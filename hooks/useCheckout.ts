@@ -100,6 +100,39 @@ const distributeCoinsProportionally = (
   return distribution;
 };
 
+/**
+ * `useCheckout` — primary hook that drives the checkout flow.
+ *
+ * Manages the full lifecycle of a checkout session: loading cart items,
+ * applying promo codes, selecting payment methods, redeeming Rez/promo coins,
+ * choosing delivery addresses and fulfillment options, and placing the order
+ * via Razorpay.
+ *
+ * @param retryOrderId - Optional Razorpay order ID to retry a failed payment.
+ *   When provided, the hook skips cart creation and pre-fills the order totals
+ *   from the existing order, allowing the user to re-attempt payment without
+ *   creating a duplicate order.
+ *
+ * @returns `UseCheckoutReturn` — the full checkout state and action handlers,
+ *   including `handlePlaceOrder`, `applyPromoCode`, `selectPaymentMethod`,
+ *   `setCoinsToRedeem`, and navigation helpers.
+ *
+ * @example
+ * ```tsx
+ * function CheckoutScreen() {
+ *   const { pageState, handlePlaceOrder, billSummary } = useCheckout();
+ *   // ...
+ * }
+ * ```
+ *
+ * @remarks
+ * - Coin redemption is capped by `REZ_COIN_MAX_USAGE_PERCENTAGE` and
+ *   `PROMO_COIN_MAX_USAGE_PERCENTAGE` from `@/config/checkout.config`.
+ * - Analytics events (`checkout_started`, `order_placed`, etc.) are fired
+ *   via `analyticsService` and `AnalyticsService`.
+ * - The hook synchronises with the Zustand cart store via `useCartState` /
+ *   `useCartActions` selectors to avoid prop-drilling.
+ */
 export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
   const cartActions = useCartActions();
   const cartState = useCartState();

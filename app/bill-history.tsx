@@ -2,7 +2,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Bill History Page
 // View all uploaded bills with their verification status and cashback details
 
-import React, { useState, useEffect, useCallback, useLayoutEffect } from 'react';
+import React, { useState, useEffect, useCallback, useLayoutEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -25,6 +25,7 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { errorReporter } from '@/utils/errorReporter';
 
 interface Bill {
   _id: string;
@@ -100,16 +101,19 @@ function BillHistoryPage() {
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
 
-  // Load bills on mount and when filter changes
-  useEffect(() => {
-    loadBills(1, false);
-  }, [activeFilter]);
-
   // Stats (computed from all-filter first load)
   const [stats, setStats] = useState({ total: 0, pending: 0, totalCashback: 0 });
 
+  // CONS-012: Request-generation counter to prevent stale pagination responses
+  // from overwriting newer results when filter changes or rapid scrolling occurs.
+  const requestGenRef = useRef(0);
+
   // Load bills from API with pagination
-  const loadBills = async (pageNum: number, append: boolean) => {
+  // CONS-012: Each call increments a generation counter; results are discarded
+  // if a newer request has been started before this one resolves.
+  const loadBills = useCallback(async (pageNum: number, append: boolean) => {
+    const myGen = ++requestGenRef.current; // capture generation at call time
+
     try {
       if (pageNum === 1) setIsLoading(true);
       else setLoadingMore(true);
@@ -119,24 +123,24 @@ function BillHistoryPage() {
 
       const response = await billUploadService.getBillHistory(params);
 
+      // Discard response if a newer request was started (race condition guard)
+      if (myGen !== requestGenRef.current) return;
+      if (!isMounted()) return;
+
       if (response.success && response.data) {
         const data = response.data as any;
         const newBills = Array.isArray(data) ? data : (data.bills || []);
         if (append) {
           setBills(prev => [...prev, ...newBills]);
         } else {
-          if (!isMounted()) return;
           setBills(newBills);
         }
-        if (!isMounted()) return;
         setPage(pageNum);
         const pagination = data?.pagination;
-        if (!isMounted()) return;
         setHasMore(pagination ? (pagination.page < pagination.pages) : newBills.length >= 20);
 
         // Update stats from response if available, or compute from first page
         if (data?.stats) {
-          if (!isMounted()) return;
           setStats(data.stats);
         } else if (pageNum === 1 && activeFilter === 'all') {
           const total = pagination?.total || newBills.length;
@@ -146,34 +150,44 @@ function BillHistoryPage() {
           const totalCashback = newBills
             .filter((b: Bill) => b.verificationStatus === 'approved' && b.cashbackAmount)
             .reduce((sum: number, b: Bill) => sum + (b.cashbackAmount || 0), 0);
-          if (!isMounted()) return;
           setStats({ total, pending, totalCashback });
         }
       }
     } catch (error) {
-      // silently handle
+      // Only log if this response is still relevant
+      if (myGen === requestGenRef.current && isMounted()) {
+        // Non-critical — user can pull-to-refresh
+        errorReporter.captureError(
+          error instanceof Error ? error : new Error('Failed to load bill history'),
+          { context: 'BillHistoryPage.loadBills', page: pageNum, filter: activeFilter },
+          'warning'
+        );
+      }
     } finally {
-      if (!isMounted()) return;
+      if (myGen !== requestGenRef.current || !isMounted()) return;
       setIsLoading(false);
-      if (!isMounted()) return;
       setIsRefreshing(false);
-      if (!isMounted()) return;
       setLoadingMore(false);
     }
-  };
+  }, [activeFilter, isMounted]);
+
+  // Load bills on mount and when filter changes
+  useEffect(() => {
+    loadBills(1, false);
+  }, [loadBills]);
 
   // Refresh bills
   const onRefresh = useCallback(() => {
     setIsRefreshing(true);
     loadBills(1, false);
-  }, [activeFilter]);
+  }, [loadBills]);
 
   // Load more bills
   const loadMore = useCallback(() => {
     if (!loadingMore && hasMore && !isLoading) {
       loadBills(page + 1, true);
     }
-  }, [loadingMore, hasMore, isLoading, page, activeFilter]);
+  }, [loadingMore, hasMore, isLoading, page, loadBills]);
 
   // Get status color
   const getStatusColor = (status: string) => {

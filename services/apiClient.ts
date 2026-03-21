@@ -91,9 +91,18 @@ class ApiClient {
   private slowRequestCallback: ((endpoint: string) => void) | null = null;
 
   constructor() {
-    // Use environment variable or fallback to user backend localhost
-    // On Android emulators, remap localhost to 10.0.2.2 (host machine)
-    const resolvedURL = resolveBaseURL(process.env.EXPO_PUBLIC_API_BASE_URL || process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api');
+    // CONS-009: Require explicit API URL — no silent localhost fallback
+    // In dev: set EXPO_PUBLIC_API_BASE_URL=http://localhost:5001/api in .env
+    // In prod: set EXPO_PUBLIC_API_BASE_URL=https://api.rez.app/api
+    const rawURL = process.env.EXPO_PUBLIC_API_BASE_URL || process.env.EXPO_PUBLIC_API_URL;
+    if (!rawURL) {
+      if (__DEV__) {
+        console.error('[ApiClient] EXPO_PUBLIC_API_BASE_URL is not set. Defaulting to localhost for dev.');
+      } else {
+        throw new Error('[ApiClient] FATAL: EXPO_PUBLIC_API_BASE_URL is required but not configured.');
+      }
+    }
+    const resolvedURL = resolveBaseURL(rawURL || 'http://localhost:5001/api');
 
     // In production, enforce HTTPS to prevent credential leakage over plaintext
     if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production' && !resolvedURL.startsWith('https://')) {
@@ -453,100 +462,81 @@ class ApiClient {
     return this.makeRequest<T>(url, requestOptions);
   }
 
-  // POST request (optional deduplication)
+  // POST request (optional deduplication, optional timeout)
+  // CONS-015: Pass timeout from API_TIMEOUTS for payment/upload/slow endpoints
   async post<T>(
     endpoint: string,
     data?: any,
-    options?: { deduplicate?: boolean }
+    options?: { deduplicate?: boolean; timeout?: number }
   ): Promise<ApiResponse<T>> {
     // POST requests are NOT deduplicated by default (usually mutating)
     const shouldDeduplicate = options?.deduplicate === true;
+    const requestOpts: RequestOptions = { method: 'POST', body: data };
+    if (options?.timeout) requestOpts.timeout = options.timeout;
 
     if (shouldDeduplicate) {
       const requestKey = createRequestKey(`POST:${this.baseURL}${endpoint}`, data);
-
-      return globalDeduplicator.dedupe(
-        requestKey,
-        () => this.makeRequest<T>(endpoint, { method: 'POST', body: data })
-      );
+      return globalDeduplicator.dedupe(requestKey, () => this.makeRequest<T>(endpoint, requestOpts));
     }
 
-    return this.makeRequest<T>(endpoint, {
-      method: 'POST',
-      body: data
-    });
+    return this.makeRequest<T>(endpoint, requestOpts);
   }
 
-  // PUT request (optional deduplication)
+  // PUT request (optional deduplication, optional timeout)
   async put<T>(
     endpoint: string,
     data?: any,
-    options?: { deduplicate?: boolean }
+    options?: { deduplicate?: boolean; timeout?: number }
   ): Promise<ApiResponse<T>> {
     // PUT requests are NOT deduplicated by default (usually mutating)
     const shouldDeduplicate = options?.deduplicate === true;
+    const requestOpts: RequestOptions = { method: 'PUT', body: data };
+    if (options?.timeout) requestOpts.timeout = options.timeout;
 
     if (shouldDeduplicate) {
       const requestKey = createRequestKey(`PUT:${this.baseURL}${endpoint}`, data);
-
-      return globalDeduplicator.dedupe(
-        requestKey,
-        () => this.makeRequest<T>(endpoint, { method: 'PUT', body: data })
-      );
+      return globalDeduplicator.dedupe(requestKey, () => this.makeRequest<T>(endpoint, requestOpts));
     }
 
-    return this.makeRequest<T>(endpoint, {
-      method: 'PUT',
-      body: data
-    });
+    return this.makeRequest<T>(endpoint, requestOpts);
   }
 
-  // PATCH request (optional deduplication)
+  // PATCH request (optional deduplication, optional timeout)
   async patch<T>(
     endpoint: string,
     data?: any,
-    options?: { deduplicate?: boolean }
+    options?: { deduplicate?: boolean; timeout?: number }
   ): Promise<ApiResponse<T>> {
     // PATCH requests are NOT deduplicated by default (usually mutating)
     const shouldDeduplicate = options?.deduplicate === true;
+    const requestOpts: RequestOptions = { method: 'PATCH', body: data };
+    if (options?.timeout) requestOpts.timeout = options.timeout;
 
     if (shouldDeduplicate) {
       const requestKey = createRequestKey(`PATCH:${this.baseURL}${endpoint}`, data);
-
-      return globalDeduplicator.dedupe(
-        requestKey,
-        () => this.makeRequest<T>(endpoint, { method: 'PATCH', body: data })
-      );
+      return globalDeduplicator.dedupe(requestKey, () => this.makeRequest<T>(endpoint, requestOpts));
     }
 
-    return this.makeRequest<T>(endpoint, {
-      method: 'PATCH',
-      body: data
-    });
+    return this.makeRequest<T>(endpoint, requestOpts);
   }
 
-  // DELETE request (optional deduplication)
+  // DELETE request (optional deduplication, optional timeout)
   async delete<T>(
     endpoint: string,
     data?: any,
-    options?: { deduplicate?: boolean }
+    options?: { deduplicate?: boolean; timeout?: number }
   ): Promise<ApiResponse<T>> {
     // DELETE requests are NOT deduplicated by default (usually mutating)
     const shouldDeduplicate = options?.deduplicate === true;
+    const requestOpts: RequestOptions = { method: 'DELETE', body: data };
+    if (options?.timeout) requestOpts.timeout = options.timeout;
 
     if (shouldDeduplicate) {
       const requestKey = createRequestKey(`DELETE:${this.baseURL}${endpoint}`, data);
-
-      return globalDeduplicator.dedupe(
-        requestKey,
-        () => this.makeRequest<T>(endpoint, { method: 'DELETE', body: data })
-      );
+      return globalDeduplicator.dedupe(requestKey, () => this.makeRequest<T>(endpoint, requestOpts));
     }
 
-    return this.makeRequest<T>(endpoint, {
-      method: 'DELETE',
-      body: data
-    });
+    return this.makeRequest<T>(endpoint, requestOpts);
   }
 
   // Upload file (30s timeout for large files)
@@ -603,11 +593,16 @@ class ApiClient {
   }
 }
 
-// Timeout constants for callers that need specific timeouts
+// CONS-015: Timeout constants for per-request-type configuration.
+// Import API_TIMEOUTS in service files and pass to post/put/patch/delete
+// to override the 8s default for endpoints that are known to be slower.
 export const API_TIMEOUTS = {
-  DEFAULT: 8000,
-  UPLOAD: 30000,
-  LONG_RUNNING: 15000,
+  DEFAULT: 8000,          // Standard read (list, detail)
+  UPLOAD: 30000,          // File/image upload — large body
+  LONG_RUNNING: 15000,    // Reports, exports, heavy aggregations
+  PAYMENT: 20000,         // Payment processing — give gateway time to respond
+  BILL_FETCH: 12000,      // Fetch bill from BBPS/utility provider — external call
+  AUTH: 10000,            // Login / token refresh — slightly more than default
 } as const;
 
 // Create singleton instance

@@ -4,6 +4,7 @@ import { WalletData, CoinBalance } from '@/types/wallet';
 import walletApi from '@/services/walletApi';
 import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
+import { errorReporter } from '@/utils/errorReporter';
 
 // ---------------------------------------------------------------------------
 // Transform backend wallet response into frontend WalletData
@@ -182,7 +183,12 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         }
       } catch (error) {
         if (abortRef.current?.signal.aborted) return;
-        // silently handle
+        // CONS-013: Report wallet fetch failures to Sentry/errorReporter instead of swallowing
+        errorReporter.captureError(
+          error instanceof Error ? error : new Error('Wallet fetch failed'),
+          { context: 'WalletContext.fetchWallet', userId: authUser?._id || 'unknown' },
+          'warning'
+        );
       } finally {
         setIsLoading(false);
         setIsRefreshing(false);

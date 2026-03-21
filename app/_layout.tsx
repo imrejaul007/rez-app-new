@@ -6,6 +6,32 @@ import 'react-native-reanimated';
 import { initSentry, Sentry } from '@/config/sentry';
 initSentry();
 
+// CONS-010: Validate required environment variables at startup
+// Fail loudly in production; warn in development so missing configs are caught early
+;(() => {
+  const REQUIRED_CONFIGS: Record<string, string> = {
+    EXPO_PUBLIC_API_BASE_URL: 'Backend API URL',
+    EXPO_PUBLIC_RAZORPAY_KEY_ID: 'Razorpay payment key',
+  };
+  const RECOMMENDED_CONFIGS: Record<string, string> = {
+    EXPO_PUBLIC_SENTRY_DSN: 'Sentry crash reporting',
+    EXPO_PUBLIC_ENVIRONMENT: 'Environment name (production/staging/development)',
+  };
+  const missing = Object.entries(REQUIRED_CONFIGS).filter(([key]) => !process.env[key]);
+  const missingRecommended = Object.entries(RECOMMENDED_CONFIGS).filter(([key]) => !process.env[key]);
+  if (missing.length > 0) {
+    const msg = `Missing required env vars: ${missing.map(([k, v]) => `${k} (${v})`).join(', ')}`;
+    if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production') {
+      throw new Error(`[Config] FATAL: ${msg}`);
+    } else {
+      console.error(`[Config] WARNING: ${msg}`);
+    }
+  }
+  if (missingRecommended.length > 0 && __DEV__) {
+    console.warn(`[Config] Recommended env vars not set: ${missingRecommended.map(([k, v]) => `${k} (${v})`).join(', ')}`);
+  }
+})();
+
 import { useFonts } from 'expo-font';
 import React, { useEffect, useState } from 'react';
 import { View, useColorScheme } from 'react-native';
