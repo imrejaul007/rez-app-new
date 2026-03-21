@@ -24,8 +24,7 @@ export {
 } from './env';
 
 // API client configuration
-export { 
-  default as apiClient,
+export {
   apiMethods,
   buildEndpoint,
   API_ENDPOINTS

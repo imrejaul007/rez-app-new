@@ -191,7 +191,9 @@ export const useFashionData = (): UseFashionDataResult => {
   const [categories, setCategories] = useState<FashionCategory[]>([]);
 
   // Loading states
-  const [isLoadingStores, setIsLoadingStores] = useState(true);
+  const [isLoadingFeaturedStores, setIsLoadingFeaturedStores] = useState(true);
+  const [isLoadingFashionStores, setIsLoadingFashionStores] = useState(true);
+  const isLoadingStores = isLoadingFeaturedStores || isLoadingFashionStores;
   const [isLoadingProducts, setIsLoadingProducts] = useState(true);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
 
@@ -203,7 +205,7 @@ export const useFashionData = (): UseFashionDataResult => {
   // Fetch Featured Stores (FASHION ONLY)
   const fetchFeaturedStores = useCallback(async () => {
     try {
-      setIsLoadingStores(true);
+      setIsLoadingFeaturedStores(true);
       setStoresError(null);
 
       const response = await storesApi.getFeaturedStores(10);
@@ -241,14 +243,14 @@ export const useFashionData = (): UseFashionDataResult => {
       devLog.error('[FASHION DATA] Error fetching featured stores:', error);
       setStoresError(error as Error);
     } finally {
-      setIsLoadingStores(false);
+      setIsLoadingFeaturedStores(false);
     }
   }, []);
 
   // Fetch Fashion Stores (FASHION ONLY)
   const fetchFashionStores = useCallback(async () => {
     try {
-      setIsLoadingStores(true);
+      setIsLoadingFashionStores(true);
       setStoresError(null);
 
       const response = await storesApi.getStores({
@@ -285,7 +287,7 @@ export const useFashionData = (): UseFashionDataResult => {
       devLog.error('[FASHION DATA] Error fetching fashion stores:', error);
       setStoresError(error as Error);
     } finally {
-      setIsLoadingStores(false);
+      setIsLoadingFashionStores(false);
     }
   }, []);
 
@@ -313,7 +315,8 @@ export const useFashionData = (): UseFashionDataResult => {
         }
         
         // STRICT: Only show fashion products
-        // Fashion & Beauty category ID from database
+        // WARNING: This ID is environment-specific (MongoDB ObjectId) and will differ between
+        // development, staging, and production databases. It should come from config or API instead.
         const FASHION_CATEGORY_ID = '68ecdb9f55f086b04de299ef';
         
         const fashionProductsData = Array.isArray(response.data)

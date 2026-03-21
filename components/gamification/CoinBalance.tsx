@@ -46,6 +46,10 @@ function CoinBalance({
   const scaleAnim = useSharedValue(1);
   const bounceAnim = useSharedValue(0);
 
+  const animatedContentStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleAnim.value }, { translateY: bounceAnim.value }],
+  }));
+
   // Animate balance changes
   useEffect(() => {
     if (animateChanges && state.coinBalance.total !== previousBalance) {
@@ -108,9 +112,7 @@ function CoinBalance({
       <Animated.View
         style={[
           styles.content,
-          {
-            transform: [{ scale: scaleAnim }, { translateY: bounceAnim }],
-          },
+          animatedContentStyle,
         ]}
       >
         {showIcon && (

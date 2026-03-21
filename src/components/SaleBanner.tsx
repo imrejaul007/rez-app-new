@@ -96,7 +96,6 @@ const SaleBanner = () => {
 const styles = StyleSheet.create({
   container: {
     height: 180,
-    width: '100%',
     borderRadius: 16,
     marginHorizontal: 16,
     marginVertical: 8,

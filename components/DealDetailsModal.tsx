@@ -72,7 +72,6 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
   const styles = createStyles(screenData);
 
   useEffect(() => {
-    let _anim: any;
     if (visible) {
       fadeAnim.value = withTiming(1, { duration: 200 });
       slideAnim.value = withSpring(0);

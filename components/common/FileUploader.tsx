@@ -165,14 +165,17 @@ function FileUploader({
       }
     }
 
-    // Check if all uploads are complete
-    const allUploaded = uploads.every(u => u.uploadUrl && !u.isUploading && !u.error);
-    if (allUploaded) {
-      const urls = uploads
-        .filter(u => u.uploadUrl)
-        .map(u => ({ url: u.uploadUrl!, thumbnailUrl: u.thumbnailUrl }));
-      onUploadComplete?.(urls);
-    }
+    // Check if all uploads are complete using the latest state via functional updater
+    setUploads(prev => {
+      const allUploaded = prev.every(u => u.uploadUrl && !u.isUploading && !u.error);
+      if (allUploaded) {
+        const urls = prev
+          .filter(u => u.uploadUrl)
+          .map(u => ({ url: u.uploadUrl!, thumbnailUrl: u.thumbnailUrl }));
+        onUploadComplete?.(urls);
+      }
+      return prev;
+    });
   };
 
   const removeUpload = (uploadId: string) => {

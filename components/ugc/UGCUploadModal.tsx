@@ -109,14 +109,13 @@ function UGCUploadModal({
 
   // Reset state when modal closes
   useEffect(() => {
-    let anim: any | undefined;
     if (!visible) {
       if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current);
       resetTimeoutRef.current = setTimeout(() => {
         resetState();
       }, 300);
     } else {
-      anim = withTiming(1, { duration: 300 });
+      fadeAnim.value = withTiming(1, { duration: 300 });
     }
     return () => {
       // Animation cleanup handled by reanimated

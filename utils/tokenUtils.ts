@@ -9,8 +9,33 @@ interface DecodedToken {
 }
 
 /**
+ * Manual base64 decoder — fallback for environments where `atob` is unavailable
+ * (e.g. some React Native/Hermes configurations).
+ */
+function base64Decode(base64: string): string {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  let result = '';
+  let i = 0;
+  // Strip padding
+  const str = base64.replace(/=+$/, '');
+
+  while (i < str.length) {
+    const a = chars.indexOf(str[i++]);
+    const b = chars.indexOf(str[i++]);
+    const c = chars.indexOf(str[i++]);
+    const d = chars.indexOf(str[i++]);
+
+    result += String.fromCharCode((a << 2) | (b >> 4));
+    if (c !== -1) result += String.fromCharCode(((b & 15) << 4) | (c >> 2));
+    if (d !== -1) result += String.fromCharCode(((c & 3) << 6) | d);
+  }
+  return result;
+}
+
+/**
  * Decode JWT token without verification (client-side only)
- * Note: This is for display purposes only, not for security validation
+ * Note: This is for display purposes only, not for security validation.
+ * Uses atob() with a manual fallback for environments where it is unavailable.
  */
 export function decodeJWT(token: string): DecodedToken | null {
   try {
@@ -19,8 +44,14 @@ export function decodeJWT(token: string): DecodedToken | null {
       return null;
     }
 
-    const payload = parts[1];
-    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    const payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+    let decoded: string;
+    try {
+      // atob may not be available in all RN/Hermes environments
+      decoded = atob(payload);
+    } catch {
+      decoded = base64Decode(payload);
+    }
     return JSON.parse(decoded);
   } catch (error) {
     return null;

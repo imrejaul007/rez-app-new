@@ -320,7 +320,7 @@ function HomeScreen() {
         }
       });
     });
-  }, [currentLocation?.coordinates?.latitude, currentLocation?.coordinates?.longitude]);
+  }, [currentLocation?.coordinates?.latitude, currentLocation?.coordinates?.longitude, activeTab, setActiveTab]);
 
   // Get recently viewed items
   const { items: recentlyViewedItems, isLoading: isLoadingRecentlyViewed, refresh: refreshRecentlyViewed } = useRecentlyViewed();
@@ -404,7 +404,7 @@ function HomeScreen() {
         onboardingCompletedRef.current = false;
       });
     }
-  }, [isAuthenticated, authUser]);
+  }, [isAuthenticated, authUser, authActions, getCurrency, getLocale]);
 
   // Load supplementary homepage data (wallet balance comes from WalletContext)
   const loadUserContext = useCallback(async () => {

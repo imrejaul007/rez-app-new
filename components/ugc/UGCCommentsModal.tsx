@@ -23,6 +23,7 @@ import { useToast } from '@/hooks/useToast';
 import { FlashList } from '@shopify/flash-list';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useAuth } from '@/contexts/AuthContext';
 
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
@@ -89,7 +90,7 @@ function CommentItem({
   onDelete,
   onReport,
   isReply = false,
-  currentUserId = 'current-user-id', // TODO: Get from auth context
+  currentUserId,
 }: CommentItemProps) {
   const [showActions, setShowActions] = useState(false);
   const isMounted = useIsMounted();
@@ -232,6 +233,8 @@ function UGCCommentsModal({
   onClose,
   onCommentCountChange,
 }: UGCCommentsModalProps) {
+  const { state: authState } = useAuth();
+  const currentUserId = authState?.user?._id || authState?.user?.id || '';
   const [comments, setComments] = useState<UGCComment[]>([]);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -514,8 +517,9 @@ function UGCCommentsModal({
       onReply={handleReplyToComment}
       onDelete={handleDeleteComment}
       onReport={handleReportComment}
+      currentUserId={currentUserId}
     />
-  ), [handleLikeComment, handleReplyToComment, handleDeleteComment, handleReportComment]);
+  ), [handleLikeComment, handleReplyToComment, handleDeleteComment, handleReportComment, currentUserId]);
 
   const remainingChars = MAX_COMMENT_LENGTH - commentText.length;
   const isOverLimit = remainingChars < 0;

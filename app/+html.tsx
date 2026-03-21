@@ -18,13 +18,13 @@ export default function Root({ children }: { children: React.ReactNode }) {
         <meta property="og:title" content="Rez - Earn, Save & Shop Smarter" />
         <meta property="og:description" content="Discover deals, earn rewards, and shop from local stores with Rez." />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content="https://www.rezapp.com/og-image.png" />
+        <meta property="og:image" content="/og-image.png" />
         <meta property="og:url" content="https://www.rezapp.com" />
         <meta property="og:site_name" content="Rez" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Rez - Earn, Save & Shop Smarter" />
         <meta name="twitter:description" content="Discover deals, earn rewards, and shop from local stores with Rez." />
-        <meta name="twitter:image" content="https://www.rezapp.com/og-image.png" />
+        <meta name="twitter:image" content="/og-image.png" />
         <meta name="theme-color" content="#1a3a52" />
 
         {/* India market & geo targeting */}

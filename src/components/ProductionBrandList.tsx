@@ -21,40 +21,27 @@ interface ProductionBrandListProps {
   onRefresh?: () => void;
 }
 
-const ProductionBrandList = ({ stores, isLoading, error, onRefresh }: ProductionBrandListProps) => {
-  const router = useRouter();
+const renderStars = (rating: number) => {
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 !== 0;
+  const stars = [];
 
-  const handleBrandPress = (store: FashionStore) => {
-    // Navigate to store detail page with storeId query parameter
-    router.push(`/MainStorePage?storeId=${store._id}` as any);
-  };
+  for (let i = 0; i < fullStars; i++) {
+    stars.push(
+      <Ionicons key={i} name="star" size={14} color="#FFD700" />
+    );
+  }
 
-  const handleViewAllPress = () => {
-    // Navigate to stores listing page - backend now handles 'all' category
-    router.push('/StoreListPage' as any);
-  };
+  if (hasHalfStar) {
+    stars.push(
+      <Ionicons key="half" name="star-half" size={14} color="#FFD700" />
+    );
+  }
 
-  const renderStars = (rating: number) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 !== 0;
-    const stars = [];
+  return stars;
+};
 
-    for (let i = 0; i < fullStars; i++) {
-      stars.push(
-        <Ionicons key={i} name="star" size={14} color="#FFD700" />
-      );
-    }
-
-    if (hasHalfStar) {
-      stars.push(
-        <Ionicons key="half" name="star-half" size={14} color="#FFD700" />
-      );
-    }
-
-    return stars;
-  };
-
-  const BrandCard = ({ store, index }: { store: FashionStore; index: number }) => {
+const BrandCard = ({ store, index, onPress }: { store: FashionStore; index: number; onPress: (store: FashionStore) => void }) => {
     const scale = useSharedValue(1);
     const rotateX = useSharedValue(0);
     const translateY = useSharedValue(50);
@@ -148,7 +135,7 @@ const ProductionBrandList = ({ stores, isLoading, error, onRefresh }: Production
       <Animated.View style={[styles.brandCardWrapper, animatedStyle]}>
         <Pressable
           style={styles.brandCard}
-          onPress={() => handleBrandPress(store)}
+          onPress={() => onPress(store)}
           onPressIn={handlePressIn}
           onPressOut={handlePressOut}
          
@@ -239,8 +226,19 @@ const ProductionBrandList = ({ stores, isLoading, error, onRefresh }: Production
     );
   };
 
+const ProductionBrandList = ({ stores, isLoading, error, onRefresh }: ProductionBrandListProps) => {
+  const router = useRouter();
+
+  const handleBrandPress = (store: FashionStore) => {
+    router.push(`/MainStorePage?storeId=${store._id}` as any);
+  };
+
+  const handleViewAllPress = () => {
+    router.push('/StoreListPage' as any);
+  };
+
   const renderBrand = (store: FashionStore, index: number) => {
-    return <BrandCard key={store._id} store={store} index={index} />;
+    return <BrandCard key={store._id} store={store} index={index} onPress={handleBrandPress} />;
   };
 
   // Loading skeleton

@@ -42,7 +42,7 @@ const API_CONFIG = {
     AUTH: {
       SEND_OTP: '/user/auth/send-otp',
       VERIFY_OTP: '/user/auth/verify-otp',
-      REFRESH_TOKEN: '/user/auth/refresh',
+      REFRESH_TOKEN: '/user/auth/refresh-token',
       LOGOUT: '/user/auth/logout'
     },
 
@@ -225,6 +225,7 @@ const API_CONFIG = {
 const ApiHelpers = {
   // Build full URL
   buildUrl: (endpoint, params = {}) => {
+    params = { ...params };
     let url = `${API_CONFIG.BASE_URL}${endpoint}`;
 
     // Replace path parameters

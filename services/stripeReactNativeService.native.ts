@@ -384,6 +384,20 @@ class StripeReactNativeService {
         return { success: false, error };
       }
 
+      // Check the resulting payment status — handleNextAction resolving without
+      // an error does NOT guarantee the payment succeeded (e.g. the 3DS challenge
+      // could have been abandoned, leaving the intent in 'requires_action' or
+      // 'requires_payment_method').
+      const successStatuses = ['succeeded', 'requires_capture'];
+      if (!paymentIntent || !successStatuses.includes(paymentIntent.status)) {
+        return {
+          success: false,
+          error: {
+            message: `3DS authentication did not complete. Payment status: ${paymentIntent?.status ?? 'unknown'}`,
+          },
+        };
+      }
+
       return { success: true };
     } catch (error: any) {
       return { success: false, error };

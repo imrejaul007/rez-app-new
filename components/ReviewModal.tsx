@@ -25,8 +25,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
 import StarRating from '@/components/StarRating';
 import RatingBreakdown from '@/components/RatingBreakdown';
-import ReviewActionButton from '@/components/ReviewActionButton';
-import ReviewTabs from '@/components/ReviewTabs';
 import ReviewCard from '@/components/ReviewCard';
 import UGCGrid from '@/components/UGCGrid';
 import { ReviewModalProps, TabType } from '@/types/reviews';

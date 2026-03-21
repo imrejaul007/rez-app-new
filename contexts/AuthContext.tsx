@@ -2,17 +2,14 @@ import React, { createContext, useContext, useReducer, useEffect, ReactNode, use
 import { useAuthStore } from '@/stores/authStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useSegments } from 'expo-router';
-import authService, { User, AuthResponse, UnifiedUser } from '@/services/authApi';
+import authService, { User, AuthResponse } from '@/services/authApi';
 import apiClient from '@/services/apiClient';
 import * as authStorage from '@/utils/authStorage';
 import { isTokenExpired, isTokenExpiringSoon, getTimeUntilExpiration } from '@/utils/tokenUtils';
 import analytics from '@/services/analytics/AnalyticsService';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import {
-  User as UnifiedUserType,
-  toUser,
   validateUser,
-  isUserVerified
 } from '@/types/unified';
 
 // Use types from unified type system
@@ -120,8 +117,7 @@ interface AuthProviderProps {
 export function AuthProvider({ children }: AuthProviderProps) {
   const [state, dispatch] = useReducer(authReducer, initialState);
   const [hasExplicitlyLoggedOut, setHasExplicitlyLoggedOut] = React.useState(false);
-  const [lastNavigationTime, setLastNavigationTime] = React.useState(0);
-  const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false);
+const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false);
   const router = useRouter();
   const segments = useSegments();
 

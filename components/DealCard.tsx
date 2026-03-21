@@ -3,7 +3,6 @@ import {
   View,
   Pressable,
   StyleSheet,
-  LayoutAnimation,
   UIManager,
   Dimensions,
   Platform} from 'react-native';
@@ -30,7 +29,7 @@ function DealCard({
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const [timeLeft, setTimeLeft] = useState<string>('');
-  const [billPreview] = useState<number>(deal.minimumBill);
+  const billPreview = deal.minimumBill;
   
   // Animation refs
   const scaleAnim = useSharedValue(1);

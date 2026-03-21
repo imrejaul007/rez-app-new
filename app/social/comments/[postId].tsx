@@ -87,7 +87,7 @@ function CommentsPage() {
   const inputRef = useRef<TextInput>(null);
 
   const fetchComments = useCallback(async (pageNum: number, append = false) => {
-    if (!videoId || authLoading || !isAuthenticated) return;
+    if (!videoId || authLoading) return;
 
     if (pageNum === 1) setLoading(true);
     else setLoadingMore(true);

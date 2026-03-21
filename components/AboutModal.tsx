@@ -128,7 +128,6 @@ function AboutModal({ visible, onClose, storeData }: AboutModalProps) {
   const store = storeData || defaultStoreData;
 
   useEffect(() => {
-    let _anim: any;
     if (visible) {
       fadeAnim.value = withTiming(1, { duration: 250 });
       slideAnim.value = withSpring(0);

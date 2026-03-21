@@ -20,7 +20,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
-import { useIsAuthenticated } from '@/stores/selectors';
+import { useIsAuthenticated, useGetCurrencySymbol } from '@/stores/selectors';
 import eventsApiService from '@/services/eventsApi';
 import tableBookingApi from '@/services/tableBookingApi';
 import serviceBookingService from '@/services/serviceBookingApi';
@@ -128,6 +128,8 @@ function BookingsPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const isAuthenticated = useIsAuthenticated();
+  const getCurrencySymbol = useGetCurrencySymbol();
+  const currencySymbol = getCurrencySymbol();
   const tintColor = useThemeColor({}, 'tint');
 
   const [typeFilter, setTypeFilter] = useState<BookingType>('all');
@@ -199,7 +201,7 @@ function BookingsPage() {
       referenceNumber: b.bookingReference || b._id,
       details: [
         { label: 'Attendee', value: b.attendeeInfo?.name || '-' },
-        ...(b.amount > 0 ? [{ label: 'Amount', value: `${b.currency || 'AED'} ${b.amount?.toLocaleString()}` }] : []),
+        ...(b.amount > 0 ? [{ label: 'Amount', value: `${b.currency || currencySymbol} ${b.amount?.toLocaleString()}` }] : []),
         ...(b.attendeeInfo?.email ? [{ label: 'Email', value: b.attendeeInfo.email }] : []),
       ],
       canCancel: b.status === 'pending' || b.status === 'confirmed',
@@ -222,7 +224,7 @@ function BookingsPage() {
       referenceNumber: b.bookingNumber || b._id,
       details: [
         { label: 'Customer', value: b.customerName || '-' },
-        ...(b.pricing?.total ? [{ label: 'Amount', value: `${b.pricing.currency || 'AED'} ${b.pricing.total?.toLocaleString()}` }] : []),
+        ...(b.pricing?.total ? [{ label: 'Amount', value: `${b.pricing.currency || currencySymbol} ${b.pricing.total?.toLocaleString()}` }] : []),
         ...(b.serviceType ? [{ label: 'Type', value: b.serviceType.charAt(0).toUpperCase() + b.serviceType.slice(1) }] : []),
         ...(b.duration ? [{ label: 'Duration', value: `${b.duration} min` }] : []),
       ],

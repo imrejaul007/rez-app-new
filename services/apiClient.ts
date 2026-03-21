@@ -31,8 +31,9 @@ async function getDeviceFingerprintHeader(): Promise<string | null> {
 // Emulators can't reach host's localhost directly
 // BlueStacks uses Hyper-V network, host is reachable at 172.19.128.1
 // Stock Android emulator: 10.0.2.2, iOS simulator: localhost works natively
+// Guard with __DEV__ so production Android builds use the real API URL unchanged.
 function resolveBaseURL(url: string): string {
-  if (Platform.OS === 'android' && (url.includes('localhost') || url.includes('127.0.0.1'))) {
+  if (__DEV__ && Platform.OS === 'android' && (url.includes('localhost') || url.includes('127.0.0.1'))) {
     return url.replace('localhost', '172.19.128.1').replace('127.0.0.1', '172.19.128.1');
   }
   return url;
@@ -316,8 +317,14 @@ class ApiClient {
             if (this.refreshTokenCallback && !this.isLoggingOut) {
               const refreshSuccess = await this.handleTokenRefresh();
               if (refreshSuccess) {
-                // Retry the original request with new token
-                return this.makeRequest<T>(endpoint, options);
+                // Only retry safe/idempotent methods automatically.
+                // POST/PUT/PATCH/DELETE are NOT retried to avoid double-charges
+                // or duplicate mutations — the caller must handle the 401 itself.
+                if (method === 'GET' || method === 'HEAD') {
+                  return this.makeRequest<T>(endpoint, options);
+                } else {
+                  throw new Error('Session refreshed. Please retry your request.');
+                }
               }
             }
 

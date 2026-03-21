@@ -304,7 +304,9 @@ class PaymentService {
   detectCardType(cardNumber: string): string {
     const number = cardNumber.replace(/\D/g, '');
     if (number.startsWith('4')) return 'visa';
-    if (number.startsWith('5') || number.startsWith('2')) return 'mastercard';
+    const prefix2 = parseInt(number.substring(0, 2), 10);
+    const prefix4 = parseInt(number.substring(0, 4), 10);
+    if ((prefix2 >= 51 && prefix2 <= 55) || (prefix4 >= 2221 && prefix4 <= 2720)) return 'mastercard';
     if (number.startsWith('3')) return 'amex';
     if (number.startsWith('6')) return 'discover';
     return 'unknown';

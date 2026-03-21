@@ -9,8 +9,8 @@ import {
   Pressable,
   ScrollView,
   Share as RNShare,
-  Clipboard,
   Linking} from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -91,7 +91,7 @@ function ShareModal({
   // Handle copy code
   const handleCopyCode = async () => {
     if (!isMounted()) return;
-    await Clipboard.setString(referralCode);
+    await Clipboard.setStringAsync(referralCode);
     setIsCopied(true);
 
     // ✅ Analytics: Track code copy from share modal
@@ -104,7 +104,7 @@ function ShareModal({
   // Handle copy link
   const handleCopyLink = async () => {
     if (!isMounted()) return;
-    await Clipboard.setString(referralLink);
+    await Clipboard.setStringAsync(referralLink);
 
     // ✅ Analytics: Track link copy
 

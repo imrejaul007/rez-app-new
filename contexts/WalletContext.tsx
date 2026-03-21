@@ -62,7 +62,7 @@ function transformWalletResponse(backendData: any, userId: string): WalletData {
   return {
     userId: userId || 'unknown',
     totalBalance: calculatedTotalBalance,
-    availableBalance: backendData.balance.available,
+    availableBalance: backendData?.balance?.available,
     cashbackBalance,
     pendingRewards: backendData.balance?.pending || 0,
     currency: BRAND.CURRENCY_CODE,
@@ -73,7 +73,7 @@ function transformWalletResponse(backendData: any, userId: string): WalletData {
     savingsInsights: backendData.savingsInsights || { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 },
     recentTransactions: [],
     lastUpdated: new Date(backendData.lastUpdated),
-    isActive: backendData.status.isActive,
+    isActive: backendData?.status?.isActive,
     isFrozen: backendData.status?.isFrozen || false,
     frozenReason: backendData.status?.frozenReason,
   };
@@ -218,7 +218,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       _walletLastFetch = 0;
       if (abortRef.current) abortRef.current.abort();
     }
-  }, [isAuthenticated, authUser]);
+  }, [isAuthenticated, authUser?._id]);
 
   // Retry wallet fetch if first attempt failed (e.g., 401 race on page refresh)
   // Waits 2s then retries once if walletData is still null

@@ -45,7 +45,7 @@ function SpinWheelGame({
   const [nextSpinTime, setNextSpinTime] = useState<string | null>(null);
   const isMounted = useIsMounted();
   const spinValue = useSharedValue(0);
-  const [currentRotation, setCurrentRotation] = useState(0);
+  const currentRotationValue = useSharedValue(0);
   const { actions: gamificationActions } = useGamification();
 
   // Check spin eligibility on mount and when spinsRemaining changes
@@ -106,7 +106,7 @@ function SpinWheelGame({
         const targetAngle = 360 - (winningIndex * segmentAngle + segmentAngle / 2);
 
         // Add multiple rotations for excitement
-        const totalRotation = currentRotation + 360 * 5 + targetAngle;
+        const totalRotation = currentRotationValue.value + 360 * 5 + targetAngle;
 
         // Animate the spin
         if (!isMounted()) return;
@@ -116,7 +116,7 @@ function SpinWheelGame({
         // After animation completes, update state
         setTimeout(async () => {
           if (!isMounted()) return;
-          setCurrentRotation(totalRotation % 360);
+          currentRotationValue.value = totalRotation % 360;
           setIsSpinning(false);
 
           // Update wallet balance in context
@@ -149,7 +149,7 @@ function SpinWheelGame({
   };
 
   const wheelAnimStyle = useAnimatedStyle(() => {
-    const deg = currentRotation + spinValue.value * (360 * 5 + 180);
+    const deg = currentRotationValue.value + spinValue.value * (360 * 5 + 180);
     return {
       transform: [{ rotate: `${deg}deg` }],
     };

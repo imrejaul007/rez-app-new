@@ -8,6 +8,7 @@ import Animated, {
   withRepeat,
   withTiming,
   withDelay,
+  withSequence,
   Easing,
 } from 'react-native-reanimated';
 
@@ -75,26 +76,26 @@ const StoreCard = ({ store, index, onPress }: StoreCardProps) => {
   const translateY = useSharedValue(0);
   const shimmer = useSharedValue(-100);
 
-  // Entrance animation
+  // Entrance animation followed by floating animation
   useEffect(() => {
     translateY.value = withDelay(
       index * 100,
-      withSpring(0, {
-        damping: 12,
-        stiffness: 100,
-      })
-    );
-
-    // Floating animation
-    translateY.value = withDelay(
-      index * 100 + 500,
-      withRepeat(
-        withTiming(-5, {
-          duration: 2000 + index * 200,
-          easing: Easing.inOut(Easing.ease),
+      withSequence(
+        withSpring(0, {
+          damping: 12,
+          stiffness: 100,
         }),
-        -1,
-        true
+        withDelay(
+          500,
+          withRepeat(
+            withTiming(-5, {
+              duration: 2000 + index * 200,
+              easing: Easing.inOut(Easing.ease),
+            }),
+            -1,
+            true
+          )
+        )
       )
     );
 
@@ -155,7 +156,7 @@ const StoreCard = ({ store, index, onPress }: StoreCardProps) => {
         {/* 3D Card Container */}
         <View style={styles.cardContainer}>
           {/* Shimmer overlay */}
-          <Animated.View style={[styles.shimmerOverlay, shimmerStyle]}>
+          <Animated.View style={[styles.shimmerOverlay, shimmerStyle]} pointerEvents="none">
             <LinearGradient
               colors={['transparent', 'rgba(255, 255, 255, 0.3)', 'transparent']}
               start={{ x: 0, y: 0 }}
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
   storeRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingHorizontal: -5,
+    marginHorizontal: -5,
     paddingTop: 15,
     marginBottom: 24,
     overflow: 'visible',

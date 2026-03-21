@@ -71,7 +71,7 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
   const [apiDeals, setApiDeals] = useState<any[]>([]);
   const [dealCount, setDealCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [filterType, setFilterType] = useState<'all' | 'walk_in' | 'online' | 'combo' | 'cashback' | 'flash_sale'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'walk_in' | 'online' | 'combo' | 'cashback' | 'flash_sale' | 'instant' | 'bogo' | 'vip'>('all');
   const [sortBy, setSortBy] = useState<'priority' | 'discount' | 'expiry' | 'newest'>('priority');
 
   const slideAnim = useSharedValue(screenData.height);
@@ -251,7 +251,7 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
       if (!isMounted()) return;
       setIsLoadingDeals(false);
     }
-  }, [storeId, filterType, sortBy]);
+  }, [storeId, filterType, sortBy, currencySymbol]);
 
   // Use API deals if available, otherwise fallback to passed deals
   const activeDeals = apiDeals.length > 0 ? apiDeals : deals;
@@ -424,11 +424,11 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
           {/* Type Filter Chips */}
           <View style={styles.typeChipsContainer}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.typeChipsContent}>
-              {renderTypeChip('all', 'All', true)}
-              {renderTypeChip('instant', 'Instant', false)}
-              {renderTypeChip('cashback', 'Cashback', false)}
-              {renderTypeChip('bogo', 'BOGO', false)}
-              {renderTypeChip('vip', 'VIP', false)}
+              {renderTypeChip('all', 'All', filterType === 'all')}
+              {renderTypeChip('instant', 'Instant', filterType === 'instant')}
+              {renderTypeChip('cashback', 'Cashback', filterType === 'cashback')}
+              {renderTypeChip('bogo', 'BOGO', filterType === 'bogo')}
+              {renderTypeChip('vip', 'VIP', filterType === 'vip')}
             </ScrollView>
           </View>
 
@@ -512,9 +512,9 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
     );
   }
 
-  function renderTypeChip(type: string, label: string, isActive: boolean) {
+  function renderTypeChip(type: typeof filterType, label: string, isActive: boolean) {
     return (
-      <Pressable style={[styles.typeChip, isActive && styles.typeChipActive]}>
+      <Pressable style={[styles.typeChip, isActive && styles.typeChipActive]} onPress={() => setFilterType(type)}>
         {isActive ? (
           <LinearGradient
             colors={[COLORS.primary, COLORS.primaryDark]}

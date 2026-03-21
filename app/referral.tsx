@@ -90,6 +90,9 @@ const ReferralPageContent = () => {
   const copyTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const loadingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isMountedRef = useRef(true);
+  const loadingRef = useRef(loading);
+  // Keep loadingRef in sync so the 15 s timeout reads the live value, not a stale closure
+  loadingRef.current = loading;
 
   // AuthContext navigation guard handles unauthenticated redirect
   useEffect(() => {
@@ -102,7 +105,7 @@ const ReferralPageContent = () => {
 
     // ✅ FIX #4: Loading timeout - prevent infinite loading (max 15 seconds)
     loadingTimeoutRef.current = setTimeout(() => {
-      if (isMountedRef.current && loading) {
+      if (isMountedRef.current && loadingRef.current) {
         setLoading(false);
         setRefreshing(false);
         setLoadingError('Request timed out. Please check your connection and try again.');

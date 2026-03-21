@@ -3,13 +3,13 @@
  * Centralized payment provider configuration for the app
  */
 
-import { ENV_CONFIG } from './env';
+import { EXTERNAL_SERVICES } from './env';
 
 // Stripe Configuration
-export const STRIPE_PUBLISHABLE_KEY = ENV_CONFIG.payment.stripe.publishableKey;
+export const STRIPE_PUBLISHABLE_KEY = EXTERNAL_SERVICES.payment.stripe.publishableKey;
 
 // Razorpay Configuration (legacy - kept for backward compatibility)
-export const RAZORPAY_KEY = ENV_CONFIG.payment.razorpay.keyId;
+export const RAZORPAY_KEY = EXTERNAL_SERVICES.payment.razorpay.keyId;
 
 // Payment Provider Types
 export type PaymentProvider = 'stripe' | 'razorpay';

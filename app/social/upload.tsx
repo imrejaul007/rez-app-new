@@ -112,7 +112,7 @@ function UploadPage() {
       finally { setSearchingProducts(false); }
     }, 400);
     return () => clearTimeout(timeout);
-  }, [productSearchQuery]);
+  }, [productSearchQuery, currencySymbol]);
 
   // Store search with debounce
   React.useEffect(() => {

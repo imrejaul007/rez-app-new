@@ -79,11 +79,15 @@ class StorageService {
         serializedData = `COMPRESSED:${serializedData}`;
       }
 
-      // Apply encryption if requested (simplified)
+      // NOTE: base64 is NOT encryption — it is only encoding.
+      // This is a placeholder until a proper encryption library (e.g. expo-crypto
+      // with AES-GCM) is integrated. Do NOT rely on this for sensitive data.
       if (options.encrypt) {
-        // In a real implementation, you'd use proper encryption
-        // For now, just base64 encode as a placeholder
-        serializedData = `ENCRYPTED:${btoa(serializedData)}`;
+        try {
+          serializedData = `ENCODED:${btoa(serializedData)}`;
+        } catch {
+          // btoa unavailable (some RN/Hermes environments) — store as plain JSON
+        }
       }
 
       await AsyncStorage.setItem(key, serializedData);
@@ -104,9 +108,16 @@ class StorageService {
         return defaultValue;
       }
 
-      // Handle encryption
-      if (serializedData.startsWith('ENCRYPTED:')) {
-        serializedData = atob(serializedData.substring(10));
+      // Handle encoded data (legacy 'ENCRYPTED:' prefix renamed to 'ENCODED:')
+      // NOTE: base64 is NOT encryption — see setItem comment above.
+      if (serializedData.startsWith('ENCODED:') || serializedData.startsWith('ENCRYPTED:')) {
+        const prefixLength = serializedData.startsWith('ENCODED:') ? 8 : 10;
+        try {
+          serializedData = atob(serializedData.substring(prefixLength));
+        } catch {
+          // atob unavailable — attempt to use the raw value as-is
+          serializedData = serializedData.substring(prefixLength);
+        }
       }
 
       // Handle compression

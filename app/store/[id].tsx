@@ -340,13 +340,13 @@ const StoreDetailPage: React.FC = () => {
   };
 
   const getPartnerLevelColor = (level: string) => {
-    const colors: Record<string, { bg: string; text: string }> = {
+    const levelColors: Record<string, { bg: string; text: string }> = {
       platinum: { bg: '#E5E4E2', text: Colors.text.secondary },
-      gold: { bg: Colors.warningScale[100], text: colors.brand.amberDark },
+      gold: { bg: Colors.warningScale[100], text: '#92400E' },
       silver: { bg: Colors.background.secondary, text: Colors.text.secondary },
       bronze: { bg: '#FED7AA', text: '#9A3412' },
     };
-    return colors[level] || { bg: COLORS.gray100, text: COLORS.gray600 };
+    return levelColors[level] || { bg: COLORS.gray100, text: COLORS.gray600 };
   };
 
   const getDayName = (day: string) => {

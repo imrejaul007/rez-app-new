@@ -306,4 +306,4 @@ const styles = StyleSheet.create({
 export { FeatureErrorBoundary };
 
 // Default export (used by most consumers that import via `import X from ...`)
-export default React.memo(FeatureErrorBoundary);
+export default FeatureErrorBoundary;

@@ -28,6 +28,28 @@ import { colors } from '@/constants/theme';
 
 const { width, height } = Dimensions.get('window');
 
+const CONFETTI_COLORS = [colors.error, colors.warningScale[400], colors.successScale[400], colors.infoScale[400], colors.brand.purpleLight, colors.brand.pink];
+
+function ConfettiPiece({ sv, index, target }: { sv: any; index: number; target: { x: number; y: number; rotation: number } }) {
+  const color = CONFETTI_COLORS[index % CONFETTI_COLORS.length];
+  const confettiItemStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: sv.value * target.x },
+      { translateY: sv.value * target.y },
+      { rotate: `${sv.value * target.rotation}deg` },
+    ],
+  }));
+  return (
+    <Animated.View
+      style={[
+        styles.confetti,
+        { backgroundColor: color },
+        confettiItemStyle,
+      ]}
+    />
+  );
+}
+
 interface TierUpgradeCelebrationProps {
   visible: boolean;
   newTier: string;
@@ -47,8 +69,18 @@ function TierUpgradeCelebration({
   const scaleAnim = useSharedValue(0);
   const fadeAnim = useSharedValue(0);
 
-  // Store confetti target values for each particle
-  const confettiProgress = [...Array(30)].map(() => useSharedValue(0));
+  // Store confetti shared values as fixed-size array (30 particles)
+  const cp0 = useSharedValue(0); const cp1 = useSharedValue(0); const cp2 = useSharedValue(0);
+  const cp3 = useSharedValue(0); const cp4 = useSharedValue(0); const cp5 = useSharedValue(0);
+  const cp6 = useSharedValue(0); const cp7 = useSharedValue(0); const cp8 = useSharedValue(0);
+  const cp9 = useSharedValue(0); const cp10 = useSharedValue(0); const cp11 = useSharedValue(0);
+  const cp12 = useSharedValue(0); const cp13 = useSharedValue(0); const cp14 = useSharedValue(0);
+  const cp15 = useSharedValue(0); const cp16 = useSharedValue(0); const cp17 = useSharedValue(0);
+  const cp18 = useSharedValue(0); const cp19 = useSharedValue(0); const cp20 = useSharedValue(0);
+  const cp21 = useSharedValue(0); const cp22 = useSharedValue(0); const cp23 = useSharedValue(0);
+  const cp24 = useSharedValue(0); const cp25 = useSharedValue(0); const cp26 = useSharedValue(0);
+  const cp27 = useSharedValue(0); const cp28 = useSharedValue(0); const cp29 = useSharedValue(0);
+  const confettiProgress = [cp0,cp1,cp2,cp3,cp4,cp5,cp6,cp7,cp8,cp9,cp10,cp11,cp12,cp13,cp14,cp15,cp16,cp17,cp18,cp19,cp20,cp21,cp22,cp23,cp24,cp25,cp26,cp27,cp28,cp29];
   const confettiTargets = React.useRef(
     [...Array(30)].map(() => ({
       x: (Math.random() - 0.5) * width * 1.5,
@@ -104,30 +136,9 @@ function TierUpgradeCelebration({
       <Animated.View style={[styles.overlay, fadeStyle]}>
         {/* Confetti */}
         <View style={styles.confettiContainer}>
-          {confettiProgress.map((sv, index) => {
-            const confettiColors = [colors.error, colors.warningScale[400], colors.successScale[400], colors.infoScale[400], colors.brand.purpleLight, colors.brand.pink];
-            const color = confettiColors[index % confettiColors.length];
-            const target = confettiTargets[index];
-
-            const confettiItemStyle = useAnimatedStyle(() => ({
-              transform: [
-                { translateX: sv.value * target.x },
-                { translateY: sv.value * target.y },
-                { rotate: `${sv.value * target.rotation}deg` },
-              ],
-            }));
-
-            return (
-              <Animated.View
-                key={index}
-                style={[
-                  styles.confetti,
-                  { backgroundColor: color },
-                  confettiItemStyle,
-                ]}
-              />
-            );
-          })}
+          {confettiProgress.map((sv, index) => (
+            <ConfettiPiece key={index} sv={sv} index={index} target={confettiTargets[index]} />
+          ))}
         </View>
 
         {/* Content */}

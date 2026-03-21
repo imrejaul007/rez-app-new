@@ -7,8 +7,8 @@ import {
   StyleSheet,
   Dimensions,
   ScrollView,
-  Share,
-  Clipboard} from 'react-native';
+  Share} from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import Animated, { interpolate, runOnJS, useAnimatedStyle, useSharedValue, withDelay, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { CrossPlatformBlurView as BlurView } from '@/components/ui/CrossPlatformBlurView';
@@ -62,7 +62,6 @@ function DealSharingModal({
   const styles = createStyles(screenData);
 
   useEffect(() => {
-    let _anim: any;
     if (visible) {
       fadeAnim.value = withTiming(1, { duration: 200 });
       slideAnim.value = withSpring(0);
@@ -117,7 +116,8 @@ ${deal.description || 'Don\'t miss out on this incredible offer!'}
 
 #Deals #Savings #${storeName.replace(/\s+/g, '')}`;
 
-    const url = `https://store.app/deals/${deal.id}`;
+    const DEEP_LINK_BASE = 'https://rez.app';
+    const url = `${DEEP_LINK_BASE}/deals/${deal.id}`;
     
     return { message, url };
   };
@@ -152,7 +152,7 @@ ${deal.description || 'Don\'t miss out on this incredible offer!'}
           const { message, url } = generateShareContent(deal, storeName);
           const shareText = `${message}\n\n${url}`;
           if (!isMounted()) return;
-          await Clipboard.setString(shareText);
+          await Clipboard.setStringAsync(shareText);
           setCopyFeedback(true);
         } catch (error) {
           platformAlertSimple('Error', 'Failed to copy link. Please try again.');

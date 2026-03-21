@@ -185,7 +185,7 @@ function SharedCategoryPage() {
       if (!isMounted()) return;
       setIsSearching(false);
     }
-  }, []);
+  }, [slug]);
 
   const handleQueryChange = (text: string) => {
     setQuery(text);
@@ -407,7 +407,7 @@ function SharedCategoryPage() {
           ) : (
             <FlashList
               data={products}
-              keyExtractor={(item) => item._id || item.id || String(Math.random())}
+              keyExtractor={(item, index) => item._id || item.id || String(index)}
               renderItem={renderProductSearchItem}
               contentContainerStyle={styles.resultsList}
               showsVerticalScrollIndicator={false}

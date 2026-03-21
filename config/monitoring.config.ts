@@ -38,7 +38,7 @@ export const initializeSentry = () => {
  * Google Analytics Configuration
  */
 export const GoogleAnalyticsConfig = {
-  trackingId: process.env.GA_TRACKING_ID || 'UA-XXXXX-Y',
+  trackingId: process.env.EXPO_PUBLIC_GA_TRACKING_ID || 'UA-XXXXX-Y',
   enabled: !__DEV__,
 
   // Custom Dimensions
@@ -78,7 +78,7 @@ export const GoogleAnalyticsConfig = {
  * Mixpanel Configuration
  */
 export const MixpanelConfig = {
-  token: process.env.MIXPANEL_TOKEN || 'YOUR_MIXPANEL_TOKEN',
+  token: process.env.EXPO_PUBLIC_MIXPANEL_TOKEN || 'YOUR_MIXPANEL_TOKEN',
   enabled: !__DEV__,
 
   // Track everything by default

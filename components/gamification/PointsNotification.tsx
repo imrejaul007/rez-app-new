@@ -67,6 +67,10 @@ function PointsNotification({ data, onDismiss }: PointsNotificationProps) {
   const borderColor = isEarned ? colors.successScale[400] : colors.error;
   const prefix = isEarned ? '+' : '-';
 
+  const progressBarStyle = useAnimatedStyle(() => ({
+    width: `${interpolate(translateY.value, [-100, 0], [0, 100])}%` as any,
+  }));
+
   return (
     <Animated.View
       style={[
@@ -109,10 +113,8 @@ function PointsNotification({ data, onDismiss }: PointsNotificationProps) {
       <Animated.View
         style={[
           styles.progressBar,
-          {
-            backgroundColor: color,
-            width: interpolate(translateY.value, [-100, 0], ['0%', '100%']),
-          },
+          { backgroundColor: color },
+          progressBarStyle,
         ]}
       />
     </Animated.View>

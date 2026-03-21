@@ -302,6 +302,15 @@ export function validateStoreLocation(location: StoreLocation): ValidationResult
     });
   }
 
+  if (!location.coordinates) {
+    errors.push({
+      field: 'location.coordinates',
+      message: 'Coordinates are required',
+      code: 'REQUIRED_FIELD',
+    });
+    return { valid: false, errors };
+  }
+
   const { latitude, longitude } = location.coordinates;
 
   if (latitude < -90 || latitude > 90) {
@@ -618,7 +627,7 @@ export function isValidPhone(phone: string): boolean {
  * Validate postal code (Indian PIN code)
  */
 export function isValidPostalCode(postalCode: string): boolean {
-  const pinRegex = /^[1-9][0-9]{5}$/;
+  const pinRegex = /^[1-9][0-9]{4,5}$/;
   return pinRegex.test(postalCode);
 }
 

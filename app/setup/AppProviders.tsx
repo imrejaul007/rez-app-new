@@ -29,7 +29,7 @@ import { Platform } from 'react-native';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import * as Sentry from '@sentry/react-native';
+
 import { Stack, usePathname } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import analytics from '@/services/analytics/AnalyticsService';
@@ -53,14 +53,6 @@ if (Platform.OS !== 'web') {
   }
 }
 
-// Initialize Sentry for crash reporting
-if (process.env.EXPO_PUBLIC_SENTRY_DSN) {
-  Sentry.init({
-    dsn: process.env.EXPO_PUBLIC_SENTRY_DSN,
-    environment: process.env.EXPO_PUBLIC_ENVIRONMENT || 'production',
-    tracesSampleRate: 0.2,
-  });
-}
 
 import {
   DeferredSocket,
@@ -82,13 +74,8 @@ const BottomNavigation = React.lazy(() => import('@/components/navigation/Bottom
  */
 const IdentityHydrator = React.memo(function IdentityHydrator() {
   const isAuthenticated = useIsAuthenticated();
-  let authLoading = false;
-  try {
-    const auth = useAuth();
-    authLoading = auth?.loading ?? false;
-  } catch {
-    // useAuth may not be available yet
-  }
+  const auth = useAuth();
+  const authLoading = auth?.loading ?? false;
 
   useEffect(() => {
     if (authLoading || !isAuthenticated) return;

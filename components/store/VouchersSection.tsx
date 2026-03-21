@@ -8,8 +8,8 @@ import {
   StyleSheet,
   Pressable,
   ScrollView,
-  Clipboard,
   Platform} from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -59,7 +59,7 @@ const VouchersSection: React.FC<VouchersSectionProps> = ({ storeId, storeName })
     if (Platform.OS === 'web') {
       navigator.clipboard.writeText(code);
     } else {
-      Clipboard.setString(code);
+      Clipboard.setStringAsync(code);
     }
 
     platformAlertSimple('Code Copied!', `Voucher code "${code}" has been copied to clipboard.`);

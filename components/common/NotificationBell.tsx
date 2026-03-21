@@ -55,8 +55,8 @@ function NotificationBell({
 
     if (isAuthenticated) {
       loadNotifications();
-      // Poll for new notifications every 30 seconds
-      const interval = setInterval(loadNotifications, 30000);
+      // Poll for new notifications every 30 seconds (no loading indicator for polls)
+      const interval = setInterval(fetchNotifications, 30000);
       return () => {
         isMountedRef.current = false;
         clearInterval(interval);
@@ -66,11 +66,10 @@ function NotificationBell({
     return () => {
       isMountedRef.current = false;
     };
-  }, [isAuthenticated]);
+  }, [isAuthenticated, loadNotifications, fetchNotifications]);
 
-  const loadNotifications = useCallback(async () => {
+  const fetchNotifications = useCallback(async () => {
     try {
-      setLoading(true);
       const response = await notificationService.getNotifications({
         limit: 10,
       });
@@ -90,6 +89,11 @@ function NotificationBell({
       }
     }
   }, []);
+
+  const loadNotifications = useCallback(async () => {
+    setLoading(true);
+    await fetchNotifications();
+  }, [fetchNotifications]);
 
   const handleNotificationPress = async (notification: Notification) => {
     // Mark as read if unread

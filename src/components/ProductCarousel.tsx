@@ -7,7 +7,6 @@ import {
   StyleSheet,
   ImageBackground,
   Dimensions,
-  Platform,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
@@ -151,7 +150,7 @@ const ProductCard = ({ product, index, scrollX }: ProductCardProps) => {
     };
   });
 
-  const CardWrapper = Platform.OS === 'web' ? Pressable : Pressable;
+  const CardWrapper = Pressable;
 
   return (
     <CardWrapper
@@ -227,7 +226,6 @@ const ProductCarousel = () => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        pagingEnabled
         snapToInterval={CARD_WIDTH}
         snapToAlignment="start"
         decelerationRate="fast"
@@ -352,7 +350,6 @@ const styles = StyleSheet.create({
   dot: {
     height: 8,
     borderRadius: 4,
-    transition: 'all 0.3s ease',
   },
 });
 

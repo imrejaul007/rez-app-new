@@ -7,7 +7,6 @@ import {
   StyleSheet,
   ImageBackground,
   Dimensions,
-  Platform,
   NativeScrollEvent,
   NativeSyntheticEvent,
   ActivityIndicator,
@@ -111,7 +110,7 @@ const ProductCard = ({ product, index, scrollX, onPress, currencySymbol }: Produ
     };
   });
 
-  const CardWrapper = Platform.OS === 'web' ? Pressable : Pressable;
+  const CardWrapper = Pressable;
 
   // Extract data from API response with proper fallbacks
   const cashback = product.cashback?.percentage || 0;
@@ -305,7 +304,6 @@ const ProductionProductCarousel = ({ products, isLoading, error }: ProductionPro
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        pagingEnabled
         snapToInterval={CARD_WIDTH}
         snapToAlignment="start"
         decelerationRate="fast"

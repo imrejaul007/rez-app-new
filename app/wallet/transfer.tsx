@@ -200,17 +200,20 @@ function TransferPage() {
     setLoading(true);
     try {
       if (!pendingTransferId) {
+        if (!selectedRecipient) return;
         const res = await walletApi.initiateTransfer({
-          recipientId: selectedRecipient!.id,
-          recipientPhone: selectedRecipient!.phone,
+          recipientId: selectedRecipient.id,
+          recipientPhone: selectedRecipient.phone,
           amount: Number(amount),
           coinType: 'nuqta',
           note: note || undefined,
           idempotencyKey,
         });
+        if (!mountedRef.current) return;
         const data = res.data;
         if (data?.requiresOtp) {
           const confirmRes = await walletApi.confirmTransfer({ transferId: data.transferId, otp });
+          if (!mountedRef.current) return;
           setTransactionId(confirmRes.data?.transferId || data.transferId);
         } else {
           setTransactionId(data?.transferId || '');
@@ -223,6 +226,7 @@ function TransferPage() {
           transferId: pendingTransferId,
           otp,
         });
+        if (!mountedRef.current) return;
         const data = res.data;
         setTransactionId(data?.transferId || pendingTransferId);
         setIdempotencyKey(generateIdempotencyKey('transfer'));
@@ -233,7 +237,7 @@ function TransferPage() {
       const message = error?.response?.data?.message || error?.message || 'OTP verification failed. Please try again.';
       platformAlertSimple('Verification Failed', message);
     } finally {
-      setLoading(false);
+      if (mountedRef.current) setLoading(false);
     }
   };
 

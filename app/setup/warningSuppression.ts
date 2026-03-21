@@ -7,8 +7,7 @@ import { LogBox, Platform } from 'react-native';
 // Suppress console output in production builds
 if (!__DEV__) {
   console.log = () => {};
-  console.warn = () => {};
-  // Keep console.error for crash reporting
+  // Keep console.warn and console.error active in production for diagnostics
 }
 
 // Hide React DevTools overlay on web (CSS-only, no expensive DOM scanning)

@@ -24,58 +24,51 @@ interface UGCGridProps {
   onBookmarkContent?: (contentId: string) => void;
 }
 
-const UGCGrid: React.FC<UGCGridProps> = ({
-  ugcContent,
-  onContentPress,
-  onLikeContent,
-  onBookmarkContent }) => {
-  const screenWidth = Dimensions.get('window').width;
-  const itemWidth = (screenWidth - 64) / 2; // Account for padding and gap
+const formatDate = (date: Date) => {
+  const now = new Date();
+  const diffTime = Math.abs(now.getTime() - date.getTime());
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  if (diffDays === 1) return '1d';
+  if (diffDays < 7) return `${diffDays}d`;
+  if (diffDays < 30) return `${Math.ceil(diffDays / 7)}w`;
+  return `${Math.ceil(diffDays / 30)}m`;
+};
 
-  const formatDate = (date: Date) => {
-    const now = new Date();
-    const diffTime = Math.abs(now.getTime() - date.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+const formatLikeCount = (count: number): string => {
+  if (count >= 1000000) return `${(count / 1000000).toFixed(1)}M`;
+  if (count >= 1000) return `${(count / 1000).toFixed(1)}K`;
+  return count.toString();
+};
 
-    if (diffDays === 1) return '1d';
-    if (diffDays < 7) return `${diffDays}d`;
-    if (diffDays < 30) return `${Math.ceil(diffDays / 7)}w`;
-    return `${Math.ceil(diffDays / 30)}m`;
+// Extracted as a proper component so hooks can be called safely
+function UGCItemCard({ item, onContentPress, onLikeContent, onBookmarkContent }: {
+  item: UGCContent;
+  onContentPress?: (content: UGCContent) => void;
+  onLikeContent?: (contentId: string) => void;
+  onBookmarkContent?: (contentId: string) => void;
+}) {
+  const likeScaleAnim = useSharedValue(1);
+  const bookmarkScaleAnim = useSharedValue(1);
+  const likeScaleStyle = useAnimatedStyle(() => ({ transform: [{ scale: likeScaleAnim.value }] }));
+  const bookmarkScaleStyle = useAnimatedStyle(() => ({ transform: [{ scale: bookmarkScaleAnim.value }] }));
+
+  const handleLikePress = () => {
+    likeScaleAnim.value = withSequence(
+      withTiming(0.8, { duration: 100 }),
+      withSpring(1, { friction: 3, tension: 100 }),
+    );
+    onLikeContent?.(item.id);
   };
 
-  const formatLikeCount = (count: number): string => {
-    if (count >= 1000000) {
-      return `${(count / 1000000).toFixed(1)}M`;
-    }
-    if (count >= 1000) {
-      return `${(count / 1000).toFixed(1)}K`;
-    }
-    return count.toString();
+  const handleBookmarkPress = () => {
+    bookmarkScaleAnim.value = withSequence(
+      withTiming(0.8, { duration: 100 }),
+      withSpring(1, { friction: 3, tension: 100 }),
+    );
+    onBookmarkContent?.(item.id);
   };
 
-  const renderUGCItem = ({ item }: { item: UGCContent }) => {
-    const likeScaleAnim = useSharedValue(1);
-    const bookmarkScaleAnim = useSharedValue(1);
-    const likeScaleStyle = useAnimatedStyle(() => ({ transform: [{ scale: likeScaleAnim.value }] }));
-    const bookmarkScaleStyle = useAnimatedStyle(() => ({ transform: [{ scale: bookmarkScaleAnim.value }] }));
-
-    const handleLikePress = () => {
-      likeScaleAnim.value = withSequence(
-        withTiming(0.8, { duration: 100 }),
-        withSpring(1, { friction: 3, tension: 100 }),
-      );
-      onLikeContent?.(item.id);
-    };
-
-    const handleBookmarkPress = () => {
-      bookmarkScaleAnim.value = withSequence(
-        withTiming(0.8, { duration: 100 }),
-        withSpring(1, { friction: 3, tension: 100 }),
-      );
-      onBookmarkContent?.(item.id);
-    };
-
-    return (
+  return (
     <Pressable
       style={styles.ugcItem}
       onPress={() => onContentPress?.(item)}
@@ -173,8 +166,16 @@ const UGCGrid: React.FC<UGCGridProps> = ({
         )}
       </View>
     </Pressable>
-    );
-  };
+  );
+}
+
+const UGCGrid: React.FC<UGCGridProps> = ({
+  ugcContent,
+  onContentPress,
+  onLikeContent,
+  onBookmarkContent }) => {
+  const screenWidth = Dimensions.get('window').width;
+  const itemWidth = (screenWidth - 64) / 2;
 
   // Convert to simple View with manual grid layout to work better inside ScrollView
   if (ugcContent.length === 0) {
@@ -203,7 +204,7 @@ const UGCGrid: React.FC<UGCGridProps> = ({
         <View key={rowIndex} style={styles.row}>
           {row.map((item) => (
             <View key={item.id} style={[styles.ugcItemWrapper, { width: itemWidth }]}>
-              {renderUGCItem({ item })}
+              <UGCItemCard item={item} onContentPress={onContentPress} onLikeContent={onLikeContent} onBookmarkContent={onBookmarkContent} />
             </View>
           ))}
           {/* Add spacer if odd number of items in last row */}

@@ -54,8 +54,12 @@ function FeatureComparisonTable({
   newTier,
   compact = false,
 }: FeatureComparisonTableProps) {
-  // Staggered row entrance animation - one shared value per row
-  const rowAnims = FEATURES.map(() => useSharedValue(0));
+  // Staggered row entrance animation - fixed hook calls (one per FEATURES item)
+  const ra0 = useSharedValue(0); const ra1 = useSharedValue(0); const ra2 = useSharedValue(0);
+  const ra3 = useSharedValue(0); const ra4 = useSharedValue(0); const ra5 = useSharedValue(0);
+  const ra6 = useSharedValue(0); const ra7 = useSharedValue(0); const ra8 = useSharedValue(0);
+  const ra9 = useSharedValue(0);
+  const rowAnims = [ra0, ra1, ra2, ra3, ra4, ra5, ra6, ra7, ra8, ra9];
 
   useEffect(() => {
     rowAnims.forEach((anim, i) => {

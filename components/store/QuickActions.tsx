@@ -141,7 +141,8 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   const handleShareStore = async () => {
     try {
       const message = `Check out ${storeName}! ${location?.address || ''}`;
-      const url = `https://app.example.com/store/${storeId}`;
+      const DEEP_LINK_BASE = 'https://rez.app';
+      const url = `${DEEP_LINK_BASE}/store/${storeId}`;
 
       await Share.share({
         message: `${message}\n${url}`,

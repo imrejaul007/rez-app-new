@@ -265,7 +265,7 @@ function SharedCategoryPage() {
     if (SUBCATEGORY_META[subcategory]) return SUBCATEGORY_META[subcategory].title;
     // Last fallback: convert slug to title
     return subcategory.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-  }, [subcategory]);
+  }, [subcategory, slug]);
 
   const fetchStores = useCallback(async (pageNum: number = 1, isRefresh: boolean = false) => {
     if (!subcategory) return;
@@ -399,7 +399,7 @@ function SharedCategoryPage() {
             <Text style={styles.headerSubtitle}>{filteredStores.length} stores</Text>
           </View>
         </View>
-        <Pressable onPress={() => router.push('/MainCategory/[slug]/search' as any)}>
+        <Pressable onPress={() => router.push(`/MainCategory/${slug}/search` as any)}>
           <Ionicons name="search-outline" size={22} color={SHARED_COLORS.textPrimary} />
         </Pressable>
       </View>

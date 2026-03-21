@@ -3,10 +3,9 @@
 // Enhanced with comprehensive error handling, validation, token management, and logging
 
 import apiClient, { ApiResponse } from './apiClient';
-import { withRetry, createErrorResponse, getUserFriendlyErrorMessage, logApiRequest, logApiResponse } from '@/utils/apiUtils';
+import { withRetry, createErrorResponse, logApiRequest, logApiResponse } from '@/utils/apiUtils';
 import {
   User as UnifiedUser,
-  toUser,
   validateUser,
   isUserVerified
 } from '@/types/unified';
@@ -171,7 +170,7 @@ function validateAuthResponse(response: any): boolean {
     return false;
   }
 
-  if (!response.user || !validateUser(response.user)) {
+  if (!response.user || !validateUser(response.user).valid) {
     devLog.warn('[AUTH API] Auth response missing valid user');
     return false;
   }
@@ -420,7 +419,7 @@ class AuthService {
 
       // Validate response
       if (response.success && response.data) {
-        if (!validateUser(response.data)) {
+        if (!validateUser(response.data).valid) {
           devLog.error('[AUTH API] Invalid user data in profile response');
           return {
             success: false,
@@ -480,7 +479,7 @@ class AuthService {
 
       // Validate response
       if (response.success && response.data) {
-        if (!validateUser(response.data)) {
+        if (!validateUser(response.data).valid) {
           devLog.error('[AUTH API] Invalid user data in update response');
           return {
             success: false,
@@ -524,7 +523,7 @@ class AuthService {
 
       // Validate response
       if (response.success && response.data) {
-        if (!validateUser(response.data)) {
+        if (!validateUser(response.data).valid) {
           devLog.error('[AUTH API] Invalid user data in onboarding response');
           return {
             success: false,

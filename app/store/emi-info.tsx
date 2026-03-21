@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useGetCurrencySymbol } from '@/stores/selectors';
@@ -45,7 +45,6 @@ const PARTNER_BANKS: Bank[] = [
 
 function StoreEMIInfoPage() {
   const router = useRouter();
-  const params = useLocalSearchParams();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const [amount, setAmount] = useState('50000');

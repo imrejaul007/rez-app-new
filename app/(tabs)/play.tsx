@@ -180,7 +180,7 @@ function PlayScreen() {
     if (!state.loading && state.allVideos.length > 0) {
       preloadCurrentVideos();
     }
-  }, [state.loading, state.allVideos, state.activeCategory, preloadVideos]);
+  }, [state.loading, state.allVideos, state.activeCategory, preloadVideos, getCurrentVideos]);
 
   const getCurrentVideos = () => {
     switch (state.activeCategory) {

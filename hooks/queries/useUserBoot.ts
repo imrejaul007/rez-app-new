@@ -3,7 +3,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import apiClient from '@/services/apiClient';
 
 export function useUserBoot() {
-  const { isAuthenticated } = useAuth();
+  const { state } = useAuth();
   return useQuery({
     queryKey: ['user', 'boot'],
     queryFn: async () => {
@@ -11,7 +11,7 @@ export function useUserBoot() {
       if (!response.success || !response.data) throw new Error('Boot failed');
       return response.data;
     },
-    enabled: isAuthenticated,
+    enabled: state.isAuthenticated,
     staleTime: 30_000,
   });
 }

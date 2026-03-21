@@ -6,8 +6,8 @@ import {
   StyleSheet,
   Pressable,
   Share,
-  Clipboard,
 } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
 import { useCurrentLocation } from '@/hooks/useLocation';
@@ -75,7 +75,7 @@ function LocationSharing({
     try {
       const locationText = `${currentLocation.coordinates.latitude.toFixed(6)}, ${currentLocation.coordinates.longitude.toFixed(6)}`;
       if (!isMounted()) return;
-      await Clipboard.setString(locationText);
+      await Clipboard.setStringAsync(locationText);
       
       platformAlertSimple('Copied', 'Location coordinates copied to clipboard');
       onCopy?.(currentLocation.coordinates);

@@ -165,7 +165,6 @@ function ProductVariantModal({
 
   // Animation
   useEffect(() => {
-    let _anim: any;
     if (visible) {
       slideAnim.value = withSpring(0);
       fadeAnim.value = withTiming(1, { duration: 250 });

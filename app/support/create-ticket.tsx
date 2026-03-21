@@ -25,7 +25,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const CATEGORIES = [
   { id: 'payment', label: 'Cashback Not Received', icon: 'wallet-outline' },
-  { id: 'payment', label: 'Wrong Cashback Amount', icon: 'calculator-outline', subject: 'Wrong cashback amount' },
+  { id: 'cashback-amount', label: 'Wrong Cashback Amount', icon: 'calculator-outline', subject: 'Wrong cashback amount' },
   { id: 'order', label: 'Visit Not Counted', icon: 'location-outline', subject: 'Visit not counted' },
   { id: 'product', label: 'Merchant Denied Offer', icon: 'storefront-outline', subject: 'Merchant denied offer' },
   { id: 'refund', label: 'Refund Not Processed', icon: 'return-down-back-outline' },

@@ -55,7 +55,7 @@ function LoyaltyHubPage() {
       if (!isMounted()) return;
       setIsLoading(false);
     }
-  }, []);
+  }, [slug, isMounted]);
 
   useEffect(() => { fetchLoyalty(); }, [fetchLoyalty]);
 

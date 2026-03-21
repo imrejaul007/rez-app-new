@@ -8,7 +8,7 @@ import {
   TouchableWithoutFeedback,
   StyleSheet,
   Platform,
-  Dimensions,
+  useWindowDimensions,
   TextInput,
 } from 'react-native';
 import Animated, {
@@ -20,8 +20,6 @@ import Animated, {
 import { Ionicons } from '@expo/vector-icons';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
-
-const { width, height } = Dimensions.get('window');
 
 export interface ProductFilters {
   categories: string[];
@@ -62,6 +60,7 @@ function FilterDrawer({
   categories,
   priceRange,
 }: FilterDrawerProps) {
+  const { height } = useWindowDimensions();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const [filters, setFilters] = useState<ProductFilters>(currentFilters);

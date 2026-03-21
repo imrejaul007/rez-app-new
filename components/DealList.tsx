@@ -6,7 +6,6 @@ import {
   RefreshControl,
   ActivityIndicator,
   Pressable,
-  Text,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
@@ -182,6 +181,9 @@ function DealList({
     </View>
   ), [filterBy]);
 
+  // Create responsive styles
+  const styles = useMemo(() => createStyles(screenData, isTablet), [screenData, isTablet]);
+
   // Render header with filters and sorting
   const renderHeader = useCallback(() => {
     if (!showFilters) return null;
@@ -270,9 +272,6 @@ function DealList({
       </View>
     );
   }, [showFilters, processedDeals.length, selectedDeals.length, filterBy, sortBy]);
-
-  // Create responsive styles
-  const styles = useMemo(() => createStyles(screenData, isTablet), [screenData, isTablet]);
 
   // Key extractor for FlatList
   const keyExtractor = useCallback((item: DealListItemData) => item.deal.id, []);

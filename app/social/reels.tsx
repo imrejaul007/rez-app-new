@@ -68,7 +68,7 @@ const ReelVideoPlayer = React.memo(({ videoUrl, thumbnailUrl, isActive, title }:
   return (
     <Video
       ref={videoRef}
-      source={videoUrl}
+      source={{ uri: videoUrl }}
       style={reelVideoStyles.video}
       resizeMode={ResizeMode.COVER}
       shouldPlay={isActive}
@@ -198,7 +198,7 @@ function ReelsPage() {
     } catch (error) {
       // silently handle
     }
-  }, [getLikeAnimation]);
+  }, [getLikeAnimation, likedReels]);
 
   const handleBookmark = useCallback(async (reelId: string) => {
     const wasBookmarked = bookmarkedReels.has(reelId);

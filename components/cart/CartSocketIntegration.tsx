@@ -12,7 +12,6 @@
  */
 
 import React, { useEffect } from 'react';
-import { } from 'react-native';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { useSocket } from '@/contexts/SocketContext';
 import { formatPrice } from '@/utils/priceFormatter';
@@ -113,7 +112,7 @@ export function CartSocketIntegration() {
       unsubscribeOut();
       unsubscribePrice();
     };
-  }, [cartState.items]); // Re-run when cart items change
+  }, [cartState.items.length]); // Re-run when cart items change
 
   // This component doesn't render anything
   return null;

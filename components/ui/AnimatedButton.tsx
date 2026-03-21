@@ -33,6 +33,7 @@ import {
   Platform} from 'react-native';
 import Animated, {
   useSharedValue,
+  useAnimatedStyle,
   withSpring,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -81,6 +82,10 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   const { colors: Colors, shadows: Shadows, gradients: Gradients } = useTheme();
   const scaleAnim = useSharedValue(1);
   const [isPressed, setIsPressed] = useState(false);
+
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleAnim.value }],
+  }));
 
   // Handle press animation
   const handlePressIn = () => {
@@ -206,7 +211,7 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     <Animated.View
       style={[
         containerStyle,
-        { transform: [{ scale: scaleAnim }] },
+        animatedContainerStyle,
         style,
       ]}
     >

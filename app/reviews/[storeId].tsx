@@ -125,7 +125,7 @@ function ReviewsPage() {
       if (!isMounted()) return;
       setLoadingMore(false);
     }
-  }, [storeId, storeName]);
+  }, [storeId]);
 
   const handleLoadMore = useCallback(() => {
     if (!loadingMore && hasMore && !loading) {

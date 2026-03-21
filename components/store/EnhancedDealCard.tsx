@@ -41,7 +41,7 @@ function EnhancedDealCard({
 }: DealCardProps) {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const [billPreview] = useState<number>(deal.minimumBill);
+  const billPreview = deal.minimumBill;
   const [showPreview, setShowPreview] = useState(false);
 
   // Animation values

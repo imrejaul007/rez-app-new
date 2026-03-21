@@ -114,7 +114,6 @@ function SubscriptionPlansPage() {
   const [promoDiscount, setPromoDiscount] = useState(0);
   const [promoValid, setPromoValid] = useState(false);
   const [validatingPromo, setValidatingPromo] = useState(false);
-  const [finalPrice, setFinalPrice] = useState<number | null>(null);
 
   // Handle subscription purchase with Stripe payment flow
   const handleSubscribe = async (tier: 'premium' | 'vip') => {
@@ -139,19 +138,9 @@ function SubscriptionPlansPage() {
 
       const confirmMessage = `Subscribe to ${tier === 'vip' ? 'VIP' : 'Premium'} plan for ${selectedBilling === 'monthly' ? 'monthly' : 'yearly'} billing?\n\nAmount: ${currencySymbol}${amount}`;
 
-      if (Platform.OS === 'web') {
-        const confirmed = window.confirm(confirmMessage);
-
-        if (!confirmed) {
-          setIsSubscribing(false);
-          setSelectedTier(null);
-          return;
-        }
-
+      platformAlertConfirm('Confirm Subscription', confirmMessage, async () => {
         try {
           setProcessingPayment(true);
-          showToast({ message: 'Creating your subscription...', type: 'info' });
-
           const result = await subscriptionAPI.subscribeToPlan(
             tier,
             selectedBilling,
@@ -160,7 +149,6 @@ function SubscriptionPlansPage() {
           );
 
           if (result && result.subscription) {
-            showToast({ message: 'Subscription created! Opening payment...', type: 'success' });
             if (!isMounted()) return;
             setPaymentData({
               subscriptionId: result.subscription._id,
@@ -177,7 +165,7 @@ function SubscriptionPlansPage() {
             throw new Error('Failed to create subscription');
           }
         } catch (error: any) {
-          showToast({ message: error.message || 'Failed to create subscription.', type: 'error' });
+          platformAlertSimple('Subscription Failed', error.message || 'Please try again.');
           if (!isMounted()) return;
           setIsSubscribing(false);
           if (!isMounted()) return;
@@ -185,44 +173,7 @@ function SubscriptionPlansPage() {
           if (!isMounted()) return;
           setProcessingPayment(false);
         }
-      } else {
-        platformAlertConfirm('Confirm Subscription', confirmMessage, async () => {
-          try {
-            setProcessingPayment(true);
-            const result = await subscriptionAPI.subscribeToPlan(
-              tier,
-              selectedBilling,
-              'stripe',
-              promoCode || undefined
-            );
-
-            if (result && result.subscription) {
-              if (!isMounted()) return;
-              setPaymentData({
-                subscriptionId: result.subscription._id,
-                amount,
-                tier,
-                billingCycle: selectedBilling });
-              if (!isMounted()) return;
-              setShowStripeModal(true);
-              if (!isMounted()) return;
-              setIsSubscribing(false);
-              if (!isMounted()) return;
-              setProcessingPayment(false);
-            } else {
-              throw new Error('Failed to create subscription');
-            }
-          } catch (error: any) {
-            platformAlertSimple('Subscription Failed', error.message || 'Please try again.');
-            if (!isMounted()) return;
-            setIsSubscribing(false);
-            if (!isMounted()) return;
-            setSelectedTier(null);
-            if (!isMounted()) return;
-            setProcessingPayment(false);
-          }
-        }, 'Proceed to Payment');
-      }
+      }, 'Proceed to Payment');
     } catch (error: any) {
       const errorMessage = error.message || 'An error occurred.';
       if (Platform.OS === 'web') {
@@ -309,8 +260,6 @@ function SubscriptionPlansPage() {
         setPromoValid(true);
         if (!isMounted()) return;
         setPromoDiscount(response.data.discount);
-        if (!isMounted()) return;
-        setFinalPrice(response.data.finalPrice);
         const successMsg = response.data.message || `Promo applied! You saved ${currencySymbol}${response.data.discount}`;
         if (Platform.OS === 'web') {
           showToast({ message: successMsg, type: 'success' });
@@ -322,8 +271,6 @@ function SubscriptionPlansPage() {
         setPromoValid(false);
         if (!isMounted()) return;
         setPromoDiscount(0);
-        if (!isMounted()) return;
-        setFinalPrice(null);
         const errorMsg = response.message || 'This promo code is not valid';
         if (Platform.OS === 'web') {
           showToast({ message: errorMsg, type: 'error' });
@@ -336,8 +283,6 @@ function SubscriptionPlansPage() {
       setPromoValid(false);
       if (!isMounted()) return;
       setPromoDiscount(0);
-      if (!isMounted()) return;
-      setFinalPrice(null);
       if (Platform.OS === 'web') {
         showToast({ message: 'Failed to validate promo code.', type: 'error' });
       } else {
