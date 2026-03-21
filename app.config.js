@@ -7,6 +7,35 @@ const path = require('path');
 
 const BRAND_NAME = 'Rez';
 
+// ─── Production debug-flag guard ──────────────────────────────────────────────
+// Warn loudly at build/config-load time when debug flags that should never
+// ship to production are still enabled.  We do NOT modify .env here because
+// it is environment-specific; instead we surface a clear console warning so
+// that CI / the developer notices before a production build is published.
+const _env = process.env.EXPO_PUBLIC_ENVIRONMENT || 'development';
+const _isProduction = _env === 'production';
+const _debugFlagsOn =
+  process.env.EXPO_PUBLIC_DEBUG_MODE === 'true' ||
+  process.env.EXPO_PUBLIC_SHOW_DEV_TOOLS === 'true' ||
+  (process.env.EXPO_PUBLIC_LOG_LEVEL || '').toLowerCase() === 'debug';
+
+if (_isProduction && _debugFlagsOn) {
+  // Use stderr so the warning is visible even when stdout is piped.
+  process.stderr.write(
+    '\n' +
+    '╔══════════════════════════════════════════════════════════════╗\n' +
+    '║  WARNING: Debug flags are ENABLED in a production build!    ║\n' +
+    '║  Set all of the following to their safe production values   ║\n' +
+    '║  before publishing to the App Store / Play Store:           ║\n' +
+    '║    EXPO_PUBLIC_DEBUG_MODE=false                             ║\n' +
+    '║    EXPO_PUBLIC_SHOW_DEV_TOOLS=false                         ║\n' +
+    '║    EXPO_PUBLIC_LOG_LEVEL=error  (or warn)                   ║\n' +
+    '╚══════════════════════════════════════════════════════════════╝\n' +
+    '\n'
+  );
+}
+// ──────────────────────────────────────────────────────────────────────────────
+
 // Firebase plugin requires google-services.json (Android) / GoogleService-Info.plist (iOS).
 // Skip plugin when missing to prevent instant crash on app launch.
 const hasFirebaseAndroid = fs.existsSync(path.join(__dirname, 'google-services.json'));

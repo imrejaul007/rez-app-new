@@ -5,7 +5,11 @@
 
 /**
  * Anonymize email address
- * Converts: mukul@gmail.com → m***@gmail.com
+ * Converts: rejaulkarim@gmail.com → re***@gmail.com
+ *
+ * Shows the first 2 characters of the local part followed by *** and the
+ * full domain.  Two characters give enough context to recognise the account
+ * while keeping PII exposure to the minimum required by GDPR.
  *
  * @param email - Full email address
  * @returns Anonymized email address
@@ -16,16 +20,20 @@ export const anonymizeEmail = (email: string | null | undefined): string => {
   }
 
   try {
-    const [local, domain] = email.split('@');
+    const atIndex = email.indexOf('@');
 
-    if (!local || !domain) {
+    if (atIndex === -1) {
       return 'Invalid email';
     }
 
-    // Show first character + *** for local part
-    const anonymizedLocal = local.length > 0 ? `${local[0]}***` : '***';
+    const local = email.slice(0, atIndex);
+    const domain = email.slice(atIndex); // includes the '@' sign
 
-    return `${anonymizedLocal}@${domain}`;
+    // Show first 2 characters + *** for local part (GDPR-safe)
+    const visibleChars = Math.min(2, local.length);
+    const anonymizedLocal = `${local.slice(0, visibleChars)}***`;
+
+    return `${anonymizedLocal}${domain}`;
   } catch (error) {
     return 'N/A';
   }
