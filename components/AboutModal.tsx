@@ -401,7 +401,7 @@ function AboutModal({ visible, onClose, storeData }: AboutModalProps) {
 
             <View style={styles.tagsContainer}>
               {store.categories.map((category, index) => (
-                <View key={index} style={styles.tag}>
+                <View key={`cat-${category}-${index}`} style={styles.tag}>
                   <ThemedText style={styles.tagText}>{category}</ThemedText>
                 </View>
               ))}
@@ -424,7 +424,7 @@ function AboutModal({ visible, onClose, storeData }: AboutModalProps) {
               <View style={styles.cardHighlight} />
               {store.hours.map((schedule, index) => (
                 <View
-                  key={index}
+                  key={`hour-${schedule.day}`}
                   style={[
                     styles.hourRow,
                     index === store.hours.length - 1 && { borderBottomWidth: 0 }

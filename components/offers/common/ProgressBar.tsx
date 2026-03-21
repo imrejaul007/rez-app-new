@@ -5,7 +5,7 @@
  */
 
 import React from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useOffersTheme } from '@/contexts/OffersThemeContext';
 import { BorderRadius } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';

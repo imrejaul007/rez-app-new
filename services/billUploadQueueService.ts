@@ -908,14 +908,18 @@ function getBillUploadQueueService(): BillUploadQueueService {
     if (!(globalThis as any)[BILL_UPLOAD_QUEUE_SERVICE_KEY]) {
       const instance = new BillUploadQueueService();
       // Auto-initialize only on first creation
-      instance.initialize().catch(() => {});
+      instance.initialize().catch((err: any) => {
+        if (__DEV__) console.warn('[BillUploadQueue] Initialization failed:', err?.message);
+      });
       (globalThis as any)[BILL_UPLOAD_QUEUE_SERVICE_KEY] = instance;
     }
     return (globalThis as any)[BILL_UPLOAD_QUEUE_SERVICE_KEY];
   }
   // Fallback for environments without globalThis
   const instance = new BillUploadQueueService();
-  instance.initialize().catch(() => {});
+  instance.initialize().catch((err: any) => {
+    if (__DEV__) console.warn('[BillUploadQueue] Fallback initialization failed:', err?.message);
+  });
   return instance;
 }
 

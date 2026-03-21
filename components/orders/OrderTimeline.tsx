@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useGetLocale } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
 

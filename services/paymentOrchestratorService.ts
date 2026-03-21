@@ -48,7 +48,8 @@ class PaymentOrchestratorService {
       this.initialized = true;
 
     } catch (error) {
-      // Continue even if initialization fails - fallback methods will still work
+      // Re-throw so callers (and ultimately the UI) can surface the failure
+      throw error;
     }
   }
 

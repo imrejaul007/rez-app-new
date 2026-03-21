@@ -79,6 +79,7 @@
     "expo-system-ui": "~3.0.7",
     "expo-web-browser": "~13.0.3",
     "jsqr": "^1.4.0",
+    "lightningcss": "^1.32.0",
     "pako": "^2.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -117,6 +118,11 @@
     "typescript": "~5.3.3"
   },
   "private": true,
+  "_dependencyNotes": {
+    "react-native-maps": "v1.14.0 — may have issues with RN 0.74; upgrade to 1.18.x+ when upgrading RN",
+    "@react-native-firebase/app": "^21.6.1 — requires google-services.json on Android (guarded in app.config.js)",
+    "@sentry/react-native": "~5.24.3 — pinned; check for updates when upgrading Expo SDK"
+  },
   "overrides": {
     "markdown-it": {
       "entities": "~2.0.0"

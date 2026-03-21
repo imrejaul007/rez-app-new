@@ -7,7 +7,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSequence, withRepeat } from 'react-native-reanimated';
+import Animated, { cancelAnimation, useSharedValue, useAnimatedStyle, withTiming, withSequence, withRepeat } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
@@ -77,6 +77,9 @@ const SocialProofSection: React.FC = () => {
   // Animate the live indicator dot
   useEffect(() => {
     liveDotAnim.value = withRepeat(withSequence(withTiming(0.3, { duration: 1000 }), withTiming(1, { duration: 1000 })), -1);
+    return () => {
+      cancelAnimation(liveDotAnim);
+    };
   }, [liveDotAnim]);
 
   const liveDotStyle = useAnimatedStyle(() => ({

@@ -8,7 +8,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSpring, withSequence, withRepeat, interpolate, SharedValue } from 'react-native-reanimated';
+import Animated, { cancelAnimation, useSharedValue, useAnimatedStyle, withTiming, withSpring, withSequence, withRepeat, interpolate, SharedValue } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { CrossPlatformBlurView as BlurView } from '@/components/ui/CrossPlatformBlurView';
@@ -101,6 +101,7 @@ function LevelUpCelebration({
   const badgeRotate = useSharedValue(0);
   const glowAnim = useSharedValue(0.5);
   const [showConfetti, setShowConfetti] = useState(false);
+  const closeAnimTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const confettiColors = [
     COLORS.gold,
@@ -127,6 +128,8 @@ function LevelUpCelebration({
 
       return () => {
         clearTimeout(confettiTimer);
+        if (closeAnimTimer.current) clearTimeout(closeAnimTimer.current);
+        cancelAnimation(glowAnim);
       };
     } else {
       scaleAnim.value = 0;
@@ -150,7 +153,8 @@ function LevelUpCelebration({
 
   const handleClose = () => {
     scaleAnim.value = withTiming(0, { duration: 200 });
-    setTimeout(() => onClose(), 200);
+    if (closeAnimTimer.current) clearTimeout(closeAnimTimer.current);
+    closeAnimTimer.current = setTimeout(() => onClose(), 200);
   };
 
   const getLevelIcon = (level: number) => {

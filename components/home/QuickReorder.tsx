@@ -27,12 +27,14 @@ function QuickReorder({ limit = 5, onViewAll }: QuickReorderProps) {
   const currencySymbol = getCurrencySymbol();
   const { items, loading, error, refresh } = useFrequentlyOrdered(limit);
 
+  // Fetch on mount. Hook must be declared before any conditional returns (Rules of Hooks).
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    refresh();
+  }, [refresh, isAuthenticated]);
+
   // Don't render for unauthenticated users
   if (!isAuthenticated) return null;
-
-  useEffect(() => {
-    refresh();
-  }, []);
 
   const handleItemPress = (productId: string, storeId: string) => {
     router.push(`/product-page?cardId=${productId}&cardType=product` as any);

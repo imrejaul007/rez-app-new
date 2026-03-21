@@ -1,6 +1,6 @@
 import React, { useEffect} from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import Animated, { useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
+import Animated, { cancelAnimation, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { colors } from '@/constants/theme';
 
 interface SkeletonBoxProps {
@@ -24,8 +24,10 @@ export const SkeletonBox: React.FC<SkeletonBoxProps> = ({
 
   useEffect(() => {
     opacity.value = withRepeat(withSequence(withTiming(0.7, { duration: 800 })), -1);
-    
-    }, [opacity]);
+    return () => {
+      cancelAnimation(opacity);
+    };
+  }, [opacity]);
 
   return (
     <Animated.View

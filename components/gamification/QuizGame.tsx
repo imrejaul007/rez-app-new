@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Pressable,
   ScrollView,
-  Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { platformAlert } from '@/utils/platformAlert';
@@ -34,7 +33,6 @@ function QuizGame({ difficulty, category, onGameComplete }: QuizGameProps) {
   const [totalCoins, setTotalCoins] = useState(0);
   const [lastTournamentUpdate, setLastTournamentUpdate] = useState<any>(null);
   const isMounted = useIsMounted();
-  const progressAnim = useRef(new Animated.Value(0)).current;
   const timerInterval = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -167,7 +165,7 @@ function QuizGame({ difficulty, category, onGameComplete }: QuizGameProps) {
 
     return (
       <Pressable
-        key={index}
+        key={`option-${optionLabels[index]}-${index}`}
         style={[styles.optionButton, isSelected && styles.optionButtonSelected]}
         onPress={() => setSelectedAnswer(index)}
         disabled={isSubmitting}

@@ -1,7 +1,7 @@
 // DealDetailsModal.tsx - Premium Glassmorphism Design
 // Deal Details Modal - Green & Gold Theme
 
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useMemo, useState} from 'react';
 import {
   View,
   Modal,
@@ -69,7 +69,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
     return () => subscription?.remove();
   }, [slideAnim]);
 
-  const styles = createStyles(screenData);
+  const styles = useMemo(() => createStyles(screenData), [screenData]);
 
   useEffect(() => {
     if (visible) {
@@ -345,7 +345,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
             </View>
 
             {savingsExamples.map((example, index) => (
-              <View key={index} style={styles.savingsExample}>
+              <View key={`savings-${example.billAmount}-${index}`} style={styles.savingsExample}>
                 <View style={styles.savingsRow}>
                   <ThemedText style={styles.savingsLabel}>Bill Amount:</ThemedText>
                   <ThemedText style={styles.savingsValue}>{currencySymbol}{example.billAmount.toLocaleString()}</ThemedText>
@@ -378,7 +378,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
               </View>
               <View style={styles.categoriesContainer}>
                 {deal.applicableProducts.map((category, index) => (
-                  <View key={index} style={styles.categoryTag}>
+                  <View key={`cat-${category}-${index}`} style={styles.categoryTag}>
                     <ThemedText style={styles.categoryTagText}>{category}</ThemedText>
                   </View>
                 ))}
@@ -399,7 +399,7 @@ function DealDetailsModal({ visible, onClose, deal }: DealDetailsModalProps) {
             </View>
             <View style={styles.glassCard}>
               {deal.terms.map((term, index) => (
-                <View key={index} style={styles.termRow}>
+                <View key={`term-${index}`} style={styles.termRow}>
                   <View style={styles.termBullet}>
                     <Ionicons name="checkmark" size={12} color={COLORS.primary} />
                   </View>

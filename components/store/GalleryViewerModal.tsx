@@ -544,7 +544,7 @@ function GalleryViewerModal({
                 {currentItem.tags && currentItem.tags.length > 0 && (
                   <View style={styles.tagsContainer}>
                     {currentItem.tags.map((tag, idx) => (
-                      <View key={idx} style={styles.tag}>
+                      <View key={`tag-${tag}-${idx}`} style={styles.tag}>
                         <Text style={styles.tagText}>#{tag}</Text>
                       </View>
                     ))}
@@ -565,9 +565,9 @@ function GalleryViewerModal({
         {/* Pagination dots - only show in carousel mode */}
         {viewMode === 'carousel' && items.length > 1 && (
           <View style={styles.pagination}>
-            {items.map((_, index) => (
+            {items.map((item, index) => (
               <View
-                key={index}
+                key={`dot-${item.id}`}
                 style={[
                   styles.paginationDot,
                   index === currentIndex && styles.paginationDotActive,

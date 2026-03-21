@@ -3,7 +3,7 @@
  * Animated toast notification for points earned/spent
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -34,6 +34,8 @@ function PointsNotification({ data, onDismiss }: PointsNotificationProps) {
   const translateY = useSharedValue(-100);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.8);
+  const autoDismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { amount, type, reason, icon, duration = 3000 } = data;
 
@@ -44,12 +46,13 @@ function PointsNotification({ data, onDismiss }: PointsNotificationProps) {
     scale.value = withSpring(1, { damping: 5 });
 
     // Auto dismiss after duration
-    const timer = setTimeout(() => {
+    autoDismissTimer.current = setTimeout(() => {
       handleDismiss();
     }, duration);
 
     return () => {
-      clearTimeout(timer);
+      if (autoDismissTimer.current) clearTimeout(autoDismissTimer.current);
+      if (dismissTimer.current) clearTimeout(dismissTimer.current);
     };
   }, []);
 
@@ -57,7 +60,7 @@ function PointsNotification({ data, onDismiss }: PointsNotificationProps) {
     translateY.value = withTiming(-100, { duration: 300 });
     opacity.value = withTiming(0, { duration: 300 });
     scale.value = withTiming(0.8, { duration: 300 });
-    setTimeout(() => onDismiss(), 300);
+    dismissTimer.current = setTimeout(() => onDismiss(), 300);
   };
 
   const isEarned = type === 'earned';

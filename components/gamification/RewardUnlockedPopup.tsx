@@ -5,7 +5,7 @@
  * Uses ReZ brand colors: Green gradient background, Golden text/buttons.
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { BRAND } from '@/constants/brand';
 import { catchSilent } from '@/utils/catchAndReport';
 import {
@@ -48,6 +48,8 @@ function RewardUnlockedPopup({ data, onDismiss }: RewardUnlockedPopupProps) {
   const translateY = useSharedValue(150);
   const opacity = useSharedValue(0);
   const scale = useSharedValue(0.9);
+  const autoDismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const {
     type,
@@ -73,21 +75,23 @@ function RewardUnlockedPopup({ data, onDismiss }: RewardUnlockedPopupProps) {
     scale.value = withSpring(1, { damping: 6 });
 
     // Auto dismiss after duration (if duration > 0)
-    let timer: NodeJS.Timeout | null = null;
     if (duration > 0) {
-      timer = setTimeout(() => {
+      autoDismissTimer.current = setTimeout(() => {
         handleDismiss();
       }, duration);
     }
 
-    return () => { if (timer) clearTimeout(timer); };
+    return () => {
+      if (autoDismissTimer.current) clearTimeout(autoDismissTimer.current);
+      if (dismissTimer.current) clearTimeout(dismissTimer.current);
+    };
   }, []);
 
   const handleDismiss = () => {
     translateY.value = withTiming(150, { duration: 250 });
     opacity.value = withTiming(0, { duration: 250 });
     scale.value = withTiming(0.9, { duration: 250 });
-    setTimeout(() => {
+    dismissTimer.current = setTimeout(() => {
       data.onDismiss?.();
       onDismiss();
     }, 250);

@@ -1,7 +1,7 @@
 // Transaction History Component
 // Complete transaction history section with filtering and pagination
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   StyleSheet,
@@ -47,9 +47,9 @@ function TransactionHistory({
   const isMounted = useIsMounted();
 
   // Load transactions for the current tab
-  const loadTransactions = async (
-    category: TransactionCategory = activeTab, 
-    page: number = 1, 
+  const loadTransactions = useCallback(async (
+    category: TransactionCategory = activeTab,
+    page: number = 1,
     append: boolean = false
   ) => {
     try {
@@ -60,14 +60,15 @@ function TransactionHistory({
       }
 
       const result = await fetchTransactions(category, page, 20);
-      
+
       if (append) {
         if (!isMounted()) return;
         setTransactions(prev => [...prev, ...result.transactions]);
       } else {
+        if (!isMounted()) return;
         setTransactions(result.transactions);
       }
-      
+
       if (!isMounted()) return;
       setHasMore(result.hasMore);
       setCurrentPage(page);
@@ -78,7 +79,7 @@ function TransactionHistory({
       setIsLoading(false);
       setIsLoadingMore(false);
     }
-  };
+  }, [activeTab, isMounted]);
 
   // Update tabs with current transaction counts
   // Uses a single fetch per tab with limit=1 to get the total count without fetching all records
@@ -105,7 +106,7 @@ function TransactionHistory({
   useEffect(() => {
     loadTransactions(activeTab, 1, false);
     updateTabCounts();
-  }, [activeTab]);
+  }, [activeTab, loadTransactions]);
 
   // Handle tab change
   const handleTabPress = (tabId: TransactionCategory) => {

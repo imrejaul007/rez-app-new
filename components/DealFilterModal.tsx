@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useMemo} from 'react';
 import {
   View,
   Modal,
@@ -59,7 +59,7 @@ function DealFilterModal({
     }
   }, [visible, currentSort, currentFilter]);
 
-  const styles = createStyles(screenData);
+  const styles = useMemo(() => createStyles(screenData), [screenData]);
 
   useEffect(() => {
     if (visible) {

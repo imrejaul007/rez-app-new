@@ -1,6 +1,6 @@
 import React, { useEffect} from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
-import Animated, { interpolate, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
+import Animated, { cancelAnimation, interpolate, useAnimatedStyle, useSharedValue, withRepeat, withSequence, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/constants/theme';
 
@@ -23,9 +23,10 @@ function SkeletonLoader({
 
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 })), -1);
-    
-    // Cleanup: stop animation on unmount to prevent memory leak
-    
+
+    return () => {
+      cancelAnimation(shimmerAnim);
+    };
   }, []);
 
   const shimmerStyle = useAnimatedStyle(() => ({

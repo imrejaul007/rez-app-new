@@ -72,7 +72,7 @@ export const EnhancedPaymentMethodCard: React.FC<EnhancedPaymentMethodProps> = (
       {hasOffers && (
         <View style={styles.offersContainer}>
           {method.offers.slice(0, 2).map((offer, index) => (
-            <View key={index} style={styles.offerRow}>
+            <View key={offer.type ? `${offer.type}-${index}` : index} style={styles.offerRow}>
               <View style={styles.offerIcon}>
                 <Ionicons
                   name={
@@ -109,7 +109,7 @@ export const EnhancedPaymentMethodCard: React.FC<EnhancedPaymentMethodProps> = (
           <Text style={styles.providersLabel}>Pay with:</Text>
           <View style={styles.providersList}>
             {method.providers.map((provider, index) => (
-              <View key={index} style={styles.providerChip}>
+              <View key={`${provider}-${index}`} style={styles.providerChip}>
                 <Text style={styles.providerText}>
                   {provider.charAt(0).toUpperCase() + provider.slice(1)}
                 </Text>

@@ -174,7 +174,9 @@ class OfflineSyncService extends EventEmitter {
     // If online, trigger sync
     const netState = await NetInfo.fetch();
     if (netState.isConnected && this.config.autoSync) {
-      this.syncAll().catch(() => {});
+      this.syncAll().catch((err) => {
+        if (__DEV__) console.warn('[OfflineSync] Auto-sync after enqueue failed:', err?.message);
+      });
     }
 
     return action.id;
@@ -295,7 +297,9 @@ class OfflineSyncService extends EventEmitter {
     }
     await this.persistQueue();
     this.emit('queue:change', { type: 'retry' });
-    this.syncAll().catch(() => {});
+    this.syncAll().catch((err) => {
+      if (__DEV__) console.warn('[OfflineSync] Retry sync failed:', err?.message);
+    });
   }
 
   /**
@@ -390,7 +394,9 @@ class OfflineSyncService extends EventEmitter {
         this.wasOffline = false;
         // Small delay to let connection stabilize
         setTimeout(() => {
-          this.syncAll().catch(() => {});
+          this.syncAll().catch((err) => {
+            if (__DEV__) console.warn('[OfflineSync] Reconnect sync failed:', err?.message);
+          });
         }, 1500);
       }
     });

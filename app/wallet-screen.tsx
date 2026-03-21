@@ -126,58 +126,61 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
     return () => { cancelled = true; };
   }, [trackWalletViewed]);
 
-  // Refresh wallet data when screen regains focus (e.g., after a transaction)
-  useFocusEffect(
-    useCallback(() => {
-      refreshWallet();
-    }, [refreshWallet])
-  );
-
   // Expiring coins warning
   const [expiringAmount, setExpiringAmount] = useState(0);
   const [expiringLabel, setExpiringLabel] = useState('');
   const [expiringByType, setExpiringByType] = useState<Array<{ type: string; amount: number; expiresAt: string; daysLeft: number }>>([]);
 
-  useEffect(() => {
-    if (!currentUserId || authLoading || !isAuthenticated) return;
-    let cancelled = false;
-    walletApi.getExpiringCoins().then(res => {
-      if (cancelled || !res.success || !res.data) return;
-      const { expiringCoins, totalExpiring } = res.data;
-      if (totalExpiring <= 0) return;
-      setExpiringAmount(totalExpiring);
-      // Show most urgent bucket
-      if (expiringCoins?.this_week?.totalAmount > 0) {
-        setExpiringLabel(`${expiringCoins.this_week.totalAmount} ${BRAND.CURRENCY_CODE} expiring this week`);
-      } else if (expiringCoins?.this_month?.totalAmount > 0) {
-        setExpiringLabel(`${expiringCoins.this_month.totalAmount} ${BRAND.CURRENCY_CODE} expiring this month`);
-      } else {
-        setExpiringLabel(`${totalExpiring} ${BRAND.CURRENCY_CODE} expiring soon`);
-      }
-
-      // Build per-type breakdown from all buckets
-      const typeMap = new Map<string, { amount: number; expiresAt: string; daysLeft: number }>();
-      for (const period of ['this_week', 'this_month', 'next_month'] as const) {
-        const bucket = expiringCoins?.[period];
-        if (!bucket?.coins) continue;
-        for (const coin of bucket.coins) {
-          const coinType = coin.type || coin.source || 'rez';
-          const existing = typeMap.get(coinType);
-          if (existing) {
-            existing.amount += coin.amount;
-            if (coin.daysLeft < existing.daysLeft) {
-              existing.daysLeft = coin.daysLeft;
-              existing.expiresAt = coin.expiresAt;
+  // Refresh wallet balance and expiring coins in parallel on screen focus.
+  // Promise.all ensures both complete together — prevents the UI from showing
+  // stale balance while expiry data has already updated (race condition fix).
+  useFocusEffect(
+    useCallback(() => {
+      if (!isAuthenticated || authLoading) return;
+      let cancelled = false;
+      Promise.all([
+        refreshWallet(),
+        walletApi.getExpiringCoins(),
+      ]).then(([, expiryRes]) => {
+        if (cancelled || !expiryRes.success || !expiryRes.data) return;
+        const { expiringCoins, totalExpiring } = expiryRes.data;
+        if (totalExpiring <= 0) {
+          setExpiringAmount(0);
+          setExpiringLabel('');
+          setExpiringByType([]);
+          return;
+        }
+        setExpiringAmount(totalExpiring);
+        if (expiringCoins?.this_week?.totalAmount > 0) {
+          setExpiringLabel(`${expiringCoins.this_week.totalAmount} ${BRAND.CURRENCY_CODE} expiring this week`);
+        } else if (expiringCoins?.this_month?.totalAmount > 0) {
+          setExpiringLabel(`${expiringCoins.this_month.totalAmount} ${BRAND.CURRENCY_CODE} expiring this month`);
+        } else {
+          setExpiringLabel(`${totalExpiring} ${BRAND.CURRENCY_CODE} expiring soon`);
+        }
+        const typeMap = new Map<string, { amount: number; expiresAt: string; daysLeft: number }>();
+        for (const period of ['this_week', 'this_month', 'next_month'] as const) {
+          const bucket = expiringCoins?.[period];
+          if (!bucket?.coins) continue;
+          for (const coin of bucket.coins) {
+            const coinType = coin.type || coin.source || 'rez';
+            const existing = typeMap.get(coinType);
+            if (existing) {
+              existing.amount += coin.amount;
+              if (coin.daysLeft < existing.daysLeft) {
+                existing.daysLeft = coin.daysLeft;
+                existing.expiresAt = coin.expiresAt;
+              }
+            } else {
+              typeMap.set(coinType, { amount: coin.amount, expiresAt: coin.expiresAt, daysLeft: coin.daysLeft });
             }
-          } else {
-            typeMap.set(coinType, { amount: coin.amount, expiresAt: coin.expiresAt, daysLeft: coin.daysLeft });
           }
         }
-      }
-      setExpiringByType(Array.from(typeMap.entries()).map(([type, data]) => ({ type, ...data })));
-    }).catch(() => { /* silent */ });
-    return () => { cancelled = true; };
-  }, [currentUserId, authLoading, isAuthenticated]);
+        setExpiringByType(Array.from(typeMap.entries()).map(([type, data]) => ({ type, ...data })));
+      }).catch(() => { /* silent — expiry info is supplementary */ });
+      return () => { cancelled = true; };
+    }, [refreshWallet, isAuthenticated, authLoading])
+  );
 
   const handleRefresh = useCallback(async () => {
     try {

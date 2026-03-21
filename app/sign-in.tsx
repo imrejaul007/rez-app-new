@@ -202,6 +202,8 @@ function SignInScreen() {
       platformAlertSimple('OTP Resent', 'New verification code sent to your phone');
     } catch (error: any) {
       const errorMessage = error?.message || authError || 'Failed to resend OTP. Please try again.';
+      if (!isMounted()) return;
+      setErrors(prev => ({ ...prev, otp: errorMessage }));
       platformAlertSimple('Error', errorMessage);
       actions.clearError();
     }

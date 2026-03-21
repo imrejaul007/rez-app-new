@@ -15,7 +15,7 @@ import {
   StyleSheet,
   useColorScheme,
 } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withRepeat, interpolate } from 'react-native-reanimated';
+import Animated, { cancelAnimation, useSharedValue, useAnimatedStyle, withTiming, withRepeat, interpolate } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors } from '@/constants/theme';
 
@@ -39,6 +39,9 @@ function SkeletonLoader({
 
   useEffect(() => {
     shimmerAnim.value = withRepeat(withTiming(1, { duration: 1500 }), -1);
+    return () => {
+      cancelAnimation(shimmerAnim);
+    };
   }, []);
 
   const animatedTranslateStyle = useAnimatedStyle(() => ({

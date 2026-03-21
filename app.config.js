@@ -29,6 +29,7 @@ module.exports = {
     },
     ios: {
       supportsTablet: true,
+      // TODO: Update to your production App Store bundle identifier before release (e.g. com.yourcompany.yourapp)
       bundleIdentifier: 'com.rez.app', // App Store identifier
       buildNumber: process.env.BUILD_NUMBER || '1',
       infoPlist: {
@@ -47,6 +48,7 @@ module.exports = {
         backgroundColor: '#1a3a52',
       },
       edgeToEdgeEnabled: false,
+      // TODO: Update to your production Play Store package name before release (e.g. com.yourcompany.yourapp)
       package: 'com.rez.app', // Play Store identifier
       versionCode: parseInt(process.env.VERSION_CODE || '1'),
       permissions: [
@@ -108,7 +110,8 @@ module.exports = {
       [
         '@stripe/stripe-react-native',
         {
-          merchantIdentifier: 'merchant.com.rez.app', // Stripe config
+          // TODO: Update merchantIdentifier to match your production Apple Pay merchant ID
+        merchantIdentifier: 'merchant.com.rez.app', // Stripe/Apple Pay merchant identifier
           enableGooglePay: true,
         },
       ],

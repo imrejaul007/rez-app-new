@@ -20,17 +20,11 @@ import { useCartState, useCartActions, useGetCurrencySymbol } from '@/stores/sel
 export function CartSocketIntegration() {
   const cartState = useCartState();
   const cartActions = useCartActions();
-  const { onStockUpdate, onOutOfStock, onPriceUpdate } = useSocket();
+  const { onStockUpdate, onOutOfStock, onPriceUpdate, onLowStock } = useSocket();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
   useEffect(() => {
-
-    // Subscribe to all products in cart
-    cartState.items.forEach(item => {
-      // Socket context will handle subscription internally when components mount
-
-    });
 
     // Listen for stock updates
     const unsubscribeStock = onStockUpdate((payload) => {
@@ -58,11 +52,19 @@ export function CartSocketIntegration() {
         }
       }
 
-      // Show low stock warning
-      if (payload.status === 'LOW_STOCK' && safeCartQuantity === safePayloadQuantity) {
+    });
 
-        // Could show a toast notification here instead of alert
-      }
+    // Listen for low stock alerts
+    const unsubscribeLowStock = onLowStock((payload) => {
+      const cartItem = cartState.items.find(
+        item => (item.productId || item.id) === payload.productId
+      );
+      if (!cartItem) return;
+
+      platformAlertSimple(
+        'Low Stock Alert',
+        `Only ${payload.quantity} left for ${payload.productName || cartItem.name || 'this product'}. Order soon before it runs out!`
+      );
     });
 
     // Listen for out of stock notifications
@@ -107,10 +109,10 @@ export function CartSocketIntegration() {
 
     // Cleanup
     return () => {
-
-      unsubscribeStock();
-      unsubscribeOut();
-      unsubscribePrice();
+      if (typeof unsubscribeStock === 'function') unsubscribeStock();
+      if (typeof unsubscribeLowStock === 'function') unsubscribeLowStock();
+      if (typeof unsubscribeOut === 'function') unsubscribeOut();
+      if (typeof unsubscribePrice === 'function') unsubscribePrice();
     };
   }, [cartState.items.length]); // Re-run when cart items change
 

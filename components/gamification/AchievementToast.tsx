@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -31,6 +31,8 @@ function AchievementToast({
   const slideAnim = useSharedValue(-200);
   const scaleAnim = useSharedValue(0.8);
   const [isVisible, setIsVisible] = useState(true);
+  const autoDismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     // Slide in animation
@@ -38,19 +40,20 @@ function AchievementToast({
     scaleAnim.value = withSpring(1, { stiffness: 50, damping: 7 });
 
     // Auto-hide timer
-    const timer = setTimeout(() => {
+    autoDismissTimer.current = setTimeout(() => {
       handleDismiss();
     }, autoHideDuration);
 
     return () => {
-      clearTimeout(timer);
+      if (autoDismissTimer.current) clearTimeout(autoDismissTimer.current);
+      if (dismissTimer.current) clearTimeout(dismissTimer.current);
     };
   }, []);
 
   const handleDismiss = () => {
     slideAnim.value = withTiming(-200, { duration: 300 });
     scaleAnim.value = withTiming(0.8, { duration: 300 });
-    setTimeout(() => {
+    dismissTimer.current = setTimeout(() => {
       setIsVisible(false);
       onDismiss();
     }, 300);

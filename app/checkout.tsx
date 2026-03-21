@@ -101,13 +101,13 @@ function CheckoutPage() {
     showToastNotifications: true,
   });
 
-  useEffect(() => { validateCart(); }, []);
+  useEffect(() => { validateCart(); }, [validateCart]);
 
   useEffect(() => {
     if (validationState.validationResult && errorCount > 0) {
       dispatch({ type: 'SET_FIELD', field: 'showValidationModal', value: true });
     }
-  }, [errorCount, validationState.validationResult]);
+  }, [errorCount, validationState.validationResult, dispatch]);
 
   // Add slider thumb styling for web
   useEffect(() => {

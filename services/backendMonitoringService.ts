@@ -122,7 +122,9 @@ class BackendMonitoringService {
     this.isEnabled = enabled;
 
     if (enabled) {
-      this.init().then(() => this.startHealthChecks()).catch(() => {});
+      this.init().then(() => this.startHealthChecks()).catch((err) => {
+        if (__DEV__) console.warn('[BackendMonitoring] Initialization failed:', err?.message);
+      });
     } else {
       this.stopHealthChecks();
     }

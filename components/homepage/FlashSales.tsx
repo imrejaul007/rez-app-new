@@ -7,7 +7,7 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSequence, withRepeat, interpolate } from 'react-native-reanimated';
+import Animated, { cancelAnimation, useSharedValue, useAnimatedStyle, withTiming, withSequence, withRepeat, interpolate } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -113,6 +113,9 @@ const SkeletonCard: React.FC = () => {
 
   useEffect(() => {
     shimmerAnim.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
+    return () => {
+      cancelAnimation(shimmerAnim);
+    };
   }, [shimmerAnim]);
 
   const shimmerStyle = useAnimatedStyle(() => ({

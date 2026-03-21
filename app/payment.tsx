@@ -38,7 +38,11 @@ import { BRAND } from '@/constants/brand';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
 // Initialize Stripe lazily — SDK is only loaded when this promise is first awaited
-const stripePromise = getStripePromise(process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
+const STRIPE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+if (!STRIPE_KEY) {
+  console.error('[Payment] EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set. Card payments will not work.');
+}
+const stripePromise = STRIPE_KEY ? getStripePromise(STRIPE_KEY) : null;
 
 function PaymentPage() {
   const router = useRouter();
@@ -116,7 +120,7 @@ function PaymentPage() {
         }
       }).catch(() => {});
     }
-  }, [isFinancialService, serviceId]);
+  }, [isFinancialService, serviceId, isWalletRecharge, amount]);
 
   const loadFinancialService = async () => {
     if (!serviceId) return;
@@ -244,6 +248,11 @@ function PaymentPage() {
    */
   const handleStripeCardPayment = async () => {
     if (!selectedMethod || isProcessing) return;
+
+    if (!STRIPE_KEY) {
+      platformAlertSimple('Configuration Error', 'Card payments are not available at the moment. Please choose a different payment method or contact support.');
+      return;
+    }
 
     setIsProcessing(true);
     try {

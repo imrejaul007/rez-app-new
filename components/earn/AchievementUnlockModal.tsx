@@ -131,13 +131,15 @@ const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
 
   const particles = useRef(generateParticles()).current;
   const autoDismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeAnimTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleClose = useCallback(() => {
     overlayOpacity.value = withTiming(0, { duration: 250 });
     cardScale.value = withTiming(0.8, { duration: 250 });
     cardOpacity.value = withTiming(0, { duration: 200 });
     // Delay onClose to let exit animation play
-    setTimeout(() => onClose(), 300);
+    if (closeAnimTimer.current) clearTimeout(closeAnimTimer.current);
+    closeAnimTimer.current = setTimeout(() => onClose(), 300);
   }, [onClose, overlayOpacity, cardScale, cardOpacity]);
 
   // Start entrance animations
@@ -180,9 +182,8 @@ const AchievementUnlockModal: React.FC<AchievementUnlockModalProps> = ({
     }
 
     return () => {
-      if (autoDismissTimer.current) {
-        clearTimeout(autoDismissTimer.current);
-      }
+      if (autoDismissTimer.current) clearTimeout(autoDismissTimer.current);
+      if (closeAnimTimer.current) clearTimeout(closeAnimTimer.current);
     };
   }, [visible, achievement, handleClose]);
 

@@ -247,7 +247,7 @@ const WhatsNewStoriesFlow: React.FC<WhatsNewStoriesFlowProps> = ({ onClose, star
         {/* Slide Progress (within current story) */}
         <View style={styles.slideProgressRow}>
           {currentStory.slides.map((_, index) => (
-            <View key={index} style={styles.slideProgressWrapper}>
+            <View key={`slide-progress-${currentStoryIndex}-${index}`} style={styles.slideProgressWrapper}>
               <View style={styles.slideProgressBg}>
                 <Animated.View
                   style={[

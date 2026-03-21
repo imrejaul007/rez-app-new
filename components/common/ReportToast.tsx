@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import Animated, { runOnJS, useSharedValue, withDelay, withTiming } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -37,6 +37,7 @@ function ReportToast({
 }: ReportToastProps) {
   const fadeAnim = useSharedValue(0);
   const slideAnim = useSharedValue(-100);
+  const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (visible) {
@@ -47,8 +48,12 @@ function ReportToast({
       fadeAnim.value = withDelay(3000, withTiming(0, { duration: 200 }));
       slideAnim.value = withDelay(3000, withTiming(-100, { duration: 200 }));
       // Dismiss after animation
-      setTimeout(() => onDismiss?.(), 3200);
+      if (dismissTimer.current) clearTimeout(dismissTimer.current);
+      dismissTimer.current = setTimeout(() => onDismiss?.(), 3200);
     }
+    return () => {
+      if (dismissTimer.current) clearTimeout(dismissTimer.current);
+    };
   }, [visible]);
 
   const getIconName = () => {

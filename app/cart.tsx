@@ -250,10 +250,16 @@ function CartPage() {
     }
   }, []);
 
+  // Stable ref for cartActions to avoid stale closures without causing re-runs
+  const cartActionsRef = useRef(cartActions);
+  useEffect(() => {
+    cartActionsRef.current = cartActions;
+  });
+
   // Load cart on mount
   useEffect(() => {
     const loadData = async () => {
-      await cartActions.loadCart();
+      await cartActionsRef.current.loadCart();
       await loadLockedItems();
     };
     loadData();
@@ -302,7 +308,7 @@ function CartPage() {
     } catch (error) {
       platformAlertSimple('Error', 'Unable to unlock item. Please try again.');
     }
-  }, []);
+  }, [isMounted]);
 
   const handleMoveToCart = useCallback(async (itemId: string, productId: string) => {
     try {
