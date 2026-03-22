@@ -200,7 +200,7 @@ export default function MissionsScreen() {
 
       {/* Content */}
       <FlatList
-        data={missions}
+        data={missions && Array.isArray(missions) ? missions : []}
         renderItem={renderMissionCard}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.listContent}

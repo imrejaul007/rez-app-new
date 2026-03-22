@@ -238,8 +238,8 @@ export default function BundlesScreen() {
     );
   }
 
-  const featuredBundle = bundles.find(b => b.isFeatured);
-  const regularBundles = bundles.filter(b => !b.isFeatured);
+  const featuredBundle = bundles && Array.isArray(bundles) ? bundles.find(b => b.isFeatured) : undefined;
+  const regularBundles = bundles && Array.isArray(bundles) ? bundles.filter(b => !b.isFeatured) : [];
 
   return (
     <SafeAreaView style={styles.container}>

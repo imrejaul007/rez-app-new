@@ -240,7 +240,7 @@ export default function BookingCalendarScreen() {
         </View>
       ) : (
         <ScrollView style={styles.slotsContainer} showsVerticalScrollIndicator={false}>
-          {Object.entries(timeSlotsByHour).map(([hour, slots]) => (
+          {timeSlotsByHour && Object.entries(timeSlotsByHour).map(([hour, slots]) => (
             <View key={hour} style={styles.hourSection}>
               <Text style={styles.hourLabel}>{hour}:00</Text>
               <View style={styles.slotsGrid}>

@@ -206,8 +206,8 @@ export default function CampaignsScreen() {
     );
   };
 
-  const activeCampaigns = campaigns.filter(c => !c.isCompleted);
-  const completedCampaigns = campaigns.filter(c => c.isCompleted);
+  const activeCampaigns = campaigns && Array.isArray(campaigns) ? campaigns.filter(c => !c.isCompleted) : [];
+  const completedCampaigns = campaigns && Array.isArray(campaigns) ? campaigns.filter(c => c.isCompleted) : [];
 
   const EmptyState = () => (
     <View style={styles.emptyContainer}>

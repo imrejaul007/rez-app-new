@@ -174,16 +174,28 @@ export default function ExplorerScoreScreen() {
           </View>
 
           {/* Next Tier Info */}
-          <View style={styles.nextTierCard}>
-            <Ionicons name={TIER_INFO[scoreData.tier === 'curious' ? 'explorer' : scoreData.tier === 'explorer' ? 'adventurer' : scoreData.tier === 'adventurer' ? 'pioneer' : 'pioneer'].icon as any} size={24} color={TIER_INFO[scoreData.tier === 'curious' ? 'explorer' : scoreData.tier === 'explorer' ? 'adventurer' : scoreData.tier === 'adventurer' ? 'pioneer' : 'pioneer'].color} />
-            <View style={styles.nextTierInfo}>
-              <Text style={styles.nextTierLabel}>Next Tier</Text>
-              <Text style={styles.nextTierName}>
-                {TIER_INFO[scoreData.tier === 'curious' ? 'explorer' : scoreData.tier === 'explorer' ? 'adventurer' : scoreData.tier === 'adventurer' ? 'pioneer' : 'pioneer'].name}
-              </Text>
-            </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.text.secondary} />
-          </View>
+          {(() => {
+            const getNextTierKey = (currentTier: string): string => {
+              if (currentTier === 'curious') return 'explorer';
+              if (currentTier === 'explorer') return 'adventurer';
+              if (currentTier === 'adventurer') return 'pioneer';
+              return 'pioneer';
+            };
+            const nextTierKey = getNextTierKey(scoreData.tier);
+            const nextTierInfo = TIER_INFO[nextTierKey];
+            return (
+              <View style={styles.nextTierCard}>
+                <Ionicons name={nextTierInfo.icon as any} size={24} color={nextTierInfo.color} />
+                <View style={styles.nextTierInfo}>
+                  <Text style={styles.nextTierLabel}>Next Tier</Text>
+                  <Text style={styles.nextTierName}>
+                    {nextTierInfo.name}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={colors.text.secondary} />
+              </View>
+            );
+          })()}
         </View>
 
         {/* Stats Grid */}

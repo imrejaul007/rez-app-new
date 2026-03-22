@@ -60,8 +60,12 @@ export default function BadgesScreen() {
   const loadBadges = useCallback(async () => {
     try {
       const data = await tryApi.getBadges();
-      setBadges(data.earned || []);
-      setUndiscovered(data.undiscovered || []);
+      if (data && data.earned) {
+        setBadges(data.earned);
+      }
+      if (data && data.undiscovered) {
+        setUndiscovered(data.undiscovered);
+      }
     } catch (err) {
       console.error('Failed to load badges:', err);
     } finally {

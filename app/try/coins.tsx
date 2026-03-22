@@ -64,15 +64,19 @@ export default function TrialCoinsScreen() {
         setCoinBalance(coinsData.totalBalance);
 
         // Calculate days until expiry and sort buckets
-        const bucketsWithExpiry = coinsData.buckets.map(b => ({
-          ...b,
-          daysUntilExpiry: Math.ceil(
-            (new Date(b.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-          ),
-        }));
-        setBuckets(bucketsWithExpiry.sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry));
+        if (coinsData.buckets && Array.isArray(coinsData.buckets)) {
+          const bucketsWithExpiry = coinsData.buckets.map(b => ({
+            ...b,
+            daysUntilExpiry: Math.ceil(
+              (new Date(b.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+            ),
+          }));
+          setBuckets(bucketsWithExpiry.sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry));
+        }
 
-        setTransactions(coinsData.recentTransactions);
+        if (coinsData.recentTransactions && Array.isArray(coinsData.recentTransactions)) {
+          setTransactions(coinsData.recentTransactions);
+        }
       } catch (err) {
         console.error('Failed to load coins data:', err);
       } finally {

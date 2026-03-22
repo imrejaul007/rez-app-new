@@ -102,7 +102,7 @@ export default function QRDisplayScreen() {
     );
   }
 
-  const isLowTime = parseInt(timeRemaining) < 5 && !isExpired;
+  const isLowTime = !isNaN(parseInt(timeRemaining)) && parseInt(timeRemaining) < 5 && !isExpired;
 
   return (
     <SafeAreaView style={styles.container}>

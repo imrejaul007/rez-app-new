@@ -66,7 +66,7 @@ export default function LeaderboardScreen() {
   }, [city, period]);
 
   const renderPodium = () => {
-    if (!leaderboard || leaderboard.entries.length === 0) return null;
+    if (!leaderboard || !leaderboard.entries || leaderboard.entries.length === 0) return null;
 
     const top3 = leaderboard.entries.slice(0, 3);
 
