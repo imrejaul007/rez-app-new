@@ -363,7 +363,7 @@ function ReferralDashboard() {
         </View>
 
         {userRank && (
-          <View style={styles.userRankCard}>
+          <View style={styles.userRankCard} key="user-rank">
             <Ionicons name="trophy" size={24} color={Colors.warning} />
             <View style={styles.userRankInfo}>
               <Text style={styles.userRankText}>Your Rank</Text>
@@ -375,6 +375,7 @@ function ReferralDashboard() {
           </View>
         )}
 
+        </View>
         </>
       )}
       ListFooterComponent={() => (
