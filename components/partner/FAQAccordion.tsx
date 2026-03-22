@@ -110,6 +110,8 @@ function FAQAccordion({ faqs, onContactPress }: FAQAccordionProps) {
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
+  const safeFaqs = faqs || [];
+
   const categories = [
     { key: 'all', name: 'All', icon: 'apps-outline', color: colors.neutral[500] },
     { key: 'general', name: 'General', icon: 'information-circle-outline', color: colors.brand.green },
@@ -118,9 +120,9 @@ function FAQAccordion({ faqs, onContactPress }: FAQAccordionProps) {
     { key: 'levels', name: 'Levels', icon: 'trophy-outline', color: colors.error },
   ];
 
-  const filteredFAQs = selectedCategory === 'all' 
-    ? faqs 
-    : faqs.filter(faq => faq.category === selectedCategory);
+  const filteredFAQs = selectedCategory === 'all'
+    ? safeFaqs
+    : safeFaqs.filter(faq => faq.category === selectedCategory);
 
   const toggleItem = (faqId: string) => {
     const newExpandedItems = new Set(expandedItems);
@@ -144,6 +146,7 @@ function FAQAccordion({ faqs, onContactPress }: FAQAccordionProps) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
+
         <View style={styles.headerIcon}>
           <LinearGradient
             colors={[colors.brand.green, colors.brand.teal]}
@@ -198,7 +201,7 @@ function FAQAccordion({ faqs, onContactPress }: FAQAccordionProps) {
       {/* Controls */}
       <View style={styles.controls}>
         <Text style={styles.controlsInfo}>
-          Showing {filteredFAQs.length} of {faqs.length} questions
+          Showing {filteredFAQs.length} of {safeFaqs.length} questions
         </Text>
         <View style={styles.controlButtons}>
           <Pressable

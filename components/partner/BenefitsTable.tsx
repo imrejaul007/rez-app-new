@@ -25,6 +25,9 @@ function BenefitsTable({
 }: BenefitsTableProps) {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
+
+  // Guard against undefined/null levels
+  const safeLevels = levels || [];
   // Define benefit types with clear, accurate names
   const allBenefitTypes = [
     { 
@@ -54,47 +57,81 @@ function BenefitsTable({
   ];
 
   const getBenefitValue = (level: PartnerLevel, benefitKey: string): string => {
-    // Get actual benefits from level data (backend)
-    const benefits = (level as any).benefits;
-    
-    if (!benefits) {
-      return '-';
+    const raw = (level as any).benefits;
+    if (!raw) return '-';
+
+    // Backend shape: { cashbackRate, birthdayDiscount, freeDeliveryThreshold, transactionBonus }
+    if (!Array.isArray(raw)) {
+      switch (benefitKey) {
+        case 'cashback':
+          return raw.cashbackRate != null ? `${raw.cashbackRate}%` : '-';
+        case 'birthday':
+          return raw.birthdayDiscount != null ? `${raw.birthdayDiscount}%` : '-';
+        case 'freeDelivery':
+          if (raw.freeDeliveryThreshold === 0) return 'Always Free';
+          if (raw.freeDeliveryThreshold != null) return `Above ${currencySymbol}${raw.freeDeliveryThreshold}`;
+          return '-';
+        case 'transactionBonus':
+          if (raw.transactionBonus) return `${currencySymbol}${raw.transactionBonus.reward ?? raw.transactionBonus}`;
+          return '-';
+        default:
+          return '-';
+      }
     }
-    
+
+    // Static/fallback shape: PartnerBenefit[] with type field
+    const benefitArray = raw as PartnerBenefit[];
     switch (benefitKey) {
-      case 'cashback':
-        return `${benefits.cashbackRate || 0}%`;
-      case 'birthday':
-        return `${benefits.birthdayDiscount || 0}%`;
-      case 'freeDelivery':
-        if (benefits.freeDeliveryThreshold === 0) {
-          return 'Always Free';
-        } else {
-          return `Above ${currencySymbol}${benefits.freeDeliveryThreshold}`;
-        }
-      case 'transactionBonus':
-        if (benefits.transactionBonus) {
-          return `${currencySymbol}${benefits.transactionBonus.reward}`;
-        }
-        return '-';
+      case 'cashback': {
+        const b = benefitArray.find(b => b.type === 'cashback');
+        return b ? `${b.value}%` : '-';
+      }
+      case 'birthday': {
+        const b = benefitArray.find(b => b.type === 'discount' && b.name.toLowerCase().includes('birthday'));
+        return b ? `${b.value}%` : '-';
+      }
+      case 'freeDelivery': {
+        const b = benefitArray.find(b => b.type === 'freebie');
+        return b ? String(b.value) : '-';
+      }
+      case 'transactionBonus': {
+        const b = benefitArray.find(b => b.name.toLowerCase().includes('bonus') || b.name.toLowerCase().includes('transaction'));
+        return b ? String(b.value) : '-';
+      }
       default:
         return '-';
     }
   };
 
   const isBenefitActive = (level: PartnerLevel, benefitKey: string): boolean => {
-    const benefits = (level as any).benefits;
-    if (!benefits) return false;
-    
+    const raw = (level as any).benefits;
+    if (!raw) return false;
+
+    if (!Array.isArray(raw)) {
+      switch (benefitKey) {
+        case 'cashback':
+          return raw.cashbackRate > 0;
+        case 'birthday':
+          return raw.birthdayDiscount > 0;
+        case 'freeDelivery':
+          return raw.freeDeliveryThreshold !== undefined && raw.freeDeliveryThreshold !== null;
+        case 'transactionBonus':
+          return !!raw.transactionBonus;
+        default:
+          return false;
+      }
+    }
+
+    const benefitArray = raw as PartnerBenefit[];
     switch (benefitKey) {
       case 'cashback':
-        return benefits.cashbackRate > 0;
+        return benefitArray.some(b => b.type === 'cashback' && b.isActive);
       case 'birthday':
-        return benefits.birthdayDiscount > 0;
+        return benefitArray.some(b => b.type === 'discount' && b.name.toLowerCase().includes('birthday') && b.isActive);
       case 'freeDelivery':
-        return benefits.freeDeliveryThreshold !== undefined;
+        return benefitArray.some(b => b.type === 'freebie' && b.isActive);
       case 'transactionBonus':
-        return !!benefits.transactionBonus;
+        return benefitArray.some(b => (b.name.toLowerCase().includes('bonus') || b.name.toLowerCase().includes('transaction')) && b.isActive);
       default:
         return false;
     }
@@ -148,7 +185,7 @@ function BenefitsTable({
       <View style={styles.currentLevelContainer}>
         <Text style={styles.currentLevelText}>
           Current: <Text style={styles.currentLevelName}>
-            Level {currentLevel} - {levels.find(l => l.level === currentLevel)?.name}
+            Level {currentLevel} - {safeLevels.find(l => l.level === currentLevel)?.name}
           </Text>
         </Text>
       </View>
@@ -161,7 +198,7 @@ function BenefitsTable({
             <View style={styles.benefitNameColumn}>
               <Text style={styles.tableHeaderText}>Benefits</Text>
             </View>
-            {levels.map((level) => (
+            {safeLevels.map((level) => (
               <View key={level.id} style={styles.levelColumn}>
                 <LinearGradient
                   colors={getLevelColor(level.level) as any}
@@ -204,7 +241,7 @@ function BenefitsTable({
               </View>
 
               {/* Benefit Values for each level */}
-              {levels.map((level) => {
+              {safeLevels.map((level) => {
                 const isActive = isBenefitActive(level, benefitType.key);
                 const value = getBenefitValue(level, benefitType.key);
                 const isCurrentLevel = level.level === currentLevel;
@@ -248,7 +285,7 @@ function BenefitsTable({
             <View style={styles.benefitNameCell}>
               <Text style={styles.actionRowLabel}>Actions</Text>
             </View>
-            {levels.map((level) => (
+            {safeLevels.map((level) => (
               <View key={level.id} style={styles.actionCell}>
                 {level.level === currentLevel ? (
                   <View style={styles.currentLevelAction}>
@@ -283,7 +320,7 @@ function BenefitsTable({
       <View style={styles.requirementsSection}>
         <Text style={styles.requirementsSectionTitle}>Level Requirements</Text>
         <View style={styles.requirementsGrid}>
-          {levels.map((level) => (
+          {safeLevels.map((level) => (
             <View key={level.id} style={[
               styles.requirementCard,
               level.level === currentLevel && styles.currentRequirementCard

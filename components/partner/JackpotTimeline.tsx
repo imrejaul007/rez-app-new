@@ -23,19 +23,45 @@ const { width } = Dimensions.get('window');
 
 function JackpotTimeline({
   milestones,
-  currentSpent = 0, // Fixed: Don't hardcode to 18500, use actual value from props
+  currentSpent = 0,
   onMilestonePress
 }: JackpotTimelineProps) {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
+
+  // Guard: render nothing when there are no milestones
+  if (!milestones || milestones.length === 0) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.trophyContainer}>
+            <LinearGradient
+              colors={[colors.brand.goldWarm, colors.warning]}
+              style={styles.trophyGradient}
+            >
+              <Ionicons name="trophy" size={24} color="white" />
+            </LinearGradient>
+          </View>
+          <Text style={styles.headerTitle}>Your Jackpot Timeline</Text>
+        </View>
+        <View style={{ alignItems: 'center', paddingVertical: 24 }}>
+          <Ionicons name="trophy-outline" size={48} color={colors.neutral[300]} />
+          <Text style={{ color: colors.neutral[400], fontSize: 14, marginTop: 12, textAlign: 'center' }}>
+            Jackpot milestones will appear here{'\n'}once you start shopping!
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   // Normalize milestone data (backend sends spendAmount, frontend expects amount)
   const normalizedMilestones = milestones.map(m => ({
     ...m,
     amount: m.amount || m.spendAmount || 0
   }));
 
-  const sortedMilestones = normalizedMilestones.sort((a, b) => a.amount - b.amount);
-  const maxAmount = Math.max(...normalizedMilestones.map(m => m.amount));
+  const sortedMilestones = [...normalizedMilestones].sort((a, b) => a.amount - b.amount);
+  const maxAmount = Math.max(...normalizedMilestones.map(m => m.amount), 1); // guard against 0
   const progressPercentage = (currentSpent / maxAmount) * 100;
 
   const renderMilestone = (milestone: JackpotMilestone, index: number) => {
@@ -88,9 +114,9 @@ function JackpotTimeline({
               isActive && styles.activeMilestoneTitle,
               isNext && styles.nextMilestoneTitle
             ]}>
-              {milestone.reward.title}
+              {milestone.reward?.title || ''}
             </Text>
-            {milestone.reward.image && (
+            {milestone.reward?.image && (
               <CachedImage
                 source={milestone.reward.image}
                 style={styles.rewardImage}
@@ -101,8 +127,7 @@ function JackpotTimeline({
               isActive && styles.activeRewardValue,
               isNext && styles.nextRewardValue
             ]}>
-              {milestone.reward.value}
-            </Text>
+              {milestone.reward?.value ?? ''}</Text>
           </View>
           
           {/* Arrow pointing to timeline */}

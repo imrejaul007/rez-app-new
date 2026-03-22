@@ -48,16 +48,19 @@ function PartnerStatsDashboard({
     try {
       setError(null);
       const response = await partnerApi.getStats();
+      if (!isMounted()) return;
       if (response.success && response.data) {
-        if (!isMounted()) return;
         setStats(response.data);
       }
     } catch (err) {
       if (!isMounted()) return;
       setError('Failed to load stats');
     } finally {
-      if (!isMounted()) return;
-      setLoading(false);
+      // Only update loading if mounted; check inside finally to avoid state update on unmounted component
+      // Use a microtask to allow isMounted to reflect latest value
+      if (isMounted()) {
+        setLoading(false);
+      }
     }
   };
 
@@ -65,7 +68,12 @@ function PartnerStatsDashboard({
     if (onViewLeaderboard) {
       onViewLeaderboard();
     } else {
-      router.push('/partner/leaderboard');
+      // Fallback to profile if leaderboard route doesn't exist
+      try {
+        router.push('/partner/leaderboard' as any);
+      } catch {
+        router.push('/profile' as any);
+      }
     }
   };
 

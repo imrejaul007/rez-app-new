@@ -67,6 +67,82 @@ function PartnerProfilePage() {
     loadPartnerData();
   }, []);
 
+  // Normalise raw API milestone → type-safe OrderMilestone
+  const normalizeMilestone = (m: any): OrderMilestone => ({
+    id: m.id || m._id || String(Math.random()),
+    orderNumber: m.orderCount ?? m.orderNumber ?? 0,
+    orderCount: m.orderCount ?? m.orderNumber ?? 0,
+    isCompleted: m.achieved ?? m.isCompleted ?? false,
+    isLocked: m.isLocked ?? false,
+    reward: m.reward
+      ? {
+          id: m.reward.id || m.reward._id || String(Math.random()),
+          title: m.reward.title || '',
+          description: m.reward.description || '',
+          type: m.reward.type || 'cashback',
+          value: m.reward.value ?? 0,
+          image: m.reward.image,
+          validUntil: m.reward.validUntil,
+          isClaimed: m.reward.isClaimed ?? m.reward.claimed ?? !!m.claimedAt,
+        }
+      : undefined,
+  });
+
+  // Normalise raw API task → type-safe RewardTask
+  const normalizeTask = (t: any): RewardTask => ({
+    id: t.id || t._id || String(Math.random()),
+    title: t.title || '',
+    description: t.description || '',
+    type: t.type || 'purchase',
+    isCompleted: t.completed ?? t.isCompleted ?? false,
+    progress: t.progress,
+    reward: {
+      id: t.reward?.id || t.reward?._id || String(Math.random()),
+      title: t.reward?.title || '',
+      description: t.reward?.description || '',
+      type: t.reward?.type || 'cashback',
+      value: t.reward?.value ?? 0,
+      image: t.reward?.image,
+      validUntil: t.reward?.validUntil,
+      isClaimed: t.reward?.isClaimed ?? t.claimed ?? false,
+    },
+  });
+
+  // Normalise raw API jackpot milestone → type-safe JackpotMilestone
+  const normalizeJackpot = (j: any): JackpotMilestone => ({
+    id: j.id || j._id || String(Math.random()),
+    amount: j.spendAmount ?? j.amount ?? 0,
+    spendAmount: j.spendAmount ?? j.amount ?? 0,
+    title: j.title || '',
+    description: j.description || '',
+    isUnlocked: j.achieved ?? j.isUnlocked ?? false,
+    isCompleted: j.achieved ?? j.isCompleted ?? false,
+    achieved: j.achieved ?? false,
+    claimedAt: j.claimedAt,
+    reward: {
+      id: j.reward?.id || j.reward?._id || String(Math.random()),
+      title: j.reward?.title || '',
+      description: j.reward?.description || '',
+      type: j.reward?.type || 'cashback',
+      value: j.reward?.value ?? 0,
+      image: j.reward?.image,
+      validUntil: j.reward?.validUntil,
+      isClaimed: !!j.claimedAt || (j.reward?.isClaimed ?? false),
+    },
+  });
+
+  // Normalise raw API offer → type-safe ClaimableOffer
+  const normalizeOffer = (o: any): ClaimableOffer => ({
+    id: o.id || o._id || String(Math.random()),
+    title: o.title || '',
+    description: o.description || '',
+    discount: typeof o.discount === 'number' ? `${o.discount}%` : (o.discount || ''),
+    image: o.image,
+    validUntil: o.validUntil || new Date().toISOString(),
+    termsAndConditions: Array.isArray(o.termsAndConditions) ? o.termsAndConditions : [],
+    isClaimed: o.isClaimed ?? o.claimed ?? false,
+  });
+
   const loadPartnerData = async () => {
     try {
       setPartnerState(prev => ({ ...prev, loading: true, error: null }));
@@ -78,7 +154,6 @@ function PartnerProfilePage() {
         if (dashboardResponse.data.enrolled === false) {
           if (!isMounted()) return;
           setEnrolled(false);
-          if (!isMounted()) return;
           setPartnerState(prev => ({ ...prev, loading: false, error: null }));
           return;
         }
@@ -88,17 +163,24 @@ function PartnerProfilePage() {
 
         const benefitsResponse = await partnerApi.getBenefits();
         const levelsWithBenefits = benefitsResponse.success && benefitsResponse.data
-          ? benefitsResponse.data.allLevels
+          ? (benefitsResponse.data.allLevels || benefitsResponse.data.levels || [])
           : [];
 
         if (!isMounted()) return;
         setPartnerState({
           profile: dashboardResponse.data.profile as any,
-          milestones: dashboardResponse.data.milestones as any,
-          tasks: dashboardResponse.data.tasks as any,
-          jackpotProgress: dashboardResponse.data.jackpotProgress as any,
-          claimableOffers: dashboardResponse.data.claimableOffers as any,
-          faqs: dashboardResponse.data.faqs as any,
+          milestones: (dashboardResponse.data.milestones || []).map(normalizeMilestone),
+          tasks: (dashboardResponse.data.tasks || []).map(normalizeTask),
+          jackpotProgress: (dashboardResponse.data.jackpotProgress || []).map(normalizeJackpot),
+          claimableOffers: (dashboardResponse.data.claimableOffers || []).map(normalizeOffer),
+          faqs: (dashboardResponse.data.faqs || []).map((f: any) => ({
+            id: f.id || f._id || String(Math.random()),
+            question: f.question || '',
+            answer: f.answer || '',
+            category: (['general', 'transactions', 'rewards', 'levels'].includes(f.category)
+              ? f.category
+              : 'general') as 'general' | 'transactions' | 'rewards' | 'levels',
+          })),
           levels: levelsWithBenefits,
           loading: false,
           error: null,
@@ -114,19 +196,32 @@ function PartnerProfilePage() {
         if (isMounted() && benefitsResponse.success && benefitsResponse.data) {
           setEnrolled(true);
           setPartnerState({
-            profile: { level: benefitsResponse.data.currentLevel, name: '' } as any,
+            profile: {
+              level: {
+                level: benefitsResponse.data.currentLevel || 1,
+                name: 'Partner',
+                requirements: { orders: 15, timeframe: 44 },
+              },
+              name: '',
+              ordersThisLevel: 0,
+              totalOrders: 0,
+              daysRemaining: 0,
+              validUntil: '',
+              currentBenefits: [],
+            } as any,
             milestones: [],
             tasks: [],
             jackpotProgress: [],
             claimableOffers: [],
             faqs: [],
-            levels: benefitsResponse.data.allLevels,
+            levels: benefitsResponse.data.allLevels || benefitsResponse.data.levels || [],
             loading: false,
             error: null,
           });
           return;
         }
       } catch {}
+      if (!isMounted()) return;
       setPartnerState(prev => ({
         ...prev,
         loading: false,
@@ -626,6 +721,7 @@ function PartnerProfilePage() {
             daysRemaining={daysRemaining}
             ordersNeeded={ordersRequired - ordersThisLevel}
             currentLevel={levelName}
+            totalDays={profile?.level?.requirements?.timeframe ?? 44}
             onShopNow={() => router.push('/(tabs)')}
           />
         )}
@@ -723,7 +819,7 @@ function PartnerProfilePage() {
                 )}
 
                 {level.locked && !level.future && (
-                  <Ionicons name="lock-closed" size={14} color={colors.gray[400]} style={styles.lockIcon} />
+                  <Ionicons name="lock-closed" size={14} color={colors.neutral[400]} style={styles.lockIcon} />
                 )}
               </View>
             ))}
@@ -880,7 +976,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   errorText: {
-    color: colors.gray[400],
+    color: colors.neutral[400],
     fontSize: Typography.bodyLarge.fontSize,
     textAlign: 'center',
     marginBottom: Spacing.xl,
@@ -1191,7 +1287,7 @@ const styles = StyleSheet.create({
   },
   sectionSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
-    color: colors.gray[400],
+    color: colors.neutral[400],
   },
 
   // Action Buttons
@@ -1283,7 +1379,7 @@ const styles = StyleSheet.create({
   levelCardLabel: {
     fontSize: Typography.overline.fontSize,
     fontWeight: '600',
-    color: colors.gray[400],
+    color: colors.neutral[400],
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: 2,
@@ -1310,12 +1406,12 @@ const styles = StyleSheet.create({
   },
   levelDays: {
     fontSize: Typography.caption.fontSize,
-    color: colors.gray[400],
+    color: colors.neutral[400],
     marginTop: 2,
   },
   futureLevelText: {
     fontSize: Typography.overline.fontSize,
-    color: colors.gray[400],
+    color: colors.neutral[400],
     textAlign: 'center',
     lineHeight: 14,
   },
@@ -1354,7 +1450,7 @@ const styles = StyleSheet.create({
   },
   infoSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
-    color: colors.gray[400],
+    color: colors.neutral[400],
   },
   infoContent: {
     gap: Spacing.md,
@@ -1410,7 +1506,7 @@ const styles = StyleSheet.create({
   },
   enrollDescription: {
     fontSize: Typography.bodyLarge.fontSize,
-    color: colors.gray[400],
+    color: colors.neutral[400],
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.xl,

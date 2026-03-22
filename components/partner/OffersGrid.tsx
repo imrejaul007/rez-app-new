@@ -30,10 +30,12 @@ function OffersGrid({
   onClaimOffer,
   onViewTerms 
 }: OffersGridProps) {
-  // Normalize offers data (backend might send claimed or isClaimed)
-  const normalizedOffers = offers.map(offer => ({
+  // Normalize offers data (backend might send claimed or isClaimed, discount as number or string)
+  const normalizedOffers = (offers || []).map((offer: any) => ({
     ...offer,
-    isClaimed: offer.isClaimed ?? offer.claimed ?? false
+    isClaimed: offer.isClaimed ?? offer.claimed ?? false,
+    discount: typeof offer.discount === 'number' ? `${offer.discount}%` : (offer.discount || ''),
+    termsAndConditions: Array.isArray(offer.termsAndConditions) ? offer.termsAndConditions : [],
   }));
 
   const availableOffers = normalizedOffers.filter(offer => !offer.isClaimed);
@@ -232,7 +234,7 @@ function OffersGrid({
             style={styles.statCardGradient}
           >
             <Ionicons name="star" size={20} color="white" />
-            <Text style={styles.statCardNumber}>{offers.length}</Text>
+            <Text style={styles.statCardNumber}>{normalizedOffers.length}</Text>
             <Text style={styles.statCardLabel}>Total</Text>
           </LinearGradient>
         </View>

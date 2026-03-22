@@ -60,13 +60,13 @@ function RewardTasks({
   };
 
   const handleTaskPress = (task: RewardTask) => {
-    if (task.isCompleted && task.reward.isClaimed) {
+    if (task.isCompleted && task.reward?.isClaimed) {
       platformAlertSimple('Already Claimed', 'This reward has already been claimed.');
       return;
     }
 
-    if (task.isCompleted && !task.reward.isClaimed) {
-      platformAlertConfirm('Claim Reward', `Claim ${task.reward.title}?`, () => onClaimReward?.(task.id), 'Claim');
+    if (task.isCompleted && !task.reward?.isClaimed) {
+      platformAlertConfirm('Claim Reward', `Claim ${task.reward?.title || 'reward'}?`, () => onClaimReward?.(task.id), 'Claim');
       return;
     }
 
@@ -115,9 +115,9 @@ function RewardTasks({
   };
 
   const renderTaskCard = (task: RewardTask) => {
-    const colors = getTaskColor(task.type);
+    const taskColors = getTaskColor(task.type);
     const isCompleted = task.isCompleted;
-    const isClaimed = task.reward.isClaimed;
+    const isClaimed = task.reward?.isClaimed ?? false;
 
     return (
       <Pressable
@@ -128,18 +128,18 @@ function RewardTasks({
           isClaimed && styles.claimedTaskCard
         ]}
         onPress={() => handleTaskPress(task)}
-       
+
       >
         {/* Task Icon */}
         <View style={styles.taskIconContainer}>
           <LinearGradient
-            colors={isCompleted ? [colors.lightMustard, colors.nileBlue] : colors}
+            colors={isCompleted ? [colors.lightMustard, colors.nileBlue] as const : taskColors}
             style={styles.taskIconGradient}
           >
-            <Ionicons 
-              name={isCompleted ? 'checkmark' : getTaskIcon(task.type)} 
-              size={20} 
-              color="white" 
+            <Ionicons
+              name={isCompleted ? 'checkmark' : getTaskIcon(task.type)}
+              size={20}
+              color="white"
             />
           </LinearGradient>
         </View>
@@ -155,9 +155,9 @@ function RewardTasks({
             </Text>
             <View style={[
               styles.taskTypeBadge,
-              { backgroundColor: colors[0] + '20' }
+              { backgroundColor: taskColors[0] + '20' }
             ]}>
-              <Text style={[styles.taskTypeBadgeText, { color: colors[0] }]}>
+              <Text style={[styles.taskTypeBadgeText, { color: taskColors[0] }]}>
                 {task.type.toUpperCase()}
               </Text>
             </View>
@@ -178,10 +178,10 @@ function RewardTasks({
                 styles.rewardTitle,
                 isCompleted && styles.completedRewardTitle
               ]}>
-                {task.reward.title}
+                {task.reward?.title || ''}
               </Text>
               <Text style={styles.rewardDescription}>
-                {task.reward.description}
+                {task.reward?.description || ''}
               </Text>
             </View>
 
@@ -194,7 +194,9 @@ function RewardTasks({
                 styles.rewardValue,
                 isCompleted && styles.completedRewardValue
               ]}>
-                {typeof task.reward.value === 'number' ? `${currencySymbol}${task.reward.value}` : task.reward.value}
+                {task.reward
+                  ? (typeof task.reward.value === 'number' ? `${currencySymbol}${task.reward.value}` : task.reward.value)
+                  : ''}
               </Text>
             </View>
           </View>
@@ -213,7 +215,7 @@ function RewardTasks({
               onPress={() => handleTaskPress(task)}
             >
               <LinearGradient
-                colors={[colors.lightMustard, colors.nileBlue]}
+                colors={[colors.lightMustard, colors.nileBlue] as const}
                 style={styles.claimButtonGradient}
               >
                 <Ionicons name="gift" size={16} color="white" />
@@ -231,8 +233,8 @@ function RewardTasks({
     );
   };
 
-  const completedTasks = tasks.filter(task => task.isCompleted);
-  const pendingTasks = tasks.filter(task => !task.isCompleted);
+  const completedTasks = (tasks || []).filter(task => task.isCompleted);
+  const pendingTasks = (tasks || []).filter(task => !task.isCompleted);
 
   return (
     <View style={styles.container}>
@@ -252,7 +254,7 @@ function RewardTasks({
       {/* Summary Stats */}
       <View style={styles.statsContainer}>
         <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{tasks.length}</Text>
+          <Text style={styles.statNumber}>{(tasks || []).length}</Text>
           <Text style={styles.statLabel}>Total Tasks</Text>
         </View>
         <View style={styles.statCard}>
@@ -269,7 +271,7 @@ function RewardTasks({
         </View>
         <View style={styles.statCard}>
           <Text style={[styles.statNumber, { color: colors.lightMustard }]}>
-            {completedTasks.filter(t => !t.reward.isClaimed).length}
+            {completedTasks.filter(t => !t.reward?.isClaimed).length}
           </Text>
           <Text style={styles.statLabel}>Ready to Claim</Text>
         </View>
@@ -281,11 +283,11 @@ function RewardTasks({
         showsVerticalScrollIndicator={false}
       >
         {/* Ready to Claim Section */}
-        {completedTasks.filter(t => !t.reward.isClaimed).length > 0 && (
+        {completedTasks.filter(t => !t.reward?.isClaimed).length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>🎁 Ready to Claim</Text>
             {completedTasks
-              .filter(t => !t.reward.isClaimed)
+              .filter(t => !t.reward?.isClaimed)
               .map(renderTaskCard)}
           </View>
         )}
@@ -299,11 +301,11 @@ function RewardTasks({
         )}
 
         {/* Completed Section */}
-        {completedTasks.filter(t => t.reward.isClaimed).length > 0 && (
+        {completedTasks.filter(t => t.reward?.isClaimed).length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>✅ Completed & Claimed</Text>
             {completedTasks
-              .filter(t => t.reward.isClaimed)
+              .filter(t => t.reward?.isClaimed)
               .map(renderTaskCard)}
           </View>
         )}

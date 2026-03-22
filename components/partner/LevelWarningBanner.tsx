@@ -15,6 +15,7 @@ interface LevelWarningBannerProps {
   daysRemaining: number;
   ordersNeeded: number;
   currentLevel: string;
+  totalDays?: number; // Total timeframe days (default 44)
   onDismiss?: () => void;
   onShopNow?: () => void;
 }
@@ -34,6 +35,7 @@ function LevelWarningBanner({
   daysRemaining,
   ordersNeeded,
   currentLevel,
+  totalDays = 44,
   onDismiss,
   onShopNow,
 }: LevelWarningBannerProps) {
@@ -81,7 +83,7 @@ function LevelWarningBanner({
     }
   };
 
-  if (!isVisible || ordersNeeded <= 0) {
+  if (!isVisible || ordersNeeded <= 0 || daysRemaining <= 0) {
     return null;
   }
 
@@ -138,7 +140,7 @@ function LevelWarningBanner({
                 style={[
                   styles.progressFill,
                   {
-                    width: `${Math.max(0, 100 - (daysRemaining / 44) * 100)}%`,
+                    width: `${Math.min(100, Math.max(0, 100 - (daysRemaining / totalDays) * 100))}%`,
                     backgroundColor: accentColor,
                   },
                 ]}

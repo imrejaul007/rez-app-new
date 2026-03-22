@@ -18,15 +18,16 @@ interface MilestoneTrackerProps {
   onClaimReward?: (milestoneId: string) => void;
 }
 
-function MilestoneTracker({ 
-  milestones, 
-  currentOrders = 0, // Fixed: Don't hardcode to 12, use actual value from props
-  onClaimReward 
+function MilestoneTracker({
+  milestones,
+  currentOrders = 0,
+  onClaimReward
 }: MilestoneTrackerProps) {
-  const sortedMilestones = milestones.sort((a, b) => 
+  const safeMilestones = milestones || [];
+  const sortedMilestones = [...safeMilestones].sort((a, b) =>
     (a.orderNumber || a.orderCount || 0) - (b.orderNumber || b.orderCount || 0)
   );
-  
+
   const handleClaimPress = (milestone: OrderMilestone) => {
     if (milestone.reward?.isClaimed) {
       platformAlertSimple('Already Claimed', 'This reward has already been claimed.');
@@ -38,7 +39,7 @@ function MilestoneTracker({
       return;
     }
 
-    platformAlertConfirm('Claim Reward', `Claim ${milestone.reward?.title}?`, () => onClaimReward?.(milestone.id), 'Claim');
+    platformAlertConfirm('Claim Reward', `Claim ${milestone.reward?.title || 'reward'}?`, () => onClaimReward?.(milestone.id), 'Claim');
   };
 
   const renderMilestone = (milestone: OrderMilestone) => {
@@ -186,6 +187,30 @@ function MilestoneTracker({
     );
   };
 
+  if (sortedMilestones.length === 0) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <View style={styles.headerIcon}>
+            <LinearGradient
+              colors={[colors.brand.green, colors.brand.teal] as const}
+              style={styles.headerIconGradient}
+            >
+              <Ionicons name="ribbon" size={20} color="white" />
+            </LinearGradient>
+          </View>
+          <Text style={styles.headerTitle}>More Rewards</Text>
+        </View>
+        <View style={{ alignItems: 'center', paddingVertical: 24 }}>
+          <Ionicons name="ribbon-outline" size={48} color={colors.neutral[300]} />
+          <Text style={{ color: colors.neutral[400], fontSize: 14, marginTop: 12, textAlign: 'center' }}>
+            Milestone rewards will unlock{'\n'}as you place more orders!
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -211,7 +236,7 @@ function MilestoneTracker({
             <View key={milestone.id} style={styles.completedMilestoneChip}>
               <Ionicons name="checkmark-circle" size={14} color={colors.successScale[400]} />
               <Text style={styles.completedMilestoneChipText}>
-                {milestone.orderNumber}th order reward
+                {(milestone.orderNumber || milestone.orderCount || 0)}th order reward
               </Text>
             </View>
           ))}
