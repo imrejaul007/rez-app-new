@@ -18,7 +18,11 @@ import {
   RefreshControl,
   Pressable,
   ActivityIndicator,
-  Modal} from 'react-native';
+  Modal,
+  Dimensions,
+} from 'react-native';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
 import Animated, { runOnJS, useSharedValue, withTiming } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import logger from '@/utils/logger';
@@ -96,6 +100,74 @@ const DEFAULT_SORT_OPTIONS = [
   { id: 'rating', label: 'Rating', icon: 'star-outline', enabled: true, sortOrder: 1 },
   { id: 'delivery_time', label: 'Delivery Time', icon: 'time-outline', enabled: true, sortOrder: 2 },
   { id: 'newest', label: 'Newest', icon: 'sparkles-outline', enabled: true, sortOrder: 3 },
+];
+
+// ============================================
+// Tab icon fallback mapping (Upgrade 3)
+// ============================================
+const TAB_ICON_MAP: Record<string, keyof typeof Ionicons.glyphMap> = {
+  all: 'grid-outline',
+  salon: 'scissors-outline',
+  spa: 'leaf-outline',
+  barber: 'cut-outline',
+  delivery: 'bicycle-outline',
+  'dine-in': 'restaurant-outline',
+  dinein: 'restaurant-outline',
+  restaurant: 'restaurant-outline',
+  food: 'fast-food-outline',
+  grocery: 'basket-outline',
+  beauty: 'sparkles-outline',
+  fitness: 'barbell-outline',
+  health: 'medkit-outline',
+  fashion: 'shirt-outline',
+  electronics: 'hardware-chip-outline',
+  education: 'book-outline',
+  home: 'home-outline',
+  travel: 'airplane-outline',
+  entertainment: 'film-outline',
+  financial: 'wallet-outline',
+  offers: 'pricetag-outline',
+  experiences: 'rocket-outline',
+  trending: 'trending-up-outline',
+  new: 'sparkles-outline',
+};
+
+// ============================================
+// Promo carousel data (Upgrade 2)
+// ============================================
+const PROMO_CARDS = [
+  {
+    id: 'promo1',
+    title: 'Up to 30% off',
+    subtitle: 'On your first booking today',
+    cta: 'Book Now',
+    icon: 'pricetag-outline' as keyof typeof Ionicons.glyphMap,
+  },
+  {
+    id: 'promo2',
+    title: 'Free Delivery',
+    subtitle: 'On orders above ₹500',
+    cta: 'Order Now',
+    icon: 'bicycle-outline' as keyof typeof Ionicons.glyphMap,
+  },
+  {
+    id: 'promo3',
+    title: 'Earn 2x Coins',
+    subtitle: 'This week only — don\'t miss out',
+    cta: 'Explore',
+    icon: 'star-outline' as keyof typeof Ionicons.glyphMap,
+  },
+];
+
+// ============================================
+// Quick filter pills definition (Upgrade 5)
+// ============================================
+const QUICK_FILTER_PILLS = [
+  { id: 'openNow', label: 'Open Now', icon: 'time-outline' as keyof typeof Ionicons.glyphMap },
+  { id: 'topRated', label: 'Top Rated', icon: 'star-outline' as keyof typeof Ionicons.glyphMap },
+  { id: 'freeDelivery', label: 'Free Delivery', icon: 'bicycle-outline' as keyof typeof Ionicons.glyphMap },
+  { id: 'cashback', label: 'Cashback', icon: 'cash-outline' as keyof typeof Ionicons.glyphMap },
+  { id: 'new', label: 'New', icon: 'sparkles-outline' as keyof typeof Ionicons.glyphMap },
 ];
 
 // ============================================
@@ -226,12 +298,42 @@ const StoreCard = ({
   const reviewBonus = store.rewardRules?.reviewBonusCoins || defaultReviewBonus;
   const visitMilestone = store.rewardRules?.visitMilestoneRewards?.[0]?.visits || defaultVisitMilestone;
 
+  // Build tag pills for the tags row (Upgrade 1)
+  const getTagPills = (): string[] => {
+    if (store.tags && Array.isArray(store.tags) && store.tags.length > 0) {
+      return store.tags
+        .filter((tag: string) => !tagExclusions.includes(tag.toLowerCase()))
+        .slice(0, 3)
+        .map((t: string) => t.charAt(0).toUpperCase() + t.slice(1));
+    }
+    return store.category?.name ? [store.category.name] : [];
+  };
+  const tagPills = getTagPills();
+
+  // Price range indicator (Upgrade 1)
+  const getPriceRange = (): string => {
+    const p = store.priceForTwo || 0;
+    if (p === 0) return '';
+    if (p < 300) return '₹';
+    if (p < 700) return '₹₹';
+    return '₹₹₹';
+  };
+  const priceRange = getPriceRange();
+
+  // Rating stars (Upgrade 8)
+  const ratingValue = store.ratings?.average || store.rating || 4.5;
+  const ratingCount = store.ratings?.count || 0;
+  const ratingDisplay = ratingCount >= 1000
+    ? `${(ratingCount / 1000).toFixed(1)}k`
+    : ratingCount.toString();
+
   return (
     <Pressable
       style={[styles.storeCard, isCompact && styles.storeCardCompact]}
       onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as any)}
-     
+
     >
+      {/* ── Image Area (Upgrade 1: 160px banner) ── */}
       <View style={[styles.storeImageContainer, isCompact && styles.storeImageContainerCompact]}>
         {imageUri && !imageError ? (
           <CachedImage
@@ -247,11 +349,11 @@ const StoreCard = ({
           </View>
         )}
         <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.7)']}
+          colors={['transparent', 'rgba(0,0,0,0.65)']}
           style={styles.storeImageGradient}
         />
 
-        {/* Badges */}
+        {/* Top-left badges */}
         <View style={styles.storeBadges}>
           {showNewBadge && (
             <View style={[styles.badgeNew, { backgroundColor: primaryColor }]}>
@@ -280,47 +382,78 @@ const StoreCard = ({
               <Text style={styles.badgePureVegText}>Pure Veg</Text>
             </View>
           )}
-          {store.offers?.cashback && (
-            <View style={styles.badgeCashbackPurple}>
-              <Text style={styles.badgeCashbackPurpleText}>{store.offers.cashback}% cashback</Text>
-            </View>
-          )}
         </View>
 
-        {/* Rating Badge */}
+        {/* Cashback badge overlaid on image (Upgrade 1 & 7) */}
+        {store.offers?.cashback && (
+          <View style={styles.cashbackOverlayBadge}>
+            <Ionicons name="cash-outline" size={10} color={colors.background.primary} />
+            <Text style={styles.cashbackOverlayText}>{store.offers.cashback}% cashback</Text>
+          </View>
+        )}
+
+        {/* Distance badge overlaid on image (Upgrade 7) */}
+        {store.distance && (
+          <View style={styles.distanceOverlayBadge}>
+            <Ionicons name="location-outline" size={10} color={colors.background.primary} />
+            <Text style={styles.distanceOverlayText}>{store.distance} km</Text>
+          </View>
+        )}
+
+        {/* Rating badge on image bottom-left (Upgrade 8) */}
         <View style={styles.storeRating}>
-          <Ionicons name="star" size={12} color={colors.warningScale[400]} />
-          <Text style={styles.storeRatingText}>
-            {store.ratings?.average?.toFixed(1) || '4.5'}
-          </Text>
-          <Text style={styles.storeRatingCount}>
-            ({store.ratings?.count || 0})
-          </Text>
+          <Ionicons name="star" size={11} color={colors.warningScale[400]} />
+          <Text style={styles.storeRatingText}>{ratingValue.toFixed(1)}</Text>
+          {ratingCount > 0 && (
+            <Text style={styles.storeRatingCount}>({ratingDisplay})</Text>
+          )}
         </View>
       </View>
 
+      {/* ── Content Area ── */}
       <View style={styles.storeContent}>
-        <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
-        <Text style={styles.storeTags} numberOfLines={1}>{getDisplayTags()}</Text>
-
-        {/* Meta Info */}
-        <View style={styles.storeMeta}>
-          <View style={styles.storeMetaItem}>
-            <Ionicons name="location-outline" size={12} color={colors.neutral[500]} />
-            <Text style={styles.storeMetaText}>
-              {store.distance ? `${store.distance} km` : store.location?.city || 'Nearby'}
-            </Text>
+        {/* Store name + inline rating stars (Upgrade 8) */}
+        <View style={styles.storeNameRow}>
+          <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
+          <View style={styles.inlineStarRow}>
+            {[1,2,3,4,5].map(i => (
+              <Ionicons
+                key={i}
+                name={i <= Math.round(ratingValue) ? 'star' : 'star-outline'}
+                size={11}
+                color={colors.warningScale[400]}
+              />
+            ))}
           </View>
+        </View>
+
+        {/* Tag pills row (Upgrade 1) */}
+        {tagPills.length > 0 && (
+          <View style={styles.tagPillsRow}>
+            {tagPills.map((tag, idx) => (
+              <View key={idx} style={[styles.tagPill, { backgroundColor: `${primaryColor}18` }]}>
+                <Text style={[styles.tagPillText, { color: primaryColor }]}>{tag}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* Meta row: distance (if no overlay), delivery time, price range */}
+        <View style={styles.storeMeta}>
+          {!store.distance && (
+            <View style={styles.storeMetaItem}>
+              <Ionicons name="location-outline" size={12} color={colors.neutral[500]} />
+              <Text style={styles.storeMetaText}>{store.location?.city || 'Nearby'}</Text>
+            </View>
+          )}
           <View style={styles.storeMetaItem}>
             <Ionicons name="time-outline" size={12} color={colors.neutral[500]} />
-            <Text style={styles.storeMetaText}>
-              {store.operationalInfo?.deliveryTime || '30-35 min'}
-            </Text>
+            <Text style={styles.storeMetaText}>{store.operationalInfo?.deliveryTime || '30-35 min'}</Text>
           </View>
-          {store.priceForTwo && (
-            <Text style={styles.storePriceForTwo}>
-              {currencySymbol}{store.priceForTwo} for two
-            </Text>
+          {priceRange !== '' && (
+            <View style={styles.storeMetaItem}>
+              <Text style={styles.priceRangeText}>{priceRange}</Text>
+            </View>
           )}
         </View>
 
@@ -346,45 +479,37 @@ const StoreCard = ({
           </View>
         )}
 
-        {/* Rewards Row */}
-        <View style={styles.storeRewardsRow}>
+        {/* Bottom row: coins + Book Now button (Upgrade 1) */}
+        <View style={styles.storeBottomRow}>
           <View style={styles.storeCoins}>
-            <Ionicons name="star" size={14} color={colors.warningScale[400]} />
-            <Text style={styles.storeCoinsText}>
-              Earn {currencySymbol}{coinsEarned} coins
-            </Text>
+            <Ionicons name="star" size={13} color={colors.warningScale[400]} />
+            <Text style={styles.storeCoinsText}>+{coinsEarned} coins</Text>
+            <Text style={styles.reviewBonusText}>  +{reviewBonus} review</Text>
           </View>
-          <Text style={styles.reviewBonusText}>
-            +{currencySymbol}{reviewBonus} for review
-          </Text>
+          <Pressable
+            style={[styles.bookNowButton, { backgroundColor: primaryColor }]}
+            onPress={(e) => {
+              e.stopPropagation();
+              if (showReserveButton) {
+                router.push(`/MainCategory/${categorySlug}/book-table?storeId=${store._id || store.id}` as any);
+              } else {
+                router.push(`/MainStorePage?storeId=${store._id || store.id}` as any);
+              }
+            }}
+          >
+            <Text style={styles.bookNowText}>{showReserveButton ? 'Reserve' : 'Visit'}</Text>
+          </Pressable>
         </View>
 
         {/* Visit Progress */}
         <View style={styles.visitProgressRow}>
-          <Text style={styles.visitProgressText}>
-            {userVisitCount}/{visitMilestone} visits
-          </Text>
+          <Text style={styles.visitProgressText}>{userVisitCount}/{visitMilestone} visits</Text>
           {userVisitCount < visitMilestone && (
             <Pressable onPress={() => router.push('/my-visits' as any)}>
               <Text style={[styles.unlockRewardText, { color: primaryColor }]}>Unlock reward</Text>
             </Pressable>
           )}
         </View>
-
-        {/* Reserve Button */}
-        {showReserveButton && (
-          <Pressable
-            style={styles.reserveButton}
-            onPress={(e) => {
-              e.stopPropagation();
-              router.push(`/MainCategory/${categorySlug}/book-table?storeId=${store._id || store.id}` as any);
-            }}
-           
-          >
-            <Ionicons name="calendar-outline" size={14} color={colors.background.primary} />
-            <Text style={styles.reserveButtonText}>Reserve</Text>
-          </Pressable>
-        )}
       </View>
     </Pressable>
   );
@@ -467,6 +592,12 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
   const [showSortModal, setShowSortModal] = useState(false);
   const [activeFilters, setActiveFilters] = useState<{ minRating?: number; openNow?: boolean; priceMax?: number }>({});
   const [activeDietary, setActiveDietary] = useState<string[]>([]);
+
+  // Quick filter pills state (Upgrade 5)
+  const [activeQuickFilters, setActiveQuickFilters] = useState<string[]>([]);
+
+  // Promo carousel dot index (Upgrade 2)
+  const [promoIndex, setPromoIndex] = useState(0);
 
   // User visit counts (storeId -> count)
   const [visitCounts, setVisitCounts] = useState<Record<string, number>>({});
@@ -802,9 +933,29 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
       result = result.filter(s => (s.priceForTwo || 0) <= activeFilters.priceMax!);
     }
 
-    // Open Now filter
-    if (activeFilters.openNow) {
+    // Open Now filter (from filter chips or quick pills)
+    if (activeFilters.openNow || activeQuickFilters.includes('openNow')) {
       result = result.filter(s => isStoreOpen(s).isOpen);
+    }
+
+    // Top Rated quick pill
+    if (activeQuickFilters.includes('topRated')) {
+      result = result.filter(s => (s.ratings?.average || s.rating || 0) >= 4);
+    }
+
+    // Free Delivery quick pill
+    if (activeQuickFilters.includes('freeDelivery')) {
+      result = result.filter(s => s.operationalInfo?.deliveryFee === 0);
+    }
+
+    // Cashback quick pill
+    if (activeQuickFilters.includes('cashback')) {
+      result = result.filter(s => s.offers?.cashback);
+    }
+
+    // New quick pill
+    if (activeQuickFilters.includes('new')) {
+      result = result.filter(s => s.isNew || s.showNewBadge);
     }
 
     // Sort
@@ -822,7 +973,7 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
     });
 
     return result;
-  }, [stores, tabStores, extraStores, currentTab, activeDietary, dietaryOptions, activeFilters, sortOption]);
+  }, [stores, tabStores, extraStores, currentTab, activeDietary, dietaryOptions, activeFilters, activeQuickFilters, sortOption]);
 
   // ============================================
   // Pagination
@@ -874,7 +1025,7 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
     setAllStoresPage(1);
     setExtraStores([]);
     setHasMoreStores(true);
-  }, [sortOption, activeFilters, activeDietary, activeTab]);
+  }, [sortOption, activeFilters, activeDietary, activeTab, activeQuickFilters]);
 
   // ============================================
   // Refresh handler
@@ -1080,16 +1231,49 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
           <Text style={styles.sectionCount}>{displayStores.length}+ places</Text>
         </View>
 
+        {/* Quick Filter Pills (Upgrade 5) */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickFilterContent} style={styles.quickFilterBar}>
+          {QUICK_FILTER_PILLS.map(pill => {
+            const isActive = activeQuickFilters.includes(pill.id);
+            return (
+              <Pressable
+                key={pill.id}
+                style={[styles.quickFilterPill, isActive && { backgroundColor: primaryColor }]}
+                onPress={() => setActiveQuickFilters(prev =>
+                  isActive ? prev.filter(f => f !== pill.id) : [...prev, pill.id]
+                )}
+              >
+                <Ionicons name={pill.icon} size={13} color={isActive ? colors.background.primary : colors.neutral[600]} />
+                <Text style={[styles.quickFilterPillText, isActive && styles.quickFilterPillTextActive]}>{pill.label}</Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
         {/* Store Cards Grid */}
         <View style={styles.storesGrid}>
           {isDataLoading || isLoadingTabStores ? (
             <StoreCardSkeleton count={3} />
           ) : displayStores.length === 0 ? (
-            <EmptyState
-              icon="storefront-outline"
-              title="No stores found"
-              message="Try changing your filters or check back later."
-            />
+            // Upgrade 6: Category-specific empty state
+            <View style={styles.emptyStateContainer}>
+              <Ionicons name="storefront-outline" size={64} color={colors.neutral[300]} />
+              <Text style={styles.emptyStateTitle}>No stores found</Text>
+              <Text style={styles.emptyStateMessage}>
+                {slug.includes('beauty') || slug.includes('wellness')
+                  ? 'No salons found nearby. Try expanding your search area.'
+                  : slug.includes('food') || slug.includes('dining') || slug.includes('grocery')
+                    ? 'No restaurants found nearby. Try changing your location.'
+                    : `No stores found in this category. Try adjusting your filters.`}
+              </Text>
+              <Pressable
+                style={[styles.emptyStateButton, { backgroundColor: primaryColor }]}
+                onPress={() => router.push('/location' as any)}
+              >
+                <Ionicons name="location-outline" size={16} color={colors.background.primary} />
+                <Text style={styles.emptyStateButtonText}>Change Location</Text>
+              </Pressable>
+            </View>
           ) : (
             <>
               {displayStores.map((store) => (
@@ -1404,32 +1588,87 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
         )}
         </SectionErrorBoundary>
 
-        {/* Tabs */}
+        {/* Promo Carousel (Upgrade 2) — only shown when there are stores */}
+        {(stores.length > 0 || displayStores.length > 0) && (
+          <View style={styles.promoCarouselContainer}>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              onMomentumScrollEnd={(e) => {
+                const idx = Math.round(e.nativeEvent.contentOffset.x / (SCREEN_WIDTH - 32));
+                setPromoIndex(idx);
+              }}
+              contentContainerStyle={styles.promoCarouselContent}
+            >
+              {PROMO_CARDS.map((card) => (
+                <LinearGradient
+                  key={card.id}
+                  colors={[primaryColor, `${primaryColor}CC`, `${primaryColor}99`]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.promoCard}
+                >
+                  <View style={styles.promoCardInner}>
+                    <View style={styles.promoIconWrap}>
+                      <Ionicons name={card.icon} size={28} color="rgba(255,255,255,0.9)" />
+                    </View>
+                    <View style={styles.promoTextBlock}>
+                      <Text style={styles.promoTitle}>{card.title}</Text>
+                      <Text style={styles.promoSubtitle}>{card.subtitle}</Text>
+                      <Text style={styles.promoCta}>{card.cta} →</Text>
+                    </View>
+                  </View>
+                </LinearGradient>
+              ))}
+            </ScrollView>
+            {/* Dot indicators */}
+            <View style={styles.promoDots}>
+              {PROMO_CARDS.map((_, i) => (
+                <View
+                  key={i}
+                  style={[
+                    styles.promoDot,
+                    i === promoIndex && [styles.promoDotActive, { backgroundColor: primaryColor }],
+                  ]}
+                />
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Tabs (Upgrade 3: icon above text, filled active background) */}
         {tabs.length > 0 && (
           <View style={styles.tabsContainer}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabs}>
-              {tabs.map((tab) => (
-                <Pressable
-                  key={tab.id}
-                  onPress={() => setActiveTab(tab.id)}
-                  style={[
-                    styles.tab,
-                    activeTab === tab.id && [styles.tabActive, { backgroundColor: primaryColor }],
-                  ]}
-                >
-                  <Ionicons
-                    name={tab.icon as any}
-                    size={18}
-                    color={activeTab === tab.id ? colors.background.primary : colors.neutral[500]}
-                  />
-                  <Text style={[
-                    styles.tabLabel,
-                    activeTab === tab.id && styles.tabLabelActive,
-                  ]}>
-                    {tab.label}
-                  </Text>
-                </Pressable>
-              ))}
+              {tabs.map((tab) => {
+                const isActive = activeTab === tab.id;
+                // Resolve icon: use tab.icon from backend, fallback to TAB_ICON_MAP, then grid-outline
+                const resolvedIcon: keyof typeof Ionicons.glyphMap =
+                  (tab.icon as keyof typeof Ionicons.glyphMap) ||
+                  TAB_ICON_MAP[tab.id.toLowerCase()] ||
+                  TAB_ICON_MAP[tab.label?.toLowerCase()] ||
+                  'grid-outline';
+                return (
+                  <Pressable
+                    key={tab.id}
+                    onPress={() => setActiveTab(tab.id)}
+                    style={[
+                      styles.tab,
+                      isActive && [styles.tabActive, { backgroundColor: primaryColor }],
+                    ]}
+                  >
+                    <Ionicons
+                      name={resolvedIcon}
+                      size={18}
+                      color={isActive ? colors.background.primary : colors.neutral[600]}
+                    />
+                    <Text style={[styles.tabLabel, isActive && styles.tabLabelActive]}>
+                      {tab.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
             </ScrollView>
           </View>
         )}
@@ -1587,35 +1826,178 @@ const styles = StyleSheet.create({
     color: colors.neutral[900],
   },
 
-  // Tabs
+  // ── Promo Carousel (Upgrade 2) ────────────────────────────────────────────
+  promoCarouselContainer: {
+    marginTop: 14,
+    marginHorizontal: 16,
+  },
+  promoCarouselContent: {
+    gap: 0,
+  },
+  promoCard: {
+    width: SCREEN_WIDTH - 32,
+    height: 140,
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginRight: 0,
+  },
+  promoCardInner: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+    gap: 16,
+  },
+  promoIconWrap: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  promoTextBlock: {
+    flex: 1,
+  },
+  promoTitle: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: colors.background.primary,
+    marginBottom: 4,
+  },
+  promoSubtitle: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.85)',
+    marginBottom: 8,
+  },
+  promoCta: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.9)',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  promoDots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginTop: 10,
+    gap: 6,
+  },
+  promoDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: colors.neutral[300],
+  },
+  promoDotActive: {
+    width: 18,
+    height: 6,
+    borderRadius: 3,
+  },
+
+  // ── Tabs (Upgrade 3) ──────────────────────────────────────────────────────
   tabsContainer: {
     backgroundColor: colors.background.primary,
-    paddingVertical: 8,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.neutral[100],
+    marginTop: 14,
   },
   tabs: {
     paddingHorizontal: 16,
     gap: 8,
+    alignItems: 'center',
   },
   tab: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+    backgroundColor: colors.neutral[100],
     gap: 6,
   },
-  tabActive: {},
+  tabActive: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 2,
+  },
   tabLabel: {
-    fontSize: 14,
-    color: colors.neutral[500],
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.neutral[600],
   },
   tabLabelActive: {
     color: colors.background.primary,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   tabContent: {
     paddingTop: 16,
+  },
+
+  // ── Quick Filter Pills (Upgrade 5) ─────────────────────────────────────────
+  quickFilterBar: {
+    marginBottom: 8,
+  },
+  quickFilterContent: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    gap: 8,
+  },
+  quickFilterPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    backgroundColor: colors.neutral[100],
+    gap: 5,
+    borderWidth: 1,
+    borderColor: colors.neutral[200],
+  },
+  quickFilterPillText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.neutral[700],
+  },
+  quickFilterPillTextActive: {
+    color: colors.background.primary,
+  },
+
+  // ── Empty State (Upgrade 6) ────────────────────────────────────────────────
+  emptyStateContainer: {
+    alignItems: 'center',
+    paddingVertical: 48,
+    paddingHorizontal: 24,
+    gap: 12,
+  },
+  emptyStateTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.neutral[700],
+    textAlign: 'center',
+  },
+  emptyStateMessage: {
+    fontSize: 14,
+    color: colors.neutral[500],
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  emptyStateButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 24,
+    marginTop: 8,
+  },
+  emptyStateButtonText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.background.primary,
   },
 
   // Section
@@ -1722,12 +2104,17 @@ const styles = StyleSheet.create({
     gap: 16,
   },
 
-  // Store Card (mirrors RestaurantCard)
+  // ── Store Card (Upgrade 1, 7, 8) ──────────────────────────────────────────
   storeCard: {
     borderRadius: 16,
     backgroundColor: colors.background.primary,
     overflow: 'hidden',
     marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
   },
   storeCardCompact: {
     minWidth: 200,
@@ -1735,18 +2122,18 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   storeImageContainer: {
-    height: 180,
+    height: 160,      // Upgrade 1: 160px banner height
     position: 'relative',
   },
   storeImageContainerCompact: {
-    height: 120,
+    height: 110,
   },
   storeImage: {
     width: '100%',
     height: '100%',
   },
   storeImagePlaceholder: {
-    backgroundColor: colors.neutral[200],
+    backgroundColor: colors.neutral[100],
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1763,14 +2150,16 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    height: '50%',
+    height: '55%',
   },
   storeBadges: {
     position: 'absolute',
     top: 8,
     left: 8,
     flexDirection: 'row',
+    flexWrap: 'wrap',
     gap: 4,
+    maxWidth: '70%',
   },
   badge60Min: {
     flexDirection: 'row',
@@ -1808,6 +2197,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.background.primary,
   },
+  // kept for backward compat (no longer used in new layout but don't remove)
   badgeCashbackPurple: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -1836,11 +2226,48 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 12,
     gap: 4,
+    backgroundColor: 'rgba(255,255,255,0.92)',
   },
   statusDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
+  },
+  // Cashback overlay badge (Upgrade 1)
+  cashbackOverlayBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 12,
+    backgroundColor: colors.brand.purpleLight,
+    gap: 4,
+  },
+  cashbackOverlayText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: colors.background.primary,
+  },
+  // Distance overlay badge (Upgrade 7)
+  distanceOverlayBadge: {
+    position: 'absolute',
+    bottom: 8,
+    right: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    gap: 3,
+  },
+  distanceOverlayText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: colors.background.primary,
   },
   storeRating: {
     position: 'absolute',
@@ -1850,13 +2277,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    gap: 4,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    gap: 3,
   },
   storeRatingText: {
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.neutral[900],
   },
   storeRatingCount: {
@@ -1864,33 +2291,61 @@ const styles = StyleSheet.create({
     color: colors.neutral[500],
   },
   storeContent: {
-    padding: 12,
+    padding: 14,
+  },
+  // Store name row with inline stars (Upgrade 8)
+  storeNameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 6,
   },
   storeName: {
+    flex: 1,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.neutral[900],
-    marginBottom: 2,
+    marginRight: 8,
   },
-  storeTags: {
-    fontSize: 12,
-    color: colors.neutral[500],
+  inlineStarRow: {
+    flexDirection: 'row',
+    gap: 1,
+  },
+  // Tag pills row (Upgrade 1)
+  tagPillsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 6,
+    marginBottom: 8,
+  },
+  tagPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 20,
+  },
+  tagPillText: {
+    fontSize: 11,
+    fontWeight: '600',
   },
   storeMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 6,
     marginBottom: 8,
-    gap: 12,
+    gap: 10,
   },
   storeMetaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 3,
   },
   storeMetaText: {
     fontSize: 11,
     color: colors.neutral[500],
+  },
+  priceRangeText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.neutral[600],
   },
   storePriceForTwo: {
     fontSize: 11,
@@ -1901,7 +2356,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 8,
+    marginBottom: 10,
     flexWrap: 'wrap',
   },
   freeDeliveryBadge: {
@@ -1915,27 +2370,40 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.successScale[700],
   },
-  storeRewardsRow: {
+  // Bottom row: coins + book button (Upgrade 1)
+  storeBottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 8,
+    paddingTop: 10,
     borderTopWidth: 1,
     borderTopColor: colors.neutral[100],
+    gap: 8,
   },
   storeCoins: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    flex: 1,
   },
   storeCoinsText: {
     fontSize: 12,
-    fontWeight: '500',
-    color: colors.warningScale[400],
+    fontWeight: '600',
+    color: colors.warningScale[500],
   },
   reviewBonusText: {
     fontSize: 11,
-    color: colors.neutral[500],
+    color: colors.neutral[400],
+  },
+  bookNowButton: {
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  bookNowText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.background.primary,
   },
   visitProgressRow: {
     flexDirection: 'row',
@@ -1946,12 +2414,13 @@ const styles = StyleSheet.create({
   visitProgressText: {
     fontSize: 11,
     fontWeight: '500',
-    color: colors.neutral[500],
+    color: colors.neutral[400],
   },
   unlockRewardText: {
     fontSize: 11,
     fontWeight: '600',
   },
+  // kept for backward compat (reserve button now replaced by bookNowButton)
   reserveButton: {
     flexDirection: 'row',
     alignItems: 'center',

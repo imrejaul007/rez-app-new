@@ -5,12 +5,17 @@
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, ImageSourcePropType } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ImageSourcePropType, Dimensions } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { CategoryGridItem, BrowseCategoryGridProps } from '@/types/categoryTypes';
 import { colors } from '@/constants/theme';
+
+const SCREEN_WIDTH = Dimensions.get('window').width;
+// 2-column grid: full width minus outer padding (16*2) minus gap between columns (12) divided by 2
+const CARD_WIDTH = (SCREEN_WIDTH - 32 - 12) / 2;
 
 // Map category IDs to local asset images
 const CATEGORY_IMAGES: Record<string, ImageSourcePropType> = {
@@ -256,25 +261,55 @@ const CategoryIcon: React.FC<CategoryIconProps> = ({ category, onPress, countLab
     ? (CATEGORY_ICON_FALLBACK[category.id] || (category.slug ? CATEGORY_ICON_FALLBACK[category.slug] : undefined))
     : undefined;
 
+  // Derive accent color for gradient
+  const accentColor = iconFallback?.color || color;
+
   return (
     <Pressable
       style={styles.categoryItem}
       onPress={() => onPress(category)}
-     
     >
+      {/* Upgrade 4: 120x120 card with gradient overlay */}
       <View style={styles.itemCard}>
         {imageSource ? (
-          <CachedImage source={imageSource} style={styles.itemImage} contentFit="contain" cachePolicy="memory-disk" recyclingKey={category.id} />
+          <>
+            <CachedImage source={imageSource} style={styles.itemImage} contentFit="contain" cachePolicy="memory-disk" recyclingKey={category.id} />
+            {/* Subtle gradient overlay for images */}
+            <LinearGradient
+              colors={['transparent', `${accentColor}30`]}
+              style={styles.imageGradientOverlay}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 0, y: 1 }}
+            />
+          </>
         ) : iconFallback ? (
-          <View style={[styles.emojiContainer, { backgroundColor: `${iconFallback.color}15` }]}>
-            <Ionicons name={iconFallback.name} size={36} color={iconFallback.color} />
-          </View>
+          <LinearGradient
+            colors={[`${iconFallback.color}18`, `${iconFallback.color}30`]}
+            style={styles.emojiContainer}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <Ionicons name={iconFallback.name} size={40} color={iconFallback.color} />
+          </LinearGradient>
         ) : (
-          <View style={[styles.emojiContainer, { backgroundColor: `${color}20` }]}>
+          <LinearGradient
+            colors={[`${color}15`, `${color}28`]}
+            style={styles.emojiContainer}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
             <Text style={styles.iconEmoji}>{icon}</Text>
+          </LinearGradient>
+        )}
+
+        {/* Store count badge (Upgrade 4) */}
+        {category.itemCount !== undefined && category.itemCount > 0 && (
+          <View style={styles.countBadge}>
+            <Text style={styles.countBadgeText}>{category.itemCount}+</Text>
           </View>
         )}
       </View>
+
       <Text style={styles.categoryName} numberOfLines={2}>
         {category.name}
       </Text>
@@ -317,7 +352,7 @@ const BrowseCategoryGrid: React.FC<BrowseCategoryGridProps> = ({
         </View>
       </View>
 
-      {/* 4-column Grid */}
+      {/* 2-column Grid (Upgrade 4) */}
       <View style={styles.grid}>
         {categories.map((category) => (
           <CategoryIcon
@@ -334,7 +369,7 @@ const BrowseCategoryGrid: React.FC<BrowseCategoryGridProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16,
+    paddingVertical: 20,
     backgroundColor: COLORS.background,
   },
   header: {
@@ -360,52 +395,85 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: COLORS.textPrimary,
   },
+  // Upgrade 4: 2-column grid with 12px gap
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 8,
+    paddingHorizontal: 16,
+    gap: 12,
   },
   categoryItem: {
-    width: '25%', // 4 columns
+    width: CARD_WIDTH,
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 4,
   },
+  // Upgrade 4: 120x120 card with shadow
   itemCard: {
-    width: '85%',
-    aspectRatio: 1,
-    borderRadius: 12,
-    backgroundColor: '#F8F8F8',
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+    backgroundColor: '#F4F4F6',
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    marginBottom: 6,
+    marginBottom: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    elevation: 2,
+    alignSelf: 'center',
   },
   itemImage: {
-    width: '85%',
-    height: '85%',
+    width: '80%',
+    height: '80%',
+  },
+  // Gradient overlay on image cards (Upgrade 4)
+  imageGradientOverlay: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '40%',
+    borderRadius: 16,
   },
   emojiContainer: {
     width: '100%',
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 12,
   },
   iconEmoji: {
-    fontSize: 28,
+    fontSize: 36,
+  },
+  // Store count badge on card (Upgrade 4)
+  countBadge: {
+    position: 'absolute',
+    top: 6,
+    right: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  countBadgeText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: '#fff',
   },
   categoryName: {
-    fontSize: 11,
-    fontWeight: '500',
+    fontSize: 12,
+    fontWeight: '600',
     color: COLORS.textPrimary,
     textAlign: 'center',
-    lineHeight: 14,
-    paddingHorizontal: 2,
+    lineHeight: 16,
+    paddingHorizontal: 4,
   },
   itemCount: {
-    fontSize: 9,
+    fontSize: 10,
     color: COLORS.textSecondary,
     marginTop: 2,
+    fontWeight: '500',
   },
 });
 
