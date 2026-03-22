@@ -121,7 +121,30 @@ export const useHomeTabStore = create<HomeTabState>((set) => ({
   },
 
   refreshPriveEligibility: async () => {
-    // TODO: Fetch from backend API /api/prive/eligibility
+    try {
+      // Import here to avoid circular dependencies
+      const apiClient = require('@/services/apiClient').default || require('@/services/apiClient');
+
+      const response = await apiClient.get<PriveEligibility>(
+        '/api/v1/user/prive/eligibility'
+      );
+
+      if (response.success && response.data) {
+        set({
+          priveEligibility: {
+            isEligible: response.data.isEligible ?? false,
+            score: response.data.score ?? 0,
+            tier: response.data.tier ?? 'none',
+            pillars: response.data.pillars ?? [],
+            trustScore: response.data.trustScore ?? 0,
+            hasSeenGlowThisSession: false,
+          },
+        });
+      }
+    } catch (error) {
+      console.warn('[homeTabStore] Failed to fetch Prive eligibility:', error);
+      // Keep the default state on error
+    }
   },
 
   markPriveGlowSeen: () => {
