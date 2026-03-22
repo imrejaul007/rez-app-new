@@ -1,6 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, Pressable, StyleSheet, Dimensions, RefreshControl } from 'react-native';
+import { View, Text, ScrollView, FlatList, Pressable, StyleSheet, Dimensions, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -137,14 +137,41 @@ function ReferralDashboard() {
   const currentTierData = REFERRAL_TIERS[currentTier];
   const tierGradient = TIER_GRADIENTS[currentTier];
 
+  // Prepare leaderboard data for FlatList
+  const leaderboardData = leaderboard.slice(0, 5);
+
   return (
-    <ScrollView
+    <FlatList
         contentContainerStyle={{ paddingBottom: 120 }}
       style={styles.container}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-    >
+      data={leaderboardData}
+      keyExtractor={(item) => item.userId}
+      renderItem={({ item: entry }) => (
+        <View style={styles.leaderboardItem}>
+          <View style={styles.leaderboardRank}>
+            <Text style={styles.leaderboardRankText}>#{entry.rank}</Text>
+          </View>
+          <View style={styles.leaderboardInfo}>
+            <Text style={styles.leaderboardName}>
+              {entry.fullName || entry.username}
+            </Text>
+            <Text style={styles.leaderboardStats}>
+              {entry.totalReferrals} referrals · {currencySymbol}{entry.lifetimeEarnings}
+            </Text>
+          </View>
+          <View style={styles.leaderboardTierBadge}>
+            <Text style={styles.leaderboardTierText}>
+              {REFERRAL_TIERS[entry.tier]?.badge || 'Starter'}
+            </Text>
+          </View>
+        </View>
+      )}
+      scrollEnabled={true}
+      ListHeaderComponent={() => (
+        <>
       {/* Header with Tier Badge */}
       <LinearGradient colors={tierGradient as any} style={styles.header}>
         <View style={styles.headerContent}>
@@ -348,29 +375,42 @@ function ReferralDashboard() {
           </View>
         )}
 
-        {leaderboard.slice(0, 5).map((entry) => (
-          <View key={entry.userId} style={styles.leaderboardItem}>
-            <View style={styles.leaderboardRank}>
-              <Text style={styles.leaderboardRankText}>#{entry.rank}</Text>
-            </View>
-            <View style={styles.leaderboardInfo}>
-              <Text style={styles.leaderboardName}>
-                {entry.fullName || entry.username}
-              </Text>
-              <Text style={styles.leaderboardStats}>
-                {entry.totalReferrals} referrals · {currencySymbol}{entry.lifetimeEarnings}
-              </Text>
-            </View>
-            <View style={styles.leaderboardTierBadge}>
-              <Text style={styles.leaderboardTierText}>
-                {REFERRAL_TIERS[entry.tier]?.badge || 'Starter'}
-              </Text>
-            </View>
+        </>
+      )}
+      ListFooterComponent={() => (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Leaderboard</Text>
+            <Pressable
+              onPress={handleViewLeaderboard}
+              accessibilityLabel="View full leaderboard"
+              accessibilityRole="button"
+              accessibilityHint="Opens complete leaderboard page"
+            >
+              <Text style={styles.viewAllButton}>View All</Text>
+            </Pressable>
           </View>
-        ))}
-      </View>
-    </ScrollView>
-);
+
+          {userRank && (
+            <View style={styles.userRankCard}>
+              <Ionicons name="trophy" size={24} color={Colors.warning} />
+              <View style={styles.userRankInfo}>
+                <Text style={styles.userRankText}>Your Rank</Text>
+                <Text style={styles.userRankNumber}>#{userRank.rank}</Text>
+              </View>
+              <Text style={styles.userRankReferrals}>
+                {userRank.totalReferrals} referrals
+              </Text>
+            </View>
+          )}
+        </View>
+      )}
+      initialNumToRender={5}
+      maxToRenderPerBatch={5}
+      windowSize={10}
+      removeClippedSubviews={true}
+    />
+  );
 }
 
 const styles = StyleSheet.create({

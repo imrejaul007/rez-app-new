@@ -3,7 +3,7 @@ import { BRAND } from '@/constants/brand';
 
 // Core Coin Types - Updated for new wallet design
 // Note: Backend uses 'rez', frontend displays as 'nuqta' for branding consistency
-export type CoinType = 'rez' | 'nuqta' | 'branded' | 'promo';
+export type CoinType = 'rez' | 'nuqta' | 'branded' | 'promo' | 'prive';
 
 // Branded Coin Details (merchant-specific)
 export interface BrandedCoinDetails {
@@ -162,7 +162,7 @@ export type TransactionStatus = 'completed' | 'pending' | 'failed';
 export type WalletErrorCode = 'NETWORK_ERROR' | 'SERVER_ERROR' | 'PARSING_ERROR' | 'UNAUTHORIZED' | 'TIMEOUT' | 'REAUTH_REQUIRED' | 'FEATURE_DISABLED' | 'VELOCITY_LIMIT' | 'WALLET_FROZEN' | 'INSUFFICIENT_BALANCE' | 'UNKNOWN';
 
 // Coin Usage Order - Promo > Branded > Rez (automatic)
-export const COIN_USAGE_ORDER: CoinType[] = ['promo', 'branded', 'nuqta'];
+export const COIN_USAGE_ORDER: CoinType[] = ['promo', 'branded', 'prive', 'nuqta'];
 
 // Constants - Updated for new wallet design
 // Note: 'rez' and 'nuqta' are aliases - backend uses 'rez', frontend displays 'nuqta'
@@ -198,6 +198,14 @@ export const COIN_TYPES: Record<CoinType, { name: string; color: string; amountC
     backgroundColor: '#FEF3C7',
     icon: 'promo-coin.png',
     description: 'Special coins from campaigns & events'
+  },
+  prive: {
+    name: 'Privé Coins',
+    color: '#B8860B', // Dark gold
+    amountColor: '#7A5C00', // Deep gold for text (WCAG AA compliant)
+    backgroundColor: '#FDF6E3',
+    icon: 'prive-coin.png',
+    description: 'Premium member exclusive rewards'
   }
 };
 

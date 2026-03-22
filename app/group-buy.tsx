@@ -8,6 +8,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  FlatList,
   Pressable,
   StatusBar,
   RefreshControl,
@@ -198,16 +199,17 @@ const GroupBuyPage = () => {
     }
 
     return (
-      <ScrollView
+      <FlatList
         contentContainerStyle={{ paddingBottom: 120 }}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
-      >
-        {groupBuying.availableGroups.map((group) => (
-          <View key={group.id}>
+        data={groupBuying.availableGroups}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item: group }) => (
+          <View>
             <GroupCard
               group={group}
               onPress={() => handleGroupPress(group)}
@@ -226,9 +228,14 @@ const GroupBuyPage = () => {
               </View>
             )}
           </View>
-        ))}
-        <View style={styles.bottomSpacing} />
-      </ScrollView>
+        )}
+        ListFooterComponent={() => <View style={styles.bottomSpacing} />}
+        scrollEnabled={true}
+        initialNumToRender={5}
+        maxToRenderPerBatch={3}
+        windowSize={10}
+        removeClippedSubviews={true}
+      />
     );
   };
 
@@ -267,15 +274,16 @@ const GroupBuyPage = () => {
     }
 
     return (
-      <ScrollView
+      <FlatList
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
-      >
-        {groupBuying.myGroups.map((group) => (
-          <View key={group.id}>
+        data={groupBuying.myGroups}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item: group }) => (
+          <View>
             <GroupCard group={group} onPress={() => handleGroupPress(group)} />
 
             {/* Expanded Group Details */}
@@ -314,9 +322,15 @@ const GroupBuyPage = () => {
               </View>
             )}
           </View>
-        ))}
-        <View style={styles.bottomSpacing} />
-      </ScrollView>
+        )}
+        ListFooterComponent={() => <View style={styles.bottomSpacing} />}
+        scrollEnabled={true}
+        initialNumToRender={5}
+        maxToRenderPerBatch={3}
+        windowSize={10}
+        removeClippedSubviews={true}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      />
     );
   };
 
@@ -339,19 +353,18 @@ const GroupBuyPage = () => {
     }
 
     return (
-      <ScrollView
+      <FlatList
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
-      >
-        {groupBuying.availableProducts.map((product) => (
+        data={groupBuying.availableProducts}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item: product }) => (
           <Pressable
-            key={product.id}
             style={styles.productCard}
             onPress={() => handleProductSelect(product)}
-           
           >
             <View style={styles.productContent}>
               <Text style={styles.productName}>{product.name}</Text>
@@ -383,9 +396,15 @@ const GroupBuyPage = () => {
               <Ionicons name="add-circle" size={24} color={Colors.brand.purpleLight} />
             </View>
           </Pressable>
-        ))}
-        <View style={styles.bottomSpacing} />
-      </ScrollView>
+        )}
+        ListFooterComponent={() => <View style={styles.bottomSpacing} />}
+        scrollEnabled={true}
+        initialNumToRender={6}
+        maxToRenderPerBatch={4}
+        windowSize={10}
+        removeClippedSubviews={true}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      />
     );
   };
 

@@ -8,6 +8,7 @@ import React, { useCallback, useState, useMemo } from 'react';
 import {
   View,
   ScrollView,
+  FlatList,
   StyleSheet,
   RefreshControl,
   Dimensions,
@@ -214,16 +215,13 @@ function EventsListPage() {
     </View>
   );
 
-  // Render events grid
-  const renderEventsGrid = () => (
-    <View style={styles.eventsGrid}>
-      {events.map((event) => (
-        <EventGridCard
-          key={event.id}
-          event={event}
-          onPress={handleEventPress}
-        />
-      ))}
+  // Render event card
+  const renderEventCard = ({ item: event }: { item: EventItem }) => (
+    <View style={{ width: '48%' }}>
+      <EventGridCard
+        event={event}
+        onPress={handleEventPress}
+      />
     </View>
   );
 
@@ -267,7 +265,7 @@ function EventsListPage() {
         )}
 
         {/* Scrollable Content */}
-        <ScrollView
+        <FlatList
           style={styles.content}
           contentContainerStyle={styles.contentContainer}
           showsVerticalScrollIndicator={false}
@@ -279,45 +277,59 @@ function EventsListPage() {
               colors={[Colors.nileBlue]}
             />
           }
-        >
-          {/* Loading State */}
-          {loading && events.length === 0 && <EventsGridSkeleton count={6} />}
+          data={events}
+          keyExtractor={(item) => item.id || Math.random().toString()}
+          renderItem={renderEventCard}
+          numColumns={2}
+          columnWrapperStyle={{ justifyContent: 'space-between', gap: Spacing.base }}
+          scrollEnabled={true}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.3}
+          ListHeaderComponent={() => (
+            <>
+              {/* Loading State */}
+              {loading && events.length === 0 && <EventsGridSkeleton count={6} />}
 
-          {/* Error State */}
-          {error && !loading && events.length === 0 && renderErrorState()}
+              {/* Error State */}
+              {error && !loading && events.length === 0 && renderErrorState()}
 
-          {/* Empty State */}
-          {!loading && !error && events.length === 0 && renderEmptyState()}
-
-          {/* Events Grid */}
-          {events.length > 0 && renderEventsGrid()}
-
-          {/* Load More Button */}
-          {hasMore && events.length > 0 && !loading && (
-            <Pressable
-              style={styles.loadMoreButton}
-              onPress={handleLoadMore}
-             
-            >
-              <ThemedText style={styles.loadMoreText}>
-                Load More Events
-              </ThemedText>
-              <Ionicons name="chevron-down" size={20} color={Colors.nileBlue} />
-            </Pressable>
+              {/* Empty State */}
+              {!loading && !error && events.length === 0 && renderEmptyState()}
+            </>
           )}
+          ListFooterComponent={() => (
+            <>
+              {/* Load More Button */}
+              {hasMore && events.length > 0 && !loading && (
+                <Pressable
+                  style={styles.loadMoreButton}
+                  onPress={handleLoadMore}
+                >
+                  <ThemedText style={styles.loadMoreText}>
+                    Load More Events
+                  </ThemedText>
+                  <Ionicons name="chevron-down" size={20} color={Colors.nileBlue} />
+                </Pressable>
+              )}
 
-          {/* Loading More Indicator */}
-          {loading && events.length > 0 && (
-            <View style={styles.loadingMore}>
-              <ThemedText style={styles.loadingMoreText}>
-                Loading more events...
-              </ThemedText>
-            </View>
+              {/* Loading More Indicator */}
+              {loading && events.length > 0 && (
+                <View style={styles.loadingMore}>
+                  <ThemedText style={styles.loadingMoreText}>
+                    Loading more events...
+                  </ThemedText>
+                </View>
+              )}
+
+              {/* Bottom Spacing */}
+              <View style={styles.bottomSpacer} />
+            </>
           )}
-
-          {/* Bottom Spacing */}
-          <View style={styles.bottomSpacer} />
-        </ScrollView>
+          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          windowSize={10}
+          removeClippedSubviews={true}
+        />
       </SafeAreaView>
 
       {/* Filters Modal */}

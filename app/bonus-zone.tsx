@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  FlatList,
   RefreshControl,
   ActivityIndicator,
   Pressable,
@@ -114,160 +115,153 @@ function BonusZonePage() {
         }}
       />
 
-      <ScrollView
+      <FlatList
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand.orange} />
         }
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <Ionicons name="happy" size={28} color={colors.brand.orange} />
-          <Text style={styles.headerTitle}>Bonus Zone</Text>
-          <Text style={styles.headerSubtitle}>
-            Earn extra coins with time-limited bonus campaigns
-          </Text>
-        </View>
-
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <View style={styles.searchInputWrapper}>
-            <Ionicons name="search-outline" size={18} color={Colors.text.tertiary} style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search campaigns..."
-              placeholderTextColor={colors.neutral[400]}
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              returnKeyType="search"
-              autoCorrect={false}
-              autoCapitalize="none"
-            />
-            {searchQuery.length > 0 && (
-              <Pressable
-                onPress={() => setSearchQuery('')}
-                style={styles.searchClearButton}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <Ionicons name="close-circle" size={18} color={Colors.text.tertiary} />
-              </Pressable>
-            )}
-          </View>
-        </View>
-
-        {/* Filter Tabs */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          style={styles.filtersContainer}
-          contentContainerStyle={styles.filtersContent}
-        >
-          {FILTER_TABS.map((tab) => (
-            <Pressable
-              key={tab.key}
-              style={[
-                styles.filterTab,
-                activeFilter === tab.key && styles.filterTabActive,
-              ]}
-              onPress={() => setActiveFilter(tab.key)}
-            >
-              <Text
-                style={[
-                  styles.filterTabText,
-                  activeFilter === tab.key && styles.filterTabTextActive,
-                ]}
-              >
-                {tab.label}
-              </Text>
-            </Pressable>
-          ))}
-        </ScrollView>
-
-        {/* Results Count */}
-        {!loading && !error && filteredCampaigns.length > 0 && (
-          <View style={styles.resultCount}>
-            <Text style={styles.resultCountText}>
-              {filteredCampaigns.length} campaign{filteredCampaigns.length !== 1 ? 's' : ''}
-              {activeFilter !== 'all' || searchQuery.trim() ? ' found' : ' available'}
-            </Text>
-          </View>
+        data={filteredCampaigns}
+        keyExtractor={(item) => item.slug}
+        renderItem={({ item: campaign }) => (
+          <BonusZoneCard
+            campaign={campaign}
+            currencySymbol={currencySymbol}
+          />
         )}
-
-        {/* Loading / Error State */}
-        {loading ? (
-          <CardGridSkeleton />
-        ) : error ? (
-          <View style={styles.emptyContainer}>
-            <Ionicons name="warning-outline" size={48} color={Colors.error} />
-            <Text style={styles.emptyTitle}>Something went wrong</Text>
-            <Text style={styles.emptySubtitle}>{error}</Text>
-            <Pressable
-              style={{ marginTop: Spacing.base, paddingHorizontal: Spacing.lg, paddingVertical: 10, backgroundColor: colors.brand.orange, borderRadius: BorderRadius.sm }}
-              onPress={fetchCampaigns}
-            >
-              <Text style={{ color: Colors.text.inverse, fontWeight: '600', ...Typography.body }}>Retry</Text>
-            </Pressable>
-          </View>
-        ) : filteredCampaigns.length === 0 ? (
-          /* Empty State */
-          <View style={styles.emptyContainer}>
-            <Ionicons name={searchQuery.trim() ? 'search-outline' : 'gift-outline'} size={48} color={Colors.border.default} />
-            <Text style={styles.emptyTitle}>
-              {searchQuery.trim() ? 'No matching campaigns' : 'No campaigns available'}
-            </Text>
-            <Text style={styles.emptySubtitle}>
-              {searchQuery.trim()
-                ? `No campaigns match "${searchQuery.trim()}". Try a different search.`
-                : activeFilter === 'all'
-                  ? 'Check back soon for new bonus opportunities!'
-                  : 'No campaigns in this category right now.'}
-            </Text>
-          </View>
-        ) : (
+        ListHeaderComponent={() => (
           <>
-            {/* Featured Campaigns */}
-            {featured.length > 0 && (
-              <View style={styles.section}>
-                <Text style={styles.sectionLabel}>Featured</Text>
-                {featured.map((campaign) => (
-                  <BonusZoneCard
-                    key={campaign.slug}
-                    campaign={campaign}
-                    currencySymbol={currencySymbol}
-                  />
-                ))}
+            {/* Header */}
+            <View style={styles.header}>
+              <Ionicons name="happy" size={28} color={colors.brand.orange} />
+              <Text style={styles.headerTitle}>Bonus Zone</Text>
+              <Text style={styles.headerSubtitle}>
+                Earn extra coins with time-limited bonus campaigns
+              </Text>
+            </View>
+
+            {/* Search Bar */}
+            <View style={styles.searchContainer}>
+              <View style={styles.searchInputWrapper}>
+                <Ionicons name="search-outline" size={18} color={Colors.text.tertiary} style={styles.searchIcon} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search campaigns..."
+                  placeholderTextColor={colors.neutral[400]}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  returnKeyType="search"
+                  autoCorrect={false}
+                  autoCapitalize="none"
+                />
+                {searchQuery.length > 0 && (
+                  <Pressable
+                    onPress={() => setSearchQuery('')}
+                    style={styles.searchClearButton}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                  >
+                    <Ionicons name="close-circle" size={18} color={Colors.text.tertiary} />
+                  </Pressable>
+                )}
+              </View>
+            </View>
+
+            {/* Filter Tabs */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.filtersContainer}
+              contentContainerStyle={styles.filtersContent}
+            >
+              {FILTER_TABS.map((tab) => (
+                <Pressable
+                  key={tab.key}
+                  style={[
+                    styles.filterTab,
+                    activeFilter === tab.key && styles.filterTabActive,
+                  ]}
+                  onPress={() => setActiveFilter(tab.key)}
+                >
+                  <Text
+                    style={[
+                      styles.filterTabText,
+                      activeFilter === tab.key && styles.filterTabTextActive,
+                    ]}
+                  >
+                    {tab.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+
+            {/* Results Count */}
+            {!loading && !error && filteredCampaigns.length > 0 && (
+              <View style={styles.resultCount}>
+                <Text style={styles.resultCountText}>
+                  {filteredCampaigns.length} campaign{filteredCampaigns.length !== 1 ? 's' : ''}
+                  {activeFilter !== 'all' || searchQuery.trim() ? ' found' : ' available'}
+                </Text>
               </View>
             )}
 
-            {/* Regular Campaigns */}
-            {regular.length > 0 && (
+            {/* Loading / Error State */}
+            {loading ? (
+              <CardGridSkeleton />
+            ) : error ? (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="warning-outline" size={48} color={Colors.error} />
+                <Text style={styles.emptyTitle}>Something went wrong</Text>
+                <Text style={styles.emptySubtitle}>{error}</Text>
+                <Pressable
+                  style={{ marginTop: Spacing.base, paddingHorizontal: Spacing.lg, paddingVertical: 10, backgroundColor: colors.brand.orange, borderRadius: BorderRadius.sm }}
+                  onPress={fetchCampaigns}
+                >
+                  <Text style={{ color: Colors.text.inverse, fontWeight: '600', ...Typography.body }}>Retry</Text>
+                </Pressable>
+              </View>
+            ) : filteredCampaigns.length === 0 ? (
+              /* Empty State */
+              <View style={styles.emptyContainer}>
+                <Ionicons name={searchQuery.trim() ? 'search-outline' : 'gift-outline'} size={48} color={Colors.border.default} />
+                <Text style={styles.emptyTitle}>
+                  {searchQuery.trim() ? 'No matching campaigns' : 'No campaigns available'}
+                </Text>
+                <Text style={styles.emptySubtitle}>
+                  {searchQuery.trim()
+                    ? `No campaigns match "${searchQuery.trim()}". Try a different search.`
+                    : activeFilter === 'all'
+                      ? 'Check back soon for new bonus opportunities!'
+                      : 'No campaigns in this category right now.'}
+                </Text>
+              </View>
+            ) : (
               <View style={styles.section}>
-                {featured.length > 0 && (
-                  <Text style={styles.sectionLabel}>More Offers</Text>
-                )}
-                {regular.map((campaign) => (
-                  <BonusZoneCard
-                    key={campaign.slug}
-                    campaign={campaign}
-                    currencySymbol={currencySymbol}
-                  />
-                ))}
+                <Text style={styles.sectionLabel}>
+                  {featured.length > 0 ? 'Featured' : 'Campaigns'}
+                </Text>
               </View>
             )}
           </>
         )}
-
-        {/* Claim History Link */}
-        <Pressable
-          style={styles.historyLink}
-          onPress={() => router.push('/bonus-zone-history' as any)}
-        >
-          <Ionicons name="receipt-outline" size={18} color={Colors.text.tertiary} />
-          <Text style={styles.historyLinkText}>View Claim History</Text>
-          <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
-        </Pressable>
-      </ScrollView>
+        ListFooterComponent={() => (
+          <>
+            {/* Claim History Link */}
+            <Pressable
+              style={styles.historyLink}
+              onPress={() => router.push('/bonus-zone-history' as any)}
+            >
+              <Ionicons name="receipt-outline" size={18} color={Colors.text.tertiary} />
+              <Text style={styles.historyLinkText}>View Claim History</Text>
+              <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
+            </Pressable>
+          </>
+        )}
+        scrollEnabled={true}
+        initialNumToRender={8}
+        maxToRenderPerBatch={5}
+        windowSize={10}
+        removeClippedSubviews={true}
+      />
     </>
   );
 }

@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet,
   ScrollView,
+  FlatList,
   Pressable,
   Platform,
   Dimensions,
@@ -54,12 +55,45 @@ function BrandedCoinsScreen() {
       </LinearGradient>
 
       {/* Store Coins List */}
-      <ScrollView
+      <FlatList
         style={styles.scrollContent}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
-      >
-        {brandedCoins.length === 0 ? (
+        data={brandedCoins}
+        keyExtractor={(item) => item.merchantId || Math.random().toString()}
+        renderItem={({ item: bc }) => (
+          <View style={styles.storeCard}>
+            <View style={styles.storeRow}>
+              <View style={[styles.storeIcon, { backgroundColor: (bc.merchantColor || COIN_TYPES.branded.color) + '15' }]}>
+                {bc.merchantLogo ? (
+                  <CachedImage
+                    source={bc.merchantLogo}
+                    style={styles.storeLogo}
+                    contentFit="contain"
+                  />
+                ) : (
+                  <Ionicons
+                    name="storefront"
+                    size={24}
+                    color={bc.merchantColor || COIN_TYPES.branded.color}
+                  />
+                )}
+              </View>
+
+              <View style={styles.storeInfo}>
+                <Text style={styles.storeName}>{bc.merchantName}</Text>
+                <Text style={styles.storeDesc}>Use only at {bc.merchantName}</Text>
+              </View>
+
+              <View style={styles.storeAmountWrap}>
+                <Text style={[styles.storeAmount, { color: bc.merchantColor || COIN_TYPES.branded.color }]}>
+                  RC {bc.amount}
+                </Text>
+              </View>
+            </View>
+          </View>
+        )}
+        ListEmptyComponent={() => (
           <View style={styles.emptyState}>
             <Ionicons name="storefront-outline" size={48} color={colors.neutral[400]} />
             <Text style={styles.emptyTitle}>No Branded Coins Yet</Text>
@@ -67,56 +101,28 @@ function BrandedCoinsScreen() {
               When stores reward you with branded coins, they will appear here
             </Text>
           </View>
-        ) : (
-          brandedCoins.map((bc) => (
-            <View key={bc.merchantId} style={styles.storeCard}>
-              <View style={styles.storeRow}>
-                <View style={[styles.storeIcon, { backgroundColor: (bc.merchantColor || COIN_TYPES.branded.color) + '15' }]}>
-                  {bc.merchantLogo ? (
-                    <CachedImage
-                      source={bc.merchantLogo}
-                      style={styles.storeLogo}
-                      contentFit="contain"
-                    />
-                  ) : (
-                    <Ionicons
-                      name="storefront"
-                      size={24}
-                      color={bc.merchantColor || COIN_TYPES.branded.color}
-                    />
-                  )}
-                </View>
-
-                <View style={styles.storeInfo}>
-                  <Text style={styles.storeName}>{bc.merchantName}</Text>
-                  <Text style={styles.storeDesc}>Use only at {bc.merchantName}</Text>
-                </View>
-
-                <View style={styles.storeAmountWrap}>
-                  <Text style={[styles.storeAmount, { color: bc.merchantColor || COIN_TYPES.branded.color }]}>
-                    RC {bc.amount}
+        )}
+        ListFooterComponent={() => (
+          <>
+            <View style={styles.infoSection}>
+              <View style={styles.infoCard}>
+                <Ionicons name="information-circle-outline" size={20} color={colors.brand.indigo} />
+                <View style={styles.infoContent}>
+                  <Text style={styles.infoTitle}>How Branded Coins Work</Text>
+                  <Text style={styles.infoText}>
+                    Branded coins are awarded by stores as rewards. Each store's coins can only be used at that specific store. They are used automatically during checkout.
                   </Text>
                 </View>
               </View>
             </View>
-          ))
+            <View style={{ height: 40 }} />
+          </>
         )}
-
-        {/* Info Section */}
-        <View style={styles.infoSection}>
-          <View style={styles.infoCard}>
-            <Ionicons name="information-circle-outline" size={20} color={colors.brand.indigo} />
-            <View style={styles.infoContent}>
-              <Text style={styles.infoTitle}>How Branded Coins Work</Text>
-              <Text style={styles.infoText}>
-                Branded coins are awarded by stores as rewards. Each store's coins can only be used at that specific store. They are used automatically during checkout.
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={{ height: 40 }} />
-      </ScrollView>
+        initialNumToRender={10}
+        maxToRenderPerBatch={5}
+        windowSize={10}
+        removeClippedSubviews={true}
+      />
     </View>
   );
 }
