@@ -60,11 +60,17 @@ export interface WalletBalanceResponse {
     pending: number;
     cashback: number;
   };
+  // totalValue is the canonical rupee-equivalent total returned by the API
   totalValue: number;
   breakdown: {
+    // API returns breakdown.rezCoins as an object with amount
     rezCoins: { amount: number; color: string; expiryDate?: string };
-    cashbackBalance: number;
-    pendingRewards: number;
+    // API returns cashback as breakdown.cashback (not cashbackBalance)
+    cashback?: number;
+    cashbackBalance?: number;
+    // API returns pending as breakdown.pending (not pendingRewards)
+    pending?: number;
+    pendingRewards?: number;
   };
   coins: BackendCoinBalance[];
   brandedCoins: BackendBrandedCoin[];
@@ -87,7 +93,7 @@ export interface WalletBalanceResponse {
   categoryBalances?: Record<string, CategoryBalance>;
   savingsInsights: BackendSavingsInsights;
   currency: string;
-  statistics: {
+  statistics?: {
     totalEarned: number;
     totalSpent: number;
     totalCashback: number;
@@ -95,7 +101,7 @@ export interface WalletBalanceResponse {
     totalTopups: number;
     totalWithdrawals: number;
   };
-  limits: {
+  limits?: {
     maxBalance: number;
     dailySpendLimit: number;
     dailySpentToday: number;
@@ -106,7 +112,8 @@ export interface WalletBalanceResponse {
     isFrozen: boolean;
     frozenReason?: string;
   };
-  lastUpdated: string;
+  // lastUpdated may be absent in some API responses — guard with optional
+  lastUpdated?: string;
 }
 
 /**

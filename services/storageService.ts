@@ -1,5 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 import { FILE_SIZE_LIMITS } from '@/utils/fileUploadConstants';
+
+// Sensitive keys that should be stored in SecureStore (not on web)
+const SECURE_KEYS = ['auth_token', 'refresh_token', 'device_fingerprint', 'user_id', 'access_token'];
 
 // Types
 export interface StorageOptions {
@@ -90,7 +95,18 @@ class StorageService {
         }
       }
 
-      await AsyncStorage.setItem(key, serializedData);
+      // Use SecureStore for sensitive keys on native platforms
+      if (SECURE_KEYS.includes(key) && Platform.OS !== 'web') {
+        try {
+          await SecureStore.setItemAsync(key, serializedData);
+        } catch (error) {
+          // Fallback to AsyncStorage if SecureStore fails
+          await AsyncStorage.setItem(key, serializedData);
+        }
+      } else {
+        // Use AsyncStorage for non-sensitive keys or web platform
+        await AsyncStorage.setItem(key, serializedData);
+      }
     } catch (error) {
       throw new Error(`Failed to set item: ${key}`);
     }
@@ -102,8 +118,21 @@ class StorageService {
     defaultValue?: T
   ): Promise<T | undefined> {
     try {
-      let serializedData = await AsyncStorage.getItem(key);
-      
+      let serializedData: string | null = null;
+
+      // Try SecureStore first for sensitive keys on native platforms
+      if (SECURE_KEYS.includes(key) && Platform.OS !== 'web') {
+        try {
+          serializedData = await SecureStore.getItemAsync(key);
+        } catch (error) {
+          // Fallback to AsyncStorage if SecureStore fails
+          serializedData = await AsyncStorage.getItem(key);
+        }
+      } else {
+        // Use AsyncStorage for non-sensitive keys or web platform
+        serializedData = await AsyncStorage.getItem(key);
+      }
+
       if (!serializedData) {
         return defaultValue;
       }
@@ -142,6 +171,15 @@ class StorageService {
   // Remove item
   async removeItem(key: string): Promise<void> {
     try {
+      // Remove from SecureStore if it's a sensitive key on native platform
+      if (SECURE_KEYS.includes(key) && Platform.OS !== 'web') {
+        try {
+          await SecureStore.deleteItemAsync(key);
+        } catch (error) {
+          // Ignore SecureStore errors, fall through to AsyncStorage
+        }
+      }
+      // Always remove from AsyncStorage as fallback
       await AsyncStorage.removeItem(key);
     } catch (error) {
       throw new Error(`Failed to remove item: ${key}`);

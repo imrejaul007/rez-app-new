@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { WalletData } from '@/types/wallet';
 
 // ---------------------------------------------------------------------------
@@ -42,33 +44,51 @@ const defaults: WalletStoreData = {
 // ---------------------------------------------------------------------------
 // Store
 // ---------------------------------------------------------------------------
-export const useWalletStore = create<WalletStoreState>((set) => ({
-  ...defaults,
+export const useWalletStore = create<WalletStoreState>(
+  persist(
+    (set) => ({
+      ...defaults,
 
-  // Called by WalletProvider on every render to keep store in sync
-  _setFromProvider: (data: WalletStoreData) => {
-    set(data);
-  },
+      // Called by WalletProvider on every render to keep store in sync
+      _setFromProvider: (data: WalletStoreData) => {
+        set(data);
+      },
 
-  // Optimistic balance adjustment for instant UI feedback after earning coins.
-  // Server truth is restored by the next refreshWallet() call.
-  adjustBalance: (delta: number) => {
-    set((state) => {
-      if (!state.walletData) return state;
-      const updatedCoins = state.walletData.coins.map((c) =>
-        c.type === 'rez' ? { ...c, amount: c.amount + delta } : c
-      );
-      return {
-        rezBalance: state.rezBalance + delta,
-        totalBalance: state.totalBalance + delta,
-        availableBalance: state.availableBalance + delta,
-        walletData: {
-          ...state.walletData,
-          totalBalance: state.walletData.totalBalance + delta,
-          availableBalance: state.walletData.availableBalance + delta,
-          coins: updatedCoins,
-        },
-      };
-    });
-  },
-}));
+      // Optimistic balance adjustment for instant UI feedback after earning coins.
+      // Server truth is restored by the next refreshWallet() call.
+      adjustBalance: (delta: number) => {
+        set((state) => {
+          if (!state.walletData) return state;
+          const updatedCoins = state.walletData.coins.map((c) =>
+            c.type === 'rez' ? { ...c, amount: c.amount + delta } : c
+          );
+          return {
+            rezBalance: state.rezBalance + delta,
+            totalBalance: state.totalBalance + delta,
+            availableBalance: state.availableBalance + delta,
+            walletData: {
+              ...state.walletData,
+              totalBalance: state.walletData.totalBalance + delta,
+              availableBalance: state.walletData.availableBalance + delta,
+              coins: updatedCoins,
+            },
+          };
+        });
+      },
+    }),
+    {
+      name: 'rez-wallet-store',
+      storage: createJSONStorage(() => AsyncStorage),
+      partialize: (state) => ({
+        // Only persist user data, not loading states or functions
+        walletData: state.walletData,
+        rezBalance: state.rezBalance,
+        totalBalance: state.totalBalance,
+        availableBalance: state.availableBalance,
+        brandedCoins: state.brandedCoins,
+        savingsInsights: state.savingsInsights,
+        rawBackendData: state.rawBackendData,
+      }),
+    }
+  )
+);

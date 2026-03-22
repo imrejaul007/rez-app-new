@@ -14,69 +14,97 @@ function transformWalletResponse(backendData: any, userId: string): WalletData {
   if (!backendData || typeof backendData !== 'object') {
     throw new Error('Invalid wallet data received');
   }
+
+  // Safe fallback date — guards against missing lastUpdated field in API response
+  const safeDate = backendData.lastUpdated ? new Date(backendData.lastUpdated) : new Date();
+
   const backendCoins = Array.isArray(backendData.coins) ? backendData.coins : [];
   const rezCoin = backendCoins.find((c: any) => c.type === 'rez');
   const promoData = backendData.promoCoins;
+
+  // Resolve rez coin amount: prefer coin object, fall back to breakdown.rezCoins.amount
+  const rezAmount = rezCoin?.amount ?? backendData?.breakdown?.rezCoins?.amount ?? 0;
+  const promoAmount = promoData?.amount ?? 0;
 
   const coins: CoinBalance[] = [
     {
       id: 'rez-0',
       type: 'rez',
       name: BRAND.COIN_NAME,
-      amount: rezCoin?.amount || 0,
+      amount: rezAmount,
       currency: BRAND.CURRENCY_CODE,
-      formattedAmount: `${BRAND.CURRENCY_CODE} ${rezCoin?.amount || 0}`,
+      formattedAmount: `${BRAND.CURRENCY_CODE} ${rezAmount}`,
       description: `Universal rewards usable anywhere on ${BRAND.APP_NAME}`,
       iconPath: require('@/assets/images/wasil-coin.png'),
       backgroundColor: '#FFF9E6',
       color: '#B45309',
       isActive: rezCoin?.isActive !== false,
-      earnedDate: rezCoin?.earnedDate ? new Date(rezCoin.earnedDate) : new Date(backendData.lastUpdated),
-      lastUsed: rezCoin?.lastUsed ? new Date(rezCoin.lastUsed) : new Date(backendData.lastUpdated),
+      earnedDate: rezCoin?.earnedDate ? new Date(rezCoin.earnedDate) : safeDate,
+      lastUsed: rezCoin?.lastUsed ? new Date(rezCoin.lastUsed) : safeDate,
       expiryDate: rezCoin?.expiryDate ? new Date(rezCoin.expiryDate) : undefined,
     },
     {
       id: 'promo-0',
       type: 'promo',
       name: 'Promo Coins',
-      amount: promoData?.amount || 0,
+      amount: promoAmount,
       currency: BRAND.CURRENCY_CODE,
-      formattedAmount: `${BRAND.CURRENCY_CODE} ${promoData?.amount || 0}`,
+      formattedAmount: `${BRAND.CURRENCY_CODE} ${promoAmount}`,
       description: 'Special coins from campaigns & events (max 20% per bill)',
       iconPath: require('@/assets/images/promo-coin.png'),
       backgroundColor: '#FEF9E7',
       color: '#D97706',
       isActive: promoData?.isActive !== false,
-      earnedDate: promoData?.earnedDate ? new Date(promoData.earnedDate) : new Date(backendData.lastUpdated),
-      lastUsed: promoData?.lastUsed ? new Date(promoData.lastUsed) : new Date(backendData.lastUpdated),
+      earnedDate: promoData?.earnedDate ? new Date(promoData.earnedDate) : safeDate,
+      lastUsed: promoData?.lastUsed ? new Date(promoData.lastUsed) : safeDate,
       expiryDate: promoData?.expiryDate ? new Date(promoData.expiryDate) : undefined,
       promoDetails: promoData?.promoDetails,
     }
   ];
 
-  const cashbackBalance = backendData.balance?.cashback || 0;
-  const coinBalance = coins.reduce((sum, coin) => sum + coin.amount, 0) + cashbackBalance;
-  const brandedCoinsData = backendData.brandedCoins || [];
-  const brandedCoinsTotal = brandedCoinsData.reduce((sum: number, bc: any) => sum + (bc.amount || 0), 0);
-  const calculatedTotalBalance = coinBalance + brandedCoinsTotal;
+  // Prefer the API's canonical totalValue (already includes all coin types).
+  // Fall back to local sum only if totalValue is missing (older API versions).
+  const brandedCoinsData = Array.isArray(backendData.brandedCoins) ? backendData.brandedCoins : [];
+  const brandedCoinsTotal = backendData.brandedCoinsTotal
+    ?? brandedCoinsData.reduce((sum: number, bc: any) => sum + (bc.amount || 0), 0);
+
+  // cashbackBalance: API returns it under balance.cashback OR breakdown.cashback
+  const cashbackBalance =
+    backendData?.balance?.cashback
+    ?? backendData?.breakdown?.cashback
+    ?? backendData?.breakdown?.cashbackBalance
+    ?? 0;
+
+  // pendingRewards: API returns it under balance.pending OR breakdown.pending
+  const pendingRewards =
+    backendData?.balance?.pending
+    ?? backendData?.breakdown?.pending
+    ?? backendData?.breakdown?.pendingRewards
+    ?? 0;
+
+  // Use API totalValue as authoritative total — avoids double-counting
+  const totalBalance =
+    typeof backendData.totalValue === 'number' && backendData.totalValue > 0
+      ? backendData.totalValue
+      : (rezAmount + promoAmount + cashbackBalance + brandedCoinsTotal);
 
   return {
     userId: userId || 'unknown',
-    totalBalance: calculatedTotalBalance,
-    availableBalance: backendData?.balance?.available,
+    totalBalance,
+    availableBalance: backendData?.balance?.available ?? totalBalance,
     cashbackBalance,
-    pendingRewards: backendData.balance?.pending || 0,
+    pendingRewards,
     currency: BRAND.CURRENCY_CODE,
-    formattedTotalBalance: `${BRAND.CURRENCY_CODE} ${calculatedTotalBalance}`,
+    formattedTotalBalance: `${BRAND.CURRENCY_CODE} ${totalBalance}`,
     coins,
     brandedCoins: brandedCoinsData,
     brandedCoinsTotal,
     savingsInsights: backendData.savingsInsights || { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 },
     recentTransactions: [],
-    lastUpdated: new Date(backendData.lastUpdated),
-    isActive: backendData?.status?.isActive,
-    isFrozen: backendData.status?.isFrozen || false,
-    frozenReason: backendData.status?.frozenReason,
+    lastUpdated: safeDate,
+    isActive: backendData?.status?.isActive ?? true,
+    isFrozen: backendData?.status?.isFrozen || false,
+    frozenReason: backendData?.status?.frozenReason,
   };
 }
 

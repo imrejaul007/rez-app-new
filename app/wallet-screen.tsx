@@ -161,7 +161,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
         walletApi.getExpiringCoins(),
       ]).then(([, expiryRes]) => {
         if (cancelled || !expiryRes.success || !expiryRes.data) return;
-        const { expiringCoins, totalExpiring } = expiryRes.data;
+        const expiringCoins = expiryRes.data?.expiringCoins ?? {};
+        const totalExpiring = typeof expiryRes.data?.totalExpiring === 'number' ? expiryRes.data.totalExpiring : 0;
         if (totalExpiring <= 0) {
           setExpiringAmount(0);
           setExpiringLabel('');
@@ -169,28 +170,37 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
           return;
         }
         setExpiringAmount(totalExpiring);
-        if (expiringCoins?.this_week?.totalAmount > 0) {
-          setExpiringLabel(`${expiringCoins.this_week.totalAmount} ${BRAND.CURRENCY_CODE} expiring this week`);
-        } else if (expiringCoins?.this_month?.totalAmount > 0) {
-          setExpiringLabel(`${expiringCoins.this_month.totalAmount} ${BRAND.CURRENCY_CODE} expiring this month`);
+        // Determine urgency label from the most imminent bucket
+        const thisWeekAmt = expiringCoins?.this_week?.totalAmount ?? 0;
+        const thisMonthAmt = expiringCoins?.this_month?.totalAmount ?? 0;
+        if (thisWeekAmt > 0) {
+          setExpiringLabel(`${thisWeekAmt} ${BRAND.CURRENCY_CODE} expiring this week`);
+        } else if (thisMonthAmt > 0) {
+          setExpiringLabel(`${thisMonthAmt} ${BRAND.CURRENCY_CODE} expiring this month`);
         } else {
           setExpiringLabel(`${totalExpiring} ${BRAND.CURRENCY_CODE} expiring soon`);
         }
+        // Build per-type breakdown across all periods
         const typeMap = new Map<string, { amount: number; expiresAt: string; daysLeft: number }>();
         for (const period of ['this_week', 'this_month', 'next_month'] as const) {
           const bucket = expiringCoins?.[period];
-          if (!bucket?.coins) continue;
-          for (const coin of bucket.coins) {
-            const coinType = coin.type || coin.source || 'rez';
+          if (!bucket) continue;
+          const coinsList = Array.isArray(bucket.coins) ? bucket.coins : [];
+          for (const coin of coinsList) {
+            if (!coin) continue;
+            const coinType: string = (coin as any).type || (coin as any).source || 'rez';
+            const coinAmount: number = typeof (coin as any).amount === 'number' ? (coin as any).amount : 0;
+            const coinExpiresAt: string = (coin as any).expiresAt || '';
+            const coinDaysLeft: number = typeof (coin as any).daysLeft === 'number' ? (coin as any).daysLeft : 0;
             const existing = typeMap.get(coinType);
             if (existing) {
-              existing.amount += coin.amount;
-              if (coin.daysLeft < existing.daysLeft) {
-                existing.daysLeft = coin.daysLeft;
-                existing.expiresAt = coin.expiresAt;
+              existing.amount += coinAmount;
+              if (coinDaysLeft < existing.daysLeft) {
+                existing.daysLeft = coinDaysLeft;
+                existing.expiresAt = coinExpiresAt;
               }
             } else {
-              typeMap.set(coinType, { amount: coin.amount, expiresAt: coin.expiresAt, daysLeft: coin.daysLeft });
+              typeMap.set(coinType, { amount: coinAmount, expiresAt: coinExpiresAt, daysLeft: coinDaysLeft });
             }
           }
         }
@@ -476,24 +486,34 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
             currencySymbol={currencySymbol}
           />
 
-          {/* Coin Expiry Warning */}
+          {/* Coin Expiry Warning Banner */}
           {expiringAmount > 0 && (
             <Pressable
               style={styles.expiryBanner}
               onPress={() => router.push('/wallet/expiry-tracker' as any)}
+              accessibilityLabel={`${expiringLabel} — tap to view expiry details`}
+              accessibilityRole="button"
             >
               <View style={styles.expiryIconWrap}>
-                <Ionicons name="timer-outline" size={18} color={colors.warningScale[700]} />
+                <Ionicons name="timer-outline" size={20} color={colors.warningScale?.[700] ?? '#B45309'} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.expiryText}>{expiringLabel}</Text>
                 {expiringByType.length > 0 && (
                   <View style={{ marginTop: 4 }}>
                     {expiringByType.slice(0, 3).map((item, idx) => {
-                      const label = item.type === 'promo' ? 'Promo' : item.type === 'branded' ? 'Branded' : item.type === 'prive' ? 'Prive' : 'ReZ';
+                      const typeLabel =
+                        item.type === 'promo' ? 'Promo'
+                        : item.type === 'branded' ? 'Branded'
+                        : item.type === 'prive' ? 'Privé'
+                        : 'Rez';
+                      const daysText =
+                        typeof item.daysLeft === 'number'
+                          ? (item.daysLeft <= 0 ? 'expires today' : `${item.daysLeft}d left`)
+                          : '';
                       return (
                         <Text key={idx} style={styles.expiryTypeRow}>
-                          {label}: {item.amount} {BRAND.CURRENCY_CODE} ({item.daysLeft <= 1 ? 'expires today' : `${item.daysLeft}d left`})
+                          {typeLabel}: {item.amount} {BRAND.CURRENCY_CODE}{daysText ? ` (${daysText})` : ''}
                         </Text>
                       );
                     })}
@@ -501,7 +521,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
                 )}
                 <Text style={styles.expirySubtext}>Use them before they expire</Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={colors.warningScale[700]} />
+              <Ionicons name="chevron-forward" size={16} color={colors.warningScale?.[700] ?? '#B45309'} />
             </Pressable>
           )}
 
@@ -514,20 +534,20 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
               <Ionicons name="help-circle-outline" size={20} color={colors.neutral[400]} />
             </Pressable>
           </View>
-          {walletData.coins.map((coin) => (
+          {(walletData.coins ?? []).map((coin) => (
             <CoinDetailCard key={coin.id} coin={coin} onPress={handleCoinPress} />
           ))}
 
           {/* Branded Coins Summary */}
-          {walletData.brandedCoins && walletData.brandedCoins.length > 0 && (
+          {Array.isArray(walletData.brandedCoins) && walletData.brandedCoins.length > 0 && (
             <CoinDetailCard
               coin={{
                 id: 'branded-summary',
                 type: 'branded',
                 name: 'Branded Coins',
-                amount: walletData.brandedCoinsTotal,
+                amount: walletData.brandedCoinsTotal ?? 0,
                 currency: BRAND.CURRENCY_CODE,
-                formattedAmount: `${BRAND.CURRENCY_CODE} ${walletData.brandedCoinsTotal}`,
+                formattedAmount: `${BRAND.CURRENCY_CODE} ${walletData.brandedCoinsTotal ?? 0}`,
                 description: `From ${walletData.brandedCoins.length} ${walletData.brandedCoins.length === 1 ? 'store' : 'stores'}`,
                 iconPath: BRAND.COIN_IMAGE,
                 backgroundColor: COIN_TYPES.branded.backgroundColor,

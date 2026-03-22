@@ -30,14 +30,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
-          cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
-        working-directory: ./frontend
         run: npm ci
 
       - name: Run unit tests
-        working-directory: ./frontend
         run: npm test -- --testPathPattern="__tests__/(services|hooks|components|utils)" --coverage=false
 
       - name: Test summary
@@ -67,7 +64,6 @@ jobs:
         run: npm ci
 
       - name: Run integration tests
-        working-directory: ./frontend
         run: npm test -- --testPathPattern="__tests__/integration" --coverage=false
 
       - name: Test summary
@@ -97,11 +93,9 @@ jobs:
         run: npm ci
 
       - name: Generate coverage report
-        working-directory: ./frontend
         run: npm run test:coverage
 
       - name: Check coverage threshold
-        working-directory: ./frontend
         run: |
           COVERAGE=$(node -pe "Math.min(...Object.values(require('./coverage/coverage-summary.json').total).map(m => m.pct))")
           echo "Overall coverage: $COVERAGE%"
@@ -156,11 +150,9 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        working-directory: ./frontend
         run: npm run lint
 
       - name: Run TypeScript compiler
-        working-directory: ./frontend
         run: npx tsc --noEmit
 
       - name: Code quality summary
@@ -194,7 +186,6 @@ jobs:
         run: echo "Setting up E2E test environment..."
 
       - name: Run E2E tests
-        working-directory: ./frontend
         run: |
           echo "⚠️ E2E tests require Detox setup"
           echo "Configure Detox before enabling E2E tests"
@@ -234,7 +225,6 @@ jobs:
         run: npm ci
 
       - name: Run performance tests
-        working-directory: ./frontend
         run: node scripts/test-automation.js performance
 
       - name: Upload performance report

@@ -577,6 +577,22 @@ function HomeScreen() {
     }
   }, [updateUserLocation]);
 
+  // Handle location pill expansion/collapse
+  const handleLocationPillPress = useCallback(() => {
+    const newState = !showDetailedLocation;
+    setShowDetailedLocation(newState);
+    animatedHeight.value = withTiming(newState ? 1 : 0, { duration: 300 });
+    animatedOpacity.value = withTiming(newState ? 1 : 0, { duration: 300 });
+  }, [showDetailedLocation, animatedHeight, animatedOpacity]);
+
+  // Handle change location button press
+  const handleChangeLocationPress = useCallback(() => {
+    setShowDetailedLocation(false);
+    animatedHeight.value = withTiming(0, { duration: 200 });
+    animatedOpacity.value = withTiming(0, { duration: 200 });
+    setTimeout(() => setIsLocationModalVisible(true), 220);
+  }, [animatedHeight, animatedOpacity]);
+
   // Memoize gradient colors to avoid new array allocation on every scroll frame
   const gradientColors = useMemo((): string[] => {
     switch (activeTab) {
@@ -638,14 +654,7 @@ function HomeScreen() {
           {/* Modern Location Pill - Tap to expand details */}
           <Pressable
             style={viewStyles.locationPill}
-            onPress={() => {
-              const newState = !showDetailedLocation;
-              setShowDetailedLocation(newState);
-
-              // Smooth animation for expand/collapse (reanimated)
-              animatedHeight.value = withTiming(newState ? 1 : 0, { duration: 300 });
-              animatedOpacity.value = withTiming(newState ? 1 : 0, { duration: 300 });
-            }}
+            onPress={handleLocationPillPress}
             accessibilityLabel="Current location"
             accessibilityHint={showDetailedLocation ? "Tap to collapse location details" : "Tap to expand location details"}
             accessibilityState={{ expanded: showDetailedLocation }}
@@ -771,19 +780,12 @@ function HomeScreen() {
             <Pressable
               style={[
                 viewStyles.changeLocationButton,
-                activeTab === 'mall' && { 
-                  backgroundColor: '#E0F2FE', 
-                  borderColor: '#BAE6FD' 
+                activeTab === 'mall' && {
+                  backgroundColor: '#E0F2FE',
+                  borderColor: '#BAE6FD'
                 }
               ]}
-              onPress={() => {
-                setShowDetailedLocation(false);
-                // Collapse animation then open modal (reanimated)
-                animatedHeight.value = withTiming(0, { duration: 200 });
-                animatedOpacity.value = withTiming(0, { duration: 200 });
-                // Open modal after animation delay
-                setTimeout(() => setIsLocationModalVisible(true), 220);
-              }}
+              onPress={handleChangeLocationPress}
              
             >
               <View style={[

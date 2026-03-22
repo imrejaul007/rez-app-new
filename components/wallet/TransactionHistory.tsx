@@ -1,197 +1,300 @@
-// Transaction History Component
-// Complete transaction history section with filtering and pagination
+/**
+ * TransactionHistory — Real-API backed transaction list with:
+ * - Live data from walletApi.getTransactions()
+ * - All / Credits / Debits tabs
+ * - Date grouping (Today / Yesterday / This Week / Earlier)
+ * - Pull-to-refresh
+ * - Infinite scroll pagination
+ * - Friendly empty state
+ */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
+  Text,
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
+  SectionList,
+  Pressable,
 } from 'react-native';
-import { FlashList } from '@shopify/flash-list';
+import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
-import TransactionTabs from './TransactionTabs';
-import TransactionCard from './TransactionCard';
-import { 
-  Transaction, 
-  TransactionCategory, 
-  WalletTab 
-} from '@/types/wallet.types';
 import { colors } from '@/constants/theme';
-import {
-  fetchTransactions,
-  walletTabs as defaultTabs
-} from '@/data/walletData';
+import walletApi, { TransactionResponse } from '@/services/walletApi';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+type TabId = 'all' | 'credits' | 'debits';
+
+interface Tab {
+  id: TabId;
+  label: string;
+}
+
+const TABS: Tab[] = [
+  { id: 'all', label: 'All' },
+  { id: 'credits', label: 'Credits' },
+  { id: 'debits', label: 'Debits' },
+];
+
 interface TransactionHistoryProps {
-  onTransactionPress?: (transaction: Transaction) => void;
+  onTransactionPress?: (transaction: TransactionResponse) => void;
   refreshing?: boolean;
   onRefresh?: () => void;
   maxHeight?: number;
 }
 
+// ---------------------------------------------------------------------------
+// Date grouping helpers
+// ---------------------------------------------------------------------------
+function getDateGroup(dateStr: string): string {
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return 'Earlier';
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return 'Today';
+  if (diffDays === 1) return 'Yesterday';
+  if (diffDays < 7) return 'This Week';
+  return 'Earlier';
+}
+
+function groupTransactionsByDate(
+  transactions: TransactionResponse[]
+): Array<{ title: string; data: TransactionResponse[] }> {
+  const groupOrder = ['Today', 'Yesterday', 'This Week', 'Earlier'];
+  const groups: Record<string, TransactionResponse[]> = {};
+  for (const txn of transactions) {
+    const key = getDateGroup(txn.createdAt);
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(txn);
+  }
+  return groupOrder
+    .filter((g) => groups[g] && groups[g].length > 0)
+    .map((g) => ({ title: g, data: groups[g] }));
+}
+
+function formatDate(dateStr: string): string {
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return '';
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+}
+
+// ---------------------------------------------------------------------------
+// Transaction Item
+// ---------------------------------------------------------------------------
+const ICON_MAP: Record<string, keyof typeof import('@expo/vector-icons').Ionicons['glyphMap']> = {
+  earning: 'arrow-down-circle',
+  spending: 'arrow-up-circle',
+  refund: 'refresh-circle',
+  withdrawal: 'remove-circle',
+  topup: 'add-circle',
+  bonus: 'gift',
+  penalty: 'warning',
+  cashback: 'cash',
+};
+
+function getIcon(category: string): keyof typeof import('@expo/vector-icons').Ionicons['glyphMap'] {
+  return ICON_MAP[category] || 'swap-horizontal';
+}
+
+const STATUS_COLORS: Record<string, string> = {
+  completed: '#059669',
+  pending: '#F59E0B',
+  processing: '#3B82F6',
+  failed: '#EF4444',
+  cancelled: '#6B7280',
+  reversed: '#8B5CF6',
+};
+
+function statusColor(status: string): string {
+  return STATUS_COLORS[status] || '#6B7280';
+}
+
+function TransactionItem({
+  txn,
+  onPress,
+}: {
+  txn: TransactionResponse;
+  onPress?: (t: TransactionResponse) => void;
+}) {
+  const isCredit = txn.type === 'credit';
+  const amountColor = isCredit ? '#059669' : '#EF4444';
+  const amountPrefix = isCredit ? '+' : '-';
+  const icon = getIcon(txn.category);
+  const iconBg = isCredit ? '#D1FAE5' : '#FEE2E2';
+  const iconColor = isCredit ? '#059669' : '#EF4444';
+  const status = txn.status?.current || 'completed';
+  const sc = statusColor(status);
+
+  // Description: prefer source.description, then txn.description, then category
+  const label =
+    txn.source?.description || txn.description || txn.category || 'Transaction';
+
+  return (
+    <Pressable
+      style={styles.txnCard}
+      onPress={() => onPress?.(txn)}
+      disabled={!onPress}
+      accessibilityRole="button"
+      accessibilityLabel={`${label}, ${amountPrefix}${txn.amount} ${txn.currency}, ${status}`}
+    >
+      <View style={[styles.txnIconWrap, { backgroundColor: iconBg }]}>
+        <Ionicons name={icon as any} size={22} color={iconColor} />
+      </View>
+      <View style={styles.txnBody}>
+        <ThemedText style={styles.txnLabel} numberOfLines={1}>
+          {label}
+        </ThemedText>
+        <ThemedText style={styles.txnDate}>{formatDate(txn.createdAt)}</ThemedText>
+      </View>
+      <View style={styles.txnRight}>
+        <Text style={[styles.txnAmount, { color: amountColor }]}>
+          {amountPrefix}
+          {txn.amount} {txn.currency}
+        </Text>
+        <View style={[styles.statusBadge, { backgroundColor: sc + '20' }]}>
+          <ThemedText style={[styles.statusText, { color: sc }]}>
+            {status.replace('_', ' ')}
+          </ThemedText>
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main component
+// ---------------------------------------------------------------------------
 function TransactionHistory({
-  onTransactionPress, 
-  refreshing = false, 
+  onTransactionPress,
+  refreshing = false,
   onRefresh,
   maxHeight,
 }: TransactionHistoryProps) {
-  const [activeTab, setActiveTab] = useState<TransactionCategory>('ALL');
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [activeTab, setActiveTab] = useState<TabId>('all');
+  const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [tabs, setTabs] = useState<WalletTab[]>(defaultTabs);
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState<string | null>(null);
   const isMounted = useIsMounted();
+  const PAGE_SIZE = 20;
 
-  // Load transactions for the current tab
-  const loadTransactions = useCallback(async (
-    category: TransactionCategory = activeTab,
-    page: number = 1,
-    append: boolean = false
-  ) => {
-    try {
-      if (page === 1) {
-        setIsLoading(true);
-      } else {
-        setIsLoadingMore(true);
-      }
+  const loadTransactions = useCallback(
+    async (tab: TabId, pageNum: number, append: boolean) => {
+      try {
+        if (pageNum === 1) {
+          setIsLoading(true);
+          setError(null);
+        } else {
+          setIsLoadingMore(true);
+        }
 
-      const result = await fetchTransactions(category, page, 20);
+        const filters: Record<string, any> = { page: pageNum, limit: PAGE_SIZE };
+        if (tab === 'credits') filters.type = 'credit';
+        if (tab === 'debits') filters.type = 'debit';
 
-      if (append) {
+        const res = await walletApi.getTransactions(filters);
+
         if (!isMounted()) return;
-        setTransactions(prev => [...prev, ...result.transactions]);
-      } else {
-        if (!isMounted()) return;
-        setTransactions(result.transactions);
+
+        if (!res.success || !res.data) {
+          setError(res.message || 'Failed to load transactions');
+          return;
+        }
+
+        const fetched = res.data.transactions ?? [];
+        const pagination = res.data.pagination;
+
+        if (append) {
+          setTransactions((prev) => [...prev, ...fetched]);
+        } else {
+          setTransactions(fetched);
+        }
+
+        setHasMore(pagination?.hasNext ?? fetched.length === PAGE_SIZE);
+        setPage(pageNum);
+      } catch (e: any) {
+        if (isMounted()) setError(e?.message || 'Something went wrong');
+      } finally {
+        if (isMounted()) {
+          setIsLoading(false);
+          setIsLoadingMore(false);
+        }
       }
+    },
+    [isMounted]
+  );
 
-      if (!isMounted()) return;
-      setHasMore(result.hasMore);
-      setCurrentPage(page);
-    } catch (error) {
-      // Error loading transactions - handled by UI state
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      setIsLoadingMore(false);
-    }
-  }, [activeTab, isMounted]);
-
-  // Update tabs with current transaction counts
-  // Uses a single fetch per tab with limit=1 to get the total count without fetching all records
-  const updateTabCounts = async () => {
-    try {
-      const updatedTabs = await Promise.all(
-        defaultTabs.map(async (tab) => {
-          const result = await fetchTransactions(tab.id, 1, 1);
-          return {
-            ...tab,
-            count: result.total,
-            isActive: tab.id === activeTab,
-          };
-        })
-      );
-      if (!isMounted()) return;
-      setTabs(updatedTabs);
-    } catch (error) {
-      // Error updating tab counts - handled silently
-    }
-  };
-
-  // Initial load
+  // Reload when tab changes
   useEffect(() => {
     loadTransactions(activeTab, 1, false);
-    updateTabCounts();
-  }, [activeTab, loadTransactions]);
+  }, [activeTab]);
 
-  // Handle tab change
-  const handleTabPress = (tabId: TransactionCategory) => {
-    if (tabId !== activeTab) {
-      setActiveTab(tabId);
-      setCurrentPage(1);
-      setHasMore(true);
-      
-      // Update active state in tabs
-      setTabs(prev =>
-        prev.map(tab => ({
-          ...tab,
-          isActive: tab.id === tabId
-        }))
-      );
-    }
-  };
+  const handleTabPress = useCallback(
+    (tab: TabId) => {
+      if (tab !== activeTab) {
+        setActiveTab(tab);
+        setPage(1);
+        setHasMore(true);
+      }
+    },
+    [activeTab]
+  );
 
-  // Handle load more
-  const handleLoadMore = () => {
-    if (hasMore && !isLoadingMore && !isLoading) {
-      loadTransactions(activeTab, currentPage + 1, true);
-    }
-  };
-
-  // Handle refresh
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     onRefresh?.();
-    setCurrentPage(1);
+    setPage(1);
     setHasMore(true);
     loadTransactions(activeTab, 1, false);
-    updateTabCounts();
-  };
+  }, [activeTab, onRefresh, loadTransactions]);
 
-  // Render transaction item
-  const renderTransaction = ({ item }: { item: Transaction }) => (
-    <TransactionCard
-      transaction={item}
-      onPress={onTransactionPress}
-      showDate={true}
-    />
-  );
+  const handleLoadMore = useCallback(() => {
+    if (hasMore && !isLoadingMore && !isLoading) {
+      loadTransactions(activeTab, page + 1, true);
+    }
+  }, [hasMore, isLoadingMore, isLoading, activeTab, page, loadTransactions]);
 
-  // Render footer with loading indicator
-  const renderFooter = () => {
-    if (!isLoadingMore) return null;
-    
-    return (
-      <View style={styles.footerLoader}>
-        <ActivityIndicator size="small" color={colors.brand.purpleLight} />
-        <ThemedText style={styles.loadingText}>Loading more transactions...</ThemedText>
-      </View>
-    );
-  };
+  // Group into sections
+  const sections = useMemo(() => groupTransactionsByDate(transactions), [transactions]);
 
-  // Empty state
-  const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <ThemedText style={styles.emptyTitle}>No transactions found</ThemedText>
-      <ThemedText style={styles.emptyDescription}>
-        No transactions available for the selected category.
-      </ThemedText>
-    </View>
-  );
-
-  // Loading state
+  // --- Loading state (initial) ---
   if (isLoading && transactions.length === 0) {
     return (
       <View style={styles.container}>
-        <TransactionTabs 
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabPress={handleTabPress}
-        />
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.brand.purpleLight} />
-          <ThemedText style={styles.loadingText}>Loading transactions...</ThemedText>
+        <_Tabs activeTab={activeTab} onPress={handleTabPress} />
+        <View style={styles.centeredBox}>
+          <ActivityIndicator size="large" color={colors.primary[500]} />
+          <ThemedText style={styles.loadingText}>Loading transactions…</ThemedText>
+        </View>
+      </View>
+    );
+  }
+
+  // --- Error state ---
+  if (error && transactions.length === 0) {
+    return (
+      <View style={styles.container}>
+        <_Tabs activeTab={activeTab} onPress={handleTabPress} />
+        <View style={styles.centeredBox}>
+          <Ionicons name="alert-circle-outline" size={40} color="#EF4444" />
+          <ThemedText style={styles.errorText}>{error}</ThemedText>
+          <Pressable style={styles.retryBtn} onPress={() => loadTransactions(activeTab, 1, false)}>
+            <ThemedText style={styles.retryBtnText}>Retry</ThemedText>
+          </Pressable>
         </View>
       </View>
     );
   }
 
   return (
-    <View style={[styles.container, maxHeight && { maxHeight }]}>
-      {/* Section Header */}
+    <View style={[styles.container, maxHeight ? { maxHeight } : undefined]}>
+      {/* Header */}
       <View style={styles.header}>
         <ThemedText style={styles.headerTitle}>Transaction History</ThemedText>
         <ThemedText style={styles.headerSubtitle}>
@@ -199,43 +302,93 @@ function TransactionHistory({
         </ThemedText>
       </View>
 
-      {/* Filter Tabs */}
-      <TransactionTabs 
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabPress={handleTabPress}
-      />
+      {/* Tabs */}
+      <_Tabs activeTab={activeTab} onPress={handleTabPress} />
 
-      {/* Transaction List */}
-      <FlashList
-        data={transactions}
-        renderItem={renderTransaction}
-        keyExtractor={(item) => item.id}
-        showsVerticalScrollIndicator={false}
+      {/* List */}
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item.id || item.transactionId}
+        renderItem={({ item }) => (
+          <TransactionItem txn={item} onPress={onTransactionPress} />
+        )}
+        renderSectionHeader={({ section }) => (
+          <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionHeaderText}>{section.title}</ThemedText>
+          </View>
+        )}
+        ListEmptyComponent={
+          <View style={styles.centeredBox}>
+            <Ionicons name="wallet-outline" size={48} color={colors.neutral[300]} />
+            <ThemedText style={styles.emptyTitle}>No transactions yet</ThemedText>
+            <ThemedText style={styles.emptySubtitle}>
+              Start earning coins!
+            </ThemedText>
+          </View>
+        }
+        ListFooterComponent={
+          isLoadingMore ? (
+            <View style={styles.footerLoader}>
+              <ActivityIndicator size="small" color={colors.primary[500]} />
+              <ThemedText style={styles.loadingText}>Loading more…</ThemedText>
+            </View>
+          ) : null
+        }
         onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.1}
-        ListFooterComponent={renderFooter}
-        ListEmptyComponent={renderEmptyState}
-        estimatedItemSize={72}
+        onEndReachedThreshold={0.2}
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={colors.brand.purpleLight}
-            colors={[colors.brand.purpleLight]}
+            tintColor={colors.primary[500]}
+            colors={[colors.primary[500]]}
             progressBackgroundColor={colors.background.primary}
           />
         }
         style={styles.list}
-        contentContainerStyle={[
-          styles.listContent,
-          transactions.length === 0 && styles.emptyListContent,
-        ]}
+        contentContainerStyle={transactions.length === 0 ? styles.emptyListContent : undefined}
+        stickySectionHeadersEnabled
       />
     </View>
   );
 }
 
+// ---------------------------------------------------------------------------
+// Tabs sub-component
+// ---------------------------------------------------------------------------
+function _Tabs({
+  activeTab,
+  onPress,
+}: {
+  activeTab: TabId;
+  onPress: (id: TabId) => void;
+}) {
+  return (
+    <View style={styles.tabsContainer}>
+      {TABS.map((tab) => {
+        const isActive = tab.id === activeTab;
+        return (
+          <Pressable
+            key={tab.id}
+            style={[styles.tab, isActive && styles.tabActive]}
+            onPress={() => onPress(tab.id)}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: isActive }}
+          >
+            <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
+              {tab.label}
+            </Text>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Styles
+// ---------------------------------------------------------------------------
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -243,7 +396,6 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     marginHorizontal: 8,
     marginTop: 8,
-    marginBottom: 0,
     overflow: 'hidden',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -251,81 +403,177 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
     borderWidth: 0.5,
-    borderColor: colors.tint.slate,
+    borderColor: colors.tint?.slate || '#E2E8F0',
   },
-  
-  // Header
   header: {
     paddingHorizontal: 16,
-    paddingTop: 30,
-    paddingBottom: 12,
+    paddingTop: 18,
+    paddingBottom: 10,
     borderBottomWidth: 0.5,
-    borderBottomColor: colors.tint.slate,
+    borderBottomColor: colors.tint?.slate || '#E2E8F0',
     backgroundColor: '#FAFBFC',
   },
   headerTitle: {
     fontSize: 16,
     fontWeight: '700',
     color: '#1E293B',
-    marginBottom: 4,
-    letterSpacing: 0.2,
+    marginBottom: 2,
   },
   headerSubtitle: {
-    fontSize: 13,
-    color: colors.slateGray,
+    fontSize: 12,
+    color: colors.slateGray || '#64748B',
     fontWeight: '500',
   },
-  
-  // List
+  // Tabs
+  tabsContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 8,
+    backgroundColor: '#FAFBFC',
+    borderBottomWidth: 0.5,
+    borderBottomColor: colors.tint?.slate || '#E2E8F0',
+  },
+  tab: {
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: 'white',
+    borderWidth: 1,
+    borderColor: colors.slateLight || '#CBD5E1',
+  },
+  tabActive: {
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue,
+  },
+  tabText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#475569',
+  },
+  tabTextActive: {
+    color: 'white',
+  },
+  // Section header
+  sectionHeader: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    backgroundColor: '#F8FAFC',
+    borderBottomWidth: 0.5,
+    borderBottomColor: colors.tint?.slate || '#E2E8F0',
+  },
+  sectionHeaderText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#64748B',
+    textTransform: 'uppercase',
+    letterSpacing: 0.8,
+  },
+  // Transaction card
+  txnCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    backgroundColor: 'white',
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#F1F5F9',
+    gap: 12,
+  },
+  txnIconWrap: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  txnBody: {
+    flex: 1,
+    gap: 3,
+  },
+  txnLabel: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#1E293B',
+  },
+  txnDate: {
+    fontSize: 11,
+    color: '#94A3B8',
+    fontWeight: '500',
+  },
+  txnRight: {
+    alignItems: 'flex-end',
+    gap: 4,
+  },
+  txnAmount: {
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: 0.2,
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: '700',
+    textTransform: 'capitalize',
+  },
+  // List states
   list: {
     flex: 1,
   },
-  listContent: {
-    flexGrow: 1,
-  },
   emptyListContent: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
   },
-  
-  // Loading States
-  loadingContainer: {
+  centeredBox: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 40,
+    paddingVertical: 48,
+    paddingHorizontal: 24,
+    gap: 8,
   },
   loadingText: {
-    fontSize: 14,
-    color: colors.neutral[500],
+    fontSize: 13,
+    color: colors.neutral?.[500] || '#6B7280',
+    marginTop: 8,
+  },
+  errorText: {
+    fontSize: 13,
+    color: '#EF4444',
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  retryBtn: {
     marginTop: 12,
-    fontWeight: '500',
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    backgroundColor: colors.nileBlue,
+    borderRadius: 8,
   },
-  footerLoader: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  
-  // Empty State
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
+  retryBtnText: {
+    color: 'white',
+    fontWeight: '700',
+    fontSize: 13,
   },
   emptyTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.gray[900],
-    marginBottom: 8,
+    color: '#334155',
     textAlign: 'center',
   },
-  emptyDescription: {
-    fontSize: 14,
-    color: colors.neutral[500],
+  emptySubtitle: {
+    fontSize: 13,
+    color: colors.neutral?.[500] || '#6B7280',
     textAlign: 'center',
-    lineHeight: 20,
+  },
+  footerLoader: {
+    padding: 20,
+    alignItems: 'center',
+    gap: 6,
   },
 });
 
