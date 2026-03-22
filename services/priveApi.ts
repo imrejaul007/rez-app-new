@@ -240,6 +240,52 @@ export interface RedeemConfig {
   currency: string;
 }
 
+// Privé Campaigns types
+export interface PriveCampaign {
+  id: string;
+  brandName: string;
+  hashtag: string;
+  category: string;
+  rewardCoins: number;
+  deadline: string;
+  submissionCount: number;
+  description?: string;
+  rules?: string[];
+  minCaptionLength?: number;
+  requiredHashtag?: string;
+  platforms?: string[];
+  isEligible?: boolean;
+}
+
+export interface CampaignDetail extends PriveCampaign {
+  rules: string[];
+  requiredHashtag: string;
+  minCaptionLength: number;
+  eligibilityReason?: string;
+}
+
+export interface CampaignSubmission {
+  id?: string;
+  campaignId: string;
+  platform: 'instagram' | 'twitter' | 'youtube';
+  postUrl: string;
+  screenshotUrl?: string;
+  status: 'pending' | 'under_review' | 'approved' | 'rejected';
+  rejectionReason?: string;
+  coinsEarned?: number;
+  expiryDays?: number;
+  createdAt?: string;
+}
+
+export interface CampaignStatus {
+  submissionId: string;
+  status: 'pending' | 'under_review' | 'approved' | 'rejected';
+  rejectionReason?: string;
+  coinsEarned?: number;
+  expiryDays?: number;
+  approvedAt?: string;
+}
+
 export interface CatalogGiftCard {
   id: string;
   name: string;
@@ -381,6 +427,7 @@ const ENDPOINTS = {
   NOTIFICATIONS: '/prive/notifications',
   PROGRAM_CONFIG: '/prive/program-config/public',
   CONCIERGE: '/prive/concierge/tickets',
+  CAMPAIGNS: '/prive/campaigns',
 };
 
 class PriveApi {
@@ -714,6 +761,59 @@ class PriveApi {
 
   async addConciergeMessage(ticketId: string, message: string): Promise<ApiResponse<any>> {
     return apiClient.post(`${ENDPOINTS.CONCIERGE}/${ticketId}/message`, { message });
+  }
+
+  // ─── Campaigns ────────────────────────────────────────────────────────────
+
+  /**
+   * Get list of active Privé campaigns
+   */
+  async getCampaigns(params?: {
+    category?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<ApiResponse<{
+    campaigns: PriveCampaign[];
+    pagination: {
+      page: number;
+      limit: number;
+      total: number;
+      pages: number;
+    };
+  }>> {
+    return apiClient.get(ENDPOINTS.CAMPAIGNS, params);
+  }
+
+  /**
+   * Get campaign details by ID
+   */
+  async getCampaignById(id: string): Promise<ApiResponse<CampaignDetail>> {
+    return apiClient.get(`${ENDPOINTS.CAMPAIGNS}/${id}`);
+  }
+
+  /**
+   * Join a campaign
+   */
+  async joinCampaign(id: string): Promise<ApiResponse<{ message: string; joinedAt: string }>> {
+    return apiClient.post(`${ENDPOINTS.CAMPAIGNS}/${id}/join`);
+  }
+
+  /**
+   * Submit post for campaign
+   */
+  async submitCampaignPost(id: string, data: {
+    platform: 'instagram' | 'twitter' | 'youtube';
+    postUrl: string;
+    screenshotUrl?: string;
+  }): Promise<ApiResponse<{ submissionId: string; status: string }>> {
+    return apiClient.post(`${ENDPOINTS.CAMPAIGNS}/${id}/submit`, data);
+  }
+
+  /**
+   * Get submission status for a campaign
+   */
+  async getCampaignSubmissionStatus(id: string): Promise<ApiResponse<CampaignStatus>> {
+    return apiClient.get(`${ENDPOINTS.CAMPAIGNS}/${id}/status`);
   }
 }
 

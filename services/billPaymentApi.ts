@@ -62,7 +62,9 @@ export interface BillPaymentRecord {
   amount:               number;
   cashbackAmount:       number;
   promoCoinsIssued:     number;
+  promoCoinsEarned:     number;
   promoExpiryDays:      number;
+  maxRedemptionPercent: number;
   status:               'pending' | 'processing' | 'completed' | 'failed' | 'refunded';
   transactionRef?:      string;
   paidAt?:              string;

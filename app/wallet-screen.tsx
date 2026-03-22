@@ -46,6 +46,7 @@ import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
+import { useHomeTabStore } from '@/stores/homeTabStore';
 
 const WalletScreen: React.FC<WalletScreenProps> = ({
   onNavigateBack,
@@ -71,6 +72,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   const refreshWallet = useRefreshWallet();
 
   const { segment, statedIdentity } = useUserIdentityStore();
+  const { activeTab } = useHomeTabStore();
   const { completionStatus, isLoading: profileLoading, error: profileError } = useProfile();
 
   const { referralData, isLoading: referralLoading, error: referralError } = useReferral({
@@ -111,6 +113,22 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
 
   const totalBrandedCoins = walletData?.brandedCoinsTotal ?? 0;
   const totalBalance = walletData?.totalBalance ?? 0;
+
+  // Determine wallet header based on active tab
+  const walletHeaderTitle = useMemo(() => {
+    switch (activeTab) {
+      case 'near-u':
+        return 'Your REZ Wallet';
+      case 'mall':
+        return 'Mall Wallet';
+      case 'prive':
+        return 'Privé Balance';
+      case 'cash':
+        return 'Your REZ Wallet';
+      default:
+        return 'Wallet';
+    }
+  }, [activeTab]);
 
   useEffect(() => {
     let cancelled = false;
@@ -328,7 +346,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
             <Pressable style={styles.backButton} onPress={handleBackPress}>
               <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
             </Pressable>
-            <Text style={styles.headerTitle}>Wallet</Text>
+            <Text style={styles.headerTitle}>{walletHeaderTitle}</Text>
             <View style={styles.headerRight} />
           </View>
         </LinearGradient>
@@ -347,7 +365,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
             <Pressable style={styles.backButton} onPress={handleBackPress}>
               <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
             </Pressable>
-            <Text style={styles.headerTitle}>Wallet</Text>
+            <Text style={styles.headerTitle}>{walletHeaderTitle}</Text>
             <View style={styles.headerRight} />
           </View>
         </LinearGradient>
@@ -393,7 +411,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
             >
               <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
             </Pressable>
-            <Text style={styles.headerTitle}>Wallet</Text>
+            <Text style={styles.headerTitle}>{walletHeaderTitle}</Text>
             <Pressable
               style={styles.settingsButton}
               onPress={() => router.push('/settings' as any)}

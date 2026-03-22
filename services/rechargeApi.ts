@@ -36,6 +36,9 @@ export interface RechargeResult {
   amount: number;
   cashbackPercent: number;
   status: string;
+  promoCoinsEarned?: number;
+  promoExpiryDays?: number;
+  maxRedemptionPercent?: number;
 }
 
 export async function getOperators(type: string = 'mobile', limit: number = 20) {

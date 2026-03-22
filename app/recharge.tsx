@@ -16,6 +16,7 @@ import {
   StatusBar,
   Platform,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -70,6 +71,7 @@ function RechargePage() {
   // Data state
   const [operators, setOperators] = useState<Operator[]>([]);
   const [plans, setPlans] = useState<Plan[]>([]);
+  const [result, setResult] = useState<any>(null);
 
   // Loading / error state
   const [loadingOperators, setLoadingOperators] = useState(true);
@@ -184,9 +186,11 @@ function RechargePage() {
       );
 
       if (response.success && response.data) {
-        router.push(
-          `/payment?type=recharge&amount=${amount}&mobile=${mobileNumber}&txnId=${response.data.transactionId}`
-        );
+        setResult(response.data);
+        // Optionally navigate to payment gateway
+        // router.push(
+        //   `/payment?type=recharge&amount=${amount}&mobile=${mobileNumber}&txnId=${response.data.transactionId}`
+        // );
       } else {
         const msg = response.message || 'Failed to initiate recharge';
         if (!isMounted()) return;
@@ -475,6 +479,106 @@ function RechargePage() {
   // ============================================
 
   const canProceed = mobileNumber.length === 10 && !!amount && !!selectedOperator;
+
+  // ============================================
+  // SUCCESS STATE
+  // ============================================
+
+  if (result) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" backgroundColor={COLORS.white} />
+
+        {/* Header */}
+        <View style={styles.header}>
+          <Pressable onPress={() => { setResult(null); }} style={styles.backButton}>
+            <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
+          </Pressable>
+          <Text style={styles.headerTitle}>Recharge Successful</Text>
+          <View style={{ width: 32 }} />
+        </View>
+
+        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: Spacing.base }} showsVerticalScrollIndicator={false}>
+          {/* Success Icon */}
+          <View style={styles.successContainer}>
+            <View style={styles.successIcon}>
+              <Ionicons name="checkmark" size={48} color={COLORS.white} />
+            </View>
+            <Text style={styles.successTitle}>Recharge Done!</Text>
+            <Text style={styles.successSubtitle}>Your mobile has been recharged successfully</Text>
+          </View>
+
+          {/* Details Card */}
+          <View style={styles.detailsCard}>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Mobile Number</Text>
+              <Text style={styles.detailValue}>{result.phoneNumber}</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Operator</Text>
+              <Text style={styles.detailValue}>{result.operatorName}</Text>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Amount</Text>
+              <Text style={styles.detailValue}>{currencySymbol}{Number(result.amount).toFixed(2)}</Text>
+            </View>
+            {result.cashbackPercent > 0 && (
+              <>
+                <View style={styles.divider} />
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Cashback</Text>
+                  <Text style={styles.detailValue}>{result.cashbackPercent}%</Text>
+                </View>
+              </>
+            )}
+            <View style={styles.divider} />
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Transaction ID</Text>
+              <Text style={styles.detailValue}>{result.transactionId.slice(-8)}</Text>
+            </View>
+          </View>
+
+          {/* Coins Earned Banner */}
+          {result?.promoCoinsEarned > 0 && (
+            <View style={styles.coinsEarnedBanner}>
+              <LinearGradient
+                colors={['#6C63FF', '#5A52D5']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.coinsEarnedGradient}
+              >
+                <View style={styles.coinsEarnedContent}>
+                  <Ionicons name="sparkles" size={24} color={COLORS.white} />
+                  <View style={styles.coinsEarnedText}>
+                    <Text style={styles.coinsEarnedTitle}>🎉 +{result.promoCoinsEarned} promo coins earned!</Text>
+                    <Text style={styles.coinsEarnedSubtitle}>Valid for {result.promoExpiryDays} days</Text>
+                  </View>
+                </View>
+              </LinearGradient>
+            </View>
+          )}
+
+          {/* Action Buttons */}
+          <View style={styles.actionButtons}>
+            <Pressable
+              style={styles.secondaryButton}
+              onPress={() => { setResult(null); }}
+            >
+              <Text style={styles.secondaryButtonText}>Recharge Again</Text>
+            </Pressable>
+            <Pressable
+              style={styles.primaryButton}
+              onPress={() => router.replace('/(tabs)')}
+            >
+              <Text style={styles.primaryButtonText}>Go Home</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -866,6 +970,115 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.textSecondary,
   },
   proceedButtonText: {
+    ...Typography.bodyLarge,
+    fontWeight: '600',
+    color: COLORS.white,
+  },
+  // Success Screen Styles
+  successContainer: {
+    alignItems: 'center',
+    marginBottom: Spacing.xl,
+  },
+  successIcon: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: COLORS.primaryGreen,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+  },
+  successTitle: {
+    ...Typography.h2,
+    fontWeight: '700',
+    color: COLORS.textPrimary,
+    marginBottom: Spacing.sm,
+  },
+  successSubtitle: {
+    ...Typography.bodyLarge,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+  },
+  detailsCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.base,
+    marginVertical: Spacing.lg,
+    ...Shadows.sm,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+  },
+  detailLabel: {
+    ...Typography.bodyLarge,
+    color: COLORS.textSecondary,
+  },
+  detailValue: {
+    ...Typography.bodyLarge,
+    fontWeight: '600',
+    color: COLORS.textPrimary,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: COLORS.border,
+  },
+  coinsEarnedBanner: {
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    marginVertical: Spacing.lg,
+    ...Shadows.md,
+  },
+  coinsEarnedGradient: {
+    padding: Spacing.lg,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  coinsEarnedContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  coinsEarnedText: {
+    flex: 1,
+  },
+  coinsEarnedTitle: {
+    ...Typography.bodyLarge,
+    fontWeight: '600',
+    color: COLORS.white,
+    marginBottom: Spacing.xs,
+  },
+  coinsEarnedSubtitle: {
+    ...Typography.bodySmall,
+    color: 'rgba(255, 255, 255, 0.8)',
+  },
+  actionButtons: {
+    gap: Spacing.md,
+    marginTop: Spacing.xl,
+  },
+  secondaryButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: COLORS.primaryGreen,
+    paddingVertical: 14,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+  },
+  secondaryButtonText: {
+    ...Typography.bodyLarge,
+    fontWeight: '600',
+    color: COLORS.primaryGreen,
+  },
+  primaryButton: {
+    backgroundColor: COLORS.primaryGreen,
+    paddingVertical: 14,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+  },
+  primaryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
     color: COLORS.white,
