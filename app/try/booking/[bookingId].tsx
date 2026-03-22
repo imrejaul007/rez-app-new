@@ -13,6 +13,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
 import { colors, spacing, borderRadius } from '@/constants/theme';
+import { tryApi } from '@/services/tryApi';
 
 interface BookingDetails {
   bookingId: string;
@@ -34,32 +35,35 @@ export default function QRDisplayScreen() {
   const [isExpired, setIsExpired] = useState(false);
   const [qrSize] = useState(250);
 
+  // Load booking details on mount
   useEffect(() => {
-    // TODO: Fetch booking details from API
-    // Removed mock booking data - implement API call to fetch by bookingId
-    // const booking = await tryApi.getBookingDetails(bookingId);
+    const loadBookingDetails = async () => {
+      if (!bookingId) {
+        setLoading(false);
+        return;
+      }
 
-    if (!bookingId) {
-      setLoading(false);
-      return;
-    }
-
-    // Placeholder for loading state
-    const mockBooking: BookingDetails = {
-      bookingId: bookingId || '',
-      trialTitle: '',
-      merchantName: '',
-      qrToken: '',
-      qrExpiresAt: new Date().toISOString(),
-      validUntil: new Date().toISOString(),
-      status: 'active',
-      createdAt: new Date().toISOString(),
+      try {
+        const details = await tryApi.getBookingDetails(bookingId);
+        setBooking(details);
+      } catch (err) {
+        console.error('Failed to load booking details:', err);
+        setBooking(null);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    // Start countdown timer
+    loadBookingDetails();
+  }, [bookingId]);
+
+  // Setup countdown timer for QR expiration
+  useEffect(() => {
+    if (!booking) return;
+
     const interval = setInterval(() => {
       const now = new Date();
-      const expiry = new Date(mockBooking.qrExpiresAt);
+      const expiry = new Date(booking.qrExpiresAt);
       const diff = expiry.getTime() - now.getTime();
 
       if (diff <= 0) {
@@ -70,16 +74,11 @@ export default function QRDisplayScreen() {
         const minutes = Math.floor(diff / 60_000);
         const seconds = Math.floor((diff % 60_000) / 1000);
         setTimeRemaining(`${minutes}:${seconds.toString().padStart(2, '0')}`);
-
-        // Turn red when < 5 minutes
-        if (minutes < 5) {
-          // Component will re-render with different styling
-        }
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [bookingId]);
+  }, [booking]);
 
   if (loading) {
     return (

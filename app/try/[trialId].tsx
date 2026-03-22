@@ -65,9 +65,9 @@ export default function TrialDetailScreen() {
           return;
         }
 
-        // TODO: Implement API call to fetch trial details by trialId
-        // const trialDetails = await tryApi.getTrialDetails(trialId);
-        // setTrial(trialDetails);
+        // Fetch trial details from API
+        const trialDetails = await tryApi.getTrialDetails(trialId);
+        setTrial(trialDetails);
 
         // Fetch coin balance
         const coinsData = await tryApi.getCoins();
@@ -111,8 +111,10 @@ export default function TrialDetailScreen() {
       });
 
       setBookingModal({ visible: false, loading: false });
-      if (bookingResponse.data?.bookingId) {
+      if (bookingResponse?.data?.bookingId) {
         router.push(`/try/booking/${bookingResponse.data.bookingId}`);
+      } else {
+        console.error('No booking ID in response:', bookingResponse);
       }
     } catch (err) {
       setBookingModal(prev => ({
@@ -164,39 +166,41 @@ export default function TrialDetailScreen() {
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Image Carousel */}
-        <View style={styles.imageCarouselContainer}>
-          <ScrollView
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            scrollEventThrottle={16}
-            onMomentumScrollEnd={event => {
-              const contentOffsetX = event.nativeEvent.contentOffset.x;
-              const index = Math.round(contentOffsetX / 400);
-              setCurrentImageIndex(index);
-            }}
-          >
-            {trial.images.map((image, idx) => (
-              <Image
-                key={idx}
-                source={{ uri: image }}
-                style={styles.carouselImage}
-                accessibilityIgnoresInvertColors
-              />
-            ))}
-          </ScrollView>
-          <View style={styles.imagePagination}>
-            {trial.images.map((_, idx) => (
-              <View
-                key={idx}
-                style={[
-                  styles.paginationDot,
-                  idx === currentImageIndex && styles.paginationDotActive,
-                ]}
-              />
-            ))}
+        {trial.images && trial.images.length > 0 && (
+          <View style={styles.imageCarouselContainer}>
+            <ScrollView
+              horizontal
+              pagingEnabled
+              showsHorizontalScrollIndicator={false}
+              scrollEventThrottle={16}
+              onMomentumScrollEnd={event => {
+                const contentOffsetX = event.nativeEvent.contentOffset.x;
+                const index = Math.round(contentOffsetX / 400);
+                setCurrentImageIndex(index);
+              }}
+            >
+              {trial.images.map((image, idx) => (
+                <Image
+                  key={idx}
+                  source={{ uri: image }}
+                  style={styles.carouselImage}
+                  accessibilityIgnoresInvertColors
+                />
+              ))}
+            </ScrollView>
+            <View style={styles.imagePagination}>
+              {trial.images.map((_, idx) => (
+                <View
+                  key={idx}
+                  style={[
+                    styles.paginationDot,
+                    idx === currentImageIndex && styles.paginationDotActive,
+                  ]}
+                />
+              ))}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Title and Merchant */}
         <View style={styles.section}>

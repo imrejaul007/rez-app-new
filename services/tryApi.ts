@@ -245,6 +245,26 @@ class TryApi {
   }
 
   /**
+   * Get detailed information about a specific trial
+   */
+  async getTrialDetails(trialId: string): Promise<TrialCard | null> {
+    const response = await apiClient.request<{ success: boolean; data: TrialCard }>(`/try/${trialId}`, {
+      method: 'GET',
+    });
+    return response.data?.data || null;
+  }
+
+  /**
+   * Get detailed information about a booking
+   */
+  async getBookingDetails(bookingId: string): Promise<any> {
+    const response = await apiClient.request<{ success: boolean; data: any }>(`/try/bookings/${bookingId}`, {
+      method: 'GET',
+    });
+    return response.data?.data || null;
+  }
+
+  /**
    * Book a trial with commitment fee payment
    */
   async bookTrial(request: BookingRequest): Promise<BookingResponse> {
