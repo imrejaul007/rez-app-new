@@ -873,6 +873,31 @@ function HomeScreen() {
         </View>
       )}
 
+      {/* Try Before You Buy Banner */}
+      {activeTab !== 'prive' && activeTab !== 'mall' && (
+        <Pressable
+          style={viewStyles.tryBanner}
+          onPress={() => router.push('/try' as any)}
+          accessibilityLabel="Try before you buy"
+          accessibilityRole="button"
+        >
+          <LinearGradient
+            colors={[colors.nileBlue, '#0d2035']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={viewStyles.tryBannerGradient}
+          >
+            <View style={viewStyles.tryBannerContent}>
+              <View style={viewStyles.tryBannerTextSection}>
+                <Text style={viewStyles.tryBannerTitle}>Try Before You Buy</Text>
+                <Text style={viewStyles.tryBannerSubtitle}>Experience products risk-free, earn coins</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.6)" style={viewStyles.tryBannerChevron} />
+            </View>
+          </LinearGradient>
+        </Pressable>
+      )}
+
       {/* Stories Row — What's New (Instagram-style) */}
       {activeTab !== 'prive' && (
         <StoriesRow variant={tabStyles.whatsNewVariant} />
