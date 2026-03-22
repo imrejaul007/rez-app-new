@@ -148,6 +148,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   const [expiringAmount, setExpiringAmount] = useState(0);
   const [expiringLabel, setExpiringLabel] = useState('');
   const [expiringByType, setExpiringByType] = useState<Array<{ type: string; amount: number; expiresAt: string; daysLeft: number }>>([]);
+  const [minDaysLeft, setMinDaysLeft] = useState<number>(30); // Track minimum days to determine urgency
 
   // Refresh wallet balance and expiring coins in parallel on screen focus.
   // Promise.all ensures both complete together — prevents the UI from showing
@@ -204,7 +205,13 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
             }
           }
         }
-        setExpiringByType(Array.from(typeMap.entries()).map(([type, data]) => ({ type, ...data })));
+        const expiringList = Array.from(typeMap.entries()).map(([type, data]) => ({ type, ...data }));
+        setExpiringByType(expiringList);
+        // Calculate minimum days left for urgency styling
+        if (expiringList.length > 0) {
+          const minDays = Math.min(...expiringList.map(item => item.daysLeft));
+          setMinDaysLeft(minDays);
+        }
       }).catch(() => { /* silent — expiry info is supplementary */ });
       return () => { cancelled = true; };
     }, [refreshWallet, isAuthenticated, authLoading])
@@ -345,6 +352,32 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   ], [completionStatus, router, segmentShortcut]);
 
   const styles = useMemo(() => createStyles(screenData), [screenData]);
+
+  // Determine expiry banner style based on urgency
+  const expiryBannerStyle = useMemo(() => {
+    // Red/urgent if ≤24 hours (1 day)
+    if (minDaysLeft <= 1) {
+      return {
+        backgroundColor: Colors.errorScale?.[50] ?? '#FEF2F2',
+        borderColor: Colors.errorScale?.[200] ?? '#FECACA',
+        iconColor: Colors.errorScale?.[700] ?? '#B91C1C',
+      };
+    }
+    // Amber if >7 days
+    if (minDaysLeft > 7) {
+      return {
+        backgroundColor: colors.tint.amber,
+        borderColor: colors.warningScale?.[200] ?? '#FDE68A',
+        iconColor: colors.warningScale?.[700] ?? '#B45309',
+      };
+    }
+    // Orange/warning if 1 < daysLeft ≤ 7
+    return {
+      backgroundColor: colors.warningScale?.[50] ?? '#FFF9E6',
+      borderColor: colors.warningScale?.[300] ?? '#FCD34D',
+      iconColor: colors.warningScale?.[600] ?? '#D97706',
+    };
+  }, [minDaysLeft]);
 
   // --- Loading State ---
   if (walletLoading && !walletData) {
@@ -489,16 +522,46 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
           {/* Coin Expiry Warning Banner */}
           {expiringAmount > 0 && (
             <Pressable
-              style={styles.expiryBanner}
+              style={[
+                styles.expiryBanner,
+                {
+                  backgroundColor: expiryBannerStyle.backgroundColor,
+                  borderColor: expiryBannerStyle.borderColor,
+                },
+              ]}
               onPress={() => router.push('/wallet/expiry-tracker' as any)}
               accessibilityLabel={`${expiringLabel} — tap to view expiry details`}
               accessibilityRole="button"
             >
-              <View style={styles.expiryIconWrap}>
-                <Ionicons name="timer-outline" size={20} color={colors.warningScale?.[700] ?? '#B45309'} />
+              <View style={[
+                styles.expiryIconWrap,
+                {
+                  backgroundColor: minDaysLeft <= 1
+                    ? (Colors.errorScale?.[100] ?? '#FEE2E2')
+                    : minDaysLeft > 7
+                    ? colors.tint.amberLight
+                    : (colors.warningScale?.[100] ?? '#FEF3C7'),
+                },
+              ]}>
+                <Ionicons
+                  name={minDaysLeft <= 1 ? "alert-circle" : "timer-outline"}
+                  size={20}
+                  color={expiryBannerStyle.iconColor}
+                />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={styles.expiryText}>{expiringLabel}</Text>
+                <Text style={[
+                  styles.expiryText,
+                  {
+                    color: minDaysLeft <= 1
+                      ? (Colors.errorScale?.[700] ?? '#B91C1C')
+                      : minDaysLeft > 7
+                      ? (colors.brand.amberDark ?? '#92400E')
+                      : (colors.warningScale?.[700] ?? '#B45309'),
+                  },
+                ]}>
+                  {expiringLabel}
+                </Text>
                 {expiringByType.length > 0 && (
                   <View style={{ marginTop: 4 }}>
                     {expiringByType.slice(0, 3).map((item, idx) => {
@@ -521,7 +584,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
                 )}
                 <Text style={styles.expirySubtext}>Use them before they expire</Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={colors.warningScale?.[700] ?? '#B45309'} />
+              <Ionicons name="chevron-forward" size={16} color={expiryBannerStyle.iconColor} />
             </Pressable>
           )}
 

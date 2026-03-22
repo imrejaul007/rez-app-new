@@ -102,6 +102,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 // Lazy-loaded components (below-the-fold / modals / secondary content)
 const HomeTabSection = lazyWithRetry(() => import('@/components/homepage/HomeTabSection'));
 const NearUTabContent = lazyWithRetry(() => import('@/components/homepage/NearUTabContent'));
+const RecommendedStoresSection = lazyWithRetry(() => import('@/components/homepage/RecommendedStoresSection'));
 const LocationPickerModal = lazyWithRetry(() => import('@/components/location/LocationPickerModal'));
 const QuickAccessFAB = lazyWithRetry(() => import('@/components/navigation/QuickAccessFAB'));
 const PushNotificationInitializer = lazyWithRetry(() => import('@/components/common/PushNotificationInitializer'));
@@ -125,6 +126,7 @@ function prefetchOtherTabs() {
   // Prefetch JS chunks (import() caches the module — next React.lazy render is instant)
   import('@/components/homepage/HomeTabSection').catch(() => {});
   import('@/components/homepage/NearUTabContent').catch(() => {});
+  import('@/components/homepage/RecommendedStoresSection').catch(() => {});
   import('@/components/mall/MallSectionContainer').catch(() => {});
   import('@/components/mall/MallHeaderWrapper').catch(() => {});
   import('@/components/cash-store/CashStoreHeaderWrapper').catch(() => {});

@@ -44,6 +44,7 @@ import BonusZoneHighlight from '@/components/homepage/BonusZoneHighlight';
 import NewOnRezSection from '@/components/homepage/NewOnRezSection';
 import EventsExperiencesSection from '@/components/homepage/EventsExperiencesSection';
 import ShopByCategorySection from '@/components/homepage/ShopByCategorySection';
+import RecommendedStoresSection from '@/components/homepage/RecommendedStoresSection';
 
 // Lightweight banners - static imports
 import PromoBanner from '@/components/homepage/PromoBanner';
@@ -656,6 +657,9 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
 
       <LazySection sectionId="just-for-you" scrollY={scrollY} height={280}
         renderSection={renderJustForYou} />
+
+      <LazySection sectionId="recommended-stores" scrollY={scrollY} height={180}
+        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={180} />}><RecommendedStoresSection /></Suspense>} />
 
       <LazySection sectionId="home-delivery" scrollY={scrollY} height={300}
         renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HomeDeliverySection /></Suspense>} />
