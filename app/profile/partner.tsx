@@ -108,6 +108,25 @@ function PartnerProfilePage() {
       }
     } catch (error) {
       if (!isMounted()) return;
+      // If dashboard fails, try loading just benefits as fallback
+      try {
+        const benefitsResponse = await partnerApi.getBenefits();
+        if (isMounted() && benefitsResponse.success && benefitsResponse.data) {
+          setEnrolled(true);
+          setPartnerState({
+            profile: { level: benefitsResponse.data.currentLevel, name: '' } as any,
+            milestones: [],
+            tasks: [],
+            jackpotProgress: [],
+            claimableOffers: [],
+            faqs: [],
+            levels: benefitsResponse.data.allLevels,
+            loading: false,
+            error: null,
+          });
+          return;
+        }
+      } catch {}
       setPartnerState(prev => ({
         ...prev,
         loading: false,
