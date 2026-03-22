@@ -240,7 +240,9 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
       };
 
       // Call the correct authService method directly instead of going through AuthContext
+      if (__DEV__) console.log('[ProfileContext] Sending to API:', JSON.stringify(profileUpdateData));
       const response = await authService.updateProfile(profileUpdateData);
+      if (__DEV__) console.log('[ProfileContext] API response:', JSON.stringify({ success: response.success, error: response.error, hasData: !!response.data }));
 
       // Check for API errors and throw with descriptive message
       if (!response.success) {

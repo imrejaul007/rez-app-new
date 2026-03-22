@@ -62,10 +62,10 @@ function ProfileEditPage() {
     { label: 'Other', value: 'other' },
   ];
 
-  // Update form data when user data changes
+  // Update form data when user data changes or on focus
   useEffect(() => {
     if (user) {
-      setFormData({
+      const newData = {
         name: user.name || '',
         email: user.email || '',
         phone: user.phone || '',
@@ -74,9 +74,11 @@ function ProfileEditPage() {
         website: user.website || '',
         dateOfBirth: user.dateOfBirth || '',
         gender: user.gender || '',
-      });
+      };
+      if (__DEV__) console.log('[ProfileEdit] Loading user data:', JSON.stringify(newData));
+      setFormData(newData);
     }
-  }, [user]);
+  }, [user?.name, user?.email, user?.phone, user?.bio, user?.location, user?.website, user?.dateOfBirth, user?.gender]);
 
   useEffect(() => {
     // Check if form has changes by comparing individual fields (avoids JSON.stringify overhead)
@@ -213,6 +215,7 @@ function ProfileEditPage() {
     setIsSaving(true);
 
     try {
+      if (__DEV__) console.log('[ProfileEdit] Saving:', JSON.stringify(formData));
       // Use ProfileContext to update user with real backend API
       await updateUser({
         name: formData.name,
