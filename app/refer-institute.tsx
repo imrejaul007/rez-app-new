@@ -199,11 +199,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20,
     borderWidth: 1, borderColor: colors.border.default,
   },
-  typeChipActive: { backgroundColor: colors.brand.purple, borderColor: colors.brand.purple },
+  typeChipActive: { backgroundColor: colors.primary[500], borderColor: colors.primary[500] },
   typeChipText: { fontSize: 14, fontWeight: '600', color: colors.text.secondary },
   typeChipTextActive: { color: '#fff' },
   submitButton: {
-    backgroundColor: colors.brand.purple, paddingVertical: 16, borderRadius: borderRadius.md,
+    backgroundColor: colors.primary[500], paddingVertical: 16, borderRadius: borderRadius.md,
     alignItems: 'center', marginTop: spacing.md, ...shadows.medium,
   },
   submitButtonDisabled: { opacity: 0.6 },
@@ -216,7 +216,7 @@ const styles = StyleSheet.create({
   successTitle: { fontSize: 22, fontWeight: '700', color: colors.text.primary, marginBottom: spacing.md },
   successBody: { fontSize: 14, color: colors.text.secondary, textAlign: 'center', marginBottom: spacing['2xl'] },
   ctaButton: {
-    backgroundColor: colors.brand.purple, paddingVertical: 14, paddingHorizontal: spacing['2xl'],
+    backgroundColor: colors.primary[500], paddingVertical: 14, paddingHorizontal: spacing['2xl'],
     borderRadius: borderRadius.md, flexDirection: 'row', alignItems: 'center', gap: spacing.sm,
     ...shadows.medium,
   },

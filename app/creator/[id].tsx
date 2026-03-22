@@ -628,7 +628,7 @@ const styles = StyleSheet.create({
   tierText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.brand.purple,
+    color: colors.primary[500],
   },
   bioText: {
     ...Typography.body,
@@ -737,7 +737,7 @@ const styles = StyleSheet.create({
   tagPillText: {
     ...Typography.caption,
     fontWeight: '500',
-    color: Colors.brand.purple,
+    color: colors.primary[500],
   },
 
   // Stats

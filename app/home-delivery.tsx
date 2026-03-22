@@ -62,7 +62,7 @@ function HomeDeliveryPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purpleLight} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary[300]} />
       
       {/* Header */}
       <HomeDeliveryHeader
@@ -180,7 +180,7 @@ function HomeDeliveryPage() {
                     : `Search results for ${state.searchQuery}. ${state.filteredProducts.length} ${state.filteredProducts.length === 1 ? 'product' : 'products'} found`}
               >
                 <View style={styles.searchResultsTitleContainer}>
-                  <Ionicons name="search" size={20} color={Colors.brand.purpleLight} />
+                  <Ionicons name="search" size={20} color={colors.primary[300]} />
                   <ThemedText style={styles.searchResultsTitle}>
                     Search Results
                   </ThemedText>
@@ -222,7 +222,7 @@ function HomeDeliveryPage() {
                   accessibilityLabel="Searching for products"
                   accessibilityValue={{ text: "Loading" }}
                 >
-                  <ActivityIndicator size="large" color={Colors.brand.purpleLight} />
+                  <ActivityIndicator size="large" color={colors.primary[300]} />
                   <ThemedText style={styles.loadingText}>Searching products...</ThemedText>
                 </View>
               ) : state.filteredProducts.length > 0 ? (
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   categoryBadge: {
-    backgroundColor: Colors.brand.purpleLight,
+    backgroundColor: colors.primary[300],
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
@@ -428,14 +428,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   emptyActionButton: {
-    backgroundColor: Colors.brand.purpleLight,
+    backgroundColor: colors.primary[300],
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing['2xl'],
     borderRadius: BorderRadius.lg,
     alignItems: 'center',
     ...Platform.select({
       ios: {
-        shadowColor: Colors.brand.purpleLight,
+        shadowColor: colors.primary[300],
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
         shadowRadius: 8,
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   searchResultsCount: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.brand.purpleLight,
+    color: colors.primary[300],
     marginBottom: Spacing.xs,
   },
   searchQueryText: {

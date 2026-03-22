@@ -115,7 +115,7 @@ function AllProjectsPage() {
   const isMounted = useIsMounted();
 
   const categories = [
-    { label: 'All', value: null, icon: 'grid', gradient: [colors.brand.purpleLight, colors.brand.purpleMedium] },
+    { label: 'All', value: null, icon: 'grid', gradient: [colors.primary[300], colors.primary[400]] },
     { label: 'Review', value: 'review', icon: 'star', gradient: [colors.warningScale[400], colors.brand.orange] },
     { label: 'Social Share', value: 'social_share', icon: 'share-social', gradient: [colors.infoScale[400], colors.brand.indigo] },
     { label: 'UGC Content', value: 'ugc_content', icon: 'videocam', gradient: [colors.brand.pink, '#F472B6'] },
@@ -324,7 +324,7 @@ function AllProjectsPage() {
 
   const getCategoryGradient = (category: string) => {
     const cat = categories.find(c => c.value === category);
-    return cat?.gradient || [colors.brand.purpleLight, colors.brand.purpleMedium];
+    return cat?.gradient || [colors.primary[300], colors.primary[400]];
   };
 
   // Project Card Component
@@ -499,7 +499,7 @@ function AllProjectsPage() {
       >
         {/* Modern Header with Gradient */}
         <LinearGradient
-          colors={[colors.brand.purpleLight, colors.brand.purple, colors.brand.purpleDeep]}
+          colors={[colors.primary[300], colors.primary[500], colors.primary[700]]}
           style={styles.header}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -692,7 +692,7 @@ function AllProjectsPage() {
               onPress={() => loadProjects(1, true)}
             >
               <LinearGradient
-                colors={[colors.brand.purple, colors.brand.purpleDeep]}
+                colors={[colors.primary[500], colors.primary[700]]}
                 style={styles.retryButtonGradient}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
@@ -721,7 +721,7 @@ function AllProjectsPage() {
             style={styles.projectsList}
             showsVerticalScrollIndicator={false}
             refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.brand.purple} />
+              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.primary[500]} />
             }
             onScroll={({ nativeEvent }) => {
               const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;

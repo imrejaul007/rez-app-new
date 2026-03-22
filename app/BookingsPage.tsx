@@ -45,7 +45,7 @@ const C = {
   error: Colors.error,
   warning: Colors.warning,
   success: Colors.success,
-  purple: Colors.brand.purple,
+  purple: colors.primary[500],
   blue: Colors.info,
   orange: colors.brand.orange,
   teal: colors.tealGreen,
@@ -63,7 +63,7 @@ const STATUS_CONFIG: Record<string, { color: string; bg: string; icon: string }>
   confirmed: { color: colors.successScale[400], bg: colors.tint.greenLight, icon: 'checkmark-circle-outline' },
   completed: { color: colors.infoScale[400], bg: colors.tint.blue, icon: 'checkmark-done-outline' },
   cancelled: { color: colors.error, bg: colors.errorScale[50], icon: 'close-circle-outline' },
-  assigned: { color: colors.brand.purpleLight, bg: colors.tint.purpleLight, icon: 'person-outline' },
+  assigned: { color: colors.primary[300], bg: colors.tint.purpleLight, icon: 'person-outline' },
   in_progress: { color: colors.brand.orange, bg: colors.tint.orange, icon: 'play-circle-outline' },
   no_show: { color: colors.neutral[500], bg: colors.neutral[50], icon: 'eye-off-outline' },
 };

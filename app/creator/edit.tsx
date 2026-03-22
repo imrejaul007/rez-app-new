@@ -499,8 +499,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.border.default,
   },
   tagChipSelected: {
-    backgroundColor: Colors.brand.purpleLight,
-    borderColor: Colors.brand.purpleLight,
+    backgroundColor: colors.primary[300],
+    borderColor: colors.primary[300],
   },
   tagChipText: {
     ...Typography.bodySmall,

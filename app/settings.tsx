@@ -188,7 +188,7 @@ function SettingsPage() {
           type: 'switch',
           value: settings.pushNotifications,
           icon: 'notifications-outline',
-          iconColor: Colors.brand.purpleLight,
+          iconColor: colors.primary[300],
           onPress: () => handleToggleSetting('pushNotifications'),
         },
         {
@@ -250,7 +250,7 @@ function SettingsPage() {
           type: 'switch',
           value: settings.autoSync,
           icon: 'sync-outline',
-          iconColor: Colors.brand.purpleLight,
+          iconColor: colors.primary[300],
           onPress: () => handleToggleSetting('autoSync'),
         },
         {
@@ -284,7 +284,7 @@ function SettingsPage() {
           description: 'Update your personal information and preferences',
           type: 'navigation',
           icon: 'person-outline',
-          iconColor: Colors.brand.purpleLight,
+          iconColor: colors.primary[300],
           route: '/profile/edit',
         },
         {
@@ -326,7 +326,7 @@ function SettingsPage() {
           description: 'Get answers to common questions',
           type: 'navigation',
           icon: 'help-circle-outline',
-          iconColor: Colors.brand.purpleLight,
+          iconColor: colors.primary[300],
           route: '/help',
         },
         {
@@ -419,7 +419,7 @@ function SettingsPage() {
           <Switch
             value={item.value}
             onValueChange={item.onPress}
-            trackColor={{ false: Colors.border.default, true: Colors.brand.purpleLight }}
+            trackColor={{ false: Colors.border.default, true: colors.primary[300] }}
             thumbColor={item.value ? Colors.background.primary : Colors.background.primary}
           />
         )}
@@ -446,13 +446,13 @@ function SettingsPage() {
     <SafeAreaView style={styles.container}>
       <StatusBar
         barStyle="light-content"
-        backgroundColor={Colors.brand.purpleLight}
+        backgroundColor={colors.primary[300]}
         translucent={false}
       />
       
       {/* Header */}
       <LinearGradient
-        colors={[Colors.brand.purpleLight, colors.brand.purpleMedium]}
+        colors={[colors.primary[300], colors.primary[400]]}
         style={styles.header}
       >
         <View style={styles.headerContent}>

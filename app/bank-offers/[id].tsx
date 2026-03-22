@@ -156,7 +156,7 @@ function BankOfferDetailScreen() {
           </View>
           {offer.cardNetwork && (
             <View style={[styles.chip, { backgroundColor: colors.tint.pink }]}>
-              <ThemedText style={[styles.chipText, { color: Colors.brand.purple }]}>{offer.cardNetwork}</ThemedText>
+              <ThemedText style={[styles.chipText, { color: colors.primary[500] }]}>{offer.cardNetwork}</ThemedText>
             </View>
           )}
           {isExpired ? (
