@@ -12,6 +12,7 @@ import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useAuthActions } from '@/stores/selectors';
+import authService from '@/services/authApi';
 import { useSafeNavigation } from '@/hooks/useSafeNavigation';
 import { HeaderBackButton } from '@/components/navigation/SafeBackButton';
 import { PROFILE_COLORS } from '@/types/profile.types';
@@ -40,17 +41,19 @@ function ProfileEditPage() {
   const authActions = useAuthActions();
 
   const [formData, setFormData] = useState<ProfileFormData>({
-    name: user?.name || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    bio: user?.bio || '',
-    location: user?.location || '',
-    website: user?.website || '',
-    dateOfBirth: user?.dateOfBirth || '',
-    gender: user?.gender || '',
+    name: '',
+    email: '',
+    phone: '',
+    bio: '',
+    location: '',
+    website: '',
+    dateOfBirth: '',
+    gender: '',
   });
+  const [initialData, setInitialData] = useState<ProfileFormData | null>(null);
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const [showGenderModal, setShowGenderModal] = useState(false);
@@ -62,43 +65,83 @@ function ProfileEditPage() {
     { label: 'Other', value: 'other' },
   ];
 
-  // Update form data when user data changes or on focus
+  // Load profile directly from API on mount — bypass all caching layers
   useEffect(() => {
-    if (user) {
-      const newData = {
-        name: user.name || '',
-        email: user.email || '',
-        phone: user.phone || '',
-        bio: user.bio || '',
-        location: user.location || '',
-        website: user.website || '',
-        dateOfBirth: user.dateOfBirth || '',
-        gender: user.gender || '',
-      };
-      if (__DEV__) console.log('[ProfileEdit] Loading user data:', JSON.stringify(newData));
-      setFormData(newData);
-    }
-  }, [user?.name, user?.email, user?.phone, user?.bio, user?.location, user?.website, user?.dateOfBirth, user?.gender]);
+    let cancelled = false;
+    const loadProfile = async () => {
+      try {
+        const response = await authService.getProfile();
+        if (cancelled || !isMounted()) return;
+        if (response.success && response.data) {
+          const d = response.data as any;
+          const profileData: ProfileFormData = {
+            name: d.profile?.firstName && d.profile?.lastName
+              ? `${d.profile.firstName} ${d.profile.lastName}`
+              : d.profile?.firstName || d.name || '',
+            email: d.email || '',
+            phone: d.phoneNumber || d.phone || '',
+            bio: d.profile?.bio || d.bio || '',
+            location: d.profile?.location?.address || d.location || '',
+            website: d.profile?.website || d.website || '',
+            dateOfBirth: d.profile?.dateOfBirth
+              ? new Date(d.profile.dateOfBirth).toISOString().split('T')[0]
+              : d.dateOfBirth || '',
+            gender: d.profile?.gender || d.gender || '',
+          };
+          setFormData(profileData);
+          setInitialData(profileData);
+        } else if (user) {
+          // Fallback to context user
+          const profileData: ProfileFormData = {
+            name: user.name || '',
+            email: user.email || '',
+            phone: user.phone || '',
+            bio: user.bio || '',
+            location: user.location || '',
+            website: user.website || '',
+            dateOfBirth: user.dateOfBirth || '',
+            gender: user.gender || '',
+          };
+          setFormData(profileData);
+          setInitialData(profileData);
+        }
+      } catch {
+        // Fallback to context user on error
+        if (user && !cancelled) {
+          const profileData: ProfileFormData = {
+            name: user.name || '',
+            email: user.email || '',
+            phone: user.phone || '',
+            bio: user.bio || '',
+            location: user.location || '',
+            website: user.website || '',
+            dateOfBirth: user.dateOfBirth || '',
+            gender: user.gender || '',
+          };
+          setFormData(profileData);
+          setInitialData(profileData);
+        }
+      } finally {
+        if (!cancelled) setIsLoadingProfile(false);
+      }
+    };
+    loadProfile();
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
-    // Check if form has changes by comparing individual fields (avoids JSON.stringify overhead)
+    if (!initialData) return;
     const hasChangesDetected =
-      formData.name !== (user?.name || '') ||
-      formData.email !== (user?.email || '') ||
-      formData.phone !== (user?.phone || '') ||
-      formData.bio !== (user?.bio || '') ||
-      formData.location !== (user?.location || '') ||
-      formData.website !== (user?.website || '') ||
-      formData.dateOfBirth !== (user?.dateOfBirth || '') ||
-      formData.gender !== (user?.gender || '');
-
+      formData.name !== initialData.name ||
+      formData.email !== initialData.email ||
+      formData.phone !== initialData.phone ||
+      formData.bio !== initialData.bio ||
+      formData.location !== initialData.location ||
+      formData.website !== initialData.website ||
+      formData.dateOfBirth !== initialData.dateOfBirth ||
+      formData.gender !== initialData.gender;
     setHasChanges(hasChangesDetected);
-  }, [
-    formData.name, formData.email, formData.phone, formData.bio,
-    formData.location, formData.website, formData.dateOfBirth, formData.gender,
-    user?.name, user?.email, user?.phone, user?.bio,
-    user?.location, user?.website, user?.dateOfBirth, user?.gender,
-  ]);
+  }, [formData, initialData]);
 
   const handleBackPress = () => {
     if (hasChanges) {
@@ -215,27 +258,52 @@ function ProfileEditPage() {
     setIsSaving(true);
 
     try {
-      if (__DEV__) console.log('[ProfileEdit] Saving:', JSON.stringify(formData));
-      // Use ProfileContext to update user with real backend API
-      await updateUser({
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        bio: formData.bio,
-        location: formData.location,
-        website: formData.website,
-        dateOfBirth: formData.dateOfBirth,
-        gender: formData.gender,
-      });
+      // Split name into firstName/lastName for the backend
+      const nameParts = formData.name.trim().split(' ');
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
 
-      // Automatically navigate back after successful save
-      goBack('/profile' as any);
+      // Call API directly to avoid context/cache issues
+      const profileUpdateData = {
+        email: formData.email || undefined,
+        profile: {
+          firstName: firstName || undefined,
+          lastName: lastName || undefined,
+          bio: formData.bio || undefined,
+          website: formData.website || undefined,
+          dateOfBirth: formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined,
+          gender: formData.gender && ['male', 'female', 'other'].includes(formData.gender.toLowerCase())
+            ? formData.gender.toLowerCase()
+            : undefined,
+          location: formData.location ? { address: formData.location } : undefined,
+        },
+      };
+
+      const response = await authService.updateProfile(profileUpdateData as any);
+
+      if (!response.success) {
+        throw new Error(response.error || response.message || 'Failed to update profile');
+      }
+
+      // Force refresh auth state from backend (clear cache first)
+      const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
+      await AsyncStorage.removeItem('lastProfileSync');
+      await authActions.checkAuthStatus();
+
+      // Update initial data so hasChanges resets
+      setInitialData({ ...formData });
+
+      platformAlertSimple('Success', 'Profile updated successfully!');
+
+      // Navigate back after a short delay
+      setTimeout(() => {
+        if (isMounted()) goBack('/profile' as any);
+      }, 500);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
-      platformAlertError('Validation Error', message);
+      platformAlertError('Save Failed', message);
     } finally {
-      if (!isMounted()) return;
-      setIsSaving(false);
+      if (isMounted()) setIsSaving(false);
     }
   };
 
