@@ -126,8 +126,7 @@ function FashionCategoryPage() {
   const activeModes = [...activeServiceFilters, ...activeLifestyleFilters];
   const hasActiveFilters = activeModes.length > 0;
 
-  if (!isMounted()) return;
-  const onRefresh = async () => { setRefreshing(true); await refetch(); setRefreshing(false); };
+  const onRefresh = async () => { setRefreshing(true); await refetch(); if (isMounted()) setRefreshing(false); };
 
   const toggleServiceFilter = (filterId: string) => {
     if (!isMounted()) return;
@@ -401,27 +400,71 @@ function FashionCategoryPage() {
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.storesList}>
             {filteredStores.slice(0, 5).map((store: any) => {
               const pt = getPriceTier(store.priceForTwo);
-              const topSvc = store.serviceTypes?.[0] || '';
+              const cashback = store.offers?.cashback || store.cashback;
+              const isNew = store.isNew || store.showNewBadge;
+              const rating = store.ratings?.average || store.rating;
+              const storeTags = (store.tags || [])
+                .filter((t: string) => !['pure-veg','veg','non-veg','halal'].includes(t.toLowerCase()))
+                .slice(0, 2)
+                .map((t: string) => t.charAt(0).toUpperCase() + t.slice(1));
+              const imageSource = store.logo || (Array.isArray(store.banner) ? store.banner[0] : store.banner);
               return (
-                <Pressable key={store.id} style={styles.storeCard} onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as any)}>
-                  {(store.logo || store.banner?.[0]) ? (
-                    <CachedImage source={store.logo || store.banner?.[0]} style={styles.storeImage} contentFit="cover" />
+                <Pressable key={store._id || store.id} style={styles.storeCard} onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as any)}>
+                  {/* Store image */}
+                  {imageSource ? (
+                    <CachedImage source={imageSource} style={styles.storeImage} contentFit="cover" />
                   ) : (
-                    <View style={[styles.storeImage, styles.storePlaceholder]}><Ionicons name="storefront" size={32} color={COLORS.purple} /></View>
-                  )}
-                  <View style={styles.storeBadge}>
-                    <Ionicons name="checkmark-circle" size={14} color={COLORS.white} />
-                    <Text style={styles.storeBadgeText}>Verified</Text>
-                  </View>
-                  <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
-                  <View style={styles.storeMeta}>
-                    <View style={styles.storeRating}>
-                      <Ionicons name="star" size={12} color={COLORS.primaryGold} />
-                      <Text style={styles.storeRatingText}>{store.rating?.toFixed(1) || 'New'}</Text>
+                    <View style={[styles.storeImage, styles.storePlaceholder]}>
+                      <Ionicons name="storefront" size={32} color={COLORS.purple} />
                     </View>
-                    {pt.label ? <Text style={[styles.storePriceTier, { color: pt.color }]}>{pt.label}</Text> : null}
+                  )}
+                  {/* Badges overlay */}
+                  <View style={styles.storeBadgesRow}>
+                    {isNew ? (
+                      <View style={styles.storeNewBadge}>
+                        <Text style={styles.storeNewBadgeText}>NEW</Text>
+                      </View>
+                    ) : (
+                      <View style={styles.storeBadge}>
+                        <Ionicons name="checkmark-circle" size={12} color={COLORS.white} />
+                        <Text style={styles.storeBadgeText}>Verified</Text>
+                      </View>
+                    )}
+                    {cashback ? (
+                      <View style={styles.storeCashbackBadge}>
+                        <Text style={styles.storeCashbackBadgeText}>{cashback}% off</Text>
+                      </View>
+                    ) : null}
                   </View>
-                  {topSvc ? <Text style={styles.storeService} numberOfLines={1}>{topSvc}</Text> : null}
+                  {/* Content */}
+                  <View style={styles.storeCardContent}>
+                    <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
+                    {/* Rating + price tier */}
+                    <View style={styles.storeMeta}>
+                      {rating ? (
+                        <View style={styles.storeRating}>
+                          <Ionicons name="star" size={11} color={COLORS.primaryGold} />
+                          <Text style={styles.storeRatingText}>{typeof rating === 'number' ? rating.toFixed(1) : rating}</Text>
+                        </View>
+                      ) : null}
+                      {pt.label ? <Text style={[styles.storePriceTier, { color: pt.color }]}>{pt.label}</Text> : null}
+                    </View>
+                    {/* Tags */}
+                    {storeTags.length > 0 && (
+                      <View style={styles.storeTagsRow}>
+                        {storeTags.map((tag: string, i: number) => (
+                          <View key={i} style={styles.storeTag}>
+                            <Text style={styles.storeTagText} numberOfLines={1}>{tag}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+                    {/* New arrivals pill */}
+                    <View style={styles.storeNewArrivalsRow}>
+                      <Ionicons name="sparkles-outline" size={11} color={COLORS.purple} />
+                      <Text style={styles.storeNewArrivalsText}>New arrivals this week</Text>
+                    </View>
+                  </View>
                 </Pressable>
               );
             })}
@@ -532,18 +575,71 @@ const styles = StyleSheet.create({
   productCashbackCompact: { fontSize: 11, color: COLORS.purple },
   storesList: { gap: 12, paddingRight: 16 },
   storeCard: {
-    width: 170, borderRadius: 16, backgroundColor: COLORS.white, overflow: 'hidden', position: 'relative',
-    ...Platform.select({ ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.05, shadowRadius: 4 }, android: { elevation: 1 }, web: { boxShadow: '0 1px 3px rgba(0,0,0,0.05)' } }),
+    width: 180,
+    borderRadius: 16,
+    backgroundColor: COLORS.white,
+    overflow: 'hidden',
+    position: 'relative',
+    borderWidth: 1,
+    borderColor: colors.neutral[100],
+    ...Platform.select({
+      ios: { shadowColor: '#A855F7', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.1, shadowRadius: 8 },
+      android: { elevation: 3 },
+      web: { boxShadow: '0 3px 8px rgba(168,85,247,0.1)' },
+    }),
   },
-  storeImage: { width: '100%', height: 100 },
+  storeImage: { width: '100%', height: 110 },
   storePlaceholder: { backgroundColor: COLORS.purpleLight, justifyContent: 'center', alignItems: 'center' },
-  storeBadge: { position: 'absolute', top: 8, right: 8, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 6, paddingVertical: 3, borderRadius: 12, backgroundColor: COLORS.purple, gap: 3 },
+  // Badge overlays on image
+  storeBadgesRow: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    right: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  storeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 12,
+    backgroundColor: COLORS.purple,
+    gap: 3,
+  },
   storeBadgeText: { fontSize: 10, fontWeight: '600', color: COLORS.white },
-  storeName: { fontSize: 14, fontWeight: '600', color: COLORS.textPrimary, paddingHorizontal: 8, paddingTop: 8, paddingBottom: 2 },
-  storeMeta: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, gap: 8 },
-  storeRating: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  storeRatingText: { fontSize: 12, fontWeight: '500', color: COLORS.textPrimary },
+  storeNewBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 12,
+    backgroundColor: '#EC4899',
+  },
+  storeNewBadgeText: { fontSize: 10, fontWeight: '800', color: COLORS.white, letterSpacing: 0.5 },
+  storeCashbackBadge: {
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: 12,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+  },
+  storeCashbackBadgeText: { fontSize: 10, fontWeight: '700', color: COLORS.white },
+  storeCardContent: { padding: 10 },
+  storeName: { fontSize: 14, fontWeight: '700', color: COLORS.textPrimary, marginBottom: 4 },
+  storeMeta: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 6 },
+  storeRating: { flexDirection: 'row', alignItems: 'center', gap: 3 },
+  storeRatingText: { fontSize: 12, fontWeight: '600', color: COLORS.textPrimary },
   storePriceTier: { fontSize: 12, fontWeight: '700' },
+  storeTagsRow: { flexDirection: 'row', gap: 4, marginBottom: 6, flexWrap: 'wrap' },
+  storeTag: {
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 8,
+    backgroundColor: `${COLORS.purple}14`,
+  },
+  storeTagText: { fontSize: 10, color: COLORS.purple, fontWeight: '500' },
+  storeNewArrivalsRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
+  storeNewArrivalsText: { fontSize: 10, color: COLORS.purple, fontWeight: '500' },
   storeService: { fontSize: 11, color: COLORS.textSecondary, paddingHorizontal: 8, paddingBottom: 8 },
   filterEmptyState: { alignItems: 'center', padding: 40, marginTop: 24 },
   filterEmptyTitle: { fontSize: 16, fontWeight: '600', color: COLORS.textPrimary, marginTop: 16 },

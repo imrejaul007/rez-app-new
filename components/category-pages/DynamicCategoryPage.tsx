@@ -1094,14 +1094,20 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
       case 'value-proposition':
         return renderValuePropositionSection();
       case 'popular-items':
-        return renderStoresListSection(section);
+        return renderStoresListSection({ ...section, id: section.id || 'popular-items', title: section.title || 'Popular Now' });
       case 'new-stores':
-        return renderStoresListSection(section);
+        return renderStoresListSection({ ...section, id: section.id || 'new-stores', title: section.title || 'New Stores' });
+      case 'social-proof-ticker':
+        // Rendered unconditionally in the header area — skip here to avoid duplication
+        return null;
+      case 'footer-trust':
+        // Rendered unconditionally at the bottom — skip here
+        return null;
       case 'offers-section':
         return (
-          <SectionErrorBoundary key={section.id} name="offers-section">
+          <SectionErrorBoundary key={section.id || 'offers-section'} name="offers-section">
             <OffersSection
-              key={section.id}
+              key={section.id || 'offers-section'}
               title={section.title || 'Offers & Deals'}
               subtitle={section.subtitle}
               slug={slug}
@@ -1110,9 +1116,9 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
         );
       case 'experiences-section':
         return (
-          <SectionErrorBoundary key={section.id} name="experiences-section">
+          <SectionErrorBoundary key={section.id || 'experiences-section'} name="experiences-section">
             <ExperiencesSection
-              key={section.id}
+              key={section.id || 'experiences-section'}
               title={section.title || 'Experiences'}
               subtitle={section.subtitle}
               slug={slug}
@@ -1127,9 +1133,11 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
   // ============================================
   // Section render functions
   // ============================================
-  const renderLoyaltyHubSection = (section: PageConfigSection) => (
+  const renderLoyaltyHubSection = (section: PageConfigSection) => {
+    const sectionKey = (section as any).id || (section as any)._id || 'loyalty-hub';
+    return (
     <Pressable
-      key={section.id}
+      key={sectionKey}
       style={styles.loyaltyHub}
       onPress={() => router.push(`/MainCategory/${slug}/loyalty` as any)}
      
@@ -1164,14 +1172,16 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
         </View>
       </LinearGradient>
     </Pressable>
-  );
+    );
+  };
 
   const renderBrowseGridSection = (section: PageConfigSection) => {
     // Only show for tabs that have a serviceFilter (main browsing tabs) or "all"
     if (currentTab?.sectionOverride) return null;
+    const sectionKey = (section as any).id || (section as any)._id || 'browse-grid';
     return (
       <BrowseCategoryGrid
-        key={section.id}
+        key={sectionKey}
         categories={subcategories}
         title={section.title || 'Browse Categories'}
         onCategoryPress={handleCategoryPress}
@@ -1182,9 +1192,11 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
 
   const renderStoresListSection = (section: PageConfigSection) => {
     if (currentTab?.sectionOverride) return null;
+    // Ensure a stable key even for backend sections that use _id instead of id
+    const sectionKey = (section as any).id || (section as any)._id || section.type;
 
     return (
-      <View key={section.id} style={styles.section}>
+      <View key={sectionKey} style={styles.section}>
         {/* Sort & Filter Bar */}
         <View style={styles.sortFilterBar}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sortFilterContent}>
@@ -1345,9 +1357,11 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
     );
   };
 
-  const renderAISearchSection = (section: PageConfigSection) => (
+  const renderAISearchSection = (section: PageConfigSection) => {
+    const sectionKey = (section as any).id || (section as any)._id || 'ai-search';
+    return (
     <EnhancedAISuggestionsSection
-      key={section.id}
+      key={sectionKey}
       categorySlug={slug}
       categoryName={currentTab?.sectionOverride === 'offers'
         ? `${pageConfig?.categoryName} Offers`
@@ -1357,16 +1371,19 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
       placeholders={currentPlaceholders}
       onSearch={handleAISearch}
     />
-  );
+    );
+  };
 
   const renderOrderAgainSection = () => {
     if (myOrders.length === 0) return null;
     return <OrderAgainSection key="order-again" orders={myOrders} />;
   };
 
-  const renderUGCSocialSection = (section: PageConfigSection) => (
+  const renderUGCSocialSection = (section: PageConfigSection) => {
+    const sectionKey = (section as any).id || (section as any)._id || 'ugc-social';
+    return (
     <EnhancedUGCSocialProofSection
-      key={section.id}
+      key={sectionKey}
       categorySlug={slug}
       categoryName={pageConfig?.categoryName || slug}
       posts={ugcPosts}
@@ -1381,7 +1398,8 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
         router.push(storiesRoute as any);
       }}
     />
-  );
+    );
+  };
 
   const renderStreakLoyaltySection = () => (
     <StreakLoyaltySection
@@ -1394,8 +1412,9 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
 
   const renderServiceTypesSection = (section: PageConfigSection) => {
     if (serviceTypes.length === 0) return null;
+    const sectionKey = (section as any).id || (section as any)._id || 'service-types';
     return (
-      <View key={section.id} style={styles.section}>
+      <View key={sectionKey} style={styles.section}>
         <View style={styles.sectionHeader}>
           <Ionicons name={section.icon as any || 'apps-outline'} size={20} color={primaryColor} />
           <Text style={styles.sectionTitle}>{section.title || 'Service Types'}</Text>
@@ -1423,8 +1442,9 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
 
   const renderCuratedCollectionsSection = (section: PageConfigSection) => {
     if (curatedCollections.length === 0) return null;
+    const sectionKey = (section as any).id || (section as any)._id || 'curated-collections';
     return (
-      <View key={section.id} style={styles.section}>
+      <View key={sectionKey} style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionEmoji}>{section.icon || '\u2728'}</Text>
           <Text style={styles.sectionTitle}>{section.title || 'Curated for You'}</Text>
@@ -1513,12 +1533,18 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
     }
 
     // Default: render configured sections (exclude types rendered unconditionally outside tabs)
-    const RENDERED_OUTSIDE_TABS = ['loyalty-hub', 'ai-search', 'value-proposition', 'streak-loyalty', 'ugc-social', 'footer-trust'];
+    const RENDERED_OUTSIDE_TABS = [
+      'loyalty-hub', 'ai-search', 'value-proposition', 'streak-loyalty',
+      'ugc-social', 'footer-trust', 'social-proof-ticker',
+    ];
     return (
       <View style={styles.tabContent}>
-        {sections.filter(s => !RENDERED_OUTSIDE_TABS.includes(s.type)).map(section => (
-          <SectionErrorBoundary key={section.id} name={`tab-section-${section.type}`}>{renderSection(section)}</SectionErrorBoundary>
-        ))}
+        {sections.filter(s => !RENDERED_OUTSIDE_TABS.includes(s.type)).map(section => {
+          const secKey = (section as any).id || (section as any)._id || section.type;
+          return (
+            <SectionErrorBoundary key={secKey} name={`tab-section-${section.type}`}>{renderSection(section)}</SectionErrorBoundary>
+          );
+        })}
       </View>
     );
   };

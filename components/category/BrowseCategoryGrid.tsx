@@ -1,11 +1,19 @@
 /**
  * BrowseCategoryGrid Component
- * 4-column grid layout for category icons with names and cashback badges
- * Based on reference design from Rez_v-2-main
+ * Premium 2-column grid layout for category cards — fashion-ready.
+ * Cards are equal height, responsive width, icon centred, text truncated.
  */
 
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, ImageSourcePropType, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ImageSourcePropType,
+  Dimensions,
+  Platform,
+} from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -15,7 +23,11 @@ import { colors } from '@/constants/theme';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 // 2-column grid: full width minus outer padding (16*2) minus gap between columns (12) divided by 2
-const CARD_WIDTH = (SCREEN_WIDTH - 32 - 12) / 2;
+const COLUMN_GAP = 12;
+const OUTER_PADDING = 32; // 16 left + 16 right
+const CARD_WIDTH = (SCREEN_WIDTH - OUTER_PADDING - COLUMN_GAP) / 2;
+// Image/icon area: square based on card width, capped for large screens
+const ICON_SIZE = Math.min(CARD_WIDTH - 24, 130);
 
 // Map category IDs to local asset images
 const CATEGORY_IMAGES: Record<string, ImageSourcePropType> = {
@@ -232,60 +244,55 @@ const CATEGORY_ICON_FALLBACK: Record<string, { name: keyof typeof Ionicons.glyph
   'smartwatches': { name: 'watch-outline', color: colors.brand.blue },
 };
 
-// Rez Brand Colors
-const COLORS = {
-  primaryGold: colors.warningScale[400],
-  textPrimary: colors.neutral[900],
-  textSecondary: colors.neutral[500],
-  background: colors.background.primary,
-  border: colors.neutral[100],
-};
-
-interface CategoryIconProps {
+interface CategoryCardProps {
   category: CategoryGridItem;
   onPress: (category: CategoryGridItem) => void;
   countLabel?: string;
 }
 
-const CategoryIcon: React.FC<CategoryIconProps> = ({ category, onPress, countLabel = 'items' }) => {
+const CategoryCard: React.FC<CategoryCardProps> = ({ category, onPress, countLabel = 'items' }) => {
   const icon = category.icon || '🍽️';
   const color = category.color || colors.neutral[500];
-  // Priority: 1) Backend image URL (admin-uploaded), 2) Hardcoded local asset, 3) Emoji fallback
-  const backendImage = category.image
-    ? { uri: category.image }
-    : null;
-  const localImage = CATEGORY_IMAGES[category.slug] || CATEGORY_IMAGES[category.id] || null;
+
+  // Priority: 1) Backend image URL, 2) Hardcoded local asset, 3) Ionicons fallback
+  const backendImage = category.image ? { uri: category.image } : null;
+  const localImage = CATEGORY_IMAGES[category.slug ?? ''] || CATEGORY_IMAGES[category.id] || null;
   const imageSource = backendImage || localImage;
-  // Ionicons fallback for categories without images
+
   const iconFallback = !imageSource
     ? (CATEGORY_ICON_FALLBACK[category.id] || (category.slug ? CATEGORY_ICON_FALLBACK[category.slug] : undefined))
     : undefined;
 
-  // Derive accent color for gradient
   const accentColor = iconFallback?.color || color;
 
   return (
     <Pressable
-      style={styles.categoryItem}
+      style={styles.card}
       onPress={() => onPress(category)}
     >
-      {/* Upgrade 4: 120x120 card with gradient overlay */}
-      <View style={styles.itemCard}>
+      {/* Icon area — fixed square size, always centred */}
+      <View style={styles.iconArea}>
         {imageSource ? (
           <>
-            <CachedImage source={imageSource} style={styles.itemImage} contentFit="contain" cachePolicy="memory-disk" recyclingKey={category.id} />
-            {/* Subtle gradient overlay for images */}
+            <CachedImage
+              source={imageSource}
+              style={styles.itemImage}
+              contentFit="contain"
+              cachePolicy="memory-disk"
+              recyclingKey={category.id}
+            />
             <LinearGradient
-              colors={['transparent', `${accentColor}30`]}
-              style={styles.imageGradientOverlay}
+              colors={['transparent', `${accentColor}28`]}
+              style={StyleSheet.absoluteFill}
               start={{ x: 0, y: 0 }}
               end={{ x: 0, y: 1 }}
+              pointerEvents="none"
             />
           </>
         ) : iconFallback ? (
           <LinearGradient
-            colors={[`${iconFallback.color}18`, `${iconFallback.color}30`]}
-            style={styles.emojiContainer}
+            colors={[`${iconFallback.color}15`, `${iconFallback.color}2E`]}
+            style={styles.gradientFill}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
@@ -293,8 +300,8 @@ const CategoryIcon: React.FC<CategoryIconProps> = ({ category, onPress, countLab
           </LinearGradient>
         ) : (
           <LinearGradient
-            colors={[`${color}15`, `${color}28`]}
-            style={styles.emojiContainer}
+            colors={[`${color}12`, `${color}26`]}
+            style={styles.gradientFill}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
@@ -302,7 +309,7 @@ const CategoryIcon: React.FC<CategoryIconProps> = ({ category, onPress, countLab
           </LinearGradient>
         )}
 
-        {/* Store count badge (Upgrade 4) */}
+        {/* Item count badge — top-right corner */}
         {category.itemCount !== undefined && category.itemCount > 0 && (
           <View style={styles.countBadge}>
             <Text style={styles.countBadgeText}>{category.itemCount}+</Text>
@@ -310,12 +317,20 @@ const CategoryIcon: React.FC<CategoryIconProps> = ({ category, onPress, countLab
         )}
       </View>
 
-      <Text style={styles.categoryName} numberOfLines={2}>
-        {category.name}
-      </Text>
-      {category.itemCount !== undefined && category.itemCount > 0 && (
-        <Text style={styles.itemCount}>{category.itemCount}+ {countLabel}</Text>
-      )}
+      {/* Text block — always renders, same min-height so rows stay even */}
+      <View style={styles.textBlock}>
+        <Text style={styles.categoryName} numberOfLines={2}>
+          {category.name}
+        </Text>
+        {category.itemCount !== undefined && category.itemCount > 0 ? (
+          <Text style={styles.itemCount} numberOfLines={1}>
+            {category.itemCount}+ {countLabel}
+          </Text>
+        ) : (
+          // Placeholder keeps card height consistent when count is absent
+          <Text style={styles.itemCountPlaceholder}>{' '}</Text>
+        )}
+      </View>
     </Pressable>
   );
 };
@@ -332,35 +347,47 @@ const BrowseCategoryGrid: React.FC<BrowseCategoryGridProps> = ({
     if (onCategoryPress) {
       onCategoryPress(category);
     } else {
-      // Default navigation
       router.push(`/category/${category.id}`);
     }
   };
 
-  // Don't render if no categories
+  // Guard: don't render empty grid
   if (!categories || categories.length === 0) {
     return null;
+  }
+
+  // Pair categories into rows of 2 so alignment is always perfect
+  const rows: CategoryGridItem[][] = [];
+  for (let i = 0; i < categories.length; i += 2) {
+    rows.push(categories.slice(i, i + 2));
   }
 
   return (
     <View style={styles.container}>
       {/* Section Header */}
       <View style={styles.header}>
-        <View style={styles.headerTitleContainer}>
+        <View style={styles.headerTitleRow}>
           <View style={styles.titleAccent} />
           <Text style={styles.headerTitle}>{title}</Text>
         </View>
+        <Text style={styles.headerCount}>{categories.length} categories</Text>
       </View>
 
-      {/* 2-column Grid (Upgrade 4) */}
+      {/* Grid — manually paired rows to guarantee alignment */}
       <View style={styles.grid}>
-        {categories.map((category) => (
-          <CategoryIcon
-            key={category.id}
-            category={category}
-            onPress={handleCategoryPress}
-            countLabel={itemCountLabel}
-          />
+        {rows.map((row, rowIdx) => (
+          <View key={rowIdx} style={styles.row}>
+            {row.map((cat) => (
+              <CategoryCard
+                key={cat.id}
+                category={cat}
+                onPress={handleCategoryPress}
+                countLabel={itemCountLabel}
+              />
+            ))}
+            {/* If odd number of categories, fill the last cell with an empty placeholder */}
+            {row.length === 1 && <View style={styles.cardPlaceholder} />}
+          </View>
         ))}
       </View>
     </View>
@@ -370,7 +397,7 @@ const BrowseCategoryGrid: React.FC<BrowseCategoryGridProps> = ({
 const styles = StyleSheet.create({
   container: {
     paddingVertical: 20,
-    backgroundColor: COLORS.background,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -379,101 +406,133 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     marginBottom: 16,
   },
-  headerTitleContainer: {
+  headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
   },
+  // Fashion purple accent bar
   titleAccent: {
     width: 4,
     height: 20,
-    backgroundColor: COLORS.primaryGold,
+    backgroundColor: '#A855F7',
     borderRadius: 2,
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.textPrimary,
+    color: colors.neutral[900],
   },
-  // Upgrade 4: 2-column grid with 12px gap
+  headerCount: {
+    fontSize: 12,
+    color: colors.neutral[500],
+    fontWeight: '500',
+  },
+
+  // Outer grid — column of rows
   grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
     paddingHorizontal: 16,
-    gap: 12,
+    gap: COLUMN_GAP,
   },
-  categoryItem: {
+  // Each row is a horizontal pair
+  row: {
+    flexDirection: 'row',
+    gap: COLUMN_GAP,
+  },
+
+  // Individual card — fixed width, equal height via minHeight
+  card: {
     width: CARD_WIDTH,
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  // Upgrade 4: 120x120 card with shadow
-  itemCard: {
-    width: 120,
-    height: 120,
+    backgroundColor: colors.background.primary,
     borderRadius: 16,
-    backgroundColor: '#F4F4F6',
+    overflow: 'hidden',
+    // Premium shadow
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: { elevation: 3 },
+      web: { boxShadow: '0 2px 8px rgba(0,0,0,0.08)' },
+    }),
+    // Border gives premium feel
+    borderWidth: 1,
+    borderColor: colors.neutral[100],
+  },
+
+  // Empty placeholder card to fill odd row
+  cardPlaceholder: {
+    width: CARD_WIDTH,
+  },
+
+  // Square icon/image area — responsive, always centred
+  iconArea: {
+    width: '100%',
+    aspectRatio: 1,
+    backgroundColor: '#F8F5FF',
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
-    marginBottom: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 6,
-    elevation: 2,
-    alignSelf: 'center',
+    position: 'relative',
   },
-  itemImage: {
-    width: '80%',
-    height: '80%',
-  },
-  // Gradient overlay on image cards (Upgrade 4)
-  imageGradientOverlay: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: '40%',
-    borderRadius: 16,
-  },
-  emojiContainer: {
-    width: '100%',
-    height: '100%',
+  gradientFill: {
+    ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  iconEmoji: {
-    fontSize: 36,
+  itemImage: {
+    width: '78%',
+    height: '78%',
   },
-  // Store count badge on card (Upgrade 4)
+  iconEmoji: {
+    fontSize: 40,
+    textAlign: 'center',
+  },
+
+  // Item count badge — overlaid top-right
   countBadge: {
     position: 'absolute',
-    top: 6,
-    right: 6,
+    top: 8,
+    right: 8,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 8,
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: 'rgba(168,85,247,0.85)',
   },
   countBadgeText: {
     fontSize: 9,
     fontWeight: '700',
     color: '#fff',
   },
+
+  // Text block below icon
+  textBlock: {
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 12,
+    minHeight: 52,
+    justifyContent: 'space-between',
+  },
   categoryName: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '600',
-    color: COLORS.textPrimary,
+    color: colors.neutral[900],
     textAlign: 'center',
-    lineHeight: 16,
-    paddingHorizontal: 4,
+    lineHeight: 17,
   },
   itemCount: {
-    fontSize: 10,
-    color: COLORS.textSecondary,
-    marginTop: 2,
+    fontSize: 11,
+    color: '#A855F7',
+    marginTop: 4,
+    textAlign: 'center',
     fontWeight: '500',
+  },
+  // Invisible placeholder keeps row heights equal when count is absent
+  itemCountPlaceholder: {
+    fontSize: 11,
+    marginTop: 4,
   },
 });
 
