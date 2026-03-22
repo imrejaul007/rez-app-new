@@ -198,7 +198,7 @@ function ProjectSubmissionForm({
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: 'images',
         allowsMultipleSelection: true,
         quality: 0.8,
         allowsEditing: false,
@@ -224,7 +224,7 @@ function ProjectSubmissionForm({
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        mediaTypes: 'videos',
         allowsMultipleSelection: false,
         quality: 0.8,
         videoMaxDuration: project.requirements?.maxDuration || 300,

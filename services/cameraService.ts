@@ -6,7 +6,7 @@ import { apiClient } from '@/utils/apiClient';
 
 // Types
 export interface ImagePickerOptions {
-  mediaTypes?: ImagePicker.MediaTypeOptions;
+  mediaTypes?: ImagePicker.MediaType;
   allowsEditing?: boolean;
   aspect?: [number, number];
   quality?: number;
@@ -60,7 +60,7 @@ const STORAGE_KEYS = {
 
 // Default options
 const DEFAULT_PICKER_OPTIONS: Required<ImagePickerOptions> = {
-  mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  mediaTypes: 'images',
   allowsEditing: true,
   aspect: [1, 1],
   quality: 0.8,
@@ -159,7 +159,7 @@ class CameraService {
       const mergedOptions = { ...DEFAULT_CAMERA_OPTIONS, ...options };
 
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: 'mixed',
         allowsEditing: mergedOptions.allowsEditing,
         aspect: mergedOptions.aspect,
         quality: mergedOptions.quality,
@@ -396,7 +396,7 @@ class CameraService {
   ): Promise<string | null> {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: 'images',
         allowsEditing: false,
         quality,
         base64: false,

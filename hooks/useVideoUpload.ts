@@ -4,7 +4,7 @@
 import { useState, useCallback, useRef } from 'react';
 import { Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { Camera } from 'expo-camera';
+import { useCameraPermissions } from 'expo-camera';
 import {
   VideoUploadState,
   VideoMetadata,
@@ -43,19 +43,22 @@ export function useVideoUpload() {
     camera: 'undetermined',
     mediaLibrary: 'undetermined',
   });
+  // SDK 16: Camera.requestCameraPermissionsAsync() removed — use hook
+  const [, requestCameraPermissionHook] = useCameraPermissions();
 
   /**
    * Request camera permissions
    */
   const requestCameraPermission = useCallback(async () => {
     try {
-      const { status } = await Camera.requestCameraPermissionsAsync();
+      const result = await requestCameraPermissionHook();
+      const status = result?.granted ? 'granted' : 'denied';
       setPermissions(prev => ({ ...prev, camera: status }));
-      return status === 'granted';
+      return result?.granted ?? false;
     } catch (error) {
       return false;
     }
-  }, []);
+  }, [requestCameraPermissionHook]);
 
   /**
    * Request media library permissions
@@ -164,7 +167,7 @@ export function useVideoUpload() {
 
       // Launch camera
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        mediaTypes: 'videos',
         allowsEditing: true,
         quality: 1,
         videoMaxDuration: DEFAULT_VIDEO_RULES.maxDuration,
@@ -234,7 +237,7 @@ export function useVideoUpload() {
 
       // Launch picker
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Videos,
+        mediaTypes: 'videos',
         allowsEditing: true,
         quality: 1,
       });

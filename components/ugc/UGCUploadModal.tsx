@@ -191,7 +191,7 @@ function UGCUploadModal({
 
     try {
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: 'mixed',
         allowsEditing: true,
         aspect: [9, 16],
         quality: 0.8,
@@ -233,7 +233,7 @@ function UGCUploadModal({
 
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: 'mixed',
         allowsEditing: true,
         aspect: [9, 16],
         quality: 0.8,

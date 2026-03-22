@@ -105,7 +105,7 @@ function PhotoUploadPage() {
   const handlePickPhotos = async () => {
     const ImagePicker = await getImagePicker();
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      mediaTypes: 'images',
       allowsMultipleSelection: true,
       quality: 0.8,
     });

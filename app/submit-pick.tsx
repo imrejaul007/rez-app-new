@@ -92,8 +92,8 @@ function SubmitPickPage() {
 
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: type === 'video'
-          ? ImagePicker.MediaTypeOptions.Videos
-          : ImagePicker.MediaTypeOptions.Images,
+          ? 'videos'
+          : 'images',
         allowsEditing: type === 'image',
         quality: type === 'image' ? 0.8 : 1,
         videoMaxDuration: 60,

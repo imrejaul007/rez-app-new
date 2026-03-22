@@ -69,7 +69,7 @@ function FileUploader({
       // Configure picker options
       const pickerOptions: UploadOptions = {
         allowsMultipleSelection: maxFiles > 1,
-        mediaTypes: allowedTypes.includes('video') ? ImagePicker.MediaTypeOptions.All : ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: allowedTypes.includes('video') ? 'mixed' : 'images',
         ...options,
       };
 

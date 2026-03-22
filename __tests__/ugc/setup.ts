@@ -167,11 +167,8 @@ export const mockImagePicker = {
   requestMediaLibraryPermissionsAsync: jest.fn(() =>
     Promise.resolve({ status: 'granted' })
   ),
-  MediaTypeOptions: {
-    All: 'All',
-    Videos: 'Videos',
-    Images: 'Images',
-  },
+  // SDK 16+: MediaTypeOptions removed, use string literals 'images' | 'videos' | 'mixed'
+  MediaType: undefined,
 };
 
 jest.mock('expo-image-picker', () => ({

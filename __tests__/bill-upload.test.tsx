@@ -38,9 +38,10 @@ describe('BillUploadPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     (AsyncStorage.getItem as jest.Mock).mockResolvedValue(null);
-    (ExpoCamera.Camera.requestCameraPermissionsAsync as jest.Mock).mockResolvedValue({
-      status: 'granted',
-    });
+    (ExpoCamera.useCameraPermissions as jest.Mock).mockReturnValue([
+      { granted: true, status: 'granted' },
+      jest.fn().mockResolvedValue({ granted: true, status: 'granted' }),
+    ]);
   });
 
   // =============================================================================
@@ -267,14 +268,16 @@ describe('BillUploadPage', () => {
       });
 
       await waitFor(() => {
-        expect(ExpoCamera.Camera.requestCameraPermissionsAsync).toHaveBeenCalled();
+        // useCameraPermissions hook is used instead of Camera.requestCameraPermissionsAsync
+        expect(ExpoCamera.useCameraPermissions).toHaveBeenCalled();
       });
     });
 
     test('shows camera view when take photo is pressed', async () => {
-      (ExpoCamera.Camera.requestCameraPermissionsAsync as jest.Mock).mockResolvedValue({
-        status: 'granted',
-      });
+      (ExpoCamera.useCameraPermissions as jest.Mock).mockReturnValue([
+        { granted: true, status: 'granted' },
+        jest.fn().mockResolvedValue({ granted: true, status: 'granted' }),
+      ]);
 
       const { getByText, queryByText } = render(<BillUploadPage />);
 
@@ -289,9 +292,10 @@ describe('BillUploadPage', () => {
     });
 
     test('handles camera permission denial', async () => {
-      (ExpoCamera.Camera.requestCameraPermissionsAsync as jest.Mock).mockResolvedValue({
-        status: 'denied',
-      });
+      (ExpoCamera.useCameraPermissions as jest.Mock).mockReturnValue([
+        { granted: false, status: 'denied' },
+        jest.fn().mockResolvedValue({ granted: false, status: 'denied' }),
+      ]);
 
       const { getByText } = render(<BillUploadPage />);
 

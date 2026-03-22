@@ -303,7 +303,7 @@ function ApplyServicePage() {
                   try {
                     const { getImagePicker } = await import('@/utils/lazyImports');
                     const ImagePicker = await getImagePicker();
-                    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.7 });
+                    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: 'images', quality: 0.7 });
                     if (!result.canceled && result.assets?.[0]) {
                       setUploadedDocs(prev => [...prev, doc.id]);
                       platformAlertSimple('Uploaded', `${doc.label} uploaded successfully`);

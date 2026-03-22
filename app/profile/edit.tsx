@@ -193,7 +193,7 @@ function ProfileEditPage() {
 
       // Pick image with EXTREME compression for fastest Cloudinary upload
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: 'images',
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.2, // Extreme compression (20% quality) for slow Cloudinary connection

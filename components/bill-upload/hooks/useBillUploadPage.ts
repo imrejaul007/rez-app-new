@@ -88,7 +88,8 @@ export function useBillUploadPage(): BillUploadHookReturn {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
 
-  // Camera states
+  // Camera states — SDK 16: use hook instead of Camera.requestCameraPermissionsAsync()
+  const [, requestCameraPermission] = ExpoCamera.useCameraPermissions();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   const [cameraType, setCameraType] = useState<typeof CAMERA_TYPE[keyof typeof CAMERA_TYPE]>(CAMERA_TYPE.back);
@@ -141,9 +142,9 @@ export function useBillUploadPage(): BillUploadHookReturn {
 
   const initializePage = async () => {
     try {
-      const { status } = await ExpoCamera.Camera.requestCameraPermissionsAsync();
+      const result = await requestCameraPermission();
       if (!isMounted()) return;
-      setHasPermission(status === 'granted');
+      setHasPermission(result?.granted ?? false);
     } catch (e) {
       if (!isMounted()) return;
       setHasPermission(false);
@@ -317,10 +318,10 @@ export function useBillUploadPage(): BillUploadHookReturn {
 
   const openCamera = async () => {
     if (hasPermission === null) {
-      const { status } = await ExpoCamera.Camera.requestCameraPermissionsAsync();
+      const result = await requestCameraPermission();
       if (!isMounted()) return;
-      setHasPermission(status === 'granted');
-      if (status !== 'granted') {
+      setHasPermission(result?.granted ?? false);
+      if (!result?.granted) {
         showToast('Camera permission is required', 'error');
         return;
       }
@@ -371,7 +372,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
     try {
       const ImagePicker = await import('expo-image-picker');
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: 'images',
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8});

@@ -12,7 +12,7 @@ export interface UploadOptions {
   aspect?: [number, number];
   quality?: number;
   allowsMultipleSelection?: boolean;
-  mediaTypes?: ImagePicker.MediaTypeOptions;
+  mediaTypes?: ImagePicker.MediaType;
   videoMaxDuration?: number;
 }
 
@@ -89,7 +89,7 @@ class FileUploadService {
   async pickFromCamera(options: UploadOptions = {}): Promise<UploadResult[]> {
     try {
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: options.mediaTypes || ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: options.mediaTypes || 'images',
         allowsEditing: options.allowsEditing ?? true,
         aspect: options.aspect || [1, 1],
         quality: options.quality ?? 0.8,
@@ -110,7 +110,7 @@ class FileUploadService {
   async pickFromGallery(options: UploadOptions = {}): Promise<UploadResult[]> {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: options.mediaTypes || ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: options.mediaTypes || 'images',
         allowsEditing: options.allowsEditing ?? true,
         aspect: options.aspect || [1, 1],
         quality: options.quality ?? 0.8,
@@ -245,7 +245,7 @@ class FileUploadService {
   async compressImage(uri: string, quality: number = 0.7): Promise<string> {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: 'images',
         allowsEditing: false,
         quality,
         base64: false,

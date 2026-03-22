@@ -73,7 +73,7 @@ function UGCUploadScreen() {
     try {
       const ImagePicker = await getImagePicker();
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: 'mixed',
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,

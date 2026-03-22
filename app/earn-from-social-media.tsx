@@ -303,7 +303,7 @@ function EarnFromSocialMediaPage() {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        mediaTypes: 'mixed',
         allowsMultipleSelection: true,
         selectionLimit: 5 - selectedMedia.length,
         quality: 0.8,

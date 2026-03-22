@@ -180,7 +180,8 @@ function BillUploadPage() {
     });
   }, [navigation]);
 
-  // Camera states
+  // Camera states — SDK 16: use hook instead of Camera.requestCameraPermissionsAsync()
+  const [cameraPermission, requestCameraPermission] = ExpoCamera.useCameraPermissions();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [showCamera, setShowCamera] = useState(false);
   const [cameraType, setCameraType] = useState<typeof CAMERA_TYPE[keyof typeof CAMERA_TYPE]>(
@@ -248,10 +249,10 @@ function BillUploadPage() {
 
   const initializePage = async () => {
     try {
-      // Request camera permissions
-      const { status } = await ExpoCamera.Camera.requestCameraPermissionsAsync();
+      // SDK 16: use requestCameraPermission from useCameraPermissions hook
+      const result = await requestCameraPermission();
       if (!isMounted()) return;
-      setHasPermission(status === 'granted');
+      setHasPermission(result?.granted ?? false);
     } catch (e) {
       if (!isMounted()) return;
       setHasPermission(false);
@@ -509,10 +510,10 @@ function BillUploadPage() {
    */
   const openCamera = async () => {
     if (hasPermission === null) {
-      const { status } = await ExpoCamera.Camera.requestCameraPermissionsAsync();
+      const result = await requestCameraPermission();
       if (!isMounted()) return;
-      setHasPermission(status === 'granted');
-      if (status !== 'granted') {
+      setHasPermission(result?.granted ?? false);
+      if (!result?.granted) {
         showToast('Camera permission is required', 'error');
         return;
       }
@@ -588,7 +589,7 @@ function BillUploadPage() {
     try {
       const ImagePicker = await getImagePicker();
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: 'images',
         allowsEditing: true,
         aspect: [4, 3],
         quality: 0.8,

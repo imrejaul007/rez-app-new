@@ -59,8 +59,8 @@ function UploadPage() {
     const ImagePicker = await getImagePicker();
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: contentType === 'reel'
-        ? ImagePicker.MediaTypeOptions.Videos
-        : ImagePicker.MediaTypeOptions.All,
+        ? 'videos'
+        : 'mixed',
       allowsMultipleSelection: contentType === 'post',
       quality: 0.8,
       videoMaxDuration: 60,
