@@ -878,6 +878,32 @@ function HomeScreen() {
         <StoriesRow variant={tabStyles.whatsNewVariant} />
       )}
 
+      {/* ReZ TRY Banner - Premium trial discovery feature */}
+      {activeTab === 'near-u' && (
+        <Pressable
+          style={viewStyles.tryBanner}
+          onPress={() => router.push('/try')}
+          accessibilityLabel="ReZ TRY - Discover and try new places"
+          accessibilityRole="button"
+          accessibilityHint="Double tap to explore exclusive trial offers"
+        >
+          <LinearGradient
+            colors={['#7C3AED', '#A855F7']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={viewStyles.tryBannerGradient}
+          >
+            <View style={viewStyles.tryBannerContent}>
+              <View style={viewStyles.tryBannerTextSection}>
+                <Text style={viewStyles.tryBannerTitle}>🔥 ReZ TRY</Text>
+                <Text style={viewStyles.tryBannerSubtitle}>Discover & try new places</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#fff" style={viewStyles.tryBannerChevron} />
+            </View>
+          </LinearGradient>
+        </Pressable>
+      )}
+
       {/* Content */}
       <View style={[
         viewStyles.content,
@@ -1293,6 +1319,41 @@ const viewStyles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '700',
     color: colors.nileBlue,
+  },
+  // ReZ TRY Banner Styles
+  tryBanner: {
+    marginHorizontal: spacing.md,
+    marginTop: spacing.md,
+    marginBottom: spacing.md,
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
+  },
+  tryBannerGradient: {
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.lg,
+  },
+  tryBannerContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  tryBannerTextSection: {
+    flex: 1,
+  },
+  tryBannerTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 4,
+  },
+  tryBannerSubtitle: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: 'rgba(255, 255, 255, 0.9)',
+  },
+  tryBannerChevron: {
+    marginLeft: spacing.md,
   },
 });
 
