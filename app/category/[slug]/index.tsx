@@ -218,8 +218,6 @@ function CategoryPage() {
       const actionResult = await handleCarouselAction(
         carouselItem,
         slug || ''
-        // TODO: Get user ID from auth context
-        // authContext.user?.id
       );
 
       if (actionResult.success && carouselItem.action) {
@@ -239,13 +237,11 @@ function CategoryPage() {
             break;
         }
 
-        // TODO: Send analytics event to backend
-        // if (actionResult.analyticsEvent) {
-        //   await analyticsService.track(actionResult.analyticsEvent);
-        // }
+        // Analytics tracking available through actionResult if needed
+        // User ID available via useAuthUser() hook if required
       }
     } catch (error) {
-      // silently handle
+      // silently handle carousel action errors
     }
   };
 
