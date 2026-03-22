@@ -10,7 +10,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import platformApi from '@/services/platformApi';
-import { colors } from '@/constants/theme';
+import { colors, typography, iconSize } from '@/constants/theme';
 
 const HORIZONTAL_PADDING = 2;
 
@@ -91,7 +91,7 @@ function HeroBanner({ totalSaved = 0, onScanPayPress, onViewWalletPress }: HeroB
           <View style={styles.iconBadge}>
             <Ionicons
               name={isNewUser ? "wallet-outline" : "gift-outline"}
-              size={18}
+              size={iconSize.md}
               color={colors.lightMustard}
             />
           </View>
@@ -101,7 +101,7 @@ function HeroBanner({ totalSaved = 0, onScanPayPress, onViewWalletPress }: HeroB
                 ? 'Save money on everything you buy'
                 : `You've saved ${formatSavings(totalSaved)} ${BRAND.CURRENCY_CODE} with ${BRAND.APP_NAME}`}
             </Text>
-            <Text style={styles.subtitle}>
+            <Text style={styles.subtitle} numberOfLines={1} ellipsizeMode="tail">
               {isNewUser ? `Online & in-store with ${BRAND.APP_NAME}` : "That's smarter spending"}
             </Text>
           </View>
@@ -117,27 +117,28 @@ function HeroBanner({ totalSaved = 0, onScanPayPress, onViewWalletPress }: HeroB
           <Pressable
             style={[styles.ctaCard, styles.ctaCardPrimary]}
             onPress={handleScanPayPress}
-           
+
           >
-            <Ionicons name="qr-code-outline" size={18} color={colors.nileBlue} />
+            <Ionicons name="qr-code-outline" size={iconSize.md} color={colors.nileBlue} />
             <Text style={[styles.ctaText, styles.ctaTextPrimary]}>Scan & Pay</Text>
-            <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
+            <Ionicons name="chevron-forward" size={iconSize.sm} color={colors.nileBlue} />
           </Pressable>
 
           <Pressable
             style={styles.ctaCard}
             onPress={handleViewWalletPress}
-           
+
           >
-            <Ionicons name="wallet-outline" size={18} color={colors.background.primary} />
+            <Ionicons name="wallet-outline" size={iconSize.md} color={colors.background.primary} />
             <Text style={styles.ctaText}>View Wallet</Text>
-            <Ionicons name="chevron-forward" size={14} color="rgba(255,255,255,0.6)" />
+            <Ionicons name="chevron-forward" size={iconSize.sm} color="rgba(255,255,255,0.9)" />
           </Pressable>
         </View>
 
-        {/* Social Proof Section — only shown once stats have loaded */}
+        {/* Social Proof Section — reserve height even when loading to prevent CLS */}
+        <View style={[styles.socialProofContainer, !stats && styles.socialProofPlaceholder]}>
         {stats && (
-          <View style={styles.socialProofContainer}>
+          <View style={{ width: '100%' }}>
             {/* Rating */}
             {stats.rating > 0 && (
               <>
@@ -165,6 +166,7 @@ function HeroBanner({ totalSaved = 0, onScanPayPress, onViewWalletPress }: HeroB
             </View>
           </View>
         )}
+        </View>
       </LinearGradient>
     </View>
   );
@@ -206,15 +208,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   mainTitle: {
-    fontSize: 17,
-    fontWeight: '700',
+    ...typography.h4,
     color: colors.background.primary,
-    lineHeight: 22,
+    lineHeight: 24,
     marginBottom: 2,
   },
   subtitle: {
-    fontSize: 13,
-    fontWeight: '400',
+    ...typography.caption,
     color: 'rgba(255, 255, 255, 0.85)',
     lineHeight: 18,
   },
@@ -247,8 +247,7 @@ const styles = StyleSheet.create({
   },
   ctaText: {
     flex: 1,
-    fontSize: 14,
-    fontWeight: '600',
+    ...typography.button,
     color: colors.background.primary,
   },
   ctaTextPrimary: {
@@ -263,14 +262,16 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.15)',
   },
+  socialProofPlaceholder: {
+    minHeight: 32,
+  },
   proofItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
   },
   proofText: {
-    fontSize: 13,
-    fontWeight: '500',
+    ...typography.caption,
     color: 'rgba(255, 255, 255, 0.85)',
   },
   proofDivider: {

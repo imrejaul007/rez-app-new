@@ -47,11 +47,10 @@ const HeaderContentComponent = memo<{
       <Pressable
         style={styles.searchContainer}
         onPress={onSearchPress}
-
-        accessibilityLabel="Search bar"
-        accessibilityRole="search"
+        accessibilityLabel="Search"
+        accessibilityRole="button"
       >
-        <Ionicons name="search" size={18} color={colors.midGray} style={styles.searchIcon} />
+        <Ionicons name="search" size={18} color={colors.text.tertiary} style={styles.searchIcon} />
         <TextInput
           style={[styles.searchInput, { pointerEvents: 'none' }]}
           placeholder="Search for stores, products..."
@@ -235,7 +234,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(247, 250, 252, 0.9)',
+    backgroundColor: colors.background.primary,
     marginHorizontal: 16,
     marginBottom: 8,
     paddingHorizontal: 16,

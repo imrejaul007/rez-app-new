@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   View,
   ScrollView,
@@ -54,9 +54,9 @@ function DeliverySlotPicker({ selectedSlot, onSelectSlot }: { selectedSlot?: str
           <Pressable
             key={slot.value}
             onPress={() => onSelectSlot(slot.value)}
-            style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: selectedSlot === slot.value ? '#7C3AED' : '#F1F5F9', borderWidth: 1, borderColor: selectedSlot === slot.value ? '#7C3AED' : '#E2E8F0' }}
+            style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: selectedSlot === slot.value ? colors.primary[500] : colors.background.secondary, borderWidth: 1, borderColor: selectedSlot === slot.value ? colors.primary[500] : colors.border.light }}
           >
-            <Text style={{ fontSize: 12, fontWeight: '600', color: selectedSlot === slot.value ? '#fff' : '#64748B' }}>{slot.label}</Text>
+            <Text style={{ fontSize: 12, fontWeight: '600', color: selectedSlot === slot.value ? '#fff' : colors.text.secondary }}>{slot.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -110,8 +110,9 @@ function CheckoutPage() {
   }, [errorCount, validationState.validationResult, dispatch]);
 
   // Add slider thumb styling for web
+  const styleCreatedRef = useRef(false);
   useEffect(() => {
-    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+    if (Platform.OS === 'web' && typeof document !== 'undefined' && !styleCreatedRef.current) {
       const styleId = 'slider-thumb-styles';
       if (!document.getElementById(styleId)) {
         const style = document.createElement('style');
@@ -126,6 +127,7 @@ function CheckoutPage() {
           input[type="range"]::-moz-range-thumb:active { transform: scale(1.05); box-shadow: 0 2px 8px rgba(139, 92, 246, 0.5), 0 0 0 3px rgba(255, 255, 255, 0.7); cursor: grabbing; }
         `;
         document.head.appendChild(style);
+        styleCreatedRef.current = true;
       }
     }
   }, []);

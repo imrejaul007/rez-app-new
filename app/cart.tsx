@@ -458,20 +458,20 @@ function CartPage() {
           {serviceItem.serviceBookingDetails && (
             <View style={styles.serviceBookingDetails}>
               <View style={styles.serviceBookingRow}>
-                <ThemedText style={styles.serviceBookingIcon}>📅</ThemedText>
+                <Ionicons name="calendar-outline" size={16} color={Colors.nileBlue} />
                 <ThemedText style={styles.serviceBookingText}>
                   {serviceItem.bookingDateFormatted || 'Date not set'}
                 </ThemedText>
               </View>
               <View style={styles.serviceBookingRow}>
-                <ThemedText style={styles.serviceBookingIcon}>🕐</ThemedText>
+                <Ionicons name="time-outline" size={16} color={Colors.nileBlue} />
                 <ThemedText style={styles.serviceBookingText}>
                   {serviceItem.bookingTimeFormatted || 'Time not set'}
                 </ThemedText>
               </View>
               {serviceItem.serviceBookingDetails.duration && (
                 <View style={styles.serviceBookingRow}>
-                  <ThemedText style={styles.serviceBookingIcon}>⏱️</ThemedText>
+                  <Ionicons name="hourglass-outline" size={16} color={Colors.nileBlue} />
                   <ThemedText style={styles.serviceBookingText}>
                     {serviceItem.serviceBookingDetails.duration} min
                   </ThemedText>
@@ -549,11 +549,15 @@ function CartPage() {
           <FlashList
             data={currentItems}
             renderItem={renderCartItem}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={[
-              styles.listContent,
+            keyExtractor={(item, index) => `${item.id}-${index}`}
+            contentContainerStyle={useMemo(() => [
+              {
+                paddingHorizontal: 16,
+                paddingTop: 16,
+                paddingBottom: currentItems.length < 3 ? 80 : 120,
+              },
               currentItems.length === 0 && styles.emptyListContent,
-            ]}
+            ], [currentItems.length])}
             showsVerticalScrollIndicator={false}
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
@@ -568,7 +572,7 @@ function CartPage() {
                 />
               ) : null
             }
-            estimatedItemSize={100}
+            estimatedItemSize={144}
           />
         )}
       </View>
@@ -691,10 +695,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 6,
-  },
-  serviceBookingIcon: {
-    fontSize: 14,
-    marginRight: 8,
   },
   serviceBookingText: {
     ...Typography.bodySmall,

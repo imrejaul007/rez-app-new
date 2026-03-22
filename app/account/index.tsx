@@ -337,14 +337,14 @@ function AccountPage() {
                     />
                   </View>
                   <View style={{ flex: 1 }}>
-                    <ThemedText style={{ fontSize: 14, fontWeight: '700', color: '#111827', marginBottom: 2 }}>
+                    <ThemedText style={{ fontSize: 14, fontWeight: '700', color: colors.text.primary, marginBottom: 2 }}>
                       {isVerified
                         ? `${verifiedLabel} Verified`
                         : isProvisional
                           ? 'Verification in review'
                           : 'Verify your identity'}
                     </ThemedText>
-                    <ThemedText style={{ fontSize: 12, color: '#6B7280' }}>
+                    <ThemedText style={{ fontSize: 12, color: colors.text.secondary }}>
                       {isVerified
                         ? 'Your exclusive benefits are active'
                         : isProvisional
@@ -352,20 +352,20 @@ function AccountPage() {
                           : 'Unlock exclusive student, corporate & healthcare offers'}
                     </ThemedText>
                   </View>
-                  <Ionicons name="chevron-forward" size={16} color={isVerified ? '#059669' : '#9CA3AF'} />
+                  <Ionicons name="chevron-forward" size={16} color={isVerified ? colors.success : colors.text.tertiary} />
                 </Pressable>
 
                 {/* Feature Level Progress */}
                 {featureLevel < 5 && (
                   <View style={{ marginTop: 10, backgroundColor: colors.background.primary, borderRadius: 12, padding: 14, borderWidth: 1, borderColor: 'rgba(0,0,0,0.04)' }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                      <ThemedText style={{ fontSize: 12, fontWeight: '600', color: '#6B7280' }}>Level {featureLevel} of 5</ThemedText>
-                      <ThemedText style={{ fontSize: 11, color: '#9CA3AF' }}>{Math.round((featureLevel / 5) * 100)}%</ThemedText>
+                      <ThemedText style={{ fontSize: 12, fontWeight: '600', color: colors.text.secondary }}>Level {featureLevel} of 5</ThemedText>
+                      <ThemedText style={{ fontSize: 11, color: colors.text.tertiary }}>{Math.round((featureLevel / 5) * 100)}%</ThemedText>
                     </View>
-                    <View style={{ height: 6, backgroundColor: '#F3F4F6', borderRadius: 3, overflow: 'hidden' }}>
-                      <View style={{ height: 6, width: `${(featureLevel / 5) * 100}%`, backgroundColor: '#7C3AED', borderRadius: 3 }} />
+                    <View style={{ height: 6, backgroundColor: colors.background.secondary, borderRadius: 3, overflow: 'hidden' }}>
+                      <View style={{ height: 6, width: `${(featureLevel / 5) * 100}%`, backgroundColor: colors.primary[500], borderRadius: 3 }} />
                     </View>
-                    <ThemedText style={{ fontSize: 11, color: '#9CA3AF', marginTop: 6 }}>
+                    <ThemedText style={{ fontSize: 11, color: colors.text.tertiary, marginTop: 6 }}>
                       {featureLevel === 1 && 'Verify identity to unlock streaks + bonus zone'}
                       {featureLevel === 2 && 'Complete your first order to level up'}
                       {featureLevel === 3 && '3 orders total to unlock more personalisation'}

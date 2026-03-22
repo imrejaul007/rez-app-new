@@ -159,6 +159,17 @@ const FALLBACK_STORES: Store[] = [
   },
 ];
 
+// Helper function to validate image URLs
+const isValidImageUrl = (url: string | undefined): boolean => {
+  if (!url) return false;
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 // Helper function to map backend categories to UI properties
 const mapCategoryToStore = (category: StoreCategory): Store => {
   // Get the display info from the service
@@ -210,7 +221,7 @@ const mapCategoryToStore = (category: StoreCategory): Store => {
     title: displayInfo.name,
     accent: displayInfo.color,
     icon: iconMap[displayInfo.icon] || 'storefront',
-    image: category.imageUrl ? { uri: category.imageUrl } : imageMap[category.id],
+    image: isValidImageUrl(category.imageUrl) ? { uri: category.imageUrl } : imageMap[category.id],
     gradient,
     badge: category.badgeText || badgeMap[category.id] || '',
     description: category.description,
@@ -328,7 +339,7 @@ function StoreCard({ item, index }: { item: Store; index: number }) {
             {item.title}
           </Text>
           {item.description && (
-            <Text numberOfLines={2} allowFontScaling={false} style={styles.cardDescription}>
+            <Text numberOfLines={2} allowFontScaling={false} ellipsizeMode="tail" style={styles.cardDescription}>
               {item.description}
             </Text>
           )}
@@ -357,6 +368,15 @@ function App() {
   const [categories, setCategories] = useState<Store[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
+
+  // Cleanup nav timer on unmount
+  useEffect(() => {
+    return () => {
+      if (navTimerRef.current) {
+        clearTimeout(navTimerRef.current);
+      }
+    };
+  }, []);
 
   // Helper to add currency symbol to numeric badges
   const formatBadgeWithCurrency = (badge: string | undefined): string => {
@@ -653,7 +673,7 @@ const styles = StyleSheet.create({
   coinsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: Spacing.xs,
     backgroundColor: 'rgba(255,255,255,0.2)',
     paddingHorizontal: Spacing.md,
     paddingVertical: 7,
