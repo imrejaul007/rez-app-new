@@ -1,10 +1,16 @@
 /**
  * BalanceDisplay — Total wallet balance card with hide/reveal toggle,
- * animated count-up, breakdown row (Rez Coins | Cashback | Pending),
- * and "Add Money" / "Send" quick action buttons.
+ * animated count-up, per-coin-type breakdown cards (Rez, Privé, Promo,
+ * Branded, Cashback), and "Add Money" / "Send" quick action buttons.
  */
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  Platform,
+} from 'react-native';
 import {
   useSharedValue,
   useAnimatedReaction,
@@ -17,7 +23,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
-import { CoinChip } from './CoinChip';
 import { WalletData, CoinType } from '@/types/wallet';
 import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -26,15 +31,75 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const BALANCE_HIDDEN_KEY = '@wallet_balance_hidden';
 
+const NILE_BLUE = '#1a3a52';
+const NILE_BLUE_DARK = '#0d1f2d';
+
 interface BalanceDisplayProps {
   walletData: WalletData;
   onCoinPress?: (type: CoinType) => void;
   currencySymbol?: string;
 }
 
+// ---------------------------------------------------------------------------
+// Small helper: icon circle for each coin card
+// ---------------------------------------------------------------------------
+interface IconCircleProps {
+  bgColor: string;
+  iconName: React.ComponentProps<typeof Ionicons>['name'];
+}
+const IconCircle: React.FC<IconCircleProps> = ({ bgColor, iconName }) => (
+  <View style={[styles.iconCircle, { backgroundColor: bgColor }]}>
+    <Ionicons name={iconName} size={18} color="#fff" />
+  </View>
+);
+
+// ---------------------------------------------------------------------------
+// Individual breakdown card
+// ---------------------------------------------------------------------------
+interface CoinCardProps {
+  iconBg: string;
+  iconName: React.ComponentProps<typeof Ionicons>['name'];
+  title: string;
+  subtitle: string;
+  amount: number;
+  isHidden: boolean;
+  badge?: React.ReactNode;
+  children?: React.ReactNode;
+}
+const CoinCard: React.FC<CoinCardProps> = ({
+  iconBg,
+  iconName,
+  title,
+  subtitle,
+  amount,
+  isHidden,
+  badge,
+  children,
+}) => {
+  const displayAmount = isHidden ? '₹••' : `₹${amount.toLocaleString('en-IN')}`;
+  return (
+    <View style={styles.coinCard}>
+      <IconCircle bgColor={iconBg} iconName={iconName} />
+      <View style={styles.coinCardCenter}>
+        <View style={styles.coinCardTitleRow}>
+          <Text style={styles.coinCardTitle}>{title}</Text>
+          {badge}
+        </View>
+        <Text style={styles.coinCardSubtitle}>{subtitle}</Text>
+        {children}
+      </View>
+      <Text style={[styles.coinCardAmount, { color: NILE_BLUE }]}>{displayAmount}</Text>
+    </View>
+  );
+};
+
+// ---------------------------------------------------------------------------
+// Main component
+// ---------------------------------------------------------------------------
 export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
   ({ walletData, onCoinPress, currencySymbol = '₹' }) => {
     const [isHidden, setIsHidden] = useState(false);
+    const [brandedExpanded, setBrandedExpanded] = useState(false);
     const isMounted = useIsMounted();
     const router = useRouter();
     const countAnim = useSharedValue(0);
@@ -50,9 +115,12 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
     }, []);
 
     // totalBalance is the canonical value — already in RC units (not divided by rate)
-    const totalBalance = typeof walletData.totalBalance === 'number' ? walletData.totalBalance : 0;
-    const cashbackBalance = typeof walletData.cashbackBalance === 'number' ? walletData.cashbackBalance : 0;
-    const pendingRewards = typeof walletData.pendingRewards === 'number' ? walletData.pendingRewards : 0;
+    const totalBalance =
+      typeof walletData.totalBalance === 'number' ? walletData.totalBalance : 0;
+    const cashbackBalance =
+      typeof walletData.cashbackBalance === 'number' ? walletData.cashbackBalance : 0;
+    const pendingRewards =
+      typeof walletData.pendingRewards === 'number' ? walletData.pendingRewards : 0;
 
     // Count-up animation whenever balance changes
     useEffect(() => {
@@ -83,127 +151,218 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
       await AsyncStorage.setItem(BALANCE_HIDDEN_KEY, String(newVal));
     }, [isHidden, isMounted]);
 
-    // Coin chips
-    const nuqtaCoin = walletData.coins?.find((c) => c.type === 'rez' || c.type === 'nuqta');
+    // Derive per-type coin amounts from the coins array
+    const rezCoin = walletData.coins?.find((c) => c.type === 'rez' || c.type === 'nuqta');
+    const priveCoin = walletData.coins?.find((c) => c.type === 'prive');
     const promoCoin = walletData.coins?.find((c) => c.type === 'promo');
-    const brandedTotal = typeof walletData.brandedCoinsTotal === 'number' ? walletData.brandedCoinsTotal : 0;
+    const brandedTotal =
+      typeof walletData.brandedCoinsTotal === 'number' ? walletData.brandedCoinsTotal : 0;
 
-    const displayBalance = isHidden
-      ? `${BRAND.CURRENCY_CODE} ••••`
-      : `${BRAND.CURRENCY_CODE} ${animatedBalance.toLocaleString('en-IN')}`;
+    const rezAmount = rezCoin?.amount ?? 0;
+    const priveAmount = priveCoin?.amount ?? 0;
+    const promoAmount = promoCoin?.amount ?? 0;
 
-    const breakdownRez = isHidden ? '••' : String(nuqtaCoin?.amount ?? 0);
-    const breakdownCashback = isHidden ? '••' : `₹${cashbackBalance}`;
-    const breakdownPending = isHidden ? '••' : `₹${pendingRewards}`;
+    // Hero balance display
+    const heroBalanceText = isHidden
+      ? '₹ ••••'
+      : `₹ ${animatedBalance.toLocaleString('en-IN')}`;
+
+    // Promo expiry countdown (days)
+    let promoExpiryDays: number | null = null;
+    if (promoCoin?.expiryDate) {
+      const diff = new Date(promoCoin.expiryDate).getTime() - Date.now();
+      promoExpiryDays = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+    }
 
     return (
       <View style={styles.outerContainer}>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* HERO CARD                                                         */}
+        {/* ---------------------------------------------------------------- */}
         <LinearGradient
-          colors={['#1a3a52', '#0d2035', '#0d1f2d']}
+          colors={[NILE_BLUE, '#0d2035', NILE_BLUE_DARK]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.heroCard}
         >
-          {/* Radial glow overlay — top-right depth effect */}
+          {/* Depth glow overlays */}
           <View style={styles.glowOverlay} pointerEvents="none" />
           <View style={styles.glowOverlayBottomLeft} pointerEvents="none" />
 
-          {/* Wallet icon + subtitle */}
-          <View style={styles.topRow}>
-            <View style={styles.walletIconWrap}>
-              <Ionicons name="wallet" size={18} color="#D4AF37" />
-            </View>
-            <Text style={styles.availableLabel}>Available Balance</Text>
+          {/* Top row: label + eye */}
+          <View style={styles.heroTopRow}>
+            <Text style={styles.heroLabel}>AVAILABLE BALANCE</Text>
             <Pressable
               onPress={toggleHidden}
               style={styles.eyeButton}
               accessibilityLabel={isHidden ? 'Show balance' : 'Hide balance'}
               accessibilityRole="button"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
               <Ionicons
                 name={isHidden ? 'eye-off-outline' : 'eye-outline'}
-                size={18}
+                size={20}
                 color="rgba(255,255,255,0.6)"
               />
             </Pressable>
           </View>
 
-          {/* Balance row */}
-          <View style={styles.balanceRow}>
-            <Text
-              style={styles.balanceText}
-              accessibilityLabel={`Wallet balance: ${displayBalance}`}
-            >
-              {displayBalance}
-            </Text>
-          </View>
+          {/* Large balance */}
+          <Text
+            style={styles.heroBalance}
+            accessibilityLabel={`Wallet balance: ${heroBalanceText}`}
+          >
+            {heroBalanceText}
+          </Text>
 
-          {/* 3 stat pills */}
-          <View style={styles.statPillsRow}>
-            <View style={styles.statPill}>
-              <View style={[styles.statDot, { backgroundColor: '#4ADE80' }]} />
-              <Text style={styles.statPillLabel}>Rez Coins</Text>
-              <Text style={styles.statPillValue}>{breakdownRez}</Text>
-            </View>
-            <View style={styles.statPillDivider} />
-            <View style={styles.statPill}>
-              <View style={[styles.statDot, { backgroundColor: '#FBBF24' }]} />
-              <Text style={styles.statPillLabel}>Cashback</Text>
-              <Text style={styles.statPillValue}>{breakdownCashback}</Text>
-            </View>
-            <View style={styles.statPillDivider} />
-            <View style={styles.statPill}>
-              <View style={[styles.statDot, { backgroundColor: '#60A5FA' }]} />
-              <Text style={styles.statPillLabel}>Pending</Text>
-              <Text style={styles.statPillValue}>{breakdownPending}</Text>
-            </View>
-          </View>
+          {/* Subtitle */}
+          <Text style={styles.heroSubtitle}>
+            = {isHidden ? '••••' : animatedBalance.toLocaleString('en-IN')} Rez Coins
+          </Text>
 
           {/* Action buttons */}
           <View style={styles.actionRow}>
             <Pressable
-              style={({ pressed }) => [styles.actionBtnPrimary, pressed && { opacity: 0.85 }]}
+              style={({ pressed }) => [styles.actionBtnFilled, pressed && { opacity: 0.82 }]}
               onPress={() => router.push('/payment' as any)}
               accessibilityLabel="Add money to wallet"
               accessibilityRole="button"
             >
-              <Ionicons name="add-circle-outline" size={16} color="#1a3a52" />
-              <Text style={styles.actionBtnTextPrimary}>Add Money</Text>
+              <Ionicons name="add-circle" size={17} color="#fff" />
+              <Text style={styles.actionBtnFilledText}>Add Money</Text>
             </Pressable>
             <Pressable
-              style={({ pressed }) => [styles.actionBtnSecondary, pressed && { opacity: 0.75 }]}
+              style={({ pressed }) => [styles.actionBtnOutlined, pressed && { opacity: 0.75 }]}
               onPress={() => router.push('/wallet/transfer' as any)}
               accessibilityLabel="Send coins"
               accessibilityRole="button"
             >
-              <Ionicons name="paper-plane-outline" size={16} color="#fff" />
-              <Text style={styles.actionBtnTextSecondary}>Send Money</Text>
+              <Ionicons name="paper-plane" size={17} color={NILE_BLUE} />
+              <Text style={styles.actionBtnOutlinedText}>Send</Text>
             </Pressable>
           </View>
         </LinearGradient>
 
-        {/* Coin Chips Row — rendered below the hero card */}
-        <View style={styles.chipRow}>
-          <CoinChip
-            type="rez"
-            amount={isHidden ? 0 : (nuqtaCoin?.amount || 0)}
+        {/* ---------------------------------------------------------------- */}
+        {/* COIN BREAKDOWN CARDS                                              */}
+        {/* ---------------------------------------------------------------- */}
+        <View style={styles.breakdownContainer}>
+
+          {/* Rez Coins */}
+          <Pressable
             onPress={() => onCoinPress?.('rez')}
-            compact
-          />
-          <CoinChip
-            type="promo"
-            amount={isHidden ? 0 : (promoCoin?.amount || 0)}
-            onPress={() => onCoinPress?.('promo')}
-            compact
-          />
-          {brandedTotal > 0 && (
-            <CoinChip
-              type="branded"
-              amount={isHidden ? 0 : brandedTotal}
-              onPress={() => onCoinPress?.('branded')}
-              compact
+            style={({ pressed }) => [pressed && { opacity: 0.88 }]}
+          >
+            <CoinCard
+              iconBg={NILE_BLUE}
+              iconName="diamond"
+              title="Rez Coins"
+              subtitle="Universal — use at any store"
+              amount={rezAmount}
+              isHidden={isHidden}
             />
-          )}
+          </Pressable>
+
+          {/* Privé Coins */}
+          <Pressable
+            onPress={() => onCoinPress?.('prive')}
+            style={({ pressed }) => [pressed && { opacity: 0.88 }]}
+          >
+            <CoinCard
+              iconBg="#B8860B"
+              iconName="shield-checkmark"
+              title="Privé Coins"
+              subtitle="Premium member exclusive rewards"
+              amount={priveAmount}
+              isHidden={isHidden}
+              badge={
+                priveAmount > 0 ? (
+                  <View style={styles.premiumBadge}>
+                    <Text style={styles.premiumBadgeText}>PREMIUM</Text>
+                  </View>
+                ) : undefined
+              }
+            />
+          </Pressable>
+
+          {/* Promo Coins */}
+          <Pressable
+            onPress={() => onCoinPress?.('promo')}
+            style={({ pressed }) => [pressed && { opacity: 0.88 }]}
+          >
+            <CoinCard
+              iconBg="#D97706"
+              iconName="gift"
+              title="Promo Coins"
+              subtitle="Limited time — max 20% per order"
+              amount={promoAmount}
+              isHidden={isHidden}
+            >
+              {promoExpiryDays !== null && !isHidden && (
+                <Text style={styles.expiryText}>
+                  Expires in {promoExpiryDays} day{promoExpiryDays !== 1 ? 's' : ''}
+                </Text>
+              )}
+            </CoinCard>
+          </Pressable>
+
+          {/* Branded Coins */}
+          <Pressable
+            onPress={() => {
+              setBrandedExpanded((v) => !v);
+              onCoinPress?.('branded');
+            }}
+            style={({ pressed }) => [pressed && { opacity: 0.88 }]}
+          >
+            <View style={styles.coinCard}>
+              <IconCircle bgColor="#4F46E5" iconName="storefront" />
+              <View style={styles.coinCardCenter}>
+                <View style={styles.coinCardTitleRow}>
+                  <Text style={styles.coinCardTitle}>Branded Coins</Text>
+                  {walletData.brandedCoins?.length > 0 && (
+                    <Ionicons
+                      name={brandedExpanded ? 'chevron-up' : 'chevron-down'}
+                      size={14}
+                      color="rgba(0,0,0,0.35)"
+                      style={{ marginLeft: 4 }}
+                    />
+                  )}
+                </View>
+                <Text style={styles.coinCardSubtitle}>Store-specific rewards</Text>
+
+                {/* Per-brand breakdown when expanded */}
+                {brandedExpanded && walletData.brandedCoins?.length > 0 && (
+                  <View style={styles.brandedBreakdown}>
+                    {walletData.brandedCoins.map((b) => (
+                      <View key={b.merchantId} style={styles.brandedRow}>
+                        <Text style={styles.brandedName}>{b.merchantName}</Text>
+                        <Text style={styles.brandedAmount}>
+                          {isHidden ? '₹••' : `₹${b.amount.toLocaleString('en-IN')}`}
+                        </Text>
+                      </View>
+                    ))}
+                  </View>
+                )}
+              </View>
+              <Text style={[styles.coinCardAmount, { color: NILE_BLUE }]}>
+                {isHidden ? '₹••' : `₹${brandedTotal.toLocaleString('en-IN')}`}
+              </Text>
+            </View>
+          </Pressable>
+
+          {/* Cashback */}
+          <View style={styles.coinCard}>
+            <IconCircle bgColor="#16A34A" iconName="cash" />
+            <View style={styles.coinCardCenter}>
+              <Text style={styles.coinCardTitle}>Cashback</Text>
+              <Text style={styles.coinCardSubtitle}>From your purchases</Text>
+            </View>
+            <Text style={[styles.coinCardAmount, { color: NILE_BLUE }]}>
+              {isHidden ? '₹••' : `₹${cashbackBalance.toLocaleString('en-IN')}`}
+            </Text>
+          </View>
+
         </View>
       </View>
     );
@@ -213,18 +372,18 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
 const styles = StyleSheet.create({
   outerContainer: {
     width: '100%',
-    alignItems: 'center',
+    backgroundColor: '#F4F6F9',
   },
+
+  // ── Hero card ──────────────────────────────────────────────────────────────
   heroCard: {
     width: '100%',
-    minHeight: 220,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingTop: 24,
+    paddingBottom: 24,
     paddingHorizontal: 20,
     overflow: 'hidden',
     position: 'relative',
   },
-  // Depth glow overlays
   glowOverlay: {
     position: 'absolute',
     top: -40,
@@ -243,139 +402,195 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: 'rgba(212,175,55,0.07)',
   },
-  // Top row: icon + label + eye
-  topRow: {
+
+  heroTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
+    justifyContent: 'space-between',
+    marginBottom: 10,
   },
-  walletIconWrap: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: 'rgba(212,175,55,0.18)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  availableLabel: {
-    flex: 1,
+  heroLabel: {
     fontSize: 12,
-    color: 'rgba(255,255,255,0.65)',
+    color: 'rgba(255,255,255,0.60)',
     fontWeight: '500',
-    letterSpacing: 0.4,
+    letterSpacing: 1.1,
   },
   eyeButton: {
-    padding: 4,
+    padding: 2,
   },
-  // Balance
-  balanceRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginBottom: 18,
-  },
-  balanceText: {
+
+  heroBalance: {
     color: '#FFFFFF',
-    fontSize: 46,
+    fontSize: 44,
     fontWeight: '800',
     letterSpacing: -1,
     includeFontPadding: false,
-    textShadowColor: 'rgba(212,175,55,0.35)',
-    textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 12,
+    marginBottom: 6,
   },
-  // Stat pills row
-  statPillsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.10)',
-    borderRadius: 14,
-    paddingVertical: 10,
-    paddingHorizontal: 8,
-    marginBottom: 16,
-    borderWidth: StyleSheet.hairlineWidth,
-    borderColor: 'rgba(255,255,255,0.15)',
-  },
-  statPill: {
-    flex: 1,
-    alignItems: 'center',
-    gap: 3,
-  },
-  statDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-  },
-  statPillLabel: {
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.55)',
-    fontWeight: '500',
-    letterSpacing: 0.2,
-  },
-  statPillValue: {
+  heroSubtitle: {
     fontSize: 13,
-    color: '#FFFFFF',
-    fontWeight: '700',
-    letterSpacing: 0.1,
+    color: 'rgba(255,255,255,0.50)',
+    fontWeight: '400',
+    marginBottom: 24,
   },
-  statPillDivider: {
-    width: StyleSheet.hairlineWidth,
-    height: 32,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-  },
-  // Action buttons
+
+  // ── Action buttons ──────────────────────────────────────────────────────────
   actionRow: {
     flexDirection: 'row',
-    gap: 10,
+    gap: 12,
   },
-  actionBtnPrimary: {
+  actionBtnFilled: {
     flex: 1,
+    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 11,
-    borderRadius: 50,
-    backgroundColor: '#D4AF37',
-    gap: 6,
-    shadowColor: '#D4AF37',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 6,
+    gap: 7,
+    borderRadius: 25,
+    backgroundColor: NILE_BLUE,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255,255,255,0.25)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.25,
+        shadowRadius: 6,
+      },
+      android: { elevation: 4 },
+    }),
   },
-  actionBtnTextPrimary: {
-    color: '#1a3a52',
-    fontSize: 13,
-    fontWeight: '800',
-    letterSpacing: 0.2,
-  },
-  actionBtnSecondary: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 11,
-    borderRadius: 50,
-    backgroundColor: 'rgba(255,255,255,0.10)',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.35)',
-    gap: 6,
-  },
-  actionBtnTextSecondary: {
+  actionBtnFilledText: {
     color: '#fff',
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: '700',
     letterSpacing: 0.2,
   },
-  // Chip row below card
-  chipRow: {
+  actionBtnOutlined: {
+    flex: 1,
+    height: 48,
     flexDirection: 'row',
-    marginTop: 10,
-    marginBottom: 2,
-    gap: 6,
-    flexWrap: 'wrap',
+    alignItems: 'center',
     justifyContent: 'center',
+    gap: 7,
+    borderRadius: 25,
+    backgroundColor: '#fff',
+    borderWidth: 1.5,
+    borderColor: NILE_BLUE,
+  },
+  actionBtnOutlinedText: {
+    color: NILE_BLUE,
+    fontSize: 14,
+    fontWeight: '700',
+    letterSpacing: 0.2,
+  },
+
+  // ── Breakdown section ───────────────────────────────────────────────────────
+  breakdownContainer: {
     paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
+    gap: 10,
+  },
+
+  // ── Individual coin card ────────────────────────────────────────────────────
+  coinCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    gap: 12,
+    ...Platform.select({
+      ios: {
+        shadowColor: NILE_BLUE,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+      },
+      android: { elevation: 2 },
+    }),
+  },
+
+  iconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexShrink: 0,
+  },
+
+  coinCardCenter: {
+    flex: 1,
+  },
+  coinCardTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 2,
+  },
+  coinCardTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#111827',
+    letterSpacing: 0.1,
+  },
+  coinCardSubtitle: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: '#6B7280',
+    letterSpacing: 0.1,
+  },
+  coinCardAmount: {
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 0.1,
+    flexShrink: 0,
+  },
+
+  // ── Premium badge ───────────────────────────────────────────────────────────
+  premiumBadge: {
+    marginLeft: 6,
+    backgroundColor: '#B8860B',
+    borderRadius: 20,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+  },
+  premiumBadgeText: {
+    fontSize: 9,
+    fontWeight: '800',
+    color: '#fff',
+    letterSpacing: 0.6,
+  },
+
+  // ── Promo expiry ─────────────────────────────────────────────────────────────
+  expiryText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: '#D97706',
+    marginTop: 3,
+  },
+
+  // ── Branded breakdown ────────────────────────────────────────────────────────
+  brandedBreakdown: {
+    marginTop: 8,
+    gap: 6,
+  },
+  brandedRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  brandedName: {
+    fontSize: 12,
+    fontWeight: '500',
+    color: '#374151',
+  },
+  brandedAmount: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#4F46E5',
   },
 });
 
