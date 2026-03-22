@@ -874,6 +874,32 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
         return renderCuratedCollectionsSection(section);
       case 'value-proposition':
         return renderValuePropositionSection();
+      case 'popular-items':
+        return renderStoresListSection(section);
+      case 'new-stores':
+        return renderStoresListSection(section);
+      case 'offers-section':
+        return (
+          <SectionErrorBoundary key={section.id} name="offers-section">
+            <OffersSection
+              key={section.id}
+              title={section.title || 'Offers & Deals'}
+              subtitle={section.subtitle}
+              slug={slug}
+            />
+          </SectionErrorBoundary>
+        );
+      case 'experiences-section':
+        return (
+          <SectionErrorBoundary key={section.id} name="experiences-section">
+            <ExperiencesSection
+              key={section.id}
+              title={section.title || 'Experiences'}
+              subtitle={section.subtitle}
+              slug={slug}
+            />
+          </SectionErrorBoundary>
+        );
       default:
         return null;
     }

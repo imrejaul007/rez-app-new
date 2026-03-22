@@ -190,10 +190,10 @@ function SharedCategoryPage() {
   const fetchStores = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await storesApi.getStoresBySubcategorySlug(slug || 'electronics', 50);
+      const response = await storesApi.getStoresBySubcategorySlug(slug, 50);
 
       if (response.success && response.data) {
-        const allStores = Array.isArray(response.data) ? response.data : (response.data.stores || []);
+        const allStores = response.data.stores || (Array.isArray(response.data) ? response.data : []);
         // Filter for top rated (4.0+)
         const topRated = allStores.filter((s: any) => (s.ratings?.average || 0) >= 4.0);
         if (!isMounted()) return;

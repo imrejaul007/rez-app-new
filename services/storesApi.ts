@@ -127,7 +127,7 @@ export interface StoresResponse {
   stores: Store[];
   pagination: {
     current: number;
-    pages: number;
+    totalPages: number;
     total: number;
     limit: number;
   };
@@ -352,7 +352,10 @@ class StoresService {
       if (response.success && response.data) {
         return {
           ...response,
-          data: response.data.stores || [],
+          data: {
+            stores: response.data.stores || [],
+            pagination: response.data.pagination || null,
+          },
         };
       }
 

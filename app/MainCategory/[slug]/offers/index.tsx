@@ -6,9 +6,10 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import * as Clipboard from 'expo-clipboard';
 import {
   View, Text, StyleSheet, Pressable,
-  RefreshControl, ActivityIndicator, ScrollView, Clipboard,
+  RefreshControl, ActivityIndicator, ScrollView,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
@@ -26,8 +27,8 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const TABS = [
   { id: 'all', label: 'All Deals', icon: 'grid-outline' },
-  { id: 'gadgets', label: 'Store Offers', icon: 'phone-portrait-outline' },
-  { id: 'accessories', label: 'Exclusive', icon: 'headset-outline' },
+  { id: 'store-offers', label: 'Store Offers', icon: 'storefront-outline' },
+  { id: 'exclusive', label: 'Exclusive', icon: 'ribbon-outline' },
 ];
 
 const BANK_GRADIENTS: Record<string, string[]> = {
@@ -98,9 +99,9 @@ function OffersIndexPage() {
     setRefreshing(false);
   };
 
-  const handleCopyCode = (code: string) => {
+  const handleCopyCode = async (code: string) => {
     try {
-      Clipboard.setString(code);
+      await Clipboard.setStringAsync(code);
       platformAlertSimple('Copied!', `Promo code ${code} copied to clipboard`);
     } catch {}
   };
@@ -119,20 +120,16 @@ function OffersIndexPage() {
   const getFilteredData = () => {
     const allItems = [...bankOffers, ...deals, ...coupons];
     if (activeTab === 'all') return allItems;
-    if (activeTab === 'gadgets') {
+    if (activeTab === 'store-offers') {
       return allItems.filter((item: any) =>
-        item.subcategory === 'gadgets' || item.tags?.includes('gadgets') ||
-        item.title?.toLowerCase().includes('gadget') || item.description?.toLowerCase().includes('gadget') ||
-        item.title?.toLowerCase().includes('phone') || item.title?.toLowerCase().includes('laptop') ||
-        item.title?.toLowerCase().includes('tablet')
+        item.store || item.storeId || item.brandName ||
+        item.tags?.includes('store') || item.subcategory === 'store-offers'
       );
     }
-    if (activeTab === 'accessories') {
+    if (activeTab === 'exclusive') {
       return allItems.filter((item: any) =>
-        item.subcategory === 'accessories' || item.tags?.includes('accessories') ||
-        item.title?.toLowerCase().includes('accessor') || item.description?.toLowerCase().includes('accessor') ||
-        item.title?.toLowerCase().includes('case') || item.title?.toLowerCase().includes('charger') ||
-        item.title?.toLowerCase().includes('cable')
+        item.isExclusive || item.exclusive ||
+        item.tags?.includes('exclusive') || item.subcategory === 'exclusive'
       );
     }
     return allItems;
@@ -242,7 +239,7 @@ function OffersIndexPage() {
           <Ionicons name="arrow-back" size={24} color={SHARED_COLORS.textPrimary} />
         </Pressable>
         <View style={{ flex: 1 }}>
-          <Text style={styles.headerTitle}>Electronics Offers</Text>
+          <Text style={styles.headerTitle}>{slug ? slug.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') + ' Offers' : 'Offers'}</Text>
           <Text style={styles.headerSubtitle}>
             {bankOffers.length + deals.length + coupons.length} offers available
           </Text>
@@ -285,12 +282,12 @@ function OffersIndexPage() {
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons
-                name={activeTab === 'gadgets' ? 'phone-portrait-outline' : activeTab === 'accessories' ? 'headset-outline' : 'pricetag-outline'}
+                name="pricetag-outline"
                 size={48}
                 color={SHARED_COLORS.textSecondary}
               />
               <Text style={styles.emptyTitle}>
-                No {activeTab === 'all' ? 'offers' : activeTab === 'gadgets' ? 'gadget offers' : 'accessory offers'} right now
+                No {activeTab === 'all' ? 'offers' : activeTab === 'store-offers' ? 'store offers' : 'exclusive offers'} right now
               </Text>
               <Text style={styles.emptySubtitle}>Check back later for new offers</Text>
             </View>

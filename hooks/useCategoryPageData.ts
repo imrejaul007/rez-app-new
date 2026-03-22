@@ -198,23 +198,9 @@ export const useCategoryPageData = (slug: string, _options?: { storesPerPage?: n
   const [exclusiveOffers, setExclusiveOffers] = useState<ExclusiveOfferItem[]>([]);
   const [cuisineCounts, setCuisineCounts] = useState<any[]>([]);
 
-  // ---- Fetch page config ----
-  useEffect(() => {
-    if (!slug) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const categoriesApi = (await import('@/services/categoriesApi')).default;
-        const configResponse = await categoriesApi.getPageConfig(slug);
-        if (!cancelled && configResponse?.success && configResponse.data) {
-          setPageConfig(configResponse.data);
-        }
-      } catch {
-        // silently handle
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [slug]);
+  // NOTE: pageConfig is fetched by useCategoryPageConfig (deduped via React Query).
+  // The local setPageConfig state is kept for components that read it from this hook,
+  // but we do NOT make a duplicate fetch here.
 
   // ---- Fetch cuisine counts for food-dining ----
   useEffect(() => {

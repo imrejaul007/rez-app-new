@@ -2,7 +2,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
  * Shared Category Search Page
  * /MainCategory/[slug]/search
- * Searches only within the category for stores, gadgets, and products
+ * Searches only within the category for stores and products
  */
 
 import { colors } from '@/constants/theme';
@@ -137,9 +137,8 @@ function SharedCategoryPage() {
       setIsSearching(true);
       setHasSearched(true);
 
-      // Search stores within electronics category
       const [storesRes, productsRes] = await Promise.all([
-        storesApi.getStoresBySubcategorySlug(slug || 'electronics', 20),
+        storesApi.getStoresBySubcategorySlug(slug, 20),
         apiClient.get<any>('/products', {
           category: slug,
           search: searchQuery,
@@ -147,9 +146,12 @@ function SharedCategoryPage() {
         }),
       ]);
 
+      let matchedCount = 0;
+      let productCount = 0;
+
       // Filter stores by search query (client-side for better matching)
       if (storesRes.success && storesRes.data) {
-        const allStores = Array.isArray(storesRes.data) ? storesRes.data : (storesRes.data.stores || []);
+        const allStores = storesRes.data.stores || (Array.isArray(storesRes.data) ? storesRes.data : []);
         const queryLower = searchQuery.toLowerCase();
         const matched = allStores.filter((s: any) => {
           const nameMatch = s.name?.toLowerCase().includes(queryLower);
@@ -157,23 +159,24 @@ function SharedCategoryPage() {
           const categoryMatch = s.category?.name?.toLowerCase().includes(queryLower);
           return nameMatch || tagMatch || categoryMatch;
         });
+        matchedCount = matched.length;
         if (!isMounted()) return;
         setStores(matched);
       }
 
-      // Get products from electronics search
       if (productsRes.success && productsRes.data) {
         const searchProducts = Array.isArray(productsRes.data) ? productsRes.data : (productsRes.data.products || []);
+        productCount = searchProducts.length;
         if (!isMounted()) return;
         setProducts(searchProducts);
       }
 
-      // Log search
+      // Log search using local counts to avoid stale closure
       try {
         await apiClient.post('/search/history', {
           query: searchQuery,
           type: 'store',
-          resultCount: stores.length + products.length,
+          resultCount: matchedCount + productCount,
           filters: { category: slug },
         });
       } catch (err) {
@@ -479,7 +482,7 @@ const styles = StyleSheet.create({
   },
   resultImage: { width: 56, height: 56, borderRadius: BorderRadius.md, backgroundColor: Colors.border.default },
   resultImagePlaceholder: {
-    position: 'absolute', left: 12, justifyContent: 'center', alignItems: 'center',
+    width: 56, height: 56, justifyContent: 'center', alignItems: 'center',
     backgroundColor: colors.tint.blue,
   },
   resultContent: { flex: 1 },

@@ -30,6 +30,7 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import { getCategoryConfig } from '@/config/categoryConfig';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { isStoreOpen } from '@/utils/dateUtils';
 
 // Subcategory metadata for icons and colors
 const SUBCATEGORY_META: Record<string, { title: string; description: string; icon: string; color: string; emoji: string; filterTags: string[] }> = {
@@ -96,6 +97,71 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     color: colors.tealGreen,
     emoji: '\u231A',
     filterTags: ['Fitness', 'Premium', 'Kids', 'Budget', 'LTE'],
+  },
+  // Food & Dining subcategories
+  'cafes': {
+    title: 'Cafes',
+    description: 'Coffee shops & tea houses',
+    icon: 'cafe-outline',
+    color: colors.warningScale[400],
+    emoji: '\u2615',
+    filterTags: ['Coffee', 'Tea', 'Brunch', 'WiFi', 'Quiet'],
+  },
+  'qsr-fast-food': {
+    title: 'QSR & Fast Food',
+    description: 'Quick service restaurants',
+    icon: 'fast-food-outline',
+    color: colors.error,
+    emoji: '\uD83C\uDF54',
+    filterTags: ['Burgers', 'Pizza', 'Wraps', 'Combos', 'Value Meals'],
+  },
+  'fine-dining': {
+    title: 'Fine Dining',
+    description: 'Upscale dining experiences',
+    icon: 'restaurant-outline',
+    color: colors.brand.purpleLight,
+    emoji: '\uD83C\uDF7D\uFE0F',
+    filterTags: ['Romantic', 'Business', 'Tasting Menu', 'Premium', 'Buffet'],
+  },
+  'bakery-confectionery': {
+    title: 'Bakery & Confectionery',
+    description: 'Breads, cakes & sweets',
+    icon: 'storefront-outline',
+    color: colors.brand.pink,
+    emoji: '\uD83C\uDF70',
+    filterTags: ['Cakes', 'Pastry', 'Bread', 'Custom Orders', 'Eggless'],
+  },
+  'cloud-kitchens': {
+    title: 'Cloud Kitchens',
+    description: 'Delivery-only restaurants',
+    icon: 'cloud-outline',
+    color: colors.infoScale[400],
+    emoji: '\u2601\uFE0F',
+    filterTags: ['Fast Delivery', 'Budget', 'Multi-Cuisine', 'Healthy', 'Combos'],
+  },
+  'ice-cream-dessert': {
+    title: 'Ice Cream & Desserts',
+    description: 'Ice creams, waffles & more',
+    icon: 'ice-cream-outline',
+    color: colors.brand.pink,
+    emoji: '\uD83C\uDF66',
+    filterTags: ['Gelato', 'Waffles', 'Shakes', 'Sundae', 'Vegan'],
+  },
+  'family-restaurants': {
+    title: 'Family Restaurants',
+    description: 'Great meals for the whole family',
+    icon: 'people-outline',
+    color: colors.success,
+    emoji: '\uD83D\uDC68\u200D\uD83D\uDC69\u200D\uD83D\uDC67',
+    filterTags: ['Kids Menu', 'Large Portions', 'Buffet', 'Multi-Cuisine', 'Party Hall'],
+  },
+  'street-food': {
+    title: 'Street Food',
+    description: 'Chaats, snacks & local bites',
+    icon: 'nutrition-outline',
+    color: colors.warningScale[400],
+    emoji: '\uD83C\uDF62',
+    filterTags: ['Chaat', 'Momos', 'Rolls', 'Pani Puri', 'Bhel'],
   },
 };
 
@@ -334,7 +400,7 @@ function SharedCategoryPage() {
     if (activeFilter !== 'all') {
       switch (activeFilter) {
         case 'open-now':
-          result = result.filter(s => s.tags?.some((t: string) => t.toLowerCase() === 'open-now'));
+          result = result.filter(s => isStoreOpen(s.operationalInfo?.hours || s.hours));
           break;
         case 'premium':
           result = result.filter(s => s.tags?.some((t: string) => t.toLowerCase() === 'premium'));
