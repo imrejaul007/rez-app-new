@@ -112,6 +112,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
     ? Math.round((1 - pricing.selling / pricing.original) * 100)
     : 0);
   const showCashback = cashback?.isActive && cashback.percentage > 0;
+  // Calculate Rez Coins earned (cashback percentage of selling price, 1 coin = ₹1)
+  const coinsEarned = showCashback ? Math.round(pricing.selling * cashback!.percentage / 100) : 0;
 
   const formattedSelling = `₹${pricing.selling.toLocaleString('en-IN')}`;
   const formattedOriginal = `₹${pricing.original.toLocaleString('en-IN')}`;
@@ -143,11 +145,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
           </View>
         )}
 
-        {/* Cashback Badge */}
-        {showCashback && (
+        {/* Rez Coins Badge */}
+        {showCashback && coinsEarned > 0 && (
           <View style={productCardStyles.cashbackBadge}>
-            <Ionicons name="gift" size={10} color={colors.background.primary} />
-            <Text style={productCardStyles.cashbackBadgeText}>{cashback!.percentage}%</Text>
+            <Ionicons name="diamond" size={10} color={colors.background.primary} />
+            <Text style={productCardStyles.cashbackBadgeText}>Earn ₹{coinsEarned}</Text>
           </View>
         )}
 
@@ -183,6 +185,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
             <Text style={productCardStyles.mrp}>{formattedOriginal}</Text>
           )}
         </View>
+
+        {/* Coin earning preview */}
+        {showCashback && coinsEarned > 0 && (
+          <View style={productCardStyles.coinEarnRow}>
+            <Ionicons name="diamond" size={12} color={colors.nileBlue} />
+            <Text style={productCardStyles.coinEarnText}>Earn ₹{coinsEarned} {BRAND.COIN_NAME}</Text>
+          </View>
+        )}
 
         {/* Add to Cart */}
         <Pressable style={productCardStyles.addToCartBtn}>
@@ -303,6 +313,22 @@ const productCardStyles = StyleSheet.create({
     fontWeight: '400',
     color: colors.neutral[400],
     textDecorationLine: 'line-through',
+  },
+  coinEarnRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginBottom: 6,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
+    backgroundColor: 'rgba(26, 58, 82, 0.06)',
+    borderRadius: BorderRadius.xs,
+    alignSelf: 'flex-start',
+  },
+  coinEarnText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.nileBlue,
   },
   addToCartBtn: {
     flexDirection: 'row',
