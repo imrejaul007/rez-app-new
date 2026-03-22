@@ -1,9 +1,10 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
- * Category Stores Page
+ * Mall Category Page — Premium Product Grid
  *
- * Displays stores within a specific category for Nuqta Mall
- * Modern, premium design with smooth animations
+ * Displays products within a mall category.
+ * Design: Amazon/Myntra-grade 2-column product grid with sort, filter chips,
+ * gradient hero banner, cashback badges, discount strikethrough, and Add to Cart.
  */
 
 import React, { useEffect, useState, useCallback } from 'react';
@@ -16,6 +17,7 @@ import {
   Pressable,
   Platform,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
@@ -24,153 +26,398 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
+import apiClient from '@/services/apiClient';
 import { mallApi } from '../../../services/mallApi';
 import MallEmptyState from '../../../components/mall/pages/MallEmptyState';
 import MallLoadingSkeleton from '../../../components/mall/pages/MallLoadingSkeleton';
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
-import { BRAND } from '@/constants/brand';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
+import { BRAND } from '@/constants/brand';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const CARD_WIDTH = (SCREEN_WIDTH - Spacing.base * 2 - Spacing.sm) / 2;
 
-// Modern Store Card Component
-interface StoreCardProps {
-  store: any;
-  onPress: (store: any) => void;
-  index: number;
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface Product {
+  _id: string;
+  name: string;
+  slug?: string;
+  images: string[];
+  pricing: {
+    original: number;
+    selling: number;
+    discount?: number;
+    currency?: string;
+  };
+  ratings?: { average: number; count: number };
+  cashback?: { percentage: number; isActive: boolean };
+  store?: { _id: string; name: string; logo?: string; location?: { city: string } };
+  category?: { name: string; slug: string };
+  isFeatured?: boolean;
+  tags?: string[];
 }
 
-const StoreCard: React.FC<StoreCardProps> = ({ store, onPress, index }) => {
+type SortOption = 'default' | 'price_asc' | 'price_desc' | 'rating' | 'newest' | 'discount';
+
+const SORT_OPTIONS: { key: SortOption; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+  { key: 'default', label: 'Recommended', icon: 'sparkles-outline' },
+  { key: 'price_asc', label: 'Price: Low–High', icon: 'arrow-up-outline' },
+  { key: 'price_desc', label: 'Price: High–Low', icon: 'arrow-down-outline' },
+  { key: 'discount', label: 'Best Discount', icon: 'pricetag-outline' },
+  { key: 'rating', label: 'Top Rated', icon: 'star-outline' },
+  { key: 'newest', label: 'New Arrivals', icon: 'time-outline' },
+];
+
+// ─── Star Rating ──────────────────────────────────────────────────────────────
+
+const StarRating: React.FC<{ rating: number; count?: number }> = ({ rating, count }) => {
+  const filled = Math.round(rating);
+  return (
+    <View style={starStyles.row}>
+      {[1, 2, 3, 4, 5].map(i => (
+        <Ionicons
+          key={i}
+          name={i <= filled ? 'star' : 'star-outline'}
+          size={11}
+          color={i <= filled ? colors.warningScale[400] : colors.neutral[300]}
+        />
+      ))}
+      {count !== undefined && count > 0 && (
+        <Text style={starStyles.count}>({count})</Text>
+      )}
+    </View>
+  );
+};
+
+const starStyles = StyleSheet.create({
+  row: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  count: { fontSize: 11, color: colors.neutral[500], marginLeft: 2 },
+});
+
+// ─── Product Card ─────────────────────────────────────────────────────────────
+
+interface ProductCardProps {
+  product: Product;
+  onPress: (product: Product) => void;
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
   const [imageError, setImageError] = useState(false);
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
+  const { pricing, ratings, cashback } = product;
+  const hasDiscount = pricing.discount && pricing.discount > 0;
+  const discountPct = pricing.discount ?? (pricing.original > pricing.selling
+    ? Math.round((1 - pricing.selling / pricing.original) * 100)
+    : 0);
+  const showCashback = cashback?.isActive && cashback.percentage > 0;
 
-  const storeImage = store.logo || (store.banner && store.banner[0]);
-
-  // Calculate coin reward
-  const coinReward = store.deliveryCategories?.mall?.coinRewardPercentage || 5;
+  const formattedSelling = `₹${pricing.selling.toLocaleString('en-IN')}`;
+  const formattedOriginal = `₹${pricing.original.toLocaleString('en-IN')}`;
 
   return (
-    <Pressable
-      style={styles.storeCard}
-      onPress={() => onPress(store)}
-     
-    >
-      {/* Card Background Gradient */}
-      <LinearGradient
-        colors={[Colors.background.primary, Colors.background.secondary]}
-        style={styles.cardGradient}
-      >
-        {/* Top Row: Image + Info */}
-        <View style={styles.cardTopRow}>
-          {/* Store Image */}
-          <View style={styles.imageWrapper}>
-            {!imageError && storeImage ? (
-              <CachedImage
-                source={storeImage}
-                style={styles.storeImage}
-                contentFit="cover"
-                onError={() => setImageError(true)}
-              />
-            ) : (
-              <LinearGradient
-                colors={[Colors.warning, colors.warningScale[700]]}
-                style={styles.imageFallback}
-              >
-                <Text style={styles.fallbackText}>{getInitials(store.name)}</Text>
-              </LinearGradient>
-            )}
-            {/* Coin Badge */}
-            <View style={styles.coinBadge}>
-              <Text style={styles.coinBadgeText}>{coinReward}%</Text>
-            </View>
+    <Pressable style={productCardStyles.card} onPress={() => onPress(product)}>
+      {/* Image Container */}
+      <View style={productCardStyles.imageContainer}>
+        {!imageError && product.images?.[0] ? (
+          <CachedImage
+            source={product.images[0]}
+            style={productCardStyles.image}
+            contentFit="cover"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <LinearGradient
+            colors={[colors.background.tertiary, colors.background.secondary]}
+            style={productCardStyles.imageFallback}
+          >
+            <Ionicons name="image-outline" size={36} color={colors.neutral[400]} />
+          </LinearGradient>
+        )}
+
+        {/* Discount Badge */}
+        {hasDiscount && discountPct > 0 && (
+          <View style={productCardStyles.discountBadge}>
+            <Text style={productCardStyles.discountBadgeText}>{discountPct}% OFF</Text>
           </View>
+        )}
 
-          {/* Store Info */}
-          <View style={styles.storeInfo}>
-            <View style={styles.nameContainer}>
-              <Text style={styles.storeName} numberOfLines={1}>
-                {store.name}
-              </Text>
-              {store.isVerified && (
-                <Ionicons name="checkmark-circle" size={16} color={Colors.warning} />
-              )}
-            </View>
-
-            {/* Rating Row */}
-            <View style={styles.ratingContainer}>
-              <View style={styles.ratingBadge}>
-                <Ionicons name="star" size={12} color={Colors.text.inverse} />
-                <Text style={styles.ratingValue}>
-                  {store.ratings?.average?.toFixed(1) || '4.5'}
-                </Text>
-              </View>
-              <Text style={styles.ratingCount}>
-                ({store.ratings?.count || 0} reviews)
-              </Text>
-            </View>
-
-            {/* Location */}
-            {store.location?.city && (
-              <View style={styles.locationRow}>
-                <Ionicons name="location-outline" size={14} color={Colors.text.tertiary} />
-                <Text style={styles.locationText}>{store.location.city}</Text>
-              </View>
-            )}
-
-            {/* Reward Text */}
-            <View style={styles.rewardContainer}>
-              <Ionicons name="gift-outline" size={14} color={Colors.warning} />
-              <Text style={styles.rewardText}>Earn {coinReward}% {BRAND.COIN_NAME}</Text>
-            </View>
+        {/* Cashback Badge */}
+        {showCashback && (
+          <View style={productCardStyles.cashbackBadge}>
+            <Ionicons name="gift" size={10} color={colors.background.primary} />
+            <Text style={productCardStyles.cashbackBadgeText}>{cashback!.percentage}%</Text>
           </View>
+        )}
 
-          {/* Arrow */}
-          <View style={styles.arrowContainer}>
-            <Ionicons name="chevron-forward" size={22} color={Colors.border.default} />
-          </View>
+        {/* Wishlist Button */}
+        <Pressable style={productCardStyles.wishlistBtn} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+          <Ionicons name="heart-outline" size={16} color={colors.text.primary} />
+        </Pressable>
+      </View>
+
+      {/* Info */}
+      <View style={productCardStyles.info}>
+        {/* Store name */}
+        {product.store?.name && (
+          <Text style={productCardStyles.storeName} numberOfLines={1}>
+            {product.store.name}
+          </Text>
+        )}
+
+        {/* Product name */}
+        <Text style={productCardStyles.productName} numberOfLines={2}>
+          {product.name}
+        </Text>
+
+        {/* Rating */}
+        {ratings && ratings.count > 0 && (
+          <StarRating rating={ratings.average} count={ratings.count} />
+        )}
+
+        {/* Price Row */}
+        <View style={productCardStyles.priceRow}>
+          <Text style={productCardStyles.sellingPrice}>{formattedSelling}</Text>
+          {hasDiscount && pricing.original > pricing.selling && (
+            <Text style={productCardStyles.mrp}>{formattedOriginal}</Text>
+          )}
         </View>
 
-        {/* Bottom Row: Badges */}
-        <View style={styles.badgesContainer}>
-          {store.isFeatured && (
-            <View style={[styles.badge, styles.featuredBadge]}>
-              <Ionicons name="star" size={10} color={Colors.text.inverse} />
-              <Text style={styles.badgeText}>Featured</Text>
-            </View>
-          )}
-          {store.offers?.isPartner && (
-            <View style={[styles.badge, styles.partnerBadge]}>
-              <Ionicons name="ribbon" size={10} color={Colors.text.inverse} />
-              <Text style={styles.badgeText}>Partner</Text>
-            </View>
-          )}
-          {store.deliveryCategories?.mall?.isPremium && (
-            <View style={[styles.badge, styles.premiumBadge]}>
-              <Ionicons name="diamond" size={10} color={Colors.text.inverse} />
-              <Text style={styles.badgeText}>Premium</Text>
-            </View>
-          )}
-          {store.category?.name && (
-            <View style={[styles.badge, styles.categoryBadge]}>
-              <Text style={styles.categoryBadgeText}>{store.category.name}</Text>
-            </View>
-          )}
-        </View>
-      </LinearGradient>
+        {/* Add to Cart */}
+        <Pressable style={productCardStyles.addToCartBtn}>
+          <Ionicons name="bag-add-outline" size={13} color={colors.background.primary} />
+          <Text style={productCardStyles.addToCartText}>Add to Cart</Text>
+        </Pressable>
+      </View>
     </Pressable>
   );
 };
 
-function CategoryStoresPage() {
+const productCardStyles = StyleSheet.create({
+  card: {
+    width: CARD_WIDTH,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    marginBottom: Spacing.sm,
+    ...Platform.select({
+      ios: {
+        shadowColor: colors.nileBlue,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
+      },
+      android: { elevation: 3 },
+    }),
+  },
+  imageContainer: {
+    width: '100%',
+    height: 200,
+    position: 'relative',
+  },
+  image: {
+    width: '100%',
+    height: 200,
+  },
+  imageFallback: {
+    width: '100%',
+    height: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  discountBadge: {
+    position: 'absolute',
+    top: 8,
+    left: 8,
+    backgroundColor: colors.brand.orange,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.sm,
+  },
+  discountBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: colors.text.inverse,
+    letterSpacing: 0.3,
+  },
+  cashbackBadge: {
+    position: 'absolute',
+    bottom: 8,
+    left: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 3,
+    backgroundColor: colors.brand.green,
+    paddingHorizontal: 7,
+    paddingVertical: 3,
+    borderRadius: BorderRadius.sm,
+  },
+  cashbackBadgeText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: colors.background.primary,
+  },
+  wishlistBtn: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: 'rgba(255,255,255,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  info: {
+    padding: 10,
+    gap: 4,
+  },
+  storeName: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.text.secondary,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  productName: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: colors.text.primary,
+    lineHeight: 18,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    flexWrap: 'wrap',
+    marginTop: 2,
+  },
+  sellingPrice: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: colors.text.primary,
+  },
+  mrp: {
+    fontSize: 12,
+    fontWeight: '400',
+    color: colors.neutral[400],
+    textDecorationLine: 'line-through',
+  },
+  addToCartBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 5,
+    backgroundColor: colors.nileBlue,
+    paddingVertical: 8,
+    borderRadius: BorderRadius.sm,
+    marginTop: 6,
+  },
+  addToCartText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: colors.text.inverse,
+    letterSpacing: 0.3,
+  },
+});
+
+// ─── Sort Sheet ───────────────────────────────────────────────────────────────
+
+interface SortSheetProps {
+  visible: boolean;
+  activeSort: SortOption;
+  onSelect: (s: SortOption) => void;
+  onClose: () => void;
+}
+
+const SortSheet: React.FC<SortSheetProps> = ({ visible, activeSort, onSelect, onClose }) => {
+  if (!visible) return null;
+  return (
+    <Pressable style={sortStyles.overlay} onPress={onClose}>
+      <Pressable style={sortStyles.sheet} onPress={() => {}}>
+        <View style={sortStyles.handle} />
+        <Text style={sortStyles.title}>Sort By</Text>
+        {SORT_OPTIONS.map(opt => (
+          <Pressable
+            key={opt.key}
+            style={[sortStyles.option, activeSort === opt.key && sortStyles.optionActive]}
+            onPress={() => { onSelect(opt.key); onClose(); }}
+          >
+            <Ionicons
+              name={opt.icon}
+              size={18}
+              color={activeSort === opt.key ? colors.nileBlue : colors.neutral[500]}
+            />
+            <Text style={[sortStyles.optionText, activeSort === opt.key && sortStyles.optionTextActive]}>
+              {opt.label}
+            </Text>
+            {activeSort === opt.key && (
+              <Ionicons name="checkmark" size={18} color={colors.nileBlue} style={{ marginLeft: 'auto' }} />
+            )}
+          </Pressable>
+        ))}
+      </Pressable>
+    </Pressable>
+  );
+};
+
+const sortStyles = StyleSheet.create({
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    zIndex: 200,
+    justifyContent: 'flex-end',
+  },
+  sheet: {
+    backgroundColor: colors.background.primary,
+    borderTopLeftRadius: BorderRadius['3xl'],
+    borderTopRightRadius: BorderRadius['3xl'],
+    paddingHorizontal: Spacing.base,
+    paddingBottom: 40,
+    paddingTop: 12,
+  },
+  handle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.neutral[300],
+    alignSelf: 'center',
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 17,
+    fontWeight: '700',
+    color: colors.text.primary,
+    marginBottom: 12,
+    paddingHorizontal: 4,
+  },
+  option: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 8,
+    borderRadius: BorderRadius.md,
+  },
+  optionActive: {
+    backgroundColor: colors.background.tertiary,
+  },
+  optionText: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: colors.text.secondary,
+    flex: 1,
+  },
+  optionTextActive: {
+    fontWeight: '700',
+    color: colors.nileBlue,
+  },
+});
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+
+function CategoryProductsPage() {
   const params = useLocalSearchParams<{ slug: string }>();
   const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
   const isMounted = useIsMounted();
@@ -178,44 +425,64 @@ function CategoryStoresPage() {
   const insets = useSafeAreaInsets();
 
   const [category, setCategory] = useState<any>(null);
-  const [stores, setStores] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [activeSort, setActiveSort] = useState<SortOption>('default');
+  const [showSortSheet, setShowSortSheet] = useState(false);
+  const [activeVibe, setActiveVibe] = useState<string | null>(null);
 
   const LIMIT = 20;
 
-  const fetchCategoryStores = useCallback(async (
+  // Map sort option → API query params
+  const getSortParams = (sort: SortOption): string => {
+    switch (sort) {
+      case 'price_asc': return '&sort=price&order=asc';
+      case 'price_desc': return '&sort=price&order=desc';
+      case 'rating': return '&sort=rating&order=desc';
+      case 'newest': return '&sort=createdAt&order=desc';
+      case 'discount': return '&sort=discount&order=desc';
+      default: return '';
+    }
+  };
+
+  const fetchProducts = useCallback(async (
     pageNum: number = 1,
-    append: boolean = false
+    append: boolean = false,
+    sort: SortOption = 'default',
   ) => {
     if (!slug) return;
-
     try {
       setError(null);
-      const result = await mallApi.getMallStoresByCategorySlug(slug, pageNum, LIMIT);
+      const sortParams = getSortParams(sort);
+      const response = await apiClient.get(
+        `/products?category=${encodeURIComponent(slug)}&page=${pageNum}&limit=${LIMIT}${sortParams}`
+      );
+      if (!isMounted()) return;
+
+      const fetchedProducts: Product[] = response.data || [];
+      const pagination = response.meta?.pagination;
 
       if (!isMounted()) return;
-      setCategory(result.category);
+      setTotal(pagination?.total ?? fetchedProducts.length);
       if (!isMounted()) return;
-      setTotal(result.total);
-      if (!isMounted()) return;
-      setTotalPages(result.pages);
+      setTotalPages(pagination?.pages ?? 1);
 
       if (append) {
         if (!isMounted()) return;
-        setStores(prev => [...prev, ...result.stores]);
+        setProducts(prev => [...prev, ...fetchedProducts]);
       } else {
         if (!isMounted()) return;
-        setStores(result.stores);
+        setProducts(fetchedProducts);
       }
     } catch (err: any) {
       if (!isMounted()) return;
-      setError(err.message || 'Failed to load category');
+      setError(err.message || 'Failed to load products');
     } finally {
       if (!isMounted()) return;
       setIsLoading(false);
@@ -226,118 +493,219 @@ function CategoryStoresPage() {
     }
   }, [slug]);
 
+  const fetchCategory = useCallback(async () => {
+    if (!slug) return;
+    try {
+      const result = await mallApi.getMallStoresByCategorySlug(slug, 1, 1);
+      if (!isMounted()) return;
+      if (result.category) setCategory(result.category);
+    } catch {
+      // Non-fatal — category metadata is decorative
+    }
+  }, [slug]);
+
   useEffect(() => {
     setIsLoading(true);
     setPage(1);
-    fetchCategoryStores(1, false);
+    fetchCategory();
+    fetchProducts(1, false, activeSort);
   }, [slug]);
 
   const handleRefresh = useCallback(() => {
     setIsRefreshing(true);
     setPage(1);
-    fetchCategoryStores(1, false);
-  }, [fetchCategoryStores]);
+    fetchProducts(1, false, activeSort);
+  }, [fetchProducts, activeSort]);
 
   const handleLoadMore = useCallback(() => {
-    if (isLoadingMore || page >= totalPages) {
-      return;
-    }
+    if (isLoadingMore || page >= totalPages) return;
     setIsLoadingMore(true);
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchCategoryStores(nextPage, true);
-  }, [page, totalPages, isLoadingMore, fetchCategoryStores]);
+    const next = page + 1;
+    setPage(next);
+    fetchProducts(next, true, activeSort);
+  }, [page, totalPages, isLoadingMore, fetchProducts, activeSort]);
 
-  const handleStorePress = useCallback((store: any) => {
-    // Navigate to main store page
-    router.push(`/MainStorePage?storeId=${store._id}` as any);
+  const handleSortChange = useCallback((sort: SortOption) => {
+    setActiveSort(sort);
+    setIsLoading(true);
+    setPage(1);
+    fetchProducts(1, false, sort);
+  }, [fetchProducts]);
+
+  const handleProductPress = useCallback((product: Product) => {
+    router.push(`/product/${product._id}` as any);
   }, [router]);
 
-  const renderItem = useCallback(({ item, index }: { item: any; index: number }) => (
-    <StoreCard store={item} onPress={handleStorePress} index={index} />
-  ), [handleStorePress]);
+  // Category vibes (from API) — horizontal quick filter
+  const vibes: Array<{ id: string; name: string; icon: string; color: string }> =
+    category?.vibes || [];
+  const occasions: Array<{ id: string; name: string; icon: string; color: string; tag?: string; discount?: number }> =
+    category?.occasions || [];
+  const quickFilters = [...vibes, ...occasions].slice(0, 8);
 
-  const keyExtractor = useCallback((item: any) =>
-    item._id || item.id, []);
+  // Grid renderer: two columns using numColumns = 2 equivalent via pairs
+  const renderItem = useCallback(({ item }: { item: Product | 'spacer' }) => {
+    if (item === 'spacer') return <View style={{ width: CARD_WIDTH }} />;
+    return <ProductCard product={item} onPress={handleProductPress} />;
+  }, [handleProductPress]);
+
+  // Pair products into rows for the grid
+  const gridData = useCallback((): (Product | 'spacer')[] => {
+    const result: (Product | 'spacer')[] = [...products];
+    if (result.length % 2 !== 0) result.push('spacer');
+    return result;
+  }, [products]);
+
+  const keyExtractor = useCallback((item: Product | 'spacer', index: number) => {
+    if (item === 'spacer') return `spacer-${index}`;
+    return item._id || `${index}`;
+  }, []);
+
+  // ── Hero gradient colours
+  const catColor = category?.pageConfig?.theme?.primaryColor
+    || category?.metadata?.color
+    || category?.color
+    || colors.nileBlue;
+
+  const heroGradient: [string, string, string] = [catColor, `${catColor}CC`, colors.nileBlue];
 
   const ListHeader = useCallback(() => (
     <View>
-      {/* Hero Section */}
+      {/* ── Hero Banner ── */}
       <LinearGradient
-        colors={[category?.color || Colors.warning, Colors.nileBlue]}
+        colors={heroGradient}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={[styles.heroSection, { paddingTop: insets.top + 60 }]}
+        style={[headerStyles.hero, { paddingTop: insets.top + 64 }]}
       >
-        {/* Decorative Elements */}
-        <View style={styles.heroDecoration}>
-          <View style={[styles.decorCircle, styles.decorCircle1]} />
-          <View style={[styles.decorCircle, styles.decorCircle2]} />
-          <View style={[styles.decorCircle, styles.decorCircle3]} />
+        {/* Decorative circles */}
+        <View style={StyleSheet.absoluteFill} pointerEvents="none">
+          <View style={[headerStyles.circle, headerStyles.circle1]} />
+          <View style={[headerStyles.circle, headerStyles.circle2]} />
+          <View style={[headerStyles.circle, headerStyles.circle3]} />
         </View>
 
-        {/* Category Icon */}
-        <View style={styles.categoryIconContainer}>
-          {category?.icon ? (
-            <Text style={styles.categoryIconEmoji}>{category.icon}</Text>
-          ) : (
-            <Ionicons name="grid-outline" size={40} color={Colors.text.inverse} />
-          )}
-        </View>
-
-        {/* Category Name */}
-        <Text style={styles.categoryTitle}>{category?.name || 'Category'}</Text>
-
-        {/* Description */}
-        {category?.description && (
-          <Text style={styles.categoryDescription}>{category.description}</Text>
+        {/* Banner image overlay */}
+        {category?.bannerImage && (
+          <CachedImage
+            source={category.bannerImage}
+            style={headerStyles.bannerImage}
+            contentFit="cover"
+          />
         )}
+        <View style={headerStyles.bannerOverlay} />
 
-        {/* Stats Row */}
-        <View style={styles.statsRow}>
-          <View style={styles.statCard}>
-            <Text style={styles.statNumber}>{total}</Text>
-            <Text style={styles.statLabel}>Stores</Text>
-          </View>
-          <View style={styles.statDivider} />
-          <View style={styles.statCard}>
-            <View style={styles.coinIconContainer}>
-              <Ionicons name="gift" size={18} color={colors.brand.goldBright} />
+        {/* Category icon + name */}
+        <View style={headerStyles.heroContent}>
+          {category?.icon ? (
+            <Text style={headerStyles.categoryEmoji}>{category.icon}</Text>
+          ) : (
+            <View style={headerStyles.iconCircle}>
+              <Ionicons name="grid-outline" size={36} color={colors.text.inverse} />
             </View>
-            <Text style={styles.statLabel}>Earn Coins</Text>
+          )}
+          <Text style={headerStyles.categoryTitle}>
+            {category?.name || (slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : 'Category')}
+          </Text>
+          {category?.description ? (
+            <Text style={headerStyles.categorySubtitle}>{category.description}</Text>
+          ) : null}
+
+          {/* Stats row */}
+          <View style={headerStyles.statsRow}>
+            <View style={headerStyles.statPill}>
+              <Ionicons name="cube-outline" size={14} color={colors.text.inverse} />
+              <Text style={headerStyles.statText}>{total} Products</Text>
+            </View>
+            {(category?.maxCashback || 0) > 0 && (
+              <View style={headerStyles.statPill}>
+                <Ionicons name="gift-outline" size={14} color={colors.text.inverse} />
+                <Text style={headerStyles.statText}>Up to {category.maxCashback}% {BRAND.COIN_NAME}</Text>
+              </View>
+            )}
           </View>
         </View>
       </LinearGradient>
 
-      {/* Results Header */}
-      <View style={styles.resultsHeader}>
-        <Text style={styles.resultsTitle}>All Stores</Text>
-        <Text style={styles.resultsCount}>{stores.length} of {total}</Text>
+      {/* ── Quick Filter Vibes ── */}
+      {quickFilters.length > 0 && (
+        <View style={headerStyles.vibesSection}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={headerStyles.vibesScroll}>
+            {quickFilters.map((vibe) => {
+              const isActive = activeVibe === vibe.id;
+              return (
+                <Pressable
+                  key={vibe.id}
+                  style={[headerStyles.vibeChip, isActive && { backgroundColor: vibe.color || colors.nileBlue }]}
+                  onPress={() => setActiveVibe(isActive ? null : vibe.id)}
+                >
+                  <Text style={headerStyles.vibeEmoji}>{vibe.icon}</Text>
+                  <Text style={[headerStyles.vibeLabel, isActive && headerStyles.vibeLabelActive]}>
+                    {vibe.name}
+                  </Text>
+                  {'discount' in vibe && vibe.discount && (
+                    <View style={headerStyles.vibeDiscountBadge}>
+                      <Text style={headerStyles.vibeDiscountText}>{vibe.discount}%</Text>
+                    </View>
+                  )}
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* ── Sort & Filter Bar ── */}
+      <View style={headerStyles.toolbar}>
+        <Text style={headerStyles.resultCount}>
+          {products.length} of {total} results
+        </Text>
+        <View style={headerStyles.toolbarRight}>
+          <Pressable
+            style={headerStyles.toolbarBtn}
+            onPress={() => setShowSortSheet(true)}
+          >
+            <Ionicons name="swap-vertical-outline" size={16} color={colors.nileBlue} />
+            <Text style={headerStyles.toolbarBtnText}>
+              {SORT_OPTIONS.find(s => s.key === activeSort)?.label ?? 'Sort'}
+            </Text>
+          </Pressable>
+          <Pressable style={headerStyles.toolbarBtn}>
+            <Ionicons name="options-outline" size={16} color={colors.nileBlue} />
+            <Text style={headerStyles.toolbarBtnText}>Filter</Text>
+          </Pressable>
+        </View>
       </View>
     </View>
-  ), [category, stores.length, total, insets.top]);
+  ), [category, total, products.length, insets.top, quickFilters, activeVibe, activeSort, heroGradient]);
 
   const ListFooter = useCallback(() => {
     if (isLoadingMore) {
       return (
-        <View style={styles.loadingMore}>
-          <ActivityIndicator size="small" color={Colors.warning} />
-          <Text style={styles.loadingMoreText}>Loading more stores...</Text>
+        <View style={footerStyles.container}>
+          <ActivityIndicator size="small" color={colors.nileBlue} />
+          <Text style={footerStyles.text}>Loading more products…</Text>
+        </View>
+      );
+    }
+    if (products.length > 0 && products.length >= total) {
+      return (
+        <View style={footerStyles.endContainer}>
+          <Text style={footerStyles.endText}>You've seen all {total} products</Text>
         </View>
       );
     }
     return <View style={{ height: insets.bottom + 100 }} />;
-  }, [isLoadingMore, insets.bottom]);
+  }, [isLoadingMore, products.length, total, insets.bottom]);
 
   const ListEmpty = useCallback(() => {
     if (isLoading) return null;
-
     return (
-      <View style={styles.emptyContainer}>
+      <View style={{ paddingHorizontal: Spacing.base, paddingTop: 40 }}>
         <MallEmptyState
-          title="No stores yet"
-          message="We're adding more stores to this category soon!"
-          icon="storefront-outline"
+          title="No products yet"
+          message="We're adding more products to this category soon!"
+          icon="bag-outline"
           actionLabel="Browse Mall"
           onAction={() => router.push('/mall' as any)}
         />
@@ -345,22 +713,24 @@ function CategoryStoresPage() {
     );
   }, [isLoading, router]);
 
+  // ── Loading State
   if (isLoading) {
     return (
       <>
         <Stack.Screen options={{ headerShown: false }} />
-        <View style={styles.container}>
-          <MallLoadingSkeleton count={6} type="list" />
+        <View style={pageStyles.container}>
+          <MallLoadingSkeleton count={6} type="grid" />
         </View>
       </>
     );
   }
 
+  // ── Error State
   if (error) {
     return (
       <>
         <Stack.Screen options={{ headerShown: false }} />
-        <View style={styles.container}>
+        <View style={pageStyles.container}>
           <MallEmptyState
             title="Something went wrong"
             message={error}
@@ -377,48 +747,60 @@ function CategoryStoresPage() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <View style={styles.container}>
-        {/* Custom Back Button */}
+      <View style={pageStyles.container}>
+        {/* Back Button */}
         <Pressable
-          style={[styles.backButton, { top: insets.top + 10 }]}
+          style={[pageStyles.backButton, { top: insets.top + 10 }]}
           onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-         
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
-          <View style={styles.backButtonInner}>
-            <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+          <View style={pageStyles.backButtonInner}>
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </View>
         </Pressable>
 
+        {/* Product Grid */}
         <FlashList
-          data={stores}
+          data={gridData()}
           renderItem={renderItem}
           keyExtractor={keyExtractor}
-          contentContainerStyle={styles.listContent}
+          numColumns={2}
+          contentContainerStyle={pageStyles.listContent}
           showsVerticalScrollIndicator={false}
           ListHeaderComponent={ListHeader}
           ListFooterComponent={ListFooter}
           ListEmptyComponent={ListEmpty}
-          estimatedItemSize={100}
+          estimatedItemSize={360}
           refreshControl={
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={handleRefresh}
-              tintColor={Colors.warning}
-              colors={[Colors.warning]}
+              tintColor={colors.nileBlue}
+              colors={[colors.nileBlue]}
             />
           }
           onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.3}
+          onEndReachedThreshold={0.4}
+        />
+
+        {/* Sort Bottom Sheet */}
+        <SortSheet
+          visible={showSortSheet}
+          activeSort={activeSort}
+          onSelect={handleSortChange}
+          onClose={() => setShowSortSheet(false)}
         />
       </View>
     </>
   );
 }
 
-const styles = StyleSheet.create({
+// ─── Page Styles ──────────────────────────────────────────────────────────────
+
+const pageStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   backButton: {
     position: 'absolute',
@@ -428,313 +810,210 @@ const styles = StyleSheet.create({
   backButtonInner: {
     width: 40,
     height: 40,
-    borderRadius: BorderRadius.xl,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    borderRadius: 20,
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   listContent: {
+    paddingHorizontal: Spacing.base,
     paddingBottom: 120,
   },
-  // Hero Section
-  heroSection: {
-    paddingBottom: 30,
-    paddingHorizontal: Spacing.lg,
-    alignItems: 'center',
-    borderBottomLeftRadius: 32,
-    borderBottomRightRadius: 32,
+});
+
+const headerStyles = StyleSheet.create({
+  hero: {
+    paddingBottom: 28,
+    paddingHorizontal: Spacing.base,
     overflow: 'hidden',
+    // negative margin to bleed edge-to-edge (compensate FlashList padding)
+    marginHorizontal: -Spacing.base,
+    marginBottom: Spacing.base,
+    borderBottomLeftRadius: 28,
+    borderBottomRightRadius: 28,
   },
-  heroDecoration: {
+  bannerImage: {
     ...StyleSheet.absoluteFillObject,
-    overflow: 'hidden',
+    opacity: 0.25,
   },
-  decorCircle: {
+  bannerOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.15)',
+  },
+  circle: {
     position: 'absolute',
-    borderRadius: BorderRadius.full,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 9999,
+    backgroundColor: 'rgba(255,255,255,0.08)',
   },
-  decorCircle1: {
-    width: 200,
-    height: 200,
-    top: -50,
-    right: -50,
+  circle1: { width: 220, height: 220, top: -60, right: -60 },
+  circle2: { width: 160, height: 160, bottom: -40, left: -40 },
+  circle3: { width: 90, height: 90, top: 70, left: 50 },
+  heroContent: {
+    alignItems: 'center',
+    zIndex: 1,
   },
-  decorCircle2: {
-    width: 150,
-    height: 150,
-    bottom: -30,
-    left: -30,
+  categoryEmoji: {
+    fontSize: 44,
+    marginBottom: 8,
   },
-  decorCircle3: {
-    width: 80,
-    height: 80,
-    top: 60,
-    left: 40,
-  },
-  categoryIconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: BorderRadius['2xl'],
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  iconCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.base,
+    marginBottom: 10,
     borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-  },
-  categoryIconEmoji: {
-    fontSize: 40,
+    borderColor: 'rgba(255,255,255,0.3)',
   },
   categoryTitle: {
-    fontSize: 32,
+    fontSize: 30,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
-    marginBottom: Spacing.sm,
-    textShadowColor: 'rgba(0, 0, 0, 0.2)',
+    marginBottom: 6,
+    textShadowColor: 'rgba(0,0,0,0.25)',
     textShadowOffset: { width: 0, height: 2 },
     textShadowRadius: 4,
   },
-  categoryDescription: {
-    ...Typography.body,
-    color: 'rgba(255, 255, 255, 0.9)',
+  categorySubtitle: {
+    fontSize: 14,
+    fontWeight: '400',
+    color: 'rgba(255,255,255,0.88)',
     textAlign: 'center',
-    marginBottom: Spacing.lg,
-    paddingHorizontal: Spacing.lg,
-    lineHeight: 22,
+    marginBottom: 16,
+    paddingHorizontal: Spacing.xl,
+    lineHeight: 20,
   },
   statsRow: {
     flexDirection: 'row',
+    gap: 10,
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  statPill: {
+    flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: BorderRadius.lg,
-    paddingVertical: 14,
-    paddingHorizontal: Spacing.xl,
+    gap: 6,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
+    borderColor: 'rgba(255,255,255,0.25)',
   },
-  statCard: {
-    alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-  },
-  statNumber: {
-    ...Typography.h1,
-    fontWeight: '800',
-    color: Colors.text.inverse,
-  },
-  statLabel: {
-    ...Typography.bodySmall,
+  statText: {
+    fontSize: 13,
     fontWeight: '600',
-    color: 'rgba(255, 255, 255, 0.9)',
-    marginTop: 2,
+    color: colors.text.inverse,
   },
-  statDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+  // Vibes
+  vibesSection: {
+    marginHorizontal: -Spacing.base,
+    marginBottom: Spacing.sm,
   },
-  coinIconContainer: {
-    marginBottom: 2,
+  vibesScroll: {
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 10,
+    gap: 8,
   },
-  // Results Header
-  resultsHeader: {
+  vibeChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.background.primary,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 3 },
+      android: { elevation: 2 },
+    }),
+  },
+  vibeEmoji: { fontSize: 16 },
+  vibeLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.text.secondary,
+  },
+  vibeLabelActive: {
+    color: colors.text.inverse,
+  },
+  vibeDiscountBadge: {
+    backgroundColor: colors.brand.orange,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+  },
+  vibeDiscountText: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: colors.text.inverse,
+  },
+  // Toolbar
+  toolbar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: Spacing.lg,
-    paddingTop: Spacing.lg,
-    paddingBottom: Spacing.md,
+    paddingVertical: 10,
+    marginBottom: Spacing.sm,
+    marginHorizontal: -Spacing.base,
+    paddingHorizontal: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.light,
   },
-  resultsTitle: {
-    ...Typography.h3,
-    fontWeight: '700',
-    color: Colors.text.primary,
-  },
-  resultsCount: {
-    ...Typography.body,
+  resultCount: {
+    fontSize: 13,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.neutral[500],
   },
-  // Store Card
-  storeCard: {
-    marginHorizontal: Spacing.base,
-    marginBottom: Spacing.md,
-    borderRadius: BorderRadius.xl,
-    overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
+  toolbarRight: {
+    flexDirection: 'row',
+    gap: 8,
   },
-  cardGradient: {
-    padding: Spacing.base,
-  },
-  cardTopRow: {
+  toolbarBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-  },
-  imageWrapper: {
-    position: 'relative',
-  },
-  storeImage: {
-    width: 80,
-    height: 80,
-    borderRadius: BorderRadius.lg,
-  },
-  imageFallback: {
-    width: 80,
-    height: 80,
-    borderRadius: BorderRadius.lg,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  fallbackText: {
-    ...Typography.h2,
-    fontWeight: '700',
-    color: Colors.text.inverse,
-  },
-  coinBadge: {
-    position: 'absolute',
-    bottom: -6,
-    right: -6,
-    backgroundColor: Colors.warning,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 3,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: Colors.background.primary,
-  },
-  coinBadgeText: {
-    ...Typography.caption,
-    fontWeight: '700',
-    color: Colors.text.inverse,
-  },
-  storeInfo: {
-    flex: 1,
-    marginLeft: 14,
-  },
-  nameContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 6,
-  },
-  storeName: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: Colors.text.primary,
-    flex: 1,
-  },
-  ratingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    marginBottom: 6,
-  },
-  ratingBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-    backgroundColor: Colors.warning,
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 3,
+    gap: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
     borderRadius: BorderRadius.sm,
+    backgroundColor: colors.background.tertiary,
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
-  ratingValue: {
-    ...Typography.bodySmall,
-    fontWeight: '700',
-    color: Colors.text.inverse,
-  },
-  ratingCount: {
-    ...Typography.bodySmall,
-    color: Colors.text.tertiary,
-  },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-    marginBottom: 6,
-  },
-  locationText: {
-    ...Typography.bodySmall,
-    color: Colors.text.tertiary,
-  },
-  rewardContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  rewardText: {
-    ...Typography.body,
+  toolbarBtnText: {
+    fontSize: 13,
     fontWeight: '600',
-    color: Colors.warning,
+    color: colors.nileBlue,
   },
-  arrowContainer: {
-    paddingLeft: Spacing.sm,
-  },
-  badgesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.sm,
-    marginTop: 14,
-    paddingTop: 14,
-    borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
-  },
-  badge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: BorderRadius.sm,
-  },
-  badgeText: {
-    ...Typography.caption,
-    fontWeight: '600',
-    color: Colors.text.inverse,
-  },
-  featuredBadge: {
-    backgroundColor: Colors.warning,
-  },
-  partnerBadge: {
-    backgroundColor: Colors.brand.purpleLight,
-  },
-  premiumBadge: {
-    backgroundColor: colors.brand.pink,
-  },
-  categoryBadge: {
-    backgroundColor: Colors.border.default,
-  },
-  categoryBadgeText: {
-    ...Typography.caption,
-    fontWeight: '600',
-    color: Colors.text.tertiary,
-  },
-  // Loading & Empty States
-  loadingMore: {
+});
+
+const footerStyles = StyleSheet.create({
+  container: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: Spacing.lg,
     gap: 10,
   },
-  loadingMoreText: {
-    ...Typography.body,
-    color: Colors.text.tertiary,
+  text: {
+    fontSize: 14,
+    color: colors.neutral[500],
   },
-  emptyContainer: {
-    paddingHorizontal: Spacing.lg,
-    paddingTop: 40,
+  endContainer: {
+    alignItems: 'center',
+    paddingVertical: Spacing.xl,
+  },
+  endText: {
+    fontSize: 13,
+    color: colors.neutral[400],
+    fontWeight: '500',
   },
 });
 
-export default withErrorBoundary(CategoryStoresPage, 'MallCategorySlug');
+export default withErrorBoundary(CategoryProductsPage, 'MallCategorySlug');
