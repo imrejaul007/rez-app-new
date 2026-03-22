@@ -98,12 +98,12 @@ function AddAddressModal({ visible, onClose, onAdd }: AddAddressModalProps) {
         title: title.trim(),
         phone: phone.trim() || undefined,
         addressLine1: addressLine1.trim(),
-        addressLine2: addressLine2.trim(),
+        addressLine2: addressLine2.trim() || undefined,
         city: city.trim(),
         state: state.trim(),
         postalCode: postalCode.trim(),
         country: country.trim(),
-        instructions: instructions.trim(),
+        instructions: instructions.trim() || undefined,
         isDefault,
       };
 

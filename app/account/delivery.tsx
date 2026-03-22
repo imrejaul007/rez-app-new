@@ -262,6 +262,7 @@ function DeliverySettingsScreen() {
           
           <Pressable
             style={styles.actionButton}
+            onPress={handleAddAddress}
             accessibilityLabel="Add new address"
             accessibilityRole="button"
             accessibilityHint="Double tap to add a new delivery address"
