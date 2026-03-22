@@ -254,7 +254,7 @@ function CartPage() {
   const cartActionsRef = useRef(cartActions);
   useEffect(() => {
     cartActionsRef.current = cartActions;
-  });
+  }, [cartActions]);
 
   // Load cart on mount
   useEffect(() => {

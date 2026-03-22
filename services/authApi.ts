@@ -170,7 +170,7 @@ function validateAuthResponse(response: any): boolean {
     return false;
   }
 
-  if (!response.user || !validateUser(response.user).valid) {
+  if (!response.user || (!response.user.id && !response.user._id)) {
     devLog.warn('[AUTH API] Auth response missing valid user');
     return false;
   }

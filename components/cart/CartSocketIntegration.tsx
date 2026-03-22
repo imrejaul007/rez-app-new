@@ -114,7 +114,7 @@ export function CartSocketIntegration() {
       if (typeof unsubscribeOut === 'function') unsubscribeOut();
       if (typeof unsubscribePrice === 'function') unsubscribePrice();
     };
-  }, [cartState.items.length]); // Re-run when cart items change
+  }, [cartState.items, onStockUpdate, onOutOfStock, onPriceUpdate, onLowStock]);
 
   // This component doesn't render anything
   return null;
