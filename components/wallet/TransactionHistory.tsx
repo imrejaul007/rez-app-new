@@ -19,6 +19,7 @@ import {
   Pressable,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
 import walletApi, { TransactionResponse } from '@/services/walletApi';
@@ -114,19 +115,30 @@ function statusColor(status: string): string {
   return STATUS_COLORS[status] || '#6B7280';
 }
 
+// Gradient pairs per transaction direction
+const CREDIT_GRADIENT: [string, string] = ['#10B981', '#34D399'];
+const DEBIT_GRADIENT: [string, string] = ['#EF4444', '#F87171'];
+const TRANSFER_GRADIENT: [string, string] = ['#3B82F6', '#60A5FA'];
+
+function getGradientForCategory(category: string, isCredit: boolean): [string, string] {
+  if (category === 'withdrawal' || category === 'transfer') return TRANSFER_GRADIENT;
+  return isCredit ? CREDIT_GRADIENT : DEBIT_GRADIENT;
+}
+
 function TransactionItem({
   txn,
   onPress,
+  isLast,
 }: {
   txn: TransactionResponse;
   onPress?: (t: TransactionResponse) => void;
+  isLast?: boolean;
 }) {
   const isCredit = txn.type === 'credit';
   const amountColor = isCredit ? '#059669' : '#EF4444';
   const amountPrefix = isCredit ? '+' : '-';
   const icon = getIcon(txn.category);
-  const iconBg = isCredit ? '#D1FAE5' : '#FEE2E2';
-  const iconColor = isCredit ? '#059669' : '#EF4444';
+  const gradColors = getGradientForCategory(txn.category, isCredit);
   const status = txn.status?.current || 'completed';
   const sc = statusColor(status);
 
@@ -136,30 +148,47 @@ function TransactionItem({
 
   return (
     <Pressable
-      style={styles.txnCard}
+      style={({ pressed }) => [
+        styles.txnCard,
+        !isLast && styles.txnCardBorder,
+        pressed && styles.txnCardPressed,
+      ]}
       onPress={() => onPress?.(txn)}
       disabled={!onPress}
       accessibilityRole="button"
       accessibilityLabel={`${label}, ${amountPrefix}${txn.amount} ${txn.currency}, ${status}`}
     >
-      <View style={[styles.txnIconWrap, { backgroundColor: iconBg }]}>
-        <Ionicons name={icon as any} size={22} color={iconColor} />
-      </View>
+      {/* Left: gradient circle icon */}
+      <LinearGradient
+        colors={gradColors}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.txnIconWrap}
+      >
+        <Ionicons name={icon as any} size={20} color="#fff" />
+      </LinearGradient>
+
+      {/* Center: title + subtitle + date */}
       <View style={styles.txnBody}>
-        <ThemedText style={styles.txnLabel} numberOfLines={1}>
+        <Text style={styles.txnLabel} numberOfLines={1}>
           {label}
-        </ThemedText>
-        <ThemedText style={styles.txnDate}>{formatDate(txn.createdAt)}</ThemedText>
+        </Text>
+        <Text style={styles.txnSubtitle} numberOfLines={1}>
+          {txn.source?.name || txn.category || 'Wallet'}
+        </Text>
+        <Text style={styles.txnDate}>{formatDate(txn.createdAt)}</Text>
       </View>
+
+      {/* Right: amount + status badge */}
       <View style={styles.txnRight}>
         <Text style={[styles.txnAmount, { color: amountColor }]}>
           {amountPrefix}
           {txn.amount} {txn.currency}
         </Text>
-        <View style={[styles.statusBadge, { backgroundColor: sc + '20' }]}>
-          <ThemedText style={[styles.statusText, { color: sc }]}>
+        <View style={[styles.statusBadge, { backgroundColor: sc + '18' }]}>
+          <Text style={[styles.statusText, { color: sc }]}>
             {status.replace('_', ' ')}
-          </ThemedText>
+          </Text>
         </View>
       </View>
     </Pressable>
@@ -269,8 +298,8 @@ function TransactionHistory({
       <View style={styles.container}>
         <_Tabs activeTab={activeTab} onPress={handleTabPress} />
         <View style={styles.centeredBox}>
-          <ActivityIndicator size="large" color={colors.primary[500]} />
-          <ThemedText style={styles.loadingText}>Loading transactions…</ThemedText>
+          <ActivityIndicator size="large" color={colors.nileBlue} />
+          <Text style={styles.loadingText}>Loading transactions…</Text>
         </View>
       </View>
     );
@@ -282,10 +311,12 @@ function TransactionHistory({
       <View style={styles.container}>
         <_Tabs activeTab={activeTab} onPress={handleTabPress} />
         <View style={styles.centeredBox}>
-          <Ionicons name="alert-circle-outline" size={40} color="#EF4444" />
-          <ThemedText style={styles.errorText}>{error}</ThemedText>
+          <View style={styles.errorIconWrap}>
+            <Ionicons name="alert-circle-outline" size={40} color="#EF4444" />
+          </View>
+          <Text style={styles.errorText}>{error}</Text>
           <Pressable style={styles.retryBtn} onPress={() => loadTransactions(activeTab, 1, false)}>
-            <ThemedText style={styles.retryBtnText}>Retry</ThemedText>
+            <Text style={styles.retryBtnText}>Try Again</Text>
           </Pressable>
         </View>
       </View>
@@ -296,10 +327,10 @@ function TransactionHistory({
     <View style={[styles.container, maxHeight ? { maxHeight } : undefined]}>
       {/* Header */}
       <View style={styles.header}>
-        <ThemedText style={styles.headerTitle}>Transaction History</ThemedText>
-        <ThemedText style={styles.headerSubtitle}>
-          {transactions.length} transaction{transactions.length !== 1 ? 's' : ''}
-        </ThemedText>
+        <Text style={styles.headerTitle}>Recent Transactions</Text>
+        <Pressable accessibilityRole="button" accessibilityLabel="View all transactions">
+          <Text style={styles.viewAllLink}>View All</Text>
+        </Pressable>
       </View>
 
       {/* Tabs */}
@@ -309,28 +340,39 @@ function TransactionHistory({
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.id || item.transactionId}
-        renderItem={({ item }) => (
-          <TransactionItem txn={item} onPress={onTransactionPress} />
+        renderItem={({ item, index, section }) => (
+          <TransactionItem
+            txn={item}
+            onPress={onTransactionPress}
+            isLast={index === section.data.length - 1}
+          />
         )}
         renderSectionHeader={({ section }) => (
           <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionHeaderText}>{section.title}</ThemedText>
+            <View style={styles.sectionHeaderPill}>
+              <Text style={styles.sectionHeaderText}>{section.title}</Text>
+            </View>
           </View>
         )}
         ListEmptyComponent={
           <View style={styles.centeredBox}>
-            <Ionicons name="wallet-outline" size={48} color={colors.neutral[300]} />
-            <ThemedText style={styles.emptyTitle}>No transactions yet</ThemedText>
-            <ThemedText style={styles.emptySubtitle}>
-              Start earning coins!
-            </ThemedText>
+            <View style={styles.emptyIconWrap}>
+              <Ionicons name="wallet-outline" size={44} color={colors.nileBlue} />
+            </View>
+            <Text style={styles.emptyTitle}>No transactions yet</Text>
+            <Text style={styles.emptySubtitle}>
+              Start earning coins by shopping!
+            </Text>
+            <Pressable style={styles.exploreBtn} accessibilityRole="button" accessibilityLabel="Explore stores">
+              <Text style={styles.exploreBtnText}>Explore Stores</Text>
+            </Pressable>
           </View>
         }
         ListFooterComponent={
           isLoadingMore ? (
             <View style={styles.footerLoader}>
-              <ActivityIndicator size="small" color={colors.primary[500]} />
-              <ThemedText style={styles.loadingText}>Loading more…</ThemedText>
+              <ActivityIndicator size="small" color={colors.nileBlue} />
+              <Text style={styles.loadingText}>Loading more…</Text>
             </View>
           ) : null
         }
@@ -341,9 +383,9 @@ function TransactionHistory({
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={colors.primary[500]}
-            colors={[colors.primary[500]]}
-            progressBackgroundColor={colors.background.primary}
+            tintColor={colors.nileBlue}
+            colors={[colors.nileBlue]}
+            progressBackgroundColor="#fff"
           />
         }
         style={styles.list}
@@ -376,9 +418,18 @@ function _Tabs({
             accessibilityRole="tab"
             accessibilityState={{ selected: isActive }}
           >
-            <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
-              {tab.label}
-            </Text>
+            {isActive ? (
+              <LinearGradient
+                colors={['#1a3a52', '#2A5577']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.tabActiveGradient}
+              >
+                <Text style={[styles.tabText, styles.tabTextActive]}>{tab.label}</Text>
+              </LinearGradient>
+            ) : (
+              <Text style={styles.tabText}>{tab.label}</Text>
+            )}
           </Pressable>
         );
       })}
@@ -392,37 +443,31 @@ function _Tabs({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
-    borderRadius: 16,
-    marginHorizontal: 8,
-    marginTop: 8,
+    backgroundColor: '#F8FAFC',
+    borderRadius: 0,
+    marginHorizontal: 0,
+    marginTop: 0,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 4,
-    borderWidth: 0.5,
-    borderColor: colors.tint?.slate || '#E2E8F0',
   },
   header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 18,
-    paddingBottom: 10,
-    borderBottomWidth: 0.5,
-    borderBottomColor: colors.tint?.slate || '#E2E8F0',
-    backgroundColor: '#FAFBFC',
+    paddingTop: 20,
+    paddingBottom: 12,
+    backgroundColor: '#fff',
   },
   headerTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1E293B',
-    marginBottom: 2,
+    fontSize: 17,
+    fontWeight: '800',
+    color: '#0F2333',
+    letterSpacing: -0.3,
   },
-  headerSubtitle: {
-    fontSize: 12,
-    color: colors.slateGray || '#64748B',
-    fontWeight: '500',
+  viewAllLink: {
+    fontSize: 13,
+    color: colors.nileBlue,
+    fontWeight: '700',
   },
   // Tabs
   tabsContainer: {
@@ -430,42 +475,56 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     gap: 8,
-    backgroundColor: '#FAFBFC',
-    borderBottomWidth: 0.5,
-    borderBottomColor: colors.tint?.slate || '#E2E8F0',
+    backgroundColor: '#fff',
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#E2E8F0',
   },
   tab: {
-    paddingHorizontal: 18,
-    paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: 'white',
+    overflow: 'hidden',
+    backgroundColor: '#F1F5F9',
     borderWidth: 1,
-    borderColor: colors.slateLight || '#CBD5E1',
+    borderColor: '#E2E8F0',
   },
   tabActive: {
-    backgroundColor: colors.nileBlue,
-    borderColor: colors.nileBlue,
+    borderColor: 'transparent',
+    backgroundColor: 'transparent',
+  },
+  tabActiveGradient: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
   tabText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#475569',
+    color: '#64748B',
+    paddingHorizontal: 20,
+    paddingVertical: 8,
   },
   tabTextActive: {
-    color: 'white',
+    color: '#fff',
+    paddingHorizontal: 0,
+    paddingVertical: 0,
   },
   // Section header
   sectionHeader: {
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingTop: 14,
+    paddingBottom: 6,
     backgroundColor: '#F8FAFC',
-    borderBottomWidth: 0.5,
-    borderBottomColor: colors.tint?.slate || '#E2E8F0',
+  },
+  sectionHeaderPill: {
+    alignSelf: 'flex-start',
+    backgroundColor: '#E2E8F0',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 20,
   },
   sectionHeaderText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
-    color: '#64748B',
+    color: '#475569',
     textTransform: 'uppercase',
     letterSpacing: 0.8,
   },
@@ -475,40 +534,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 14,
     paddingHorizontal: 16,
-    backgroundColor: 'white',
-    borderBottomWidth: 0.5,
-    borderBottomColor: '#F1F5F9',
+    backgroundColor: '#fff',
     gap: 12,
+  },
+  txnCardBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#F1F5F9',
+  },
+  txnCardPressed: {
+    backgroundColor: '#F8FAFC',
   },
   txnIconWrap: {
     width: 44,
     height: 44,
-    borderRadius: 12,
+    borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
   },
   txnBody: {
     flex: 1,
-    gap: 3,
+    gap: 2,
   },
   txnLabel: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#1E293B',
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#0F2333',
+    letterSpacing: -0.1,
+  },
+  txnSubtitle: {
+    fontSize: 12,
+    color: '#64748B',
+    fontWeight: '500',
   },
   txnDate: {
     fontSize: 11,
     color: '#94A3B8',
-    fontWeight: '500',
+    fontWeight: '400',
+    marginTop: 1,
   },
   txnRight: {
     alignItems: 'flex-end',
-    gap: 4,
+    gap: 5,
   },
   txnAmount: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '800',
-    letterSpacing: 0.2,
+    letterSpacing: -0.2,
   },
   statusBadge: {
     paddingHorizontal: 8,
@@ -532,43 +608,78 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 48,
+    paddingVertical: 56,
     paddingHorizontal: 24,
-    gap: 8,
+    gap: 10,
+  },
+  emptyIconWrap: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: 'rgba(26,58,82,0.08)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#0F2333',
+    textAlign: 'center',
+    letterSpacing: -0.3,
+  },
+  emptySubtitle: {
+    fontSize: 13,
+    color: '#64748B',
+    textAlign: 'center',
+    lineHeight: 19,
+    fontWeight: '500',
+  },
+  exploreBtn: {
+    marginTop: 8,
+    paddingHorizontal: 28,
+    paddingVertical: 12,
+    backgroundColor: '#1a3a52',
+    borderRadius: 50,
+    shadowColor: '#1a3a52',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  exploreBtnText: {
+    color: '#fff',
+    fontWeight: '800',
+    fontSize: 14,
+    letterSpacing: 0.2,
+  },
+  errorIconWrap: {
+    marginBottom: 4,
   },
   loadingText: {
     fontSize: 13,
-    color: colors.neutral?.[500] || '#6B7280',
+    color: '#64748B',
     marginTop: 8,
+    fontWeight: '500',
   },
   errorText: {
     fontSize: 13,
     color: '#EF4444',
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: 4,
+    fontWeight: '500',
   },
   retryBtn: {
     marginTop: 12,
-    paddingHorizontal: 24,
-    paddingVertical: 10,
-    backgroundColor: colors.nileBlue,
-    borderRadius: 8,
+    paddingHorizontal: 28,
+    paddingVertical: 11,
+    backgroundColor: '#1a3a52',
+    borderRadius: 50,
   },
   retryBtnText: {
     color: 'white',
     fontWeight: '700',
-    fontSize: 13,
-  },
-  emptyTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#334155',
-    textAlign: 'center',
-  },
-  emptySubtitle: {
-    fontSize: 13,
-    color: colors.neutral?.[500] || '#6B7280',
-    textAlign: 'center',
+    fontSize: 14,
   },
   footerLoader: {
     padding: 20,

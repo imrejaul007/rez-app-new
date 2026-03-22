@@ -4,8 +4,9 @@
  * Remaining actions (History, Transfer, Gift, etc.) appear as icon chips.
  */
 import React from 'react';
-import { View, Pressable, StyleSheet, ScrollView, Text, Platform } from 'react-native';
+import { View, Pressable, StyleSheet, Text, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
@@ -20,6 +21,8 @@ interface QuickAction {
   /** If true, renders as a full pill button (primary/secondary style) */
   isPrimary?: boolean;
   isSecondary?: boolean;
+  /** Gradient colors for the circle background */
+  gradientColors?: [string, string];
 }
 
 const ACTIONS: QuickAction[] = [
@@ -30,6 +33,7 @@ const ACTIONS: QuickAction[] = [
     route: '/payment',
     color: '#fff',
     isPrimary: true,
+    gradientColors: ['#D4AF37', '#E6C84A'],
   },
   {
     id: 'send',
@@ -38,6 +42,7 @@ const ACTIONS: QuickAction[] = [
     route: '/wallet/transfer',
     color: colors.nileBlue,
     isSecondary: true,
+    gradientColors: ['#1a3a52', '#2A5577'],
   },
   {
     id: 'transactions',
@@ -45,6 +50,7 @@ const ACTIONS: QuickAction[] = [
     label: 'History',
     route: '/earnings-history',
     color: colors.nileBlue,
+    gradientColors: ['#1a3a52', '#234b68'],
   },
   {
     id: 'transfer',
@@ -52,6 +58,7 @@ const ACTIONS: QuickAction[] = [
     label: 'Transfer',
     route: '/wallet/transfer',
     color: colors.brand.indigo,
+    gradientColors: ['#6366F1', '#818CF8'],
   },
   {
     id: 'gift',
@@ -59,6 +66,7 @@ const ACTIONS: QuickAction[] = [
     label: 'Gift',
     route: '/wallet/gift',
     color: colors.brand.pink,
+    gradientColors: ['#EC4899', '#F472B6'],
   },
   {
     id: 'gift-cards',
@@ -66,6 +74,7 @@ const ACTIONS: QuickAction[] = [
     label: 'Gift Cards',
     route: '/wallet/gift-cards',
     color: colors.lightMustard,
+    gradientColors: ['#E6B84E', '#FBBF24'],
   },
   {
     id: 'expiry',
@@ -73,6 +82,7 @@ const ACTIONS: QuickAction[] = [
     label: 'Expiry',
     route: '/wallet/expiry-tracker',
     color: colors.warning,
+    gradientColors: ['#FF9F1C', '#FBBF24'],
   },
   {
     id: 'drops',
@@ -80,8 +90,13 @@ const ACTIONS: QuickAction[] = [
     label: 'Drops',
     route: '/wallet/scheduled-drops',
     color: colors.brand.purpleLight,
+    gradientColors: ['#8B5CF6', '#A78BFA'],
   },
 ];
+
+// Split into two rows of 4
+const ROW_1 = ACTIONS.slice(0, 4);
+const ROW_2 = ACTIONS.slice(4, 8);
 
 interface StickyQuickActionsProps {
   isSticky?: boolean;
@@ -91,6 +106,31 @@ interface StickyQuickActionsProps {
 export const StickyQuickActions: React.FC<StickyQuickActionsProps> = ({ isSticky, style }) => {
   const router = useRouter();
 
+  const renderAction = (action: QuickAction) => {
+    const grad = action.gradientColors ?? ['#1a3a52', '#2A5577'];
+    const iconColor = action.isPrimary ? '#1a3a52' : '#fff';
+
+    return (
+      <Pressable
+        key={action.id}
+        style={({ pressed }) => [styles.actionItem, pressed && { opacity: 0.75 }]}
+        onPress={() => router.push(action.route as any)}
+        accessibilityLabel={action.label}
+        accessibilityRole="button"
+      >
+        <LinearGradient
+          colors={grad}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.iconCircle}
+        >
+          <Ionicons name={action.icon} size={22} color={iconColor} />
+        </LinearGradient>
+        <Text style={styles.label}>{action.label}</Text>
+      </Pressable>
+    );
+  };
+
   return (
     <View
       style={[
@@ -99,135 +139,80 @@ export const StickyQuickActions: React.FC<StickyQuickActionsProps> = ({ isSticky
         style,
       ]}
     >
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {ACTIONS.map((action) => {
-          if (action.isPrimary) {
-            return (
-              <Pressable
-                key={action.id}
-                style={styles.pillPrimary}
-                onPress={() => router.push(action.route as any)}
-                accessibilityLabel={action.label}
-                accessibilityRole="button"
-              >
-                <Ionicons name={action.icon} size={16} color="#fff" />
-                <Text style={styles.pillPrimaryText}>{action.label}</Text>
-              </Pressable>
-            );
-          }
-
-          if (action.isSecondary) {
-            return (
-              <Pressable
-                key={action.id}
-                style={styles.pillSecondary}
-                onPress={() => router.push(action.route as any)}
-                accessibilityLabel={action.label}
-                accessibilityRole="button"
-              >
-                <Ionicons name={action.icon} size={16} color={colors.nileBlue} />
-                <Text style={styles.pillSecondaryText}>{action.label}</Text>
-              </Pressable>
-            );
-          }
-
-          return (
-            <Pressable
-              key={action.id}
-              style={styles.actionItem}
-              onPress={() => router.push(action.route as any)}
-              accessibilityLabel={action.label}
-              accessibilityRole="button"
-            >
-              <View style={[styles.iconCircle, { backgroundColor: action.color + '18' }]}>
-                <Ionicons name={action.icon} size={18} color={action.color} />
-              </View>
-              <ThemedText style={styles.label}>{action.label}</ThemedText>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
+      <View style={styles.grid}>
+        <View style={styles.gridRow}>
+          {ROW_1.map(renderAction)}
+        </View>
+        <View style={styles.gridRow}>
+          {ROW_2.map(renderAction)}
+        </View>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 10,
-    backgroundColor: Colors.background.primary,
-    borderRadius: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
     marginHorizontal: 0,
-    marginVertical: 4,
+    marginVertical: 6,
+    paddingVertical: 16,
+    paddingHorizontal: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(26,58,82,0.08)',
+    shadowColor: '#1a3a52',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    elevation: 3,
   },
   containerSticky: {
     backgroundColor: Platform.select({
-      ios: 'rgba(255,255,255,0.92)',
-      android: 'rgba(255,255,255,0.97)',
-      default: 'rgba(255,255,255,0.95)',
+      ios: 'rgba(255,255,255,0.96)',
+      android: 'rgba(255,255,255,0.99)',
+      default: 'rgba(255,255,255,0.97)',
     }),
     borderBottomWidth: StyleSheet.hairlineWidth,
     borderBottomColor: Colors.border.light,
-    ...Shadows.subtle,
+    borderRadius: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 6,
+    elevation: 4,
   },
-  scrollContent: {
-    paddingHorizontal: Spacing.base,
-    gap: 10,
-    alignItems: 'center',
+  grid: {
+    gap: 14,
   },
-  // Pill buttons (primary + secondary)
-  pillPrimary: {
+  gridRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: colors.nileBlue,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    ...Shadows.subtle,
+    justifyContent: 'space-around',
+    alignItems: 'flex-start',
   },
-  pillPrimaryText: {
-    color: '#fff',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  pillSecondary: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'transparent',
-    borderWidth: 1.5,
-    borderColor: colors.nileBlue,
-    paddingHorizontal: 16,
-    paddingVertical: 9,
-    borderRadius: 20,
-  },
-  pillSecondaryText: {
-    color: colors.nileBlue,
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  // Icon chip actions
   actionItem: {
     alignItems: 'center',
-    minWidth: 58,
+    width: 64,
+    gap: 6,
   },
   iconCircle: {
-    width: 42,
-    height: 42,
-    borderRadius: 12,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.18,
+    shadowRadius: 6,
+    elevation: 4,
   },
   label: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: '#334E68',
     textAlign: 'center',
+    lineHeight: 14,
   },
 });
 
