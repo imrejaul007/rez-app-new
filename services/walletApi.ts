@@ -479,7 +479,7 @@ class WalletService {
   }
 
   /**
-   * Add test funds to wallet (DEVELOPMENT ONLY)
+   * Add test funds to wallet (DEVELOPMENT ONLY — blocked in production)
    * @param amount Amount to add (default: 1000)
    * @param type 'rez' | 'promo' | 'cashback' (default: 'rez')
    */
@@ -496,17 +496,23 @@ class WalletService {
     addedAmount: number;
     type: string;
   }>> {
+    // SECURITY: Hard-block in production to prevent wallet fraud
+    if (!__DEV__) {
+      return { success: false, message: 'devTopup is only available in development builds', data: null } as any;
+    }
     try {
       return await apiClient.post('/wallet/dev-topup', { amount, type });
     } catch (error: any) {
-      if (__DEV__) console.warn('[WalletAPI] devTopup failed:', error?.message);
+      console.warn('[WalletAPI] devTopup failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to add test funds', data: null } as any;
     }
   }
 
   /**
    * Sync wallet balance from CoinTransaction (fixes discrepancies)
-   * Call this to ensure wallet balance matches the actual coin transactions
+   * SECURITY: Only available in development. Call this to ensure wallet balance
+   * matches the actual coin transactions. Not exposed in production to prevent
+   * potential balance manipulation if the backend sync logic has bugs.
    */
   async syncBalance(): Promise<ApiResponse<{
     previousBalance: number;
@@ -523,10 +529,14 @@ class WalletService {
     };
     synced: boolean;
   }>> {
+    // SECURITY: Hard-block in production
+    if (!__DEV__) {
+      return { success: false, message: 'syncBalance is only available in development builds', data: null } as any;
+    }
     try {
       return await apiClient.post('/wallet/sync-balance', {});
     } catch (error: any) {
-      if (__DEV__) console.warn('[WalletAPI] syncBalance failed:', error?.message);
+      console.warn('[WalletAPI] syncBalance failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to sync balance', data: null } as any;
     }
   }

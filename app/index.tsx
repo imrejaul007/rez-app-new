@@ -22,6 +22,9 @@ function AppEntry() {
   const pendingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const authRestoreRetryCountRef = useRef(0);
   const lastRedirectRef = useRef<{ path: string; at: number } | null>(null);
+  // Keep a ref to authLoading so checkAppState (memoized) always reads the latest value
+  const authLoadingRef = useRef(authLoading);
+  useEffect(() => { authLoadingRef.current = authLoading; }, [authLoading]);
 
   const clearPendingTimer = useCallback(() => {
     if (pendingTimerRef.current) {
@@ -73,8 +76,14 @@ function AppEntry() {
         getUser(),
       ]);
 
-      if (storedToken && storedUser && authRestoreRetryCountRef.current < 8) {
-        authRestoreRetryCountRef.current += 1;
+      // Wait for AuthContext to finish restoring the session.
+      // If authLoading is still true, we have a stored token, OR we're within our retry window,
+      // keep waiting instead of redirecting to sign-in. Cap at 20 retries (8s) to prevent
+      // hanging indefinitely on genuinely expired tokens.
+      if (storedToken && storedUser && (authLoadingRef.current || authRestoreRetryCountRef.current < 20)) {
+        if (!authLoadingRef.current) {
+          authRestoreRetryCountRef.current += 1;
+        }
         clearPendingTimer();
         if (!isMounted()) return;
         pendingTimerRef.current = setTimeout(() => {

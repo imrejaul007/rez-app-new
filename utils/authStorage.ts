@@ -255,11 +255,22 @@ export async function saveAuthData(accessToken: string, refreshToken: string, us
       window.localStorage.setItem(STORAGE_KEYS.USER, userString);
     }
   } else {
-    // Write to both SecureStore and AsyncStorage in parallel
-    await Promise.all([
-      nativeSet(STORAGE_KEYS.ACCESS_TOKEN, accessToken),
-      nativeSet(STORAGE_KEYS.REFRESH_TOKEN, refreshToken),
-      nativeSet(STORAGE_KEYS.USER, userString),
-    ]);
+    // Write all three keys. If any write fails, clean up all keys so we never
+    // leave partial auth state (e.g. token saved but user data missing).
+    try {
+      await Promise.all([
+        nativeSet(STORAGE_KEYS.ACCESS_TOKEN, accessToken),
+        nativeSet(STORAGE_KEYS.REFRESH_TOKEN, refreshToken),
+        nativeSet(STORAGE_KEYS.USER, userString),
+      ]);
+    } catch (writeError) {
+      // Best-effort cleanup — ignore cleanup errors, rethrow the original
+      await Promise.allSettled([
+        nativeDelete(STORAGE_KEYS.ACCESS_TOKEN),
+        nativeDelete(STORAGE_KEYS.REFRESH_TOKEN),
+        nativeDelete(STORAGE_KEYS.USER),
+      ]);
+      throw writeError;
+    }
   }
 }

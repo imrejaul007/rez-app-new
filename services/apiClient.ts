@@ -326,14 +326,10 @@ class ApiClient {
             if (this.refreshTokenCallback && !this.isLoggingOut) {
               const refreshSuccess = await this.handleTokenRefresh();
               if (refreshSuccess) {
-                // Only retry safe/idempotent methods automatically.
-                // POST/PUT/PATCH/DELETE are NOT retried to avoid double-charges
-                // or duplicate mutations — the caller must handle the 401 itself.
-                if (method === 'GET' || method === 'HEAD') {
-                  return this.makeRequest<T>(endpoint, options);
-                } else {
-                  throw new Error('Session refreshed. Please retry your request.');
-                }
+                // A 401 means auth middleware rejected the request BEFORE the handler ran —
+                // the server never processed the original action. It is therefore safe to
+                // retry ALL methods (including POST/PUT/PATCH/DELETE) with the new token.
+                return this.makeRequest<T>(endpoint, options);
               }
             }
 
