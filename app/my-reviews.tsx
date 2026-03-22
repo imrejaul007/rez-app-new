@@ -371,20 +371,20 @@ function MyReviewsPage() {
             ListEmptyComponent={
               reviews.length === 0 ? (
                 <View style={styles.centerContainer}>
-                  <Ionicons name="chatbox-outline" size={64} color={Colors.border.default} />
+                  <Ionicons name="create-outline" size={64} color={Colors.border.default} />
                   <Text style={styles.emptyTitle}>No Reviews Yet</Text>
                   <Text style={styles.emptyText}>
                     You haven't written any reviews yet.{'\n'}
-                    Order from a store and share your experience!
+                    Visit a store and share your experience to help others!
                   </Text>
                   <Pressable
                     style={styles.shopButton}
-                    onPress={() => router.push('/(tabs)/' as any)}
-                    accessibilityLabel="Browse stores"
+                    onPress={() => router.push('/(tabs)' as any)}
+                    accessibilityLabel="Write a Review"
                     accessibilityRole="button"
-                    accessibilityHint="Opens store browsing page"
+                    accessibilityHint="Browse stores to write your first review"
                   >
-                    <Text style={styles.shopButtonText}>Browse Stores</Text>
+                    <Text style={styles.shopButtonText}>Write a Review</Text>
                   </Pressable>
                 </View>
               ) : (

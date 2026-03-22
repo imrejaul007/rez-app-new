@@ -32,6 +32,10 @@ const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 60) / 2; // 2 cards per row with padding
 const PAGE_LIMIT = 20;
 
+// Fixed row height for getItemLayout: image(120) + productInfo padding(32) + text content(~88) + row gap(10)
+const CARD_ROW_HEIGHT = 250;
+const COLUMN_WRAPPER_GAP = 10; // columnWrapper marginBottom
+
 function ViewAllOffersScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
@@ -340,6 +344,17 @@ function ViewAllOffersScreen() {
 
   const keyExtractor = useCallback((item: Offer) => item._id, []);
 
+  // getItemLayout enables FlatList to skip measurement for fixed-height grid rows
+  const getItemLayout = useCallback((_data: any, index: number) => {
+    const rowIndex = Math.floor(index / 2);
+    const itemHeight = CARD_ROW_HEIGHT + COLUMN_WRAPPER_GAP;
+    return {
+      length: itemHeight,
+      offset: itemHeight * rowIndex,
+      index,
+    };
+  }, []);
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header - Same as Offers Page */}
@@ -410,6 +425,7 @@ function ViewAllOffersScreen() {
         maxToRenderPerBatch={8}
         windowSize={5}
         initialNumToRender={6}
+        getItemLayout={getItemLayout}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }

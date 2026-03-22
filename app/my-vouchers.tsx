@@ -613,17 +613,20 @@ const MyVouchersPage = () => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="ticket-outline" size={80} color={Colors.border.default} />
+      <Ionicons name="ticket-outline" size={64} color={Colors.border.default} />
       <Text style={styles.emptyTitle}>No Vouchers Yet</Text>
       <Text style={styles.emptyText}>
-        Purchase vouchers and they will appear here
+        You don't have any vouchers right now. Explore stores and grab great deals to earn vouchers!
       </Text>
       <Pressable
         style={styles.buyButton}
-        onPress={() => router.push('/online-voucher' as any)}
+        onPress={() => router.push('/(tabs)' as any)}
+        accessibilityLabel="Explore Stores"
+        accessibilityRole="button"
+        accessibilityHint="Browse stores to find vouchers"
       >
-        <Ionicons name="add" size={20} color={Colors.text.inverse} />
-        <Text style={styles.buyButtonText}>Buy Vouchers</Text>
+        <Ionicons name="storefront-outline" size={20} color={Colors.text.inverse} />
+        <Text style={styles.buyButtonText}>Explore Stores</Text>
       </Pressable>
     </View>
   );

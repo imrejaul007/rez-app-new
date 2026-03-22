@@ -472,53 +472,36 @@ export function SocketProvider({ children, config }: SocketProviderProps) {
     subscribedStores.current.delete(storeId);
   }, []);
 
-  // OPTIMIZED: Memoize context value to prevent unnecessary re-renders
+  // OPTIMIZED: Separate stable actions (empty deps) from volatile state so that
+  // consumers who only use actions are not re-rendered on every connection change.
+  const stableActions = useMemo(() => ({
+    connect,
+    disconnect,
+    onStockUpdate,
+    onLowStock,
+    onOutOfStock,
+    onPriceUpdate,
+    onProductAvailability,
+    onConnect,
+    onDisconnect,
+    onError,
+    onFlashSaleStarted,
+    onFlashSaleEndingSoon,
+    onFlashSaleEnded,
+    onFlashSaleStockUpdated,
+    onFlashSaleStockLow,
+    onFlashSaleSoldOut,
+    subscribeToProduct,
+    unsubscribeFromProduct,
+    subscribeToStore,
+    unsubscribeFromStore,
+  }), []); // all action callbacks have stable identity (empty deps on each useCallback)
+
   const contextValue: SocketContextType = useMemo(() => ({
     socket: socketRef.current,
     state: socketState,
-    connect,
-    disconnect,
-    onStockUpdate,
-    onLowStock,
-    onOutOfStock,
-    onPriceUpdate,
-    onProductAvailability,
-    onConnect,
-    onDisconnect,
-    onError,
-    onFlashSaleStarted,
-    onFlashSaleEndingSoon,
-    onFlashSaleEnded,
-    onFlashSaleStockUpdated,
-    onFlashSaleStockLow,
-    onFlashSaleSoldOut,
-    subscribeToProduct,
-    unsubscribeFromProduct,
-    subscribeToStore,
-    unsubscribeFromStore,
-  }), [
-    socketState,
-    connect,
-    disconnect,
-    onStockUpdate,
-    onLowStock,
-    onOutOfStock,
-    onPriceUpdate,
-    onProductAvailability,
-    onConnect,
-    onDisconnect,
-    onError,
-    onFlashSaleStarted,
-    onFlashSaleEndingSoon,
-    onFlashSaleEnded,
-    onFlashSaleStockUpdated,
-    onFlashSaleStockLow,
-    onFlashSaleSoldOut,
-    subscribeToProduct,
-    unsubscribeFromProduct,
-    subscribeToStore,
-    unsubscribeFromStore,
-  ]);
+    ...stableActions,
+  }), [socketState, stableActions]);
 
   // Sync connection state to Zustand store for crash-safe fallback
   const _setFromProvider = useSocketStore((s) => s._setFromProvider);

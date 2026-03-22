@@ -62,9 +62,9 @@ function PopularProductsSection({
     fetchPopularProducts();
   }, [fetchPopularProducts, currentRegion]); // Refetch when region changes
 
-  const handleProductPress = (product: HomepageProduct) => {
+  const handleProductPress = useCallback((product: HomepageProduct) => {
     router.push(`/product-page?cardId=${product._id || product.id}&cardType=product`);
-  };
+  }, [router]);
 
   // Calculate cashback amount
   const calculateCashback = (product: HomepageProduct) => {

@@ -209,7 +209,7 @@ function TransactionsPreviewScreen() {
 
             <Text style={styles.subtitle}>
               Shop your favorite brands and get{'\n'}
-              up to 10% discount. Earn ${BRAND.COIN_NAME}!
+              up to 10% discount. Earn {BRAND.COIN_NAME}!
             </Text>
 
             {/* Floating Coins */}

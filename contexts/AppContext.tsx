@@ -203,6 +203,15 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+// ─── Module-level currency formatters (created once, never recreated) ───────
+const CURRENCY_FORMATTERS: Record<string, Intl.NumberFormat> = {
+  AED: new Intl.NumberFormat('en-AE', { style: 'currency', currency: 'AED' }),
+  INR: new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }),
+  USD: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }),
+  EUR: new Intl.NumberFormat('en-EU', { style: 'currency', currency: 'EUR' }),
+  CNY: new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }),
+};
+
 // Provider
 interface AppProviderProps {
   children: ReactNode;
@@ -398,16 +407,7 @@ export function AppProvider({ children }: AppProviderProps) {
 
   const formattedCurrency = useCallback((amount: number): string => {
     const { currency } = state.settings.preferences;
-
-    const formatters: Record<string, Intl.NumberFormat> = {
-      AED: new Intl.NumberFormat('en-AE', { style: 'currency', currency: 'AED' }),
-      INR: new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }),
-      USD: new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }),
-      EUR: new Intl.NumberFormat('en-EU', { style: 'currency', currency: 'EUR' }),
-      CNY: new Intl.NumberFormat('zh-CN', { style: 'currency', currency: 'CNY' }),
-    };
-
-    const formatter = formatters[currency] || formatters.AED;
+    const formatter = CURRENCY_FORMATTERS[currency] || CURRENCY_FORMATTERS.AED;
     return formatter.format(amount);
   }, [state.settings.preferences]);
 

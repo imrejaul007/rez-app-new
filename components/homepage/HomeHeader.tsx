@@ -7,7 +7,7 @@
  * @component
  */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import {
   View,
   Text,
@@ -102,6 +102,30 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
     }
   }, [cartItemCount]);
 
+  const handleSubscriptionPress = useCallback(() => {
+    if (Platform.OS === 'ios') {
+      setTimeout(() => router.push('/subscription/plans'), 50);
+    } else {
+      router.push('/subscription/plans');
+    }
+  }, [router]);
+
+  const handleWalletPress = useCallback(() => {
+    if (Platform.OS === 'ios') {
+      setTimeout(() => router.push('/wallet-screen'), 50);
+    } else {
+      router.push('/wallet-screen');
+    }
+  }, [router]);
+
+  const handleCartPress = useCallback(() => {
+    if (Platform.OS === 'ios') {
+      setTimeout(() => router.push('/cart'), 50);
+    } else {
+      router.push('/cart');
+    }
+  }, [router]);
+
   return (
     <LinearGradient
       colors={[colors.lightMustard, colors.brand.goldRich, colors.lightMustard]}
@@ -143,13 +167,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
         <View style={headerStyles.headerRight}>
           {/* Subscription Tier Badge */}
           <Pressable
-            onPress={() => {
-              if (Platform.OS === 'ios') {
-                setTimeout(() => router.push('/subscription/plans'), 50);
-              } else {
-                router.push('/subscription/plans');
-              }
-            }}
+            onPress={handleSubscriptionPress}
            
             style={{ marginRight: 12 }}
             accessibilityLabel={`Subscription tier: ${subscriptionTier}`}
@@ -163,13 +181,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
           <NuqtaCoin
             balance={userPoints}
             size="small"
-            onPress={() => {
-              if (Platform.OS === 'ios') {
-                setTimeout(() => router.push('/wallet-screen'), 50);
-              } else {
-                router.push('/wallet-screen');
-              }
-            }}
+            onPress={handleWalletPress}
           />
 
           {/* Notification Bell */}
@@ -177,13 +189,7 @@ export const HomeHeader: React.FC<HomeHeaderProps> = ({
 
           {/* Cart Icon */}
           <Pressable
-            onPress={() => {
-              if (Platform.OS === 'ios') {
-                setTimeout(() => router.push('/cart'), 50);
-              } else {
-                router.push('/cart');
-              }
-            }}
+            onPress={handleCartPress}
            
             delayPressIn={Platform.OS === 'ios' ? 50 : 0}
             accessibilityLabel={`Shopping cart: ${cartItemCount} items`}

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
@@ -9,8 +9,7 @@ import {
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
-import { useWalletData, useWalletLoading, useRefreshWallet, useBrandedCoins } from '@/stores/selectors';
+import { useWalletData, useWalletLoading, useBrandedCoins } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 
@@ -62,7 +61,6 @@ const WalletSnapshotCard: React.FC = () => {
   // Use the shared wallet context
   const walletData = useWalletData();
   const isLoading = useWalletLoading();
-  const refreshWallet = useRefreshWallet();
   const brandedCoinsFromCtx = useBrandedCoins();
 
   // Track when we have initial data (without triggering re-renders)
@@ -70,15 +68,8 @@ const WalletSnapshotCard: React.FC = () => {
     hasInitialData.current = true;
   }
 
-  // Refresh wallet data when the screen comes into focus (e.g., after placing an order)
-  useFocusEffect(
-    useCallback(() => {
-      // Only refresh if we already have data (don't double-fetch on initial mount)
-      if (hasInitialData.current) {
-        refreshWallet();
-      }
-    }, [refreshWallet])
-  );
+  // NOTE: useFocusEffect removed — homepage already refreshes wallet on focus,
+  // so a second call here was causing a double wallet fetch on every navigation.
 
   // Show skeleton while loading
   if (isLoading && !walletData) {

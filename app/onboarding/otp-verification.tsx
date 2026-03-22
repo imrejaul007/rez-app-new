@@ -85,7 +85,7 @@ function OTPVerificationScreen() {
     const otpString = otpValue || otp.join('');
 
     if (otpString.length !== 6 || !/^\d{6}$/.test(otpString)) {
-      platformAlertSimple('Invalid OTP', 'Please enter a valid 6-digit OTP');
+      platformAlertSimple('That code didn\'t match', 'Please enter a valid 6-digit OTP');
       return;
     }
 
@@ -109,7 +109,7 @@ function OTPVerificationScreen() {
       }
     } catch (error: any) {
       const errorMessage = error?.message || authError || 'Invalid OTP. Please check and try again.';
-      platformAlertSimple('Invalid OTP', errorMessage);
+      platformAlertSimple('That code didn\'t match', errorMessage);
       if (!isMounted()) return;
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
@@ -159,8 +159,11 @@ function OTPVerificationScreen() {
 
           {/* Header */}
           <View style={styles.header}>
-            <View style={styles.stepBadge}>
-              <Text style={styles.stepText}>Step 2 of 3</Text>
+            <View style={styles.progressDots}>
+              <View style={[styles.dot, styles.dotActive]} />
+              <View style={[styles.dot, styles.dotActive]} />
+              <View style={[styles.dot, styles.dotInactive]} />
+              <View style={[styles.dot, styles.dotInactive]} />
             </View>
 
             {/* Shield Icon */}
@@ -340,19 +343,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 28,
   },
-  stepBadge: {
-    backgroundColor: 'rgba(255, 205, 87, 0.15)',  // Light Mustard
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: BorderRadius.lg,
+  progressDots: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     marginBottom: Spacing.base,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.3)',
   },
-  stepText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: Colors.gold,
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  dotActive: {
+    backgroundColor: Colors.gold,
+    width: 24,
+    borderRadius: 5,
+  },
+  dotInactive: {
+    backgroundColor: 'rgba(255, 205, 87, 0.3)',
   },
   iconContainer: {
     marginBottom: Spacing.base,

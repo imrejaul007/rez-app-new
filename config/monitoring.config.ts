@@ -186,13 +186,22 @@ export const initializeMonitoring = () => {
   initializeSentry();
 
   // Initialize Google Analytics
+  // GA requires a real tracking ID set via EXPO_PUBLIC_GA_TRACKING_ID.
+  // Until the SDK is installed (npm install @react-native-google-analytics/firebase
+  // or equivalent) and the ID is configured, this block intentionally has no runtime call.
   if (GoogleAnalyticsConfig.enabled) {
-    // TODO: Initialize GA
+    if (__DEV__ && (!process.env.EXPO_PUBLIC_GA_TRACKING_ID || process.env.EXPO_PUBLIC_GA_TRACKING_ID === 'UA-XXXXX-Y')) {
+      console.warn('[Monitoring] GA tracking ID is still a placeholder. Set EXPO_PUBLIC_GA_TRACKING_ID to your real ID before going to production.');
+    }
   }
 
   // Initialize Mixpanel
+  // Mixpanel requires a real project token set via EXPO_PUBLIC_MIXPANEL_TOKEN.
+  // Install the SDK (npm install mixpanel-react-native) and replace the placeholder token.
   if (MixpanelConfig.enabled) {
-    // TODO: Initialize Mixpanel
+    if (__DEV__ && (!process.env.EXPO_PUBLIC_MIXPANEL_TOKEN || process.env.EXPO_PUBLIC_MIXPANEL_TOKEN === 'YOUR_MIXPANEL_TOKEN')) {
+      console.warn('[Monitoring] Mixpanel token is still a placeholder. Set EXPO_PUBLIC_MIXPANEL_TOKEN to your real project token before going to production.');
+    }
   }
 
   // Initialize Performance Monitoring

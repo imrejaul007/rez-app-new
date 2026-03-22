@@ -29,6 +29,7 @@ import FollowButton from '../../components/social/FollowButton';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { toast } from '@/utils/toast';
 
 const ActivityFeedPage = () => {
   const {
@@ -112,7 +113,7 @@ const ActivityFeedPage = () => {
     try {
       await likeActivity(activityId);
     } catch (error) {
-      // silently handle
+      toast.error('Could not save. Please try again.');
     }
   }, [likeActivity]);
 
@@ -120,7 +121,7 @@ const ActivityFeedPage = () => {
     try {
       await commentOnActivity(activityId, comment);
     } catch (error) {
-      // silently handle
+      toast.error('Could not save. Please try again.');
     }
   }, [commentOnActivity]);
 

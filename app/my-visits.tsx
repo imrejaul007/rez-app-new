@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -47,6 +47,10 @@ function MyVisitsPage() {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
   const [error, setError] = useState<string | null>(null);
 
+  // Staleness guard: skip fetch if data was loaded within the last 30 seconds
+  const lastLoadedAt = useRef<number>(0);
+  const STALE_TTL_MS = 30_000;
+
   useFocusEffect(
     useCallback(() => {
       // Wait for auth state to be loaded before checking
@@ -67,11 +71,21 @@ function MyVisitsPage() {
         return;
       }
 
+      // Skip fetch if data is fresh (within 30s TTL)
+      if (Date.now() - lastLoadedAt.current < STALE_TTL_MS) {
+        setLoading(false);
+        return;
+      }
       loadVisits();
     }, [isAuthenticated, isLoading])
   );
 
-  const loadVisits = async () => {
+  const loadVisits = async (force = false) => {
+    // Skip fetch if data is fresh and not forced (e.g. pull-to-refresh)
+    if (!force && Date.now() - lastLoadedAt.current < STALE_TTL_MS) {
+      setLoading(false);
+      return;
+    }
     try {
       setLoading(true);
       const response = await storeVisitApi.getUserVisits();
@@ -96,6 +110,7 @@ function MyVisitsPage() {
         if (!isMounted()) return;
         setVisits(transformedVisits);
         setError(null);
+        lastLoadedAt.current = Date.now();
       } else {
         showAlert('Error', response.message || 'Failed to load visits', undefined, 'error');
       }
@@ -113,7 +128,7 @@ function MyVisitsPage() {
 
   const handleRefresh = () => {
     setRefreshing(true);
-    loadVisits();
+    loadVisits(true); // force bypass staleness guard on manual refresh
   };
 
   const handleCancelVisit = async (visitId: string) => {

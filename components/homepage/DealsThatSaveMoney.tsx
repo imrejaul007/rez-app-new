@@ -5,7 +5,7 @@
  * deal categories based on the selected tab. Modern design with glassy effects.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -272,7 +272,8 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
   const [refreshing, setRefreshing] = useState(false);
 
   // Track if impressions were already sent for current tab items
-  const [impressionsSent, setImpressionsSent] = useState<Set<string>>(new Set());
+  // useRef so updates never trigger a re-render
+  const impressionsSent = useRef<Set<string>>(new Set());
 
   // Fetch admin-managed section data
   const fetchSectionData = useCallback(async (isRefresh = false) => {
@@ -357,17 +358,13 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
     if (items.length === 0) return;
 
     // Filter out items that already had impressions tracked
-    const newItems = items.filter(item => item._id && !impressionsSent.has(item._id));
+    const newItems = items.filter(item => item._id && !impressionsSent.current.has(item._id));
     if (newItems.length === 0) return;
 
     const itemIds = newItems.map(item => item._id);
 
-    // Mark these items as tracked
-    setImpressionsSent(prev => {
-      const updated = new Set(prev);
-      itemIds.forEach(id => updated.add(id));
-      return updated;
-    });
+    // Mark these items as tracked (mutate ref — no re-render needed)
+    itemIds.forEach(id => impressionsSent.current.add(id));
 
     try {
       await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api'}/offers/homepage-deals-section/track-impression`, {
@@ -376,9 +373,9 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
         body: JSON.stringify({ itemIds, tabType }),
       });
     } catch (error) {
-      // Silent fail for analytics - don't revert impressionsSent
+      // Silent fail for analytics
     }
-  }, [impressionsSent]);
+  }, []);
 
   // Track click on item
   const trackClick = useCallback(async (itemId: string, tabType: TabType) => {

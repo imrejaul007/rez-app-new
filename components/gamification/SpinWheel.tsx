@@ -12,6 +12,7 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } f
 import { LinearGradient } from 'expo-linear-gradient';
 import { platformAlert } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
+import CelebrationModal from '@/components/gamification/CelebrationModal';
 import { ThemedText } from '@/components/ThemedText';
 import gamificationAPI from '@/services/gamificationApi';
 import type { SpinWheelSegment, SpinWheelResult } from '@/types/gamification.types';
@@ -45,6 +46,10 @@ function SpinWheel({ segments = DEFAULT_SEGMENTS, onSpinComplete }: SpinWheelPro
   const [isSpinning, setIsSpinning] = useState(false);
   const [canSpin, setCanSpin] = useState(true);
   const [nextSpinTime, setNextSpinTime] = useState<string | null>(null);
+  const [celebrationVisible, setCelebrationVisible] = useState(false);
+  const [celebrationResult, setCelebrationResult] = useState<SpinWheelResult | null>(null);
+  const [celebrationCoins, setCelebrationCoins] = useState(0);
+  const [celebrationBalance, setCelebrationBalance] = useState(0);
   const isMounted = useIsMounted();
   const rotateAnim = useSharedValue(0);
 
@@ -96,20 +101,11 @@ function SpinWheel({ segments = DEFAULT_SEGMENTS, onSpinComplete }: SpinWheelPro
           setIsSpinning(false);
           setCanSpin(false);
 
-          // Show prize alert
-          platformAlert(
-            'Congratulations! 🎉',
-            `You won: ${result.prize.description}\n\nNew balance: ${newBalance} coins`,
-            [
-              {
-                text: 'Awesome!',
-                onPress: () => {
-                  onSpinComplete?.(result);
-                  checkEligibility(); // Refresh eligibility
-                },
-              },
-            ]
-          );
+          // Show celebration modal
+          setCelebrationResult(result);
+          setCelebrationCoins(coinsAdded || 0);
+          setCelebrationBalance(newBalance || 0);
+          setCelebrationVisible(true);
         }, 4100);
       } else {
         throw new Error(response.error || 'Failed to spin wheel');
@@ -162,8 +158,23 @@ function SpinWheel({ segments = DEFAULT_SEGMENTS, onSpinComplete }: SpinWheelPro
     transform: [{ rotate: `${rotateAnim.value}deg` }],
   }));
 
+  const handleCelebrationClose = () => {
+    setCelebrationVisible(false);
+    if (celebrationResult) {
+      onSpinComplete?.(celebrationResult);
+    }
+    checkEligibility();
+  };
+
   return (
     <View style={styles.container}>
+      <CelebrationModal
+        visible={celebrationVisible}
+        result={celebrationResult}
+        coinsEarned={celebrationCoins}
+        newBalance={celebrationBalance}
+        onClose={handleCelebrationClose}
+      />
       {/* Wheel Container */}
       <View style={styles.wheelContainer}>
         {/* Pointer */}

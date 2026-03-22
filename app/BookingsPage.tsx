@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
 import {
   View,
   Text,
@@ -140,6 +140,10 @@ function BookingsPage() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [expandedBookingId, setExpandedBookingId] = useState<string | null>(null);
+
+  // Staleness guard: skip fetch if data was loaded within the last 30 seconds
+  const lastLoadedAt = useRef<number>(0);
+  const STALE_TTL_MS = 30_000;
 
   // Per-API pagination cursors
   const PAGE_SIZE = 15;
@@ -302,8 +306,13 @@ function BookingsPage() {
   }, []);
 
   // ─── Initial load (page 1 of each) ────────────────────
-  const loadBookings = useCallback(async () => {
+  const loadBookings = useCallback(async (force = false) => {
     if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
+    // Skip fetch if data is fresh (within 30s TTL) unless forced (e.g. pull-to-refresh)
+    if (!force && Date.now() - lastLoadedAt.current < STALE_TTL_MS) {
       setLoading(false);
       return;
     }
@@ -338,6 +347,7 @@ function BookingsPage() {
       setServicePage({ page: 2, hasMore: sHasMore });
       if (!isMounted()) return;
       setAllBookings(sortBookings(unified));
+      lastLoadedAt.current = Date.now();
     } catch (error: any) {
       if (!isMounted()) return;
       setLoadError(error.message || 'Failed to load bookings');
@@ -407,7 +417,7 @@ function BookingsPage() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadBookings();
+    await loadBookings(true); // force bypass staleness guard on manual refresh
     if (!isMounted()) return;
     setRefreshing(false);
   }, [loadBookings]);

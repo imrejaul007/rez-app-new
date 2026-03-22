@@ -388,21 +388,22 @@ const MyDealsPage: React.FC = () => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <View style={styles.emptyIconContainer}>
-        <Ionicons name="gift-outline" size={56} color={COLORS.gray300} />
-      </View>
+      <Ionicons name="pricetag-outline" size={64} color={COLORS.gray300} />
       <Text style={styles.emptyTitle}>No Deals Yet</Text>
       <Text style={styles.emptySubtitle}>
         {selectedFilter === 'all'
-          ? "You haven't redeemed any deals yet.\nExplore exciting offers and save!"
-          : `No ${selectedFilter} deals found.`}
+          ? "You haven't redeemed any deals yet.\nExplore exciting offers and start saving!"
+          : `No ${selectedFilter} deals found. Try a different filter or go find new ones.`}
       </Text>
       <Pressable
         style={styles.exploreButton}
         onPress={() => router.push('/(tabs)' as any)}
+        accessibilityLabel="Find Deals"
+        accessibilityRole="button"
+        accessibilityHint="Browse available deals"
       >
         <Ionicons name="flash" size={18} color={COLORS.white} />
-        <Text style={styles.exploreButtonText}>Explore Deals</Text>
+        <Text style={styles.exploreButtonText}>Find Deals</Text>
       </Pressable>
     </View>
   );

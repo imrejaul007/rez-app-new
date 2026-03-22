@@ -80,7 +80,7 @@ function RegistrationScreen() {
     if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber = 'Phone number is required';
     } else if (!/^[1-9]\d{4,14}$/.test(formData.phoneNumber.replace(/\s/g, ''))) {
-      newErrors.phoneNumber = 'Please enter a valid phone number';
+      newErrors.phoneNumber = "That number doesn't look right — double-check and try again";
     }
 
     // Email is optional, but validate format if provided
@@ -174,10 +174,9 @@ function RegistrationScreen() {
                 </LinearGradient>
               </View>
 
-              <Text style={styles.existingUserTitle}>Account Already Exists</Text>
+              <Text style={styles.existingUserTitle}>Welcome Back!</Text>
               <Text style={styles.existingUserMessage}>
-                This phone number is already registered.{'\n'}
-                Please use Sign In to access your account.
+                Great to see you again! Sign in to continue.
               </Text>
 
               <Pressable
@@ -211,8 +210,11 @@ function RegistrationScreen() {
 
             {/* Header */}
             <View style={styles.header}>
-              <View style={styles.stepBadge}>
-                <Text style={styles.stepText}>Step 1 of 3</Text>
+              <View style={styles.progressDots}>
+                <View style={[styles.dot, styles.dotActive]} />
+                <View style={[styles.dot, styles.dotInactive]} />
+                <View style={[styles.dot, styles.dotInactive]} />
+                <View style={[styles.dot, styles.dotInactive]} />
               </View>
 
               <Text style={styles.title}>Create your account</Text>
@@ -378,19 +380,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 28,
   },
-  stepBadge: {
-    backgroundColor: 'rgba(255, 205, 87, 0.15)',  // Light Mustard
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: BorderRadius.lg,
+  progressDots: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
     marginBottom: Spacing.base,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.3)',
   },
-  stepText: {
-    fontSize: Typography.bodySmall.fontSize,
-    fontWeight: '600',
-    color: Colors.gold,        // Light Mustard,
+  dot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+  },
+  dotActive: {
+    backgroundColor: Colors.gold,
+    width: 24,
+    borderRadius: 5,
+  },
+  dotInactive: {
+    backgroundColor: 'rgba(255, 205, 87, 0.3)',
   },
   title: {
     fontSize: 26,
