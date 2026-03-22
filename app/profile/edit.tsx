@@ -236,6 +236,18 @@ function ProfileEditPage() {
     }
   };
 
+  // --- Field icon mapping ---
+  const fieldIcons: Record<keyof ProfileFormData, keyof typeof Ionicons.glyphMap> = {
+    name: 'person-outline',
+    email: 'mail-outline',
+    phone: 'call-outline',
+    bio: 'chatbubble-ellipses-outline',
+    location: 'location-outline',
+    website: 'globe-outline',
+    dateOfBirth: 'calendar-outline',
+    gender: 'people-outline',
+  };
+
   const renderFormField = (
     label: string,
     field: keyof ProfileFormData,
@@ -245,7 +257,18 @@ function ProfileEditPage() {
     readonly: boolean = false
   ) => (
     <View style={styles.fieldContainer}>
-      <ThemedText style={styles.fieldLabel}>{label}</ThemedText>
+      <View style={styles.fieldIconRow}>
+        <View style={styles.fieldIconCircle}>
+          <Ionicons name={fieldIcons[field]} size={16} color={PROFILE_COLORS.primaryDark} />
+        </View>
+        <ThemedText style={styles.fieldLabel}>{label}</ThemedText>
+        {readonly && (
+          <View style={styles.readonlyBadge}>
+            <Ionicons name="lock-closed-outline" size={11} color={colors.neutral[400]} />
+            <ThemedText style={styles.readonlyBadgeText}>Read-only</ThemedText>
+          </View>
+        )}
+      </View>
       <TextInput
         style={[
           styles.textInput,
@@ -299,16 +322,19 @@ function ProfileEditPage() {
     <SafeAreaView style={styles.container}>
       <StatusBar
         barStyle="light-content"
-        backgroundColor={PROFILE_COLORS.gold}
+        backgroundColor={PROFILE_COLORS.primaryDark}
         translucent={false}
       />
-      
-      {/* Header */}
+
+      {/* Gradient Header with Avatar */}
       <LinearGradient
-        colors={[PROFILE_COLORS.gold, PROFILE_COLORS.primaryLight]}
+        colors={[PROFILE_COLORS.primaryDark, '#2d5a7b']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
         style={styles.header}
       >
-        <View style={styles.headerContent}>
+        {/* Top bar: back + title + save */}
+        <View style={styles.headerTopBar}>
           <Pressable
             style={styles.backButton}
             onPress={handleBackPress}
@@ -316,63 +342,60 @@ function ProfileEditPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to return to profile page"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
           </Pressable>
-          
+
           <ThemedText style={styles.headerTitle}>Edit Profile</ThemedText>
-          
+
           <Pressable
-            style={[styles.saveButton, isSaving && styles.saveButtonDisabled]}
+            style={[styles.saveButton, (!hasChanges || isSaving) && styles.saveButtonDisabled]}
             onPress={handleSave}
-            disabled={isSaving}
+            disabled={isSaving || !hasChanges}
             accessibilityLabel={isSaving ? 'Saving profile changes' : hasChanges ? 'Save profile changes' : 'Save profile'}
             accessibilityRole="button"
             accessibilityHint="Double tap to save your profile changes"
-            accessibilityState={{ disabled: isSaving, busy: isSaving }}
+            accessibilityState={{ disabled: isSaving || !hasChanges, busy: isSaving }}
           >
-            <ThemedText style={[
-              styles.saveButtonText,
-              isSaving && styles.saveButtonTextDisabled
-            ]}>
-              {isSaving ? 'Saving...' : hasChanges ? 'Save' : 'Save'}
-            </ThemedText>
+            {isSaving ? (
+              <ActivityIndicator size="small" color={Colors.text.inverse} />
+            ) : (
+              <ThemedText style={[
+                styles.saveButtonText,
+                (!hasChanges || isSaving) && styles.saveButtonTextDisabled
+              ]}>
+                Save
+              </ThemedText>
+            )}
           </Pressable>
         </View>
-      </LinearGradient>
 
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-
-        {/* Profile Photo Section */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Profile Photo</ThemedText>
-          <View style={styles.photoContainer}>
-            <Pressable
-              style={styles.photoWrapper}
-              onPress={handleImageUpload}
-              disabled={uploadingImage}
-             
-              accessibilityLabel={uploadingImage ? 'Uploading profile photo' : 'Change profile photo'}
-              accessibilityRole="button"
-              accessibilityHint="Double tap to select a new profile picture from your gallery"
-              accessibilityState={{ disabled: uploadingImage, busy: uploadingImage }}
+        {/* Avatar row */}
+        <View style={styles.headerAvatarRow}>
+          <Pressable
+            style={styles.avatarWrapper}
+            onPress={handleImageUpload}
+            disabled={uploadingImage}
+            accessibilityLabel={uploadingImage ? 'Uploading profile photo' : 'Change profile photo'}
+            accessibilityRole="button"
+            accessibilityHint="Double tap to select a new profile picture from your gallery"
+            accessibilityState={{ disabled: uploadingImage, busy: uploadingImage }}
+          >
+            {/* Gradient ring */}
+            <LinearGradient
+              colors={[PROFILE_COLORS.gold, '#ffd7b5']}
+              style={styles.avatarRing}
             >
-              <View style={styles.photoCircle}>
+              <View style={styles.avatarInner}>
                 {user?.avatar ? (
                   <CachedImage
-                    source={{
-                      uri: user.avatar,
-                    }}
-                    style={styles.photoImage}
+                    source={{ uri: user.avatar }}
+                    style={styles.avatarImage}
                     cachePolicy="none"
-                    key={user.avatar} // Force re-render when URL changes
+                    key={user.avatar}
                   />
                 ) : (
-                  <View style={styles.photoPlaceholder}>
-                    <ThemedText style={styles.photoInitials}>
+                  <View style={styles.avatarPlaceholder}>
+                    <ThemedText style={styles.avatarInitials}>
                       {user?.name?.substring(0, 2).toUpperCase() || 'U'}
                     </ThemedText>
                   </View>
@@ -383,33 +406,53 @@ function ProfileEditPage() {
                   </View>
                 )}
               </View>
-              <View style={styles.cameraIconContainer}>
-                <Ionicons name="camera" size={20} color={Colors.text.inverse} />
-              </View>
-            </Pressable>
-            <View style={styles.photoTextContainer}>
-              <ThemedText style={styles.photoText}>
-                {uploadingImage ? 'Uploading...' : 'Tap to change photo'}
-              </ThemedText>
-              <ThemedText style={styles.photoSubtext}>
-                JPG, PNG or GIF. Max size 5MB
-              </ThemedText>
+            </LinearGradient>
+            {/* Camera badge */}
+            <View style={styles.cameraBadge}>
+              <Ionicons name="camera" size={14} color={Colors.text.inverse} />
             </View>
+          </Pressable>
+
+          <View style={styles.headerUserInfo}>
+            <ThemedText style={styles.headerUserName}>
+              {user?.name || 'Your Name'}
+            </ThemedText>
+            <ThemedText style={styles.headerUserSub}>
+              {uploadingImage ? 'Uploading photo...' : 'Tap photo to change'}
+            </ThemedText>
           </View>
         </View>
+      </LinearGradient>
 
-        {/* Personal Information */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Personal Information</ThemedText>
-          
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
+      >
+
+        {/* Personal Info Card */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={styles.cardIconBadge}>
+              <Ionicons name="person" size={16} color={PROFILE_COLORS.primaryDark} />
+            </View>
+            <ThemedText style={styles.cardTitle}>Personal Info</ThemedText>
+          </View>
+
           {renderFormField('Full Name', 'name', 'Enter your full name')}
           {renderFormField('Email Address', 'email', 'Enter your email', false, 'email-address', false)}
           {renderFormField('Phone Number', 'phone', 'Enter your phone number', false, 'phone-pad', true)}
           {renderFormField('Date of Birth', 'dateOfBirth', 'YYYY-MM-DD', false, 'default')}
-          
+
           {/* Gender Selection */}
           <View style={styles.fieldContainer}>
-            <ThemedText style={styles.fieldLabel}>Gender</ThemedText>
+            <View style={styles.fieldIconRow}>
+              <View style={styles.fieldIconCircle}>
+                <Ionicons name="people-outline" size={16} color={PROFILE_COLORS.primaryDark} />
+              </View>
+              <ThemedText style={styles.fieldLabel}>Gender</ThemedText>
+            </View>
             <Pressable
               style={styles.genderSelector}
               onPress={() => setShowGenderModal(true)}
@@ -426,22 +469,40 @@ function ProfileEditPage() {
               <Ionicons name="chevron-down" size={20} color={Colors.text.tertiary} />
             </Pressable>
           </View>
-          
+        </View>
+
+        {/* About Card */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={styles.cardIconBadge}>
+              <Ionicons name="chatbubble-ellipses" size={16} color={PROFILE_COLORS.primaryDark} />
+            </View>
+            <ThemedText style={styles.cardTitle}>About</ThemedText>
+          </View>
           {renderFormField('Bio', 'bio', 'Tell us about yourself...', true)}
         </View>
 
-        {/* Additional Information */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Additional Information</ThemedText>
-          
+        {/* Contact Card */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={styles.cardIconBadge}>
+              <Ionicons name="compass" size={16} color={PROFILE_COLORS.primaryDark} />
+            </View>
+            <ThemedText style={styles.cardTitle}>Contact</ThemedText>
+          </View>
           {renderFormField('Location', 'location', 'Enter your city or location')}
           {renderFormField('Website', 'website', 'https://your-website.com', false, 'url')}
         </View>
 
-        {/* Account Settings */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Account Settings</ThemedText>
-          
+        {/* Account Settings Card */}
+        <View style={styles.card}>
+          <View style={styles.cardHeader}>
+            <View style={styles.cardIconBadge}>
+              <Ionicons name="settings" size={16} color={PROFILE_COLORS.primaryDark} />
+            </View>
+            <ThemedText style={styles.cardTitle}>Account Settings</ThemedText>
+          </View>
+
           <Pressable
             style={styles.settingItem}
             accessibilityLabel="Change Password"
@@ -449,7 +510,9 @@ function ProfileEditPage() {
             accessibilityHint="Double tap to update your account password"
           >
             <View style={styles.settingItemLeft}>
-              <Ionicons name="key-outline" size={24} color={PROFILE_COLORS.gold} />
+              <View style={styles.settingIconCircle}>
+                <Ionicons name="key-outline" size={20} color={PROFILE_COLORS.primaryDark} />
+              </View>
               <View style={styles.settingItemText}>
                 <ThemedText style={styles.settingItemTitle}>Change Password</ThemedText>
                 <ThemedText style={styles.settingItemDescription}>
@@ -457,7 +520,7 @@ function ProfileEditPage() {
                 </ThemedText>
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.neutral[300]} />
+            <Ionicons name="chevron-forward" size={18} color={colors.neutral[300]} />
           </Pressable>
 
           <Pressable
@@ -467,7 +530,9 @@ function ProfileEditPage() {
             accessibilityHint="Double tap to manage your notification settings"
           >
             <View style={styles.settingItemLeft}>
-              <Ionicons name="notifications-outline" size={24} color={PROFILE_COLORS.gold} />
+              <View style={styles.settingIconCircle}>
+                <Ionicons name="notifications-outline" size={20} color={PROFILE_COLORS.primaryDark} />
+              </View>
               <View style={styles.settingItemText}>
                 <ThemedText style={styles.settingItemTitle}>Notification Preferences</ThemedText>
                 <ThemedText style={styles.settingItemDescription}>
@@ -475,17 +540,19 @@ function ProfileEditPage() {
                 </ThemedText>
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.neutral[300]} />
+            <Ionicons name="chevron-forward" size={18} color={colors.neutral[300]} />
           </Pressable>
 
           <Pressable
-            style={styles.settingItem}
+            style={[styles.settingItem, styles.settingItemLast]}
             accessibilityLabel="Privacy Settings"
             accessibilityRole="button"
             accessibilityHint="Double tap to control who can see your profile"
           >
             <View style={styles.settingItemLeft}>
-              <Ionicons name="shield-outline" size={24} color={PROFILE_COLORS.gold} />
+              <View style={styles.settingIconCircle}>
+                <Ionicons name="shield-outline" size={20} color={PROFILE_COLORS.primaryDark} />
+              </View>
               <View style={styles.settingItemText}>
                 <ThemedText style={styles.settingItemTitle}>Privacy Settings</ThemedText>
                 <ThemedText style={styles.settingItemDescription}>
@@ -493,14 +560,19 @@ function ProfileEditPage() {
                 </ThemedText>
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={colors.neutral[300]} />
+            <Ionicons name="chevron-forward" size={18} color={colors.neutral[300]} />
           </Pressable>
         </View>
 
-        {/* Danger Zone */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Danger Zone</ThemedText>
-          
+        {/* Danger Zone Card */}
+        <View style={[styles.card, styles.dangerCard]}>
+          <View style={styles.cardHeader}>
+            <View style={[styles.cardIconBadge, styles.dangerIconBadge]}>
+              <Ionicons name="warning" size={16} color={Colors.error} />
+            </View>
+            <ThemedText style={[styles.cardTitle, styles.dangerCardTitle]}>Danger Zone</ThemedText>
+          </View>
+
           <Pressable
             style={styles.dangerItem}
             onPress={() => {
@@ -517,15 +589,55 @@ function ProfileEditPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to permanently delete your account and all data. This action cannot be undone"
           >
-            <Ionicons name="trash-outline" size={24} color={Colors.error} />
+            <View style={styles.dangerIconCircle}>
+              <Ionicons name="trash-outline" size={20} color={Colors.error} />
+            </View>
             <View style={styles.dangerItemText}>
               <ThemedText style={styles.dangerItemTitle}>Delete Account</ThemedText>
               <ThemedText style={styles.dangerItemDescription}>
                 Permanently delete your account and all data
               </ThemedText>
             </View>
+            <Ionicons name="chevron-forward" size={18} color={Colors.error} />
           </Pressable>
         </View>
+
+        {/* Full-width Save Button */}
+        <Pressable
+          onPress={handleSave}
+          disabled={isSaving || !hasChanges}
+          accessibilityLabel={isSaving ? 'Saving profile changes' : 'Save changes'}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: isSaving || !hasChanges, busy: isSaving }}
+          style={styles.bottomSaveWrapper}
+        >
+          <LinearGradient
+            colors={
+              hasChanges && !isSaving
+                ? [PROFILE_COLORS.primaryDark, '#2d5a7b']
+                : ['#B0BEC5', '#CFD8DC']
+            }
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.bottomSaveButton}
+          >
+            {isSaving ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <>
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color="white"
+                  style={{ marginRight: 8 }}
+                />
+                <ThemedText style={styles.bottomSaveText}>
+                  {hasChanges ? 'Save Changes' : 'No Changes'}
+                </ThemedText>
+              </>
+            )}
+          </LinearGradient>
+        </Pressable>
 
         <View style={styles.bottomSpace} />
       </ScrollView>
@@ -540,364 +652,489 @@ function ProfileEditPage() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
+            <View style={styles.modalHandle} />
             <View style={styles.modalHeader}>
               <ThemedText style={styles.modalTitle}>Select Gender</ThemedText>
               <Pressable
+                style={styles.modalCloseButton}
                 onPress={() => setShowGenderModal(false)}
                 accessibilityLabel="Close gender selection"
                 accessibilityRole="button"
                 accessibilityHint="Double tap to close the gender selection modal"
               >
-                <Ionicons name="close" size={24} color={Colors.text.tertiary} />
+                <Ionicons name="close" size={20} color={Colors.text.tertiary} />
               </Pressable>
             </View>
-            
+
             <FlashList
               data={genderOptions}
               keyExtractor={(item) => item.value}
-          estimatedItemSize={44}
+              estimatedItemSize={44}
               renderItem={renderGenderOption}
             />
           </View>
         </View>
       </Modal>
     </SafeAreaView>
-);
+  );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: PROFILE_COLORS.background.secondary,
+    backgroundColor: '#F4F6F9',
     paddingTop: Platform.OS === 'ios' ? 20 : 0,
   },
+
+  // ── Header ──────────────────────────────────────────────────────────────
   header: {
-    paddingTop: Platform.OS === 'android' ? 25 : 15,
-    paddingBottom: Spacing.lg,
+    paddingTop: Platform.OS === 'android' ? 28 : 12,
+    paddingBottom: 28,
     paddingHorizontal: Spacing.lg,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.18,
+    shadowRadius: 16,
+    elevation: 10,
   },
-  headerContent: {
+  headerTopBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    marginBottom: 24,
   },
   backButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.15)',
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
   },
   headerTitle: {
-    flex: 1,
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: '700',
     color: Colors.text.inverse,
+    letterSpacing: 0.4,
+    flex: 1,
     textAlign: 'center',
-    marginHorizontal: Spacing.base,
-    letterSpacing: 0.5,
   },
   saveButton: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: 10,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    minWidth: 80,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
+    paddingHorizontal: 18,
+    paddingVertical: 9,
+    borderRadius: 20,
+    backgroundColor: PROFILE_COLORS.gold,
+    minWidth: 72,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: PROFILE_COLORS.gold,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
     shadowRadius: 6,
-    elevation: 3,
+    elevation: 4,
   },
   saveButtonDisabled: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    shadowOpacity: 0,
+    elevation: 0,
   },
   saveButtonText: {
-    color: Colors.text.inverse,
-    ...Typography.bodyLarge,
-    fontWeight: '600',
+    color: PROFILE_COLORS.primaryDark,
+    fontSize: 15,
+    fontWeight: '700',
   },
   saveButtonTextDisabled: {
     color: 'rgba(255, 255, 255, 0.5)',
   },
+
+  // Avatar in header
+  headerAvatarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatarWrapper: {
+    position: 'relative',
+    marginRight: 16,
+  },
+  avatarRing: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    padding: 3,
+    shadowColor: PROFILE_COLORS.gold,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 8,
+  },
+  avatarInner: {
+    flex: 1,
+    borderRadius: 41,
+    overflow: 'hidden',
+    backgroundColor: PROFILE_COLORS.primaryDark,
+  },
+  avatarImage: {
+    width: '100%',
+    height: '100%',
+  },
+  avatarPlaceholder: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarInitials: {
+    fontSize: 30,
+    fontWeight: '800',
+    color: Colors.text.inverse,
+  },
+  uploadingOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.55)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  cameraBadge: {
+    position: 'absolute',
+    bottom: 2,
+    right: 2,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: PROFILE_COLORS.gold,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2.5,
+    borderColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  headerUserInfo: {
+    flex: 1,
+  },
+  headerUserName: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: Colors.text.inverse,
+    marginBottom: 4,
+    letterSpacing: 0.3,
+  },
+  headerUserSub: {
+    fontSize: 13,
+    color: 'rgba(255,255,255,0.7)',
+    fontWeight: '500',
+  },
+
+  // ── Scroll Content ────────────────────────────────────────────────────────
   content: {
     flex: 1,
   },
   scrollContent: {
-    paddingTop: Spacing.xl,
-    paddingBottom: 120,
-    paddingHorizontal: Spacing.xs,
+    paddingTop: 20,
+    paddingBottom: 40,
+    paddingHorizontal: 16,
   },
-  section: {
-    backgroundColor: Colors.background.primary,
-    marginHorizontal: Spacing.base,
-    marginTop: Spacing.lg,
-    borderRadius: BorderRadius.xl,
-    padding: Spacing.lg,
-    shadowColor: PROFILE_COLORS.text,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.12,
+
+  // ── Cards ─────────────────────────────────────────────────────────────────
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+    paddingTop: 18,
+    paddingBottom: 8,
+    marginBottom: 16,
+    shadowColor: '#1a3a52',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.07,
     shadowRadius: 12,
-    elevation: 6,
+    elevation: 3,
   },
-  sectionTitle: {
-    ...Typography.h3,
+  cardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 18,
+  },
+  cardIconBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: `${PROFILE_COLORS.primaryDark}12`,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  cardTitle: {
+    fontSize: 16,
     fontWeight: '700',
-    color: PROFILE_COLORS.text,
-    marginBottom: Spacing.md,
-    letterSpacing: 0.3,
+    color: PROFILE_COLORS.primaryDark,
+    letterSpacing: 0.2,
   },
-  sectionDescription: {
-    ...Typography.body,
-    color: PROFILE_COLORS.text.secondary,
-    marginBottom: Spacing.base,
-    lineHeight: 20,
-  },
+
+  // ── Form Fields ────────────────────────────────────────────────────────────
   fieldContainer: {
-    marginBottom: Spacing.xl,
+    marginBottom: 16,
+  },
+  fieldIconRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  fieldIconCircle: {
+    width: 26,
+    height: 26,
+    borderRadius: 8,
+    backgroundColor: `${PROFILE_COLORS.primaryDark}10`,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
   },
   fieldLabel: {
-    ...Typography.bodyLarge,
+    fontSize: 13,
     fontWeight: '600',
-    color: PROFILE_COLORS.text,
-    marginBottom: 10,
-    letterSpacing: 0.2,
+    color: '#4A5568',
+    flex: 1,
+    letterSpacing: 0.1,
+  },
+  readonlyBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F0F4F8',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+    gap: 3,
+  },
+  readonlyBadgeText: {
+    fontSize: 10,
+    color: colors.neutral[400],
+    fontWeight: '600',
   },
   textInput: {
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
-    borderRadius: BorderRadius.lg,
-    paddingHorizontal: 18,
-    paddingVertical: Spacing.base,
-    ...Typography.bodyLarge,
-    color: PROFILE_COLORS.text,
-    backgroundColor: Colors.background.secondary,
-    minHeight: 52,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
-    elevation: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    fontSize: 15,
+    color: PROFILE_COLORS.primaryDark,
+    backgroundColor: '#FAFBFD',
+    minHeight: 50,
   },
   multilineInput: {
-    height: 100,
+    height: 110,
     textAlignVertical: 'top',
-    paddingTop: Spacing.base,
+    paddingTop: 13,
   },
   readonlyInput: {
-    backgroundColor: Colors.background.secondary,
-    borderColor: Colors.border.default,
-    color: Colors.text.tertiary,
+    backgroundColor: '#F7F8FA',
+    borderColor: '#E8ECF0',
+    color: '#9AA7B2',
   },
+
+  // Gender selector
+  genderSelector: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#FAFBFD',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
+    borderWidth: 1.5,
+    borderColor: '#E2E8F0',
+    minHeight: 50,
+  },
+  genderText: {
+    fontSize: 15,
+    color: PROFILE_COLORS.primaryDark,
+  },
+  placeholderText: {
+    color: colors.neutral[400],
+  },
+
+  // ── Setting Items ─────────────────────────────────────────────────────────
   settingItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 18,
-    paddingHorizontal: Spacing.xs,
+    paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: PROFILE_COLORS.border,
-    minHeight: 70,
+    borderBottomColor: '#F0F2F5',
+    minHeight: 62,
+  },
+  settingItemLast: {
+    borderBottomWidth: 0,
   },
   settingItemLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
+  settingIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: `${PROFILE_COLORS.primaryDark}10`,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+  },
   settingItemText: {
-    marginLeft: Spacing.base,
     flex: 1,
   },
   settingItemTitle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '600',
-    color: PROFILE_COLORS.text,
-    marginBottom: Spacing.xs,
-    letterSpacing: 0.2,
+    color: PROFILE_COLORS.primaryDark,
+    marginBottom: 2,
   },
   settingItemDescription: {
-    ...Typography.body,
-    color: PROFILE_COLORS.text.secondary,
-    lineHeight: 20,
+    fontSize: 12,
+    color: '#9AA7B2',
+    lineHeight: 18,
+  },
+
+  // ── Danger Zone ───────────────────────────────────────────────────────────
+  dangerCard: {
+    borderWidth: 1.5,
+    borderColor: `${Colors.error}20`,
+  },
+  dangerCardTitle: {
+    color: Colors.error,
+  },
+  dangerIconBadge: {
+    backgroundColor: `${Colors.error}12`,
   },
   dangerItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 18,
-    paddingHorizontal: Spacing.xs,
-    minHeight: 70,
+    paddingVertical: 14,
+    minHeight: 62,
+  },
+  dangerIconCircle: {
+    width: 38,
+    height: 38,
+    borderRadius: 12,
+    backgroundColor: `${Colors.error}10`,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
   },
   dangerItemText: {
-    marginLeft: Spacing.base,
     flex: 1,
   },
   dangerItemTitle: {
-    fontSize: 17,
+    fontSize: 15,
     fontWeight: '600',
     color: Colors.error,
-    marginBottom: Spacing.xs,
-    letterSpacing: 0.2,
+    marginBottom: 2,
   },
   dangerItemDescription: {
-    ...Typography.body,
-    color: PROFILE_COLORS.text.secondary,
-    lineHeight: 20,
+    fontSize: 12,
+    color: '#9AA7B2',
+    lineHeight: 18,
   },
-  bottomSpace: {
-    height: 40,
+
+  // ── Bottom Save Button ─────────────────────────────────────────────────────
+  bottomSaveWrapper: {
+    marginTop: 4,
+    marginBottom: 8,
+    borderRadius: 16,
+    overflow: 'hidden',
+    shadowColor: PROFILE_COLORS.primaryDark,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 6,
   },
-  // Gender selector styles
-  genderSelector: {
+  bottomSaveButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    backgroundColor: Colors.background.primary,
-    borderRadius: BorderRadius.md,
-    paddingHorizontal: Spacing.base,
-    paddingVertical: 14,
-    borderWidth: 1,
-    borderColor: Colors.border.default,
-    marginTop: Spacing.sm,
+    justifyContent: 'center',
+    paddingVertical: 17,
+    paddingHorizontal: 24,
+    borderRadius: 16,
   },
-  genderText: {
-    ...Typography.bodyLarge,
-    color: Colors.text.primary,
+  bottomSaveText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: 'white',
+    letterSpacing: 0.3,
   },
-  placeholderText: {
-    color: Colors.text.tertiary,
+
+  bottomSpace: {
+    height: 30,
   },
-  // Modal styles
+
+  // ── Gender Modal ──────────────────────────────────────────────────────────
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    backgroundColor: 'rgba(0,0,0,0.45)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    maxHeight: '50%',
+    backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '55%',
     paddingBottom: Spacing.lg,
+  },
+  modalHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#E2E8F0',
+    alignSelf: 'center',
+    marginTop: 12,
+    marginBottom: 4,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.base,
+    paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: '#F0F2F5',
   },
   modalTitle: {
-    ...Typography.h4,
-    fontWeight: '600',
-    color: Colors.text.primary,
+    fontSize: 17,
+    fontWeight: '700',
+    color: PROFILE_COLORS.primaryDark,
+  },
+  modalCloseButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#F0F2F5',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   genderOption: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.base,
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.neutral[100],
+    borderBottomColor: '#F7F8FA',
   },
   selectedGenderOption: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: `${PROFILE_COLORS.gold}15`,
   },
   genderOptionText: {
-    ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    fontSize: 16,
+    color: PROFILE_COLORS.primaryDark,
+    fontWeight: '500',
   },
   selectedGenderOptionText: {
-    color: PROFILE_COLORS.gold,
-    fontWeight: '600',
-  },
-  photoContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: Spacing.md,
-  },
-  photoWrapper: {
-    position: 'relative',
-    marginRight: Spacing.lg,
-  },
-  photoCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    overflow: 'hidden',
-    backgroundColor: PROFILE_COLORS.gold,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 5,
-  },
-  photoImage: {
-    width: '100%',
-    height: '100%',
-  },
-  photoPlaceholder: {
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  photoInitials: {
-    fontSize: 36,
+    color: PROFILE_COLORS.primaryDark,
     fontWeight: '700',
-    color: Colors.text.inverse,
-  },
-  uploadingOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cameraIconContainer: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: PROFILE_COLORS.gold,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 3,
-    borderColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
-  },
-  photoTextContainer: {
-    flex: 1,
-  },
-  photoText: {
-    ...Typography.bodyLarge,
-    fontWeight: '600',
-    color: PROFILE_COLORS.text,
-    marginBottom: Spacing.xs,
-  },
-  photoSubtext: {
-    ...Typography.bodySmall,
-    color: PROFILE_COLORS.text.secondary,
   },
 });
+
 export default withErrorBoundary(ProfileEditPage, 'ProfileEdit');

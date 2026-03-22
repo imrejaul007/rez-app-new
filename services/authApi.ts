@@ -419,7 +419,7 @@ class AuthService {
 
       // Validate response
       if (response.success && response.data) {
-        if (!validateUser(response.data).valid) {
+        if (!response.data.id && !response.data._id) {
           devLog.error('[AUTH API] Invalid user data in profile response');
           return {
             success: false,
@@ -479,7 +479,7 @@ class AuthService {
 
       // Validate response
       if (response.success && response.data) {
-        if (!validateUser(response.data).valid) {
+        if (!response.data.id && !response.data._id) {
           devLog.error('[AUTH API] Invalid user data in update response');
           return {
             success: false,
@@ -523,7 +523,7 @@ class AuthService {
 
       // Validate response
       if (response.success && response.data) {
-        if (!validateUser(response.data).valid) {
+        if (!response.data.id && !response.data._id) {
           devLog.error('[AUTH API] Invalid user data in onboarding response');
           return {
             success: false,
