@@ -59,34 +59,15 @@ export default function TrialDetailScreen() {
   useEffect(() => {
     const loadTrialDetails = async () => {
       try {
-        // Mock trial data - in real app, fetch from API
-        setTrial({
-          id: trialId || '',
-          title: 'Premium Coffee Experience',
-          category: 'F&B',
-          merchant: {
-            id: 'merchant-1',
-            name: 'Blue Bottle Coffee',
-            image: 'https://via.placeholder.com/40',
-          },
-          images: [
-            'https://via.placeholder.com/400x300?text=Coffee+1',
-            'https://via.placeholder.com/400x300?text=Coffee+2',
-            'https://via.placeholder.com/400x300?text=Coffee+3',
-          ],
-          description: 'Experience our signature cold brew and seasonal espresso drinks in a curated setting.',
-          terms: 'Valid for 2 beverages. Cannot be combined with other offers. Valid 7 days a week.',
-          coinPrice: 30,
-          commitmentFee: 19,
-          originalPrice: 150,
-          validDuration: '30 minutes after booking',
-          rewards: {
-            coinsEarned: 50,
-            brandedCoinsEarned: 20,
-          },
-          rating: 4.8,
-          ratingCount: 234,
-        });
+        // Fetch trial details from API - removed mock data
+        if (!trialId) {
+          setLoading(false);
+          return;
+        }
+
+        // TODO: Implement API call to fetch trial details by trialId
+        // const trialDetails = await tryApi.getTrialDetails(trialId);
+        // setTrial(trialDetails);
 
         // Fetch coin balance
         const coinsData = await tryApi.getCoins();
@@ -120,15 +101,19 @@ export default function TrialDetailScreen() {
     setBookingModal(prev => ({ ...prev, loading: true, error: undefined }));
 
     try {
-      // Mock payment - in real app, integrate with Razorpay
+      // TODO: In production, integrate with Razorpay for commitment fee payment
+      // The commitment fee payment step should happen before this call
+      // For now, using mock payment ID - implement actual payment gateway integration
       const bookingResponse = await tryApi.bookTrial({
         trialId: trial.id,
         commitmentFeePaymentId: 'mock_payment_' + Date.now(),
-        userGeo: { lat: 0, lng: 0 }, // Should get actual location
+        userGeo: { lat: 12.9716, lng: 77.5946 }, // Default Bangalore coords - should get actual location from locationService
       });
 
       setBookingModal({ visible: false, loading: false });
-      router.push(`/try/booking/${bookingResponse.data.bookingId}`);
+      if (bookingResponse.data?.bookingId) {
+        router.push(`/try/booking/${bookingResponse.data.bookingId}`);
+      }
     } catch (err) {
       setBookingModal(prev => ({
         ...prev,

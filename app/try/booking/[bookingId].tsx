@@ -35,20 +35,26 @@ export default function QRDisplayScreen() {
   const [qrSize] = useState(250);
 
   useEffect(() => {
-    // Mock booking data - in real app, fetch from API
+    // TODO: Fetch booking details from API
+    // Removed mock booking data - implement API call to fetch by bookingId
+    // const booking = await tryApi.getBookingDetails(bookingId);
+
+    if (!bookingId) {
+      setLoading(false);
+      return;
+    }
+
+    // Placeholder for loading state
     const mockBooking: BookingDetails = {
       bookingId: bookingId || '',
-      trialTitle: 'Premium Coffee Experience',
-      merchantName: 'Blue Bottle Coffee',
-      qrToken: `trial_${bookingId}_${Math.random().toString(36).substr(2, 9)}`,
-      qrExpiresAt: new Date(Date.now() + 30 * 60_000).toISOString(),
-      validUntil: new Date(Date.now() + 30 * 60_000).toISOString(),
+      trialTitle: '',
+      merchantName: '',
+      qrToken: '',
+      qrExpiresAt: new Date().toISOString(),
+      validUntil: new Date().toISOString(),
       status: 'active',
       createdAt: new Date().toISOString(),
     };
-
-    setBooking(mockBooking);
-    setLoading(false);
 
     // Start countdown timer
     const interval = setInterval(() => {
