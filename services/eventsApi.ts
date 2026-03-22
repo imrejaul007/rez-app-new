@@ -134,7 +134,7 @@ class EventsApiService {
 
   constructor() {
     // Use environment variable or default to localhost
-    this.baseUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api';
+    this.baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
   }
 
   /**

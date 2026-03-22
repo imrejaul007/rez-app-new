@@ -370,7 +370,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
     });
 
     try {
-      await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api'}/offers/homepage-deals-section/track-impression`, {
+      await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api'}/offers/homepage-deals-section/track-impression`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemIds, tabType }),
@@ -385,7 +385,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
     if (!itemId) return;
 
     try {
-      await fetch(`${process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api'}/offers/homepage-deals-section/track-click`, {
+      await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api'}/offers/homepage-deals-section/track-click`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ itemId, tabType }),

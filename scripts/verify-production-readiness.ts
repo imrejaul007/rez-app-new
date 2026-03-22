@@ -15,7 +15,7 @@ import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api';
+const API_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
 
 interface VerificationResult {
   category: string;
@@ -271,7 +271,7 @@ function checkEnvironmentConfig() {
   console.log('\n🔍 Checking Environment Configuration...\n');
 
   const requiredEnvVars = [
-    'EXPO_PUBLIC_API_URL',
+    'EXPO_PUBLIC_API_BASE_URL',
     'EXPO_PUBLIC_RAZORPAY_KEY_ID',
   ];
 

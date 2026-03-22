@@ -31,7 +31,7 @@ const devLog = {
 
 // API Configuration
 const API_CONFIG: ApiConfig = {
-  baseUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api',
+  baseUrl: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api',
   timeout: 10000,
   retryAttempts: 3,
   retryDelay: 1000,

@@ -316,7 +316,7 @@ export function normalizeImageUrl(url: string, size?: 'small' | 'medium' | 'larg
   }
 
   // Otherwise, assume relative path
-  const baseUrl = process.env.EXPO_PUBLIC_API_URL || 'https://api.rez-app.com';
+  const baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://api.rez-app.com';
   return `${baseUrl}${url.startsWith('/') ? '' : '/'}${url}`;
 }
 

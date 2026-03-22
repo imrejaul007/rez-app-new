@@ -5,7 +5,7 @@
 
 import { getAuthToken } from '@/utils/authStorage';
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api';
+const API_BASE_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
 
 // Region getter - will be set by RegionContext
 let getRegionFn: (() => string) | null = null;

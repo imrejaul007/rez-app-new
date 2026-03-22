@@ -10,7 +10,7 @@ const isDevelopment = process.env.NODE_ENV === 'development';
 // Backend API configuration
 const API_CONFIG = {
   // Base URL for backend API
-  BASE_URL: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api',
+  BASE_URL: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api',
 
   // WebSocket URL for real-time features
   SOCKET_URL: process.env.EXPO_PUBLIC_SOCKET_URL || 'ws://localhost:5001',

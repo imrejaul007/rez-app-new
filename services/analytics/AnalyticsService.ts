@@ -95,7 +95,7 @@ export class AnalyticsService {
         case 'custom':
           provider = new CustomAnalyticsProvider();
           await provider.initialize({
-            apiUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api',
+            apiUrl: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api',
             ...providerConfig.config,
           });
           break;

@@ -134,7 +134,7 @@ export class AnalyticsQueue {
    * Send single event
    */
   private async sendEvent(event: QueuedEvent): Promise<void> {
-    const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:5001/api';
+    const apiUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
 
     const response = await fetch(`${apiUrl}/analytics/events`, {
       method: 'POST',
