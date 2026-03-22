@@ -157,12 +157,17 @@ export const useHomeTabStore = create<HomeTabState>((set) => ({
   },
 
   loadPersistedTab: () => {
-    const validTabs = ['near-u', 'mall', 'cash', 'prive'];
+    // Only restore tabs the user explicitly chose — never restore 'mall' because
+    // the old auto-switch bug may have persisted it incorrectly. Always start on near-u.
+    const allowPersisted: TabId[] = ['near-u', 'cash'];
 
     if (Platform.OS === 'web' && typeof window !== 'undefined' && window.localStorage) {
       try {
         const storedTab = window.localStorage.getItem(TAB_STORAGE_KEY);
-        if (storedTab && validTabs.includes(storedTab)) {
+        // Clear any stale 'mall' or 'prive' persisted by old auto-switch logic
+        if (storedTab && !allowPersisted.includes(storedTab as TabId)) {
+          window.localStorage.removeItem(TAB_STORAGE_KEY);
+        } else if (storedTab && allowPersisted.includes(storedTab as TabId)) {
           const tab = storedTab as TabId;
           set({
             activeTab: tab,
@@ -181,7 +186,10 @@ export const useHomeTabStore = create<HomeTabState>((set) => ({
     }
 
     AsyncStorage.getItem(TAB_STORAGE_KEY).then(storedTab => {
-      if (storedTab && validTabs.includes(storedTab)) {
+      if (storedTab && !allowPersisted.includes(storedTab as TabId)) {
+        // Clear stale value set by the old buggy auto-switch
+        AsyncStorage.removeItem(TAB_STORAGE_KEY).catch(() => {});
+      } else if (storedTab && allowPersisted.includes(storedTab as TabId)) {
         const tab = storedTab as TabId;
         set({
           activeTab: tab,
