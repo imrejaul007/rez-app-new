@@ -1,7 +1,7 @@
 // MainStorePage.tsx - Orchestrator component for store page
 // All data fetching & state management lives in useMainStorePageData hook.
 // All section rendering is delegated to extracted components.
-import React, { useMemo, useRef, useState, useEffect } from "react";
+import React, { useMemo, useRef, useState, useEffect, useCallback } from "react";
 import {
   Platform,
   RefreshControl,
@@ -10,7 +10,8 @@ import {
   Pressable,
   View,
   NativeSyntheticEvent,
-  NativeScrollEvent} from "react-native";
+  NativeScrollEvent,
+  Linking} from "react-native";
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -69,6 +70,29 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     return Math.max(32, (d.screenData.width - 1200) / 2);
   })();
   const MAX_CONTENT_WIDTH = isDesktop ? 1200 : undefined;
+
+  // Scroll view ref for programmatic scrolling (e.g. jump-to-menu)
+  const scrollViewRef = useRef<any>(null);
+
+  // ── Food ordering handlers ────────────────────────────────────
+  const handleOrderFood = useCallback(() => {
+    // Switch to the menu tab and scroll to top
+    d.handleTabChange('menu');
+    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+  }, [d]);
+
+  const handleBookTable = useCallback(() => {
+    router.push(
+      `/MainCategory/food-dining/book-table?storeId=${d.currentStoreId}&storeName=${encodeURIComponent(d.currentStoreName || '')}` as any
+    );
+  }, [router, d.currentStoreId, d.currentStoreName]);
+
+  const handleCallStore = useCallback(() => {
+    const phone = (d.storeData as any)?.contact?.phone || (d.storeData as any)?.phone;
+    if (phone) {
+      Linking.openURL(`tel:${phone}`).catch(() => {});
+    }
+  }, [d.storeData]);
 
   // Sticky tab navigation state
   const scrollY = useSharedValue(0);
@@ -152,6 +176,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
       />
 
       <Animated.ScrollView
+        ref={scrollViewRef}
         showsVerticalScrollIndicator={false}
         scrollEventThrottle={16}
         onScroll={(event: NativeSyntheticEvent<NativeScrollEvent>) => {
@@ -438,7 +463,13 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
       {/* Bottom Action Bar */}
       <StoreBottomActionBar
         storeId={d.currentStoreId}
+        storeName={d.currentStoreName || ""}
+        storePhone={(d.storeData as any)?.contact?.phone || (d.storeData as any)?.phone}
+        storeCategory={d.storeData?.category || d.productData.category}
         onScanPayEarn={() => router.push({ pathname: "/pay-in-store/enter-amount", params: { storeId: d.currentStoreId, storeName: d.currentStoreName || "", storeLogo: d.currentStoreLogo } } as any)}
+        onOrderFood={handleOrderFood}
+        onBookTable={handleBookTable}
+        onCallStore={handleCallStore}
       />
     </ThemedView>
   );

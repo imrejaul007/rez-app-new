@@ -643,6 +643,12 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
       { id: 'spa', label: 'Spa', icon: 'leaf-outline', sortOrder: 2, enabled: true, serviceFilter: 'spa' },
       { id: 'barber', label: 'Barber', icon: 'cut-outline', sortOrder: 3, enabled: true, serviceFilter: 'barber' },
     ],
+    'fashion': [
+      { id: 'all', label: 'All', icon: 'grid-outline', sortOrder: 0, enabled: true },
+      { id: 'men', label: 'Men', icon: 'shirt-outline', sortOrder: 1, enabled: true, serviceFilter: 'men' },
+      { id: 'women', label: 'Women', icon: 'rose-outline', sortOrder: 2, enabled: true, serviceFilter: 'women' },
+      { id: 'accessories', label: 'Accessories', icon: 'diamond-outline', sortOrder: 3, enabled: true, serviceFilter: 'accessories' },
+    ],
   };
 
   // Per-category fallback sections when backend returns empty
@@ -652,6 +658,12 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
       { id: 'browse-grid', type: 'browse-grid', title: 'Browse Categories', sortOrder: 1, enabled: true },
       { id: 'stores-list', type: 'stores-list', title: 'Beauty & Wellness Near You', sortOrder: 2, enabled: true },
       { id: 'ugc-social', type: 'ugc-social', title: 'Real Reviews', subtitle: 'See what others are saying', sortOrder: 3, enabled: true },
+    ],
+    'fashion': [
+      { id: 'ai-search', type: 'ai-search', title: 'Find Fashion & Apparel', sortOrder: 0, enabled: true },
+      { id: 'browse-grid', type: 'browse-grid', title: 'Browse Categories', sortOrder: 1, enabled: true },
+      { id: 'stores-list', type: 'stores-list', title: 'Fashion Stores Near You', sortOrder: 2, enabled: true },
+      { id: 'ugc-social', type: 'ugc-social', title: 'Style Inspiration', subtitle: 'See what others are wearing', sortOrder: 3, enabled: true },
     ],
   };
 
@@ -680,6 +692,13 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
       { id: 'top-rated', label: 'Top Rated', icon: 'star-outline', route: `/MainCategory/beauty-wellness/top-rated`, sortOrder: 2, enabled: true },
       { id: 'stories', label: 'Stories', icon: 'images-outline', route: `/MainCategory/beauty-wellness/beauty-stories`, sortOrder: 3, enabled: true },
       { id: 'loyalty', label: 'Loyalty', icon: 'trophy-outline', route: `/MainCategory/beauty-wellness/loyalty`, sortOrder: 4, enabled: true },
+    ],
+    'fashion': [
+      { id: 'try-buy', label: 'Try & Buy', icon: 'bag-handle-outline', route: `/MainCategory/fashion/try-and-buy`, sortOrder: 0, enabled: true },
+      { id: 'offers', label: 'Offers', icon: 'pricetag-outline', route: `/MainCategory/fashion/offers`, sortOrder: 1, enabled: true },
+      { id: 'top-rated', label: 'Top Rated', icon: 'star-outline', route: `/MainCategory/fashion/top-rated`, sortOrder: 2, enabled: true },
+      { id: 'stories', label: 'Stories', icon: 'images-outline', route: `/MainCategory/fashion/fashion-stories`, sortOrder: 3, enabled: true },
+      { id: 'loyalty', label: 'Loyalty', icon: 'trophy-outline', route: `/MainCategory/fashion/loyalty`, sortOrder: 4, enabled: true },
     ],
   };
 
