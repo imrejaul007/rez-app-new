@@ -301,7 +301,8 @@ function HomeScreen() {
   // Get current location hook for editable location
   const { currentLocation, updateLocation: updateUserLocation } = useCurrentLocation();
 
-  // Serviceability check — auto-switch to Mall if no local stores nearby
+  // Serviceability check — show Coming Soon banner if no local stores nearby
+  // NOTE: never auto-switch; let user stay on Near U and choose manually via the banner
   const [isAreaServiceable, setIsAreaServiceable] = React.useState(true);
   const [serviceabilityChecked, setServiceabilityChecked] = React.useState(false);
 
@@ -315,14 +316,10 @@ function HomeScreen() {
       checkAreaServiceability(lat, lng).then(result => {
         setIsAreaServiceable(result.isServiceable);
         setServiceabilityChecked(true);
-
-        // Auto-switch to Mall if area is not serviceable AND user is on Near U
-        if (!result.isServiceable && activeTab === 'near-u') {
-          setActiveTab('mall');
-        }
+        // No auto-switch — unserviceable areas see a banner with "Mall →" CTA instead
       });
     });
-  }, [currentLocation?.coordinates?.latitude, currentLocation?.coordinates?.longitude, activeTab, setActiveTab]);
+  }, [currentLocation?.coordinates?.latitude, currentLocation?.coordinates?.longitude]);
 
   // Get recently viewed items
   const { items: recentlyViewedItems, isLoading: isLoadingRecentlyViewed, refresh: refreshRecentlyViewed } = useRecentlyViewed();
