@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
@@ -123,7 +124,7 @@ export default function CoinsScreen() {
 
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Coin Balance Card */}
-        <View style={styles.balanceCard}>
+        <LinearGradient colors={['#6366f1', '#8b5cf6']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.balanceCard}>
           <View style={styles.coinIconBg}>
             <Ionicons name="sparkles" size={32} color="#fff" />
           </View>
@@ -132,7 +133,7 @@ export default function CoinsScreen() {
             <Text style={styles.balanceAmount}>{coinBalance}</Text>
             <Text style={styles.balanceSubtext}>≈ ₹{Math.floor(coinBalance * 0.5)}</Text>
           </View>
-        </View>
+        </LinearGradient>
 
         {/* Expiring Coins Alert */}
         {expiringCoins > 0 && (
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
   backBtn: { marginRight: 12 },
   title: { fontSize: 18, fontWeight: '600', color: '#1a1a1a' },
   content: { padding: 16, gap: 16 },
-  balanceCard: { backgroundColor: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)', borderRadius: 16, padding: 20, flexDirection: 'row', alignItems: 'center', gap: 16, overflow: 'hidden' },
+  balanceCard: { borderRadius: 16, padding: 20, flexDirection: 'row', alignItems: 'center', gap: 16, overflow: 'hidden' },
   coinIconBg: { width: 64, height: 64, borderRadius: 32, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
   balanceInfo: { flex: 1 },
   balanceLabel: { fontSize: 14, color: 'rgba(255,255,255,0.8)' },
