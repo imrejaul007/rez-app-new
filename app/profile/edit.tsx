@@ -486,7 +486,7 @@ function ProfileEditPage() {
 
           <View style={styles.headerUserInfo}>
             <ThemedText style={styles.headerUserName}>
-              {user?.name || 'Your Name'}
+              {formData.name || user?.name || ''}
             </ThemedText>
             <ThemedText style={styles.headerUserSub}>
               {uploadingImage ? 'Uploading photo...' : 'Tap photo to change'}

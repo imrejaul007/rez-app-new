@@ -38,13 +38,43 @@ import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert
 import { getReferralStats } from '@/services/referralApi';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import authService from '@/services/authApi';
 
 function ProfilePage() {
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const { goBack, canGoBack } = useSafeNavigation();
-  const { user, completionStatus, refreshCompletionStatus } = useProfile();
+  const { user: contextUser, completionStatus, refreshCompletionStatus } = useProfile();
+
+  // Fetch real user data directly from API to avoid stale cache
+  const [liveUserData, setLiveUserData] = useState<{ name: string; email: string; avatar?: string | null; initials: string } | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    authService.getProfile().then(res => {
+      if (cancelled || !res.success || !res.data) return;
+      const d = res.data as any;
+      const fn = d.profile?.firstName || '';
+      const ln = d.profile?.lastName || '';
+      const name = fn && ln ? `${fn} ${ln}` : fn || d.name || d.email?.split('@')[0] || '';
+      setLiveUserData({
+        name,
+        email: d.email || '',
+        avatar: d.profile?.avatar,
+        initials: fn ? (fn.charAt(0) + (ln?.charAt(0) || '')).toUpperCase() : 'U',
+      });
+    }).catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  // Merge live API data over context user
+  const user = contextUser ? {
+    ...contextUser,
+    name: liveUserData?.name || contextUser.name,
+    email: liveUserData?.email || contextUser.email,
+    avatar: liveUserData?.avatar !== undefined ? liveUserData.avatar : contextUser.avatar,
+    initials: liveUserData?.initials || contextUser.initials,
+  } : null;
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
   const authActions = useAuthActions();
@@ -554,10 +584,10 @@ function ProfilePage() {
 
             <View style={styles.userInfo}>
               <ThemedText style={styles.userName}>
-                {user?.name || 'User Name'}
+                {user?.name || ''}
               </ThemedText>
               <ThemedText style={styles.userEmail}>
-                {user?.email || 'user@example.com'}
+                {user?.email || ''}
               </ThemedText>
 
               {user?.isVerified && (
