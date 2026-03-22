@@ -179,12 +179,12 @@ const ExperienceDetailPage: React.FC = () => {
         )}
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.iconButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+            <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
 
           {isSearchActive ? (
             <View style={styles.searchBarContainer}>
-              <Ionicons name="search" size={18} color={Colors.neutral[400]} />
+              <Ionicons name="search" size={18} color={colors.neutral[400]} />
               <TextInput
                 style={styles.searchInput}
                 placeholder="Search stores..."
@@ -198,7 +198,7 @@ const ExperienceDetailPage: React.FC = () => {
           )}
 
           <Pressable onPress={() => setIsSearchActive(!isSearchActive)} style={styles.iconButton}>
-            <Ionicons name={isSearchActive ? "close" : "search"} size={24} color={Colors.nileBlue} />
+            <Ionicons name={isSearchActive ? "close" : "search"} size={24} color={colors.nileBlue} />
           </Pressable>
         </View>
       </View>
@@ -302,7 +302,7 @@ const ExperienceDetailPage: React.FC = () => {
           <View style={styles.storesList}>
             {filteredStores.length === 0 ? (
               <View style={styles.emptyState}>
-                <Ionicons name="storefront-outline" size={48} color={Colors.border.default} />
+                <Ionicons name="storefront-outline" size={48} color={colors.border.default} />
                 <Text style={styles.emptyText}>No stores found matching your criteria</Text>
               </View>
             ) : (
@@ -325,13 +325,13 @@ const ExperienceDetailPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     position: 'absolute',
@@ -382,7 +382,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: 8,
     fontSize: 16,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   heroSection: {
     paddingTop: Platform.OS === 'web' ? 70 : Platform.OS === 'ios' ? 110 : 100, // Space for floating header
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
     textAlign: 'center',
   },
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
     bottom: -30,
     left: 20,
     right: 20,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     flexDirection: 'row',
     paddingVertical: Spacing.base,
@@ -453,18 +453,18 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 18,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   statLabel: {
     fontSize: 12,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     fontWeight: '500',
     marginTop: 2,
   },
   statDivider: {
     width: 1,
     height: 24,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   contentContainer: {
     paddingHorizontal: Spacing.base,
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   benefitsGrid: {
     flexDirection: 'row',
@@ -487,17 +487,17 @@ const styles = StyleSheet.create({
   },
   benefitCard: {
     width: '48%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.neutral[100],
+    borderColor: colors.neutral[100],
   },
   benefitText: {
     fontSize: 13,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '500',
     flex: 1,
   },
@@ -509,23 +509,23 @@ const styles = StyleSheet.create({
   filterChip: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 100,
     marginRight: 10,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   filterChipActive: {
-    backgroundColor: Colors.nileBlue,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue,
   },
   filterText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   filterTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storesList: {
     gap: Spacing.base,
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   emptyText: {
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
     marginTop: Spacing.md,
     fontSize: 16,
   },
