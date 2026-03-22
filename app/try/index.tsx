@@ -234,6 +234,56 @@ export default function TryFeedScreen() {
         ListEmptyComponent={loading ? null : <EmptyState />}
         scrollEnabled={true}
         showsVerticalScrollIndicator={true}
+        ListHeaderComponent={
+          <>
+            {/* Navigation Chips */}
+            <View style={styles.navigationChips}>
+              <Pressable
+                style={styles.navChip}
+                onPress={() => router.push('/try/leaderboard')}
+              >
+                <Text style={styles.navChipText}>🏆 Leaderboard</Text>
+              </Pressable>
+              <Pressable
+                style={styles.navChip}
+                onPress={() => router.push('/try/missions')}
+              >
+                <Text style={styles.navChipText}>📋 Missions</Text>
+              </Pressable>
+              <Pressable
+                style={styles.navChip}
+                onPress={() => router.push('/try/surprise')}
+              >
+                <Text style={styles.navChipText}>🎁 Surprise</Text>
+              </Pressable>
+              <Pressable
+                style={styles.navChip}
+                onPress={() => router.push('/try/bundles')}
+              >
+                <Text style={styles.navChipText}>🎫 Passes</Text>
+              </Pressable>
+            </View>
+
+            {/* Campaign Banner */}
+            {trials.length > 0 && (
+              <View style={styles.campaignBanner}>
+                <View style={styles.campaignContent}>
+                  <Text style={styles.campaignEmoji}>🔥</Text>
+                  <View style={styles.campaignTextSection}>
+                    <Text style={styles.campaignTitle}>Active Campaign</Text>
+                    <Text style={styles.campaignDesc}>Join the category push</Text>
+                  </View>
+                </View>
+                <Pressable
+                  style={styles.campaignButton}
+                  onPress={() => router.push('/try/campaigns')}
+                >
+                  <Text style={styles.campaignButtonText}>Join</Text>
+                </Pressable>
+              </View>
+            )}
+          </>
+        }
       />
 
       {/* Loading State */}
@@ -289,6 +339,71 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     gap: spacing.md,
+  },
+  navigationChips: {
+    flexDirection: 'row',
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
+    paddingBottom: spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+  },
+  navChip: {
+    backgroundColor: colors.brand.purple,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.lg,
+    flex: 1,
+    alignItems: 'center',
+  },
+  navChipText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  campaignBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.warningScale[50],
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    gap: spacing.md,
+    marginBottom: spacing.lg,
+    borderWidth: 1,
+    borderColor: colors.warningScale[200],
+  },
+  campaignContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+  },
+  campaignEmoji: {
+    fontSize: 24,
+  },
+  campaignTextSection: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  campaignTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.text.primary,
+  },
+  campaignDesc: {
+    fontSize: 11,
+    color: colors.text.secondary,
+  },
+  campaignButton: {
+    backgroundColor: colors.warningScale[500],
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.md,
+  },
+  campaignButtonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#fff',
   },
   card: {
     borderRadius: borderRadius.lg,

@@ -250,6 +250,47 @@ export default function QRDisplayScreen() {
 
       {/* Bottom Action */}
       <View style={styles.bottomActions}>
+        {!isExpired && booking.status === 'completed' && (
+          <>
+            {/* Cross-Integration CTAs */}
+            <Pressable
+              style={styles.ctaCard}
+              onPress={() => router.push(`/near-u/${booking.merchantName?.toLowerCase().replace(/\s/g, '-') || 'merchant'}`)}
+            >
+              <Ionicons name="storefront" size={20} color={colors.brand.purple} />
+              <View style={styles.ctaContent}>
+                <Text style={styles.ctaTitle}>Visit Again</Text>
+                <Text style={styles.ctaSubtitle}>See more from this merchant</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.text.secondary} />
+            </Pressable>
+
+            <Pressable
+              style={styles.ctaCard}
+              onPress={() => router.push('/wallet/cashback')}
+            >
+              <Ionicons name="cash" size={20} color={colors.successScale[500]} />
+              <View style={styles.ctaContent}>
+                <Text style={styles.ctaTitle}>Earn Cashback</Text>
+                <Text style={styles.ctaSubtitle}>Redeem your trial rewards</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.text.secondary} />
+            </Pressable>
+
+            <Pressable
+              style={styles.ctaCard}
+              onPress={() => router.push('/shop')}
+            >
+              <Ionicons name="bag" size={20} color={colors.brand.orange} />
+              <View style={styles.ctaContent}>
+                <Text style={styles.ctaTitle}>Shop Products</Text>
+                <Text style={styles.ctaSubtitle}>Browse related items</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color={colors.text.secondary} />
+            </Pressable>
+          </>
+        )}
+
         {!isExpired && (
           <Pressable
             style={styles.shareButton}
@@ -493,6 +534,30 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.md,
     borderTopWidth: 1,
     borderTopColor: colors.border.default,
+  },
+  ctaCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
+  ctaContent: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  ctaTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.text.primary,
+  },
+  ctaSubtitle: {
+    fontSize: 11,
+    color: colors.text.secondary,
   },
   shareButton: {
     flexDirection: 'row',

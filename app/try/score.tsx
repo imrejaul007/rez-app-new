@@ -260,6 +260,60 @@ export default function ExplorerScoreScreen() {
           </View>
         )}
 
+        {/* My Badges Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>My Badges</Text>
+            <Pressable onPress={() => router.push('/try/badges')}>
+              <Text style={styles.viewAllLink}>View All →</Text>
+            </Pressable>
+          </View>
+          <View style={styles.badgesPreview}>
+            {[...Array(3)].map((_, i) => (
+              <View key={i} style={styles.badgeChip}>
+                <Text style={styles.badgeEmoji}>🥇</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+
+        {/* This Week's Mission */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeaderRow}>
+            <Text style={styles.sectionTitle}>This Week's Mission</Text>
+            <Pressable onPress={() => router.push('/try/missions')}>
+              <Text style={styles.viewAllLink}>View All →</Text>
+            </Pressable>
+          </View>
+          <View style={styles.missionCard}>
+            <View style={styles.missionHeader}>
+              <Text style={styles.missionTitle} numberOfLines={1}>Try 3 cafes this weekend</Text>
+              <Text style={styles.missionReward}>+200 🪙</Text>
+            </View>
+            <View style={styles.missionProgress}>
+              <View style={styles.missionProgressBar}>
+                <View style={[styles.missionProgressFill, { width: '66%' }]} />
+              </View>
+              <Text style={styles.missionProgressText}>2 / 3 completed</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Weekly Surprise */}
+        <View style={styles.section}>
+          <Pressable
+            style={styles.surpriseCard}
+            onPress={() => router.push('/try/surprise')}
+          >
+            <Text style={styles.surpriseEmoji}>🎁</Text>
+            <View style={styles.surpriseContent}>
+              <Text style={styles.surpriseLabel}>Weekly Surprise</Text>
+              <Text style={styles.surpriseText}>Surprise awaits</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.brand.purple} />
+          </Pressable>
+        </View>
+
         {/* Leaderboard Teaser */}
         {scoreData.leaderboardPercentile && (
           <View style={styles.leaderboardCard}>
@@ -272,7 +326,7 @@ export default function ExplorerScoreScreen() {
                 </Text>
               </View>
             </View>
-            <Pressable style={styles.leaderboardButton}>
+            <Pressable style={styles.leaderboardButton} onPress={() => router.push('/try/leaderboard')}>
               <Text style={styles.leaderboardButtonText}>View Leaderboard →</Text>
             </Pressable>
           </View>
@@ -546,6 +600,104 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: colors.text.primary,
+  },
+  sectionHeaderRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: spacing.md,
+  },
+  viewAllLink: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: colors.brand.purple,
+  },
+  badgesPreview: {
+    flexDirection: 'row',
+    gap: spacing.md,
+  },
+  badgeChip: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.tint.purple,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: colors.brand.purple,
+  },
+  badgeEmoji: {
+    fontSize: 20,
+  },
+  missionCard: {
+    backgroundColor: colors.background.secondary,
+    borderRadius: borderRadius.lg,
+    padding: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    gap: spacing.md,
+  },
+  missionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  missionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text.primary,
+    flex: 1,
+  },
+  missionReward: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.brand.purple,
+  },
+  missionProgress: {
+    gap: spacing.sm,
+  },
+  missionProgressBar: {
+    height: 6,
+    backgroundColor: colors.border.default,
+    borderRadius: borderRadius.sm,
+    overflow: 'hidden',
+  },
+  missionProgressFill: {
+    height: '100%',
+    backgroundColor: colors.warningScale[500],
+    borderRadius: borderRadius.sm,
+  },
+  missionProgressText: {
+    fontSize: 11,
+    color: colors.text.secondary,
+    fontWeight: '500',
+  },
+  surpriseCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md,
+    backgroundColor: colors.tint.purple,
+    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    borderWidth: 1,
+    borderColor: colors.brand.purpleLight,
+  },
+  surpriseEmoji: {
+    fontSize: 24,
+  },
+  surpriseContent: {
+    flex: 1,
+    gap: spacing.xs,
+  },
+  surpriseLabel: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.text.primary,
+  },
+  surpriseText: {
+    fontSize: 12,
+    color: colors.text.secondary,
   },
   loadingContainer: {
     flex: 1,
