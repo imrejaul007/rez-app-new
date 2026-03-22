@@ -1,6 +1,7 @@
 /**
  * EventGridCard Component
- * Compact event card for 2-column grid layout
+ * Upgraded event card: large 200px image, gradient overlay, price badge (top-right),
+ * category pill (top-left), "Book Now" CTA, coins reward indicator.
  */
 
 import React, { memo, useCallback, useMemo } from 'react';
@@ -11,16 +12,18 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { EventItem } from '@/types/homepage.types';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
+import { Colors, BorderRadius, Spacing, Typography } from '@/constants/DesignSystem';
 
 const { width: screenWidth } = Dimensions.get('window');
-const CARD_WIDTH = (screenWidth - 48) / 2; // 16px padding on each side + 16px gap
-const CARD_IMAGE_HEIGHT = CARD_WIDTH * 0.75; // 4:3 aspect ratio
+const CARD_WIDTH = (screenWidth - 48) / 2; // 16px padding each side + 16px gap
+const CARD_IMAGE_HEIGHT = 200;
 
 interface EventGridCardProps {
   event: EventItem;
@@ -48,11 +51,9 @@ const EventGridCard: React.FC<EventGridCardProps> = ({ event, onPress }) => {
     }
   }, [event.date]);
 
-  // Format price - for online events, use regional currency
+  // Format price
   const priceDisplay = useMemo(() => {
-    if (event.price?.isFree) {
-      return 'Free';
-    }
+    if (event.price?.isFree) return 'Free';
     const isOnline = (event as any).isOnline || (event.location as any)?.isOnline;
     const displayCurrency = isOnline ? currencySymbol : (event.price?.currency || currencySymbol);
     return `${displayCurrency}${event.price?.amount || 0}`;
@@ -64,11 +65,10 @@ const EventGridCard: React.FC<EventGridCardProps> = ({ event, onPress }) => {
     <Pressable
       style={styles.container}
       onPress={handlePress}
-     
       accessibilityLabel={`${event.title}, ${formattedDate}, ${priceDisplay}`}
       accessibilityRole="button"
     >
-      {/* Image Container */}
+      {/* Image with gradient overlay */}
       <View style={styles.imageContainer}>
         <CachedImage
           source={event.image}
@@ -76,28 +76,42 @@ const EventGridCard: React.FC<EventGridCardProps> = ({ event, onPress }) => {
           contentFit="cover"
         />
 
-        {/* Category Badge */}
+        {/* Bottom gradient for text legibility */}
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.72)']}
+          style={styles.imageGradient}
+        />
+
+        {/* Category pill — top-left */}
         <View style={styles.categoryBadge}>
-          <ThemedText style={styles.categoryText}>
+          <ThemedText style={styles.categoryText} numberOfLines={1}>
             {event.category}
           </ThemedText>
         </View>
 
-        {/* Online/Venue Badge */}
-        <View
-          style={[
-            styles.typeBadge,
-            event.isOnline ? styles.onlineBadge : styles.venueBadge,
-          ]}
-        >
-          <Ionicons
-            name={event.isOnline ? 'globe-outline' : 'location-outline'}
-            size={10}
-            color={colors.background.primary}
-          />
-          <ThemedText style={styles.typeBadgeText}>
-            {event.isOnline ? 'Online' : 'Venue'}
-          </ThemedText>
+        {/* Price badge — top-right */}
+        <View style={[styles.priceBadge, isFree && styles.priceBadgeFree]}>
+          <ThemedText style={styles.priceText}>{priceDisplay}</ThemedText>
+        </View>
+
+        {/* Date + venue overlaid at bottom of image */}
+        <View style={styles.imageFooter}>
+          <View style={styles.imageMeta}>
+            <Ionicons name="calendar" size={10} color="rgba(255,255,255,0.9)" />
+            <ThemedText style={styles.imageMetaText}>{formattedDate}</ThemedText>
+          </View>
+          {!!event.location && (
+            <View style={styles.imageMeta}>
+              <Ionicons
+                name={(event as any).isOnline ? 'globe' : 'location'}
+                size={10}
+                color="rgba(255,255,255,0.9)"
+              />
+              <ThemedText style={styles.imageMetaText} numberOfLines={1}>
+                {(event as any).isOnline ? 'Online' : (typeof event.location === 'string' ? event.location : 'Venue')}
+              </ThemedText>
+            </View>
+          )}
         </View>
       </View>
 
@@ -108,16 +122,7 @@ const EventGridCard: React.FC<EventGridCardProps> = ({ event, onPress }) => {
           {event.title}
         </ThemedText>
 
-        {/* Date & Time */}
-        <View style={styles.dateRow}>
-          <Ionicons name="calendar-outline" size={12} color={colors.neutral[500]} />
-          <ThemedText style={styles.dateText}>
-            {formattedDate}
-            {event.time && ` • ${event.time}`}
-          </ThemedText>
-        </View>
-
-        {/* Rating Row — only show when rating exists and > 0 */}
+        {/* Rating row */}
         {(event.rating ?? 0) > 0 && (
           <View style={styles.ratingRow}>
             <Ionicons name="star" size={11} color={colors.brand.goldWarm} />
@@ -132,23 +137,26 @@ const EventGridCard: React.FC<EventGridCardProps> = ({ event, onPress }) => {
           </View>
         )}
 
-        {/* Price & Cashback */}
-        <View style={styles.priceRow}>
-          {isFree ? (
-            <View style={styles.freeBadge}>
-              <ThemedText style={styles.freeText}>Free</ThemedText>
-            </View>
-          ) : (
-            <ThemedText style={styles.priceText}>{priceDisplay}</ThemedText>
-          )}
-          {(event.cashback ?? 0) > 0 && (
-            <View style={styles.cashbackBadge}>
-              <ThemedText style={styles.cashbackText}>
-                {event.cashback}% Cashback
-              </ThemedText>
-            </View>
-          )}
-        </View>
+        {/* Cashback / coins row */}
+        {(event.cashback ?? 0) > 0 && (
+          <View style={styles.coinsRow}>
+            <Ionicons name="gift" size={11} color={Colors.gold} />
+            <ThemedText style={styles.coinsText}>
+              {event.cashback}% Cashback
+            </ThemedText>
+          </View>
+        )}
+
+        {/* Book Now CTA */}
+        <Pressable
+          style={styles.bookButton}
+          onPress={handlePress}
+          accessibilityRole="button"
+          accessibilityLabel={`Book ${event.title}`}
+        >
+          <ThemedText style={styles.bookButtonText}>Book Now</ThemedText>
+          <Ionicons name="arrow-forward" size={12} color={Colors.text.inverse} />
+        </Pressable>
       </View>
     </Pressable>
   );
@@ -158,20 +166,20 @@ const styles = StyleSheet.create({
   container: {
     width: CARD_WIDTH,
     backgroundColor: colors.background.primary,
-    borderRadius: 12,
+    borderRadius: 14,
     overflow: 'hidden',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 10,
       },
       android: {
-        elevation: 3,
+        elevation: 5,
       },
       web: {
-        boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.08)',
+        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.12)',
       },
     }),
   },
@@ -185,6 +193,13 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
+  imageGradient: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '60%',
+  },
   categoryBadge: {
     position: 'absolute',
     top: 8,
@@ -192,63 +207,68 @@ const styles = StyleSheet.create({
     backgroundColor: colors.nileBlue,
     paddingHorizontal: 8,
     paddingVertical: 4,
-    borderRadius: 6,
+    borderRadius: 8,
+    maxWidth: '55%',
   },
   categoryText: {
     fontSize: 9,
-    fontWeight: '600',
+    fontWeight: '700',
     color: colors.background.primary,
     textTransform: 'uppercase',
-    letterSpacing: 0.3,
+    letterSpacing: 0.4,
   },
-  typeBadge: {
+  priceBadge: {
     position: 'absolute',
     top: 8,
     right: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 6,
-    paddingVertical: 3,
-    borderRadius: 6,
-    gap: 3,
+    backgroundColor: 'rgba(255,255,255,0.20)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.35)',
   },
-  onlineBadge: {
-    backgroundColor: colors.lightMustard,
+  priceBadgeFree: {
+    backgroundColor: Colors.gold,
+    borderColor: Colors.gold,
   },
-  venueBadge: {
-    backgroundColor: 'rgba(26, 58, 82, 0.7)',
-  },
-  typeBadgeText: {
-    fontSize: 8,
-    fontWeight: '600',
+  priceText: {
+    fontSize: 10,
+    fontWeight: '700',
     color: colors.background.primary,
   },
-  content: {
-    padding: 10,
+  imageFooter: {
+    position: 'absolute',
+    bottom: 8,
+    left: 8,
+    right: 8,
+    gap: 3,
   },
-  title: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: colors.neutral[800],
-    lineHeight: 18,
-    marginBottom: 6,
-  },
-  dateRow: {
+  imageMeta: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginBottom: 6,
   },
-  dateText: {
-    fontSize: 11,
-    color: colors.neutral[500],
+  imageMetaText: {
+    fontSize: 10,
+    color: 'rgba(255,255,255,0.9)',
     fontWeight: '500',
+    flex: 1,
+  },
+  content: {
+    padding: 10,
+    gap: 5,
+  },
+  title: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: colors.neutral[800],
+    lineHeight: 18,
   },
   ratingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginBottom: 6,
   },
   ratingText: {
     fontSize: 11,
@@ -259,38 +279,31 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: colors.neutral[400],
   },
-  priceRow: {
+  coinsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: 6,
+    gap: 4,
   },
-  freeBadge: {
-    backgroundColor: colors.greenMist,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
+  coinsText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: colors.brand.greenDark ?? '#2E7D32',
   },
-  freeText: {
+  bookButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.nileBlue,
+    borderRadius: 8,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    gap: 4,
+    marginTop: 4,
+  },
+  bookButtonText: {
     fontSize: 11,
     fontWeight: '700',
-    color: '#2E7D32',
-  },
-  priceText: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.neutral[800],
-  },
-  cashbackBadge: {
-    backgroundColor: colors.successScale[100],
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 4,
-  },
-  cashbackText: {
-    fontSize: 9,
-    fontWeight: '600',
-    color: colors.brand.greenDark,
+    color: colors.background.primary,
   },
 });
 

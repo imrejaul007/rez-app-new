@@ -34,14 +34,18 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const COLORS = EVENT_COLORS;
 
-// Fallback categories used when backend categories aren't available yet
+// Fallback categories — mirrors backend 10 categories exactly
 const FALLBACK_CATEGORIES = [
-  { slug: 'movies', name: 'Movies', icon: '\uD83C\uDFAC', color: colors.error },
-  { slug: 'concerts', name: 'Concerts', icon: '\uD83C\uDFB5', color: colors.brand.purpleLight },
-  { slug: 'parks', name: 'Parks', icon: '\uD83C\uDFA2', color: colors.successScale[400] },
-  { slug: 'workshops', name: 'Workshops', icon: '\uD83C\uDFA8', color: colors.warningScale[400] },
-  { slug: 'gaming', name: 'Gaming', icon: '\uD83C\uDFAE', color: colors.infoScale[400] },
-  { slug: 'sports', name: 'Sports', icon: '\u26BD', color: colors.error },
+  { slug: 'music', name: 'Music', icon: '🎵', color: colors.brand.purpleLight },
+  { slug: 'tech', name: 'Tech', icon: '💻', color: colors.infoScale[400] },
+  { slug: 'wellness', name: 'Wellness', icon: '🧘', color: colors.successScale[400] },
+  { slug: 'sports', name: 'Sports', icon: '⚽', color: colors.error },
+  { slug: 'education', name: 'Education', icon: '📚', color: colors.warningScale[400] },
+  { slug: 'business', name: 'Business', icon: '💼', color: colors.nileBlue },
+  { slug: 'arts', name: 'Arts', icon: '🎨', color: colors.brand.purpleLight },
+  { slug: 'food', name: 'Food', icon: '🍽️', color: colors.warningScale[400] },
+  { slug: 'entertainment', name: 'Entertainment', icon: '🎬', color: colors.error },
+  { slug: 'gaming', name: 'Gaming', icon: '🎮', color: colors.infoScale[400] },
 ];
 
 interface DisplayEvent {
@@ -85,20 +89,32 @@ const EventsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const transformEventToDisplay = (event: EventItem): DisplayEvent => {
+    if (!event) return {
+      id: '', title: '', type: 'Event', date: 'TBD',
+      price: 'Free', image: '', isOnline: false,
+    };
+
     const cashbackValue = (event as any).cashback;
     const cashbackText = cashbackValue && cashbackValue > 0 ? `${cashbackValue}%` : undefined;
 
-    const isOnline = (event as any).isOnline || (event.location as any)?.isOnline;
+    const isOnline = (event as any).isOnline || (event.location as any)?.isOnline || false;
     const displayCurrency = isOnline ? currencySymbol : (event.price?.currency || currencySymbol);
 
+    let formattedDate = 'TBD';
+    if (event.date) {
+      try {
+        formattedDate = new Date(event.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+      } catch { formattedDate = event.date; }
+    }
+
     return {
-      id: event.id,
-      title: event.title,
+      id: event.id || '',
+      title: event.title || 'Untitled Event',
       type: event.category || 'Event',
-      date: event.date ? new Date(event.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : 'TBD',
+      date: formattedDate,
       location: typeof event.location === 'string' ? event.location : (event.location as any)?.name || 'Venue',
-      price: event.price?.isFree ? 'Free' : `${displayCurrency}${event.price?.amount || 0}`,
-      image: event.image,
+      price: event.price?.isFree ? 'Free' : `${displayCurrency}${event.price?.amount ?? 0}`,
+      image: event.image || '',
       cashback: cashbackText,
       rating: (event as any).rating,
       reviewCount: (event as any).reviewCount,
@@ -118,12 +134,13 @@ const EventsPage: React.FC = () => {
         eventsApiService.getEvents({ upcoming: true, todayAndFuture: true }, 10, 0),
       ]);
 
+      if (!isMounted()) return;
+
       // Set categories (use backend if available, fallback otherwise)
       const categoriesData = categoriesResult.status === 'fulfilled' ? categoriesResult.value : [];
       if (categoriesData && categoriesData.length > 0) {
         setCategories(categoriesData);
       } else {
-        if (!isMounted()) return;
         setCategories(FALLBACK_CATEGORIES);
       }
 
@@ -138,32 +155,30 @@ const EventsPage: React.FC = () => {
       if (featuredData && featuredData.length > 0) {
         setFeaturedEvents(featuredData.slice(0, 5).map(transformEventToDisplay));
       } else {
-        if (!isMounted()) return;
         setFeaturedEvents([]);
       }
 
-      // Set upcoming events
-      const upcomingData = upcoming.status === 'fulfilled' ? upcoming.value : { events: [], total: 0, hasMore: false };
-      if (upcomingData && upcomingData.events && upcomingData.events.length > 0) {
-        setUpcomingEvents(upcomingData.events.slice(0, 8).map(transformEventToDisplay));
+      // Set upcoming events — handle both flat array and { events: [] } shapes
+      const upcomingRaw = upcoming.status === 'fulfilled' ? upcoming.value : null;
+      const upcomingEvents = Array.isArray(upcomingRaw)
+        ? upcomingRaw
+        : (upcomingRaw?.events || []);
+      if (upcomingEvents.length > 0) {
+        setUpcomingEvents(upcomingEvents.slice(0, 8).map(transformEventToDisplay));
       } else {
-        if (!isMounted()) return;
         setUpcomingEvents([]);
       }
     } catch (err: any) {
       if (!isMounted()) return;
       setError(err.message || 'Failed to load events. Please try again.');
-      if (!isMounted()) return;
       setFeaturedEvents([]);
-      if (!isMounted()) return;
       setUpcomingEvents([]);
-      if (!isMounted()) return;
       setCategories(FALLBACK_CATEGORIES);
     } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
+      if (isMounted()) {
+        setIsLoading(false);
+        setIsRefreshing(false);
+      }
     }
   }, []);
 
@@ -212,8 +227,23 @@ const EventsPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <View style={[styles.container, styles.loadingContainer]}>
-        <CardGridSkeleton />
+      <View style={styles.container}>
+        <LinearGradient
+          colors={[Colors.nileBlue, Colors.secondary[500]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.header}
+        >
+          <View style={styles.headerTop}>
+            <View style={styles.headerTitleContainer}>
+              <Text style={styles.headerTitle}>Events & Experiences</Text>
+              <Text style={styles.headerSubtitle}>Book tickets, earn coins</Text>
+            </View>
+          </View>
+        </LinearGradient>
+        <View style={{ flex: 1, paddingTop: 16 }}>
+          <CardGridSkeleton />
+        </View>
       </View>
     );
   }
@@ -280,9 +310,16 @@ const EventsPage: React.FC = () => {
             <Text style={styles.headerTitle}>Events & Experiences</Text>
             <Text style={styles.headerSubtitle}>Book tickets, earn coins</Text>
           </View>
-          <Pressable style={styles.searchIconBtn} onPress={() => router.push('/events-list' as any)}>
-            <Ionicons name="search" size={22} color={Colors.text.inverse} />
-          </Pressable>
+          <View style={styles.headerActions}>
+            <Pressable
+              style={styles.myEventsBtn}
+              onPress={() => router.push('/my-events' as any)}
+              accessibilityLabel="My Events"
+            >
+              <Ionicons name="ticket-outline" size={16} color={Colors.text.inverse} />
+              <Text style={styles.myEventsBtnText}>My Events</Text>
+            </Pressable>
+          </View>
         </View>
 
         {/* Search Bar */}
@@ -395,20 +432,24 @@ const EventsPage: React.FC = () => {
                  
                 >
                   <CachedImage source={event.image} style={styles.featuredImage} />
+                  {/* Price badge top-right */}
+                  <View style={[styles.featuredPriceBadgeAbs, event.price === 'Free' && styles.featuredPriceFreeAbs]}>
+                    <Text style={styles.featuredPriceAbsText}>{event.price}</Text>
+                  </View>
+                  {/* Category pill top-left */}
+                  <View style={styles.featuredCategoryPill}>
+                    <Text style={styles.featuredCategoryText}>{event.type}</Text>
+                  </View>
                   <LinearGradient
-                    colors={['transparent', 'rgba(0,0,0,0.85)']}
+                    colors={['transparent', 'rgba(0,0,0,0.88)']}
                     style={styles.featuredOverlay}
                   >
-                    <View style={styles.featuredBadges}>
-                      {event.cashback && (
-                        <View style={styles.cashbackBadge}>
-                          <Text style={styles.cashbackText}>{event.cashback} Cashback</Text>
-                        </View>
-                      )}
-                      <View style={[styles.featuredPriceBadge, event.price === 'Free' && styles.featuredPriceFree]}>
-                        <Text style={styles.featuredPriceText}>{event.price}</Text>
+                    {event.cashback && (
+                      <View style={styles.cashbackBadge}>
+                        <Ionicons name="gift" size={10} color={Colors.text.inverse} />
+                        <Text style={styles.cashbackText}>{event.cashback} Cashback</Text>
                       </View>
-                    </View>
+                    )}
                     <Text style={styles.featuredTitle} numberOfLines={2}>{event.title}</Text>
                     <View style={styles.featuredMeta}>
                       <View style={styles.featuredMetaItem}>
@@ -422,6 +463,11 @@ const EventsPage: React.FC = () => {
                           {event.isOnline ? 'Online' : event.location}
                         </Text>
                       </View>
+                    </View>
+                    {/* Book Now CTA */}
+                    <View style={styles.featuredBookBtn}>
+                      <Text style={styles.featuredBookBtnText}>Book Now</Text>
+                      <Ionicons name="arrow-forward" size={13} color={Colors.text.inverse} />
                     </View>
                   </LinearGradient>
                 </Pressable>
@@ -500,15 +546,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background.secondary,
   },
-  loadingContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 12,
-    fontSize: 14,
-    color: COLORS.textMuted,
-  },
   header: {
     paddingHorizontal: 16,
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
@@ -543,13 +580,26 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.7)',
     marginTop: 2,
   },
-  searchIconBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.xl,
-    backgroundColor: 'rgba(255,255,255,0.15)',
+  headerActions: {
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    gap: 8,
+  },
+  myEventsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.25)',
+  },
+  myEventsBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: Colors.text.inverse,
   },
   searchBarContainer: {
     marginTop: Spacing.base,
@@ -640,7 +690,7 @@ const styles = StyleSheet.create({
   // Featured Cards
   featuredCard: {
     width: SCREEN_WIDTH * 0.72,
-    height: 210,
+    height: 220,
     marginRight: 12,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
@@ -656,35 +706,62 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 14,
-    paddingTop: 40,
+    paddingTop: 50,
   },
-  featuredBadges: {
-    flexDirection: 'row',
-    gap: 6,
-    marginBottom: 8,
+  // Absolute price badge — top-right
+  featuredPriceBadgeAbs: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+    zIndex: 2,
+  },
+  featuredPriceFreeAbs: {
+    backgroundColor: Colors.gold,
+    borderColor: Colors.gold,
+  },
+  featuredPriceAbsText: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: Colors.text.inverse,
+  },
+  // Category pill — top-left
+  featuredCategoryPill: {
+    position: 'absolute',
+    top: 10,
+    left: 10,
+    backgroundColor: Colors.nileBlue,
+    paddingHorizontal: 9,
+    paddingVertical: 4,
+    borderRadius: 8,
+    zIndex: 2,
+    maxWidth: '50%',
+  },
+  featuredCategoryText: {
+    fontSize: 9,
+    fontWeight: '700',
+    color: Colors.text.inverse,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
   },
   cashbackBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
     backgroundColor: Colors.success,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 6,
+    alignSelf: 'flex-start',
+    marginBottom: 6,
   },
   cashbackText: {
     ...Typography.overline,
-    fontWeight: '700',
-    color: Colors.text.inverse,
-  },
-  featuredPriceBadge: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-  },
-  featuredPriceFree: {
-    backgroundColor: Colors.gold,
-  },
-  featuredPriceText: {
-    ...Typography.caption,
     fontWeight: '700',
     color: Colors.text.inverse,
   },
@@ -698,6 +775,7 @@ const styles = StyleSheet.create({
   featuredMeta: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 10,
   },
   featuredMetaItem: {
     flexDirection: 'row',
@@ -716,6 +794,23 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.85)',
     fontWeight: '500',
     maxWidth: 100,
+  },
+  featuredBookBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: 'rgba(255,255,255,0.22)',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  featuredBookBtnText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.text.inverse,
   },
 
   // Upcoming Event Cards

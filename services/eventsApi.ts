@@ -14,26 +14,47 @@ export function setEventsApiRegionGetter(fn: (() => string) | null) {
 }
 
 // Category mapping: Frontend display categories -> Backend API categories
-// Using direct category names as stored in database
+// Covers all 10 backend categories: Music, Tech, Wellness, Sports, Education,
+// Business, Arts, Food, Entertainment, Gaming — plus legacy slugs
 const CATEGORY_MAP: Record<string, string> = {
-  movies: 'movies',
-  concerts: 'concerts',
-  parks: 'parks',
-  workshops: 'workshops',
-  gaming: 'gaming',
+  // Backend slugs (pass-through)
+  music: 'music',
+  tech: 'tech',
+  technology: 'tech',
+  wellness: 'wellness',
   sports: 'sports',
+  education: 'education',
+  business: 'business',
+  arts: 'arts',
+  food: 'food',
   entertainment: 'entertainment',
+  gaming: 'gaming',
+  // Legacy slugs (kept for backward compatibility)
+  movies: 'entertainment',
+  concerts: 'music',
+  parks: 'wellness',
+  workshops: 'education',
+  fitness: 'wellness',
 };
 
 // Reverse mapping for display purposes: Backend -> Frontend display name
 const REVERSE_CATEGORY_MAP: Record<string, string> = {
-  movies: 'movies',
-  concerts: 'concerts',
-  parks: 'parks',
-  workshops: 'workshops',
-  gaming: 'gaming',
-  sports: 'sports',
-  entertainment: 'entertainment',
+  music: 'Music',
+  tech: 'Tech',
+  wellness: 'Wellness',
+  sports: 'Sports',
+  education: 'Education',
+  business: 'Business',
+  arts: 'Arts',
+  food: 'Food',
+  entertainment: 'Entertainment',
+  gaming: 'Gaming',
+  // Legacy
+  movies: 'Entertainment',
+  concerts: 'Music',
+  parks: 'Wellness',
+  workshops: 'Education',
+  fitness: 'Wellness',
 };
 
 // Helper function to map frontend category to backend category
@@ -387,9 +408,13 @@ class EventsApiService {
       }
 
       const data = await response.json();
-      
+
       if (data.success) {
-        return data.data.map(this.transformEventToFrontend);
+        // Handle both response shapes: data.data (array) or data.data.events (object)
+        const rawEvents = Array.isArray(data.data)
+          ? data.data
+          : (data.data?.events || data.data?.results || []);
+        return rawEvents.map(this.transformEventToFrontend);
       } else {
         throw new Error(data.message || 'Failed to fetch featured events');
       }
@@ -788,6 +813,8 @@ class EventsApiService {
 
   /**
    * Get dynamic event categories from backend
+   * Backend returns: { success, data: { categories: [{slug, name, icon, color, eventCount}] } }
+   * or: { success, data: [{slug, name, icon, color}] }
    */
   async getCategories(featured?: boolean): Promise<any[]> {
     try {
@@ -802,8 +829,20 @@ class EventsApiService {
       }
 
       const data = await response.json();
-      if (data.success && data.data?.categories) {
-        return data.data.categories;
+      if (data.success) {
+        // Handle both response shapes
+        const cats: any[] = Array.isArray(data.data)
+          ? data.data
+          : (data.data?.categories || []);
+        // Normalize: ensure slug, name, icon, color exist
+        return cats.map((c: any) => ({
+          _id: c._id,
+          slug: c.slug || c.name?.toLowerCase(),
+          name: c.name || c.slug,
+          icon: c.icon || '🎫',
+          color: c.color || '#1A3A52',
+          eventCount: c.eventCount ?? c.count ?? undefined,
+        }));
       }
       return [];
     } catch (error) {

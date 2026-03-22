@@ -210,10 +210,16 @@ export function useEventsPage(options: UseEventsPageOptions = {}): UseEventsPage
     }
   }, [loading, refreshing, pagination, searchQuery, buildFilters, pageSize]);
 
-  // Debounced search
+  // Debounced search — triggers a fresh fetch after typing stops
+  // Use a ref so the debounce always calls the latest fetchEvents
+  const fetchEventsRef = useRef(fetchEvents);
+  useEffect(() => {
+    fetchEventsRef.current = fetchEvents;
+  }, [fetchEvents]);
+
   const debouncedFetch = useMemo(
-    () => debounce(() => fetchEvents(false), 300),
-    [fetchEvents]
+    () => debounce(() => fetchEventsRef.current(false), 350),
+    [] // stable — never recreated
   );
 
   // Set search query with debounced fetch
@@ -271,10 +277,12 @@ export function useEventsPage(options: UseEventsPageOptions = {}): UseEventsPage
   }, [autoFetch, fetchEvents]);
 
   // Refetch when filters, sort, or category change
+  // Use ref to call latest fetchEvents without adding it to deps (avoids infinite loop)
   useEffect(() => {
     if (!isInitialMount.current) {
-      fetchEvents(false);
+      fetchEventsRef.current(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters, sortBy, activeCategory]);
 
   // Cleanup on unmount

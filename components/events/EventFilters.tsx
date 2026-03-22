@@ -72,6 +72,13 @@ function EventFilters({
   const PRICE_RANGES = getPriceRanges(currencySymbol);
   const [localFilters, setLocalFilters] = useState<EventFiltersType>(filters);
 
+  // Sync localFilters when the modal opens (picks up external resets)
+  React.useEffect(() => {
+    if (visible) {
+      setLocalFilters(filters);
+    }
+  }, [visible, filters]);
+
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const borderColor = useThemeColor({ light: colors.neutral[200], dark: colors.neutral[700] }, 'border');

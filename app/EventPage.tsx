@@ -210,7 +210,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     return () => { cancelled = true; };
   }, [eventIdParam, eventDataParam, eventTypeParam]);
 
-  // Fetch reward info and favorite status when event loads
+  // Fetch reward info, favorite status, and related events when event loads
   useEffect(() => {
     if (realEventData?.id) {
       eventsApiService.getEventRewardInfo(realEventData.id)
@@ -221,6 +221,17 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       eventsApiService.isFavorited(realEventData.id)
         .then(fav => setIsFavorited(fav))
         .catch(() => {}); // Silent: non-critical favorite status
+
+      // Load related events
+      setIsLoadingRelated(true);
+      eventsApiService.getRelatedEvents(realEventData.id, 6)
+        .then(events => {
+          if (isMountedRef.current) setRelatedEvents(events);
+        })
+        .catch(() => {})
+        .finally(() => {
+          if (isMountedRef.current) setIsLoadingRelated(false);
+        });
     }
   }, [realEventData?.id]);
 
@@ -754,9 +765,9 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       <View style={styles.heroSection}>
         {!imageError ? (
           <ImageBackground
-            source={eventDetails.image}
+            source={eventDetails.image ? { uri: eventDetails.image } : undefined}
             style={styles.heroBackground}
-            contentFit="cover"
+            resizeMode="cover"
             onLoad={handleImageLoad}
             onError={handleImageError}
           >
@@ -813,20 +824,34 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               <View style={styles.heroMeta}>
                 <View style={styles.heroMetaItem}>
                   <Ionicons name="calendar-outline" size={16} color={colors.background.primary} />
-                  <Text style={styles.heroMetaText}>{eventDetails.date}</Text>
+                  <Text style={styles.heroMetaText}>
+                    {eventDetails.date
+                      ? (() => {
+                          try {
+                            return new Date(eventDetails.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+                          } catch { return eventDetails.date; }
+                        })()
+                      : 'TBD'}
+                  </Text>
                 </View>
-                <View style={styles.heroMetaItem}>
-                  <Ionicons name="time-outline" size={16} color={colors.background.primary} />
-                  <Text style={styles.heroMetaText}>{eventDetails.time}</Text>
-                </View>
-                <View style={styles.heroMetaItem}>
-                  <Ionicons
-                    name={eventDetails.isOnline ? "globe-outline" : "location-outline"}
-                    size={16}
-                    color={colors.background.primary}
-                  />
-                  <Text style={styles.heroMetaText}>{eventDetails.location}</Text>
-                </View>
+                {!!eventDetails.time && (
+                  <View style={styles.heroMetaItem}>
+                    <Ionicons name="time-outline" size={16} color={colors.background.primary} />
+                    <Text style={styles.heroMetaText}>{eventDetails.time}</Text>
+                  </View>
+                )}
+                {!!eventDetails.location && (
+                  <View style={styles.heroMetaItem}>
+                    <Ionicons
+                      name={eventDetails.isOnline ? "globe-outline" : "location-outline"}
+                      size={16}
+                      color={colors.background.primary}
+                    />
+                    <Text style={styles.heroMetaText} numberOfLines={1}>
+                      {eventDetails.isOnline ? 'Online' : eventDetails.location}
+                    </Text>
+                  </View>
+                )}
               </View>
             </View>
           </LinearGradient>
@@ -1086,7 +1111,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         )}
 
         {/* Related Events Section - Lazy Loaded */}
-        {relatedEvents.length > 0 && (
+        {(relatedEvents.length > 0 || isLoadingRelated) && (
           <Animated.View
             style={{
               opacity: fadeAnim,
@@ -1122,7 +1147,14 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               <View style={styles.detailContent}>
                 <Text style={styles.detailLabel}>Date & Time</Text>
                 <Text style={styles.detailValue}>
-                  {eventDetails.date} at {eventDetails.time}
+                  {eventDetails.date
+                    ? (() => {
+                        try {
+                          return new Date(eventDetails.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
+                        } catch { return eventDetails.date; }
+                      })()
+                    : 'TBD'}
+                  {eventDetails.time ? ` at ${eventDetails.time}` : ''}
                 </Text>
               </View>
             </View>
