@@ -201,9 +201,13 @@ export const colors = {
     accent: '#ffcd57',
     mustard: '#ffcd57',
     peach: '#ffd7b5',
+    // DEPRECATED: 'green' is actually mustard color - use 'gold' or 'mustard' instead
     green: '#ffcd57',
+    // DEPRECATED: 'teal' is actually nile blue color - use 'navy' instead
     teal: '#1a3a52',
     gold: '#ffcd57',
+    // Correct semantic names (replaces misnamed 'green' and 'teal')
+    navy: '#1a3a52',
   },
 
   // Border Colors

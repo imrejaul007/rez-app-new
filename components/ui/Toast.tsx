@@ -45,6 +45,9 @@ function Toast({
     info: colors.info,
   };
 
+  const backgroundColor = BG_MAP[type] || colors.info;
+  const iconName = ICON_MAP[type] || 'information-circle';
+
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 300 });
     slideAnim.value = withTiming(0, { duration: 300 });
@@ -74,7 +77,7 @@ function Toast({
         styles.container,
         shadows.strong,
         {
-          backgroundColor: BG_MAP[type],
+          backgroundColor,
           opacity: fadeAnim,
           transform: [{ translateY: slideAnim }],
         },
@@ -86,7 +89,7 @@ function Toast({
     >
       <View style={styles.content}>
         <Ionicons
-          name={ICON_MAP[type]}
+          name={iconName}
           size={24}
           color={colors.background.primary}
           style={styles.icon}

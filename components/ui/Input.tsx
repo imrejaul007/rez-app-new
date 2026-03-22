@@ -19,8 +19,8 @@ interface InputProps extends TextInputProps {
 }
 
 const SIZE_HEIGHT: Record<InputSize, number> = {
-  small: 40,
-  medium: 48,
+  small: 48,
+  medium: 52,
   large: 56,
 };
 
@@ -45,7 +45,7 @@ function Input({
 
   const isSecure = secureTextEntry && !isPasswordVisible;
   const showPasswordToggle = secureTextEntry && !rightIcon;
-  const charCount = value?.length ?? 0;
+  const charCount = typeof value === 'string' ? value.length : 0;
 
   return (
     <View style={[styles.container, containerStyle]}>
@@ -62,8 +62,9 @@ function Input({
             borderColor: colors.border.default,
             backgroundColor: colors.background.primary,
           },
-          isFocused && { borderColor: colors.brand.purple, borderWidth: 2 },
-          error ? { borderColor: colors.error } : undefined,
+          error
+            ? { borderColor: colors.error, borderWidth: 2 }
+            : isFocused && { borderColor: colors.primary[500], borderWidth: 2 },
         ]}
       >
         {leftIcon && <View style={styles.leftIcon}>{leftIcon}</View>}
@@ -82,7 +83,7 @@ function Input({
             onPress={() => setIsPasswordVisible((v) => !v)}
             style={styles.rightIcon}
             accessibilityRole="button"
-            accessibilityLabel={isPasswordVisible ? 'Hide password' : 'Show password'}
+            accessibilityLabel={isPasswordVisible ? 'Hide password, password is currently visible' : 'Show password, password is currently hidden'}
           >
             <Ionicons
               name={isPasswordVisible ? 'eye-off-outline' : 'eye-outline'}

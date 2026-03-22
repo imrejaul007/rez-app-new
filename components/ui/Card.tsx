@@ -48,7 +48,7 @@ function Card({
     variantStyles[variant],
     { padding: spacing[padding] },
     style as ViewStyle,
-  ].filter(Boolean) as ViewStyle[];
+  ].filter((s): s is ViewStyle => s !== undefined && s !== null);
 
   if (onPress) {
     return (

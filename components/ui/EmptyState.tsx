@@ -17,6 +17,9 @@ interface EmptyStateProps {
   imageSource?: ImageSourcePropType;
   actionLabel?: string;
   onAction?: () => void;
+  trustText?: string;
+  secondaryCTALabel?: string;
+  onSecondaryAction?: () => void;
   style?: any;
 }
 
@@ -31,6 +34,9 @@ function EmptyState({
   actionLabel,
   onAction,
   imageSource,
+  trustText,
+  secondaryCTALabel,
+  onSecondaryAction,
   style,
 }: EmptyStateProps) {
   const { colors, shadows } = useTheme();
@@ -71,6 +77,12 @@ function EmptyState({
         </Text>
       )}
 
+      {trustText && (
+        <Text variant="bodySmall" color="tertiary" align="center" style={styles.trustText}>
+          {trustText}
+        </Text>
+      )}
+
       {actionLabel && onAction && (
         <Pressable
           style={[
@@ -84,8 +96,26 @@ function EmptyState({
           accessibilityRole="button"
           accessibilityLabel={actionLabel}
         >
-          <Text variant="button" style={{ color: colors.secondary[600] }}>
+          <Text variant="button" style={{ color: colors.text.inverse }}>
             {actionLabel}
+          </Text>
+        </Pressable>
+      )}
+
+      {secondaryCTALabel && onSecondaryAction && (
+        <Pressable
+          style={[
+            styles.secondaryButton,
+            {
+              borderColor: colors.primary[500],
+            },
+          ]}
+          onPress={onSecondaryAction}
+          accessibilityRole="button"
+          accessibilityLabel={secondaryCTALabel}
+        >
+          <Text variant="button" style={{ color: colors.primary[500] }}>
+            {secondaryCTALabel}
           </Text>
         </Pressable>
       )}
@@ -124,11 +154,22 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
     maxWidth: 320,
   },
+  trustText: {
+    marginBottom: spacing.lg,
+    maxWidth: 320,
+  },
   button: {
     marginTop: spacing.md,
     paddingHorizontal: spacing.xl,
     paddingVertical: spacing.md,
     borderRadius: borderRadius.md,
+  },
+  secondaryButton: {
+    marginTop: spacing.sm,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1.5,
   },
 });
 

@@ -29,7 +29,7 @@ function Badge({
   const variantBg = useMemo<Record<BadgeVariant, string>>(() => ({
     primary: colors.primary[500],
     secondary: colors.secondary[600],
-    success: colors.success,
+    success: colors.primary[100],
     error: colors.error,
     warning: colors.warning,
     info: colors.info,
@@ -37,9 +37,9 @@ function Badge({
   }), [colors]);
 
   const variantText = useMemo<Record<BadgeVariant, string>>(() => ({
-    primary: colors.secondary[600],
+    primary: colors.text.inverse,
     secondary: colors.text.inverse,
-    success: colors.text.inverse,
+    success: colors.primary[800],
     error: colors.text.inverse,
     warning: colors.secondary[600],
     info: colors.text.inverse,

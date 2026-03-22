@@ -35,9 +35,9 @@ interface ButtonProps {
 }
 
 const SIZE_CONFIG: Record<ButtonSize, { height: number; paddingH: number; iconSize: number }> = {
-  small: { height: 36, paddingH: spacing.base, iconSize: 16 },
-  medium: { height: 44, paddingH: spacing.lg, iconSize: 18 },
-  large: { height: 52, paddingH: spacing.xl, iconSize: 20 },
+  small: { height: 40, paddingH: spacing.base, iconSize: 16 },
+  medium: { height: 48, paddingH: spacing.lg, iconSize: 18 },
+  large: { height: 56, paddingH: spacing.xl, iconSize: 20 },
 };
 
 function Button({
@@ -62,7 +62,7 @@ function Button({
   const isInteractive = !disabled && !loading;
 
   const variantBg = useMemo<Record<ButtonVariant, string>>(() => ({
-    primary: colors.brand.purple,
+    primary: colors.primary[500],
     secondary: colors.secondary[600],
     outline: 'transparent',
     ghost: 'transparent',
@@ -70,10 +70,10 @@ function Button({
   }), [colors]);
 
   const variantText = useMemo<Record<ButtonVariant, string>>(() => ({
-    primary: colors.text.inverse,
+    primary: colors.secondary[700],
     secondary: colors.text.inverse,
-    outline: colors.brand.purple,
-    ghost: colors.brand.purple,
+    outline: colors.primary[500],
+    ghost: colors.primary[500],
     danger: colors.text.inverse,
   }), [colors]);
 
@@ -112,12 +112,15 @@ function Button({
     paddingHorizontal: sizeConfig.paddingH,
     ...(variant === 'outline' && {
       borderWidth: 1.5,
-      borderColor: colors.brand.purple,
+      borderColor: colors.primary[500],
     }),
     ...(!isOutlineOrGhost && shadows.subtle),
     ...(isOutlineOrGhost && { shadowOpacity: 0, elevation: 0 }),
     ...(fullWidth && { width: '100%' as const }),
-    ...((disabled || loading) && { opacity: 0.5 }),
+    ...((disabled || loading) && {
+      opacity: 0.6,
+      backgroundColor: disabled ? colors.gray[200] : variantBg[variant],
+    }),
   };
 
   const labelStyle: TextStyle = {
@@ -137,8 +140,8 @@ function Button({
         onPressOut={isInteractive ? handlePressOut : undefined}
         disabled={!isInteractive}
         accessibilityRole="button"
-        accessibilityState={{ disabled: !isInteractive }}
-        accessibilityLabel={title}
+        accessibilityState={{ disabled: !isInteractive, busy: loading }}
+        accessibilityLabel={loading ? `${title}, loading` : title}
         testID={testID}
       >
         {loading ? (
