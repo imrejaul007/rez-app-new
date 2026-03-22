@@ -51,7 +51,9 @@ export function useStoreData(storeId: string): UseStoreDataResult {
       const response = await storesService.getStoreById(storeId);
 
       if (response.success && response.data) {
-        setData(response.data);
+        // Backend returns { store: {...}, products: [...] } — unwrap the store object
+        const storeObj = response.data.store || response.data;
+        setData(storeObj);
       } else {
         throw new Error(response.message || 'Failed to load store');
       }
