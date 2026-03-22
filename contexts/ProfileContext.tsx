@@ -13,6 +13,7 @@ import {
 import { useAuthUser, useIsAuthenticated, useAuthLoading, useAuthActions } from '@/stores/selectors';
 import authService, { User as BackendUser, ProfileUpdate } from '@/services/authApi';
 import profileApi from '@/services/profileApi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import walletApi from '@/services/walletApi';
 
 interface ProfileProviderProps {
@@ -252,10 +253,11 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
         throw new Error(response.error || response.message || 'Failed to update profile');
       }
 
-      // Update user state manually since we're bypassing AuthContext
+      // Update user state: clear the profile sync cache so checkAuthStatus
+      // fetches fresh data from the backend instead of using stale cache
       if (response.data) {
-        await authActions.checkAuthStatus(); // Refresh the auth state
-        // Refresh completion status since profile fields may have changed
+        await AsyncStorage.removeItem('lastProfileSync');
+        await authActions.checkAuthStatus();
         refreshCompletionStatus();
       }
     } catch (err) {
