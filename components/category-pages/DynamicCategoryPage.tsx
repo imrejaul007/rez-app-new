@@ -501,15 +501,64 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
   const theme = pageConfig?.theme;
   const primaryColor = theme?.primaryColor || '#FF6B35';
   const gradientColors = (theme?.gradientColors?.length >= 2 ? theme.gradientColors : null) || [primaryColor, '#FF8C5A', '#FFF0E8'];
-  const tabs = useMemo(() =>
-    [...(pageConfig?.tabs || [])].filter(t => t.enabled !== false).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
-    [pageConfig?.tabs]);
-  const sections = useMemo(() =>
-    [...(pageConfig?.sections || [])].filter(s => s.enabled !== false).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
-    [pageConfig?.sections]);
-  const quickActions = useMemo(() =>
-    [...(pageConfig?.quickActions || [])].filter(qa => qa.enabled !== false).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
-    [pageConfig?.quickActions]);
+
+  // ============================================
+  // Per-category fallback tabs when backend returns empty
+  // ============================================
+  const FALLBACK_TABS_BY_SLUG: Record<string, any[]> = {
+    'beauty-wellness': [
+      { id: 'all', label: 'All', icon: 'grid-outline', sortOrder: 0, enabled: true },
+      { id: 'salon', label: 'Salon', icon: 'scissors-outline', sortOrder: 1, enabled: true, serviceFilter: 'salon' },
+      { id: 'spa', label: 'Spa', icon: 'leaf-outline', sortOrder: 2, enabled: true, serviceFilter: 'spa' },
+      { id: 'barber', label: 'Barber', icon: 'cut-outline', sortOrder: 3, enabled: true, serviceFilter: 'barber' },
+    ],
+  };
+
+  // Per-category fallback sections when backend returns empty
+  const FALLBACK_SECTIONS_BY_SLUG: Record<string, any[]> = {
+    'beauty-wellness': [
+      { id: 'ai-search', type: 'ai-search', title: 'Find Beauty Services', sortOrder: 0, enabled: true },
+      { id: 'browse-grid', type: 'browse-grid', title: 'Browse Categories', sortOrder: 1, enabled: true },
+      { id: 'stores-list', type: 'stores-list', title: 'Beauty & Wellness Near You', sortOrder: 2, enabled: true },
+      { id: 'ugc-social', type: 'ugc-social', title: 'Real Reviews', subtitle: 'See what others are saying', sortOrder: 3, enabled: true },
+    ],
+  };
+
+  const tabs = useMemo(() => {
+    const rawTabs = [...(pageConfig?.tabs || [])].filter(t => t.enabled !== false).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+    // Fall back to per-category defaults when backend returns 0 tabs
+    if (rawTabs.length === 0 && FALLBACK_TABS_BY_SLUG[slug]) {
+      return FALLBACK_TABS_BY_SLUG[slug];
+    }
+    return rawTabs;
+  }, [pageConfig?.tabs, slug]);
+
+  const sections = useMemo(() => {
+    const rawSections = [...(pageConfig?.sections || [])].filter(s => s.enabled !== false).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+    // Fall back to per-category defaults when backend returns 0 sections
+    if (rawSections.length === 0 && FALLBACK_SECTIONS_BY_SLUG[slug]) {
+      return FALLBACK_SECTIONS_BY_SLUG[slug];
+    }
+    return rawSections;
+  }, [pageConfig?.sections, slug]);
+
+  const FALLBACK_QUICK_ACTIONS_BY_SLUG: Record<string, any[]> = {
+    'beauty-wellness': [
+      { id: 'book', label: 'Book Now', icon: 'calendar-outline', route: `/MainCategory/beauty-wellness/book-appointment`, sortOrder: 0, enabled: true },
+      { id: 'offers', label: 'Offers', icon: 'pricetag-outline', route: `/MainCategory/beauty-wellness/offers`, sortOrder: 1, enabled: true },
+      { id: 'top-rated', label: 'Top Rated', icon: 'star-outline', route: `/MainCategory/beauty-wellness/top-rated`, sortOrder: 2, enabled: true },
+      { id: 'stories', label: 'Stories', icon: 'images-outline', route: `/MainCategory/beauty-wellness/beauty-stories`, sortOrder: 3, enabled: true },
+      { id: 'loyalty', label: 'Loyalty', icon: 'trophy-outline', route: `/MainCategory/beauty-wellness/loyalty`, sortOrder: 4, enabled: true },
+    ],
+  };
+
+  const quickActions = useMemo(() => {
+    const rawQA = [...(pageConfig?.quickActions || [])].filter(qa => qa.enabled !== false).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+    if (rawQA.length === 0 && FALLBACK_QUICK_ACTIONS_BY_SLUG[slug]) {
+      return FALLBACK_QUICK_ACTIONS_BY_SLUG[slug];
+    }
+    return rawQA;
+  }, [pageConfig?.quickActions, slug]);
   const serviceTypes = useMemo(() =>
     [...(pageConfig?.serviceTypes || [])].filter(st => st.enabled !== false).sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0)),
     [pageConfig?.serviceTypes]);

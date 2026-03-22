@@ -227,21 +227,20 @@ export const useCategoryPageData = (slug: string, _options?: { storesPerPage?: n
 
   // ---- Derive subcategories ----
   const subcategories = useMemo<SubcategoryItem[]>(() => {
-    if (!category?.childCategories || !Array.isArray(category.childCategories)) {
-      // Fallback to dummy data
-      if (categoryQuery.isError || (categoryQuery.isSuccess && !categorySuccess)) {
-        const dummyData = getDummyData(slug);
-        if (dummyData.categories) {
-          return dummyData.categories.map((cat: any) => ({
-            id: cat.id,
-            name: cat.name,
-            slug: cat.id,
-            icon: cat.icon,
-            color: cat.color,
-            cashback: cat.cashback,
-            itemCount: cat.itemCount,
-          }));
-        }
+    const hasChildCategories = category?.childCategories && Array.isArray(category.childCategories) && category.childCategories.length > 0;
+    if (!hasChildCategories) {
+      // Fallback to dummy data when backend returns no childCategories
+      const dummyData = getDummyData(slug);
+      if (dummyData.categories) {
+        return dummyData.categories.map((cat: any) => ({
+          id: cat.id,
+          name: cat.name,
+          slug: cat.id,
+          icon: cat.icon,
+          color: cat.color,
+          cashback: cat.cashback,
+          itemCount: cat.itemCount,
+        }));
       }
       return [];
     }
@@ -326,7 +325,13 @@ export const useCategoryPageData = (slug: string, _options?: { storesPerPage?: n
       }
       return [];
     }
-    const rawStores = Array.isArray(storesData.data) ? storesData.data : [];
+    // getStoresBySubcategorySlug returns { stores: [], pagination: null }
+    // but some endpoints return a flat array — handle both shapes
+    const rawStores: any[] = Array.isArray(storesData.data)
+      ? storesData.data
+      : Array.isArray((storesData.data as any)?.stores)
+        ? (storesData.data as any).stores
+        : [];
     return rawStores.map((store: any) => ({
       id: store._id || store.id,
       _id: store._id || store.id,
@@ -406,9 +411,9 @@ export const useCategoryPageData = (slug: string, _options?: { storesPerPage?: n
 
     const hasData = vibes.length > 0 || occasions.length > 0 || hashtags.length > 0;
     if (!hasData) {
-      // Fallback: check dummy data for AI fields
-      if (categoryQuery.isError || (categoryQuery.isSuccess && !categorySuccess)) {
-        const dummyData = getDummyData(slug);
+      // Fallback: use dummy data when backend returns no vibes/occasions/hashtags
+      const dummyData = getDummyData(slug);
+      if (dummyData.aiSuggestions || dummyData.aiFilterChips || dummyData.aiPlaceholders) {
         return {
           aiSuggestions: dummyData.aiSuggestions || [],
           aiFilterChips: dummyData.aiFilterChips || [],
