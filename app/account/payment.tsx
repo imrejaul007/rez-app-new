@@ -43,7 +43,6 @@ const DUMMY_PAYMENT_METHODS: PaymentMethod[] = [
 export default function PaymentMethodsScreen() {
   const router = useRouter();
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(DUMMY_PAYMENT_METHODS);
-  const [loading, setLoading] = useState(false);
 
   const handleSetDefault = (id: string) => {
     setPaymentMethods(prev =>
