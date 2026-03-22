@@ -878,32 +878,6 @@ function HomeScreen() {
         <StoriesRow variant={tabStyles.whatsNewVariant} />
       )}
 
-      {/* ReZ TRY Banner - Premium trial discovery feature */}
-      {activeTab === 'near-u' && (
-        <Pressable
-          style={viewStyles.tryBanner}
-          onPress={() => router.push('/try')}
-          accessibilityLabel="ReZ TRY - Discover and try new places"
-          accessibilityRole="button"
-          accessibilityHint="Double tap to explore exclusive trial offers"
-        >
-          <LinearGradient
-            colors={['#7C3AED', '#A855F7']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={viewStyles.tryBannerGradient}
-          >
-            <View style={viewStyles.tryBannerContent}>
-              <View style={viewStyles.tryBannerTextSection}>
-                <Text style={viewStyles.tryBannerTitle}>🔥 ReZ TRY</Text>
-                <Text style={viewStyles.tryBannerSubtitle}>Discover & try new places</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color="#fff" style={viewStyles.tryBannerChevron} />
-            </View>
-          </LinearGradient>
-        </Pressable>
-      )}
-
       {/* Content */}
       <View style={[
         viewStyles.content,

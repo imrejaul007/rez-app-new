@@ -407,12 +407,13 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
               </Text>
             </Pressable>
 
-            {/* Promotional Banner - Deals Button */}
+            {/* ReZ TRY Button — replaces Deals CTA */}
             <Pressable
               style={styles.promoBannerContainer}
-             
               onPress={() => {
-                router.push('/offers' as any);
+                isPriveMode
+                  ? router.push('/offers' as any)
+                  : router.push('/try' as any);
               }}
             >
               {isPriveMode ? (
@@ -432,13 +433,13 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
                 </LinearGradient>
               ) : (
                 <LinearGradient
-                  colors={activeTab === 'mall' ? [colors.brand.sky, colors.brand.skyDark] : [colors.lightMustard, colors.brand.goldRich, '#d4a645']}
+                  colors={['#7C3AED', '#A855F7']}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.promoBannerGradientDeals}
                 >
-                  <Ionicons name="flash" size={18} color={colors.background.primary} style={styles.dealsIcon} />
-                  <Text style={styles.dealsText}>Deals</Text>
+                  <Text style={styles.dealsIcon}>🔥</Text>
+                  <Text style={styles.dealsText}>TRY</Text>
                 </LinearGradient>
               )}
             </Pressable>
