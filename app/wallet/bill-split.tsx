@@ -23,6 +23,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Clipboard from 'expo-clipboard';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import uuid from 'react-native-uuid';
+import apiClient from '@/services/apiClient';
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -89,15 +90,30 @@ export default function BillSplitScreen() {
   };
 
   const handleSendRequests = async () => {
-    const requests: { phone: string; deepLink: string }[] = [];
+    try {
+      // Extract phone numbers from participants
+      const participantPhones = participants.map(p => p.phone);
 
-    for (const participant of participants) {
-      const deepLink = `https://pay.rez.app/split/${uuid.v4()}?amount=${splitAmount.toFixed(2)}&to=${participant.phone}`;
-      requests.push({ phone: participant.phone, deepLink });
+      // Call backend API to create the split
+      const response = await apiClient.post('/wallet/split', {
+        totalAmount: amount,
+        participants: participantPhones,
+      });
+
+      // Generate requests with the split ID from backend
+      const requests: { phone: string; deepLink: string }[] = [];
+      const splitId = response.data.data?.splitId || uuid.v4();
+
+      for (const participant of participants) {
+        const deepLink = `https://pay.rez.app/split/${splitId}?amount=${splitAmount.toFixed(2)}&to=${participant.phone}`;
+        requests.push({ phone: participant.phone, deepLink });
+      }
+
+      setSentRequests(requests);
+      showToastMessage(`Payment requests sent to ${requests.length} participants!`);
+    } catch (error: any) {
+      Alert.alert('Error', error?.response?.data?.error || 'Failed to send payment requests');
     }
-
-    setSentRequests(requests);
-    showToastMessage(`Payment requests sent to ${requests.length} participants!`);
   };
 
   const handleCopyLink = async (deepLink: string) => {

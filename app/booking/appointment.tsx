@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   Platform,
   TextInput,
+  Text,
 } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
@@ -24,6 +25,7 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import apiClient from '@/services/apiClient';
 
 // Service type icon mapping
 const SERVICE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
@@ -90,12 +92,26 @@ function AppointmentBookingPage() {
   const [customerEmail, setCustomerEmail] = useState('');
   const [specialInstructions, setSpecialInstructions] = useState('');
 
+  // Patch test status
+  const [patchTestStatus, setPatchTestStatus] = useState<any>(null);
+
   useEffect(() => {
     if (storeId) {
       loadStoreDetails();
       loadStoreServices();
     }
   }, [storeId]);
+
+  // Check patch test status for color/tint services
+  useEffect(() => {
+    if (selectedService && (selectedService.name?.toLowerCase().includes('colour') || selectedService.name?.toLowerCase().includes('color') || selectedService.name?.toLowerCase().includes('tint'))) {
+      apiClient.get('/consumer/patch-tests/check?category=hair_colour')
+        .then(res => setPatchTestStatus(res.data.data))
+        .catch(() => {});
+    } else {
+      setPatchTestStatus(null);
+    }
+  }, [selectedService]);
 
   const loadStoreDetails = async () => {
     try {
@@ -685,6 +701,27 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                 </ThemedText>
               </View>
             </View>
+          </View>
+        )}
+
+        {/* Patch Test Status for Color Services */}
+        {patchTestStatus !== null && (
+          <View style={{
+            padding: 14,
+            backgroundColor: patchTestStatus.hasValidTest ? '#f0fdf4' : '#fff7ed',
+            borderRadius: 12,
+            borderWidth: 1,
+            borderColor: patchTestStatus.hasValidTest ? '#86efac' : '#fed7aa',
+            margin: Spacing.md,
+          }}>
+            <Text style={{ fontWeight: '700', fontSize: 14, color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }}>
+              {patchTestStatus.hasValidTest ? '✓ Patch test on record' : '⚠️ Patch test required'}
+            </Text>
+            <Text style={{ fontSize: 13, marginTop: 4, color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }}>
+              {patchTestStatus.hasValidTest
+                ? `Last test: ${new Date(patchTestStatus.lastTest.testedAt).toLocaleDateString('en-IN')} — valid until ${new Date(patchTestStatus.lastTest.expiresAt).toLocaleDateString('en-IN')}`
+                : 'This service requires a patch test 48h before your appointment. The salon will contact you to arrange one.'}
+            </Text>
           </View>
         )}
 

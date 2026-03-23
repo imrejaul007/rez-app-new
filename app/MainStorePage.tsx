@@ -54,10 +54,15 @@ import StoreModals, { buildAboutModalData } from "@/components/store/StoreModals
 
 // Custom hook for all data/state/handlers
 import { useMainStorePageData } from "@/hooks/useMainStorePageData";
+import apiClient from "@/services/apiClient";
 
 function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   const router = useRouter();
   const d = useMainStorePageData({ productId, initialProduct });
+
+  // Upcoming coin drops state
+  const [upcomingDrop, setUpcomingDrop] = useState<any>(null);
+  const [activeCampaigns, setActiveCampaigns] = useState<any[]>([]);
 
   // Responsive layout
   const isWeb = Platform.OS === "web";
@@ -134,7 +139,31 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     }
   }, [d.refreshing]);
 
+  // Fetch upcoming coin drops
+  useEffect(() => {
+    if (!d.currentStoreId) return;
+    apiClient.get(`/stores/${d.currentStoreId}/upcoming-drops`)
+      .then(res => { if (res.data.data) setUpcomingDrop(res.data.data); })
+      .catch(() => {});
+  }, [d.currentStoreId]);
+
+  // Fetch active campaigns
+  useEffect(() => {
+    if (!d.currentStoreId) return;
+    apiClient.get(`/stores/${d.currentStoreId}/active-campaigns`)
+      .then(res => setActiveCampaigns(res.data.data || []))
+      .catch(() => {});
+  }, [d.currentStoreId]);
+
   const styles = useMemo(() => createStyles(HORIZONTAL_PADDING, d.screenData), [HORIZONTAL_PADDING, d.screenData]);
+
+  // Helper function to format time until coin drop
+  const getTimeUntil = (dateStr: string) => {
+    const diff = new Date(dateStr).getTime() - Date.now();
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    return h > 0 ? `${h}h ${m}m` : `${m} minutes`;
+  };
 
   // About modal data (memoized)
   const aboutModalData = useMemo(
@@ -260,6 +289,62 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                 onUploadBill={() => router.push({ pathname: "/bill-upload", params: { storeId: d.currentStoreId, storeName: d.currentStoreName } } as any)}
                 onViewOffers={() => router.push({ pathname: "/CardOffersPage", params: { storeId: d.currentStoreId, storeName: d.currentStoreName, orderValue: "1000" } } as any)}
               />
+
+              {/* Active Campaigns Section */}
+              {activeCampaigns.length > 0 && (
+                <View style={{ marginHorizontal: HORIZONTAL_PADDING, marginBottom: 8 }}>
+                  <Text style={{ fontWeight: '700', color: '#1a3a52', fontSize: 15, marginBottom: 8 }}>
+                    🎯 Active Offers
+                  </Text>
+                  {activeCampaigns.map((c: any) => (
+                    <View key={c._id} style={{
+                      padding: 12,
+                      backgroundColor: '#fff',
+                      borderRadius: 10,
+                      borderWidth: 1,
+                      borderColor: '#E8DCC4',
+                      marginBottom: 6,
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                      <Text style={{ fontSize: 20, marginRight: 10 }}>✨</Text>
+                      <View style={{ flex: 1 }}>
+                        <Text style={{ fontWeight: '600', color: '#1a3a52', fontSize: 14 }}>{c.title}</Text>
+                        <Text style={{ color: '#2A5577', fontSize: 13 }}>{c.description}</Text>
+                        {c.coinMultiplier > 1 && (
+                          <Text style={{ color: '#ffcd57', fontWeight: '700', fontSize: 13 }}>
+                            {c.coinMultiplier}x coins on every purchase
+                          </Text>
+                        )}
+                      </View>
+                    </View>
+                  ))}
+                </View>
+              )}
+
+              {/* Upcoming Coin Drop Banner */}
+              {upcomingDrop && (
+                <View style={{
+                  margin: HORIZONTAL_PADDING,
+                  padding: 14,
+                  backgroundColor: '#FFF9E6',
+                  borderRadius: 12,
+                  borderWidth: 1,
+                  borderColor: '#FFE799',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}>
+                  <Text style={{ fontSize: 22 }}>🪙</Text>
+                  <View style={{ marginLeft: 10, flex: 1 }}>
+                    <Text style={{ fontWeight: '700', color: '#1a3a52', fontSize: 14 }}>
+                      Coin Drop Coming!
+                    </Text>
+                    <Text style={{ color: '#2A5577', fontSize: 13 }}>
+                      {upcomingDrop.coinsAmount} coins drop in {getTimeUntil(upcomingDrop.scheduledAt)}
+                    </Text>
+                  </View>
+                </View>
+              )}
 
               {/* Store Quick Info */}
               {d.isDynamic && d.storeData && (
