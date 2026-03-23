@@ -172,6 +172,15 @@ function ReferralDashboard() {
       keyExtractor={(item) => item.userId}
       renderItem={renderLeaderboardItem}
       scrollEnabled={true}
+      ListEmptyComponent={
+        !loading ? (
+          <View style={styles.emptyState}>
+            <Ionicons name="people-outline" size={48} color={colors.text.tertiary} />
+            <Text style={[styles.emptyText, { color: colors.text.secondary }]}>No leaderboard data yet</Text>
+            <Text style={[styles.emptySub, { color: colors.text.tertiary }]}>Start referring friends to climb the ranks</Text>
+          </View>
+        ) : null
+      }
       ListHeaderComponent={() => (
         <>
       {/* Header with Tier Badge */}
@@ -746,6 +755,20 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontWeight: '600',
     color: Colors.brand.purple
+  },
+  emptyState: {
+    alignItems: 'center',
+    paddingTop: Spacing.xl * 2,
+    paddingHorizontal: Spacing.lg,
+    gap: Spacing.md
+  },
+  emptyText: {
+    ...Typography.bodyLarge,
+    fontWeight: '600'
+  },
+  emptySub: {
+    ...Typography.bodySmall,
+    textAlign: 'center'
   }
 });
 

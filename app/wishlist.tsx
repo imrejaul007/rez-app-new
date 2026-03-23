@@ -903,6 +903,15 @@ function WishlistPage() {
             contentContainerStyle={styles.listContainer}
             showsVerticalScrollIndicator={false}
             estimatedItemSize={200}
+            ListEmptyComponent={
+              !isLoading ? (
+                <View style={styles.emptyState}>
+                  <Ionicons name="heart-outline" size={48} color={colors.text.tertiary} />
+                  <ThemedText style={styles.emptyTitle}>No wishlists yet</ThemedText>
+                  <ThemedText style={styles.emptySubtitle}>Create your first wishlist to save favorite items</ThemedText>
+                </View>
+              ) : null
+            }
           />
         )}
       </View>
@@ -1519,6 +1528,25 @@ const styles = StyleSheet.create({
     color: colors.text.inverse,
     fontSize: 15,
     fontWeight: '600',
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.xl * 2,
+  },
+  emptyTitle: {
+    ...Typography.h4,
+    fontWeight: '700',
+    marginTop: Spacing.md,
+    color: colors.text.primary,
+  },
+  emptySubtitle: {
+    ...Typography.body,
+    color: colors.text.tertiary,
+    marginTop: Spacing.sm,
+    textAlign: 'center',
   },
 });
 
