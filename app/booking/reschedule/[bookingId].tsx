@@ -18,8 +18,9 @@ import { ThemedText } from '@/components/ThemedText';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import serviceBookingApi from '@/services/serviceBookingApi';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
-export default function RescheduleBookingScreen() {
+function RescheduleBookingScreen() {
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const router = useRouter();
   const isMounted = useIsMounted();
@@ -200,6 +201,8 @@ export default function RescheduleBookingScreen() {
     </SafeAreaView>
   );
 }
+
+export default withErrorBoundary(RescheduleBookingScreen, 'BookingRescheduleBookingId');
 
 const styles = StyleSheet.create({
   container: { flex: 1 },

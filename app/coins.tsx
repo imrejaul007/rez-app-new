@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 interface CoinTransaction {
   id: string;
@@ -57,7 +58,7 @@ const DUMMY_TRANSACTIONS: CoinTransaction[] = [
   },
 ];
 
-export default function CoinsScreen() {
+function CoinsScreen() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'all' | 'earn' | 'spend'>('all');
 
@@ -214,6 +215,8 @@ export default function CoinsScreen() {
     </SafeAreaView>
   );
 }
+
+export default withErrorBoundary(CoinsScreen, 'Coins');
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f9fafb' },

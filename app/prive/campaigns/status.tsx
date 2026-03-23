@@ -22,8 +22,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import priveApi from '@/services/priveApi';
 import ErrorState from '@/components/common/ErrorState';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
-export default function CampaignStatusScreen() {
+function CampaignStatusScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const campaignId = (params.campaignId as string) || '';
@@ -279,6 +280,8 @@ export default function CampaignStatusScreen() {
     </SafeAreaView>
   );
 }
+
+export default withErrorBoundary(CampaignStatusScreen, 'PriveCampaignsStatus');
 
 const styles = StyleSheet.create({
   container: {

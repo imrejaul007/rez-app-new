@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 import apiClient from '@/services/apiClient';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 function WaitlistScreen() {
   const { storeId } = useLocalSearchParams<{ storeId: string }>();
@@ -95,4 +96,4 @@ function WaitlistScreen() {
   );
 }
 
-export default WaitlistScreen;
+export default withErrorBoundary(WaitlistScreen, 'WaitlistStoreId');

@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 interface TrialDetails {
   id: string;
@@ -47,7 +48,7 @@ interface BookingModalState {
   error?: string;
 }
 
-export default function TrialDetailScreen() {
+function TrialDetailScreen() {
   const router = useRouter();
   const { trialId } = useLocalSearchParams<{ trialId: string }>();
   const [trial, setTrial] = useState<TrialDetails | null>(null);
@@ -416,6 +417,8 @@ export default function TrialDetailScreen() {
     </SafeAreaView>
   );
 }
+
+export default withErrorBoundary(TrialDetailScreen, 'TryTrialId');
 
 const styles = StyleSheet.create({
   container: {

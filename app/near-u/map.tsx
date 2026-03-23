@@ -15,12 +15,13 @@ import { platformAlertSimple } from '@/utils/platformAlert';
 import storesApi, { Store } from '@/services/storesApi';
 import { colors, spacing, borderRadius, shadows, typography } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 interface NearbyStore extends Store {
   distance?: number;
 }
 
-export default function StoreMapScreen() {
+function StoreMapScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
@@ -277,6 +278,8 @@ export default function StoreMapScreen() {
     </View>
   );
 }
+
+export default withErrorBoundary(StoreMapScreen, 'NearUMap');
 
 const styles = StyleSheet.create({
   container: {

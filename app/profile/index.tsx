@@ -95,7 +95,7 @@ function ProfilePage() {
       if (!cancelled && stats) {
         setReferralCount(stats.totalReferrals);
       }
-    });
+    }).catch(() => {});
     return () => { cancelled = true; };
   }, [isAuthenticated, authLoading]);
 

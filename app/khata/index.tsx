@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 interface KhataEntry {
   _id: string;
@@ -22,7 +23,7 @@ interface KhataEntry {
   updatedAt: string;
 }
 
-export default function ConsumerKhataScreen() {
+function ConsumerKhataScreen() {
   const router = useRouter();
   const [credits, setCredits] = useState<KhataEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -123,6 +124,8 @@ export default function ConsumerKhataScreen() {
     </SafeAreaView>
   );
 }
+
+export default withErrorBoundary(ConsumerKhataScreen, 'KhataIndex');
 
 const styles = StyleSheet.create({
   container: { flex: 1 },

@@ -264,7 +264,7 @@ const Achievements = () => {
 
           <Pressable
             style={styles.ctaCard}
-            onPress={() => router.push('/refer' as any)}
+            onPress={() => router.push('/referral' as any)}
           >
             <LinearGradient
               colors={['#3B82F620', '#06B6D420']}

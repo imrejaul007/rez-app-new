@@ -23,8 +23,9 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import priveApi from '@/services/priveApi';
 import ErrorState from '@/components/common/ErrorState';
 import { platformAlert } from '@/utils/platformAlert';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
-export default function CampaignDetailScreen() {
+function CampaignDetailScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const campaignId = (params.id as string) || '';
@@ -248,6 +249,8 @@ export default function CampaignDetailScreen() {
     </SafeAreaView>
   );
 }
+
+export default withErrorBoundary(CampaignDetailScreen, 'PriveCampaignsId');
 
 interface InfoCardProps {
   icon: string;

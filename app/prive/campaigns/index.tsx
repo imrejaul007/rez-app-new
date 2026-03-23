@@ -25,6 +25,7 @@ import { BRAND } from '@/constants/brand';
 import priveApi, { PriveCampaign } from '@/services/priveApi';
 import ErrorState from '@/components/common/ErrorState';
 import { useFeatureFlag } from '@/hooks/useFeatureFlag';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 const FILTER_CHIPS = [
   { id: 'all', label: 'All', category: null },
@@ -33,7 +34,7 @@ const FILTER_CHIPS = [
   { id: 'fitness', label: 'Fitness', category: 'fitness' },
 ];
 
-export default function PriveCampaignsScreen() {
+function PriveCampaignsScreen() {
   const router = useRouter();
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
   const priveCampaignsEnabled = useFeatureFlag('priveCampaignsEnabled');
@@ -240,6 +241,8 @@ function CampaignCard({ campaign, onJoin }: CampaignCardProps) {
     </View>
   );
 }
+
+export default withErrorBoundary(PriveCampaignsScreen, 'PriveCampaignsIndex');
 
 const styles = StyleSheet.create({
   container: {

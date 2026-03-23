@@ -318,8 +318,8 @@ function HomeScreen() {
         setIsAreaServiceable(result.isServiceable);
         setServiceabilityChecked(true);
         // No auto-switch — unserviceable areas see a banner with "Mall →" CTA instead
-      });
-    });
+      }).catch(() => {});
+    }).catch(() => {});
   }, [currentLocation?.coordinates?.latitude, currentLocation?.coordinates?.longitude]);
 
   // Get recently viewed items

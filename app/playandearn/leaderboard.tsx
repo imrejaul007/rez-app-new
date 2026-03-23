@@ -762,7 +762,7 @@ const Leaderboard = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => router.push('/refer' as any)}
+              onPress={() => router.push('/referral' as any)}
               accessibilityLabel="Refer friends"
               accessibilityRole="button"
             >

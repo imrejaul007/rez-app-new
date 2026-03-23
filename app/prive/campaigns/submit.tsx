@@ -25,6 +25,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import priveApi from '@/services/priveApi';
 import { platformAlert } from '@/utils/platformAlert';
 import { CachedImage } from '@/components/ui/CachedImage';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 type Platform = 'instagram' | 'twitter' | 'youtube';
 
@@ -34,7 +35,7 @@ const PLATFORM_OPTIONS: Array<{ id: Platform; label: string; icon: string }> = [
   { id: 'youtube', label: 'YouTube', icon: 'logo-youtube' },
 ];
 
-export default function CampaignSubmitScreen() {
+function CampaignSubmitScreen() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const campaignId = (params.campaignId as string) || '';
@@ -244,6 +245,8 @@ export default function CampaignSubmitScreen() {
     </SafeAreaView>
   );
 }
+
+export default withErrorBoundary(CampaignSubmitScreen, 'PriveCampaignsSubmit');
 
 interface ProgressStepProps {
   number: number;
