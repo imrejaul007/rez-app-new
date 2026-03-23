@@ -5,7 +5,7 @@
  * ReZ brand styling
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter } from 'expo-router';
@@ -35,7 +35,7 @@ export const CoinDropsSection: React.FC<CoinDropsSectionProps> = ({
     router.push(`/MainStorePage?storeId=${coinDrop.id}`);
   };
 
-  const styles = StyleSheet.create({
+  const styles = useMemo(() => StyleSheet.create({
     container: {
       marginBottom: Spacing.lg,
     },
@@ -142,7 +142,7 @@ export const CoinDropsSection: React.FC<CoinDropsSectionProps> = ({
     timerIcon: {
       marginRight: 4,
     },
-  });
+  }), [isDark, theme]);
 
   return (
     <View style={styles.container}>

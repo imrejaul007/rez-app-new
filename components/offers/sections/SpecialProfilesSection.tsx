@@ -5,7 +5,7 @@
  * ReZ brand styling
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -37,7 +37,7 @@ export const SpecialProfilesSection: React.FC<SpecialProfilesSectionProps> = ({
     }
   };
 
-  const styles = StyleSheet.create({
+  const styles = useMemo(() => StyleSheet.create({
     container: {
       marginBottom: Spacing.lg,
     },
@@ -144,7 +144,7 @@ export const SpecialProfilesSection: React.FC<SpecialProfilesSectionProps> = ({
       fontWeight: '700',
       color: colors.background.primary,
     },
-  });
+  }), [isDark, theme]);
 
   return (
     <View style={styles.container}>

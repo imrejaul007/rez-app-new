@@ -5,7 +5,7 @@
  * ReZ brand styling
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter } from 'expo-router';
@@ -49,7 +49,7 @@ export const FriendsRedeemedSection: React.FC<FriendsRedeemedSectionProps> = ({
     return `${diffDays}d ago`;
   };
 
-  const styles = StyleSheet.create({
+  const styles = useMemo(() => StyleSheet.create({
     container: {
       marginBottom: Spacing.lg,
     },
@@ -151,7 +151,7 @@ export const FriendsRedeemedSection: React.FC<FriendsRedeemedSectionProps> = ({
       color: Colors.primary[600],
       marginLeft: 3,
     },
-  });
+  }), [isDark, theme]);
 
   return (
     <View style={styles.container}>
