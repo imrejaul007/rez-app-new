@@ -92,6 +92,40 @@ class ApiClient {
     return headers;
   }
 
+  // Check if response is cached and still valid
+  private getCachedResponse<T>(url: string): T | null {
+    const cached = this.responseCache.get(url);
+    if (cached && Date.now() < cached.expiresAt) {
+      return cached.data as T;
+    }
+    // Remove expired cache entry
+    if (cached) {
+      this.responseCache.delete(url);
+    }
+    return null;
+  }
+
+  // Store response in cache
+  private setCachedResponse<T>(url: string, data: T, ttlMs: number): void {
+    this.responseCache.set(url, {
+      data,
+      expiresAt: Date.now() + ttlMs,
+    });
+  }
+
+  // Clear cache for a pattern or all if no pattern provided
+  public clearCache(pattern?: string): void {
+    if (!pattern) {
+      this.responseCache.clear();
+      return;
+    }
+    for (const [key] of this.responseCache) {
+      if (key.includes(pattern)) {
+        this.responseCache.delete(key);
+      }
+    }
+  }
+
   // Create request with timeout
   private createRequestWithTimeout(
     url: string,
@@ -175,9 +209,9 @@ class ApiClient {
   }
 
   // HTTP Methods
-  public async get<T>(endpoint: string, params?: Record<string, any>): Promise<ApiResponse<T>> {
+  public async get<T>(endpoint: string, params?: Record<string, any>, cacheTtlMs?: number): Promise<ApiResponse<T>> {
     let url = endpoint;
-    
+
     if (params) {
       const searchParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
@@ -188,7 +222,26 @@ class ApiClient {
       url += `?${searchParams.toString()}`;
     }
 
-    return this.request<T>(url, { method: 'GET' });
+    // Check cache first (if TTL provided)
+    if (cacheTtlMs && cacheTtlMs > 0) {
+      const cached = this.getCachedResponse<T>(url);
+      if (cached) {
+        return {
+          success: true,
+          data: cached,
+          message: 'Cached response',
+        };
+      }
+    }
+
+    const response = await this.request<T>(url, { method: 'GET' });
+
+    // Cache successful GET responses (if TTL provided)
+    if (response.success && response.data && cacheTtlMs && cacheTtlMs > 0) {
+      this.setCachedResponse(url, response.data, cacheTtlMs);
+    }
+
+    return response;
   }
 
   public async post<T>(endpoint: string, data?: any): Promise<ApiResponse<T>> {
