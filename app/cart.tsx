@@ -174,19 +174,28 @@ function CartPage() {
 
   const allItems = useMemo(() => [...productItems, ...serviceItems], [productItems, serviceItems]);
 
-  // Use real cart totals from CartContext
+  // BUG FIX #7: Cart total recalculation from scratch to prevent drift
   const overallTotal = useMemo(() => {
-    // ✅ FIX: Add type checking and safe number conversion
-    const cartTotal = typeof cartState.totalPrice === 'number' && !isNaN(cartState.totalPrice)
-      ? cartState.totalPrice
-      : 0;
+    // ✅ FIX: Recalculate total from scratch instead of relying on cartState.totalPrice
+    // This prevents incremental modifications from drifting over time
+    const recalculatedCartTotal = productItems.reduce((sum, item) => {
+      const price = typeof item.price === 'number' ? item.price : 0;
+      const qty = typeof item.quantity === 'number' ? item.quantity : 0;
+      return sum + (price * qty);
+    }, 0);
+
+    const serviceTotal = serviceItems.reduce((sum, item) => {
+      const price = typeof item.price === 'number' ? item.price : 0;
+      const qty = typeof item.quantity === 'number' ? item.quantity : 0;
+      return sum + (price * qty);
+    }, 0);
+
     const lockedTotal = typeof calculateLockedTotal === 'function'
       ? calculateLockedTotal(lockedProducts)
       : 0;
-    const total = cartTotal + lockedTotal;
 
-    return total;
-  }, [cartState.totalPrice, lockedProducts]);
+    return recalculatedCartTotal + serviceTotal + lockedTotal;
+  }, [productItems, serviceItems, lockedProducts]);
 
   const overallItemCount = useMemo(() => {
     // ✅ FIX: Add type checking for item count calculation
@@ -429,6 +438,9 @@ function CartPage() {
   };
 
   const renderCartItem = useCallback(({ item }: { item: CartItemType }) => {
+    // Null guard: prevent crash if item is somehow undefined
+    if (!item) return null;
+
     // Render locked item if on locked products tab
     if (activeTab === 'lockedproduct') {
       return (
