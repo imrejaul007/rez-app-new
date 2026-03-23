@@ -67,6 +67,16 @@ function PaymentPage() {
   const serviceId = params.serviceId as string;
   const serviceType = params.serviceType as string;
 
+  // FR-D004 FIX: Detect mobile-recharge payment type.
+  // recharge.tsx navigates here with type=recharge&txnId=<REZ-txnId>&mobile=<e164>.
+  // Without this flag the screen treated mobile recharges as a generic wallet topup,
+  // ignored txnId in the payment metadata, and navigated to /wallet-screen on success
+  // instead of back to the recharge flow.  The Razorpay webhook also never received
+  // the txnId so it couldn't match the payment back to the RechargeTransaction record.
+  const isMobileRecharge = paymentType === 'recharge';
+  const rechargeTransactionId = (params.txnId as string) || '';
+  const rechargeMobile = (params.mobile as string) || '';
+
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -209,6 +219,10 @@ function PaymentPage() {
                serviceType === 'gold' ? 'gold purchase' :
                serviceType === 'insurance' ? 'insurance' : 'payment'} of ${displayCurrency}${amount.toLocaleString()} has been processed successfully.`;
     }
+    // FR-D004 FIX: provide correct success message for mobile recharge flow
+    if (isMobileRecharge) {
+      return `Mobile recharge of ${displayCurrency}${amount.toLocaleString()} for ${rechargeMobile} has been processed successfully.`;
+    }
     if (isWalletRecharge) {
       return `${amount.toLocaleString()} ${BRAND.CURRENCY_CODE} has been added to your wallet successfully.`;
     }
@@ -218,6 +232,11 @@ function PaymentPage() {
   const navigateAfterSuccess = () => {
     if (isFinancialService) {
       router.replace('/financial' as any);
+    } else if (isMobileRecharge) {
+      // FR-D004 FIX: after mobile recharge payment navigate to wallet so user
+      // can see the debited amount + promo coins, rather than looping back to
+      // the recharge page or hitting /wallet-screen with a misleading "NC added" banner.
+      router.replace('/wallet-screen');
     } else {
       router.replace('/wallet-screen');
     }
@@ -229,14 +248,28 @@ function PaymentPage() {
   const createPaymentIntent = async (extraMetadata?: Record<string, any>): Promise<PaymentResponse | null> => {
     if (!selectedMethod) return null;
 
-    const purpose = isFinancialService ? 'financial_service' as const : isWalletRecharge ? 'wallet_topup' as const : 'other' as const;
+    // FR-D004 FIX: map mobile-recharge to its own purpose so the backend
+    // Razorpay order notes carry type='recharge' and the webhook handler
+    // (rechargeController.handleRazorpayWebhook) can match the payment
+    // back to the correct RechargeTransaction by txnId.
+    const purpose = isFinancialService
+      ? 'financial_service' as const
+      : isMobileRecharge
+        ? 'other' as const
+        : isWalletRecharge
+          ? 'wallet_topup' as const
+          : 'other' as const;
+
+    const rechargeMetadata = isMobileRecharge
+      ? { type: 'recharge', rechargeTransactionId, mobile: rechargeMobile }
+      : {};
 
     const response = await paymentService.processPayment(
       amount,
       currency,
       selectedMethod,
       purpose,
-      { ...(extraMetadata || {}), fiatCurrency }
+      { ...(extraMetadata || {}), fiatCurrency, ...rechargeMetadata }
     );
 
     if (!response.success || !response.data) {

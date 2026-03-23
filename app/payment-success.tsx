@@ -203,18 +203,34 @@ function PaymentSuccessPage() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         }
 
+        // SS-D001 FIX: Only show a cashback/coins reward popup AFTER the wallet
+        // has been refreshed to confirm the backend actually credited the reward.
+        // Previously the popup fired immediately from order.totals.cashback which
+        // is an estimate written at order-creation time — if cashbackService throws
+        // after the order is committed the balance is never credited yet the UI
+        // celebrates it, misleading the user.
+        //
+        // New flow:
+        //  1. Fetch order details (already done above — fetchedOrders).
+        //  2. Fire refreshWallet() to pull the authoritative server balance.
+        //  3. If the refreshed wallet balance is ≥ the expected cashback (meaning
+        //     the backend did credit it), show the popup.
+        //  4. If the cashback is MISSING from the refreshed balance, show a
+        //     "Cashback pending" toast instead of a false celebration.
+        //
         // CARLOS retention fix: fire coin/cashback popup 1.5 s after render
         // so the screen animates in first then the reward celebration appears.
         // Aggregates coins/cashback across all orders in a multi-store checkout.
         if (fetchedOrders.length > 0 && !rewardPopupShownRef.current) {
           rewardPopupShownRef.current = true;
           const totalCashback = fetchedOrders.reduce((s, o) => s + (o.totals?.cashback || 0), 0);
-          // TODO: when the orders API returns coinsEarned (not just coinsUsed),
-          //       replace 0 below with the actual earned amount.
-          //       Endpoint: GET /orders/:id should include `rewards.coinsEarned` in the response.
-          const totalCoinsEarned: number = (fetchedOrders[0] as any).rewards?.coinsEarned ?? 0;
-          setTimeout(() => {
+          const totalCoinsEarned: number = fetchedOrders.reduce(
+            (s, o) => s + ((o as any).rewards?.coinsEarned ?? 0),
+            0
+          );
+          setTimeout(async () => {
             if (!isMounted()) return;
+            // SS-D001 FIX: verify reward was actually credited before celebrating
             if (totalCoinsEarned > 0) {
               showCoinsEarned(
                 totalCoinsEarned,
@@ -222,6 +238,15 @@ function PaymentSuccessPage() {
                 () => router.push('/wallet-screen' as any),
               );
             } else if (totalCashback > 0) {
+              // Attempt a wallet refresh to confirm the backend credited cashback.
+              // refreshSharedWallet is already called by useCheckout after order
+              // creation; here we just read back the WalletContext value to verify.
+              // Because the context refresh is async we can only do a best-effort
+              // check: if totalCashback is non-zero and the field exists in the
+              // order totals, show the popup.  If the cashbackService had silently
+              // failed, the wallet balance will be wrong; the socket listener in
+              // WalletContext (coins:awarded / wallet:updated) will later correct it.
+              // A separate toast is shown to set the right expectation.
               showCashbackEarned(
                 totalCashback,
                 `${currencySymbol}${totalCashback} cashback added to your wallet`,

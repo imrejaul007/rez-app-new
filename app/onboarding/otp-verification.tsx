@@ -99,15 +99,21 @@ function OTPVerificationScreen() {
 
     try {
       triggerImpact('Medium');
-      await actions.verifyOTP(phoneNumber, otpString);
+      // FR-D003 FIX: Use the freshly-returned user from verifyOTP instead of the
+      // stale `user` value from Zustand. When verifyOTP resolves, the Zustand store
+      // dispatch has not yet triggered a re-render, so `user` is still null/old.
+      // Reading isOnboarded from the stale store meant ALL new signups were always
+      // sent to /onboarding even when they were returning users (isOnboarded=true).
+      const freshUser = await actions.verifyOTP(phoneNumber, otpString);
 
       analyticsService.track('otp_verified');
       triggerNotification('Success');
 
       if (!isMounted()) return;
-      await new Promise(resolve => setTimeout(resolve, 100));
 
-      if (user?.isOnboarded) {
+      // Prefer freshUser from the response; fall back to Zustand store user.
+      const resolvedUser = freshUser ?? user;
+      if (resolvedUser?.isOnboarded) {
         router.replace('/(tabs)');
       } else {
         router.replace('/onboarding/notification-permission');

@@ -10,6 +10,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import NetInfo from '@react-native-community/netinfo';
 import storePaymentApi from '@/services/storePaymentApi';
 import externalWalletApi from '@/services/externalWalletApi';
 import apiClient from '@/services/apiClient';
@@ -113,9 +114,31 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
   // Refs to prevent infinite loops
   const hasLoadedRef = useRef(false);
   const selectedOfferIdsRef = useRef(selectedOfferIds);
-  
+
+  // OG-D001 FIX: One idempotency key per hook mount so retries after a
+  // network drop always re-use the same key and the backend deduplicates.
+  const idempotencyKeyRef = useRef(
+    `store-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+  );
+
+  // OG-D002 FIX: In-flight lock prevents duplicate submissions from a
+  // double-tap or a reconnect firing initiatePayment a second time while
+  // the first request is still awaiting a response.
+  const isSubmittingRef = useRef(false);
+
   // Update ref when selectedOfferIds changes
   selectedOfferIdsRef.current = selectedOfferIds;
+
+  // OG-D003 FIX: assertOnline() — gate every mutating payment call so the
+  // user gets a clear error message instead of a stuck spinner when offline.
+  const assertOnline = useCallback(async (): Promise<boolean> => {
+    const state = await NetInfo.fetch();
+    const online = state.isConnected === true;
+    if (!online) {
+      setError('No internet connection. Please check your network and try again.');
+    }
+    return online;
+  }, []);
 
   // State
   const [store, setStore] = useState<StorePaymentInfo | null>(null);
@@ -334,9 +357,25 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       return null;
     }
 
+    // OG-D002 FIX: Prevent concurrent duplicate submissions.
+    if (isSubmittingRef.current) {
+      return null;
+    }
+    isSubmittingRef.current = true;
+
+    // OG-D003 FIX: Fail fast when offline — don't start a doomed in-flight request.
+    if (!(await assertOnline())) {
+      isSubmittingRef.current = false;
+      return null;
+    }
+
     try {
       setIsProcessing(true);
       setError(null);
+
+      // OG-D001 FIX: Use the caller-supplied key or the session-scoped ref so
+      // that retries after a reconnect always carry the same idempotency key.
+      const resolvedKey = idempotencyKey ?? idempotencyKeyRef.current;
 
       // Map nuqtaCoins back to rezCoins for backend
       const response = await apiClient.post('/store-payment/initiate', {
@@ -350,7 +389,8 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
           totalAmount: appliedCoins.totalApplied,
         },
         offersApplied: selectedOfferIdsRef.current,
-        ...(idempotencyKey ? { idempotencyKey } : {}),
+      }, {
+        headers: { 'Idempotency-Key': resolvedKey },
       });
 
       if (response.success && response.data) {
@@ -364,14 +404,21 @@ export function usePaymentFlow(params: UsePaymentFlowParams): UsePaymentFlowRetu
       return null;
     } finally {
       setIsProcessing(false);
+      // OG-D002 FIX: Always release the lock so the user can retry after a
+      // genuine failure.
+      isSubmittingRef.current = false;
     }
-  }, [storeId, billAmount, amountToPay, selectedPaymentMethod, appliedCoins]);
+  }, [storeId, billAmount, amountToPay, selectedPaymentMethod, appliedCoins, assertOnline]);
 
   const reset = useCallback(() => {
     setAppliedCoins(DEFAULT_APPLIED_COINS);
     setIsAutoOptimized(false);
     setSelectedPaymentMethod(null);
     setError(null);
+    // OG-D001 FIX: Regenerate the idempotency key when the user explicitly
+    // resets — this represents a new payment intent, not a retry.
+    idempotencyKeyRef.current = `store-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    isSubmittingRef.current = false;
   }, []);
 
   const clearError = useCallback(() => {

@@ -16,7 +16,9 @@ interface AuthActions {
   sendOTP: (phoneNumber: string, email?: string, referralCode?: string) => Promise<void>;
   login: (phoneNumber: string, otp: string) => Promise<void>;
   register: (phoneNumber: string, email: string, referralCode?: string) => Promise<void>;
-  verifyOTP: (phoneNumber: string, otp: string) => Promise<void>;
+  // FR-D003 FIX: verifyOTP returns the fresh User so callers can read isOnboarded
+  // from the server response rather than stale Zustand state.
+  verifyOTP: (phoneNumber: string, otp: string) => Promise<User | undefined>;
   logout: () => Promise<void>;
   forceLogout: () => void;
   updateProfile: (data: Partial<User>) => Promise<void>;

@@ -9,6 +9,8 @@ import apiClient from '@/services/apiClient';
 import { API_CONFIG, APP_CONFIG, getApiUrl, EXTERNAL_SERVICES, FEATURE_FLAGS } from '@/config/env';
 import { errorReporter } from '@/utils/errorReporter';
 import ReferralHandler from '@/utils/referralHandler';
+// OG-D005 FIX: Abort in-flight payment requests when the app goes to background.
+import { requestRegistry } from '@/utils/requestRegistry';
 
 export function useAppServices(fontsLoaded: boolean) {
   const appState = useRef<AppStateStatus>(AppState.currentState);
@@ -47,6 +49,12 @@ export function useAppServices(fontsLoaded: boolean) {
         import('@/services/cacheWarmingService').then(mod => {
           mod.default.onAppBackground();
         }).catch(() => {});
+
+        // OG-D005 FIX: Abort all in-flight payment / mutating requests so the
+        // pending fetch does not keep a stale reference alive after the OS kills
+        // the app, and so a re-launch starts from a clean slate (the idempotency
+        // key in useCheckout ensures the retry is safe to re-issue).
+        requestRegistry.abortAll('app-backgrounded');
       }
     });
 

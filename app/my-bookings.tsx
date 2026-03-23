@@ -3,7 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // My Bookings Page
 // Shows user's service bookings with travel-specific enhancements
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -61,6 +61,12 @@ const MyBookingsPage = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past' | 'courses'>('upcoming');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // SS-D002 FIX: Track which booking IDs currently have a cancel in-flight so
+  // the button is disabled (preventing double-tap race) and the UI shows a
+  // local "cancelling" state before the API responds.
+  const [cancellingIds, setCancellingIds] = useState<Set<string>>(new Set());
+  // Ref that keeps fetchBookings stable across the cancel handler closure
+  const fetchBookingsRef = useRef<() => void>(() => {});
 
   const fetchBookings = useCallback(async () => {
     try {
@@ -147,26 +153,74 @@ const MyBookingsPage = () => {
     fetchBookings();
   }, [fetchBookings]);
 
+  // SS-D002 FIX: Keep fetchBookings accessible inside handleCancelBooking
+  // without making it a dependency (avoids stale-closure re-creation loop).
+  useEffect(() => {
+    fetchBookingsRef.current = fetchBookings;
+  });
+
   const handleCancelBooking = useCallback(async (bookingId: string) => {
+    // SS-D002 FIX: If a cancel is already in-flight for this booking, ignore the
+    // duplicate tap — prevents race where two PATCH requests race each other.
+    if (cancellingIds.has(bookingId)) return;
+
     platformAlertDestructive(
       'Cancel Booking',
       'Are you sure you want to cancel this booking?',
       'Yes, Cancel',
       async () => {
+        // SS-D002 FIX: Lock this booking's Cancel button immediately so that:
+        //  (a) a background refresh arriving mid-cancel cannot re-render the
+        //      button in its enabled state and
+        //  (b) a double-tap cannot create two simultaneous cancel requests.
+        setCancellingIds(prev => new Set(prev).add(bookingId));
+
+        // SS-D002 FIX: Optimistic local state update — immediately show the
+        // booking as 'cancelled' so the user sees instant feedback while the
+        // API call is in-flight.  If the call fails we revert.
+        let previousBookings: ServiceBooking[] = [];
+        setBookings(prev => {
+          previousBookings = prev;
+          return prev.map(b =>
+            b._id === bookingId ? { ...b, status: 'cancelled' as any } : b
+          );
+        });
+
         try {
           const response = await serviceBookingApi.cancelBooking(bookingId);
           if (response.success) {
+            // SS-D002 FIX: Replace optimistic entry with authoritative server
+            // data so any server-side fields (refund amount, cancelledAt, etc.)
+            // are reflected without requiring a full list refresh.
+            if (response.data) {
+              setBookings(prev =>
+                prev.map(b => (b._id === bookingId ? response.data! : b))
+              );
+            }
             platformAlertSimple('Success', 'Booking cancelled successfully');
-            fetchBookings();
+            // Full refresh in the background to sync other fields (e.g. cashback reversal)
+            fetchBookingsRef.current();
           } else {
+            // SS-D002 FIX: Revert optimistic update on API failure so the
+            // booking does not appear cancelled when it actually still is active.
+            setBookings(previousBookings);
             platformAlertSimple('Error', response.error || 'Failed to cancel booking');
           }
         } catch (error) {
+          // SS-D002 FIX: Revert on network / unexpected error too.
+          setBookings(previousBookings);
           platformAlertSimple('Error', 'Failed to cancel booking');
+        } finally {
+          // SS-D002 FIX: Always release the lock so the button re-enables on error.
+          setCancellingIds(prev => {
+            const next = new Set(prev);
+            next.delete(bookingId);
+            return next;
+          });
         }
       }
     );
-  }, [fetchBookings]);
+  }, [cancellingIds]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -216,7 +270,9 @@ const MyBookingsPage = () => {
   };
 
   const renderTravelBooking = useCallback(({ item }: { item: ServiceBooking }) => {
-    const canCancel = item.status === 'confirmed' || item.status === 'pending';
+    // SS-D002 FIX: canCancel also checks that no cancel is in-flight for this item
+    const isCancelling = cancellingIds.has(item._id);
+    const canCancel = (item.status === 'confirmed' || item.status === 'pending') && !isCancelling;
     const bookingDate = new Date(item.bookingDate);
     const isUpcoming = bookingDate > new Date();
     const route = item.travelDetails?.route;
@@ -310,15 +366,19 @@ const MyBookingsPage = () => {
               />
             )}
           </View>
-          {canCancel && isUpcoming && (
+          {/* SS-D002 FIX: disable button while cancel API call is in-flight */}
+          {(canCancel || isCancelling) && isUpcoming && (
             <Pressable
-              style={styles.cancelButton}
+              style={[styles.cancelButton, isCancelling && { opacity: 0.5 }]}
+              disabled={isCancelling}
               onPress={(e) => {
                 e.stopPropagation();
                 handleCancelBooking(item._id);
               }}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.cancelButtonText}>
+                {isCancelling ? 'Cancelling…' : 'Cancel'}
+              </Text>
             </Pressable>
           )}
         </View>
@@ -332,10 +392,12 @@ const MyBookingsPage = () => {
         )}
       </Pressable>
     );
-  }, [router, currencySymbol, handleCancelBooking]);
+  }, [router, currencySymbol, handleCancelBooking, cancellingIds]);
 
   const renderStandardBooking = useCallback(({ item }: { item: ServiceBooking }) => {
-    const canCancel = item.status === 'confirmed' || item.status === 'pending';
+    // SS-D002 FIX: canCancel also checks that no cancel is in-flight for this item
+    const isCancelling = cancellingIds.has(item._id);
+    const canCancel = (item.status === 'confirmed' || item.status === 'pending') && !isCancelling;
     const bookingDate = new Date(item.bookingDate);
     const isUpcoming = bookingDate > new Date();
 
@@ -404,15 +466,19 @@ const MyBookingsPage = () => {
                 <Text style={styles.rescheduleButtonText}>Reschedule</Text>
               </Pressable>
             )}
-            {canCancel && isUpcoming && (
+            {/* SS-D002 FIX: disable button while cancel API call is in-flight */}
+            {(canCancel || isCancelling) && isUpcoming && (
               <Pressable
-                style={styles.cancelButton}
+                style={[styles.cancelButton, isCancelling && { opacity: 0.5 }]}
+                disabled={isCancelling}
                 onPress={(e) => {
                   e.stopPropagation();
                   handleCancelBooking(item._id);
                 }}
               >
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={styles.cancelButtonText}>
+                  {isCancelling ? 'Cancelling…' : 'Cancel'}
+                </Text>
               </Pressable>
             )}
           </View>
@@ -427,7 +493,7 @@ const MyBookingsPage = () => {
         )}
       </Pressable>
     );
-  }, [router, currencySymbol, handleCancelBooking]);
+  }, [router, currencySymbol, handleCancelBooking, cancellingIds]);
 
   const renderBooking = useCallback(({ item }: { item: ServiceBooking }) => {
     if (isTravelBooking(item)) {

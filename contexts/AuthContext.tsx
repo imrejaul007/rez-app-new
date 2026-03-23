@@ -97,7 +97,9 @@ interface AuthContextType {
     sendOTP: (phoneNumber: string, email?: string, referralCode?: string) => Promise<void>;
     login: (phoneNumber: string, otp: string) => Promise<void>;
     register: (phoneNumber: string, email: string, referralCode?: string) => Promise<void>;
-    verifyOTP: (phoneNumber: string, otp: string) => Promise<void>;
+    // FR-D003 FIX: verifyOTP returns the fresh User so the OTP screen can navigate
+    // correctly using the server response instead of stale Zustand state.
+    verifyOTP: (phoneNumber: string, otp: string) => Promise<User | undefined>;
     logout: () => Promise<void>;
     forceLogout: () => void;
     updateProfile: (data: Partial<User>) => Promise<void>;
@@ -325,6 +327,10 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
       // Reset explicit logout flag since user is logging in again
       setHasExplicitlyLoggedOut(false);
+
+      // FR-D003 FIX: Return the user so verifyOTP / callers can use fresh data
+      // without relying on stale Zustand state.
+      return response.data.user;
     } catch (error: any) {
       dispatch({
         type: 'AUTH_FAILURE',
@@ -358,8 +364,14 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   };
 
   const verifyOTP = async (phoneNumber: string, otp: string) => {
-    // Use login for OTP verification
-    await login(phoneNumber, otp);
+    // FR-D003 FIX: verifyOTP must return the resolved user so callers can read
+    // isOnboarded from the fresh server response rather than stale Zustand state.
+    // The Zustand store dispatch (AUTH_SUCCESS) is async — the component re-renders
+    // after the current microtask queue drains, so reading `user` from the store
+    // immediately after `await actions.verifyOTP()` returns still gets the OLD value.
+    // By returning the User object here the OTP screen can navigate correctly on
+    // the very first OTP verification even before the store re-renders.
+    return await login(phoneNumber, otp);
   };
 
   const logout = async () => {

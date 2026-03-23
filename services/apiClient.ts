@@ -7,6 +7,9 @@ import { Sentry } from '@/config/sentry';
 import { globalDeduplicator, createRequestKey } from '@/utils/requestDeduplicator';
 import { globalConcurrencyLimiter } from '@/utils/concurrencyLimiter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+// OG-D005/OG-D006 FIX: Register every fetch's AbortController so the
+// app-level background listener can cancel in-flight requests on OS kill.
+import { requestRegistry } from '@/utils/requestRegistry';
 
 // Cached device fingerprint (loaded once, reused for all requests)
 let _cachedDeviceFingerprint: string | null = null;
@@ -241,10 +244,18 @@ class ApiClient {
 
     // Declared outside try so catch block can clear the timer
     let slowWarningId: ReturnType<typeof setTimeout> | null = null;
+    // OG-D005/OG-D006 FIX: Declare registryId outside try so the catch block
+    // can unregister the controller even when the fetch throws or is aborted.
+    let registryId: string | null = null;
 
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+      // OG-D005/OG-D006 FIX: Register the controller so the AppState
+      // background listener can abort this fetch if the app is backgrounded
+      // or killed while the request is in flight.
+      registryId = requestRegistry.register(controller, `${method} ${endpoint}`);
 
       // Show "taking longer than usual" warning at 4s
       if (this.slowRequestCallback && timeout >= 5000) {
@@ -273,6 +284,8 @@ class ApiClient {
       const response = await globalConcurrencyLimiter.execute(() => fetch(url, config));
       clearTimeout(timeoutId);
       if (slowWarningId) clearTimeout(slowWarningId);
+      // OG-D006 FIX: Unregister now that the fetch has resolved.
+      requestRegistry.unregister(registryId);
 
       const responseData = await response.json();
 
@@ -367,6 +380,10 @@ class ApiClient {
 
     } catch (error) {
       if (slowWarningId) clearTimeout(slowWarningId);
+      // OG-D006 FIX: Ensure the registry entry is cleaned up on error/abort.
+      if (registryId !== null) {
+        requestRegistry.unregister(registryId);
+      }
 
       // Report API errors to Sentry with tier tags for filtering
       try {

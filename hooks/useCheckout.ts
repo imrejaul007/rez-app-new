@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { errorReporter } from '@/utils/errorReporter';
@@ -41,6 +42,8 @@ import analytics from '@/services/analytics/AnalyticsService';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import discountsApi from '@/services/discountsApi';
 import { queryKeys } from '@/lib/queryKeys';
+// OG-D004 FIX: Persist checkout progress across OS background-kills.
+import { useCheckoutDraftStore, getActiveDraft } from '@/stores/checkoutDraftStore';
 
 const devLog = {
   log: __DEV__ ? console.log.bind(console) : () => {},
@@ -135,6 +138,10 @@ const distributeCoinsProportionally = (
  *   `useCartActions` selectors to avoid prop-drilling.
  */
 export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
+  // OG-D004 FIX: Access draft store for persisting / restoring checkout progress.
+  const saveDraft = useCheckoutDraftStore(s => s.saveDraft);
+  const clearDraft = useCheckoutDraftStore(s => s.clearDraft);
+
   const cartActions = useCartActions();
   const cartState = useCartState();
   const getCurrencySymbol = useGetCurrencySymbol();
@@ -192,6 +199,34 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
     initializeCheckout().then(() => { hasInitializedRef.current = true; });
     return () => { isMountedRef.current = false; };
   }, [authLoading, isAuthenticated]);
+
+  // OG-D007 FIX: When the app returns to the foreground after being killed
+  // mid-payment, the isSubmittingRef is correctly re-initialised to false by
+  // the hook re-mount, but the state.currentStep can be stuck at 'processing'
+  // if we somehow kept in-memory state (e.g. React Navigation cache on iOS).
+  // This listener resets the processing step on foreground so the Pay button
+  // is not permanently disabled after a background kill → relaunch.
+  useEffect(() => {
+    const appStateRef = { current: AppState.currentState as AppStateStatus };
+    const subscription = AppState.addEventListener('change', (nextState: AppStateStatus) => {
+      const prev = appStateRef.current;
+      appStateRef.current = nextState;
+      if (prev.match(/inactive|background/) && nextState === 'active') {
+        // If we were processing when the app was backgrounded/killed, reset so
+        // the user can retry cleanly.
+        if (isMountedRef.current) {
+          setState(s => {
+            if (s.currentStep === 'processing') {
+              isSubmittingRef.current = false;
+              return { ...s, currentStep: 'checkout', loading: false };
+            }
+            return s;
+          });
+        }
+      }
+    });
+    return () => subscription.remove();
+  }, []);
 
   // Refresh wallet data when user returns to checkout (e.g., after failed payment or back from address screen)
   useFocusEffect(
@@ -701,6 +736,19 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
                 );
               } // Non-critical — fallback to default
               defaultAddress = lastUsedAddress || userAddresses.find(addr => addr.isDefault) || userAddresses[0];
+
+              // OG-D004 FIX: Prefer the address the user had selected in the
+              // previous checkout session (draft) so that after an OS kill the
+              // user does not have to re-select their address from scratch.
+              const activeDraft = getActiveDraft();
+              if (activeDraft?.selectedAddressId) {
+                const draftAddr = userAddresses.find(a => a.id === activeDraft.selectedAddressId);
+                if (draftAddr) {
+                  defaultAddress = draftAddr;
+                  devLog.log('📍 [Checkout] Address restored from draft:', draftAddr.addressLine1);
+                }
+              }
+
               devLog.log('📍 [Checkout] Addresses loaded:', {
                 total: userAddresses.length,
                 defaultAddress: defaultAddress?.addressLine1 || 'none',
@@ -1282,7 +1330,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
   const selectPaymentMethod = useCallback((method: PaymentMethod) => {
     setState(prev => ({ ...prev, selectedPaymentMethod: method }));
-  }, []);
+    // OG-D004 FIX: Persist selected payment method so it survives an OS kill.
+    saveDraft({ paymentMethod: method.id });
+  }, [saveDraft]);
 
   const proceedToPayment = useCallback(async () => {
     setState(prev => ({ ...prev, currentStep: 'payment_methods' }));
@@ -1454,6 +1504,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
         // SS-002 FIX: Refresh wallet after COD order so coin balance reflects deducted coins
         refreshSharedWallet().catch(() => {});
+
+        // OG-D004 FIX: Clear checkout draft on success — this checkout is done.
+        clearDraft();
 
         setState(prev => ({ ...prev, currentStep: 'success', loading: false }));
         router.replace(`/payment-success?orderId=${orderId}`);
@@ -1709,6 +1762,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       // SS-002 FIX: Refresh wallet after wallet payment so the deducted coin balance is shown immediately
       refreshSharedWallet().catch(() => {});
 
+      // OG-D004 FIX: Clear checkout draft on successful wallet payment.
+      clearDraft();
+
       router.replace(`/payment-success?orderId=${orderId}&transactionId=${transactionId}&paymentMethod=wallet`);
 
     } catch (error) {
@@ -1960,6 +2016,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       // SS-002 FIX: Refresh wallet for multi-store COD (coins deducted per store order)
       refreshSharedWallet().catch(() => {});
 
+      // OG-D004 FIX: Clear checkout draft on successful COD placement.
+      clearDraft();
+
       router.replace(`/payment-success?orderId=${orderIdsParam}&transactionId=${transactionId}&paymentMethod=cod&multiStore=${isMultiStore}`);
 
     } catch (error) {
@@ -2201,6 +2260,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             // SS-002 FIX: Refresh wallet after Razorpay payment so earned cashback/coins are reflected
             refreshSharedWallet().catch(() => {});
 
+            // OG-D004 FIX: Clear checkout draft on successful Razorpay payment.
+            clearDraft();
+
             router.replace(
               `/payment-success?orderId=${orderId}&transactionId=${paymentResponse.transactionId}&paymentMethod=razorpay`
             );
@@ -2438,7 +2500,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       selectedAddress: address,
       showAddressSection: false,
     }));
-  }, []);
+    // OG-D004 FIX: Persist selected address ID so it survives an OS kill.
+    saveDraft({ selectedAddressId: address.id });
+  }, [saveDraft]);
 
   const handleAddressSelect = useCallback((address: CheckoutDeliveryAddress) => {
     selectAddress(address);
