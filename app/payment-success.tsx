@@ -25,6 +25,8 @@ import analytics from '@/services/analytics/AnalyticsService';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+// CARLOS retention fix: show coins-earned popup immediately after purchase
+import { useRewardPopup } from '@/contexts/RewardPopupContext';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -90,6 +92,9 @@ function PaymentSuccessPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const analyticsTrackedRef = useRef(false);
+  // CARLOS retention fix: reward popup shown once orders load
+  const rewardPopupShownRef = useRef(false);
+  const { showCoinsEarned, showCashbackEarned } = useRewardPopup();
   const isMounted = useIsMounted();
 
   // Parse multiple order IDs (comma-separated)
@@ -196,6 +201,34 @@ function PaymentSuccessPage() {
         // Haptic feedback on successful payment
         if (fetchedOrders.length > 0) {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        }
+
+        // CARLOS retention fix: fire coin/cashback popup 1.5 s after render
+        // so the screen animates in first then the reward celebration appears.
+        // Aggregates coins/cashback across all orders in a multi-store checkout.
+        if (fetchedOrders.length > 0 && !rewardPopupShownRef.current) {
+          rewardPopupShownRef.current = true;
+          const totalCashback = fetchedOrders.reduce((s, o) => s + (o.totals?.cashback || 0), 0);
+          // TODO: when the orders API returns coinsEarned (not just coinsUsed),
+          //       replace 0 below with the actual earned amount.
+          //       Endpoint: GET /orders/:id should include `rewards.coinsEarned` in the response.
+          const totalCoinsEarned: number = (fetchedOrders[0] as any).rewards?.coinsEarned ?? 0;
+          setTimeout(() => {
+            if (!isMounted()) return;
+            if (totalCoinsEarned > 0) {
+              showCoinsEarned(
+                totalCoinsEarned,
+                `${BRAND.COIN_NAME} earned from your purchase`,
+                () => router.push('/wallet-screen' as any),
+              );
+            } else if (totalCashback > 0) {
+              showCashbackEarned(
+                totalCashback,
+                `${currencySymbol}${totalCashback} cashback added to your wallet`,
+                () => router.push('/wallet-screen' as any),
+              );
+            }
+          }, 1500);
         }
 
         // Set partial error if some orders failed

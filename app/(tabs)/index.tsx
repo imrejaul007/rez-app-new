@@ -823,6 +823,20 @@ function HomeScreen() {
 
           {/* Modern Header Actions */}
           <View style={viewStyles.headerActions}>
+            {/* CARLOS retention fix: Streak pill — always-visible in header, no scroll needed */}
+            {streakCount > 0 && streakDisplay.emoji && (
+              <Pressable
+                onPress={() => router.push('/(tabs)/earn' as any)}
+                accessibilityRole="button"
+                accessibilityLabel={`${streakCount}-day streak`}
+                accessibilityHint="Tap to see your streak and earn missions"
+                style={viewStyles.headerStreakPill}
+              >
+                <Text style={viewStyles.headerStreakEmoji}>{streakDisplay.emoji}</Text>
+                <Text style={viewStyles.headerStreakText}>{streakCount}d</Text>
+              </Pressable>
+            )}
+
             {/* Coin Balance Display - Horizontal Pill Style */}
             <Pressable
               onPress={handleCoinPress}
@@ -1292,6 +1306,27 @@ const viewStyles = StyleSheet.create({
       ios: { flexShrink: 0, marginLeft: 4 },
       default: { gap: spacing.xs }, // Web: use gap (well-supported)
     }),
+  },
+  // CARLOS retention fix: always-visible streak pill in header row
+  headerStreakPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255, 107, 53, 0.15)',
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 107, 53, 0.35)',
+    minHeight: 32,
+    gap: 2,
+  },
+  headerStreakEmoji: {
+    fontSize: 14,
+  },
+  headerStreakText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#FF6B35',
   },
   // What's New Badge
   // Header Coin - Horizontal Pill Style

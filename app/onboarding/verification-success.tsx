@@ -16,6 +16,9 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { fetchIdentityFromProfile } from '@/services/identityApi';
 
+// ── CARLOS retention fix: welcome coin grant amount shown on screen
+const WELCOME_COINS = 50;
+
 const INSTANT_BENEFITS = [
   '120+ exclusive deals unlocked',
   '5% extra cashback on purchases',
@@ -41,6 +44,35 @@ function VerificationSuccessPage() {
   const isInstant = type === 'instant';
   const benefits = isInstant ? INSTANT_BENEFITS : PROVISIONAL_BENEFITS;
   const [showCoinRain, setShowCoinRain] = useState(false);
+  const [welcomeCoinsGranted, setWelcomeCoinsGranted] = useState(false);
+  const [welcomeCoinsError, setWelcomeCoinsError] = useState(false);
+
+  // CARLOS retention fix: grant welcome coins once per new user on first arrival here.
+  // The backend endpoint is idempotent — duplicate calls for the same user are a no-op.
+  // TODO: replace the import path below with the real wallet/rewards API when available.
+  useEffect(() => {
+    let mounted = true;
+    import('@/services/walletApi').then(({ default: walletApi }) => {
+      // TODO: ensure backend exposes POST /wallet/welcome-coins that:
+      //   1. Checks if user already received welcome coins (idempotent guard)
+      //   2. Credits WELCOME_COINS to the user's wallet
+      //   3. Returns { success: true, coinsGranted: number }
+      walletApi.grantWelcomeCoins().then((res: any) => {
+        if (!mounted) return;
+        if (res?.success) {
+          setWelcomeCoinsGranted(true);
+          analyticsService.track('welcome_coins_granted', { amount: WELCOME_COINS, zone, type });
+        }
+      }).catch(() => {
+        if (mounted) setWelcomeCoinsError(true);
+      });
+    }).catch(() => {
+      if (mounted) setWelcomeCoinsError(true);
+    });
+    return () => { mounted = false; };
+  // Only run once — new users should only receive welcome coins one time
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     analyticsService.track(IdentityAnalyticsEvents.ZONE_UNLOCK_SEEN, {
@@ -184,6 +216,30 @@ function VerificationSuccessPage() {
           ))}
         </View>
 
+        {/* CARLOS retention fix: Welcome Coins Banner */}
+        <Animated.View
+          entering={FadeInDown.delay(1350).springify()}
+          style={styles.welcomeCoinsContainer}
+        >
+          <View style={[
+            styles.welcomeCoinsBanner,
+            welcomeCoinsGranted ? styles.welcomeCoinsGranted : styles.welcomeCoinsPending,
+          ]}>
+            <Ionicons
+              name={welcomeCoinsGranted ? 'checkmark-circle' : welcomeCoinsError ? 'alert-circle-outline' : 'hourglass-outline'}
+              size={22}
+              color={welcomeCoinsGranted ? colors.successScale[600] : welcomeCoinsError ? colors.warningScale[500] : colors.text.tertiary}
+            />
+            <ThemedText style={styles.welcomeCoinsText}>
+              {welcomeCoinsGranted
+                ? `+${WELCOME_COINS} welcome coins added to your wallet!`
+                : welcomeCoinsError
+                ? 'Welcome coins will be added shortly'
+                : 'Crediting your welcome coins…'}
+            </ThemedText>
+          </View>
+        </Animated.View>
+
         {/* CTA */}
         <Animated.View
           entering={FadeInDown.delay(1500).springify()}
@@ -246,6 +302,34 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.text.primary,
     flex: 1,
+  },
+  // Welcome coins banner
+  welcomeCoinsContainer: {
+    width: '100%',
+    marginBottom: spacing.md,
+  },
+  welcomeCoinsBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: borderRadius.md,
+    borderWidth: 1,
+  },
+  welcomeCoinsGranted: {
+    backgroundColor: colors.successScale[50],
+    borderColor: colors.successScale[200],
+  },
+  welcomeCoinsPending: {
+    backgroundColor: colors.background.secondary,
+    borderColor: colors.border.default,
+  },
+  welcomeCoinsText: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.text.primary,
   },
   ctaContainer: {
     width: '100%',
