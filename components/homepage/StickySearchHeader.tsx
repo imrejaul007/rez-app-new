@@ -12,6 +12,7 @@ import {
   Pressable,
   StyleSheet,
   Platform,
+  Dimensions,
 } from 'react-native';
 import Animated, { SharedValue, useAnimatedStyle, useAnimatedReaction, interpolate, Extrapolation, runOnJS } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,7 +20,10 @@ import { CrossPlatformBlurView as BlurView } from '@/components/ui/CrossPlatform
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import CategoryTabBar from './CategoryTabBar';
-import { colors } from '@/constants/theme';
+import { colors, spacing } from '@/constants/theme';
+import { isSmallDevice, responsiveFontSize } from '@/utils/responsive';
+
+const { width: SCREEN_W } = Dimensions.get('window');
 
 interface StickySearchHeaderProps {
   /** Current scroll position for animation */
@@ -235,20 +239,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.background.primary,
-    marginHorizontal: 16,
-    marginBottom: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    marginHorizontal: isSmallDevice ? spacing.sm : spacing.base,
+    marginBottom: spacing.xs,
+    paddingHorizontal: isSmallDevice ? spacing.sm : spacing.base,
+    paddingVertical: spacing.md,
     borderRadius: 12,
     borderWidth: 1,
     borderColor: 'rgba(255, 205, 87, 0.15)',
   },
   searchIcon: {
-    marginRight: 10,
+    marginRight: spacing.sm,
   },
   searchInput: {
     flex: 1,
-    fontSize: 15,
+    fontSize: isSmallDevice ? 13 : 15,
     color: colors.nileBlue,
     fontFamily: Platform.select({
       ios: 'Inter-Regular',

@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Text,
   Pressable,
+  Dimensions,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useCheckout } from '@/hooks/useCheckout';
@@ -36,6 +37,7 @@ import AddressSelectionModal from '@/components/checkout/AddressSelectionModal';
 import PaymentFailureModal from '@/components/checkout/PaymentFailureModal';
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { isSmallDevice } from '@/utils/responsive';
 
 // G-03: Delivery time slot picker
 const DELIVERY_SLOTS = [
@@ -47,16 +49,16 @@ const DELIVERY_SLOTS = [
 
 function DeliverySlotPicker({ selectedSlot, onSelectSlot }: { selectedSlot?: string; onSelectSlot: (s: string) => void }) {
   return (
-    <View style={{ backgroundColor: colors.background.primary, borderRadius: 14, padding: 14, marginBottom: 12, shadowOpacity: 0.04, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1 }}>
-      <Text style={{ fontSize: 14, fontWeight: '700', color: colors.text.primary, marginBottom: 10 }}>Delivery Time Slot</Text>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+    <View style={{ backgroundColor: colors.background.primary, borderRadius: 14, padding: Spacing.sm, marginBottom: Spacing.md, shadowOpacity: 0.04, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1 }}>
+      <Text style={{ fontSize: isSmallDevice ? 13 : 14, fontWeight: '700', color: colors.text.primary, marginBottom: Spacing.sm }}>Delivery Time Slot</Text>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: isSmallDevice ? 6 : Spacing.xs }}>
         {DELIVERY_SLOTS.map(slot => (
           <Pressable
             key={slot.value}
             onPress={() => onSelectSlot(slot.value)}
-            style={{ paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: selectedSlot === slot.value ? colors.primary[500] : colors.background.secondary, borderWidth: 1, borderColor: selectedSlot === slot.value ? colors.primary[500] : colors.border.light }}
+            style={{ paddingHorizontal: isSmallDevice ? 10 : Spacing.sm, paddingVertical: Spacing.xs, borderRadius: 20, backgroundColor: selectedSlot === slot.value ? colors.primary[500] : colors.background.secondary, borderWidth: 1, borderColor: selectedSlot === slot.value ? colors.primary[500] : colors.border.light }}
           >
-            <Text style={{ fontSize: 12, fontWeight: '600', color: selectedSlot === slot.value ? '#fff' : colors.text.secondary }}>{slot.label}</Text>
+            <Text style={{ fontSize: isSmallDevice ? 11 : 12, fontWeight: '600', color: selectedSlot === slot.value ? '#fff' : colors.text.secondary }}>{slot.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -156,7 +158,7 @@ function CheckoutPage() {
           onBack={checkoutHandlers.handleBackNavigation}
         />
 
-        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
           {uiState.showWarningBanner && validationState.validationResult && validationState.validationResult.issues.length > 0 && (
             <StockWarningBanner
               issues={validationState.validationResult.issues}
@@ -367,8 +369,8 @@ const styles = StyleSheet.create({
   storeConfirmation: {
     backgroundColor: '#FEF3E2',
     paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.md,
-    marginBottom: Spacing.sm,
+    paddingVertical: Spacing.base,
+    marginBottom: Spacing.base,
   },
   storeWarning: {
     fontSize: 13,

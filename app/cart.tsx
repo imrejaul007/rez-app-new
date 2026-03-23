@@ -40,6 +40,7 @@ import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSys
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { isSmallDevice } from '@/utils/responsive';
 
 // Helper function to format time slot for display
 const formatTimeSlot = (start: string, end?: string): string => {
@@ -497,22 +498,34 @@ function CartPage() {
   }, [activeTab, handleMoveToCart, handleUnlockItem, handleRemoveItem, handleUpdateQuantity]);
 
   const renderEmptyState = () => {
-    let title = "Your cart is empty 🛒";
+    let title = "Your cart is empty";
     let subtitle = "Add some items to get started";
+    let icon = "cart-outline";
 
     if (activeTab === 'lockedproduct') {
-      title = "No locked products 🔒";
+      title = "No locked products";
       subtitle = "Lock products to reserve them at current price for 24 hours";
+      icon = "lock-closed-outline";
     } else if (activeTab === 'products') {
       subtitle = "Add some products to get started";
     } else if (activeTab === 'service') {
-      subtitle = "Add some services to get started";
+      title = "No services yet";
+      subtitle = "Add services to your cart";
+      icon = "calendar-outline";
     }
 
     return (
       <View style={styles.emptyContainer}>
+        <Ionicons name={icon as any} size={64} color={Colors.border.default} />
         <ThemedText style={styles.emptyTitle}>{title}</ThemedText>
         <ThemedText style={styles.emptySubtitle}>{subtitle}</ThemedText>
+        <Pressable
+          style={styles.browseCTAButton}
+          onPress={() => router.push('/(tabs)')}
+        >
+          <Ionicons name="storefront" size={20} color={Colors.text.inverse} />
+          <ThemedText style={styles.browseCTAButtonText}>Browse Stores</ThemedText>
+        </Pressable>
       </View>
     );
   };
@@ -552,13 +565,14 @@ function CartPage() {
             keyExtractor={(item, index) => `${item.id}-${index}`}
             contentContainerStyle={useMemo(() => [
               {
-                paddingHorizontal: 16,
+                paddingHorizontal: isSmallDevice ? 12 : 16,
                 paddingTop: 16,
                 paddingBottom: currentItems.length < 3 ? 80 : 120,
               },
               currentItems.length === 0 && styles.emptyListContent,
             ], [currentItems.length])}
             showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
             ListFooterComponent={
               overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
@@ -641,9 +655,9 @@ const styles = StyleSheet.create({
   cardWrapper: {
     backgroundColor: 'rgba(255, 255, 255, 0.98)',
     borderRadius: 20,
-    paddingVertical: 14,
-    paddingHorizontal: 14,
-    marginBottom: 16,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    marginBottom: Spacing.base,
     shadowColor: Colors.nileBlue, // Nile Blue shadow
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
@@ -655,16 +669,16 @@ const styles = StyleSheet.create({
   emptyContainer: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 40,
+    paddingHorizontal: isSmallDevice ? Spacing.lg : Spacing.xl,
     paddingVertical: 80,
     backgroundColor: 'rgba(255, 255, 255, 0.95)',
-    marginHorizontal: 20,
+    marginHorizontal: isSmallDevice ? Spacing.sm : Spacing.base,
     borderRadius: 24,
     borderWidth: 1,
-    borderColor: colors.lightPeach, // Light Peach
+    borderColor: colors.lightPeach,
   },
   emptyTitle: {
-    fontSize: 22,
+    fontSize: isSmallDevice ? 18 : 22,
     fontWeight: '800',
     color: Colors.nileBlue,
     marginBottom: Spacing.md,
@@ -675,6 +689,21 @@ const styles = StyleSheet.create({
     color: Colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
+    marginBottom: Spacing.lg,
+  },
+  browseCTAButton: {
+    backgroundColor: colors.primary[500],
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  browseCTAButtonText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: Colors.text.inverse,
   },
   loadingContainer: {
     flex: 1,
@@ -682,19 +711,19 @@ const styles = StyleSheet.create({
   },
   // Service booking details styles
   serviceBookingDetails: {
-    marginTop: 12,
-    paddingTop: 12,
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 205, 87, 0.3)', // Mustard tint
     backgroundColor: 'rgba(250, 241, 224, 0.5)', // Linen tint
     borderRadius: 12,
-    padding: 12,
-    marginHorizontal: -4,
+    padding: Spacing.md,
+    marginHorizontal: -Spacing.xs,
   },
   serviceBookingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: Spacing.xs,
   },
   serviceBookingText: {
     ...Typography.bodySmall,
@@ -708,15 +737,15 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 205, 87, 0.4)',
     borderRadius: 14,
-    marginHorizontal: 16,
-    marginBottom: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    marginHorizontal: Spacing.base,
+    marginBottom: Spacing.xs,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.sm,
   },
   walletBannerCoin: {
     width: 32,
     height: 32,
-    marginRight: 12,
+    marginRight: Spacing.md,
   },
   walletBannerTextContainer: {
     flex: 1,

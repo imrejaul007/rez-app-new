@@ -80,13 +80,11 @@ function Button({
   const textColor = variantText[variant];
 
   const handlePressIn = useCallback(() => {
-    scaleAnim.value = withSpring(0.98, { damping: 15,
-      stiffness: 200 });
+    scaleAnim.value = withSpring(0.96, { damping: 14, stiffness: 180, overshootClamping: false });
   }, [scaleAnim]);
 
   const handlePressOut = useCallback(() => {
-    scaleAnim.value = withSpring(1, { damping: 15,
-      stiffness: 200 });
+    scaleAnim.value = withSpring(1, { damping: 10, stiffness: 160, overshootClamping: false });
   }, [scaleAnim]);
 
   const handlePress = useCallback(() => {

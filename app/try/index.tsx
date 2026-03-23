@@ -181,9 +181,16 @@ export default function TryFeedScreen() {
 
   const EmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="search-outline" size={48} color={colors.text.tertiary} />
+      <Ionicons name="search-outline" size={64} color={colors.border.default} />
       <Text style={styles.emptyTitle}>No trials near you yet</Text>
       <Text style={styles.emptySubtitle}>Check back soon for exclusive offers in your area</Text>
+      <Pressable
+        style={styles.refreshCTAButton}
+        onPress={handleRefresh}
+      >
+        <Ionicons name="refresh" size={18} color={'#fff'} />
+        <Text style={styles.refreshCTAText}>Refresh Feed</Text>
+      </Pressable>
     </View>
   );
 
@@ -554,6 +561,21 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.text.secondary,
     textAlign: 'center',
+    marginBottom: 24,
+  },
+  refreshCTAButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: colors.brand.purple,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 10,
+  },
+  refreshCTAText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
   },
   loadingContainer: {
     ...StyleSheet.absoluteFillObject,

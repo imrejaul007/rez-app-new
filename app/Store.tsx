@@ -14,7 +14,9 @@ import {
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+  Easing,
+} from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useHomepage, useHomepageNavigation } from '@/hooks/useHomepage';
@@ -47,11 +49,12 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { isSmallDevice, getResponsiveCardWidth, responsiveFontSize } from '@/utils/responsive';
 
 const { width } = Dimensions.get('window');
-const CARD_GAP = 14;
-const H_PADDING = 18;
-const CARD_WIDTH = (width - H_PADDING * 2 - CARD_GAP) / 2;
+const CARD_GAP = isSmallDevice ? 12 : 14;
+const H_PADDING = isSmallDevice ? 12 : 18;
+const CARD_WIDTH = getResponsiveCardWidth(2, H_PADDING * 2, CARD_GAP);
 
 type Store = {
   id: string;
@@ -357,6 +360,12 @@ function App() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { user: profileUser, isModalVisible, showModal, hideModal } = useProfile();
+
+  // Screen fade-in animation
+  const fadeAnim = useSharedValue(0);
+  useEffect(() => {
+    fadeAnim.value = withTiming(1, { duration: 250, easing: Easing.ease });
+  }, [fadeAnim]);
   const { handleMenuItemPress } = useProfileMenu();
   const userPoints = useRezBalance();
   const isLoadingPoints = useWalletLoading();
@@ -449,10 +458,15 @@ function App() {
     <StoreCard item={item} index={index} />
   ), []);
 
+  const fadeAnimStyle = useAnimatedStyle(() => ({
+    opacity: fadeAnim.value,
+  }));
+
   return (
     <SafeAreaView style={styles.safe} edges={['left', 'right']}>
-      {/* Header with gradient - Fixed at top */}
-      <LinearGradient
+      <Animated.View style={fadeAnimStyle}>
+        {/* Header with gradient - Fixed at top */}
+        <LinearGradient
         colors={[colors.lightMustard, '#E6A817', colors.nileBlue] as const}
         locations={[0, 0.5, 1]}
         style={styles.header}
@@ -614,16 +628,17 @@ function App() {
       />
 
 
-      {/* Profile Menu Modal */}
-      {profileUser && (
-        <ProfileMenuModal
-          visible={isModalVisible}
-          onClose={hideModal}
-          user={profileUser}
-          menuSections={profileMenuSections}
-          onMenuItemPress={handleMenuItemPress}
-        />
-      )}
+        {/* Profile Menu Modal */}
+        {profileUser && (
+          <ProfileMenuModal
+            visible={isModalVisible}
+            onClose={hideModal}
+            user={profileUser}
+            menuSections={profileMenuSections}
+            onMenuItemPress={handleMenuItemPress}
+          />
+        )}
+      </Animated.View>
     </SafeAreaView>
   );
 }
@@ -676,7 +691,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     backgroundColor: 'rgba(255,255,255,0.2)',
     paddingHorizontal: Spacing.md,
-    paddingVertical: 7,
+    paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.xl,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.15)' },
@@ -706,8 +721,8 @@ const styles = StyleSheet.create({
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 10,
-    gap: 10 },
+    marginTop: Spacing.sm,
+    gap: Spacing.sm },
 
   backBtn: {
     width: 38,
@@ -725,8 +740,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.95)',
     borderRadius: 26,
-    paddingHorizontal: 14,
-    height: 42,
+    paddingHorizontal: Spacing.sm,
+    height: 40,
     ...Shadows.subtle },
 
   searchIcon: { marginRight: Spacing.sm },
@@ -758,7 +773,7 @@ const styles = StyleSheet.create({
   // Grid & cards
   flatListContent: {
     paddingHorizontal: H_PADDING,
-    paddingTop: 18,
+    paddingTop: Spacing.base,
     paddingBottom: 100,
     gap: CARD_GAP },
 
@@ -770,9 +785,9 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
     backgroundColor: Colors.background.primary,
     borderRadius: 22,
-    paddingHorizontal: 14,
-    paddingTop: 14,
-    paddingBottom: 14,
+    paddingHorizontal: Spacing.sm,
+    paddingTop: Spacing.sm,
+    paddingBottom: Spacing.sm,
     shadowColor: Colors.nileBlue,
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -783,7 +798,7 @@ const styles = StyleSheet.create({
 
   cardIllustration: {
     alignItems: 'center',
-    marginBottom: 10 },
+    marginBottom: Spacing.sm },
 
   cardContent: {
     alignItems: 'flex-start',
@@ -794,7 +809,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontWeight: '700',
     letterSpacing: -0.2,
-    marginBottom: 3 },
+    marginBottom: Spacing.xs },
 
   cardDescription: {
     color: Colors.text.tertiary,
@@ -846,11 +861,11 @@ const styles = StyleSheet.create({
 
   countContainer: {
     position: 'absolute',
-    bottom: 6,
+    bottom: Spacing.xs,
     left: Spacing.sm,
     backgroundColor: 'rgba(0,0,0,0.25)',
     paddingHorizontal: Spacing.sm,
-    paddingVertical: 3,
+    paddingVertical: Spacing.xs,
     borderRadius: 10 },
 
   countText: {
@@ -910,8 +925,8 @@ const styles = StyleSheet.create({
     color: Colors.text.tertiary,
     fontWeight: '500' },
   errorContainer: {
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.base,
+    paddingHorizontal: Spacing.base,
     backgroundColor: Colors.warningScale[50],
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base,
@@ -927,10 +942,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.warning,
-    paddingHorizontal: 18,
-    paddingVertical: 9,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.xl,
-    gap: 6,
+    gap: Spacing.xs,
     marginVertical: Spacing.sm },
   retryButtonText: {
     ...Typography.bodySmall,

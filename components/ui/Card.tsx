@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { View, StyleSheet, ViewStyle, Pressable } from 'react-native';
+import Animated, { useSharedValue, withSpring, useAnimatedStyle } from 'react-native-reanimated';
 import { spacing, borderRadius } from '@/constants/theme';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -24,6 +25,7 @@ function Card({
   testID,
 }: CardProps) {
   const { colors, shadows } = useTheme();
+  const scaleAnim = useSharedValue(1);
 
   const variantStyles = useMemo<Record<CardVariant, ViewStyle>>(() => ({
     flat: {},
@@ -50,19 +52,28 @@ function Card({
     style as ViewStyle,
   ].filter((s): s is ViewStyle => s !== undefined && s !== null);
 
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleAnim.value }],
+  }));
+
   if (onPress) {
     return (
-      <Pressable
-        style={({ pressed }) => [
-          ...containerStyle,
-          pressed && styles.pressed,
-        ]}
-        onPress={onPress}
-        accessibilityRole="button"
-        testID={testID}
-      >
-        {children}
-      </Pressable>
+      <Animated.View style={animatedStyle}>
+        <Pressable
+          style={containerStyle}
+          onPress={onPress}
+          onPressIn={() => {
+            scaleAnim.value = withSpring(0.98, { damping: 14, stiffness: 180 });
+          }}
+          onPressOut={() => {
+            scaleAnim.value = withSpring(1, { damping: 10, stiffness: 160 });
+          }}
+          accessibilityRole="button"
+          testID={testID}
+        >
+          {children}
+        </Pressable>
+      </Animated.View>
     );
   }
 
@@ -73,11 +84,6 @@ function Card({
   );
 }
 
-const styles = StyleSheet.create({
-  pressed: {
-    opacity: 0.95,
-    transform: [{ scale: 0.99 }],
-  },
-});
+const styles = StyleSheet.create({});
 
 export default React.memo(Card);

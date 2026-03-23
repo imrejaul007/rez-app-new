@@ -5,13 +5,16 @@ import {
   Text,
   StyleSheet,
   Pressable,
+  Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import platformApi from '@/services/platformApi';
-import { colors, typography, iconSize } from '@/constants/theme';
+import { colors, typography, iconSize, spacing } from '@/constants/theme';
+import { isSmallDevice, responsiveFontSize } from '@/utils/responsive';
 
+const { width: SCREEN_W } = Dimensions.get('window');
 const HORIZONTAL_PADDING = 2;
 
 interface HeroBannerProps {
@@ -175,14 +178,14 @@ function HeroBanner({ totalSaved = 0, onScanPayPress, onViewWalletPress }: HeroB
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: HORIZONTAL_PADDING,
-    paddingTop: 8,
-    paddingBottom: 12,
+    paddingTop: spacing.xs,
+    paddingBottom: spacing.sm,
   },
   gradientContainer: {
     borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 14,
+    paddingHorizontal: spacing.base,
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
     shadowColor: colors.nileBlue,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.2,
@@ -192,7 +195,7 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginBottom: 8,
+    marginBottom: spacing.xs,
   },
   iconBadge: {
     width: 32,
@@ -201,7 +204,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
+    marginRight: spacing.md,
     marginTop: 2,
   },
   titleContainer: {
@@ -210,8 +213,9 @@ const styles = StyleSheet.create({
   mainTitle: {
     ...typography.h4,
     color: colors.background.primary,
-    lineHeight: 24,
-    marginBottom: 2,
+    fontSize: isSmallDevice ? 16 : responsiveFontSize(18),
+    lineHeight: isSmallDevice ? 22 : 24,
+    marginBottom: spacing.xs,
   },
   subtitle: {
     ...typography.caption,
@@ -222,13 +226,13 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '500',
     color: 'rgba(255, 255, 255, 0.65)',
-    marginBottom: 12,
+    marginBottom: spacing.md,
     marginLeft: 44,
   },
   ctaContainer: {
     flexDirection: 'row',
-    gap: 10,
-    marginBottom: 14,
+    gap: isSmallDevice ? spacing.xs : spacing.sm,
+    marginBottom: spacing.sm,
   },
   ctaCard: {
     flex: 1,
@@ -237,10 +241,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.18)',
     borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.sm,
     minHeight: 44,
-    gap: 6,
+    gap: spacing.xs,
   },
   ctaCardPrimary: {
     backgroundColor: colors.background.primary,
@@ -248,6 +252,7 @@ const styles = StyleSheet.create({
   ctaText: {
     flex: 1,
     ...typography.button,
+    fontSize: isSmallDevice ? 12 : 14,
     color: colors.background.primary,
   },
   ctaTextPrimary: {
@@ -258,7 +263,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 12,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
     borderTopColor: 'rgba(255, 255, 255, 0.15)',
   },
@@ -268,7 +273,7 @@ const styles = StyleSheet.create({
   proofItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
   proofText: {
     ...typography.caption,
@@ -278,7 +283,7 @@ const styles = StyleSheet.create({
     width: 1,
     height: 12,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    marginHorizontal: 12,
+    marginHorizontal: spacing.md,
   },
 });
 

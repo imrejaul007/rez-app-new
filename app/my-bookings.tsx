@@ -13,6 +13,7 @@ import {
   StatusBar,
   Platform,
 } from 'react-native';
+import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { platformAlertSimple, platformAlertDestructive } from '@/utils/platformAlert';
@@ -46,6 +47,12 @@ const MyBookingsPage = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
+
+  // Screen fade-in animation
+  const fadeAnim = useSharedValue(0);
+  useEffect(() => {
+    fadeAnim.value = withTiming(1, { duration: 250, easing: Easing.ease });
+  }, [fadeAnim]);
   const currencySymbol = getCurrencySymbol();
   const isAuthenticated = useIsAuthenticated();
   const [bookings, setBookings] = useState<ServiceBooking[]>([]);
@@ -428,20 +435,22 @@ const MyBookingsPage = () => {
     <View style={styles.emptyContainer}>
       <Ionicons name="calendar-outline" size={80} color={Colors.border.default} />
       <Text style={styles.emptyTitle}>
-        {activeTab === 'upcoming' ? 'No Upcoming Bookings' : 'No Past Bookings'}
+        {activeTab === 'upcoming' ? 'No Upcoming Bookings' : activeTab === 'courses' ? 'No Courses' : 'No Past Bookings'}
       </Text>
       <Text style={styles.emptyText}>
         {activeTab === 'upcoming'
           ? 'Book a service to see your upcoming appointments here'
-          : 'Your completed bookings will appear here'}
+          : activeTab === 'courses'
+            ? 'Enroll in a course to get started'
+            : 'Your completed bookings will appear here'}
       </Text>
-      {activeTab === 'upcoming' && (
+      {(activeTab === 'upcoming' || activeTab === 'courses') && (
         <Pressable
           style={styles.browseButton}
-          onPress={() => router.push('/(tabs)/categories' as any)}
+          onPress={() => router.push('/(tabs)' as any)}
         >
-          <Ionicons name="search" size={20} color={Colors.text.inverse} />
-          <Text style={styles.browseButtonText}>Browse Services</Text>
+          <Ionicons name={activeTab === 'courses' ? 'book-outline' : 'search'} size={20} color={Colors.text.inverse} />
+          <Text style={styles.browseButtonText}>{activeTab === 'courses' ? 'Explore Courses' : 'Browse Services'}</Text>
         </Pressable>
       )}
     </View>
@@ -564,7 +573,7 @@ const styles = StyleSheet.create({
   },
   tab: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: Spacing.sm,
     alignItems: 'center',
     borderRadius: 10,
   },
@@ -601,7 +610,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     marginRight: Spacing.md,
-    gap: 10,
+    gap: Spacing.sm,
   },
   categoryIcon: {
     width: 40,
@@ -629,7 +638,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.infoScale[50],
     paddingHorizontal: Spacing.sm,
-    paddingVertical: 3,
+    paddingVertical: Spacing.xs,
     borderRadius: 6,
     alignSelf: 'flex-start',
   },
@@ -642,15 +651,15 @@ const styles = StyleSheet.create({
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.xl,
   },
   statusDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    marginRight: 6,
+    marginRight: Spacing.xs,
   },
   statusText: {
     ...Typography.bodySmall,
@@ -685,12 +694,12 @@ const styles = StyleSheet.create({
   footerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    gap: Spacing.sm,
   },
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: Spacing.xs,
   },
   priceLabel: {
     ...Typography.body,
@@ -709,10 +718,10 @@ const styles = StyleSheet.create({
   rescheduleButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: Spacing.xs,
     backgroundColor: 'transparent',
     paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
     borderColor: Colors.nileBlue,
@@ -725,7 +734,7 @@ const styles = StyleSheet.create({
   cancelButton: {
     backgroundColor: Colors.errorScale[50],
     paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
   },
   cancelButtonText: {
@@ -740,7 +749,7 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.md,
     borderTopWidth: 1,
     borderTopColor: Colors.border.default,
-    gap: 6,
+    gap: Spacing.xs,
   },
   bookingNumberLabel: {
     ...Typography.bodySmall,
@@ -802,11 +811,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: Colors.errorScale[50],
     paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.md,
+    paddingVertical: Spacing.base,
     marginHorizontal: Spacing.base,
     marginTop: Spacing.base,
     borderRadius: BorderRadius.sm,
-    gap: 10,
+    gap: Spacing.sm,
   },
   errorBannerText: {
     flex: 1,
