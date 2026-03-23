@@ -379,17 +379,31 @@ const MyBookingsPage = () => {
               {currencySymbol}{(item.pricing?.total || item.pricing?.basePrice || 0).toLocaleString()}
             </Text>
           </View>
-          {canCancel && isUpcoming && (
-            <Pressable
-              style={styles.cancelButton}
-              onPress={(e) => {
-                e.stopPropagation();
-                handleCancelBooking(item._id);
-              }}
-            >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </Pressable>
-          )}
+          <View style={styles.footerActions}>
+            {canCancel && isUpcoming && (
+              <Pressable
+                style={styles.rescheduleButton}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  router.push(`/booking/reschedule/${item._id}` as any);
+                }}
+              >
+                <Ionicons name="calendar-outline" size={14} color={Colors.nileBlue} />
+                <Text style={styles.rescheduleButtonText}>Reschedule</Text>
+              </Pressable>
+            )}
+            {canCancel && isUpcoming && (
+              <Pressable
+                style={styles.cancelButton}
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handleCancelBooking(item._id);
+                }}
+              >
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </Pressable>
+            )}
+          </View>
         </View>
 
         {/* Booking Number */}
@@ -685,6 +699,27 @@ const styles = StyleSheet.create({
   priceValue: {
     ...Typography.h4,
     fontWeight: '700',
+    color: Colors.nileBlue,
+  },
+  footerActions: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    alignItems: 'center',
+  },
+  rescheduleButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    backgroundColor: 'transparent',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.sm,
+    borderWidth: 1,
+    borderColor: Colors.nileBlue,
+  },
+  rescheduleButtonText: {
+    ...Typography.body,
+    fontWeight: '600',
     color: Colors.nileBlue,
   },
   cancelButton: {

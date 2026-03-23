@@ -92,14 +92,40 @@ export default function BundlesScreen() {
     setPurchaseModal(prev => ({ ...prev, confirming: true }));
 
     try {
-      const mockPaymentId = `payment_${Date.now()}`;
-      await tryApi.purchaseBundle(purchaseModal.bundle.id, mockPaymentId);
+      // Create Razorpay order
+      const orderResp = await tryApi.createPaymentOrder({
+        bundleId: purchaseModal.bundle.id,
+        amount: purchaseModal.bundle.price,
+      });
+      const order = orderResp.data || orderResp;
 
-      // Reload bundles and show success
-      await loadBundles();
-      setPurchaseModal({ isVisible: false, bundle: null, confirming: false });
-    } catch (err) {
+      // Open Razorpay checkout
+      try {
+        const RazorpayCheckout = require('react-native-razorpay').default;
+        const paymentResponse = await RazorpayCheckout.open({
+          description: `REZ TRY — ${purchaseModal.bundle.name}`,
+          currency: 'INR',
+          key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '',
+          amount: order.amount || purchaseModal.bundle.price * 100,
+          order_id: order.razorpayOrderId,
+          name: 'REZ TRY Bundles',
+          prefill: { name: '', contact: '' },
+          theme: { color: colors.brand.purple },
+        });
+
+        // Complete bundle purchase with payment ID
+        await tryApi.purchaseBundle(purchaseModal.bundle.id, paymentResponse.razorpay_payment_id);
+        await loadBundles();
+        setPurchaseModal({ isVisible: false, bundle: null, confirming: false });
+      } catch (paymentErr: any) {
+        if (paymentErr.code !== 2) { // 2 = user cancelled
+          console.error('Payment error:', paymentErr);
+        }
+        setPurchaseModal(prev => ({ ...prev, confirming: false }));
+      }
+    } catch (err: any) {
       console.error('Failed to purchase bundle:', err);
+      setPurchaseModal(prev => ({ ...prev, confirming: false }));
     }
   };
 

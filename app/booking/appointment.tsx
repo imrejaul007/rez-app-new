@@ -228,24 +228,75 @@ function AppointmentBookingPage() {
   const handleConfirmAppointment = async () => {
     if (!validateForm()) return;
 
-    // Show confirmation dialog with summary
-    const summary = `
+    setSubmitting(true);
+    try {
+      // Fetch service details to check requiresPaymentUpfront
+      let requiresUpfront = false;
+      let servicePrice = 0;
+
+      if (selectedService?.id) {
+        try {
+          const serviceResp = await servicesApi.getServiceById(selectedService.id);
+          const svc = serviceResp.data?.data || serviceResp.data;
+          requiresUpfront = svc?.serviceDetails?.requiresPaymentUpfront || svc?.requiresPaymentUpfront || false;
+          servicePrice = svc?.pricing?.selling || svc?.price || selectedService.price || 0;
+        } catch (e) {
+          // If can't fetch, use existing service price
+          servicePrice = selectedService.price || 0;
+        }
+      }
+
+      if (requiresUpfront && servicePrice > 0) {
+        // Show confirmation with payment required message
+        const summary = `
+Service: ${selectedService?.name}
+Date: ${formatDate(selectedDate)}
+Time: ${selectedTime?.displayTime}
+Duration: ${selectedService?.duration ? formatDuration(selectedService.duration) : 'N/A'}
+Price: ${currencySymbol}${servicePrice}
+
+Payment Required: Full amount will be charged now.
+Free cancellation available 24 hours before appointment.
+        `.trim();
+
+        platformAlertConfirm(
+          'Confirm Appointment',
+          summary,
+          () => handlePaymentGate(servicePrice),
+          'Proceed to Payment'
+        );
+      } else {
+        // No upfront payment — show standard confirmation
+        const summary = `
 Service: ${selectedService?.name}
 Date: ${formatDate(selectedDate)}
 Time: ${selectedTime?.displayTime}
 Duration: ${selectedService?.duration ? formatDuration(selectedService.duration) : 'N/A'}
 Price: ${currencySymbol}${selectedService?.price}
-    `.trim();
+        `.trim();
 
-    platformAlertConfirm(
-      'Confirm Appointment',
-      summary,
-      submitBooking,
-      'Confirm'
-    );
+        platformAlertConfirm(
+          'Confirm Appointment',
+          summary,
+          () => submitBooking({}),
+          'Confirm'
+        );
+      }
+    } catch (error) {
+      platformAlertSimple('Error', 'Failed to process booking');
+    } finally {
+      if (!isMounted()) return;
+      setSubmitting(false);
+    }
   };
 
-  const submitBooking = async () => {
+  const handlePaymentGate = async (amount: number) => {
+    // Payment flow would be integrated here with Razorpay
+    // For now, proceed directly to booking confirmation
+    submitBooking({});
+  };
+
+  const submitBooking = async (paymentData?: { paymentId?: string }) => {
     if (!selectedService || !selectedTime) return;
 
     try {
@@ -260,6 +311,7 @@ Price: ${currencySymbol}${selectedService?.price}
         customerName: customerName.trim(),
         customerPhone: customerPhone.trim(),
         customerEmail: customerEmail.trim() || undefined,
+        ...(paymentData || {}),
       };
 
       const response = await bookingApi.createBooking(bookingData);
@@ -577,6 +629,20 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Booking Summary</ThemedText>
             <View style={styles.summaryCard}>
+              {/* Deposit Banner */}
+              {selectedService.requiresPaymentUpfront && selectedService.price > 0 && (
+                <View style={[styles.depositBanner, { backgroundColor: colors.tint.pink, borderColor: colors.brand.purpleLight }]}>
+                  <Ionicons name="card-outline" size={16} color={colors.brand.purpleLight} />
+                  <View style={{ flex: 1, marginLeft: 8 }}>
+                    <ThemedText style={[styles.depositText, { fontWeight: '600', color: colors.brand.purple }]}>
+                      Payment required at booking · {currencySymbol}{selectedService.price}
+                    </ThemedText>
+                    <ThemedText style={[styles.depositSub, { color: Colors.text.tertiary, marginTop: 2, fontSize: 12 }]}>
+                      Full amount charged now · Free cancellation 24h before
+                    </ThemedText>
+                  </View>
+                </View>
+              )}
               <View style={styles.summaryRow}>
                 <ThemedText style={styles.summaryLabel}>Service</ThemedText>
                 <ThemedText style={styles.summaryValue}>{selectedService.name}</ThemedText>
@@ -608,6 +674,15 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
               <View style={styles.summaryRow}>
                 <ThemedText style={styles.summaryLabelBold}>Total Price</ThemedText>
                 <ThemedText style={styles.summaryValueBold}>{currencySymbol}{selectedService.price}</ThemedText>
+              </View>
+
+              {/* Cancellation Policy */}
+              <View style={styles.summaryDivider} />
+              <View style={styles.policyRow}>
+                <Ionicons name="information-circle-outline" size={14} color={Colors.text.tertiary} />
+                <ThemedText style={styles.policyText}>
+                  Free cancellation up to 24h before · Late cancellations may incur a fee.
+                </ThemedText>
               </View>
             </View>
           </View>
@@ -942,6 +1017,36 @@ const styles = StyleSheet.create({
     ...Typography.h4,
     fontWeight: '700',
     color: colors.brand.purpleLight,
+  },
+  depositBanner: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    borderWidth: 1,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.base,
+    marginBottom: Spacing.md,
+  },
+  depositText: {
+    fontSize: 14,
+    color: colors.secondary[700],
+  },
+  depositSub: {
+    fontSize: 12,
+    color: Colors.text.tertiary,
+    marginTop: 2,
+  },
+  policyRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm,
+  },
+  policyText: {
+    ...Typography.bodySmall,
+    fontSize: 12,
+    color: Colors.text.tertiary,
+    flex: 1,
+    lineHeight: 16,
   },
   bottomContainer: {
     position: 'absolute',

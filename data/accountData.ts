@@ -104,6 +104,15 @@ const settingsItems: Record<string, AccountSettingsCategory> = {
     isEnabled: true,
     showArrow: true,
   },
+  khata: {
+    id: 'khata',
+    title: 'My Credit (Khata)',
+    icon: 'receipt-outline',
+    route: '/khata',
+    description: 'View your outstanding balances at stores',
+    isEnabled: true,
+    showArrow: true,
+  },
   payment: {
     id: 'payment',
     title: 'Payment Methods',
@@ -171,7 +180,7 @@ export const settingsSections: AccountSection[] = [
   {
     id: 'payments',
     title: 'Payments & Wallet',
-    items: [settingsItems.wallet, settingsItems.payment],
+    items: [settingsItems.wallet, settingsItems.khata, settingsItems.payment],
   },
   {
     id: 'delivery_services',

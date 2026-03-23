@@ -145,6 +145,9 @@ function AccountPage() {
         case 'wallet':
           router.push('/wallet');
           break;
+        case 'khata':
+          router.push('/khata');
+          break;
         case 'voucher':
           router.push('/my-vouchers');
           break;

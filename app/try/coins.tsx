@@ -91,16 +91,42 @@ export default function TrialCoinsScreen() {
     setPurchaseModal({ visible: true, pack, loading: true });
 
     try {
-      // Mock payment - in real app, integrate with Razorpay
-      await tryApi.purchaseCoins(pack.index, `mock_payment_${Date.now()}`);
+      // Create Razorpay order
+      const orderResp = await tryApi.createPaymentOrder({
+        packIndex: pack.index,
+        amount: pack.price,
+      });
+      const order = orderResp.data || orderResp;
 
-      // Update balance
-      setCoinBalance(prev => prev + pack.coins);
+      // Open Razorpay checkout
+      try {
+        const RazorpayCheckout = require('react-native-razorpay').default;
+        const paymentResponse = await RazorpayCheckout.open({
+          description: `REZ TRY Coins — ${pack.coins} coins`,
+          currency: 'INR',
+          key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '',
+          amount: order.amount || pack.price * 100,
+          order_id: order.razorpayOrderId,
+          name: 'REZ TRY Coins',
+          prefill: { name: '', contact: '' },
+          theme: { color: colors.brand.purple },
+        });
 
-      setTimeout(() => {
-        setPurchaseModal({ visible: false });
-      }, 1500);
-    } catch (err) {
+        // Complete coin purchase with payment ID
+        await tryApi.purchaseCoins(pack.index, paymentResponse.razorpay_payment_id);
+        setCoinBalance(prev => prev + pack.coins);
+
+        setTimeout(() => {
+          setPurchaseModal({ visible: false });
+        }, 1500);
+      } catch (paymentErr: any) {
+        if (paymentErr.code !== 2) { // 2 = user cancelled
+          console.error('Payment error:', paymentErr);
+        }
+        setPurchaseModal(prev => ({ ...prev, loading: false }));
+      }
+    } catch (err: any) {
+      console.error('Failed to purchase coins:', err);
       setPurchaseModal(prev => ({ ...prev, loading: false }));
     }
   };
