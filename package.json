@@ -79,6 +79,7 @@
     "expo-store-review": "~8.1.5",
     "expo-symbols": "~0.4.3",
     "expo-system-ui": "~4.1.8",
+    "expo-updates": "~0.26.0",
     "expo-web-browser": "~14.2.0",
     "jsqr": "^1.4.0",
     "lightningcss": "^1.32.0",

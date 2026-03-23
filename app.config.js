@@ -105,6 +105,17 @@ module.exports = {
       output: 'static',
       favicon: './assets/images/favicon.png',
     },
+    updates: {
+      url: `https://u.expo.dev/${process.env.EXPO_PUBLIC_EAS_PROJECT_ID || '58b80355-a254-4d4a-80ce-d2bc3272b144'}`,
+      enabled: true,
+      fallbackToCacheTimeout: 0,
+      requestHeaders: {
+        'expo-channel-name': process.env.EXPO_PUBLIC_CHANNEL || 'production',
+      },
+    },
+    runtimeVersion: {
+      policy: 'appVersion',
+    },
     plugins: [
       'react-native-reanimated',
       'expo-router',
