@@ -86,6 +86,11 @@ function AppointmentBookingPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<TimeSlot | null>(null);
 
+  // Staff picker state
+  const [availableStaff, setAvailableStaff] = useState<any[]>([]);
+  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
+  const [loadingStaff, setLoadingStaff] = useState(false);
+
   // Customer details
   const [customerName, setCustomerName] = useState('');
   const [customerPhone, setCustomerPhone] = useState('');
