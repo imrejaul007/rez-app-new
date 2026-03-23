@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthUser, useAuthLoading, useAuthError, useAuthActions } from '@/stores/selectors';
 import { platformAlertSimple } from '@/utils/platformAlert';
+import { triggerImpact, triggerNotification } from '@/utils/haptics';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -85,6 +86,7 @@ function OTPVerificationScreen() {
     const otpString = otpValue || otp.join('');
 
     if (otpString.length !== 6 || !/^\d{6}$/.test(otpString)) {
+      triggerImpact('Light');
       platformAlertSimple('That code didn\'t match', 'Please enter a valid 6-digit OTP');
       return;
     }
@@ -95,9 +97,11 @@ function OTPVerificationScreen() {
     }
 
     try {
+      triggerImpact('Medium');
       await actions.verifyOTP(phoneNumber, otpString);
 
       analyticsService.track('otp_verified');
+      triggerNotification('Success');
 
       if (!isMounted()) return;
       await new Promise(resolve => setTimeout(resolve, 100));
@@ -121,6 +125,7 @@ function OTPVerificationScreen() {
     if (!canResend || !phoneNumber) return;
 
     try {
+      triggerImpact('Light');
       await actions.sendOTP(phoneNumber);
       if (!isMounted()) return;
       setTimer(30);

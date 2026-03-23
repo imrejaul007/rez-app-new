@@ -851,7 +851,13 @@ function HomeScreen() {
                 contentFit="contain"
                 showShimmer={false}
               />
-              <Text style={[viewStyles.headerCoinText, tabStyles.coinTextColor]}>{!walletData && isWalletLoading ? '...' : userPoints}</Text>
+              <ReAnimated.Text
+                key={isWalletLoading ? 'loading' : 'loaded'}
+                entering={FadeIn.duration(350)}
+                style={[viewStyles.headerCoinText, tabStyles.coinTextColor]}
+              >
+                {!walletData && isWalletLoading ? '...' : userPoints}
+              </ReAnimated.Text>
             </Pressable>
 
             {/* Cart Button with Modern Badge */}

@@ -6,6 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
   Text,
@@ -75,6 +76,7 @@ interface CategoryItem {
 const EventsPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const [isLoading, setIsLoading] = useState(true);
@@ -301,7 +303,7 @@ const EventsPage: React.FC = () => {
         colors={[colors.nileBlue, Colors.secondary[500]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.header}
+        style={[styles.header, { paddingTop: insets.top + 12 }]}
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
@@ -555,7 +557,7 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: Spacing.md,
-    paddingTop: Platform.OS === 'ios' ? 56 : 44,
+    paddingTop: 12, // base value — overridden at render time with safe area insets
     paddingBottom: Spacing.xl,
     borderBottomLeftRadius: BorderRadius['2xl'],
     borderBottomRightRadius: BorderRadius['2xl'],

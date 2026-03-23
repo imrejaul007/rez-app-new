@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
+import { triggerImpact } from '@/utils/haptics';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -38,7 +39,7 @@ function PaymentBottomSheet({
   return (
     <View style={styles.paymentBottomSheet}>
       {/* Main Pay Button - Always Visible */}
-      <Pressable style={styles.payNowBar} onPress={onToggleExpanded}>
+      <Pressable style={styles.payNowBar} onPress={() => { triggerImpact('Medium'); onToggleExpanded(); }}>
         <View style={styles.payNowLeft}>
           <ThemedText style={styles.payNowAmount}>{currencySymbol}{finalAmount}</ThemedText>
           <ThemedText style={styles.payNowLabel}>Total Amount</ThemedText>
@@ -77,7 +78,7 @@ function PaymentBottomSheet({
                 styles.quickPayCard,
                 (totalWalletBalance < totalPayable || !canCheckout) && styles.quickPayDisabled,
               ]}
-              onPress={() => onPaymentSelect('wallet')}
+              onPress={() => { triggerImpact('Heavy'); onPaymentSelect('wallet'); }}
               disabled={loading || totalWalletBalance < totalPayable || !canCheckout}
             >
               <View style={[styles.quickPayIcon, { backgroundColor: colors.brand.purpleLight }]}>
@@ -97,7 +98,7 @@ function PaymentBottomSheet({
                 styles.quickPayCard,
                 (hasServiceItems || !canCheckout) && styles.quickPayDisabled,
               ]}
-              onPress={() => onPaymentSelect('cod')}
+              onPress={() => { triggerImpact('Heavy'); onPaymentSelect('cod'); }}
               disabled={loading || !canCheckout || hasServiceItems}
             >
               <View style={[styles.quickPayIcon, { backgroundColor: hasServiceItems ? colors.neutral[400] : colors.warningScale[400] }]}>
@@ -111,7 +112,7 @@ function PaymentBottomSheet({
           {/* Other Payment Button */}
           <Pressable
             style={styles.otherPaymentOption}
-            onPress={() => onPaymentSelect('razorpay')}
+            onPress={() => { triggerImpact('Heavy'); onPaymentSelect('razorpay'); }}
           >
             <View style={styles.otherPaymentLeft}>
               <Ionicons name="card-outline" size={22} color={colors.neutral[700]} />
