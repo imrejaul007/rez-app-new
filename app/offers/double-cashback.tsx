@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   // Hero
   hero: { paddingBottom: 24 },
   heroHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingTop: Spacing.sm, paddingBottom: Spacing.md },
-  heroHeaderTitle: { color: Colors.text.inverse, fontSize: 17, fontWeight: '700' },
+  heroHeaderTitle: { color: Colors.text.inverse, fontSize: 16, fontWeight: '700' },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.15)', justifyContent: 'center', alignItems: 'center' }, // circular
   heroCenter: { alignItems: 'center', paddingVertical: Spacing.md },
   multiplierGlow: { width: 100, height: 100, borderRadius: BorderRadius.full, backgroundColor: 'rgba(255,255,255,0.12)', justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
@@ -486,15 +486,15 @@ const styles = StyleSheet.create({
   infoText: { flex: 1, ...Typography.bodySmall, color: Colors.text.secondary, lineHeight: 20 },
 
   // CTA
-  ctaBanner: { flexDirection: 'row', alignItems: 'center', padding: 18, borderRadius: 14, marginBottom: Spacing.lg },
+  ctaBanner: { flexDirection: 'row', alignItems: 'center', padding: 18, borderRadius: 12, marginBottom: Spacing.lg },
   ctaTitle: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.inverse, marginBottom: 2 },
   ctaSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
   ctaArrow: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
 
   // Stats
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: Spacing.base },
-  statCard: { flex: 1, backgroundColor: Colors.background.primary, borderRadius: 14, padding: 14, alignItems: 'center', gap: 6, borderWidth: 1, borderColor: Colors.background.secondary },
-  statIconWrap: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center' },
+  statCard: { flex: 1, backgroundColor: Colors.background.primary, borderRadius: 12, padding: 14, alignItems: 'center', gap: 6, borderWidth: 1, borderColor: Colors.background.secondary },
+  statIconWrap: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center' }, // circular
   statValue: { ...Typography.caption, color: Colors.text.tertiary, fontWeight: '600' },
   statLabel: { ...Typography.body, color: Colors.nileBlue, fontWeight: '700' },
 
@@ -505,14 +505,14 @@ const styles = StyleSheet.create({
 
   // Category Grid
   categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  categoryCard: { width: (width - 32 - 20) / 3, backgroundColor: Colors.background.primary, borderRadius: 14, padding: Spacing.md, alignItems: 'center', borderWidth: 1, borderColor: Colors.background.secondary },
-  categoryIconWrap: { width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
+  categoryCard: { width: (width - 32 - 20) / 3, backgroundColor: Colors.background.primary, borderRadius: 12, padding: Spacing.md, alignItems: 'center', borderWidth: 1, borderColor: Colors.background.secondary },
+  categoryIconWrap: { width: 44, height: 44, borderRadius: BorderRadius.full, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
   categoryName: { ...Typography.caption, fontWeight: '600', color: Colors.text.secondary, textAlign: 'center', marginBottom: Spacing.xs },
   categoryMultiplier: { ...Typography.body, fontWeight: '800', color: Colors.success },
 
   // Store Grid
   storeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  storeCard: { width: (width - 32 - 10) / 2, backgroundColor: Colors.background.primary, borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: Colors.background.secondary },
+  storeCard: { width: (width - 32 - 10) / 2, backgroundColor: Colors.background.primary, borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: Colors.background.secondary },
   storeIconWrap: { width: 40, height: 40, borderRadius: BorderRadius.md, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center' },
   storeName: { flex: 1, ...Typography.bodySmall, fontWeight: '600', color: Colors.text.primary },
   storeMultiplierBadge: { backgroundColor: Colors.successScale[50], paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: BorderRadius.sm },
