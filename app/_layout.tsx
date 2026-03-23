@@ -33,8 +33,10 @@ initSentry();
 })();
 
 import { useFonts } from 'expo-font';
+import * as Constants from 'expo-constants';
 import React, { useEffect, useState } from 'react';
 import { View, useColorScheme } from 'react-native';
+import { useRouter } from 'expo-router';
 import {
   Poppins_600SemiBold,
   Poppins_700Bold,
@@ -51,7 +53,22 @@ import { colors } from '@/constants/theme';
 
 const FONT_TIMEOUT_MS = 5000;
 
+/**
+ * Compare two semantic versions
+ * Returns: -1 if a < b, 0 if a == b, 1 if a > b
+ */
+function compareVersions(a: string, b: string): number {
+  const pa = a.split('.').map(Number);
+  const pb = b.split('.').map(Number);
+  for (let i = 0; i < 3; i++) {
+    if ((pa[i] || 0) > (pb[i] || 0)) return 1;
+    if ((pa[i] || 0) < (pb[i] || 0)) return -1;
+  }
+  return 0;
+}
+
 function RootLayout() {
+  const router = useRouter();
   const [loaded, fontError] = useFonts({
     'Poppins-SemiBold': Poppins_600SemiBold,
     'Poppins-Bold': Poppins_700Bold,
@@ -64,7 +81,31 @@ function RootLayout() {
 
   useEffect(() => {
     installProductionConsoleGuard();
+    checkAppStatus();
   }, []);
+
+  const checkAppStatus = async () => {
+    try {
+      const apiUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://api.rezapp.com';
+      const resp = await fetch(`${apiUrl}/config/app-status`, { timeout: 5000 });
+      const json = await resp.json();
+      const data = json?.data;
+
+      if (data?.maintenanceMode) {
+        router.replace('/maintenance');
+        return;
+      }
+
+      // Check version (requires expo-constants)
+      const currentVersion = Constants.expoConfig?.version || '1.0.0';
+      if (data?.forceUpdate && compareVersions(currentVersion, data.minVersion) < 0) {
+        router.replace('/update-required');
+      }
+    } catch {
+      // Non-blocking — app continues if config endpoint fails
+      logger.debug('[AppStatus] Failed to fetch app status', undefined, 'AppStatus');
+    }
+  };
 
   useEffect(() => {
     if (fontError) {

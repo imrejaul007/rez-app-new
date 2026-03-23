@@ -51,7 +51,7 @@ module.exports = {
     icon: './assets/images/icon.png',
     scheme: 'rez', // Deep link scheme
     userInterfaceStyle: 'automatic',
-    newArchEnabled: false,
+    newArchEnabled: true,
     notification: {
       vapidPublicKey: process.env.EXPO_PUBLIC_VAPID_KEY,
       serviceWorkerPath: '/expo-service-worker.js',
@@ -61,6 +61,7 @@ module.exports = {
       // TODO: Update to your production App Store bundle identifier before release (e.g. com.yourcompany.yourapp)
       bundleIdentifier: 'com.rez.app', // App Store identifier
       buildNumber: process.env.BUILD_NUMBER || '1',
+      associatedDomains: ['applinks:rezapp.in'],
       infoPlist: {
         NSCameraUsageDescription: `${BRAND_NAME} needs camera access to scan QR codes for store payments`,
         NSLocationWhenInUseUsageDescription: `${BRAND_NAME} needs your location to show nearby stores and offers`,
@@ -80,6 +81,14 @@ module.exports = {
       // TODO: Update to your production Play Store package name before release (e.g. com.yourcompany.yourapp)
       package: 'com.rez.app', // Play Store identifier
       versionCode: parseInt(process.env.VERSION_CODE || '1'),
+      intentFilters: [
+        {
+          action: 'VIEW',
+          autoVerify: true,
+          data: [{ scheme: 'https', host: 'rezapp.in', pathPrefix: '/' }],
+          category: ['BROWSABLE', 'DEFAULT'],
+        },
+      ],
       permissions: [
         'android.permission.CAMERA',
         'android.permission.ACCESS_FINE_LOCATION',
@@ -97,6 +106,7 @@ module.exports = {
       favicon: './assets/images/favicon.png',
     },
     plugins: [
+      'react-native-reanimated',
       'expo-router',
       [
         'expo-splash-screen',

@@ -217,19 +217,22 @@ const BadgeAvatar: React.FC<BadgeAvatarProps> = React.memo(({ size = 24, color }
   const shieldColor = color || colors.lightMustard;
   const iconColor = color === colors.brand.sky ? '#0EA5E9' : color === colors.brand.goldAccent ? '#D4AF37' : colors.nileBlue;
 
+  // Memoize the style object so a new object isn't allocated on every render
+  const shieldStyle = useMemo(() => ({
+    width: size,
+    height: size * 1.15,
+    backgroundColor: shieldColor,
+    borderTopLeftRadius: size * 0.15,
+    borderTopRightRadius: size * 0.15,
+    borderBottomLeftRadius: size * 0.45,
+    borderBottomRightRadius: size * 0.45,
+    justifyContent: 'center' as const,
+    alignItems: 'center' as const,
+    paddingBottom: size * 0.05,
+  }), [size, shieldColor]);
+
   return (
-    <View style={{
-      width: size,
-      height: size * 1.15,
-      backgroundColor: shieldColor,
-      borderTopLeftRadius: size * 0.15,
-      borderTopRightRadius: size * 0.15,
-      borderBottomLeftRadius: size * 0.45,
-      borderBottomRightRadius: size * 0.45,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingBottom: size * 0.05,
-    }}>
+    <View style={shieldStyle}>
       <Ionicons name="person" size={size * 0.5} color={iconColor} />
     </View>
   );
@@ -697,7 +700,9 @@ function HomeScreen() {
             {/* Coin Balance Display - Horizontal Pill Style */}
             <Pressable
               onPress={handleCoinPress}
-             
+              accessibilityRole="button"
+              accessibilityLabel={`Your balance: ${userPoints} coins`}
+              accessibilityHint="Tap to view wallet details"
               style={[viewStyles.headerCoinContainer, tabStyles.coinContainerStyle]}
             >
               <CachedImage
@@ -734,9 +739,9 @@ function HomeScreen() {
             {/* Notification Bell */}
             <Pressable
               onPress={handleNotificationPress}
-             
               accessibilityLabel="Notifications"
               accessibilityRole="button"
+              accessibilityHint="Tap to view your notifications"
               style={viewStyles.headerIconButton}
             >
               <Ionicons name="notifications-outline" size={22} color={tabStyles.iconColor} />
@@ -799,7 +804,9 @@ function HomeScreen() {
                 }
               ]}
               onPress={handleChangeLocationPress}
-             
+              accessibilityRole="button"
+              accessibilityLabel="Change location"
+              accessibilityHint="Tap to search and change your current location"
             >
               <View style={[
                 viewStyles.changeLocationIconWrapper,
@@ -868,6 +875,9 @@ function HomeScreen() {
               if (!isMounted()) return;
               setLocationBannerDismissed(true);
             }}
+            accessibilityRole="button"
+            accessibilityLabel="Enable location permission"
+            accessibilityHint="Tap to grant location access and find deals near you"
           >
             <Text style={viewStyles.locationBannerBtnText}>Enable</Text>
           </Pressable>
@@ -878,6 +888,9 @@ function HomeScreen() {
               AS.setItem('location_banner_dismissed', 'true').catch(() => {});
             }}
             hitSlop={8}
+            accessibilityRole="button"
+            accessibilityLabel="Dismiss location request"
+            accessibilityHint="Tap to close this notification"
           >
             <Ionicons name="close" size={18} color={colors.text.tertiary} />
           </Pressable>
@@ -891,6 +904,7 @@ function HomeScreen() {
           onPress={() => router.push('/try' as any)}
           accessibilityLabel="Try before you buy"
           accessibilityRole="button"
+          accessibilityHint="Tap to explore products you can try risk-free and earn coins"
         >
           <LinearGradient
             colors={[colors.nileBlue, '#0d2035']}
