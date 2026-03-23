@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
 
   profileText: {
     color: Colors.nileBlue,
-    fontWeight: 'bold',
+    fontWeight: '700',
     ...Typography.body,
     fontSize: 15 },
 
