@@ -93,9 +93,10 @@ const MyBookingsPage = () => {
           });
           filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
         } else if (activeTab === 'upcoming') {
+          // SS-008 FIX: Removed isMounted() guard inside .filter() — it returns undefined (falsy),
+          // incorrectly excluding all bookings when the check fires.
           filteredBookings = filteredBookings.filter(booking => {
             const bookingDate = new Date(booking.bookingDate);
-            if (!isMounted()) return;
             bookingDate.setHours(0, 0, 0, 0);
             const isFuture = bookingDate >= today;
             const isActive = booking.status !== 'completed' && booking.status !== 'cancelled' && booking.status !== 'no_show';
@@ -103,9 +104,9 @@ const MyBookingsPage = () => {
           });
           filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
         } else {
+          // SS-008 FIX: Same — removed erroneous isMounted() early-return inside filter
           filteredBookings = filteredBookings.filter(booking => {
             const bookingDate = new Date(booking.bookingDate);
-            if (!isMounted()) return;
             bookingDate.setHours(0, 0, 0, 0);
             const isPast = bookingDate < today;
             const isCompleted = booking.status === 'completed' || booking.status === 'cancelled' || booking.status === 'no_show';

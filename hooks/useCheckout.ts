@@ -27,7 +27,6 @@ import { createRazorpayPayment } from '@/services/razorpayApi';
 import { mapBackendCartToFrontend, mapFrontendCheckoutToBackendOrder } from '@/utils/dataMappers';
 import { showToast } from '@/components/common/ToastManager';
 import { useCartActions, useCartState, useGetCurrencySymbol, useWalletData, useRawWalletData, useRefreshWallet, useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
-// SS-002: wallet refresh after payment
 import {
   TAX_RATE,
   PLATFORM_FEE,
@@ -1880,6 +1879,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       // Non-blocking analytics
       try { analyticsService.trackFulfillmentOrderPlaced({ fulfillmentType: state.fulfillment.selectedType, storeId: state.store.id, orderId: createdOrderIds[0] || '', cartValue: state.billSummary.itemTotal, paymentMethod: 'cod' }); } catch {} // Silent: non-critical analytics
+
+      // SS-002 FIX: Refresh wallet for multi-store COD (coins deducted per store order)
+      refreshSharedWallet().catch(() => {});
 
       router.replace(`/payment-success?orderId=${orderIdsParam}&transactionId=${transactionId}&paymentMethod=cod&multiStore=${isMultiStore}`);
 

@@ -332,7 +332,14 @@ function OrdersListScreen() {
   const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // SS-010 FIX: Only load on filter/sort changes (not on mount — useFocusEffect handles mount + focus).
+  // Previously, both this useEffect and useFocusEffect fired on mount, causing duplicate API calls.
+  const isFirstRender = useRef(true);
   useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
     loadOrders(1, false);
   }, [activeFilter, sortOrder]);
 

@@ -5,6 +5,8 @@ import walletApi from '@/services/walletApi';
 import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
 import { errorReporter } from '@/utils/errorReporter';
+// SS-007 FIX: Subscribe to backend socket events so wallet auto-refreshes on coins earned / wallet updated
+import { useSocket } from '@/contexts/SocketContext';
 
 // ---------------------------------------------------------------------------
 // Transform backend wallet response into frontend WalletData
@@ -276,6 +278,33 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       if (abortRef.current) abortRef.current.abort();
     };
   }, []);
+
+  // SS-007 FIX: Listen for backend socket events that signal a wallet change.
+  // The backend emits 'coins:awarded' and 'wallet:updated' to the user's personal room
+  // (see orderSocketService.ts emitCoinsAwarded / emitToUser).
+  // When received, trigger a server-side refresh so the displayed balance is always accurate.
+  const { socket } = useSocket();
+  const refreshWalletRef = useRef(refreshWallet);
+  refreshWalletRef.current = refreshWallet;
+
+  useEffect(() => {
+    if (!socket || !isAuthenticated) return;
+
+    const handleCoinsAwarded = () => {
+      refreshWalletRef.current().catch(() => {});
+    };
+    const handleWalletUpdated = () => {
+      refreshWalletRef.current().catch(() => {});
+    };
+
+    socket.on('coins:awarded', handleCoinsAwarded);
+    socket.on('wallet:updated', handleWalletUpdated);
+
+    return () => {
+      socket.off('coins:awarded', handleCoinsAwarded);
+      socket.off('wallet:updated', handleWalletUpdated);
+    };
+  }, [socket, isAuthenticated]);
 
   // Split into two memo'd values so loading state changes don't re-render data consumers
   const dataValue = useMemo<WalletDataContextType>(() => {

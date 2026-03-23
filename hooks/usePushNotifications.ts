@@ -29,6 +29,28 @@ export function usePushNotifications() {
     // Initialize push notifications
     initializePushNotifications();
 
+    // SS-004 FIX: Register a foreground notification data-refresh listener.
+    // When a push arrives while the app is open, refresh the relevant data
+    // (wallet for coins/cashback, orders cache for order updates).
+    const removeDataRefreshListener = pushNotificationService.addDataRefreshListener((data) => {
+      const type: string = data?.type || '';
+      if (
+        type === 'wallet_update' ||
+        type === 'cashback_received' ||
+        type === 'coins_earned'
+      ) {
+        refreshWallet().catch(() => {});
+      }
+      if (
+        type.startsWith('order_') ||
+        type.startsWith('delivery_') ||
+        type === 'out_for_delivery' ||
+        type === 'payment_success'
+      ) {
+        queryClient.invalidateQueries({ queryKey: queryKeys.orders.all }).catch(() => {});
+      }
+    });
+
     // Setup app state listener
     const subscription = AppState.addEventListener('change', nextAppState => {
       if (
@@ -44,6 +66,7 @@ export function usePushNotifications() {
     initialized.current = true;
 
     return () => {
+      removeDataRefreshListener();
       subscription.remove();
       pushNotificationService.cleanup();
     };
