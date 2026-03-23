@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useMemo } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -29,6 +29,39 @@ function BrandedCoinsScreen() {
 
   const brandedCoins = brandedCoinsFromCtx || [];
   const totalBranded = walletData?.brandedCoinsTotal || 0;
+
+  const renderBrandedCoin = useCallback(({ item: bc }: any) => (
+    <View style={styles.storeCard}>
+      <View style={styles.storeRow}>
+        <View style={[styles.storeIcon, { backgroundColor: (bc.merchantColor || COIN_TYPES.branded.color) + '15' }]}>
+          {bc.merchantLogo ? (
+            <CachedImage
+              source={bc.merchantLogo}
+              style={styles.storeLogo}
+              contentFit="contain"
+            />
+          ) : (
+            <Ionicons
+              name="storefront"
+              size={24}
+              color={bc.merchantColor || COIN_TYPES.branded.color}
+            />
+          )}
+        </View>
+
+        <View style={styles.storeInfo}>
+          <Text style={styles.storeName}>{bc.merchantName}</Text>
+          <Text style={styles.storeDesc}>Use only at {bc.merchantName}</Text>
+        </View>
+
+        <View style={styles.storeAmountWrap}>
+          <Text style={[styles.storeAmount, { color: bc.merchantColor || COIN_TYPES.branded.color }]}>
+            RC {bc.amount}
+          </Text>
+        </View>
+      </View>
+    </View>
+  ), []);
 
   return (
     <View style={styles.root}>
@@ -61,38 +94,7 @@ function BrandedCoinsScreen() {
         contentContainerStyle={{ paddingBottom: 120 }}
         data={brandedCoins}
         keyExtractor={(item) => item.merchantId || Math.random().toString()}
-        renderItem={({ item: bc }) => (
-          <View style={styles.storeCard}>
-            <View style={styles.storeRow}>
-              <View style={[styles.storeIcon, { backgroundColor: (bc.merchantColor || COIN_TYPES.branded.color) + '15' }]}>
-                {bc.merchantLogo ? (
-                  <CachedImage
-                    source={bc.merchantLogo}
-                    style={styles.storeLogo}
-                    contentFit="contain"
-                  />
-                ) : (
-                  <Ionicons
-                    name="storefront"
-                    size={24}
-                    color={bc.merchantColor || COIN_TYPES.branded.color}
-                  />
-                )}
-              </View>
-
-              <View style={styles.storeInfo}>
-                <Text style={styles.storeName}>{bc.merchantName}</Text>
-                <Text style={styles.storeDesc}>Use only at {bc.merchantName}</Text>
-              </View>
-
-              <View style={styles.storeAmountWrap}>
-                <Text style={[styles.storeAmount, { color: bc.merchantColor || COIN_TYPES.branded.color }]}>
-                  RC {bc.amount}
-                </Text>
-              </View>
-            </View>
-          </View>
-        )}
+        renderItem={renderBrandedCoin}
         ListEmptyComponent={() => (
           <View style={styles.emptyState}>
             <Ionicons name="storefront-outline" size={48} color={colors.neutral[400]} />

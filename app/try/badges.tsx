@@ -187,7 +187,7 @@ export default function BadgesScreen() {
           { type: 'undiscovered-header', data: null },
           ...undiscovered.map(u => ({ type: 'undiscovered', data: u })),
         ]}
-        renderItem={({ item }) => {
+        renderItem={useCallback(({ item }: any) => {
           if (item.type === 'header') {
             return renderSectionHeader('Your Badges');
           }
@@ -201,7 +201,7 @@ export default function BadgesScreen() {
             return renderUndiscoveredCard({ item: item.data });
           }
           return null;
-        }}
+        }, [])}
         keyExtractor={(item, idx) => {
           if (item.type === 'header') return 'header';
           if (item.type === 'undiscovered-header') return 'undiscovered-header';

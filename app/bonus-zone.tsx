@@ -123,12 +123,12 @@ function BonusZonePage() {
         }
         data={filteredCampaigns}
         keyExtractor={(item) => item.slug}
-        renderItem={({ item: campaign }) => (
+        renderItem={useCallback(({ item: campaign }) => (
           <BonusZoneCard
             campaign={campaign}
             currencySymbol={currencySymbol}
           />
-        )}
+        ), [currencySymbol])}
         ListHeaderComponent={() => (
           <>
             {/* Header */}

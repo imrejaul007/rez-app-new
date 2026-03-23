@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, ScrollView, FlatList, Pressable, StyleSheet, Dimensions, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -140,6 +140,27 @@ function ReferralDashboard() {
   // Prepare leaderboard data for FlatList
   const leaderboardData = leaderboard.slice(0, 5);
 
+  const renderLeaderboardItem = useCallback(({ item: entry }: { item: LeaderboardEntry }) => (
+    <View style={styles.leaderboardItem}>
+      <View style={styles.leaderboardRank}>
+        <Text style={styles.leaderboardRankText}>#{entry.rank}</Text>
+      </View>
+      <View style={styles.leaderboardInfo}>
+        <Text style={styles.leaderboardName}>
+          {entry.fullName || entry.username}
+        </Text>
+        <Text style={styles.leaderboardStats}>
+          {entry.totalReferrals} referrals · {currencySymbol}{entry.lifetimeEarnings}
+        </Text>
+      </View>
+      <View style={styles.leaderboardTierBadge}>
+        <Text style={styles.leaderboardTierText}>
+          {REFERRAL_TIERS[entry.tier]?.badge || 'Starter'}
+        </Text>
+      </View>
+    </View>
+  ), [currencySymbol]);
+
   return (
     <FlatList
         contentContainerStyle={{ paddingBottom: 120 }}
@@ -149,26 +170,7 @@ function ReferralDashboard() {
       }
       data={leaderboardData}
       keyExtractor={(item) => item.userId}
-      renderItem={({ item: entry }) => (
-        <View style={styles.leaderboardItem}>
-          <View style={styles.leaderboardRank}>
-            <Text style={styles.leaderboardRankText}>#{entry.rank}</Text>
-          </View>
-          <View style={styles.leaderboardInfo}>
-            <Text style={styles.leaderboardName}>
-              {entry.fullName || entry.username}
-            </Text>
-            <Text style={styles.leaderboardStats}>
-              {entry.totalReferrals} referrals · {currencySymbol}{entry.lifetimeEarnings}
-            </Text>
-          </View>
-          <View style={styles.leaderboardTierBadge}>
-            <Text style={styles.leaderboardTierText}>
-              {REFERRAL_TIERS[entry.tier]?.badge || 'Starter'}
-            </Text>
-          </View>
-        </View>
-      )}
+      renderItem={renderLeaderboardItem}
       scrollEnabled={true}
       ListHeaderComponent={() => (
         <>
