@@ -106,7 +106,7 @@ function PriceSection({
                   { fontSize: isSmallScreen ? 15 : 16 },
                   !(loading || totalPrice === 0) && { color: colors.nuqta.nileBlue }
                 ]}>
-                  {loading ? 'Processing...' : 'Buy Now'}
+                  {loading ? 'Processing...' : 'Checkout'}
                 </ThemedText>
                 {!loading && totalPrice > 0 && (
                   <View style={styles.arrowWrapper}>
@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flex: 1,
-    maxWidth: 180,
+    maxWidth: 200,
   },
   buyNowButton: {
     borderRadius: borderRadius.xl,

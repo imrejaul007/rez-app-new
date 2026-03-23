@@ -4,7 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Platform, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -16,7 +16,6 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const HomeServicesPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
@@ -125,8 +124,8 @@ const HomeServicesPage: React.FC = () => {
                       <Text style={styles.categoryEmoji}>{cat.icon}</Text>
                     )}
                   </View>
-                  <Text style={styles.categoryTitle}>{cat.title}</Text>
-                  <Text style={styles.categoryCount}>{cat.count}</Text>
+                  <Text style={styles.categoryTitle} numberOfLines={2}>{cat.title}</Text>
+                  <Text style={styles.categoryCount} numberOfLines={1}>{cat.count}</Text>
                 </Pressable>
               );
             })}
@@ -155,9 +154,9 @@ const HomeServicesPage: React.FC = () => {
                     <Text style={styles.cashbackText}>{cashback}%</Text>
                   </View>
                   <View style={styles.serviceInfo}>
-                    <Text style={styles.serviceName}>{service.name}</Text>
-                    <Text style={styles.serviceType}>{categoryName}</Text>
-                    <Text style={styles.servicePrice}>From {currencySymbol}{price}</Text>
+                    <Text style={styles.serviceName} numberOfLines={1}>{service.name}</Text>
+                    <Text style={styles.serviceType} numberOfLines={1}>{categoryName}</Text>
+                    <Text style={styles.servicePrice} numberOfLines={1}>From {currencySymbol}{price}</Text>
                   </View>
                 </Pressable>
               );
@@ -198,7 +197,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 18, fontWeight: '700', color: Colors.nileBlue, marginBottom: 12 },
   viewAllText: { fontSize: 14, fontWeight: '600', color: Colors.brand.purple },
   categoriesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  categoryCard: { width: (SCREEN_WIDTH - 56) / 3, alignItems: 'center', padding: Spacing.md, backgroundColor: Colors.background.secondary, borderRadius: 16 },
+  categoryCard: { flexBasis: '30%', flexGrow: 1, flexShrink: 1, alignItems: 'center', padding: Spacing.md, backgroundColor: Colors.background.secondary, borderRadius: 16 },
   categoryIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
   categoryEmoji: { fontSize: 24 },
   categoryTitle: { fontSize: 12, fontWeight: '600', color: Colors.nileBlue, marginBottom: 2, textAlign: 'center' },

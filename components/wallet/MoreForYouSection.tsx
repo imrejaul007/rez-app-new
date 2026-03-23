@@ -6,7 +6,8 @@ import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, Pressable, LayoutAnimation, Platform, UIManager } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 
 // Enable layout animations on Android
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -52,13 +53,13 @@ export const MoreForYouSection: React.FC<MoreForYouSectionProps> = ({
         accessibilityLabel={`More for you. ${expanded ? 'Collapse' : 'Expand'}`}
       >
         <View style={styles.headerLeft}>
-          <Ionicons name="grid-outline" size={18} color={Colors.nileBlue} />
+          <Ionicons name="grid-outline" size={18} color={colors.nileBlue} />
           <ThemedText style={styles.headerTitle}>More for You</ThemedText>
         </View>
         <Ionicons
           name={expanded ? 'chevron-up' : 'chevron-down'}
           size={18}
-          color={Colors.text.tertiary}
+          color={colors.text.tertiary}
         />
       </Pressable>
 
@@ -75,7 +76,7 @@ export const MoreForYouSection: React.FC<MoreForYouSectionProps> = ({
               accessibilityRole="button"
             >
               <View style={styles.optionIconBg}>
-                <Ionicons name={option.icon} size={18} color={Colors.nileBlue} />
+                <Ionicons name={option.icon} size={18} color={colors.nileBlue} />
               </View>
               <View style={styles.optionContent}>
                 <ThemedText style={styles.optionTitle}>{option.title}</ThemedText>
@@ -86,7 +87,7 @@ export const MoreForYouSection: React.FC<MoreForYouSectionProps> = ({
                   <ThemedText style={styles.badgeText}>{option.badge}</ThemedText>
                 </View>
               )}
-              <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
             </Pressable>
           ))}
         </View>
@@ -98,7 +99,7 @@ export const MoreForYouSection: React.FC<MoreForYouSectionProps> = ({
 const styles = StyleSheet.create({
   container: {
     marginVertical: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     ...Shadows.subtle,
@@ -118,7 +119,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   optionsList: {
     paddingHorizontal: Spacing.base,
@@ -131,13 +132,13 @@ const styles = StyleSheet.create({
   },
   optionBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   optionIconBg: {
     width: 34,
     height: 34,
     borderRadius: 10,
-    backgroundColor: Colors.background.accent,
+    backgroundColor: colors.background.accent,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
@@ -148,15 +149,15 @@ const styles = StyleSheet.create({
   optionTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   optionSubtitle: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 1,
   },
   badge: {
-    backgroundColor: Colors.lightMustard + '30',
+    backgroundColor: colors.lightMustard + '30',
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 9,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 });
 

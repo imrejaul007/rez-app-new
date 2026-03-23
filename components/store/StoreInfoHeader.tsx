@@ -3,7 +3,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface StoreInfoHeaderProps {
@@ -50,7 +50,7 @@ function StoreInfoHeader({ storeName, rating, categoryTags, horizontalPadding }:
         {/* Category Tags */}
         {categoryTags.slice(0, 3).map((tag, index) => (
           <View key={index} style={styles.categoryTag}>
-            <Ionicons name={getCategoryIcon(tag)} size={12} color={Colors.text.tertiary} />
+            <Ionicons name={getCategoryIcon(tag)} size={12} color={colors.text.tertiary} />
             <ThemedText style={styles.categoryTagText}>{tag}</ThemedText>
           </View>
         ))}
@@ -85,7 +85,7 @@ const createStyles = (horizontalPadding: number) =>
       marginBottom: Spacing.sm,
       paddingHorizontal: Spacing.base,
       paddingVertical: Spacing.base,
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderRadius: BorderRadius.lg,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
@@ -134,7 +134,7 @@ const createStyles = (horizontalPadding: number) =>
     categoryTagText: {
       ...Typography.bodySmall,
       fontWeight: "500",
-      color: Colors.text.secondary,
+      color: colors.text.secondary,
     },
     featureTagsRow: {
       flexDirection: "row",

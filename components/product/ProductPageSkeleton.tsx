@@ -7,7 +7,8 @@
 import React from 'react';
 import { View, StyleSheet, ScrollView, SafeAreaView, Dimensions } from 'react-native';
 import ShimmerEffect from '@/components/common/ShimmerEffect';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 
 const { width: screenWidth } = Dimensions.get('window');
 
@@ -171,7 +172,7 @@ function ProductPageSkeleton({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -179,9 +180,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.medium,
+    borderBottomColor: colors.border.medium,
   },
   headerButton: {
     borderRadius: BorderRadius.full,
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full,
   },
   infoSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
   },
@@ -236,7 +237,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
   },
@@ -267,10 +268,10 @@ const styles = StyleSheet.create({
   },
   tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginBottom: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.medium,
+    borderBottomColor: colors.border.medium,
   },
   tab: {
     flex: 1,
@@ -286,7 +287,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   relatedProductCard: {
     width: 140,
@@ -303,11 +304,11 @@ const styles = StyleSheet.create({
     height: 100,
   },
   actionBar: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.medium,
+    borderTopColor: colors.border.medium,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

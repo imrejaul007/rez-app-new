@@ -170,7 +170,7 @@ const GroceryStoresPage: React.FC = () => {
               <CachedImage source={store.logo} style={styles.storeLogo} />
             )}
             <View style={styles.featuredInfo}>
-              <Text style={styles.featuredName}>{store.name}</Text>
+              <Text style={styles.featuredName} numberOfLines={1}>{store.name}</Text>
               <View style={styles.featuredMeta}>
                 {store.rating?.average && (
                   <View style={styles.ratingBadge}>
@@ -220,7 +220,7 @@ const GroceryStoresPage: React.FC = () => {
           </View>
         )}
         <View style={styles.storeInfo}>
-          <Text style={styles.storeName}>{store.name}</Text>
+          <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
           <View style={styles.storeMeta}>
             {store.rating?.average && (
               <>

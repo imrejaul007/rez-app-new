@@ -6,7 +6,6 @@ import {
   Pressable,
   Modal,
   ScrollView,
-  Dimensions,
   ActivityIndicator,
 } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
@@ -15,8 +14,6 @@ import { Ionicons } from '@expo/vector-icons';
 import { storeSearchService, Review, ReviewStats } from '@/services/storeSearchService';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-
-const { width } = Dimensions.get('window');
 
 // Review interface is now imported from storeSearchService
 

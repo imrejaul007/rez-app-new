@@ -12,7 +12,8 @@ import {
   SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Typography, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+import { Typography, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 
 interface Props {
   children: ReactNode;
@@ -144,7 +145,7 @@ class ProductPageErrorBoundary extends Component<Props, State> {
                   accessibilityRole="button"
                   accessibilityHint="Double tap to go back to previous page"
                 >
-                  <Ionicons name="arrow-back" size={20} color={Colors.primary[700]} />
+                  <Ionicons name="arrow-back" size={20} color={colors.primary[700]} />
                   <Text style={styles.secondaryButtonText}>Go Back</Text>
                 </Pressable>
               )}
@@ -161,7 +162,7 @@ class ProductPageErrorBoundary extends Component<Props, State> {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   content: {
     flex: 1,
@@ -174,26 +175,26 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
     textAlign: 'center',
   },
   message: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing['2xl'],
     lineHeight: 22,
     maxWidth: 320,
   },
   errorDetails: {
-    backgroundColor: Colors.background.tertiary,
+    backgroundColor: colors.background.tertiary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.xl,
     maxWidth: 320,
     borderWidth: 1,
-    borderColor: Colors.border.medium,
+    borderColor: colors.border.medium,
   },
   errorDetailsTitle: {
     ...Typography.labelSmall,
@@ -202,7 +203,7 @@ const styles = StyleSheet.create({
   },
   errorDetailsText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontFamily: 'monospace',
   },
   buttonContainer: {
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.primary[700],
+    backgroundColor: colors.primary[700],
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.xl,
     borderRadius: BorderRadius.md,
@@ -223,24 +224,24 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: {
     ...Typography.button,
-    color: Colors.text.white,
+    color: colors.text.white,
     fontSize: 16,
   },
   secondaryButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.xl,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.primary[700],
+    borderColor: colors.primary[700],
     gap: Spacing.sm,
   },
   secondaryButtonText: {
     ...Typography.buttonSmall,
-    color: Colors.primary[700],
+    color: colors.primary[700],
     fontSize: 16,
     fontWeight: '600',
   },

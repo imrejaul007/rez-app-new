@@ -378,9 +378,9 @@ const styles = StyleSheet.create({
   // ── Hero card ──────────────────────────────────────────────────────────────
   heroCard: {
     width: '100%',
-    paddingTop: 24,
-    paddingBottom: 24,
-    paddingHorizontal: 20,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.md,
     overflow: 'hidden',
     position: 'relative',
   },
@@ -487,10 +487,10 @@ const styles = StyleSheet.create({
 
   // ── Breakdown section ───────────────────────────────────────────────────────
   breakdownContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: 8,
-    gap: 10,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.sm,
+    gap: Spacing.sm,
   },
 
   // ── Individual coin card ────────────────────────────────────────────────────
@@ -499,9 +499,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 14,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    gap: 12,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    gap: Spacing.md,
     ...Platform.select({
       ios: {
         shadowColor: NILE_BLUE,

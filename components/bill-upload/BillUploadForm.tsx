@@ -15,7 +15,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { VALIDATION_CONFIG } from '@/utils/billValidation';
 import CashbackCalculator from '@/components/bills/CashbackCalculator';
@@ -247,10 +247,10 @@ const BillUploadForm = React.memo(function BillUploadForm({
         disabled={!isFormValid || isUploading}
       >
         {isUploading ? (
-          <ActivityIndicator color={Colors.text.inverse} />
+          <ActivityIndicator color={colors.text.inverse} />
         ) : (
           <>
-            <Ionicons name="cloud-upload" size={20} color={Colors.text.inverse} />
+            <Ionicons name="cloud-upload" size={20} color={colors.text.inverse} />
             <Text style={styles.submitButtonText}>Upload Bill</Text>
           </>
         )}
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   required: {
@@ -280,11 +280,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   selectedMerchantContainer: {
     flexDirection: 'row',
@@ -294,20 +294,20 @@ const styles = StyleSheet.create({
   },
   selectedMerchant: {
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   placeholderText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     paddingHorizontal: Spacing.md,
     gap: Spacing.sm,
   },
@@ -318,32 +318,32 @@ const styles = StyleSheet.create({
   currencyPrefix: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   input: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingVertical: 14,
   },
   textArea: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     padding: Spacing.md,
     minHeight: 100,
     textAlignVertical: 'top',
   },
   characterCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'right',
     marginTop: Spacing.xs,
   },
   helperText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
   },
   errorText: {
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   },
   cashbackDisclaimer: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontStyle: 'italic',
     marginTop: Spacing.sm,
     paddingHorizontal: Spacing.base,
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
     }),
   },
   submitButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },

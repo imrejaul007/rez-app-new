@@ -7,7 +7,7 @@ import { View, StyleSheet } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { InsightTile } from './InsightTile';
 import { WalletData } from '@/types/wallet';
-import { Colors, Spacing } from '@/constants/DesignSystem';
+import { Spacing } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 const SEGMENT_THIRD_TILE: Record<string, { label: string; icon: string; iconColor: string }> = {
@@ -55,7 +55,7 @@ export const InsightSection: React.FC<InsightSectionProps> = ({ walletData, curr
             label="Total Saved"
             value={`${currencySymbol}${totalSaved.toLocaleString('en-IN')}`}
             icon="wallet"
-            iconColor={Colors.nileBlue}
+            iconColor={colors.nileBlue}
           />
           {(() => {
             const segTile = segment ? SEGMENT_THIRD_TILE[segment] : null;
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   row: {
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

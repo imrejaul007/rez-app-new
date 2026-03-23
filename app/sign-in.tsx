@@ -8,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Dimensions,
   TextInput,
 } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
@@ -24,8 +23,6 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { BRAND } from '@/constants/brand';
 import { useIsMounted } from '@/hooks/useIsMounted';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Rez Design System Colors
 
@@ -505,7 +502,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: Spacing.xl,
-    paddingVertical: 40,
+    paddingVertical: Spacing.xxl,
   },
 
   // Decorative Circles
@@ -707,7 +704,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
   },
   phoneIcon: {
-    marginRight: 10,
+    marginRight: Spacing.sm,
   },
   phoneTextInput: {
     flex: 1,
@@ -730,9 +727,9 @@ const styles = StyleSheet.create({
   timerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: Spacing.xs,
     backgroundColor: 'rgba(154, 167, 178, 0.1)',
-    paddingHorizontal: 14,
+    paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
   },
@@ -765,7 +762,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   primaryButton: {
-    paddingVertical: Spacing.base,
+    minHeight: 52,
+    paddingVertical: 14,
     paddingHorizontal: Spacing.xl,
     flexDirection: 'row',
     alignItems: 'center',
@@ -775,6 +773,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: Colors.text.inverse,
     ...Typography.bodyLarge,
+    fontSize: 17,
     fontWeight: '700',
     letterSpacing: 0.3,
   },
@@ -785,7 +784,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing['2xl'],
   },
   secondaryButton: {
-    paddingVertical: 14,
+    paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xl,
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     borderRadius: BorderRadius.lg,

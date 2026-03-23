@@ -754,14 +754,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#F4F6F9',
-    paddingTop: Platform.OS === 'ios' ? 20 : 0,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
   header: {
-    paddingTop: Platform.OS === 'android' ? 28 : 12,
-    paddingBottom: 28,
-    paddingHorizontal: Spacing.lg,
+    paddingTop: Platform.OS === 'android' ? 48 : 52,
+    paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.md,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.18,
@@ -772,7 +771,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 24,
+    marginBottom: Spacing.xl,
   },
   backButton: {
     width: 40,
@@ -793,8 +792,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   saveButton: {
-    paddingHorizontal: 18,
-    paddingVertical: 9,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
     borderRadius: 20,
     backgroundColor: PROFILE_COLORS.gold,
     minWidth: 72,
@@ -1032,7 +1031,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
+    paddingVertical: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F2F5',
     minHeight: 62,
@@ -1052,7 +1051,7 @@ const styles = StyleSheet.create({
     backgroundColor: `${PROFILE_COLORS.primaryDark}10`,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 14,
+    marginRight: Spacing.md,
   },
   settingItemText: {
     flex: 1,
@@ -1083,7 +1082,7 @@ const styles = StyleSheet.create({
   dangerItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
+    paddingVertical: Spacing.md,
     minHeight: 62,
   },
   dangerIconCircle: {
@@ -1093,7 +1092,7 @@ const styles = StyleSheet.create({
     backgroundColor: `${Colors.error}10`,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 14,
+    marginRight: Spacing.md,
   },
   dangerItemText: {
     flex: 1,
@@ -1112,8 +1111,8 @@ const styles = StyleSheet.create({
 
   // ── Bottom Save Button ─────────────────────────────────────────────────────
   bottomSaveWrapper: {
-    marginTop: 4,
-    marginBottom: 8,
+    marginTop: Spacing.xs,
+    marginBottom: Spacing.sm,
     borderRadius: 16,
     overflow: 'hidden',
     shadowColor: PROFILE_COLORS.primaryDark,
@@ -1126,8 +1125,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 17,
-    paddingHorizontal: 24,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
     borderRadius: 16,
   },
   bottomSaveText: {

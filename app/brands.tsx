@@ -11,7 +11,6 @@ import {
   StyleSheet,
   Pressable,
   RefreshControl,
-  Dimensions,
   Platform,
   TextInput,
 } from 'react-native';
@@ -24,8 +23,6 @@ import { CardGridSkeleton } from '@/components/skeletons';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
-const CARD_WIDTH = (SCREEN_WIDTH - 48) / 2;
 
 const BrandCard = ({
   brand,
@@ -355,7 +352,9 @@ const styles = StyleSheet.create({
     gap: Spacing.base,
   },
   brandCard: {
-    width: CARD_WIDTH,
+    flexBasis: '46%',
+    flexGrow: 1,
+    flexShrink: 1,
     backgroundColor: Colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,

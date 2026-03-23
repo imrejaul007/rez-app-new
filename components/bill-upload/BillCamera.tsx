@@ -8,7 +8,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import * as ExpoCamera from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface BillCameraProps {
@@ -32,7 +32,7 @@ const BillCamera = React.memo(function BillCamera({
         <View style={styles.cameraOverlay}>
           {/* Close button */}
           <Pressable style={styles.cameraCloseButton} onPress={onClose}>
-            <Ionicons name="close" size={32} color={Colors.text.inverse} />
+            <Ionicons name="close" size={32} color={colors.text.inverse} />
           </Pressable>
 
           {/* Guidelines */}
@@ -49,7 +49,7 @@ const BillCamera = React.memo(function BillCamera({
           {/* Controls */}
           <View style={styles.cameraControls}>
             <Pressable style={styles.cameraFlipButton} onPress={onFlipCamera}>
-              <Ionicons name="camera-reverse" size={32} color={Colors.text.inverse} />
+              <Ionicons name="camera-reverse" size={32} color={colors.text.inverse} />
             </Pressable>
 
             <Pressable style={styles.cameraCaptureButton} onPress={onCapture}>
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
   },
   cameraGuidelinesText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
     marginBottom: Spacing.lg,
@@ -116,11 +116,11 @@ const styles = StyleSheet.create({
     width: 300,
     height: 200,
     borderWidth: 3,
-    borderColor: Colors.text.inverse,
+    borderColor: colors.text.inverse,
     borderRadius: BorderRadius.md,
   },
   cameraHelperText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     marginTop: Spacing.md,
     textAlign: 'center',
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },

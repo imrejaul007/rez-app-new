@@ -9,7 +9,7 @@ import StarRating from '@/components/StarRating';
 import RatingBreakdown from '@/components/RatingBreakdown';
 import ReviewCard from '@/components/ReviewCard';
 import UGCGrid from '@/components/UGCGrid';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 
 interface ReviewsTabContentProps {
   storeName: string;
@@ -117,7 +117,7 @@ function ReviewsTabContent({
                 You have already reviewed this store
               </ThemedText>
               <Pressable style={styles.editReviewButton}>
-                <Ionicons name="create-outline" size={18} color={Colors.gold} />
+                <Ionicons name="create-outline" size={18} color={colors.gold} />
               </Pressable>
             </View>
           </View>
@@ -127,10 +127,10 @@ function ReviewsTabContent({
             onPress={onWriteReview}
           >
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[colors.gold, colors.nileBlue]}
               style={styles.writeReviewGradient}
             >
-              <Ionicons name="create-outline" size={20} color={Colors.text.inverse} />
+              <Ionicons name="create-outline" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.writeReviewText}>Write a Review</ThemedText>
             </LinearGradient>
           </Pressable>
@@ -146,7 +146,7 @@ function ReviewsTabContent({
           >
             {reviewInnerTab === 'reviews' ? (
               <LinearGradient
-                colors={[Colors.gold, Colors.nileBlue]}
+                colors={[colors.gold, colors.nileBlue]}
                 style={styles.reviewInnerTabGradient}
               >
                 <ThemedText style={styles.reviewInnerTabTextActive}>
@@ -165,7 +165,7 @@ function ReviewsTabContent({
           >
             {reviewInnerTab === 'ugc' ? (
               <LinearGradient
-                colors={[Colors.gold, Colors.nileBlue]}
+                colors={[colors.gold, colors.nileBlue]}
                 style={styles.reviewInnerTabGradient}
               >
                 <ThemedText style={styles.reviewInnerTabTextActive}>UGC Content</ThemedText>
@@ -182,16 +182,16 @@ function ReviewsTabContent({
         <View style={sectionCardStyle}>
           {reviewsLoading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={Colors.gold} />
+              <ActivityIndicator size="large" color={colors.gold} />
               <ThemedText style={styles.loadingText}>Loading reviews...</ThemedText>
             </View>
           ) : reviews.length === 0 ? (
             <View style={styles.emptyReviewState}>
               <LinearGradient
-                colors={[Colors.gold, Colors.nileBlue]}
+                colors={[colors.gold, colors.nileBlue]}
                 style={styles.emptyIconContainer}
               >
-                <Ionicons name="chatbubble-outline" size={32} color={Colors.text.inverse} />
+                <Ionicons name="chatbubble-outline" size={32} color={colors.text.inverse} />
               </LinearGradient>
               <ThemedText style={styles.emptyStateTitle}>No reviews yet</ThemedText>
               <ThemedText style={styles.emptyStateText}>
@@ -217,7 +217,7 @@ function ReviewsTabContent({
         <View style={sectionCardStyle}>
           {ugcLoading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={Colors.gold} />
+              <ActivityIndicator size="large" color={colors.gold} />
               <ThemedText style={styles.loadingText}>Loading UGC content...</ThemedText>
             </View>
           ) : ugcContent.length === 0 ? (
@@ -256,12 +256,12 @@ const styles = StyleSheet.create({
   reviewsHeaderTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.3,
   },
   reviewsStoreName: {
     ...Typography.body,
-    color: Colors.gold,
+    color: colors.gold,
     fontWeight: '600',
     marginTop: Spacing.xs,
   },
@@ -280,12 +280,12 @@ const styles = StyleSheet.create({
   averageRatingNumber: {
     fontSize: 44,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -1,
   },
   outOfFive: {
     ...Typography.h4,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   starsContainer: {
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
   },
   totalReviewsText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   alreadyReviewedBanner: {
@@ -321,7 +321,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   editReviewButton: {
     width: 36,
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   writeReviewText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   reviewInnerTabsContainer: {
     flexDirection: 'row',
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.5)',
   },
   reviewInnerTabActive: {
-    borderColor: Colors.gold,
+    borderColor: colors.gold,
   },
   reviewInnerTabGradient: {
     paddingVertical: Spacing.md,
@@ -371,14 +371,14 @@ const styles = StyleSheet.create({
   reviewInnerTabText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingVertical: Spacing.md,
   },
   reviewInnerTabTextActive: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   reviewListContainer: {
     gap: Spacing.md,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   emptyReviewState: {
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     ...Platform.select({
       ios: {
-        shadowColor: Colors.gold,
+        shadowColor: colors.gold,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
         shadowRadius: 8,
@@ -439,12 +439,12 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   emptyStateText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
   },

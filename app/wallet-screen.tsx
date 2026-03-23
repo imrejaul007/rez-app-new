@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useFocusEffect } from 'expo-router';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import RechargeWalletCard from "../components/RechargeWalletCard";
 import ReferAndEarnCard from "@/components/ReferAndEarnCard";
 import {
@@ -440,7 +441,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
 
   return (
     <FeatureErrorBoundary featureName="Wallet">
-      <View style={styles.root}>
+      <Animated.View style={styles.root} entering={FadeIn.duration(300)}>
         <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
 
         {/* Fixed Header */}
@@ -588,10 +589,18 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
             </Pressable>
           )}
 
-          {/* Quick Actions Bar */}
-          {!walletData.isFrozen && <StickyQuickActions />}
-          {/* Coin Detail Cards */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 16, marginBottom: 4 }}>
+          {/* Quick Actions Bar — Add Money is the primary action */}
+          {!walletData.isFrozen && (
+            <>
+              <Text style={{ fontSize: 11, fontWeight: '600', color: colors.text.tertiary, textTransform: 'uppercase', letterSpacing: 0.8, paddingHorizontal: 16, marginTop: 12, marginBottom: 4 }}>
+                Quick Actions
+              </Text>
+              <StickyQuickActions />
+            </>
+          )}
+
+          {/* Section: Your Savings Breakdown */}
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: Spacing.md, marginTop: Spacing.md, marginBottom: Spacing.xs }}>
             <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text.primary }}>Your Savings Breakdown</Text>
             <Pressable onPress={() => setCoinEducationVisible(true)} hitSlop={8}>
               <Ionicons name="help-circle-outline" size={20} color={colors.neutral[400]} />
@@ -651,16 +660,16 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
             <Pressable
               onPress={() => router.push('/onboarding/identity-select' as any)}
               style={{
-                marginHorizontal: 16,
-                marginVertical: 12,
-                padding: 16,
+                marginHorizontal: Spacing.md,
+                marginVertical: Spacing.md,
+                padding: Spacing.md,
                 backgroundColor: '#FFF7ED',
                 borderRadius: 14,
                 borderLeftWidth: 3,
                 borderLeftColor: '#F97316',
                 flexDirection: 'row',
                 alignItems: 'center',
-                gap: 12,
+                gap: Spacing.md,
               }}
             >
               <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#FFEDD5', justifyContent: 'center', alignItems: 'center' }}>
@@ -703,7 +712,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
           <View style={{ height: 120 }} />
         </ScrollView>
 
-      </View>
+      </Animated.View>
 
       {/* Coin Education Overlay */}
       <CoinEducationOverlay
@@ -760,7 +769,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       textAlign: 'center',
     },
     headerRight: { width: 36 },
-    scroll: { flex: 1, paddingHorizontal: horizontalPadding },
+    scroll: { flex: 1 },
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     loadingText: { fontSize: Typography.body.fontSize, color: Colors.text.secondary },
     errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: Spacing['2xl'] },
@@ -778,7 +787,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: Colors.errorScale[100],
-      marginHorizontal: Spacing.base,
+      marginHorizontal: Spacing.md,
       marginTop: Spacing.sm,
       padding: Spacing.md,
       borderRadius: BorderRadius.md,
@@ -799,18 +808,18 @@ const createStyles = (screenData: { width: number; height: number }) => {
       flexDirection: 'row',
       alignItems: 'center',
       backgroundColor: colors.tint.amber,
-      borderRadius: BorderRadius.md + 2,
-      padding: Spacing.md + 2,
-      marginTop: Spacing.sm + 2,
-      marginHorizontal: Spacing.base,
+      borderRadius: BorderRadius.md,
+      padding: Spacing.md,
+      marginTop: Spacing.sm,
+      marginHorizontal: Spacing.md,
       borderWidth: 1,
       borderColor: colors.warningScale[200],
-      gap: Spacing.sm + 2,
+      gap: Spacing.sm,
     },
     expiryIconWrap: {
-      width: 34,
-      height: 34,
-      borderRadius: BorderRadius.sm + 2,
+      width: 36,
+      height: 36,
+      borderRadius: BorderRadius.sm,
       backgroundColor: colors.tint.amberLight,
       justifyContent: 'center',
       alignItems: 'center',

@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: colors.tint.slate,
-    height: 380, // Fixed height for all cards
+    minHeight: 380, // Minimum card height — allows growth on small screens
     ...Platform.select({
       ios: {
         shadowColor: '#000',

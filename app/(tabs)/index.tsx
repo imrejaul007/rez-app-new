@@ -14,6 +14,7 @@ import ReAnimated, {
   useAnimatedStyle,
   withTiming,
   interpolate,
+  FadeIn,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -627,7 +628,7 @@ function HomeScreen() {
   }
 
   return (
-    <View style={viewStyles.mainContainer}>
+    <ReAnimated.View style={viewStyles.mainContainer} entering={FadeIn.duration(250)}>
       <ReAnimated.ScrollView
         ref={scrollViewRef}
         style={viewStyles.container}
@@ -1003,7 +1004,7 @@ function HomeScreen() {
           onCategoryChange={setSelectedCategory}
         />
       )}
-    </View>
+    </ReAnimated.View>
   );
 }
 
@@ -1099,13 +1100,14 @@ const viewStyles = StyleSheet.create({
   headerCoinContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 200, 87, 0.18)',
+    backgroundColor: 'rgba(255, 200, 87, 0.25)',
     borderRadius: borderRadius.md,
-    paddingVertical: 2,
-    paddingLeft: 2,
-    paddingRight: 6,
+    paddingVertical: 5,
+    paddingLeft: 4,
+    paddingRight: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 200, 87, 0.35)',
+    borderColor: 'rgba(255, 200, 87, 0.5)',
+    minHeight: 32,
     ...Platform.select({
       android: { flexShrink: 0 },
       ios: { flexShrink: 0 },
@@ -1113,12 +1115,12 @@ const viewStyles = StyleSheet.create({
     }),
   },
   headerCoinImage: {
-    width: 18,
-    height: 18,
-    marginRight: 2,
+    width: 20,
+    height: 20,
+    marginRight: 4,
   },
   headerCoinText: {
-    fontSize: 11,
+    fontSize: 13,
     fontWeight: '700',
     color: colors.brand.amberDeep,
   },
@@ -1164,12 +1166,11 @@ const viewStyles = StyleSheet.create({
   // Text pill with background - positioned to the left of badge
   savedTextPill: {
     backgroundColor: 'rgba(255, 200, 87, 0.35)',
-    paddingLeft: 6,
-    paddingRight: 4,
-    paddingVertical: 2,
-    borderRadius: 0,
-    marginRight: -4,
-    marginTop: -6,
+    paddingLeft: spacing.sm,
+    paddingRight: spacing.xs,
+    paddingVertical: spacing.xs,
+    borderRadius: borderRadius.sm,
+    marginRight: -spacing.xs,
   },
   // Badge overlay - overlaps text from right
   badgeOverlay: {
@@ -1178,7 +1179,7 @@ const viewStyles = StyleSheet.create({
   // Savings text - Nuqta Nile Blue
   savedText: {
     color: colors.nileBlue,
-    fontSize: 8,
+    fontSize: 10,
     fontWeight: '600',
   },
   locationDisplay: {
@@ -1229,14 +1230,14 @@ const viewStyles = StyleSheet.create({
     ...typography.body,
     fontWeight: '600',
     color: colors.nileBlue,
-    marginLeft: 6,
+    marginLeft: spacing.xs,
   },
   changeLocationButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.successScale[50],
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderRadius: borderRadius.md,
+    paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     borderWidth: 1,
     borderColor: colors.successScale[200],
@@ -1248,7 +1249,7 @@ const viewStyles = StyleSheet.create({
     backgroundColor: colors.lightMustard,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+    marginRight: spacing.sm,
   },
   changeLocationText: {
     flex: 1,
@@ -1292,11 +1293,11 @@ const viewStyles = StyleSheet.create({
     alignItems: 'center',
     marginHorizontal: spacing.md,
     marginTop: spacing.sm,
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     backgroundColor: colors.background.primary,
-    borderRadius: 12,
-    gap: 8,
+    borderRadius: borderRadius.md,
+    gap: spacing.sm,
     ...shadows.subtle,
   },
   locationBannerText: {
@@ -1306,10 +1307,10 @@ const viewStyles = StyleSheet.create({
     color: colors.text.primary,
   },
   locationBannerBtn: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
     backgroundColor: colors.lightMustard,
-    borderRadius: 8,
+    borderRadius: borderRadius.sm,
   },
   locationBannerBtnText: {
     fontSize: 12,
@@ -1341,7 +1342,7 @@ const viewStyles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     color: '#fff',
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   tryBannerSubtitle: {
     fontSize: 14,

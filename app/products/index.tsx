@@ -24,7 +24,7 @@ import productsApi from '@/services/productsApi';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { CardGridSkeleton } from '@/components/skeletons';
 
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -44,25 +44,25 @@ const categoryConfigs: Record<string, {
   },
   'fashion': {
     title: 'Fashion',
-    color: Colors.brand.purple,
+    color: colors.brand.purple,
     tags: ['fashion', 'clothing', 'apparel', 'accessories'],
     icon: '👗',
   },
   'grocery-essentials': {
     title: 'Grocery & Essentials',
-    color: Colors.success,
+    color: colors.success,
     tags: ['grocery', 'food', 'essentials'],
     icon: '🛒',
   },
   'healthcare': {
     title: 'Healthcare Products',
-    color: Colors.error,
+    color: colors.error,
     tags: ['healthcare', 'medicine', 'supplements'],
     icon: '💊',
   },
   'default': {
     title: 'All Products',
-    color: Colors.gold,
+    color: colors.gold,
     tags: [],
     icon: '🛍️',
   },
@@ -257,30 +257,30 @@ const ProductsPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>{config.icon} {config.title}</Text>
             <Text style={styles.headerSubtitle}>{filteredProducts.length} products available</Text>
           </View>
           <Pressable onPress={() => router.push('/cart' as any)} style={styles.cartButton}>
-            <Ionicons name="cart-outline" size={24} color={Colors.text.inverse} />
+            <Ionicons name="cart-outline" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="search" size={20} color={colors.text.tertiary} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search products..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
             <Pressable onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
             </Pressable>
           )}
         </View>
@@ -301,7 +301,7 @@ const ProductsPage: React.FC = () => {
               <Ionicons
                 name={filter.icon as any}
                 size={14}
-                color={selectedFilter === filter.id ? Colors.background.primary : Colors.text.tertiary}
+                color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />
               <Text style={[
                 styles.filterChipText,
@@ -352,7 +352,7 @@ const ProductsPage: React.FC = () => {
         {/* Error State */}
         {error && (
           <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
+            <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
             <Text style={styles.errorText}>{error}</Text>
             <Pressable style={[styles.retryButton, { backgroundColor: config.color }]} onPress={handleRefresh}>
               <Text style={styles.retryButtonText}>Try Again</Text>
@@ -424,14 +424,14 @@ const ProductsPage: React.FC = () => {
                   <Pressable
                     style={[
                       styles.addToCartButton,
-                      { backgroundColor: product.inStock ? config.color : Colors.border.default }
+                      { backgroundColor: product.inStock ? config.color : colors.border.default }
                     ]}
                     onPress={() => product.inStock && handleAddToCart(product)}
                     disabled={!product.inStock}
                   >
                     <Text style={[
                       styles.addToCartText,
-                      !product.inStock && { color: Colors.text.tertiary }
+                      !product.inStock && { color: colors.text.tertiary }
                     ]}>
                       {product.inStock ? 'Add to Cart' : 'Notify Me'}
                     </Text>
@@ -451,18 +451,18 @@ const ProductsPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.md,
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
@@ -506,12 +506,12 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: Typography.body.fontSize,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   filtersContainer: {
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   filterChip: {
     flexDirection: 'row',
@@ -519,16 +519,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
     gap: 6,
   },
   filterChipText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   sortBar: {
@@ -536,32 +536,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     gap: Spacing.md,
   },
   resultCount: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   sortChip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
   },
   sortChipActive: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   sortChipText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   sortChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   errorContainer: {
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: Typography.bodyLarge.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.md,
     marginBottom: Spacing.base,
@@ -585,7 +585,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyContainer: {
     justifyContent: 'center',
@@ -600,12 +600,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   productsGrid: {
@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
   },
   productCard: {
     width: (SCREEN_WIDTH - 36) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     elevation: 2,
@@ -636,7 +636,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     left: 8,
-    backgroundColor: Colors.error,
+    backgroundColor: colors.error,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
@@ -644,13 +644,13 @@ const styles = StyleSheet.create({
   discountText: {
     fontSize: Typography.overline.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cashbackBadge: {
     position: 'absolute',
     top: 8,
     right: 8,
-    backgroundColor: Colors.success,
+    backgroundColor: colors.success,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
@@ -658,7 +658,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     fontSize: Typography.overline.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   outOfStockOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -669,20 +669,20 @@ const styles = StyleSheet.create({
   outOfStockText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   productInfo: {
     padding: Spacing.md,
   },
   productBrand: {
     fontSize: Typography.caption.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   productName: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 6,
     minHeight: 36,
   },
@@ -695,11 +695,11 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   reviewCount: {
     fontSize: Typography.caption.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   priceContainer: {
     flexDirection: 'row',
@@ -710,11 +710,11 @@ const styles = StyleSheet.create({
   price: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   originalPrice: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   addToCartButton: {
@@ -725,7 +725,7 @@ const styles = StyleSheet.create({
   addToCartText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

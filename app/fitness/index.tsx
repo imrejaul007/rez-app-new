@@ -13,7 +13,6 @@ import {
   ScrollView,
   Pressable,
   Platform,
-  Dimensions,
   RefreshControl,
 } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
@@ -25,7 +24,6 @@ import apiClient from '@/services/apiClient';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useIsMounted } from '@/hooks/useIsMounted';
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Static categories for navigation (icons and colors)
 const categoryConfig: Record<string, { icon: string; color: string }> = {
@@ -232,8 +230,8 @@ const FitnessPage: React.FC = () => {
                 <View style={[styles.categoryIcon, { backgroundColor: `${getCategoryColor(cat.slug)}20` }]}>
                   <Text style={styles.categoryEmoji}>{getCategoryIcon(cat.slug)}</Text>
                 </View>
-                <Text style={styles.categoryTitle}>{cat.name}</Text>
-                <Text style={styles.categoryCount}>{formatCount(cat.storeCount)}</Text>
+                <Text style={styles.categoryTitle} numberOfLines={2}>{cat.name}</Text>
+                <Text style={styles.categoryCount} numberOfLines={1}>{formatCount(cat.storeCount)}</Text>
               </Pressable>
             ))}
           </View>
@@ -330,7 +328,7 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.nileBlue, marginBottom: Spacing.md },
   viewAllText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.brand.orange },
   categoriesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
-  categoryCard: { width: (SCREEN_WIDTH - 56) / 3, alignItems: 'center', padding: Spacing.md, backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.lg },
+  categoryCard: { flexBasis: '30%', flexGrow: 1, flexShrink: 1, alignItems: 'center', padding: Spacing.md, backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.lg },
   categoryIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
   categoryEmoji: { fontSize: Typography.h2.fontSize },
   categoryTitle: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: Colors.nileBlue, marginBottom: 2, textAlign: 'center' },

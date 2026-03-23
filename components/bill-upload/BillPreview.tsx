@@ -8,7 +8,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable, ActivityIndicator } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface BillPreviewProps {
@@ -62,7 +62,7 @@ const BillPreview = React.memo(function BillPreview({
                     : 'warning'
                 }
                 size={16}
-                color={Colors.text.inverse}
+                color={colors.text.inverse}
               />
               <Text style={styles.qualityBadgeText}>
                 Quality: {qualityResult.score}/100
@@ -74,7 +74,7 @@ const BillPreview = React.memo(function BillPreview({
             <Ionicons name="close-circle" size={32} color="#FF4444" />
           </Pressable>
           <Pressable style={styles.retakeButton} onPress={onOpenCamera}>
-            <Ionicons name="camera" size={16} color={Colors.text.inverse} />
+            <Ionicons name="camera" size={16} color={colors.text.inverse} />
             <Text style={styles.retakeButtonText}>Retake</Text>
           </Pressable>
         </View>
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   required: {
@@ -171,7 +171,7 @@ const styles = StyleSheet.create({
   uploadOptionText: {
     marginTop: Spacing.sm,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   imagePreviewContainer: {
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: Spacing.sm,
     right: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
   },
   retakeButton: {
@@ -206,13 +206,13 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   retakeButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
   helperText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
   },
   errorText: {
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
   qualityBadgeText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   qualityWarningContainer: {
     flexDirection: 'row',

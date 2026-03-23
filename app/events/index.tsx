@@ -17,6 +17,7 @@ import {
   RefreshControl,
   TextInput,
 } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -294,7 +295,7 @@ const EventsPage: React.FC = () => {
   const displayCategories = categories.length > 0 ? categories : FALLBACK_CATEGORIES;
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
       {/* Header */}
       <LinearGradient
         colors={[Colors.nileBlue, Colors.secondary[500]]}
@@ -495,7 +496,7 @@ const EventsPage: React.FC = () => {
                 key={event.id}
                 style={styles.eventCard}
                 onPress={() => handleEventPress(event.id)}
-               
+
               >
                 <CachedImage source={event.image} style={styles.eventImage} />
                 <View style={styles.eventInfo}>
@@ -521,9 +522,15 @@ const EventsPage: React.FC = () => {
                     styles.eventPrice,
                     event.price === 'Free' && styles.eventPriceFree,
                   ]}>{event.price}</Text>
-                  <View style={styles.eventArrow}>
-                    <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
-                  </View>
+                  {/* Primary CTA: Book Now */}
+                  <Pressable
+                    style={styles.eventBookNowBtn}
+                    onPress={() => handleEventPress(event.id)}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Book Now for ${event.title}`}
+                  >
+                    <Text style={styles.eventBookNowText}>Book Now</Text>
+                  </Pressable>
                 </View>
               </Pressable>
             ))
@@ -537,7 +544,7 @@ const EventsPage: React.FC = () => {
 
         <View style={{ height: 100 }} />
       </ScrollView>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -547,9 +554,9 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background.secondary,
   },
   header: {
-    paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'ios' ? 56 : 16,
-    paddingBottom: 20,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Platform.OS === 'ios' ? 56 : 44,
+    paddingBottom: Spacing.xl,
     borderBottomLeftRadius: BorderRadius['2xl'],
     borderBottomRightRadius: BorderRadius['2xl'],
   },
@@ -583,15 +590,15 @@ const styles = StyleSheet.create({
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: Spacing.sm,
   },
   myEventsBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: Spacing.xs,
     backgroundColor: 'rgba(255,255,255,0.18)',
-    paddingHorizontal: 10,
-    paddingVertical: 7,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
     borderColor: 'rgba(255,255,255,0.25)',
@@ -610,8 +617,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.95)',
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
-    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
-    gap: 10,
+    paddingVertical: Platform.OS === 'ios' ? Spacing.base : Spacing.sm,
+    gap: Spacing.sm,
   },
   searchInput: {
     flex: 1,
@@ -622,14 +629,14 @@ const styles = StyleSheet.create({
 
   // Categories
   categoriesSection: {
-    paddingTop: 20,
-    paddingBottom: 4,
+    paddingTop: Spacing.xl,
+    paddingBottom: Spacing.xs,
   },
   categoriesScroll: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    paddingBottom: 4,
-    gap: 10,
+    paddingHorizontal: Spacing.md,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.xs,
+    gap: Spacing.sm,
   },
   categoryCard: {
     width: 80,
@@ -666,7 +673,7 @@ const styles = StyleSheet.create({
 
   // Section
   section: {
-    paddingTop: 20,
+    paddingTop: Spacing.xl,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -799,16 +806,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: 'rgba(255,255,255,0.22)',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
+    backgroundColor: Colors.nileBlue,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
     borderRadius: 10,
     alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.3)',
+    minHeight: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
   featuredBookBtnText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
     color: Colors.text.inverse,
   },
@@ -832,7 +843,7 @@ const styles = StyleSheet.create({
   },
   eventInfo: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: Spacing.md,
   },
   eventTopRow: {
     flexDirection: 'row',
@@ -904,6 +915,21 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  eventBookNowBtn: {
+    backgroundColor: Colors.nileBlue,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    minHeight: 36,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 6,
+  },
+  eventBookNowText: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: Colors.text.inverse,
   },
 
   // Promo Banner

@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { useRouter } from 'expo-router';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface TransactionCTAProps {
@@ -35,7 +35,7 @@ export const TransactionCTA: React.FC<TransactionCTAProps> = ({ onPress }) => {
         accessibilityRole="button"
       >
         <LinearGradient
-          colors={[Colors.nileBlue, '#2A5577'] as const}
+          colors={[colors.nileBlue, '#2A5577'] as const}
           style={styles.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}

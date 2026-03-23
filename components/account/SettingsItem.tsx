@@ -10,22 +10,22 @@ import Animated, { useSharedValue, withSpring, withTiming } from 'react-native-r
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { SettingsItemProps } from '@/types/account.types';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 // Semantic chip color map
 const CHIP_COLORS: Record<string, { bg: string; text: string }> = {
-  PREMIUM: { bg: Colors.secondary[600], text: colors.background.primary },
+  PREMIUM: { bg: colors.secondary[600], text: colors.background.primary },
   ONLINE: { bg: '#E8F8EF', text: '#1B9E5A' },
   NEW: { bg: '#FFF3E0', text: '#E67E22' },
 };
 
 function getChipStyle(badge: string | number) {
   if (typeof badge === 'number' || !isNaN(Number(badge))) {
-    return { bg: `${Colors.primary[500]}20`, text: Colors.secondary[600] };
+    return { bg: `${colors.primary[500]}20`, text: colors.secondary[600] };
   }
   const key = String(badge).toUpperCase();
-  return CHIP_COLORS[key] || { bg: Colors.secondary[600], text: colors.background.primary };
+  return CHIP_COLORS[key] || { bg: colors.secondary[600], text: colors.background.primary };
 }
 
 function SettingsItem({ category, onPress, style, isLast }: SettingsItemProps & { isLast?: boolean }) {
@@ -103,8 +103,8 @@ function SettingsItem({ category, onPress, style, isLast }: SettingsItemProps & 
             size={20}
             color={
               category.isEnabled
-                ? Colors.secondary[600]
-                : Colors.gray[400]
+                ? colors.secondary[600]
+                : colors.gray[400]
             }
           />
         </View>
@@ -142,7 +142,7 @@ function SettingsItem({ category, onPress, style, isLast }: SettingsItemProps & 
             <Ionicons
               name="chevron-forward"
               size={18}
-              color={Colors.gray[400]}
+              color={colors.gray[400]}
               style={styles.chevron}
             />
           )}
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   },
   containerBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   disabledContainer: {
     opacity: 0.5,
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md,
   },
   disabledIcon: {
-    backgroundColor: Colors.gray[50],
+    backgroundColor: colors.gray[50],
   },
   textContainer: {
     flex: 1,
@@ -186,24 +186,24 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.1,
   },
   description: {
     fontSize: 12,
     fontWeight: '400',
-    color: Colors.gray[600],
+    color: colors.gray[600],
     marginTop: 2,
     lineHeight: 16,
   },
   insight: {
     fontSize: 12,
     fontWeight: '500',
-    color: Colors.primary[700],
+    color: colors.primary[700],
     marginTop: 3,
   },
   disabledText: {
-    color: Colors.gray[400],
+    color: colors.gray[400],
   },
   rightContent: {
     flexDirection: 'row',

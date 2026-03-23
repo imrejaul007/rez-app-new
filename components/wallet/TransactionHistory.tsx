@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 20,
+    paddingTop: 16,
     paddingBottom: 12,
     backgroundColor: '#fff',
   },
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
   tabsContainer: {
     flexDirection: 'row',
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 8,
     gap: 8,
     backgroundColor: '#fff',
     borderBottomWidth: StyleSheet.hairlineWidth,
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 16,
     backgroundColor: '#fff',
-    gap: 12,
+    gap: 16,
   },
   txnCardBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,

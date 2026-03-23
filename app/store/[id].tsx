@@ -16,6 +16,7 @@ import {
   RefreshControl,
   Linking,
 } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
@@ -376,7 +377,7 @@ const StoreDetailPage: React.FC = () => {
   }
 
   return (
-    <>
+    <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)}>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         {/* Hero Section */}
@@ -748,7 +749,7 @@ const StoreDetailPage: React.FC = () => {
           </Pressable>
         </View>
       </View>
-    </>
+    </Animated.View>
   );
 };
 

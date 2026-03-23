@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderColor: colors.neutral[100],
-    height: 380, // Fixed height for all cards
+    minHeight: 380, // Minimum card height — allows growth on small screens
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   },
   containerCompact: {
     padding: 8,
-    height: 340,
+    minHeight: 340,
   },
   imageContainer: {
     position: 'relative',

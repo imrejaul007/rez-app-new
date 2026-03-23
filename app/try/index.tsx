@@ -176,6 +176,18 @@ export default function TryFeedScreen() {
             </View>
           )}
         </View>
+
+        {/* Primary CTA — Book Trial */}
+        <Pressable
+          style={styles.bookTrialButton}
+          onPress={() => handleTrialPress(item.id)}
+          accessibilityRole="button"
+          accessibilityLabel={`Book trial for ${item.title}`}
+        >
+          <Ionicons name="calendar-outline" size={18} color="#fff" />
+          <Text style={styles.bookTrialButtonText}>Book Trial</Text>
+          <Ionicons name="arrow-forward" size={16} color="#fff" />
+        </Pressable>
       </View>
     </Pressable>
   );
@@ -351,23 +363,25 @@ const styles = StyleSheet.create({
   navigationChips: {
     flexDirection: 'row',
     gap: spacing.sm,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.md,
     paddingBottom: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: colors.border.default,
   },
   navChip: {
-    backgroundColor: colors.brand.purple,
-    paddingHorizontal: spacing.md,
+    backgroundColor: 'rgba(124, 58, 237, 0.08)',
+    borderWidth: 1,
+    borderColor: 'rgba(124, 58, 237, 0.25)',
+    paddingHorizontal: spacing.sm,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.lg,
     flex: 1,
     alignItems: 'center',
   },
   navChipText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#fff',
+    fontSize: 11,
+    fontWeight: '600',
+    color: colors.brand.purple,
   },
   campaignBanner: {
     flexDirection: 'row',
@@ -547,6 +561,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.text.secondary,
   },
+  // Primary CTA button on each trial card
+  bookTrialButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
+    backgroundColor: colors.brand.purple,
+    borderRadius: borderRadius.md,
+    minHeight: 48,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    marginTop: spacing.xs,
+  },
+  bookTrialButtonText: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#fff',
+  },
   emptyContainer: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -562,15 +594,15 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.text.secondary,
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: spacing.xl,
   },
   refreshCTAButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
     backgroundColor: colors.brand.purple,
-    paddingHorizontal: 24,
-    paddingVertical: 14,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
     borderRadius: 10,
   },
   refreshCTAText: {

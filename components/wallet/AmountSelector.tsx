@@ -5,7 +5,7 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 
@@ -60,18 +60,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.background.accent,
+    backgroundColor: colors.background.accent,
     borderWidth: 1,
-    borderColor: Colors.border.light,
+    borderColor: colors.border.light,
   },
   pillSelected: {
-    backgroundColor: Colors.nileBlue,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue,
   },
   pillText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   pillTextSelected: {
     color: colors.text.white,

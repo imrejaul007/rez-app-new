@@ -3,7 +3,7 @@ import React from 'react';
 import { View, Text, Pressable, StyleSheet, Platform } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, Typography } from '@/constants/DesignSystem';
+import { Spacing, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface BookTableCardProps {
@@ -27,7 +27,7 @@ function BookTableCard({ storeId, storeName, storeCategory, onPress }: BookTable
         onPress={() => onPress(storeId, storeName)}
       >
         <LinearGradient
-          colors={[Colors.nileBlue, '#0f2638']}
+          colors={[colors.nileBlue, '#0f2638']}
           style={styles.gradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -43,7 +43,7 @@ function BookTableCard({ storeId, storeName, storeCategory, onPress }: BookTable
               </Text>
             </View>
             <View style={styles.cta}>
-              <Ionicons name="chevron-forward" size={16} color={Colors.nileBlue} />
+              <Ionicons name="chevron-forward" size={16} color={colors.nileBlue} />
             </View>
           </View>
           <View style={styles.perks}>
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   subtitle: {
     ...Typography.caption,

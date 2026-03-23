@@ -596,6 +596,17 @@ function ProfilePage() {
                   <ThemedText style={styles.verifiedText}>Verified</ThemedText>
                 </View>
               )}
+
+              {/* Primary CTA — Edit Profile, prominent and easy to find */}
+              <Pressable
+                style={styles.editProfileButton}
+                onPress={() => router.push('/profile/edit')}
+                accessibilityRole="button"
+                accessibilityLabel="Edit profile"
+              >
+                <Ionicons name="create-outline" size={16} color={PROFILE_COLORS.primary} />
+                <ThemedText style={styles.editProfileButtonText}>Edit Profile</ThemedText>
+              </Pressable>
             </View>
           </View>
 
@@ -939,9 +950,9 @@ const styles = StyleSheet.create({
 
   // ── Header ──────────────────────────────────────────────────────────────
   header: {
-    paddingTop: Platform.OS === 'android' ? 50 : 45,
-    paddingBottom: 22,
-    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'android' ? 50 : 52,
+    paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.md,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.2,
@@ -954,7 +965,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   backButton: {
-    marginRight: 12,
+    marginRight: Spacing.md,
   },
   backButtonInner: {
     width: 40,
@@ -984,8 +995,9 @@ const styles = StyleSheet.create({
   },
   headerActions: {
     flexDirection: 'row',
-    marginLeft: 12,
-    gap: 8,
+    alignItems: 'center',
+    marginLeft: Spacing.md,
+    gap: Spacing.sm,
   },
   actionButton: {
     width: 40,
@@ -1006,8 +1018,8 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   section: {
-    marginHorizontal: 16,
-    marginBottom: 16,
+    marginHorizontal: Spacing.md,
+    marginBottom: Spacing.md,
   },
 
   // Location & Time Section
@@ -1024,14 +1036,14 @@ const styles = StyleSheet.create({
 
   // ── User Section ──────────────────────────────────────────────────────────
   userSection: {
-    marginHorizontal: 16,
-    marginTop: 18,
-    marginBottom: 16,
+    marginHorizontal: Spacing.md,
+    marginTop: Spacing.xl,
+    marginBottom: Spacing.md,
   },
   userCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    padding: 20,
+    padding: Spacing.md,
     flexDirection: 'row',
     alignItems: 'center',
     shadowColor: PROFILE_COLORS.primaryDark,
@@ -1043,7 +1055,7 @@ const styles = StyleSheet.create({
 
   // Avatar with gradient ring
   avatarContainer: {
-    marginRight: 18,
+    marginRight: Spacing.lg,
     position: 'relative',
   },
   avatar: {
@@ -1117,6 +1129,7 @@ const styles = StyleSheet.create({
     color: PROFILE_COLORS.textSecondary,
     marginBottom: 10,
   },
+  // verified badge — needs alignItems so icon+text align to baseline
   verifiedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1133,16 +1146,37 @@ const styles = StyleSheet.create({
     color: '#2E7D32',
   },
 
+  // Primary CTA: Edit Profile
+  editProfileButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(124, 58, 237, 0.08)',
+    borderWidth: 1,
+    borderColor: PROFILE_COLORS.primary,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    minHeight: 36,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+  },
+  editProfileButtonText: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: PROFILE_COLORS.primary,
+  },
+
   // Identity Status Banner
   identityBanner: {
-    marginTop: 14,
+    marginTop: Spacing.md,
   },
   identityBannerInner: {
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 16,
-    padding: 14,
-    gap: 12,
+    padding: Spacing.md,
+    gap: Spacing.md,
   },
   identityIconCircle: {
     width: 42,
@@ -1168,8 +1202,8 @@ const styles = StyleSheet.create({
   completionCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 18,
-    padding: 18,
-    marginTop: 14,
+    padding: Spacing.lg,
+    marginTop: Spacing.md,
     shadowColor: PROFILE_COLORS.primaryDark,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.08,
@@ -1238,7 +1272,7 @@ const styles = StyleSheet.create({
 
   // Referral Card
   referralCard: {
-    marginTop: 14,
+    marginTop: Spacing.md,
     borderRadius: 18,
     overflow: 'hidden',
     shadowColor: PROFILE_COLORS.primaryDark,
@@ -1248,7 +1282,7 @@ const styles = StyleSheet.create({
     elevation: 7,
   },
   referralGradient: {
-    padding: 18,
+    padding: Spacing.lg,
   },
   referralContent: {
     flexDirection: 'row',
@@ -1261,7 +1295,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 14,
+    marginRight: Spacing.md,
   },
   referralText: {
     flex: 1,
@@ -1279,10 +1313,10 @@ const styles = StyleSheet.create({
 
   // Loyalty Card
   loyaltyCard: {
-    marginTop: 12,
+    marginTop: Spacing.md,
     backgroundColor: '#FFFFFF',
     borderRadius: 18,
-    padding: 16,
+    padding: Spacing.md,
     shadowColor: PROFILE_COLORS.primaryDark,
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.07,
@@ -1306,7 +1340,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.tint.amberLight,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 14,
+    marginRight: Spacing.md,
   },
   loyaltyText: {
     flex: 1,
@@ -1343,7 +1377,7 @@ const styles = StyleSheet.create({
 
   // Partner Program Card
   partnerCard: {
-    marginTop: 12,
+    marginTop: Spacing.md,
     borderRadius: 18,
     overflow: 'hidden',
     shadowColor: PROFILE_COLORS.primaryDark,
@@ -1353,7 +1387,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   partnerGradient: {
-    padding: 16,
+    padding: Spacing.md,
   },
   partnerContent: {
     flexDirection: 'row',
@@ -1372,7 +1406,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 14,
+    marginRight: Spacing.md,
   },
   partnerText: {
     flex: 1,
@@ -1462,8 +1496,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 18,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     borderBottomWidth: 1,
     borderBottomColor: '#F0F2F5',
     minHeight: 64,
@@ -1480,7 +1514,7 @@ const styles = StyleSheet.create({
     backgroundColor: `${PROFILE_COLORS.primaryDark}10`,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 14,
+    marginRight: Spacing.md,
   },
   menuTextContainer: {
     flex: 1,
@@ -1526,7 +1560,7 @@ const styles = StyleSheet.create({
   statsCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    padding: 20,
+    padding: Spacing.xl,
     shadowColor: PROFILE_COLORS.primaryDark,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
@@ -1537,7 +1571,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 18,
+    marginBottom: Spacing.lg,
   },
   statsTitle: {
     fontSize: 16,
@@ -1565,8 +1599,8 @@ const styles = StyleSheet.create({
   statItem: {
     alignItems: 'center',
     flex: 1,
-    paddingVertical: 12,
-    marginHorizontal: 4,
+    paddingVertical: Spacing.md,
+    marginHorizontal: Spacing.xs,
     backgroundColor: '#F8FAFC',
     borderRadius: 14,
   },

@@ -38,6 +38,17 @@ import {
 const PlayAndEarn = () => {
   const data = usePlayAndEarnData();
 
+  if (data.loading && !data.refreshing) {
+    return (
+      <>
+        <Stack.Screen options={{ headerShown: false }} />
+        <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+          <ActivityIndicator size="large" color={Colors.gold} />
+        </View>
+      </>
+    );
+  }
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />

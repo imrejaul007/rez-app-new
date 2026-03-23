@@ -143,9 +143,11 @@ const styles = StyleSheet.create({
     fontSize: 32,
   },
   image: {
-    width: 200,
+    width: '100%',
+    maxWidth: 200,
     height: 200,
     marginBottom: spacing.lg,
+    alignSelf: 'center',
   },
   title: {
     marginBottom: spacing.sm,

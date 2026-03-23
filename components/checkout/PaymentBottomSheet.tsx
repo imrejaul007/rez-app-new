@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { BRAND } from '@/constants/brand';
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface PaymentBottomSheetProps {
@@ -51,7 +51,7 @@ function PaymentBottomSheet({
             style={styles.payNowButton}
           >
             <ThemedText style={styles.payNowButtonText}>
-              {paymentExpanded ? 'Close' : 'Pay Now'}
+              {paymentExpanded ? 'Close' : 'Place Order'}
             </ThemedText>
             <Ionicons
               name={paymentExpanded ? 'chevron-down' : 'chevron-up'}
@@ -80,7 +80,7 @@ function PaymentBottomSheet({
               onPress={() => onPaymentSelect('wallet')}
               disabled={loading || totalWalletBalance < totalPayable || !canCheckout}
             >
-              <View style={[styles.quickPayIcon, { backgroundColor: Colors.brand.purpleLight }]}>
+              <View style={[styles.quickPayIcon, { backgroundColor: colors.brand.purpleLight }]}>
                 <CachedImage
                   source={BRAND.COIN_IMAGE}
                   style={styles.coinIconMedium}
@@ -100,7 +100,7 @@ function PaymentBottomSheet({
               onPress={() => onPaymentSelect('cod')}
               disabled={loading || !canCheckout || hasServiceItems}
             >
-              <View style={[styles.quickPayIcon, { backgroundColor: hasServiceItems ? Colors.neutral[400] : colors.warningScale[400] }]}>
+              <View style={[styles.quickPayIcon, { backgroundColor: hasServiceItems ? colors.neutral[400] : colors.warningScale[400] }]}>
                 <Ionicons name="cash" size={20} color="white" />
               </View>
               <ThemedText style={styles.quickPayLabel}>COD</ThemedText>
@@ -114,18 +114,18 @@ function PaymentBottomSheet({
             onPress={() => onPaymentSelect('razorpay')}
           >
             <View style={styles.otherPaymentLeft}>
-              <Ionicons name="card-outline" size={22} color={Colors.neutral[700]} />
+              <Ionicons name="card-outline" size={22} color={colors.neutral[700]} />
               <View style={styles.otherPaymentText}>
                 <ThemedText style={styles.otherPaymentTitle}>Other Payment Methods</ThemedText>
                 <ThemedText style={styles.otherPaymentSubtitle}>UPI, Credit/Debit Card, Net Banking</ThemedText>
               </View>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={Colors.neutral[400]} />
+            <Ionicons name="chevron-forward" size={20} color={colors.neutral[400]} />
           </Pressable>
 
           {/* Security Badge */}
           <View style={styles.securityBadge}>
-            <Ionicons name="shield-checkmark" size={14} color={Colors.gold} />
+            <Ionicons name="shield-checkmark" size={14} color={colors.gold} />
             <ThemedText style={styles.securityText}>100% Secure Payments</ThemedText>
           </View>
         </View>
@@ -136,7 +136,7 @@ function PaymentBottomSheet({
 
 const styles = StyleSheet.create({
   paymentBottomSheet: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
     shadowColor: '#000',
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
   },
@@ -162,12 +162,12 @@ const styles = StyleSheet.create({
   payNowAmount: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.5,
   },
   payNowLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   payNowRight: {},
@@ -175,17 +175,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
-    paddingVertical: 14,
+    paddingVertical: 16,
     borderRadius: BorderRadius.md,
     gap: 6,
+    minHeight: 52,
+    shadowColor: colors.lightMustard,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 6,
   },
   payNowButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   paymentOptionsContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.lg,
@@ -201,7 +207,7 @@ const styles = StyleSheet.create({
   paymentOptionsTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   quickPayOptions: {
@@ -212,7 +218,7 @@ const styles = StyleSheet.create({
   },
   quickPayCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 14,
     alignItems: 'center',
@@ -232,12 +238,12 @@ const styles = StyleSheet.create({
   quickPayLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   quickPayBalance: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   coinIconMedium: {
     width: 24,
@@ -247,7 +253,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -262,11 +268,11 @@ const styles = StyleSheet.create({
   otherPaymentTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   otherPaymentSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   securityBadge: {
@@ -278,7 +284,7 @@ const styles = StyleSheet.create({
   },
   securityText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
 });
