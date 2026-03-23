@@ -14,7 +14,9 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Share,
+  Switch,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -89,6 +91,9 @@ function GiftPage() {
   const [validatingRecipient, setValidatingRecipient] = useState(false);
   const [amount, setAmount] = useState('');
   const [message, setMessage] = useState('');
+  const [isScheduled, setIsScheduled] = useState(false);
+  const [scheduledDate, setScheduledDate] = useState(new Date());
+  const [showDatePicker, setShowDatePicker] = useState(false);
   const [deliveryType, setDeliveryType] = useState<'now' | 'scheduled'>('now');
   const [loading, setLoading] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
@@ -212,7 +217,8 @@ function GiftPage() {
         amount: Number(amount),
         theme: selectedTheme.id,
         message: message || undefined,
-        deliveryType: deliveryType === 'now' ? 'instant' : 'scheduled',
+        deliveryType: isScheduled ? 'scheduled' : 'instant',
+        scheduledAt: isScheduled ? scheduledDate.toISOString() : undefined,
         idempotencyKey,
       });
 
@@ -496,47 +502,45 @@ function GiftPage() {
             <ThemedText style={styles.charCount}>{message.length}/{features.messageMaxLength}</ThemedText>
           </View>
 
-          {/* Delivery Options */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Delivery</ThemedText>
-            <View style={styles.deliveryOptions}>
-              <Pressable
-                style={[
-                  styles.deliveryOption,
-                  deliveryType === 'now' && styles.deliveryOptionSelected,
-                ]}
-                onPress={() => setDeliveryType('now')}
-              >
-                <Ionicons
-                  name={deliveryType === 'now' ? 'radio-button-on' : 'radio-button-off'}
-                  size={24}
-                  color={deliveryType === 'now' ? Colors.primary[600] : colors.text.tertiary}
-                />
-                <ThemedText style={styles.deliveryOptionText}>Send Now</ThemedText>
-              </Pressable>
-              <Pressable
-                style={[
-                  styles.deliveryOption,
-                  deliveryType === 'scheduled' && styles.deliveryOptionSelected,
-                  !features.scheduledDelivery && styles.deliveryOptionDisabled,
-                ]}
-                onPress={() => {
-                  if (!features.scheduledDelivery) {
-                    platformAlertSimple('Coming Soon', 'Scheduled gift delivery will be available soon.');
-                    return;
-                  }
-                  setDeliveryType('scheduled');
-                }}
-              >
-                <Ionicons
-                  name={deliveryType === 'scheduled' ? 'radio-button-on' : 'radio-button-off'}
-                  size={24}
-                  color={deliveryType === 'scheduled' ? Colors.primary[600] : colors.text.tertiary}
-                />
-                <ThemedText style={[styles.deliveryOptionText, !features.scheduledDelivery && styles.deliveryOptionTextDisabled]}>Schedule</ThemedText>
-                <Ionicons name="calendar" size={20} color={colors.text.tertiary} />
-              </Pressable>
+          {/* Schedule Section */}
+          <View style={styles.scheduleSection}>
+            <View style={styles.scheduleToggleRow}>
+              <View>
+                <ThemedText style={styles.scheduleLabel}>Schedule for later</ThemedText>
+                <ThemedText style={styles.scheduleSubLabel}>Send at a specific date & time</ThemedText>
+              </View>
+              <Switch
+                value={isScheduled}
+                onValueChange={setIsScheduled}
+                trackColor={{ false: '#d1d5db', true: '#1a3a52' }}
+                thumbColor={isScheduled ? '#ffcd57' : '#f3f4f6'}
+              />
             </View>
+
+            {isScheduled && (
+              <Pressable
+                onPress={() => setShowDatePicker(true)}
+                style={styles.datePickerBtn}
+              >
+                <ThemedText style={styles.datePickerText}>
+                  📅 {scheduledDate.toLocaleDateString('en-IN', {
+                    weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                  })}
+                </ThemedText>
+              </Pressable>
+            )}
+
+            {showDatePicker && (
+              <DateTimePicker
+                value={scheduledDate}
+                mode="datetime"
+                minimumDate={new Date(Date.now() + 60 * 60 * 1000)}
+                onChange={(e, date) => {
+                  setShowDatePicker(false);
+                  if (date) setScheduledDate(date);
+                }}
+              />
+            )}
           </View>
 
           {/* Preview Card */}
@@ -812,6 +816,41 @@ const styles = StyleSheet.create({
   },
   deliveryOptionTextDisabled: {
     color: colors.text.tertiary,
+  },
+  scheduleSection: {
+    marginBottom: Spacing.base,
+  },
+  scheduleToggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    ...Shadows.subtle,
+  },
+  scheduleLabel: {
+    ...Typography.body,
+    fontWeight: '600',
+    color: colors.text.primary,
+  },
+  scheduleSubLabel: {
+    ...Typography.bodySmall,
+    color: colors.text.tertiary,
+    marginTop: Spacing.xs,
+  },
+  datePickerBtn: {
+    marginTop: Spacing.md,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    alignItems: 'center',
+    ...Shadows.subtle,
+  },
+  datePickerText: {
+    ...Typography.body,
+    fontWeight: '600',
+    color: colors.text.primary,
   },
   previewButton: {
     flexDirection: 'row',

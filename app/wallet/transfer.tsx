@@ -16,7 +16,10 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Share,
+  Modal,
+  Alert,
 } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -47,6 +50,7 @@ function TransferPage() {
   const nuqtaBalance = useRezBalance();
   const refreshWallet = useRefreshWallet();
   const { authenticateWithBiometric, biometricAvailable, biometricEnrolled } = useSecurity();
+  const [permission, requestPermission] = useCameraPermissions();
 
   const [step, setStep] = useState<'recipient' | 'amount' | 'otp' | 'success'>('recipient');
   const [searchQuery, setSearchQuery] = useState('');
@@ -59,6 +63,7 @@ function TransferPage() {
   const [recipientsLoading, setRecipientsLoading] = useState(false);
   const [otp, setOtp] = useState('');
   const [pendingTransferId, setPendingTransferId] = useState('');
+  const [showScanner, setShowScanner] = useState(false);
   const searchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [idempotencyKey, setIdempotencyKey] = useState(() => generateIdempotencyKey('transfer'));
   const submittingRef = useRef(false);
@@ -88,6 +93,49 @@ function TransferPage() {
   useEffect(() => {
     fetchRecipients();
   }, [fetchRecipients]);
+
+  const handleQRScan = async () => {
+    if (!permission?.granted) {
+      const result = await requestPermission();
+      if (!result.granted) {
+        Alert.alert('Camera Permission', 'Camera access is needed to scan QR codes.');
+        return;
+      }
+    }
+    setShowScanner(true);
+  };
+
+  const handleBarCodeScanned = ({ data }: { data: string }) => {
+    setShowScanner(false);
+    // Parse REZ user QR: format is "rez://user/{userId}" or "rez://pay/{phone}"
+    try {
+      if (data.startsWith('rez://user/')) {
+        const userId = data.replace('rez://user/', '');
+        // Look up user and pre-fill recipient
+        fetchRecipients(userId);
+      } else if (/^\d{10}$/.test(data)) {
+        // Plain phone number
+        setSelectedRecipient({
+          id: data,
+          name: data,
+          phone: data,
+        });
+        setStep('amount');
+      } else if (data.startsWith('rez://pay/')) {
+        const phone = data.replace('rez://pay/', '');
+        setSelectedRecipient({
+          id: phone,
+          name: phone,
+          phone: phone,
+        });
+        setStep('amount');
+      } else {
+        Alert.alert('Invalid QR', 'This QR code is not a valid REZ payment QR.');
+      }
+    } catch {
+      Alert.alert('Scan Error', 'Could not read QR code. Please try again.');
+    }
+  };
 
   // Debounced search
   useEffect(() => {
@@ -309,11 +357,38 @@ function TransferPage() {
       {/* Scan QR Code */}
       <Pressable
         style={styles.qrButton}
-        onPress={() => platformAlertSimple('Coming Soon', 'QR code scanning will be available in a future update.')}
+        onPress={handleQRScan}
       >
         <Ionicons name="qr-code" size={22} color={colors.nileBlue} />
         <ThemedText style={styles.qrButtonText}>Scan QR Code</ThemedText>
       </Pressable>
+
+      {/* QR Scanner Modal */}
+      {showScanner && (
+        <Modal visible animationType="slide">
+          <View style={{ flex: 1, backgroundColor: '#000' }}>
+            <CameraView
+              style={{ flex: 1 }}
+              facing="back"
+              barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+              onBarcodeScanned={handleBarCodeScanned}
+            />
+            <View style={{ position: 'absolute', top: 60, left: 20, right: 20 }}>
+              <ThemedText style={{ color: '#fff', textAlign: 'center', fontSize: 16 }}>
+                Point camera at a REZ QR code
+              </ThemedText>
+            </View>
+            <View style={{ position: 'absolute', bottom: 50, left: 0, right: 0, alignItems: 'center' }}>
+              <Pressable
+                onPress={() => setShowScanner(false)}
+                style={{ backgroundColor: '#ffcd57', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 24 }}
+              >
+                <ThemedText style={{ color: '#1a3a52', fontWeight: '700' }}>Cancel</ThemedText>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      )}
     </>
   );
 
