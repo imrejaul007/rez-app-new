@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useFocusEffect } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import RechargeWalletCard from "../components/RechargeWalletCard";
 import ReferAndEarnCard from "@/components/ReferAndEarnCard";
 import {
@@ -355,7 +356,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
     },
   ], [completionStatus, router, segmentShortcut]);
 
-  const styles = useMemo(() => createStyles(screenData), [screenData]);
+  const insets = useSafeAreaInsets();
+  const styles = useMemo(() => createStyles(screenData, insets), [screenData, insets]);
 
   // Determine expiry banner style based on urgency
   const expiryBannerStyle = useMemo(() => {
@@ -726,7 +728,10 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   );
 };
 
-const createStyles = (screenData: { width: number; height: number }) => {
+const createStyles = (
+  screenData: { width: number; height: number },
+  insets: { top: number; bottom: number; left: number; right: number }
+) => {
   const isSmallScreen = screenData.width < 375;
   const isTablet = screenData.width > 768;
   const horizontalPadding = isSmallScreen ? 10 : isTablet ? 24 : 14;
@@ -734,7 +739,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
   return StyleSheet.create({
     root: { flex: 1, backgroundColor: colors.background.primary },
     headerBg: {
-      paddingTop: Platform.OS === 'ios' ? 50 : 40,
+      paddingTop: insets.top + Spacing.md,
       paddingBottom: Spacing.base,
       paddingHorizontal: horizontalPadding,
       borderBottomLeftRadius: BorderRadius.xl,

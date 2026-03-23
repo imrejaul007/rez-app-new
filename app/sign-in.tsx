@@ -10,6 +10,7 @@ import {
   ScrollView,
   TextInput,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter, useRootNavigationState } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
@@ -422,7 +423,7 @@ function SignInScreen() {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Hero Gradient Background - Brand Purple */}
       <LinearGradient
         colors={[colors.brand.purple, colors.brand.purpleDeep, colors.brand.purpleDeep]}
@@ -484,7 +485,7 @@ function SignInScreen() {
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -12,7 +12,7 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
-import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from 'react-native-reanimated';
+import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing, FadeIn } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
@@ -103,7 +103,8 @@ export default function TryFeedScreen() {
     router.push('/try/coins');
   };
 
-  const renderTrialCard = ({ item }: { item: TrialCard }) => (
+  const renderTrialCard = ({ item, index }: { item: TrialCard; index: number }) => (
+    <Animated.View entering={FadeIn.delay(index * 60).duration(300)}>
     <Pressable
       style={styles.card}
       onPress={() => handleTrialPress(item.id)}
@@ -190,6 +191,7 @@ export default function TryFeedScreen() {
         </Pressable>
       </View>
     </Pressable>
+    </Animated.View>
   );
 
   const EmptyState = () => (
