@@ -22,6 +22,9 @@ export interface ServiceItem {
   image?: string;
   rating?: number;
   reviewCount?: number;
+  freeCancellationHours?: number; // default 24
+  lateCancellationFee?: 'none' | 'partial' | 'full';
+  cancellationFeeAmount?: number; // INR amount if partial/full
 }
 
 export interface TimeSlot {

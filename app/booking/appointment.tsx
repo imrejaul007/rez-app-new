@@ -69,6 +69,65 @@ interface TimeSlot {
   available: boolean;
 }
 
+function CancellationPolicyBadge({
+  freeCancellationHours = 24,
+  lateCancellationFee = 'none',
+  cancellationFeeAmount,
+  selectedDate,
+}: {
+  freeCancellationHours?: number;
+  lateCancellationFee?: 'none' | 'partial' | 'full';
+  cancellationFeeAmount?: number;
+  selectedDate?: Date | string;
+}) {
+  const isFree = lateCancellationFee === 'none';
+  const deadline = selectedDate
+    ? new Date(new Date(selectedDate).getTime() - freeCancellationHours * 60 * 60 * 1000)
+    : null;
+
+  const deadlineText = deadline
+    ? deadline.toLocaleString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+    : `${freeCancellationHours} hours before`;
+
+  let policyText = '';
+  let policyColor = '';
+  let iconName: any = 'checkmark-circle-outline';
+
+  if (isFree) {
+    policyText = `Free cancellation until ${deadlineText}`;
+    policyColor = '#16a34a';
+    iconName = 'checkmark-circle-outline';
+  } else if (lateCancellationFee === 'partial') {
+    const feeText = cancellationFeeAmount ? `₹${cancellationFeeAmount}` : '50%';
+    policyText = `${feeText} fee if cancelled after ${deadlineText}`;
+    policyColor = '#d97706';
+    iconName = 'warning-outline';
+  } else {
+    policyText = `Full charge if cancelled after ${deadlineText}`;
+    policyColor = '#dc2626';
+    iconName = 'alert-circle-outline';
+  }
+
+  return (
+    <View style={{
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      gap: 8,
+      backgroundColor: isFree ? '#f0fdf4' : lateCancellationFee === 'partial' ? '#fffbeb' : '#fef2f2',
+      borderRadius: 12,
+      padding: 12,
+      borderWidth: 1,
+      borderColor: isFree ? '#bbf7d0' : lateCancellationFee === 'partial' ? '#fed7aa' : '#fecaca',
+      marginTop: 12,
+    }}>
+      <Ionicons name={iconName} size={18} color={policyColor} style={{ marginTop: 1, flexShrink: 0 }} />
+      <Text style={{ flex: 1, fontSize: 13, color: policyColor, fontWeight: '500', lineHeight: 18 }}>
+        {policyText}
+      </Text>
+    </View>
+  );
+}
+
 function AppointmentBookingPage() {
   const isMounted = useIsMounted();
   const { storeId } = useLocalSearchParams<{ storeId: string }>();
@@ -861,13 +920,17 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
               </View>
 
               {/* Cancellation Policy */}
-              <View style={styles.summaryDivider} />
-              <View style={styles.policyRow}>
-                <Ionicons name="information-circle-outline" size={14} color={colors.text.tertiary} />
-                <ThemedText style={styles.policyText}>
-                  Free cancellation up to 24h before · Late cancellations may incur a fee.
-                </ThemedText>
-              </View>
+              {selectedService && (
+                <>
+                  <View style={styles.summaryDivider} />
+                  <CancellationPolicyBadge
+                    freeCancellationHours={selectedService.freeCancellationHours ?? 24}
+                    lateCancellationFee={selectedService.lateCancellationFee ?? 'none'}
+                    cancellationFeeAmount={selectedService.cancellationFeeAmount}
+                    selectedDate={selectedDate}
+                  />
+                </>
+              )}
             </View>
           </View>
         )}
