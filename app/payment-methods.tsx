@@ -9,6 +9,7 @@ import {
   Platform,
   TextInput,
   Dimensions,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -66,7 +67,12 @@ function PaymentMethodsPage() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purpleLight} />
-      
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 50 : 0}
+      >
+
       {/* Header */}
       <LinearGradient 
         colors={[Colors.brand.purpleLight, Colors.brand.purple]} 
@@ -101,7 +107,8 @@ function PaymentMethodsPage() {
       <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={styles.scrollContent}
+        keyboardShouldPersistTaps="handled"
       >
         {/* Recent Methods */}
         <View style={styles.section}>
@@ -272,6 +279,7 @@ function PaymentMethodsPage() {
 
         <View style={styles.bottomSpace} />
       </ScrollView>
+      </KeyboardAvoidingView>
     </View>
 );
 }
@@ -332,6 +340,9 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     backgroundColor: colors.background.secondary,
+  },
+  scrollContent: {
+    paddingBottom: 140,
   },
   
   // Sections

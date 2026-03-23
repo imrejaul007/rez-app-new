@@ -19,6 +19,7 @@ import {
   Modal,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -366,7 +367,7 @@ function TransferPage() {
       {/* QR Scanner Modal */}
       {showScanner && (
         <Modal visible animationType="slide">
-          <View style={{ flex: 1, backgroundColor: '#000' }}>
+          <SafeAreaView style={{ flex: 1, backgroundColor: '#000' }} edges={['top', 'bottom']}>
             <CameraView
               style={{ flex: 1 }}
               facing="back"
@@ -386,7 +387,7 @@ function TransferPage() {
                 <ThemedText style={{ color: '#1a3a52', fontWeight: '700' }}>Cancel</ThemedText>
               </Pressable>
             </View>
-          </View>
+          </SafeAreaView>
         </Modal>
       )}
     </>
@@ -497,36 +498,41 @@ function TransferPage() {
   );
 
   const renderOtpStep = () => (
-    <View style={styles.otpContainer}>
-      <View style={styles.otpIconContainer}>
-        <Ionicons name="shield-checkmark" size={48} color={colors.nileBlue} />
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1, justifyContent: 'center' }}
+    >
+      <View style={styles.otpContainer}>
+        <View style={styles.otpIconContainer}>
+          <Ionicons name="shield-checkmark" size={48} color={colors.nileBlue} />
+        </View>
+        <ThemedText style={styles.otpTitle}>Verify Transfer</ThemedText>
+        <ThemedText style={styles.otpSubtitle}>
+          Enter the 6-digit code sent to your phone to confirm this transfer
+        </ThemedText>
+        <TextInput
+          style={styles.otpInput}
+          value={otp}
+          onChangeText={setOtp}
+          keyboardType="number-pad"
+          placeholder="------"
+          placeholderTextColor={colors.text.tertiary}
+          maxLength={6}
+          autoFocus
+        />
+        <Pressable
+          style={[styles.sendButton, (!otp || otp.length < 6) && styles.sendButtonDisabled]}
+          onPress={handleConfirmOtp}
+          disabled={!otp || otp.length < 6 || loading}
+        >
+          {loading ? (
+            <ActivityIndicator color={colors.background.primary} />
+          ) : (
+            <ThemedText style={styles.sendButtonText}>Verify & Send</ThemedText>
+          )}
+        </Pressable>
       </View>
-      <ThemedText style={styles.otpTitle}>Verify Transfer</ThemedText>
-      <ThemedText style={styles.otpSubtitle}>
-        Enter the 6-digit code sent to your phone to confirm this transfer
-      </ThemedText>
-      <TextInput
-        style={styles.otpInput}
-        value={otp}
-        onChangeText={setOtp}
-        keyboardType="number-pad"
-        placeholder="------"
-        placeholderTextColor={colors.text.tertiary}
-        maxLength={6}
-        autoFocus
-      />
-      <Pressable
-        style={[styles.sendButton, (!otp || otp.length < 6) && styles.sendButtonDisabled]}
-        onPress={handleConfirmOtp}
-        disabled={!otp || otp.length < 6 || loading}
-      >
-        {loading ? (
-          <ActivityIndicator color={colors.background.primary} />
-        ) : (
-          <ThemedText style={styles.sendButtonText}>Verify & Send</ThemedText>
-        )}
-      </Pressable>
-    </View>
+    </KeyboardAvoidingView>
   );
 
   const renderSuccessStep = () => (

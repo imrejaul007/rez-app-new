@@ -1,6 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Platform } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Platform, KeyboardAvoidingView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import analyticsService from '@/services/analyticsService';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -142,12 +143,16 @@ function OTPVerificationScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Background */}
-      <LinearGradient
-        colors={[colors.background.secondary, '#EDF2F7', colors.background.secondary]}
-        style={StyleSheet.absoluteFill}
-      />
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+      >
+        {/* Background */}
+        <LinearGradient
+          colors={[colors.background.secondary, '#EDF2F7', colors.background.secondary]}
+          style={StyleSheet.absoluteFill}
+        />
 
       {/* Decorative Elements */}
       <View style={styles.decorativeCircles}>
@@ -155,8 +160,8 @@ function OTPVerificationScreen() {
         <View style={[styles.circle, styles.circleGold]} />
       </View>
 
-      <View style={styles.content}>
-        <View style={styles.glassCard}>
+      <View style={styles.content} pointerEvents="box-none">
+        <View style={styles.glassCard} pointerEvents="auto">
           <LinearGradient
             colors={['rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
             style={styles.glassShine}
@@ -277,7 +282,8 @@ function OTPVerificationScreen() {
           </Pressable>
         </View>
       </View>
-    </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Modal, Pressable, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -64,7 +65,7 @@ function OrderConfirmationModal({
       transparent={true}
       onRequestClose={onClose}
     >
-      <View style={styles.confirmModalOverlay}>
+      <SafeAreaView style={styles.confirmModalOverlay} edges={['top', 'bottom']}>
         <View style={styles.confirmModalContent}>
           {/* Header */}
           <LinearGradient
@@ -193,7 +194,7 @@ function OrderConfirmationModal({
             </Pressable>
           </View>
         </View>
-      </View>
+      </SafeAreaView>
     </Modal>
   );
 }
