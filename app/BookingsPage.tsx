@@ -886,6 +886,11 @@ function BookingsPage() {
           ]}
           ListEmptyComponent={renderEmpty}
           estimatedItemSize={120}
+          maxToRenderPerBatch={10}
+          updateCellsBatchingPeriod={50}
+          initialNumToRender={8}
+          windowSize={5}
+          removeClippedSubviews={true}
           ListFooterComponent={
             hasMoreData && filteredBookings.length > 0 ? (
               <View style={styles.loadMoreFooter}>

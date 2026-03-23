@@ -599,6 +599,11 @@ function CartPage() {
               ) : null
             }
             estimatedItemSize={144}
+            maxToRenderPerBatch={8}
+            updateCellsBatchingPeriod={50}
+            initialNumToRender={4}
+            windowSize={4}
+            removeClippedSubviews={true}
           />
         )}
       </View>
