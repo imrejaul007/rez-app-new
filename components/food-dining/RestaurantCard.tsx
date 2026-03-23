@@ -249,22 +249,29 @@ const RestaurantCard: React.FC<RestaurantCardProps> = ({
 
 const styles = StyleSheet.create({
   restaurantCard: {
-    borderRadius: 16,
+    borderRadius: 14,
     backgroundColor: COLORS.white,
     overflow: 'hidden',
-    marginBottom: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.neutral[100],
+    ...Platform.select({
+      ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.06, shadowRadius: 4 },
+      android: { elevation: 2 },
+      web: { boxShadow: '0 1px 4px rgba(0,0,0,0.06)' },
+    }),
   },
   restaurantCardCompact: {
-    minWidth: 200,
+    minWidth: 180,
     marginRight: 12,
     marginBottom: 0,
   },
   restaurantImageContainer: {
-    height: 180,
+    height: 140,
     position: 'relative',
   },
   restaurantImageContainerCompact: {
-    height: 120,
+    height: 100,
   },
   restaurantImage: {
     width: '100%',
@@ -390,23 +397,24 @@ const styles = StyleSheet.create({
     color: COLORS.textSecondary,
   },
   restaurantContent: {
-    padding: 12,
+    padding: 10,
   },
   restaurantName: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 14,
+    fontWeight: '700',
     color: COLORS.textPrimary,
     marginBottom: 2,
   },
   restaurantCuisine: {
-    fontSize: 12,
+    fontSize: 11,
     color: COLORS.textSecondary,
+    marginBottom: 4,
   },
   restaurantMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
-    gap: 12,
+    marginBottom: 6,
+    gap: 10,
   },
   restaurantMetaItem: {
     flexDirection: 'row',

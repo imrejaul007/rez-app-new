@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Alert } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 import apiClient from '@/services/apiClient';
 
-export default function WaitlistScreen() {
+function WaitlistScreen() {
   const { storeId } = useLocalSearchParams<{ storeId: string }>();
   const router = useRouter();
   const { colors } = useTheme();
@@ -36,7 +36,7 @@ export default function WaitlistScreen() {
     }
   };
 
-  const styles = StyleSheet.create({
+  const styles = useMemo(() => StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background.primary },
     header: { flexDirection: 'row', alignItems: 'center', padding: 16, paddingTop: 48 },
     title: { fontSize: 22, fontWeight: '700', color: colors.text.primary, marginLeft: 12 },
@@ -49,7 +49,7 @@ export default function WaitlistScreen() {
     successIcon: { fontSize: 64, marginBottom: 16 },
     successTitle: { fontSize: 22, fontWeight: '800', color: colors.text.primary, marginBottom: 8 },
     successSub: { fontSize: 15, color: colors.text.secondary, textAlign: 'center' },
-  });
+  }), [colors]);
 
   if (joined) {
     return (
@@ -94,3 +94,5 @@ export default function WaitlistScreen() {
     </ScrollView>
   );
 }
+
+export default WaitlistScreen;

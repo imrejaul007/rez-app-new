@@ -38,9 +38,9 @@ export const createStyles = (HORIZONTAL_PADDING: number, _screenData: { width: n
       borderColor: "rgba(0, 192, 106, 0.1)",
     },
     tabsContainer: {
-      marginTop: Spacing.base,
+      marginTop: Spacing.sm,
       marginHorizontal: HORIZONTAL_PADDING,
-      marginBottom: Spacing.md,
+      marginBottom: Spacing.sm,
     },
     sectionCard: {
       marginHorizontal: HORIZONTAL_PADDING,

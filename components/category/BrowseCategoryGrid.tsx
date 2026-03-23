@@ -22,12 +22,14 @@ import { CategoryGridItem, BrowseCategoryGridProps } from '@/types/categoryTypes
 import { colors } from '@/constants/theme';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
-// 2-column grid: full width minus outer padding (16*2) minus gap between columns (12) divided by 2
-const COLUMN_GAP = 12;
+// 3-column grid: full width minus outer padding (16*2) minus two gaps (10*2) divided by 3
+const COLUMN_GAP = 10;
 const OUTER_PADDING = 32; // 16 left + 16 right
-const CARD_WIDTH = (SCREEN_WIDTH - OUTER_PADDING - COLUMN_GAP) / 2;
-// Image/icon area: square based on card width, capped for large screens
-const ICON_SIZE = Math.min(CARD_WIDTH - 24, 130);
+const CARD_WIDTH = (SCREEN_WIDTH - OUTER_PADDING - COLUMN_GAP * 2) / 3;
+// Icon size: fixed small for compact look
+const ICON_SIZE = Math.min(CARD_WIDTH - 16, 64);
+// Max visible rows before "See All"
+const MAX_VISIBLE_ROWS = 3;
 
 // Map category IDs to local asset images
 const CATEGORY_IMAGES: Record<string, ImageSourcePropType> = {
@@ -296,7 +298,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onPress, countLab
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           >
-            <Ionicons name={iconFallback.name} size={40} color={iconFallback.color} />
+            <Ionicons name={iconFallback.name} size={28} color={iconFallback.color} />
           </LinearGradient>
         ) : (
           <LinearGradient
@@ -319,16 +321,13 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onPress, countLab
 
       {/* Text block — always renders, same min-height so rows stay even */}
       <View style={styles.textBlock}>
-        <Text style={styles.categoryName} numberOfLines={2}>
+        <Text style={styles.categoryName} numberOfLines={1}>
           {category.name}
         </Text>
-        {category.itemCount !== undefined && category.itemCount > 0 ? (
+        {category.itemCount !== undefined && category.itemCount > 0 && (
           <Text style={styles.itemCount} numberOfLines={1}>
-            {category.itemCount}+ {countLabel}
+            {category.itemCount}+
           </Text>
-        ) : (
-          // Placeholder keeps card height consistent when count is absent
-          <Text style={styles.itemCountPlaceholder}>{' '}</Text>
         )}
       </View>
     </Pressable>
@@ -342,6 +341,7 @@ const BrowseCategoryGrid: React.FC<BrowseCategoryGridProps> = ({
   itemCountLabel = 'items',
 }) => {
   const router = useRouter();
+  const [showAll, setShowAll] = React.useState(false);
 
   const handleCategoryPress = (category: CategoryGridItem) => {
     if (onCategoryPress) {
@@ -356,11 +356,14 @@ const BrowseCategoryGrid: React.FC<BrowseCategoryGridProps> = ({
     return null;
   }
 
-  // Pair categories into rows of 2 so alignment is always perfect
-  const rows: CategoryGridItem[][] = [];
-  for (let i = 0; i < categories.length; i += 2) {
-    rows.push(categories.slice(i, i + 2));
+  // Group into rows of 3
+  const allRows: CategoryGridItem[][] = [];
+  for (let i = 0; i < categories.length; i += 3) {
+    allRows.push(categories.slice(i, i + 3));
   }
+
+  const visibleRows = showAll ? allRows : allRows.slice(0, MAX_VISIBLE_ROWS);
+  const hasMore = allRows.length > MAX_VISIBLE_ROWS;
 
   return (
     <View style={styles.container}>
@@ -373,9 +376,9 @@ const BrowseCategoryGrid: React.FC<BrowseCategoryGridProps> = ({
         <Text style={styles.headerCount}>{categories.length} categories</Text>
       </View>
 
-      {/* Grid — manually paired rows to guarantee alignment */}
+      {/* Grid — 3-column rows */}
       <View style={styles.grid}>
-        {rows.map((row, rowIdx) => (
+        {visibleRows.map((row, rowIdx) => (
           <View key={rowIdx} style={styles.row}>
             {row.map((cat) => (
               <CategoryCard
@@ -385,18 +388,32 @@ const BrowseCategoryGrid: React.FC<BrowseCategoryGridProps> = ({
                 countLabel={itemCountLabel}
               />
             ))}
-            {/* If odd number of categories, fill the last cell with an empty placeholder */}
-            {row.length === 1 && <View style={styles.cardPlaceholder} />}
+            {/* Fill empty cells in last row */}
+            {row.length === 2 && <View style={styles.cardPlaceholder} />}
+            {row.length === 1 && (
+              <>
+                <View style={styles.cardPlaceholder} />
+                <View style={styles.cardPlaceholder} />
+              </>
+            )}
           </View>
         ))}
       </View>
+
+      {/* See All / See Less toggle */}
+      {hasMore && (
+        <Pressable style={styles.seeAllButton} onPress={() => setShowAll(v => !v)}>
+          <Text style={styles.seeAllText}>{showAll ? 'See Less' : `See All (${categories.length})`}</Text>
+          <Ionicons name={showAll ? 'chevron-up' : 'chevron-down'} size={14} color="#A855F7" />
+        </Pressable>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 20,
+    paddingVertical: 12,
     backgroundColor: colors.background.primary,
   },
   header: {
@@ -404,7 +421,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    marginBottom: 16,
+    marginBottom: 12,
   },
   headerTitleRow: {
     flexDirection: 'row',
@@ -413,18 +430,18 @@ const styles = StyleSheet.create({
   },
   // Fashion purple accent bar
   titleAccent: {
-    width: 4,
-    height: 20,
+    width: 3,
+    height: 16,
     backgroundColor: '#A855F7',
     borderRadius: 2,
   },
   headerTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
     color: colors.neutral[900],
   },
   headerCount: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.neutral[500],
     fontWeight: '500',
   },
@@ -434,32 +451,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     gap: COLUMN_GAP,
   },
-  // Each row is a horizontal pair
+  // Each row is a horizontal trio
   row: {
     flexDirection: 'row',
     gap: COLUMN_GAP,
   },
 
-  // Individual card — fixed width, equal height via minHeight
+  // Individual card — compact 3-column card
   card: {
     width: CARD_WIDTH,
     backgroundColor: colors.background.primary,
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: 'hidden',
-    // Premium shadow
+    borderWidth: 1,
+    borderColor: colors.neutral[100],
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 8,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
       },
-      android: { elevation: 3 },
-      web: { boxShadow: '0 2px 8px rgba(0,0,0,0.08)' },
+      android: { elevation: 2 },
+      web: { boxShadow: '0 1px 4px rgba(0,0,0,0.06)' },
     }),
-    // Border gives premium feel
-    borderWidth: 1,
-    borderColor: colors.neutral[100],
   },
 
   // Empty placeholder card to fill odd row
@@ -467,7 +482,7 @@ const styles = StyleSheet.create({
     width: CARD_WIDTH,
   },
 
-  // Square icon/image area — responsive, always centred
+  // Square icon/image area — compact
   iconArea: {
     width: '100%',
     aspectRatio: 1,
@@ -483,56 +498,70 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   itemImage: {
-    width: '78%',
-    height: '78%',
+    width: '72%',
+    height: '72%',
   },
   iconEmoji: {
-    fontSize: 40,
+    fontSize: 28,
     textAlign: 'center',
   },
 
   // Item count badge — overlaid top-right
   countBadge: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
+    top: 4,
+    right: 4,
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 6,
     backgroundColor: 'rgba(168,85,247,0.85)',
   },
   countBadgeText: {
-    fontSize: 9,
+    fontSize: 8,
     fontWeight: '700',
     color: '#fff',
   },
 
   // Text block below icon
   textBlock: {
-    paddingHorizontal: 10,
-    paddingTop: 10,
-    paddingBottom: 12,
-    minHeight: 52,
-    justifyContent: 'space-between',
+    paddingHorizontal: 6,
+    paddingTop: 6,
+    paddingBottom: 8,
+    alignItems: 'center',
   },
   categoryName: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: '600',
     color: colors.neutral[900],
     textAlign: 'center',
-    lineHeight: 17,
+    lineHeight: 15,
   },
   itemCount: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#A855F7',
-    marginTop: 4,
+    marginTop: 2,
     textAlign: 'center',
     fontWeight: '500',
   },
-  // Invisible placeholder keeps row heights equal when count is absent
-  itemCountPlaceholder: {
-    fontSize: 11,
-    marginTop: 4,
+
+  // See All button
+  seeAllButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 4,
+    marginTop: 12,
+    paddingVertical: 8,
+    marginHorizontal: 16,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#A855F720',
+    backgroundColor: '#A855F708',
+  },
+  seeAllText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: '#A855F7',
   },
 });
 

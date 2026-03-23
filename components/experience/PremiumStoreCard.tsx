@@ -25,7 +25,7 @@ const PremiumStoreCard: React.FC<PremiumStoreCardProps> = ({ store, onPress }) =
         <Pressable
             style={styles.container}
             onPress={() => onPress(store)}
-           
+
         >
             <View style={styles.imageContainer}>
                 {storeImage ? (
@@ -265,4 +265,11 @@ const styles = StyleSheet.create({
     },
 });
 
-export default React.memo(PremiumStoreCard);
+export default React.memo(PremiumStoreCard, (prev, next) => {
+  return (
+    prev.store._id === next.store._id &&
+    prev.store.name === next.store.name &&
+    prev.store.rating === next.store.rating &&
+    prev.onPress === next.onPress
+  );
+});

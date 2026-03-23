@@ -67,7 +67,8 @@ interface StoreProductsProps {
 }
 
 const { width } = Dimensions.get('window');
-const CARD_WIDTH = (width - 84) / 2;
+// 2-column grid: full width minus 16px side padding each side (32) minus gap (12) divided by 2
+const CARD_WIDTH = (width - 32 - 12) / 2;
 
 function StoreProducts({ storeId, storeName }: StoreProductsProps) {
   const isMounted = useIsMounted();
@@ -416,25 +417,26 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: COLORS.primary },
 
-  // Products Grid
+  // Products Grid — 2-column with consistent 16px outer padding
   productsRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12 },
+    justifyContent: 'flex-start',
+    gap: 12,
+    paddingHorizontal: 0 },
 
   // Product Card - Glass Effect
   productCard: {
     width: CARD_WIDTH,
-    borderRadius: 20,
+    borderRadius: 14,
     overflow: 'hidden',
     ...Platform.select({
       ios: {
         shadowColor: COLORS.navy,
-        shadowOffset: { width: 0, height: 6 },
-        shadowOpacity: 0.12,
-        shadowRadius: 16 },
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8 },
       android: {
-        elevation: 6 } }) },
+        elevation: 3 } }) },
 
   cardBlur: {
     borderRadius: 20,
@@ -454,10 +456,10 @@ const styles = StyleSheet.create({
     backgroundColor: GLASS.lightHighlight,
     zIndex: 1 },
 
-  // Image Container
+  // Image Container — fixed 120px height for consistent cards
   imageContainer: {
     width: '100%',
-    height: CARD_WIDTH * 0.85,
+    height: 120,
     backgroundColor: COLORS.surface,
     position: 'relative' },
 
@@ -504,9 +506,9 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: '600',
     color: COLORS.textPrimary,
-    marginBottom: 8,
+    marginBottom: 6,
     lineHeight: 17,
-    height: 34 },
+    minHeight: 34 },
 
   priceContainer: {
     flexDirection: 'row',

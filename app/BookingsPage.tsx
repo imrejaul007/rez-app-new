@@ -510,6 +510,24 @@ function BookingsPage() {
     );
   }
 
+  // ─── Callbacks for tab/pill presses ─────────────────────
+  const handleTypeFilterPress = useCallback((key: BookingType) => {
+    setTypeFilter(key);
+  }, []);
+
+  const handleStatusFilterPress = useCallback((key: StatusFilter) => {
+    setStatusFilter(key);
+  }, []);
+
+  const handleClearFilters = useCallback(() => {
+    setTypeFilter('all');
+    setStatusFilter('all');
+  }, []);
+
+  const handleLoadMore = useCallback(() => {
+    if (hasMoreData && !loadingMore) loadMore();
+  }, [hasMoreData, loadingMore]);
+
   // ─── Render booking card ─────────────────────────────────
   const renderBookingCard = useCallback(({ item: booking }: { item: UnifiedBooking }) => {
     const typeConf = BOOKING_TYPE_CONFIG[booking.type];
@@ -522,11 +540,35 @@ function BookingsPage() {
     const storeLocation = raw?.storeId?.location;
     const storeContact = raw?.storeId?.contact;
 
+    const handleExpand = () => setExpandedBookingId(isExpanded ? null : booking.id);
+    const handleMenuPress = () => {
+      const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
+      router.push({
+        pathname: '/menu/[storeId]',
+        params: {
+          storeId: store?._id || booking.raw?.storeId || '',
+          dineIn: 'true',
+          table: booking.raw?.bookingNumber || '',
+        },
+      } as any);
+    };
+    const handlePayPress = () => {
+      const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
+      router.push({
+        pathname: '/pay-in-store/enter-amount',
+        params: {
+          storeId: store?._id || booking.raw?.storeId || '',
+          storeName: store?.name || booking.title || '',
+          storeLogo: store?.logo || '',
+        },
+      } as any);
+    };
+
     return (
       <Pressable
         style={styles.card}
-       
-        onPress={() => setExpandedBookingId(isExpanded ? null : booking.id)}
+
+        onPress={handleExpand}
       >
         {/* Type badge + Status badge row */}
         <View style={styles.cardTopRow}>
@@ -650,17 +692,7 @@ function BookingsPage() {
             {booking.type === 'table' && (booking.status === 'confirmed' || booking.status === 'pending') && (
               <Pressable
                 style={styles.menuBtn}
-                onPress={() => {
-                  const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
-                  router.push({
-                    pathname: '/menu/[storeId]',
-                    params: {
-                      storeId: store?._id || booking.raw?.storeId || '',
-                      dineIn: 'true',
-                      table: booking.raw?.bookingNumber || '',
-                    },
-                  } as any);
-                }}
+                onPress={handleMenuPress}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
                 <Ionicons name="restaurant-outline" size={16} color={C.white} />
@@ -671,17 +703,7 @@ function BookingsPage() {
             {booking.type === 'table' && (booking.status === 'confirmed' || booking.status === 'pending') && (
               <Pressable
                 style={styles.payBtn}
-                onPress={() => {
-                  const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
-                  router.push({
-                    pathname: '/pay-in-store/enter-amount',
-                    params: {
-                      storeId: store?._id || booking.raw?.storeId || '',
-                      storeName: store?.name || booking.title || '',
-                      storeLogo: store?.logo || '',
-                    },
-                  } as any);
-                }}
+                onPress={handlePayPress}
                 hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
               >
                 <Ionicons name="card-outline" size={16} color={C.white} />
@@ -731,7 +753,7 @@ function BookingsPage() {
         {isFiltered ? (
           <Pressable
             style={styles.ctaButtonOutline}
-            onPress={() => { setTypeFilter('all'); setStatusFilter('all'); }}
+            onPress={handleClearFilters}
           >
             <Ionicons name="refresh-outline" size={18} color={C.primary} />
             <Text style={styles.ctaButtonOutlineText}>Clear Filters</Text>
@@ -796,8 +818,8 @@ function BookingsPage() {
             <Pressable
               key={tab.key}
               style={[styles.typeTab, active && styles.typeTabActive]}
-              onPress={() => setTypeFilter(tab.key)}
-             
+              onPress={() => handleTypeFilterPress(tab.key)}
+
             >
               <Ionicons
                 name={tab.icon}
@@ -825,8 +847,8 @@ function BookingsPage() {
             <Pressable
               key={tab.key}
               style={[styles.statusPill, active && styles.statusPillActive]}
-              onPress={() => setStatusFilter(tab.key)}
-             
+              onPress={() => handleStatusFilterPress(tab.key)}
+
             >
               <Text style={[styles.statusPillText, active && styles.statusPillTextActive]}>
                 {tab.label}
@@ -878,7 +900,7 @@ function BookingsPage() {
               </View>
             ) : null
           }
-          onEndReached={() => { if (hasMoreData && !loadingMore) loadMore(); }}
+          onEndReached={handleLoadMore}
           onEndReachedThreshold={0.3}
           refreshControl={
             <RefreshControl

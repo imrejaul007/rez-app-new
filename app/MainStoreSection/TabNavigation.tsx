@@ -169,57 +169,66 @@ function TabNavigation({
 const styles = StyleSheet.create({
   wrapper: {
     backgroundColor: colors.background.primary,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.gray[100],
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: colors.neutral[100],
   },
   container: {
     backgroundColor: colors.background.primary,
+    borderRadius: 12,
     position: "relative",
   },
   tabsRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "flex-start",
-    paddingHorizontal: Spacing.base,
+    justifyContent: "space-around",
+    paddingHorizontal: 4,
   },
   tabWrapper: {
-    marginRight: Spacing.lg,
+    flex: 1,
+    alignItems: 'center',
   },
   tab: {
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.xs,
+    paddingVertical: 10,
+    paddingHorizontal: 4,
+    width: '100%',
+    alignItems: 'center',
   },
   label: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: "500",
     color: colors.text.tertiary,
+    textAlign: 'center',
   },
   labelActive: {
     color: colors.lightMustard,
-    fontWeight: "600",
+    fontWeight: "700",
   },
   underline: {
     position: "absolute",
     bottom: 0,
-    height: 3,
+    height: 2,
     backgroundColor: colors.lightMustard,
     borderTopLeftRadius: 2,
     borderTopRightRadius: 2,
   },
 
-  // Compact mode styles
+  // Compact mode styles (used in sticky header)
   wrapperCompact: {
+    borderWidth: 0,
+    borderRadius: 0,
     borderBottomWidth: 0,
   },
   containerCompact: {
     paddingVertical: 0,
+    borderRadius: 0,
   },
   tabCompact: {
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 2,
   },
   labelCompact: {
-    fontSize: 14,
+    fontSize: 13,
   },
 });
 

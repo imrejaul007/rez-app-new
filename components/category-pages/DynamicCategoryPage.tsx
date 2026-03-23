@@ -327,10 +327,12 @@ const StoreCard = ({
     ? `${(ratingCount / 1000).toFixed(1)}k`
     : ratingCount.toString();
 
+  const handleStorePress = () => router.push(`/MainStorePage?storeId=${store._id || store.id}` as any);
+
   return (
     <Pressable
       style={[styles.storeCard, isCompact && styles.storeCardCompact]}
-      onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as any)}
+      onPress={handleStorePress}
 
     >
       {/* ── Image Area (Upgrade 1: 160px banner) ── */}
@@ -427,10 +429,10 @@ const StoreCard = ({
           </View>
         </View>
 
-        {/* Tag pills row (Upgrade 1) */}
+        {/* Tag pills row — max 2 */}
         {tagPills.length > 0 && (
           <View style={styles.tagPillsRow}>
-            {tagPills.map((tag, idx) => (
+            {tagPills.slice(0, 2).map((tag, idx) => (
               <View key={idx} style={[styles.tagPill, { backgroundColor: `${primaryColor}18` }]}>
                 <Text style={[styles.tagPillText, { color: primaryColor }]}>{tag}</Text>
               </View>
@@ -515,6 +517,15 @@ const StoreCard = ({
   );
 };
 
+const MemoizedStoreCard = React.memo(StoreCard, (prev, next) => {
+  return (
+    prev.store._id === next.store._id &&
+    prev.variant === next.variant &&
+    prev.primaryColor === next.primaryColor &&
+    prev.categorySlug === next.categorySlug
+  );
+});
+
 // ============================================
 // ServiceTypeCard Component
 // ============================================
@@ -532,6 +543,8 @@ const ServiceTypeCard = ({ serviceType, onPress }: { serviceType: PageConfigServ
     </LinearGradient>
   </Pressable>
 );
+
+const MemoizedServiceTypeCard = React.memo(ServiceTypeCard);
 
 // ============================================
 // Main Component
@@ -1308,7 +1321,7 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
           ) : (
             <>
               {displayStores.map((store) => (
-                <StoreCard
+                <MemoizedStoreCard
                   key={store.id || store._id}
                   store={store}
                   userVisitCount={visitCounts[store.id] || 0}
@@ -1420,21 +1433,23 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
           <Text style={styles.sectionTitle}>{section.title || 'Service Types'}</Text>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.serviceTypesList}>
-          {serviceTypes.map(st => (
-            <ServiceTypeCard
-              key={st.id}
-              serviceType={st}
-              onPress={() => {
-                // Find the matching tab or navigate
-                const matchingTab = tabs.find(t => t.serviceFilter === st.serviceFilter);
-                if (matchingTab) {
-                  setActiveTab(matchingTab.id);
-                } else {
-                  router.push(`/MainCategory/${slug}/search?serviceType=${st.serviceFilter}` as any);
-                }
-              }}
-            />
-          ))}
+          {serviceTypes.map(st => {
+            const handleServiceTypePress = () => {
+              const matchingTab = tabs.find(t => t.serviceFilter === st.serviceFilter);
+              if (matchingTab) {
+                setActiveTab(matchingTab.id);
+              } else {
+                router.push(`/MainCategory/${slug}/search?serviceType=${st.serviceFilter}` as any);
+              }
+            };
+            return (
+              <MemoizedServiceTypeCard
+                key={st.id}
+                serviceType={st}
+                onPress={handleServiceTypePress}
+              />
+            );
+          })}
         </ScrollView>
       </View>
     );
@@ -2146,32 +2161,34 @@ const styles = StyleSheet.create({
 
   // Stores Grid
   storesGrid: {
-    gap: 16,
+    gap: 12,
   },
 
-  // ── Store Card (Upgrade 1, 7, 8) ──────────────────────────────────────────
+  // ── Store Card ──────────────────────────────────────────
   storeCard: {
-    borderRadius: 16,
+    borderRadius: 14,
     backgroundColor: colors.background.primary,
     overflow: 'hidden',
-    marginBottom: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: colors.neutral[100],
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 4,
+    elevation: 2,
   },
   storeCardCompact: {
-    minWidth: 200,
+    minWidth: 180,
     marginRight: 12,
     marginBottom: 0,
   },
   storeImageContainer: {
-    height: 160,      // Upgrade 1: 160px banner height
+    height: 140,
     position: 'relative',
   },
   storeImageContainerCompact: {
-    height: 110,
+    height: 100,
   },
   storeImage: {
     width: '100%',
@@ -2336,18 +2353,18 @@ const styles = StyleSheet.create({
     color: colors.neutral[500],
   },
   storeContent: {
-    padding: 14,
+    padding: 12,
   },
-  // Store name row with inline stars (Upgrade 8)
+  // Store name row with inline stars
   storeNameRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 6,
+    marginBottom: 4,
   },
   storeName: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
     color: colors.neutral[900],
     marginRight: 8,
@@ -2356,20 +2373,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 1,
   },
-  // Tag pills row (Upgrade 1)
+  // Tag pills row (max 2 shown)
   tagPillsRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-    marginBottom: 8,
+    flexWrap: 'nowrap',
+    gap: 4,
+    marginBottom: 6,
   },
   tagPill: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
     borderRadius: 20,
   },
   tagPillText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
   },
   storeMeta: {
@@ -2415,12 +2432,12 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.successScale[700],
   },
-  // Bottom row: coins + book button (Upgrade 1)
+  // Bottom row: coins + CTA button
   storeBottomRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingTop: 10,
+    paddingTop: 8,
     borderTopWidth: 1,
     borderTopColor: colors.neutral[100],
     gap: 8,
@@ -2428,33 +2445,33 @@ const styles = StyleSheet.create({
   storeCoins: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 3,
     flex: 1,
   },
   storeCoinsText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '600',
     color: colors.warningScale[500],
   },
   reviewBonusText: {
-    fontSize: 11,
+    fontSize: 10,
     color: colors.neutral[400],
   },
   bookNowButton: {
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-    minHeight: 40,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 16,
+    minHeight: 32,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
   bookNowText: {
-    fontSize: 14,
+    fontSize: 12,
     fontWeight: '700',
     color: colors.background.primary,
     letterSpacing: 0.2,
@@ -2463,15 +2480,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 8,
+    marginTop: 6,
   },
   visitProgressText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '500',
     color: colors.neutral[400],
   },
   unlockRewardText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
   },
   // kept for backward compat (reserve button now replaced by bookNowButton)
