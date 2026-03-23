@@ -1,7 +1,11 @@
 // ReZ TRY API Service
 // Handles all trial/experience discovery and booking endpoints
 
-import { apiClient } from './apiClient';
+// FR-001 FIX: apiClient is a default export from './apiClient'. The named export
+// { apiClient } does not exist, so all apiClient.request() calls below would throw
+// "apiClient is undefined" at runtime. Additionally, ApiClient has no .request()
+// method — the correct helpers are .get() / .post(). Both issues are fixed here.
+import apiClient from './apiClient';
 
 interface TrialCard {
   id: string;
@@ -234,84 +238,82 @@ interface Campaign {
 class TryApi {
   /**
    * Get personalized trial feed for current location
+   * FR-001 FIX: replaced apiClient.request() (non-existent method) with apiClient.get()
    */
   async getFeed(lat: number, lng: number): Promise<TrialCard[]> {
-    const response = await apiClient.request<TrialFeedResponse>('/try/feed', {
-      method: 'GET',
-    }, {
-      params: { lat, lng },
-    });
-    return response.data?.data || [];
+    const response = await apiClient.get<TrialFeedResponse>('/try/feed', { lat, lng });
+    // The backend wraps the array in response.data.data; apiClient.get already
+    // unwraps one level (responseData.data), so response.data is the array.
+    const payload = response.data as any;
+    return (Array.isArray(payload) ? payload : payload?.data) || [];
   }
 
   /**
    * Get detailed information about a specific trial
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getTrialDetails(trialId: string): Promise<TrialCard | null> {
-    const response = await apiClient.request<{ success: boolean; data: TrialCard }>(`/try/${trialId}`, {
-      method: 'GET',
-    });
-    return response.data?.data || null;
+    const response = await apiClient.get<{ data: TrialCard }>(`/try/${trialId}`);
+    const payload = response.data as any;
+    return (payload?.data ?? payload) || null;
   }
 
   /**
    * Get detailed information about a booking
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getBookingDetails(bookingId: string): Promise<any> {
-    const response = await apiClient.request<{ success: boolean; data: any }>(`/try/bookings/${bookingId}`, {
-      method: 'GET',
-    });
-    return response.data?.data || null;
+    const response = await apiClient.get<{ data: any }>(`/try/bookings/${bookingId}`);
+    const payload = response.data as any;
+    return (payload?.data ?? payload) || null;
   }
 
   /**
    * Book a trial with commitment fee payment
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post()
    */
   async bookTrial(request: BookingRequest): Promise<BookingResponse> {
-    return apiClient.request<BookingResponse>('/try/book', {
-      method: 'POST',
-      body: request,
-    });
+    const response = await apiClient.post<BookingResponse>('/try/book', request);
+    return response as unknown as BookingResponse;
   }
 
   /**
    * Get user's trial history
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getHistory(): Promise<HistoryItem[]> {
-    const response = await apiClient.request<{ success: boolean; data: HistoryItem[] }>('/try/history', {
-      method: 'GET',
-    });
-    return response.data?.data || [];
+    const response = await apiClient.get<{ data: HistoryItem[] }>('/try/history');
+    const payload = response.data as any;
+    return (Array.isArray(payload) ? payload : payload?.data) || [];
   }
 
   /**
    * Get trial coin wallet balance and buckets
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getCoins(): Promise<CoinsData> {
-    const response = await apiClient.request<{ success: boolean; data: CoinsData }>('/try/coins', {
-      method: 'GET',
-    });
-    return response.data?.data || { totalBalance: 0, buckets: [], recentTransactions: [] };
+    const response = await apiClient.get<{ data: CoinsData }>('/try/coins');
+    const payload = response.data as any;
+    return (payload?.data ?? payload) || { totalBalance: 0, buckets: [], recentTransactions: [] };
   }
 
   /**
    * Purchase trial coins pack
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post()
    */
   async purchaseCoins(packIndex: number, paymentId: string): Promise<{ success: boolean; coinsAdded: number }> {
-    return apiClient.request<{ success: boolean; coinsAdded: number }>('/try/coins/purchase', {
-      method: 'POST',
-      body: { packIndex, paymentId },
-    });
+    const response = await apiClient.post<{ success: boolean; coinsAdded: number }>('/try/coins/purchase', { packIndex, paymentId });
+    return response as unknown as { success: boolean; coinsAdded: number };
   }
 
   /**
    * Get explorer score and tier
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getScore(): Promise<ScoreData> {
-    const response = await apiClient.request<{ success: boolean; data: ScoreData }>('/try/score', {
-      method: 'GET',
-    });
-    return response.data?.data || {
+    const response = await apiClient.get<{ data: ScoreData }>('/try/score');
+    const payload = response.data as any;
+    return (payload?.data ?? payload) || {
       score: 0,
       tier: 'curious',
       nextTierPoints: 100,
@@ -328,109 +330,100 @@ class TryApi {
 
   /**
    * Get active weekly missions
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getMissions(): Promise<Mission[]> {
-    const response = await apiClient.request<{ success: boolean; data: Mission[] }>('/try/missions', {
-      method: 'GET',
-    });
-    return response.data?.data || [];
+    const response = await apiClient.get<{ data: Mission[] }>('/try/missions');
+    const payload = response.data as any;
+    return (Array.isArray(payload) ? payload : payload?.data) || [];
   }
 
   /**
    * Get user's category badges
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getBadges(): Promise<BadgesData> {
-    const response = await apiClient.request<{ success: boolean; data: BadgesData }>('/try/badges', {
-      method: 'GET',
-    });
-    return response.data?.data || { earned: [], undiscovered: [] };
+    const response = await apiClient.get<{ data: BadgesData }>('/try/badges');
+    const payload = response.data as any;
+    return (payload?.data ?? payload) || { earned: [], undiscovered: [] };
   }
 
   /**
    * Get leaderboard for a city and period
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getLeaderboard(city: string, period: 'weekly' | 'monthly' | 'alltime'): Promise<LeaderboardData> {
-    const response = await apiClient.request<{ success: boolean; data: LeaderboardData }>('/try/leaderboard', {
-      method: 'GET',
-    }, {
-      params: { city, period },
-    });
-    return response.data?.data || { entries: [], userRank: 0, userScore: 0 };
+    const response = await apiClient.get<{ data: LeaderboardData }>('/try/leaderboard', { city, period });
+    const payload = response.data as any;
+    return (payload?.data ?? payload) || { entries: [], userRank: 0, userScore: 0 };
   }
 
   /**
    * Get this week's surprise trial (category only, merchant hidden)
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getSurpriseTrial(): Promise<SurpriseData> {
-    const response = await apiClient.request<{ success: boolean; data: SurpriseData }>('/try/surprise', {
-      method: 'GET',
-    });
-    return response.data?.data || { category: 'Mystery', distance: 'Unknown', expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() };
+    const response = await apiClient.get<{ data: SurpriseData }>('/try/surprise');
+    const payload = response.data as any;
+    return (payload?.data ?? payload) || { category: 'Mystery', distance: 'Unknown', expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() };
   }
 
   /**
    * Reveal the surprise trial merchant
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post()
    */
   async revealSurpriseTrial(): Promise<SurpriseData> {
-    const response = await apiClient.request<{ success: boolean; data: SurpriseData }>('/try/surprise/reveal', {
-      method: 'POST',
-      body: {},
-    });
-    return response.data?.data || { category: 'Mystery', distance: 'Unknown', expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() };
+    const response = await apiClient.post<{ data: SurpriseData }>('/try/surprise/reveal', {});
+    const payload = response.data as any;
+    return (payload?.data ?? payload) || { category: 'Mystery', distance: 'Unknown', expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() };
   }
 
   /**
    * Get trial bundles and passes
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getBundles(category?: string): Promise<Bundle[]> {
-    const response = await apiClient.request<{ success: boolean; data: Bundle[] }>('/try/bundles', {
-      method: 'GET',
-    }, {
-      params: category ? { category } : undefined,
-    });
-    return response.data?.data || [];
+    const response = await apiClient.get<{ data: Bundle[] }>('/try/bundles', category ? { category } : undefined);
+    const payload = response.data as any;
+    return (Array.isArray(payload) ? payload : payload?.data) || [];
   }
 
   /**
    * Purchase a bundle
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post()
    */
   async purchaseBundle(bundleId: string, paymentId: string): Promise<{ success: boolean; message?: string }> {
-    return apiClient.request<{ success: boolean; message?: string }>('/try/bundles/purchase', {
-      method: 'POST',
-      body: { bundleId, paymentId },
-    });
+    const response = await apiClient.post<{ success: boolean; message?: string }>('/try/bundles/purchase', { bundleId, paymentId });
+    return response as unknown as { success: boolean; message?: string };
   }
 
   /**
    * Get user's active bundles
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getMyBundles(): Promise<ActiveBundle[]> {
-    const response = await apiClient.request<{ success: boolean; data: ActiveBundle[] }>('/try/bundles/mine', {
-      method: 'GET',
-    });
-    return response.data?.data || [];
+    const response = await apiClient.get<{ data: ActiveBundle[] }>('/try/bundles/mine');
+    const payload = response.data as any;
+    return (Array.isArray(payload) ? payload : payload?.data) || [];
   }
 
   /**
    * Get active discovery campaigns
+   * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getCampaigns(city: string): Promise<Campaign[]> {
-    const response = await apiClient.request<{ success: boolean; data: Campaign[] }>('/try/campaigns', {
-      method: 'GET',
-    }, {
-      params: { city },
-    });
-    return response.data?.data || [];
+    const response = await apiClient.get<{ data: Campaign[] }>('/try/campaigns', { city });
+    const payload = response.data as any;
+    return (Array.isArray(payload) ? payload : payload?.data) || [];
   }
 
   /**
    * Join a campaign
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post()
    */
   async joinCampaign(campaignId: string): Promise<{ success: boolean; message?: string }> {
-    return apiClient.request<{ success: boolean; message?: string }>(`/try/campaigns/${campaignId}/join`, {
-      method: 'POST',
-      body: {},
-    });
+    const response = await apiClient.post<{ success: boolean; message?: string }>(`/try/campaigns/${campaignId}/join`, {});
+    return response as unknown as { success: boolean; message?: string };
   }
 }
 

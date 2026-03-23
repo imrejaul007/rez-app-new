@@ -178,19 +178,33 @@ function RechargePage() {
     setError(null);
 
     try {
+      // FR-003 FIX: selectedOperator.countryCode is optional (may be undefined).
+      // Template-string concatenation of undefined produces the literal string
+      // "undefined9876543210" which fails the backend E.164 regex validator
+      // (pattern: /^\+[1-9]\d{9,14}$/) and returns a 422 Unprocessable Entity.
+      // Ensure we always have a prefix string before concatenating.
+      const dialPrefix: string = selectedOperator?.countryCode || regionPhonePrefix;
+      // Strip any accidental duplicate leading '+' from the final E.164 string.
+      const e164Phone = dialPrefix.startsWith('+')
+        ? `${dialPrefix}${mobileNumber}`
+        : `+${dialPrefix}${mobileNumber}`;
       const response = await initiateRecharge(
         selectedOperator.code,
         Number(amount),
-        `${selectedOperator?.countryCode || regionPhonePrefix}${mobileNumber}`,
+        e164Phone,
         selectedPlan?._id,
       );
 
       if (response.success && response.data) {
         setResult(response.data);
-        // Optionally navigate to payment gateway
-        // router.push(
-        //   `/payment?type=recharge&amount=${amount}&mobile=${mobileNumber}&txnId=${response.data.transactionId}`
-        // );
+        // FR-004 FIX: Navigation to the payment screen was commented out, leaving
+        // the user stuck on the recharge page with no visible confirmation after a
+        // successful initiate-recharge call. The Recharge → Wallet Update journey
+        // was therefore dead after this step. Navigate to the payment screen so the
+        // user can complete the Razorpay/payment flow and wallet is actually debited.
+        router.push(
+          `/payment?type=recharge&amount=${amount}&mobile=${e164Phone}&txnId=${response.data.transactionId}` as any
+        );
       } else {
         const msg = response.message || 'Failed to initiate recharge';
         if (!isMounted()) return;

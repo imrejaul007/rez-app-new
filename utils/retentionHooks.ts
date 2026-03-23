@@ -186,3 +186,107 @@ export const markDay1ChallengeSeen = async (
 ): Promise<void> => {
   await setStorageValue('day1_challenge_shown', new Date().toISOString());
 };
+
+/**
+ * Streak freeze mechanic
+ * CARLOS: retention — allows user to maintain streak even if they miss one day
+ * Use 1 freeze token per missed day (regenerates every 7 days or via premium)
+ * Reduces streak-breaking anxiety, increases daily habit compliance
+ */
+export interface StreakFreezeState {
+  freezeTokensAvailable: number;
+  lastFreezeUsedAt?: string;
+  nextFreezeRechargeAt?: string;
+}
+
+export const getStreakFreezeState = async (
+  user: User | null,
+  getStorageValue: (key: string) => Promise<string | null>
+): Promise<StreakFreezeState> => {
+  if (!user?.id) {
+    return { freezeTokensAvailable: 0 };
+  }
+
+  const stored = await getStorageValue(`streak_freeze:${user.id}`);
+  if (!stored) {
+    return { freezeTokensAvailable: 1 }; // New users get 1 free token
+  }
+
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return { freezeTokensAvailable: 1 };
+  }
+};
+
+export const useStreakFreeze = async (
+  user: User | null,
+  setStorageValue: (key: string, value: string) => Promise<void>
+): Promise<boolean> => {
+  if (!user?.id) return false;
+
+  const state = await getStreakFreezeState(user, async () => null);
+  if (state.freezeTokensAvailable <= 0) return false;
+
+  // Decrement token and set recharge timer (7 days)
+  const newState: StreakFreezeState = {
+    freezeTokensAvailable: state.freezeTokensAvailable - 1,
+    lastFreezeUsedAt: new Date().toISOString(),
+    nextFreezeRechargeAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+  };
+
+  await setStorageValue(`streak_freeze:${user.id}`, JSON.stringify(newState));
+  return true;
+};
+
+/**
+ * Challenge card reward preview
+ * CARLOS: retention — show coin reward BEFORE user taps to complete challenge
+ * Increases perceived value and completion likelihood
+ */
+export interface DayChallenge {
+  id: string;
+  title: string;
+  description: string;
+  rewardAmount: number; // COINS TO SHOW
+  rewardLabel: string; // "10 coins"
+  actionButtonText: string;
+  icon?: string;
+}
+
+export const getDay1ChallengeWithReward = (): DayChallenge => {
+  // A/B test which challenge drives best day-1 retention
+  const challenges: DayChallenge[] = [
+    {
+      id: 'booking',
+      title: 'Complete Your First Booking',
+      description: 'Browse offers & make your first purchase',
+      rewardAmount: 50,
+      rewardLabel: '+50 coins',
+      actionButtonText: 'Browse Offers',
+      icon: '🎁',
+    },
+    {
+      id: 'earn',
+      title: 'Play & Earn',
+      description: 'Complete a game challenge to unlock rewards',
+      rewardAmount: 25,
+      rewardLabel: '+25 coins',
+      actionButtonText: 'Play Now',
+      icon: '🎮',
+    },
+    {
+      id: 'store',
+      title: 'Explore Rewards Store',
+      description: 'See what you can redeem with your coins',
+      rewardAmount: 10,
+      rewardLabel: '+10 coins',
+      actionButtonText: 'View Store',
+      icon: '🏪',
+    },
+  ];
+
+  // Rotate based on hash to distribute A/B test
+  const hash = Math.random();
+  return challenges[Math.floor(hash * challenges.length)];
+};

@@ -201,13 +201,25 @@ export const getReferralHistory = async (page?: number, limit?: number): Promise
   }
 };
 
+// FR-002 FIX: The old implementation called referralService.generateReferralLink()
+// which is a POST to /referral/generate-link. This is a side-effectful "generate"
+// call that creates a new link on every invocation and mutates rate-limit counters.
+// The backend exposes a dedicated idempotent GET /referral/code endpoint
+// (getReferralCode handler in referralController.ts) for exactly this purpose.
+// Use it instead so that merely displaying the referral code doesn't consume API
+// write quota or produce duplicate link records.
 export const getReferralCode = async () => {
   try {
-    const response = await referralService.generateReferralLink();
+    const response = await apiClient.get<{
+      referralCode: string;
+      referralLink: string;
+    }>('/referral/code');
+    const code = (response.data as any)?.referralCode || (response.data as any)?.data?.referralCode || '';
+    const link = (response.data as any)?.referralLink || (response.data as any)?.data?.referralLink || '';
     return {
-      referralCode: response.data?.referralCode || '',
-      referralLink: response.data?.referralLink || '',
-      shareMessage: `Join REZ App using my referral code: ${response.data?.referralCode || ''}`
+      referralCode: code,
+      referralLink: link,
+      shareMessage: code ? `Join REZ App using my referral code: ${code}` : ''
     };
   } catch (error) {
     return {

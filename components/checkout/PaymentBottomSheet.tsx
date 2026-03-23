@@ -105,9 +105,11 @@ function PaymentBottomSheet({
           </View>
 
           {/* Other Payment Button */}
+          {/* OG-002 FIX: Disable while loading to prevent double-tap / reconnect re-submission */}
           <Pressable
-            style={styles.otherPaymentOption}
-            onPress={() => { triggerImpact('Heavy'); onPaymentSelect('razorpay'); }}
+            style={[styles.otherPaymentOption, loading && { opacity: 0.5 }]}
+            onPress={() => { if (!loading && canCheckout) { triggerImpact('Heavy'); onPaymentSelect('razorpay'); } }}
+            disabled={loading || !canCheckout}
           >
             <View style={styles.otherPaymentLeft}>
               <Ionicons name="card-outline" size={22} color={colors.neutral[700]} />

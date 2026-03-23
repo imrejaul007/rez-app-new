@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
 import { errorReporter } from '@/utils/errorReporter';
+import NetInfo from '@react-native-community/netinfo';
 import {
   CheckoutPageState,
   CheckoutItem,
@@ -149,6 +150,36 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
   const walletRawDataRef = useRef(walletRawData);
   walletDataRef.current = walletData;
   walletRawDataRef.current = walletRawData;
+
+  // OG-001 FIX: One idempotency key per checkout session mount.
+  // Generated once here; reused for every retry of the SAME user intent.
+  // Prevents the backend from processing the same order twice if the
+  // app comes back online and fires a second createOrder call.
+  const orderIdempotencyKeyRef = useRef(
+    `order-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+  );
+  const walletIdempotencyKeyRef = useRef(
+    `wallet-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
+  );
+
+  // OG-002 FIX: Track in-flight submission to prevent double-tap / reconnect
+  // re-submission while a payment request is still in flight.
+  const isSubmittingRef = useRef(false);
+
+  // OG-004 FIX: Check network before initiating any payment so the user sees
+  // a clear error instead of a stuck loading spinner when offline.
+  const assertOnline = useCallback(async (): Promise<boolean> => {
+    const state = await NetInfo.fetch();
+    const online = state.isConnected === true;
+    if (!online) {
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: 'No internet connection. Please check your network and try again.',
+      }));
+    }
+    return online;
+  }, []);
 
   const [state, setState] = useState<CheckoutPageState>(CheckoutData.initialState);
 
@@ -1488,6 +1519,21 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       return;
     }
 
+    // OG-002 FIX: Prevent double-submission if user taps Pay again while a
+    // previous attempt is still in flight (e.g. slow network).
+    if (isSubmittingRef.current) {
+      devLog.warn('👛 [Wallet] Payment already in progress, ignoring duplicate call');
+      return;
+    }
+    isSubmittingRef.current = true;
+
+    // OG-004 FIX: Reject immediately if offline so the user sees a clear error
+    // instead of a stuck loading spinner waiting for a request that can never complete.
+    if (!(await assertOnline())) {
+      isSubmittingRef.current = false;
+      return;
+    }
+
     setState(prev => ({ ...prev, loading: true, currentStep: 'processing' }));
 
     try {
@@ -1507,7 +1553,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         }))
       };
 
-      const walletResponse = await walletApi.processPayment(paymentData);
+      // OG-001 FIX: Pass the session-scoped idempotency key so the backend
+      // wallet route can de-duplicate if this fires twice on reconnect.
+      const walletResponse = await walletApi.processPayment(
+        paymentData,
+        walletIdempotencyKeyRef.current
+      );
 
       if (!walletResponse.success || !walletResponse.data) {
         devLog.error('💳 [Checkout] Wallet payment failed:', walletResponse.error);
@@ -1589,7 +1640,12 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       devLog.log('👛 [Wallet] coinsUsed being sent to backend:', JSON.stringify(coinsUsedData));
       (orderData as any).coinsUsed = coinsUsedData;
 
-      const orderResponse = await ordersService.createOrder(orderData);
+      // OG-001 FIX: pass the session idempotency key so reconnect retries
+      // reuse the same key and the backend de-duplication fires correctly.
+      const orderResponse = await ordersService.createOrder(
+        orderData,
+        orderIdempotencyKeyRef.current
+      );
 
       if (!orderResponse.success || !orderResponse.data) {
         devLog.error('💳 [Checkout] Order creation failed after payment:', orderResponse.error);
@@ -1663,6 +1719,10 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         error: error instanceof Error ? error.message : 'Wallet payment failed',
         currentStep: 'checkout'
       }));
+    } finally {
+      // OG-002 FIX: Always release the submission lock so the user can retry
+      // after a genuine failure (network error, server 500, etc.).
+      isSubmittingRef.current = false;
     }
   }, [state.coinSystem, state.billSummary, state.items, state.store, state.appliedPromoCode, cartActions]);
 
@@ -1687,6 +1747,20 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
       items: state.items?.length,
       billSummary: state.billSummary
     });
+
+    // OG-002 FIX: Prevent duplicate COD submissions.
+    if (isSubmittingRef.current) {
+      devLog.warn('💵 [COD] Submission already in progress, ignoring duplicate call');
+      return;
+    }
+    isSubmittingRef.current = true;
+
+    // OG-004 FIX: Reject immediately if offline so the user sees a clear error
+    // instead of a stuck loading spinner waiting for a request that can never complete.
+    if (!(await assertOnline())) {
+      isSubmittingRef.current = false;
+      return;
+    }
 
     setState(prev => ({ ...prev, loading: true, currentStep: 'processing' }));
 
@@ -1817,7 +1891,10 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         });
 
         try {
-          const orderResponse = await ordersService.createOrder(storeOrderData);
+          // OG-001 FIX: For multi-store orders, derive a per-store key from the
+          // session key so each sub-order gets its own idempotency scope.
+          const storeOrderKey = `${orderIdempotencyKeyRef.current}-${storeGroup.storeId}`;
+          const orderResponse = await ordersService.createOrder(storeOrderData, storeOrderKey);
 
           if (orderResponse.success && orderResponse.data) {
             // Debug: Log full order response to trace ID extraction
@@ -1893,6 +1970,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         error: error instanceof Error ? error.message : 'COD order creation failed',
         currentStep: 'checkout'
       }));
+    } finally {
+      // OG-002 FIX: Always release the submission lock so the user can retry.
+      isSubmittingRef.current = false;
     }
   }, [state.items, state.store, state.appliedPromoCode, state.coinSystem, state.billSummary, router, cartActions, state.selectedAddress]);
 
@@ -1920,6 +2000,20 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
     if (totalPayable <= 0) {
       showToast({ message: 'Invalid order amount', type: 'error' });
+      return;
+    }
+
+    // OG-002 FIX: Prevent duplicate Razorpay payment sessions.
+    if (isSubmittingRef.current) {
+      devLog.warn('💳 [Razorpay] Payment already in progress, ignoring duplicate call');
+      return;
+    }
+    isSubmittingRef.current = true;
+
+    // OG-004 FIX: Reject immediately if offline so the user sees a clear error
+    // instead of a stuck loading spinner waiting for a request that can never complete.
+    if (!(await assertOnline())) {
+      isSubmittingRef.current = false;
       return;
     }
 
@@ -2063,7 +2157,13 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
               );
             }
 
-            const orderResponse = await ordersService.createOrder(orderData);
+            // OG-001 FIX: Pass the session idempotency key. If Razorpay fires
+            // onSuccess twice (race condition in SDK), the backend will return
+            // the cached first response instead of creating a second order.
+            const orderResponse = await ordersService.createOrder(
+              orderData,
+              orderIdempotencyKeyRef.current
+            );
 
             if (!orderResponse.success || !orderResponse.data) {
               devLog.error('❌ [Checkout] Order creation failed after payment:', orderResponse.error);
@@ -2144,6 +2244,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         error: error instanceof Error ? error.message : 'Failed to initialize payment',
         currentStep: 'checkout',
       }));
+    } finally {
+      // OG-002 FIX: Release the submission lock. Razorpay's SDK handles the
+      // user-visible sheet; the lock is released here so if the sheet is
+      // dismissed and the user retries, the call is not silently blocked.
+      isSubmittingRef.current = false;
     }
   }, [state.billSummary, state.items, state.store, state.appliedPromoCode, state.coinSystem, router, cartActions]);
 

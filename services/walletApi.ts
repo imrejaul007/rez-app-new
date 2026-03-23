@@ -395,12 +395,22 @@ class WalletService {
 
   /**
    * Process payment (deduct from wallet)
+   * OG-001 FIX: Accept an idempotency key so the backend middleware can
+   * de-duplicate wallet debits that are retried after a network failure.
+   * The key must be generated once per user payment intent (in useCheckout/
+   * handleWalletPayment) and reused on any reconnect retry.
    */
   async processPayment(
-    data: PaymentRequest
+    data: PaymentRequest,
+    idempotencyKey?: string
   ): Promise<ApiResponse<PaymentResponse>> {
     try {
-      return await apiClient.post('/wallet/payment', data);
+      const key =
+        idempotencyKey ||
+        `wallet-pay-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+      return await apiClient.post('/wallet/payment', data, {
+        headers: { 'Idempotency-Key': key },
+      });
     } catch (error: any) {
       if (__DEV__) console.warn('[WalletAPI] processPayment failed:', error?.message);
       return { success: false, message: error?.message || 'Failed to process payment', data: null } as any;

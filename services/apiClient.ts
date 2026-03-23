@@ -458,17 +458,19 @@ class ApiClient {
     return this.makeRequest<T>(url, requestOptions);
   }
 
-  // POST request (optional deduplication, optional timeout)
+  // POST request (optional deduplication, optional timeout, optional extra headers)
   // CONS-015: Pass timeout from API_TIMEOUTS for payment/upload/slow endpoints
+  // OG-001: Pass headers: { 'Idempotency-Key': key } for mutating financial endpoints
   async post<T>(
     endpoint: string,
     data?: any,
-    options?: { deduplicate?: boolean; timeout?: number }
+    options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string> }
   ): Promise<ApiResponse<T>> {
     // POST requests are NOT deduplicated by default (usually mutating)
     const shouldDeduplicate = options?.deduplicate === true;
     const requestOpts: RequestOptions = { method: 'POST', body: data };
     if (options?.timeout) requestOpts.timeout = options.timeout;
+    if (options?.headers) requestOpts.headers = options.headers;
 
     if (shouldDeduplicate) {
       const requestKey = createRequestKey(`POST:${this.baseURL}${endpoint}`, data);

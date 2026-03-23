@@ -113,7 +113,11 @@ export async function payBill(
   customerNumber:    string,
   amount:            number,
   razorpayPaymentId: string,
-  planId?:           string
+  planId?:           string,
+  // OG-001 FIX: idempotencyKey must be generated once per user payment intent
+  // (e.g. in the bill-payment screen's useRef on mount) and passed here.
+  // The backend billPaymentRoutes.ts already applies idempotencyMiddleware on POST /pay.
+  idempotencyKey?:   string
 ): Promise<ApiResponse<{
   payment:          BillPaymentRecord;
   promoCoinsEarned: number;
@@ -121,6 +125,10 @@ export async function payBill(
   status:           string;
   message:          string;
 }>> {
+  const key =
+    idempotencyKey ||
+    `bill-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
   // CONS-015: PAYMENT timeout — give payment gateway and BBPS enough time
   return apiClient.post('/bill-payments/pay', {
     providerId,
@@ -128,7 +136,10 @@ export async function payBill(
     amount,
     razorpayPaymentId,
     planId,
-  }, { timeout: API_TIMEOUTS.PAYMENT });
+  }, {
+    timeout: API_TIMEOUTS.PAYMENT,
+    headers: { 'Idempotency-Key': key },
+  });
 }
 
 export async function getPaymentHistory(

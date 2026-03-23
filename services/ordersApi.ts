@@ -256,9 +256,23 @@ export interface RefundRequest {
 
 class OrdersService {
   // Create new order from cart
-  async createOrder(data: CreateOrderRequest): Promise<ApiResponse<Order>> {
+  // OG-001 FIX: Generate a stable idempotency key per checkout session and attach
+  // it via the Idempotency-Key header so the backend middleware (middleware/idempotency.ts)
+  // can de-duplicate requests fired on reconnect, double-tap, or network retry.
+  // The key must be generated ONCE per user checkout intent (not per API call) and
+  // passed in from useCheckout/useCheckoutUI so reconnect retries reuse the same key.
+  async createOrder(
+    data: CreateOrderRequest,
+    idempotencyKey?: string
+  ): Promise<ApiResponse<Order>> {
     try {
-      const response = await apiClient.post<Order>('/orders', data);
+      const key =
+        idempotencyKey ||
+        `order-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+      const response = await apiClient.post<Order>('/orders', data, {
+        headers: { 'Idempotency-Key': key },
+      });
 
       if (!response.success) {
       }
