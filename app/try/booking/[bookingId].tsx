@@ -260,7 +260,11 @@ export default function QRDisplayScreen() {
             {/* Cross-Integration CTAs */}
             <Pressable
               style={styles.ctaCard}
-              onPress={() => router.push(`/near-u/${booking.merchantName?.toLowerCase().replace(/\s/g, '-') || 'merchant'}`)}
+              // FR-006 FIX: /near-u/[merchantSlug] does not exist — app/near-u/ only
+              // contains index.tsx and map.tsx. A dynamic slug route would 404 in
+              // Expo Router. Route to the near-u index instead, which shows nearby
+              // merchants and is the correct discovery entry point.
+              onPress={() => router.push('/near-u' as any)}
             >
               <Ionicons name="storefront" size={20} color={colors.brand.purple} />
               <View style={styles.ctaContent}>
@@ -272,7 +276,10 @@ export default function QRDisplayScreen() {
 
             <Pressable
               style={styles.ctaCard}
-              onPress={() => router.push('/wallet/cashback')}
+              // FR-005 FIX: /wallet/cashback does not exist (no such file under app/wallet/).
+              // The closest existing screen is the wallet index which shows all coin/cashback
+              // balances. Route there instead so the button doesn't crash with a 404.
+              onPress={() => router.push('/wallet' as any)}
             >
               <Ionicons name="cash" size={20} color={colors.successScale[500]} />
               <View style={styles.ctaContent}>

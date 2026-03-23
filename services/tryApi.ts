@@ -270,11 +270,26 @@ class TryApi {
 
   /**
    * Book a trial with commitment fee payment
-   * FR-001 FIX: replaced apiClient.request() with apiClient.post()
+   * FR-001 FIX: replaced apiClient.request() with apiClient.post().
+   * Returns the full ApiResponse wrapper so the caller can distinguish
+   * success from failure (check response.success and response.data).
+   *
+   * The backend handler returns:
+   *   { success: true, data: { bookingId, qrToken, ... }, message }
+   * apiClient.post unwraps one level via (responseData.data || responseData), so
+   * response.data IS the BookingResponse.data payload: { bookingId, qrToken, ... }
+   * Callers should read: response.data?.bookingId (NOT response.data?.data?.bookingId)
    */
-  async bookTrial(request: BookingRequest): Promise<BookingResponse> {
-    const response = await apiClient.post<BookingResponse>('/try/book', request);
-    return response as unknown as BookingResponse;
+  async bookTrial(request: BookingRequest): Promise<BookingResponse & { _apiResponse: true }> {
+    // Return ApiResponse shape so caller can check .success and .data.bookingId
+    const response = await apiClient.post<BookingResponse['data']>('/try/book', request);
+    // Construct a BookingResponse-compatible shape the existing callers expect.
+    return {
+      success: response.success,
+      data: response.data || ({} as BookingResponse['data']),
+      message: response.message,
+      _apiResponse: true,
+    } as any;
   }
 
   /**
@@ -300,10 +315,11 @@ class TryApi {
   /**
    * Purchase trial coins pack
    * FR-001 FIX: replaced apiClient.request() with apiClient.post()
+   * Returns ApiResponse; caller should check response.success and response.data.coinsAdded
    */
   async purchaseCoins(packIndex: number, paymentId: string): Promise<{ success: boolean; coinsAdded: number }> {
-    const response = await apiClient.post<{ success: boolean; coinsAdded: number }>('/try/coins/purchase', { packIndex, paymentId });
-    return response as unknown as { success: boolean; coinsAdded: number };
+    const response = await apiClient.post<{ coinsAdded: number }>('/try/coins/purchase', { packIndex, paymentId });
+    return { success: response.success, coinsAdded: (response.data as any)?.coinsAdded ?? 0 };
   }
 
   /**
@@ -393,8 +409,8 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.post()
    */
   async purchaseBundle(bundleId: string, paymentId: string): Promise<{ success: boolean; message?: string }> {
-    const response = await apiClient.post<{ success: boolean; message?: string }>('/try/bundles/purchase', { bundleId, paymentId });
-    return response as unknown as { success: boolean; message?: string };
+    const response = await apiClient.post('/try/bundles/purchase', { bundleId, paymentId });
+    return { success: response.success, message: response.message };
   }
 
   /**
@@ -422,8 +438,8 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.post()
    */
   async joinCampaign(campaignId: string): Promise<{ success: boolean; message?: string }> {
-    const response = await apiClient.post<{ success: boolean; message?: string }>(`/try/campaigns/${campaignId}/join`, {});
-    return response as unknown as { success: boolean; message?: string };
+    const response = await apiClient.post(`/try/campaigns/${campaignId}/join`, {});
+    return { success: response.success, message: response.message };
   }
 }
 
