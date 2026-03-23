@@ -29,6 +29,7 @@ import ChallengeTips from '@/components/challenges/ChallengeTips';
 import ActivityTimeline from '@/components/challenges/ActivityTimeline';
 import coinSyncService from '@/services/coinSyncService';
 import logger from '@/utils/logger';
+import { triggerImpact, triggerNotification } from '@/utils/haptics';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -250,6 +251,7 @@ function ChallengeDetailPage() {
       const response = await apiClient.post(`/gamification/challenges/${data.userProgress._id}/claim`);
 
       if (response.success) {
+        triggerNotification('Success');
         const coinsEarned = data.challenge.rewards.coins;
 
         // Sync coins to wallet

@@ -212,6 +212,9 @@ export const BalanceDisplay: React.FC<BalanceDisplayProps> = React.memo(
           <Text
             style={styles.heroBalance}
             accessibilityLabel={`Wallet balance: ${heroBalanceText}`}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.6}
           >
             {heroBalanceText}
           </Text>

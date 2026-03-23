@@ -12,6 +12,7 @@ import {
 import { HomepageUserContext } from '@/services/homepageDataService';
 import { useCartActions } from '@/stores/selectors';
 import { showToast } from '@/components/common/ToastManager';
+import { triggerImpact } from '@/utils/haptics';
 import { useHomepageBatch, HomepageBatchResult } from '@/hooks/queries/useHomepageData';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
@@ -312,6 +313,7 @@ export function useHomepageNavigation() {
         imageUrl = item.images;
       }
 
+      triggerImpact('Medium');
       await cartActions.addItem({
         id: productId,
         name: item.name || item.title || 'Product',

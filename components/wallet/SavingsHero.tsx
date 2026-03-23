@@ -29,7 +29,12 @@ function SavingsHero({ totalSaved, thisMonth, currencySymbol, isHidden, segment 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{savingsLabel}</Text>
-      <Text style={styles.amount}>
+      <Text
+        style={styles.amount}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.65}
+      >
         {currencySymbol}{isHidden ? '****' : totalSaved.toLocaleString()}
       </Text>
       {thisMonth > 0 && (
