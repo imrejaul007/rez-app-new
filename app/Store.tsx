@@ -808,6 +808,7 @@ const styles = StyleSheet.create({
     color: Colors.text.primary,
     ...Typography.body,
     fontWeight: '700',
+    fontSize: isSmallDevice ? 13 : 14,
     letterSpacing: -0.2,
     marginBottom: Spacing.xs },
 
@@ -815,6 +816,7 @@ const styles = StyleSheet.create({
     color: Colors.text.tertiary,
     ...Typography.caption,
     fontWeight: '500',
+    fontSize: isSmallDevice ? 11 : 12,
     lineHeight: 15 },
 
   cardArrow: {

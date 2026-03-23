@@ -456,12 +456,16 @@ const MyBookingsPage = () => {
     </View>
   );
 
+  const fadeAnimStyle = useAnimatedStyle(() => ({
+    opacity: fadeAnim.value,
+  }));
+
   if (loading && !refreshing && bookings.length === 0) {
     return <CardGridSkeleton />;
   }
 
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, fadeAnimStyle]}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
 
       {/* Header */}
@@ -529,7 +533,7 @@ const MyBookingsPage = () => {
         showsVerticalScrollIndicator={false}
         estimatedItemSize={120}
       />
-    </View>
+    </Animated.View>
   );
 };
 

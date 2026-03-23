@@ -9,6 +9,8 @@ import {
   Platform,
   TextInput,
   Text,
+  KeyboardAvoidingView,
+  Dimensions,
 } from 'react-native';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
@@ -26,6 +28,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import apiClient from '@/services/apiClient';
+import { isSmallDevice, responsiveFontSize } from '@/utils/responsive';
 
 // Service type icon mapping
 const SERVICE_ICONS: Record<string, keyof typeof Ionicons.glyphMap> = {
