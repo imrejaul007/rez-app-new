@@ -141,20 +141,21 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     }
   }, [d.refreshing]);
 
-  // Fetch upcoming coin drops
+  // PACKETSENSE FIX-1: Batch fetch upcoming coin drops + active campaigns in a single round trip.
+  // Replaced two sequential useEffect API calls with one /page-extras call whose two DB
+  // queries run in parallel on the backend (Promise.allSettled).
   useEffect(() => {
     if (!d.currentStoreId) return;
-    apiClient.get(`/stores/${d.currentStoreId}/upcoming-drops`)
-      .then(res => { if (res.data.data) setUpcomingDrop(res.data.data); })
+    let cancelled = false;
+    apiClient.get(`/stores/${d.currentStoreId}/page-extras`)
+      .then(res => {
+        if (cancelled) return;
+        const payload = res.data?.data;
+        if (payload?.upcomingDrop) setUpcomingDrop(payload.upcomingDrop);
+        if (Array.isArray(payload?.activeCampaigns)) setActiveCampaigns(payload.activeCampaigns);
+      })
       .catch(() => {});
-  }, [d.currentStoreId]);
-
-  // Fetch active campaigns
-  useEffect(() => {
-    if (!d.currentStoreId) return;
-    apiClient.get(`/stores/${d.currentStoreId}/active-campaigns`)
-      .then(res => setActiveCampaigns(res.data.data || []))
-      .catch(() => {});
+    return () => { cancelled = true; };
   }, [d.currentStoreId]);
 
   const styles = useMemo(() => createStyles(HORIZONTAL_PADDING, d.screenData), [HORIZONTAL_PADDING, d.screenData]);

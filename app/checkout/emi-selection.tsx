@@ -109,8 +109,20 @@ function EMISelectionPage() {
 
   const handleContinue = () => {
     if (selectedBank && selectedTenure) {
-      // In real app, pass EMI details to payment
-      router.push('/payment' as any);
+      // FEAT-25: Pass EMI details to payment screen via route params
+      const emiPlan = calculateEMI(selectedTenure, selectedBank);
+      router.push({
+        pathname: '/payment' as any,
+        params: {
+          emiMonths: selectedTenure.toString(),
+          emiBankCode: selectedBank.id,
+          emiBankName: selectedBank.name,
+          emiAmount: emiPlan.emi.toString(),
+          emiTotal: emiPlan.total.toString(),
+          emiInterest: emiPlan.interest.toString(),
+          emiIsNoCost: emiPlan.isNoCost.toString(),
+        }
+      });
     }
   };
 

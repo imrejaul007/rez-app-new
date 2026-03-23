@@ -111,6 +111,10 @@ function AppointmentBookingPage() {
   // Patch test status
   const [patchTestStatus, setPatchTestStatus] = useState<any>(null);
 
+  // Group booking state
+  const [isGroupBooking, setIsGroupBooking] = useState(false);
+  const [groupFriends, setGroupFriends] = useState<Array<{ name: string; phone: string }>>([]);
+
   useEffect(() => {
     if (storeId) {
       loadStoreDetails();
@@ -540,6 +544,17 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
           )}
         </View>
 
+        {/* Dynamic Pricing Badge */}
+        {selectedService && selectedService.pricingRule && (
+          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: selectedService.discount > 0 ? '#f0fdf4' : '#fff7ed', padding: 10, borderRadius: 8, marginBottom: 12 }}>
+            <Ionicons name={selectedService.discount > 0 ? 'pricetag' : 'trending-up'} size={16} color={selectedService.discount > 0 ? '#16a34a' : '#d97706'} />
+            <Text style={{ marginLeft: 8, fontSize: 13, color: selectedService.discount > 0 ? '#16a34a' : '#d97706', fontWeight: '500' }}>
+              {selectedService.pricingRule.label}
+              {selectedService.discount > 0 ? ` · Save ${currencySymbol}${selectedService.discount}` : ` · +${currencySymbol}${selectedService.surcharge}`}
+            </Text>
+          </View>
+        )}
+
         {/* Date Selection */}
         {selectedService && (
           <View style={styles.section}>
@@ -633,6 +648,29 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                 );
               })}
             </View>
+
+            {/* Waitlist button when all slots are full */}
+            {timeSlots.length > 0 && timeSlots.every((s) => !s.available) && (
+              <Pressable
+                style={{
+                  backgroundColor: colors.secondary[600],
+                  padding: 14,
+                  borderRadius: 12,
+                  marginTop: 16,
+                  alignItems: 'center',
+                }}
+                onPress={() => router.push(`/waitlist/${storeId}`)}
+                accessibilityRole="button"
+                accessibilityLabel="Join waitlist for this store"
+              >
+                <ThemedText style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>
+                  No slots available — Join Waitlist
+                </ThemedText>
+                <ThemedText style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 2 }}>
+                  We'll notify you when a slot opens
+                </ThemedText>
+              </Pressable>
+            )}
           </View>
         )}
 
@@ -690,6 +728,55 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                 textAlignVertical="top"
               />
             </View>
+          </View>
+        )}
+
+        {/* Group Booking Toggle */}
+        {selectedService && selectedTime && (
+          <View style={styles.groupBookingToggleContainer}>
+            <View>
+              <ThemedText style={styles.groupBookingTitle}>Book for a group</ThemedText>
+              <ThemedText style={styles.groupBookingSubtitle}>Add friends to book together</ThemedText>
+            </View>
+            <Pressable
+              onPress={() => setIsGroupBooking(!isGroupBooking)}
+              style={[styles.toggleSwitch, isGroupBooking && styles.toggleSwitchActive]}
+            >
+              <View style={[styles.toggleKnob, isGroupBooking && styles.toggleKnobActive]} />
+            </Pressable>
+          </View>
+        )}
+
+        {/* Group Members Input */}
+        {isGroupBooking && selectedService && selectedTime && (
+          <View style={styles.groupMembersContainer}>
+            <ThemedText style={styles.groupMembersTitle}>Group Members</ThemedText>
+            {groupFriends.map((friend, idx) => (
+              <View key={idx} style={styles.groupMemberRow}>
+                <TextInput
+                  value={friend.name}
+                  onChangeText={name => setGroupFriends(prev => prev.map((g, i) => i === idx ? { ...g, name } : g))}
+                  placeholder="Friend's name"
+                  style={[styles.groupMemberInput, { color: textColor }]}
+                  placeholderTextColor={colors.text.tertiary}
+                />
+                <TextInput
+                  value={friend.phone}
+                  onChangeText={phone => setGroupFriends(prev => prev.map((g, i) => i === idx ? { ...g, phone } : g))}
+                  placeholder="Phone"
+                  keyboardType="phone-pad"
+                  style={[styles.groupMemberPhone, { color: textColor }]}
+                  placeholderTextColor={colors.text.tertiary}
+                />
+              </View>
+            ))}
+            <Pressable
+              style={styles.addMemberButton}
+              onPress={() => setGroupFriends(prev => [...prev, { name: '', phone: '' }])}
+            >
+              <Ionicons name="add-circle-outline" size={20} color={colors.brand.purpleLight} />
+              <ThemedText style={styles.addMemberText}>Add another friend</ThemedText>
+            </Pressable>
           </View>
         )}
 
@@ -759,18 +846,14 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
 
         {/* Patch Test Status for Color Services */}
         {patchTestStatus !== null && (
-          <View style={{
-            padding: Spacing.sm,
+          <View style={[styles.patchTestContainer, {
             backgroundColor: patchTestStatus.hasValidTest ? '#f0fdf4' : '#fff7ed',
-            borderRadius: 12,
-            borderWidth: 1,
             borderColor: patchTestStatus.hasValidTest ? '#86efac' : '#fed7aa',
-            margin: Spacing.md,
-          }}>
-            <Text style={{ fontWeight: '700', fontSize: 14, color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }}>
+          }]}>
+            <Text style={[styles.patchTestTitle, { color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }]}>
               {patchTestStatus.hasValidTest ? '✓ Patch test on record' : '⚠️ Patch test required'}
             </Text>
-            <Text style={{ fontSize: 13, marginTop: Spacing.xs, color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }}>
+            <Text style={[styles.patchTestText, { color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }]}>
               {patchTestStatus.hasValidTest
                 ? `Last test: ${new Date(patchTestStatus.lastTest.testedAt).toLocaleDateString('en-IN')} — valid until ${new Date(patchTestStatus.lastTest.expiresAt).toLocaleDateString('en-IN')}`
                 : 'This service requires a patch test 48h before your appointment. The salon will contact you to arrange one.'}
@@ -1168,6 +1251,114 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: isSmallDevice ? 14 : 16,
     color: colors.background.primary,
+  },
+  groupBookingToggleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
+  groupBookingTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: colors.text.primary,
+    marginBottom: Spacing.xs,
+  },
+  groupBookingSubtitle: {
+    fontSize: 12,
+    color: colors.text.tertiary,
+  },
+  toggleSwitch: {
+    width: 50,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: colors.border.default,
+    justifyContent: 'center',
+    padding: 2,
+  },
+  toggleSwitchActive: {
+    backgroundColor: colors.brand.purpleLight,
+  },
+  toggleKnob: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.background.primary,
+    alignSelf: 'flex-start',
+  },
+  toggleKnobActive: {
+    alignSelf: 'flex-end',
+  },
+  groupMembersContainer: {
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.base,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
+  groupMembersTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.text.primary,
+    marginBottom: Spacing.md,
+  },
+  groupMemberRow: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
+  groupMemberInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    borderRadius: BorderRadius.sm,
+    paddingHorizontal: Spacing.sm,
+    fontSize: 14,
+    height: 44,
+    backgroundColor: colors.background.secondary,
+  },
+  groupMemberPhone: {
+    width: 120,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    borderRadius: BorderRadius.sm,
+    paddingHorizontal: Spacing.sm,
+    fontSize: 14,
+    height: 44,
+    backgroundColor: colors.background.secondary,
+  },
+  addMemberButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: Spacing.sm,
+  },
+  addMemberText: {
+    color: colors.brand.purpleLight,
+    marginLeft: Spacing.sm,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  patchTestContainer: {
+    padding: Spacing.sm,
+    borderRadius: 12,
+    borderWidth: 1,
+    margin: Spacing.md,
+  },
+  patchTestTitle: {
+    fontWeight: '700',
+    fontSize: 14,
+  },
+  patchTestText: {
+    fontSize: 13,
+    marginTop: Spacing.xs,
   },
 });
 

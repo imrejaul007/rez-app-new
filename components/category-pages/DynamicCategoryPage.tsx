@@ -102,6 +102,10 @@ const DEFAULT_SORT_OPTIONS = [
   { id: 'newest', label: 'Newest', icon: 'sparkles-outline', enabled: true, sortOrder: 3 },
 ];
 
+// Module-level constant — prevents a new array being allocated on every render
+// when pageConfig.storeDisplayConfig.tagExclusions is undefined.
+const DEFAULT_TAG_EXCLUSIONS = ['halal', 'pure-veg', 'veg', 'non-veg', 'jain'];
+
 // ============================================
 // Tab icon fallback mapping (Upgrade 3)
 // ============================================
@@ -267,39 +271,38 @@ const StoreCard = ({
   const [imageError, setImageError] = useState(false);
   const isMounted = useIsMounted();
 
-  const getImageUri = (): string | undefined => {
+  // Memoize derived values so they aren't recomputed on every parent re-render
+  const imageUri = useMemo((): string | undefined => {
     if (store.banner) {
       if (Array.isArray(store.banner) && store.banner.length > 0) return store.banner[0];
       if (typeof store.banner === 'string') return store.banner;
     }
     return store.logo || store.image || undefined;
-  };
+  }, [store.banner, store.logo, store.image]);
 
-  const imageUri = getImageUri();
+  const isHalal = useMemo(
+    () => store.tags?.some((t: string) => t.toLowerCase() === 'halal'),
+    [store.tags]
+  );
+  const isPureVeg = useMemo(
+    () => store.tags?.some((t: string) => ['pure-veg', 'veg', 'vegetarian'].includes(t.toLowerCase())),
+    [store.tags]
+  );
+  const openStatus = useMemo(() => isStoreOpen(store), [store]);
 
-  const getDisplayTags = (): string => {
-    if (store.tags && Array.isArray(store.tags) && store.tags.length > 0) {
-      const filtered = store.tags.filter((tag: string) =>
-        !tagExclusions.includes(tag.toLowerCase())
-      );
-      return filtered.slice(0, 3).map((t: string) => t.charAt(0).toUpperCase() + t.slice(1)).join(' \u2022 ') || store.category?.name || 'Store';
-    }
-    return store.category?.name || 'Store';
-  };
-
-  const isHalal = store.tags?.some((t: string) => t.toLowerCase() === 'halal');
-  const isPureVeg = store.tags?.some((t: string) => ['pure-veg', 'veg', 'vegetarian'].includes(t.toLowerCase()));
-  const openStatus = isStoreOpen(store);
-
-  const coinsEarned = store.rewardRules?.baseCashbackPercent
-    ? Math.round(store.rewardRules.baseCashbackPercent * 10)
-    : Math.round((store.offers?.cashback || 10) * coinsMultiplier);
+  const coinsEarned = useMemo(
+    () =>
+      store.rewardRules?.baseCashbackPercent
+        ? Math.round(store.rewardRules.baseCashbackPercent * 10)
+        : Math.round((store.offers?.cashback || 10) * coinsMultiplier),
+    [store.rewardRules, store.offers?.cashback, coinsMultiplier]
+  );
 
   const reviewBonus = store.rewardRules?.reviewBonusCoins || defaultReviewBonus;
   const visitMilestone = store.rewardRules?.visitMilestoneRewards?.[0]?.visits || defaultVisitMilestone;
 
   // Build tag pills for the tags row (Upgrade 1)
-  const getTagPills = (): string[] => {
+  const tagPills = useMemo((): string[] => {
     if (store.tags && Array.isArray(store.tags) && store.tags.length > 0) {
       return store.tags
         .filter((tag: string) => !tagExclusions.includes(tag.toLowerCase()))
@@ -307,27 +310,44 @@ const StoreCard = ({
         .map((t: string) => t.charAt(0).toUpperCase() + t.slice(1));
     }
     return store.category?.name ? [store.category.name] : [];
-  };
-  const tagPills = getTagPills();
+  }, [store.tags, store.category?.name, tagExclusions]);
 
   // Price range indicator (Upgrade 1)
-  const getPriceRange = (): string => {
+  const priceRange = useMemo((): string => {
     const p = store.priceForTwo || 0;
     if (p === 0) return '';
     if (p < 300) return '₹';
     if (p < 700) return '₹₹';
     return '₹₹₹';
-  };
-  const priceRange = getPriceRange();
+  }, [store.priceForTwo]);
 
   // Rating stars (Upgrade 8)
   const ratingValue = store.ratings?.average || store.rating || 4.5;
   const ratingCount = store.ratings?.count || 0;
-  const ratingDisplay = ratingCount >= 1000
-    ? `${(ratingCount / 1000).toFixed(1)}k`
-    : ratingCount.toString();
+  const ratingDisplay = useMemo(
+    () =>
+      ratingCount >= 1000
+        ? `${(ratingCount / 1000).toFixed(1)}k`
+        : ratingCount.toString(),
+    [ratingCount]
+  );
 
-  const handleStorePress = () => router.push(`/MainStorePage?storeId=${store._id || store.id}` as any);
+  const storeId = store._id || store.id;
+  const handleStorePress = useCallback(
+    () => router.push(`/MainStorePage?storeId=${storeId}` as any),
+    [router, storeId]
+  );
+  const handleBookNowPress = useCallback(
+    (e: any) => {
+      e.stopPropagation();
+      if (showReserveButton) {
+        router.push(`/MainCategory/${categorySlug}/book-table?storeId=${storeId}` as any);
+      } else {
+        router.push(`/MainStorePage?storeId=${storeId}` as any);
+      }
+    },
+    [router, storeId, showReserveButton, categorySlug]
+  );
 
   return (
     <Pressable
@@ -490,14 +510,7 @@ const StoreCard = ({
           </View>
           <Pressable
             style={[styles.bookNowButton, { backgroundColor: primaryColor }]}
-            onPress={(e) => {
-              e.stopPropagation();
-              if (showReserveButton) {
-                router.push(`/MainCategory/${categorySlug}/book-table?storeId=${store._id || store.id}` as any);
-              } else {
-                router.push(`/MainStorePage?storeId=${store._id || store.id}` as any);
-              }
-            }}
+            onPress={handleBookNowPress}
           >
             <Text style={styles.bookNowText}>{showReserveButton ? 'Reserve' : 'Visit'}</Text>
           </Pressable>
@@ -757,7 +770,7 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
   const coinsMultiplier = displayConfig.defaultCoinsMultiplier || 4.5;
   const defaultReviewBonus = displayConfig.defaultReviewBonus || 20;
   const defaultVisitMilestone = displayConfig.defaultVisitMilestone || 5;
-  const tagExclusions = displayConfig.tagExclusions || ['halal', 'pure-veg', 'veg', 'non-veg', 'jain'];
+  const tagExclusions = displayConfig.tagExclusions || DEFAULT_TAG_EXCLUSIONS;
 
   // Set initial active tab once config loads
   useEffect(() => {

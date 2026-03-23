@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
   StyleSheet,
@@ -54,12 +54,73 @@ export const RecommendedStoresSection: React.FC = () => {
     fetchRecommendedStores();
   }, [isMounted]);
 
-  const handleStorePress = (storeId: string) => {
+  const handleStorePress = useCallback((storeId: string) => {
     router.push({
       pathname: '/store/[id]',
       params: { id: storeId },
     });
-  };
+  }, [router]);
+
+  // Fixed card height enables getItemLayout — eliminates async layout measurement
+  const CARD_WIDTH = 120;
+  const CARD_GAP = 12; // matches styles.listContent gap
+
+  const getItemLayout = useCallback(
+    (_: any, index: number) => ({
+      length: CARD_WIDTH + CARD_GAP,
+      offset: (CARD_WIDTH + CARD_GAP) * index,
+      index,
+    }),
+    []
+  );
+
+  const keyExtractor = useCallback((store: RecommendedStore) => store.id, []);
+
+  const renderStoreItem = useCallback(
+    ({ item }: { item: RecommendedStore }) => (
+      <Pressable
+        style={styles.storeCard}
+        onPress={() => handleStorePress(item.id)}
+      >
+        {/* Store Image/Avatar */}
+        {item.logo || item.banner ? (
+          <Image
+            source={{ uri: (item.logo || item.banner || '') as string }}
+            style={styles.storeImage}
+          />
+        ) : (
+          <View style={[styles.storeImage, styles.storeImagePlaceholder]}>
+            <Ionicons name="storefront" size={32} color={colors.primary[600]} />
+          </View>
+        )}
+
+        {/* Store Info */}
+        <View style={styles.storeInfo}>
+          <Text style={styles.storeName} numberOfLines={2}>
+            {item.name}
+          </Text>
+
+          {item.category?.name && (
+            <Text style={styles.category} numberOfLines={1}>
+              {item.category.name}
+            </Text>
+          )}
+
+          {item.distance && (
+            <View style={styles.distanceContainer}>
+              <Ionicons name="location" size={12} color={colors.gray[500]} />
+              <Text style={styles.distance}>
+                {typeof item.distance === 'number'
+                  ? `${item.distance.toFixed(1)} km`
+                  : item.distance}
+              </Text>
+            </View>
+          )}
+        </View>
+      </Pressable>
+    ),
+    [handleStorePress]
+  );
 
   if (loading) {
     return (
@@ -89,51 +150,15 @@ export const RecommendedStoresSection: React.FC = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         data={stores}
-        keyExtractor={store => store.id}
+        keyExtractor={keyExtractor}
         scrollEventThrottle={16}
         contentContainerStyle={styles.listContent}
-        renderItem={({ item }) => (
-          <Pressable
-            style={styles.storeCard}
-            onPress={() => handleStorePress(item.id)}
-          >
-            {/* Store Image/Avatar */}
-            {item.logo || item.banner ? (
-              <Image
-                source={{ uri: item.logo || item.banner || '' }}
-                style={styles.storeImage}
-              />
-            ) : (
-              <View style={[styles.storeImage, styles.storeImagePlaceholder]}>
-                <Ionicons name="storefront" size={32} color={colors.primary[600]} />
-              </View>
-            )}
-
-            {/* Store Info */}
-            <View style={styles.storeInfo}>
-              <Text style={styles.storeName} numberOfLines={2}>
-                {item.name}
-              </Text>
-
-              {item.category?.name && (
-                <Text style={styles.category} numberOfLines={1}>
-                  {item.category.name}
-                </Text>
-              )}
-
-              {item.distance && (
-                <View style={styles.distanceContainer}>
-                  <Ionicons name="location" size={12} color={colors.gray[500]} />
-                  <Text style={styles.distance}>
-                    {typeof item.distance === 'number'
-                      ? `${item.distance.toFixed(1)} km`
-                      : item.distance}
-                  </Text>
-                </View>
-              )}
-            </View>
-          </Pressable>
-        )}
+        renderItem={renderStoreItem}
+        getItemLayout={getItemLayout}
+        removeClippedSubviews
+        maxToRenderPerBatch={5}
+        windowSize={5}
+        initialNumToRender={4}
       />
     </View>
   );

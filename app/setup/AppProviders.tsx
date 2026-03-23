@@ -64,6 +64,7 @@ import { useIsAuthenticated } from '@/stores/selectors';
 import { useAuth } from '@/contexts/AuthContext';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { fetchIdentityFromProfile } from '@/services/identityApi';
+import { queryKeys } from '@/lib/queryKeys';
 
 const RewardPopupManager = React.lazy(() => import('@/components/gamification/RewardPopupManager'));
 const BottomNavigation = React.lazy(() => import('@/components/navigation/BottomNavigation'));
@@ -90,6 +91,50 @@ const IdentityHydrator = React.memo(function IdentityHydrator() {
   return null;
 });
 
+/**
+ * PACKETSENSE FIX-3: Startup prefetch — seeds TanStack Query cache with wallet
+ * balance the moment auth is confirmed, before any screen renders the wallet UI.
+ *
+ * Without this, the first render of the wallet section always shows a loading
+ * spinner while waiting for the DeferredWallet provider to mount and fire its
+ * own fetch. With this in place the data is already in cache and the wallet
+ * renders instantly on the very first paint.
+ *
+ * staleTime = 60s matches the backend Redis TTL for the computed balance cache
+ * (walletBalanceController caches it for 2 min; 60s here gives a safe buffer).
+ */
+const WalletPrefetcher = React.memo(function WalletPrefetcher() {
+  const isAuthenticated = useIsAuthenticated();
+  const auth = useAuth();
+  const authLoading = auth?.loading ?? false;
+  const prefetchedRef = React.useRef(false);
+
+  useEffect(() => {
+    // Only prefetch once per session, only when auth is confirmed
+    if (authLoading || !isAuthenticated || prefetchedRef.current) return;
+    prefetchedRef.current = true;
+
+    queryClient.prefetchQuery({
+      queryKey: queryKeys.wallet.balance(),
+      queryFn: () =>
+        import('@/services/walletApi').then(m => m.default.getBalance()),
+      staleTime: 60_000, // 60 s — matches backend balance cache TTL
+    }).catch(() => {
+      // Non-fatal: DeferredWallet will fetch on its own when it mounts
+      prefetchedRef.current = false; // Allow retry on next render cycle
+    });
+  }, [isAuthenticated, authLoading]);
+
+  // Reset on logout so the next login triggers a fresh prefetch
+  useEffect(() => {
+    if (!isAuthenticated) {
+      prefetchedRef.current = false;
+    }
+  }, [isAuthenticated]);
+
+  return null;
+});
+
 interface AppProvidersProps {
   onErrorBoundaryError: (error: Error, errorInfo: React.ErrorInfo) => void;
   onQueueSyncComplete: (result: any) => void;
@@ -111,6 +156,7 @@ function AppProviders({
     <ErrorBoundary onError={onErrorBoundaryError}>
       <AuthProvider>
         <IdentityHydrator />
+        <WalletPrefetcher />
         <DeferredWallet>
           <DeferredGamification>
             <LocationProvider>

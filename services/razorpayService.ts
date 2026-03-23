@@ -148,6 +148,15 @@ class RazorpayService {
   ): Promise<RazorpayPaymentData> {
 
     return new Promise((resolve, reject) => {
+      // FEAT-25: Extract EMI options from metadata if provided
+      const emiData = metadata?.emiData || {};
+      const emiOptions: any = {};
+
+      if (emiData.emiMonths && emiData.emiBankCode) {
+        emiOptions['emi[duration]'] = parseInt(emiData.emiMonths);
+        emiOptions['emi[bank]'] = emiData.emiBankCode;
+      }
+
       const options = {
         description: 'REZ App - Order Payment',
         image: `https://res.cloudinary.com/${process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/v1/rez-logo.png`,
@@ -163,6 +172,8 @@ class RazorpayService {
         },
         theme: { color: colors.brand.purpleLight },
         notes: metadata || {},
+        // FEAT-25: Attach EMI options to checkout if provided
+        ...emiOptions,
         modal: {
           ondismiss: () => {
 
@@ -210,6 +221,15 @@ class RazorpayService {
               return;
             }
 
+                  // FEAT-25: Extract EMI options from metadata if provided
+            const emiData = metadata?.emiData || {};
+            const emiOptions: any = {};
+
+            if (emiData.emiMonths && emiData.emiBankCode) {
+              emiOptions['emi[duration]'] = parseInt(emiData.emiMonths);
+              emiOptions['emi[bank]'] = emiData.emiBankCode;
+            }
+
             const options = {
               key: order.key,
               amount: order.amount,
@@ -226,6 +246,8 @@ class RazorpayService {
               handler: (response: RazorpayPaymentData) => {
                 resolve(response);
               },
+              // FEAT-25: Attach EMI options to checkout if provided
+              ...emiOptions,
               modal: {
                 ondismiss: () => {
                   reject(new Error('Payment cancelled by user'));
