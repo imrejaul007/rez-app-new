@@ -23,6 +23,8 @@ import { platformAlertSimple, platformAlertConfirm, platformAlertDestructive } f
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import * as FileSystem from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 
 function DeleteAccountPage() {
   const isMounted = useIsMounted();
@@ -30,6 +32,7 @@ function DeleteAccountPage() {
   const actions = useAuthActions();
   const [confirmationText, setConfirmationText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const requiredText = 'DELETE';
 
@@ -49,7 +52,7 @@ function DeleteAccountPage() {
 
   const confirmDeleteAccount = async () => {
     setIsLoading(true);
-    
+
     try {
       const response = await apiClient.delete('/auth/account');
 
@@ -86,6 +89,33 @@ function DeleteAccountPage() {
     } finally {
       if (!isMounted()) return;
       setIsLoading(false);
+    }
+  };
+
+  const handleExportData = async () => {
+    setIsExporting(true);
+    try {
+      const response = await apiClient.get('/auth/me/data-export');
+      const json = JSON.stringify(response.data, null, 2);
+
+      // Save to file and share
+      const fileName = `rez-data-export-${Date.now()}.json`;
+      const fileUri = `${FileSystem.documentDirectory}${fileName}`;
+      await FileSystem.writeAsStringAsync(fileUri, json, {
+        encoding: FileSystem.EncodingType.UTF8
+      });
+
+      await Sharing.shareAsync(fileUri, {
+        mimeType: 'application/json',
+        dialogTitle: 'Your REZ Data Export (GDPR Article 20)',
+        UTI: 'public.json',
+      });
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || 'Could not export your data. Please try again.';
+      platformAlertSimple('Export Failed', errorMessage);
+    } finally {
+      if (!isMounted()) return;
+      setIsExporting(false);
     }
   };
 
@@ -165,6 +195,29 @@ function DeleteAccountPage() {
             accessibilityHint={`Type the word ${requiredText} to confirm account deletion`}
           />
         </View>
+
+        {/* Export Data Button */}
+        <Pressable
+          style={[styles.exportButton, isExporting && styles.exportButtonLoading]}
+          onPress={handleExportData}
+          disabled={isExporting}
+          accessibilityRole="button"
+          accessibilityLabel="Export my data"
+          accessibilityHint="Double tap to download all your data as JSON (GDPR Article 20)"
+          accessibilityState={{ disabled: isExporting }}
+        >
+          {isExporting ? (
+            <ActivityIndicator color={colors.text.primary} size="small" />
+          ) : (
+            <>
+              <Ionicons name="download-outline" size={20} color="#1a3a52" />
+              <ThemedText style={styles.exportButtonText}>Export My Data</ThemedText>
+            </>
+          )}
+        </Pressable>
+        <ThemedText style={styles.exportCaption}>
+          Download all your data (GDPR Article 20 - Right to Data Portability)
+        </ThemedText>
 
         {/* Delete Button */}
         <Pressable
@@ -404,6 +457,47 @@ const styles = StyleSheet.create({
     ...Typography.bodyLarge,
     fontWeight: '600',
     marginLeft: Spacing.sm,
+  },
+  exportButton: {
+    backgroundColor: colors.background.primary,
+    borderWidth: 1,
+    borderColor: '#1a3a52',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.base,
+    paddingHorizontal: Spacing.xl,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.sm,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+      },
+      android: {
+        elevation: 2,
+      },
+      web: {
+        boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
+      },
+    }),
+  },
+  exportButtonLoading: {
+    opacity: 0.6,
+  },
+  exportButtonText: {
+    color: '#1a3a52',
+    ...Typography.bodyLarge,
+    fontWeight: '600',
+    marginLeft: Spacing.sm,
+  },
+  exportCaption: {
+    ...Typography.caption,
+    color: colors.text.tertiary,
+    marginBottom: Spacing.xl,
+    textAlign: 'center',
   },
   alternativesCard: {
     backgroundColor: colors.background.primary,
