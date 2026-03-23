@@ -37,11 +37,21 @@ function BankOfferDetailScreen() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id) fetchOffer();
+    if (id) {
+      fetchOffer();
+    } else {
+      setError('Invalid offer ID');
+      setLoading(false);
+    }
   }, [id]);
 
   const fetchOffer = async () => {
     try {
+      if (!id) {
+        setError('Invalid offer ID');
+        setLoading(false);
+        return;
+      }
       setLoading(true);
       // Use the bank offers API to get the specific offer
       const response = await realOffersApi.getBankOffers({ limit: 50 });

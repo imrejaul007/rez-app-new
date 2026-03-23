@@ -17,18 +17,23 @@ function WaitlistScreen() {
   const [joined, setJoined] = useState(false);
 
   const handleJoin = async () => {
+    if (!storeId) {
+      Alert.alert('Error', 'Invalid store. Please go back and try again.');
+      return;
+    }
     if (!serviceType.trim()) {
       Alert.alert('Required', 'Please enter the service you need');
       return;
     }
     setLoading(true);
     try {
-      await apiClient.post('/consumer/waitlist', {
+      const response = await apiClient.post('/consumer/waitlist', {
         storeId,
         serviceType,
         preferredDate,
         notes,
       });
+      if (response) {
       setJoined(true);
     } catch (e: any) {
       Alert.alert('Error', e?.response?.data?.error || 'Failed to join waitlist');
