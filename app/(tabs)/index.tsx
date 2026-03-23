@@ -287,11 +287,13 @@ function HomeScreen() {
   React.useEffect(() => {
     if (permissionStatus === 'granted' || permissionStatus === 'denied') return;
     // Check if user already dismissed the banner
+    let mounted = true;
     import('@react-native-async-storage/async-storage').then(({ default: AS }) =>
       AS.getItem('location_banner_dismissed').then(v => {
-        if (v !== 'true') setLocationBannerDismissed(false);
+        if (mounted && v !== 'true') setLocationBannerDismissed(false);
       })
     ).catch(() => {});
+    return () => { mounted = false; };
   }, [permissionStatus]);
 
   // Handler for tab changes
@@ -312,14 +314,19 @@ function HomeScreen() {
 
     const lat = currentLocation.coordinates.latitude;
     const lng = currentLocation.coordinates.longitude;
+    let mounted = true;
 
     import('@/utils/serviceabilityCheck').then(({ checkAreaServiceability }) => {
       checkAreaServiceability(lat, lng).then(result => {
-        setIsAreaServiceable(result.isServiceable);
-        setServiceabilityChecked(true);
+        if (mounted) {
+          setIsAreaServiceable(result.isServiceable);
+          setServiceabilityChecked(true);
+        }
         // No auto-switch — unserviceable areas see a banner with "Mall →" CTA instead
       }).catch(() => {});
     }).catch(() => {});
+    
+    return () => { mounted = false; };
   }, [currentLocation?.coordinates?.latitude, currentLocation?.coordinates?.longitude]);
 
   // Get recently viewed items
@@ -391,6 +398,7 @@ function HomeScreen() {
   // This triggers all deferred context providers to initialize
   const onboardingCompletedRef = React.useRef(false);
   React.useEffect(() => {
+    let mounted = true;
     if (isAuthenticated && authUser && !authUser.isOnboarded && !onboardingCompletedRef.current) {
       onboardingCompletedRef.current = true;
       authActions.completeOnboarding({
@@ -401,9 +409,12 @@ function HomeScreen() {
         },
       }).catch(() => {
         // If completeOnboarding API fails, reset so it can retry on next render
-        onboardingCompletedRef.current = false;
+        if (mounted) {
+          onboardingCompletedRef.current = false;
+        }
       });
     }
+    return () => { mounted = false; };
   }, [isAuthenticated, authUser, authActions, getCurrency, getLocale]);
 
   // Load supplementary homepage data (wallet balance comes from WalletContext)
@@ -439,6 +450,7 @@ function HomeScreen() {
 
   // Load user context once after interactions complete + authenticated
   React.useEffect(() => {
+    let mounted = true;
     if (interactionsComplete && isAuthenticated && !statsLoadedRef.current) {
       statsLoadedRef.current = true;
       _statsLoadedGlobal = true; // Module-level — survives remounts
@@ -449,6 +461,7 @@ function HomeScreen() {
       statsLoadedRef.current = false;
       _statsLoadedGlobal = false;
     }
+    return () => { mounted = false; };
   }, [isAuthenticated, interactionsComplete, loadUserContext]);
 
   // Refresh all dynamic data when screen comes into focus (throttled to prevent continuous refreshing)

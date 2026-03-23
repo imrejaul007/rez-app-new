@@ -1,6 +1,7 @@
 import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { showAlert } from '@/utils/alert';
+import apiClient from '@/services/apiClient';
 
 // Configure notification behavior (wrapped in try-catch for emulator compatibility)
 try {
@@ -60,8 +61,13 @@ class EarningsNotificationService {
             projectId: process.env.EXPO_PUBLIC_PROJECT_ID || '58b80355-a254-4d4a-80ce-d2bc3272b144',
           });
 
-          // TODO: Send token to backend to register for push notifications
-          // await apiClient.post('/notifications/register-push-token', { token: token.data });
+          // Send token to backend to register for push notifications
+          await apiClient.post('/notifications/register-push-token', {
+            token: token.data,
+            platform: Platform.OS,
+          }).catch(error => {
+            console.warn('[EarningsNotificationService] Failed to register push token:', error);
+          });
         } catch (_tokenError) {
           // silently handle
         }

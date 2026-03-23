@@ -24,6 +24,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import storesApi, { Store } from '@/services/storesApi';
 import servicesApi, { ServiceItem } from '@/services/servicesApi';
 import bookingApi from '@/services/bookingApi';
+import razorpayApi from '@/services/razorpayApi';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -322,9 +323,41 @@ Price: ${currencySymbol}${selectedService?.price}
   };
 
   const handlePaymentGate = async (amount: number) => {
-    // Payment flow would be integrated here with Razorpay
-    // For now, proceed directly to booking confirmation
-    submitBooking({});
+    try {
+      setSubmitting(true);
+      // Create Razorpay order for upfront payment
+      const orderResponse = await razorpayApi.createOrder({
+        amount: Math.round(amount * 100), // Convert to paise
+        notes: {
+          serviceId: selectedService?.id,
+          serviceName: selectedService?.name,
+          storeId: selectedService?.storeId,
+        },
+      });
+
+      if (!orderResponse.data?.data?.razorpayOrderId) {
+        throw new Error('Failed to create payment order');
+      }
+
+      // Initiate checkout
+      const paymentResult = await razorpayApi.checkout({
+        amount: Math.round(amount * 100),
+        orderId: orderResponse.data.data.razorpayOrderId,
+        notes: {
+          serviceId: selectedService?.id,
+          serviceName: selectedService?.name,
+        },
+      });
+
+      if (paymentResult.paymentId) {
+        // Payment successful, proceed with booking
+        await submitBooking({ paymentId: paymentResult.paymentId });
+      }
+    } catch (error: any) {
+      console.error('[Appointment] Payment failed:', error);
+      platformAlertSimple('Payment Failed', error?.message || 'Unable to process payment. Please try again.');
+      setSubmitting(false);
+    }
   };
 
   const submitBooking = async (paymentData?: { paymentId?: string }) => {
