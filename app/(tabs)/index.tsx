@@ -98,6 +98,7 @@ import { BRAND } from '@/constants/brand';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
 import { isUserFirstDay, getStreakDisplay, getDaysSinceJoined, trackSessionStart, trackSessionEnd } from '@/utils/retentionHooks';
+import sessionTrackingService from '@/services/sessionTrackingService';
 
 // ProfileMenuModal eagerly loaded — React.lazy + Suspense(null) causes modal to not appear on Android
 import ProfileMenuModal from '@/components/profile/ProfileMenuModal';
@@ -379,12 +380,16 @@ function HomeScreen() {
         // Session start — app comes to foreground
         sessionStartTimeRef.current = Date.now();
         const event = trackSessionStart();
+        // Start session tracking service
+        sessionTrackingService.startSession(authUser?.id);
         // CARLOS: retention — log to analytics (would go to analytics queue)
         console.debug('[Retention] Session started:', event);
       } else if (state === 'background' || state === 'inactive') {
         // Session end — app goes background
         if (sessionStartTimeRef.current > 0) {
           const event = trackSessionEnd(sessionStartTimeRef.current);
+          // End session tracking and persist for analytics
+          sessionTrackingService.endSession().catch(() => {});
           // CARLOS: retention — log to analytics (would go to analytics queue)
           console.debug('[Retention] Session ended, duration:', event.sessionDuration, 'ms');
           sessionStartTimeRef.current = 0;
@@ -393,8 +398,13 @@ function HomeScreen() {
     });
 
     sessionStartTimeRef.current = Date.now();
-    return () => subscription.remove();
-  }, []);
+    sessionTrackingService.startSession(authUser?.id);
+
+    return () => {
+      subscription.remove();
+      sessionTrackingService.endSession().catch(() => {});
+    };
+  }, [authUser?.id]);
 
   // CARLOS: retention — calculate and display user's daily visit streak
   React.useEffect(() => {
@@ -614,6 +624,8 @@ function HomeScreen() {
   }, [router]);
 
   const handleCoinPress = useCallback(() => {
+    // CARLOS: retention — track wallet feature touch for cohort analysis
+    sessionTrackingService.trackFeatureTouch('wallet');
     if (IS_IOS) {
       clearTimeout(navTimerRef.current);
       navTimerRef.current = setTimeout(() => router.push('/wallet-screen'), 50);
@@ -698,15 +710,20 @@ function HomeScreen() {
 
   // CARLOS: retention — day-1 challenge action handler (booking, earn, or store)
   const handleDay1ChallengePress = useCallback((action: 'booking' | 'earn' | 'store') => {
+    // CARLOS: retention — track day-1 challenge engagement
+    sessionTrackingService.trackFeatureTouch(`day1_challenge_${action}`);
     handleDismissDay1Challenge();
     switch (action) {
       case 'booking':
+        sessionTrackingService.trackFeatureTouch('booking');
         router.push('/book' as any);
         break;
       case 'earn':
+        sessionTrackingService.trackFeatureTouch('earn');
         router.push('/(tabs)/earn' as any);
         break;
       case 'store':
+        sessionTrackingService.trackFeatureTouch('mall');
         setActiveTab('mall');
         break;
     }

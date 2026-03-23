@@ -48,6 +48,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { useHomeTabStore } from '@/stores/homeTabStore';
+import { getCoinExpiryWarning } from '@/utils/retentionHooks';
 
 const WalletScreen: React.FC<WalletScreenProps> = ({
   onNavigateBack,
