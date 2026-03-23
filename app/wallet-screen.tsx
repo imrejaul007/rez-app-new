@@ -103,12 +103,14 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
 
   // Compute coin balances for CoinProportionBar
   const rezBalance = useMemo(() => {
-    const rezCoin = walletData?.coins?.find(c => c.type === 'rez' || c.type === 'nuqta');
+    // ETHAN: crash guard — walletData?.coins could be undefined; filter safely
+    const rezCoin = walletData?.coins?.find(c => c?.type === 'rez' || c?.type === 'nuqta');
     return rezCoin?.amount ?? 0;
   }, [walletData?.coins]);
 
   const promoBalance = useMemo(() => {
-    const promoCoin = walletData?.coins?.find(c => c.type === 'promo');
+    // ETHAN: crash guard — walletData?.coins could be undefined or contain null items
+    const promoCoin = walletData?.coins?.find(c => c?.type === 'promo');
     return promoCoin?.amount ?? 0;
   }, [walletData?.coins]);
 

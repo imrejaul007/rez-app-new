@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
     width: Spacing['3xl'],
     height: Spacing['3xl'],
     borderRadius: BorderRadius.xl,
+    // MEERA: design token — hardcoded 'rgba(255,255,255,0.5)' -> colors.glass.light.backgroundColor (glass effect with white transparency)
     backgroundColor: 'rgba(255,255,255,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -192,7 +193,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    gap: 10,
+    // MEERA: design token — hardcoded gap: 10 -> Spacing.sm (8px, consistent 8px grid)
+    gap: Spacing.sm,
     ...Platform.select({
       ios: {
         shadowColor: Shadows.md.shadowColor,
@@ -204,6 +206,7 @@ const styles = StyleSheet.create({
         elevation: 3,
       },
       web: {
+        // MEERA: design token — hardcoded inline shadow -> should use theme shadows token
         boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
       },
     }),
@@ -265,8 +268,9 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     color: Colors.gray[700],
     textAlign: 'center',
-    marginTop: 6,
-    paddingHorizontal: 2,
+    // MEERA: design token — hardcoded marginTop: 6 -> Spacing.sm (8px, not in 8px grid); paddingHorizontal: 2 -> Spacing.xs (4px)
+    marginTop: Spacing.sm,
+    paddingHorizontal: Spacing.xs,
   },
   profileAvatar: {
     width: Spacing['3xl'],
@@ -276,7 +280,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#F6D55C',
+    // MEERA: design token — hardcoded '#F6D55C' (mustard variant) -> Colors.primary[400] (brand mustard)
+    borderColor: Colors.primary[400],
   },
   profileText: {
     ...Typography.body,

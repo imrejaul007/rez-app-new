@@ -12,7 +12,9 @@ import {
   Platform,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -274,8 +276,14 @@ function AccountRecoveryPage() {
   );
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
+    <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
+      {/* SOFIA: KeyboardAvoidingView for TextInput handling with phone/OTP fields */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}
+      >
+        <View style={styles.container}>
+          <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       <LinearGradient
         colors={[Colors.primary[600], Colors.secondary[700]]}
@@ -299,12 +307,23 @@ function AccountRecoveryPage() {
         {step === 'input' && renderInputStep()}
         {step === 'otp' && renderOTPStep()}
         {step === 'success' && renderSuccess()}
-      </ScrollView>
-    </View>
+        </ScrollView>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeContainer: {
+    // SOFIA: SafeAreaView protects against notch and safe area insets
+    flex: 1,
+    backgroundColor: colors.background.secondary,
+  },
+  keyboardAvoidingView: {
+    // SOFIA: Prevents TextInput fields from being hidden by keyboard
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,

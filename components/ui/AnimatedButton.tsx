@@ -21,7 +21,7 @@
  * </AnimatedButton>
  */
 
-import React, {  useState } from 'react';
+import React, {  useState, useCallback } from 'react';
 import {
   Pressable,
   Text,
@@ -87,12 +87,14 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
     transform: [{ scale: scaleAnim.value }],
   }));
 
-  // Handle press animation
-  const handlePressIn = () => {
+  // LUCA: Handle press animation - scale down and trigger haptic
+  // ROHAN: Wrap with useCallback to prevent re-render on every parent render, preserving child memoization
+  const handlePressIn = useCallback(() => {
     setIsPressed(true);
+    // LUCA: Immediate scale down to 0.96 with bouncy spring feel
     scaleAnim.value = withSpring(0.96, { ...Timing.springBouncy });
 
-    // Haptic feedback
+    // Haptic feedback for tactile response
     if (haptic && !disabled && !loading) {
       try {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => {});
@@ -100,17 +102,20 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
         // Haptic feedback not available
       }
     }
-  };
+  }, [scaleAnim, haptic, disabled, loading]);
 
-  const handlePressOut = () => {
+  // LUCA: Spring back to full size with overshoot for satisfying release
+  // ROHAN: Wrap with useCallback to prevent re-render on every parent render
+  const handlePressOut = useCallback(() => {
     setIsPressed(false);
     scaleAnim.value = withSpring(1, { ...Timing.springSmooth });
-  };
+  }, [scaleAnim]);
 
-  const handlePress = async () => {
+  // ROHAN: Wrap async onPress with useCallback to prevent stale closures and improve re-render perf
+  const handlePress = useCallback(async () => {
     if (disabled || loading) return;
     await onPress();
-  };
+  }, [disabled, loading, onPress]);
 
   // Get button styles based on variant and size
   const getButtonHeight = () => {

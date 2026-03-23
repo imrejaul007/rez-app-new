@@ -24,6 +24,28 @@ function RescheduleBookingScreen() {
   const { bookingId } = useLocalSearchParams<{ bookingId: string }>();
   const router = useRouter();
   const isMounted = useIsMounted();
+
+  // ETHAN: crash guard — bookingId from route params could be undefined
+  if (!bookingId) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background.secondary }]}>
+        <View style={[styles.header, { backgroundColor: colors.background.primary }]}>
+          <TouchableOpacity onPress={() => router.back()}>
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+          </TouchableOpacity>
+          <Text style={[styles.title, { color: colors.text.primary }]}>Reschedule Appointment</Text>
+          <View style={{ width: 24 }} />
+        </View>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Booking not found</Text>
+          <TouchableOpacity onPress={() => router.back()} style={styles.retryButton}>
+            <Text style={styles.retryButtonText}>Go Back</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
   const [loading, setLoading] = useState(false);

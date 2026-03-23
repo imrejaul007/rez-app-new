@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -772,9 +773,11 @@ function BookingsPage() {
 
   // ─── Main render ─────────────────────────────────────────
   return (
-    <ThemedView style={styles.container}>
-      <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
+      {/* SOFIA: SafeAreaView ensures content avoids notch and top inset areas */}
+      <ThemedView style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <StatusBar barStyle="light-content" />
 
       {/* ── Header ── */}
       <LinearGradient
@@ -918,7 +921,8 @@ function BookingsPage() {
           showsVerticalScrollIndicator={false}
         />
       )}
-    </ThemedView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 
@@ -926,6 +930,11 @@ function BookingsPage() {
 //  STYLES
 // ══════════════════════════════════════════════════════════════
 const styles = StyleSheet.create({
+  safeContainer: {
+    // SOFIA: SafeAreaView prevents content from hiding behind notch and safe area insets
+    flex: 1,
+    backgroundColor: C.bg,
+  },
   container: {
     flex: 1,
     backgroundColor: C.bg,

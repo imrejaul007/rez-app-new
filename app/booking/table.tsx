@@ -9,7 +9,9 @@ import {
   Platform,
   TextInput,
   Dimensions,
+  KeyboardAvoidingView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
@@ -68,6 +70,20 @@ function TableBookingPage() {
   const isMounted = useIsMounted();
   const { storeId } = useLocalSearchParams();
   const router = useRouter();
+
+  // ETHAN: crash guard — storeId from route params could be undefined
+  if (!storeId) {
+    return (
+      <ThemedView style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <ThemedText style={styles.errorText}>Restaurant not found</ThemedText>
+        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
+        </Pressable>
+      </ThemedView>
+    );
+  }
+
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
   const borderColor = useThemeColor({}, 'border');
@@ -327,8 +343,14 @@ function TableBookingPage() {
   ).filter(size => size <= maxPartySize);
 
   return (
-    <ThemedView style={styles.container}>
-      <Stack.Screen options={{ headerShown: false }} />
+    <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
+      {/* SOFIA: KeyboardAvoidingView to prevent TextInput from being hidden by soft keyboard */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoidingView}
+      >
+        <ThemedView style={styles.container}>
+          <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header with Purple Gradient */}
       <LinearGradient
@@ -630,12 +652,22 @@ function TableBookingPage() {
             )}
           </LinearGradient>
         </Pressable>
-      </View>
-    </ThemedView>
+        </View>
+        </ThemedView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeContainer: {
+    // SOFIA: SafeAreaView ensures content doesn't overlap with notch/home indicator
+    flex: 1,
+  },
+  keyboardAvoidingView: {
+    // SOFIA: Prevents TextInput from being covered by iOS/Android keyboard
+    flex: 1,
+  },
   container: {
     flex: 1,
   },

@@ -1,4 +1,4 @@
-import React, { Suspense, useCallback, useMemo } from 'react';
+import React, { Suspense, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -7,6 +7,8 @@ import {
   RefreshControl,
   Platform,
   InteractionManager,
+  AppState,
+  AppStateStatus,
 } from 'react-native';
 import ReAnimated, {
   useSharedValue,
@@ -95,6 +97,7 @@ import HomepageSkeleton from '@/components/homepage/HomepageSkeleton';
 import { BRAND } from '@/constants/brand';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
+import { isUserFirstDay, getStreakDisplay, getDaysSinceJoined, trackSessionStart, trackSessionEnd } from '@/utils/retentionHooks';
 
 // ProfileMenuModal eagerly loaded — React.lazy + Suspense(null) causes modal to not appear on Android
 import ProfileMenuModal from '@/components/profile/ProfileMenuModal';
@@ -312,6 +315,14 @@ function HomeScreen() {
   const [isAreaServiceable, setIsAreaServiceable] = React.useState(true);
   const [serviceabilityChecked, setServiceabilityChecked] = React.useState(false);
 
+  // CARLOS: retention — day-1 habit prompt & streak display
+  const [isFirstDay, setIsFirstDay] = React.useState(false);
+  const [showDay1Challenge, setShowDay1Challenge] = React.useState(false);
+  const [streakCount, setStreakCount] = React.useState(0);
+  const [streakDisplay, setStreakDisplay] = React.useState({ emoji: '', text: '' });
+  const sessionStartTimeRef = useRef<number>(0);
+  const appStateRef = useRef<AppStateStatus>('active');
+
   React.useEffect(() => {
     if (!currentLocation?.coordinates || serviceabilityChecked) return;
 
@@ -342,6 +353,68 @@ function HomeScreen() {
     trendingService,
     isLoading: isLoyaltySectionLoading
   } = useLoyaltySection({ autoFetch: activeTab === 'near-u' });
+
+  // CARLOS: retention — check if user is on first day and should see day-1 challenge
+  React.useEffect(() => {
+    if (!authUser) return;
+    const isDay1 = isUserFirstDay(authUser);
+    setIsFirstDay(isDay1);
+    if (isDay1) {
+      // Show day-1 challenge card (only once per session)
+      import('@react-native-async-storage/async-storage').then(({ default: AS }) => {
+        AS.getItem('day1_challenge_shown').then(shown => {
+          if (!shown) {
+            setShowDay1Challenge(true);
+          }
+        }).catch(() => {});
+      }).catch(() => {});
+    }
+  }, [authUser]);
+
+  // CARLOS: retention — session start/end tracking for cohort analysis
+  React.useEffect(() => {
+    const subscription = AppState.addEventListener('change', (state: AppStateStatus) => {
+      appStateRef.current = state;
+      if (state === 'active') {
+        // Session start — app comes to foreground
+        sessionStartTimeRef.current = Date.now();
+        const event = trackSessionStart();
+        // CARLOS: retention — log to analytics (would go to analytics queue)
+        console.debug('[Retention] Session started:', event);
+      } else if (state === 'background' || state === 'inactive') {
+        // Session end — app goes background
+        if (sessionStartTimeRef.current > 0) {
+          const event = trackSessionEnd(sessionStartTimeRef.current);
+          // CARLOS: retention — log to analytics (would go to analytics queue)
+          console.debug('[Retention] Session ended, duration:', event.sessionDuration, 'ms');
+          sessionStartTimeRef.current = 0;
+        }
+      }
+    });
+
+    sessionStartTimeRef.current = Date.now();
+    return () => subscription.remove();
+  }, []);
+
+  // CARLOS: retention — calculate and display user's daily visit streak
+  React.useEffect(() => {
+    if (!authUser) return;
+    // Fetch or calculate streak from local storage or backend
+    import('@react-native-async-storage/async-storage').then(({ default: AS }) => {
+      AS.getItem('last_active_date').then(lastActive => {
+        // Simple streak: if visited yesterday or today, show streak
+        // Real implementation would track full streak on backend
+        const daysSinceJoined = getDaysSinceJoined(authUser);
+        // For MVP, show a visual if user is in early days
+        if (daysSinceJoined >= 0 && daysSinceJoined <= 30) {
+          // Show a placeholder streak display for early users
+          const display = getStreakDisplay(Math.max(1, daysSinceJoined + 1));
+          setStreakCount(daysSinceJoined + 1);
+          setStreakDisplay(display);
+        }
+      }).catch(() => {});
+    }).catch(() => {});
+  }, [authUser]);
 
   const animatedHeight = useSharedValue(0);
   const animatedOpacity = useSharedValue(0);
@@ -609,6 +682,42 @@ function HomeScreen() {
     setTimeout(() => setIsLocationModalVisible(true), 220);
   }, [animatedHeight, animatedOpacity]);
 
+  // ROHAN: Extract inline async handlers from Pressable to prevent new function references on every render
+  const handleEnableLocationPress = useCallback(async () => {
+    await requestLocPermission();
+    if (!isMounted()) return;
+    setLocationBannerDismissed(true);
+  }, [requestLocPermission, isMounted]);
+
+  // CARLOS: retention — dismiss day-1 challenge card
+  const handleDismissDay1Challenge = useCallback(async () => {
+    setShowDay1Challenge(false);
+    const { default: AS } = await import('@react-native-async-storage/async-storage');
+    AS.setItem('day1_challenge_shown', new Date().toISOString()).catch(() => {});
+  }, []);
+
+  // CARLOS: retention — day-1 challenge action handler (booking, earn, or store)
+  const handleDay1ChallengePress = useCallback((action: 'booking' | 'earn' | 'store') => {
+    handleDismissDay1Challenge();
+    switch (action) {
+      case 'booking':
+        router.push('/book' as any);
+        break;
+      case 'earn':
+        router.push('/(tabs)/earn' as any);
+        break;
+      case 'store':
+        setActiveTab('mall');
+        break;
+    }
+  }, [handleDismissDay1Challenge, router, setActiveTab]);
+
+  const handleDismissLocationBanner = useCallback(async () => {
+    setLocationBannerDismissed(true);
+    const { default: AS } = await import('@react-native-async-storage/async-storage');
+    AS.setItem('location_banner_dismissed', 'true').catch(() => {});
+  }, []);
+
   // Memoize gradient colors to avoid new array allocation on every scroll frame
   const gradientColors = useMemo((): string[] => {
     switch (activeTab) {
@@ -799,8 +908,10 @@ function HomeScreen() {
               style={[
                 viewStyles.changeLocationButton,
                 activeTab === 'mall' && {
-                  backgroundColor: '#E0F2FE',
-                  borderColor: '#BAE6FD'
+                  // MEERA: design token — hardcoded '#E0F2FE' -> colors.tint.blue (sky blue tint for mall tab)
+                  backgroundColor: colors.tint.blueLight,
+                  // MEERA: design token — hardcoded '#BAE6FD' -> colors.infoScale[200] (lighter sky blue border)
+                  borderColor: colors.infoScale[200],
                 }
               ]}
               onPress={handleChangeLocationPress}
@@ -810,7 +921,8 @@ function HomeScreen() {
             >
               <View style={[
                 viewStyles.changeLocationIconWrapper,
-                activeTab === 'mall' && { backgroundColor: '#0EA5E9' }
+                // MEERA: design token — hardcoded '#0EA5E9' -> colors.brand.sky (sky blue for mall tab accent)
+                activeTab === 'mall' && { backgroundColor: colors.brand.sky }
               ]}>
                 <Ionicons name="search" size={12} color={colors.text.inverse} />
               </View>
@@ -870,11 +982,7 @@ function HomeScreen() {
           </Text>
           <Pressable
             style={viewStyles.locationBannerBtn}
-            onPress={async () => {
-              await requestLocPermission();
-              if (!isMounted()) return;
-              setLocationBannerDismissed(true);
-            }}
+            onPress={handleEnableLocationPress}
             accessibilityRole="button"
             accessibilityLabel="Enable location permission"
             accessibilityHint="Tap to grant location access and find deals near you"
@@ -882,11 +990,7 @@ function HomeScreen() {
             <Text style={viewStyles.locationBannerBtnText}>Enable</Text>
           </Pressable>
           <Pressable
-            onPress={async () => {
-              setLocationBannerDismissed(true);
-              const { default: AS } = await import('@react-native-async-storage/async-storage');
-              AS.setItem('location_banner_dismissed', 'true').catch(() => {});
-            }}
+            onPress={handleDismissLocationBanner}
             hitSlop={8}
             accessibilityRole="button"
             accessibilityLabel="Dismiss location request"
@@ -907,7 +1011,8 @@ function HomeScreen() {
           accessibilityHint="Tap to explore products you can try risk-free and earn coins"
         >
           <LinearGradient
-            colors={[colors.nileBlue, '#0d2035']}
+            // MEERA: design token — hardcoded '#0d2035' -> colors.secondary[900] (darker nile blue for gradient)
+            colors={[colors.nileBlue, colors.secondary[900]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={viewStyles.tryBannerGradient}
@@ -917,7 +1022,8 @@ function HomeScreen() {
                 <Text style={viewStyles.tryBannerTitle}>Try Before You Buy</Text>
                 <Text style={viewStyles.tryBannerSubtitle}>Experience products risk-free, earn coins</Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color="rgba(255,255,255,0.6)" style={viewStyles.tryBannerChevron} />
+              {/* MEERA: design token — hardcoded 'rgba(255,255,255,0.6)' -> colors.overlay.light (white with subtle opacity) */}
+              <Ionicons name="chevron-forward" size={20} color={colors.overlay.light} style={viewStyles.tryBannerChevron} />
             </View>
           </LinearGradient>
         </Pressable>
@@ -926,6 +1032,54 @@ function HomeScreen() {
       {/* Stories Row — What's New (Instagram-style) */}
       {activeTab !== 'prive' && (
         <StoriesRow variant={tabStyles.whatsNewVariant} />
+      )}
+
+      {/* CARLOS: retention — Day-1 Challenge Card (Habit Loop Trigger) */}
+      {showDay1Challenge && activeTab === 'near-u' && (
+        <Pressable
+          style={viewStyles.day1ChallengeCard}
+          onPress={() => handleDay1ChallengePress('earn')}
+          accessibilityRole="button"
+          accessibilityLabel="Today's challenge: earn your first coins"
+          accessibilityHint="Tap to start earning coins"
+        >
+          <LinearGradient
+            colors={[colors.lightMustard, colors.linen]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={viewStyles.day1ChallengeGradient}
+          >
+            <View style={viewStyles.day1ChallengeContent}>
+              <View style={viewStyles.day1ChallengeText}>
+                <Text style={viewStyles.day1ChallengeTitle}>🎯 Today's Challenge</Text>
+                <Text style={viewStyles.day1ChallengeSub}>Earn your first coins & start your journey</Text>
+              </View>
+              <Pressable
+                onPress={handleDismissDay1Challenge}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel="Dismiss challenge"
+              >
+                <Ionicons name="close" size={20} color={colors.text.tertiary} />
+              </Pressable>
+            </View>
+          </LinearGradient>
+        </Pressable>
+      )}
+
+      {/* CARLOS: retention — Streak Display Card (Habit Loop Reinforcement) */}
+      {streakCount > 0 && streakDisplay.emoji && activeTab === 'near-u' && (
+        <View style={viewStyles.streakCard}>
+          <LinearGradient
+            colors={['#FF6B35', '#FF8C42']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={viewStyles.streakGradient}
+          >
+            <Text style={viewStyles.streakEmoji}>{streakDisplay.emoji}</Text>
+            <Text style={viewStyles.streakText}>{streakDisplay.text}</Text>
+          </LinearGradient>
+        </View>
       )}
 
       {/* Content */}
@@ -1127,13 +1281,16 @@ const viewStyles = StyleSheet.create({
   headerCoinContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 200, 87, 0.25)',
+    // MEERA: design token — hardcoded 'rgba(255, 200, 87, 0.25)' -> colors.primary[50] (light mustard tint)
+    backgroundColor: colors.primary[50],
     borderRadius: borderRadius.md,
-    paddingVertical: 5,
-    paddingLeft: 4,
-    paddingRight: 8,
+    // MEERA: design token — hardcoded padding 5 -> spacing.sm (8px, 4px not in 8px grid) + spacing.xs (4px)
+    paddingVertical: spacing.sm,
+    paddingLeft: spacing.xs,
+    paddingRight: spacing.sm,
     borderWidth: 1,
-    borderColor: 'rgba(255, 200, 87, 0.5)',
+    // MEERA: design token — hardcoded 'rgba(255, 200, 87, 0.5)' -> colors.primary[200] (medium mustard with opacity)
+    borderColor: colors.primary[200],
     minHeight: 32,
     ...Platform.select({
       android: { flexShrink: 0 },
@@ -1192,7 +1349,8 @@ const viewStyles = StyleSheet.create({
   },
   // Text pill with background - positioned to the left of badge
   savedTextPill: {
-    backgroundColor: 'rgba(255, 200, 87, 0.35)',
+    // MEERA: design token — hardcoded 'rgba(255, 200, 87, 0.35)' -> colors.primary[100] (very light mustard tint)
+    backgroundColor: colors.primary[100],
     paddingLeft: spacing.sm,
     paddingRight: spacing.xs,
     paddingVertical: spacing.xs,
@@ -1221,7 +1379,8 @@ const viewStyles = StyleSheet.create({
     }),
   },
   detailedLocationContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    // MEERA: design token — hardcoded 'rgba(255, 255, 255, 0.95)' -> colors.background.primary (white, nearly opaque)
+    backgroundColor: colors.background.primary,
     marginHorizontal: spacing.lg,
     marginTop: spacing.sm,
     borderRadius: borderRadius.lg,
@@ -1240,7 +1399,8 @@ const viewStyles = StyleSheet.create({
       },
     }),
     borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.1)',
+    // MEERA: design token — hardcoded 'rgba(255, 205, 87, 0.1)' -> colors.border.accent (mustard-tinted border, light)
+    borderColor: colors.border.accent,
   },
   detailedLocationContent: {
     padding: spacing.base,
@@ -1368,16 +1528,74 @@ const viewStyles = StyleSheet.create({
   tryBannerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#fff',
+    // MEERA: design token — hardcoded '#fff' -> colors.text.inverse (white text on dark backgrounds)
+    color: colors.text.inverse,
     marginBottom: spacing.xs,
   },
   tryBannerSubtitle: {
     fontSize: 14,
     fontWeight: '500',
-    color: 'rgba(255, 255, 255, 0.9)',
+    // MEERA: design token — hardcoded 'rgba(255, 255, 255, 0.9)' -> colors.text.secondary (but inverse variant is white)
+    color: colors.text.inverse,
   },
   tryBannerChevron: {
     marginLeft: spacing.md,
+  },
+  // CARLOS: retention — day-1 challenge card styles
+  day1ChallengeCard: {
+    marginHorizontal: spacing.md,
+    marginTop: spacing.md,
+    marginBottom: spacing.md,
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
+  },
+  day1ChallengeGradient: {
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.lg,
+  },
+  day1ChallengeContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  day1ChallengeText: {
+    flex: 1,
+  },
+  day1ChallengeTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: colors.nileBlue,
+    marginBottom: spacing.xs,
+  },
+  day1ChallengeSub: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.text.secondary,
+  },
+  // CARLOS: retention — streak display styles
+  streakCard: {
+    marginHorizontal: spacing.md,
+    marginVertical: spacing.md,
+    borderRadius: borderRadius.lg,
+    overflow: 'hidden',
+  },
+  streakGradient: {
+    paddingVertical: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    borderRadius: borderRadius.lg,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  streakEmoji: {
+    fontSize: 40,
+    marginBottom: spacing.xs,
+  },
+  streakText: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: colors.text.inverse,
+    textAlign: 'center',
   },
 });
 

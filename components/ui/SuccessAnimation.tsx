@@ -17,14 +17,22 @@
  * />
  */
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import {
-  Animated,
   View,
   StyleSheet,
   Text,
   Platform,
 } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withTiming,
+  Easing,
+  runOnJS,
+  interpolate,
+} from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 
@@ -49,72 +57,69 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
   coinReward,
   onDone,
 }) => {
-  const scale = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(0)).current;
-  const coinBounce = useRef(new Animated.Value(0)).current;
+  const scale = useSharedValue(0);
+  const opacity = useSharedValue(0);
+  const coinBounce = useSharedValue(0);
   const { colors } = useTheme();
 
   useEffect(() => {
     if (!visible) {
       // Reset animations when hiding
-      scale.setValue(0);
-      opacity.setValue(0);
-      coinBounce.setValue(0);
+      scale.value = 0;
+      opacity.value = 0;
+      coinBounce.value = 0;
       return;
     }
 
-    // Sequence: scale in checkmark, wait, bounce coin, wait, fade out
-    Animated.sequence([
-      // 1. Spring in the checkmark circle
-      Animated.parallel([
-        Animated.spring(scale, {
-          toValue: 1,
-          damping: 10,
-          stiffness: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]),
+    // LUCA: Checkmark springs in with satisfying overshoot (damping: 8, stiffness: 100)
+    scale.value = withSpring(1, { damping: 8, stiffness: 100, overshootClamping: false });
+    opacity.value = withTiming(1, { duration: 200, easing: Easing.inOut(Easing.ease) });
 
-      // 2. Hold for a bit
-      Animated.delay(coinReward ? 200 : 600),
+    // After spring settles (delay 400ms), bounce the coin reward if present
+    const coinTimer = setTimeout(() => {
+      if (coinReward) {
+        // LUCA: Coin bounces up with spring (damping: 8, stiffness: 150) then settles
+        coinBounce.value = withSpring(-30, { damping: 8, stiffness: 150, overshootClamping: false });
+      }
 
-      // 3. If there's a coin reward, bounce it
-      ...(coinReward
-        ? [
-            Animated.spring(coinBounce, {
-              toValue: -30,
-              damping: 8,
-              stiffness: 150,
-              useNativeDriver: true,
-            }),
-          ]
-        : []),
+      // Hold for viewing time (800ms), then fade out
+      const fadeTimer = setTimeout(() => {
+        opacity.value = withTiming(0, { duration: 300, easing: Easing.inOut(Easing.ease) });
 
-      // 4. Hold to see the coin
-      Animated.delay(800),
+        // Call onDone after fade completes
+        const doneTimer = setTimeout(() => {
+          runOnJS(onDone)?.();
+        }, 300);
 
-      // 5. Fade out
-      Animated.timing(opacity, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }),
-    ]).start(() => {
-      // Call onDone callback after animation completes
-      onDone?.();
-    });
+        return () => clearTimeout(doneTimer);
+      }, 800);
+
+      return () => clearTimeout(fadeTimer);
+    }, coinReward ? 400 : 600);
+
+    return () => clearTimeout(coinTimer);
   }, [visible, coinReward, scale, opacity, coinBounce, onDone]);
 
   if (!visible) return null;
 
+  // LUCA: Overlay fade animation
+  const overlayStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  // LUCA: Checkmark scale animation with overshoot celebration
+  const checkmarkStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  // LUCA: Coin badge bounce upward with natural spring
+  const coinBadgeStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: coinBounce.value }],
+  }));
+
   return (
     <Animated.View
-      style={[styles.overlay, { opacity }]}
+      style={[styles.overlay, overlayStyle]}
       accessible={true}
       accessibilityRole="alert"
       accessibilityLiveRegion="polite"
@@ -125,8 +130,8 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
         <Animated.View
           style={[
             styles.circle,
+            checkmarkStyle,
             {
-              transform: [{ scale }],
               backgroundColor: colors.success || '#10b981',
             },
           ]}
@@ -157,8 +162,8 @@ export const SuccessAnimation: React.FC<SuccessAnimationProps> = ({
           <Animated.View
             style={[
               styles.coinBadge,
+              coinBadgeStyle,
               {
-                transform: [{ translateY: coinBounce }],
                 borderColor: colors.warning || '#ffcd57',
               },
             ]}

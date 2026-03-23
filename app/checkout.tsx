@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, memo } from 'react';
 import {
   View,
   ScrollView,
@@ -47,24 +47,67 @@ const DELIVERY_SLOTS = [
   { label: 'Night (6-9)', value: 'night' },
 ];
 
-function DeliverySlotPicker({ selectedSlot, onSelectSlot }: { selectedSlot?: string; onSelectSlot: (s: string) => void }) {
+// ROHAN: Extract style object literals to memoized objects and wrap inline handlers with useCallback to prevent unnecessary re-renders
+const DeliverySlotPickerImpl = memo(({ selectedSlot, onSelectSlot }: { selectedSlot?: string; onSelectSlot: (s: string) => void }) => {
+  const slotButtonStyle = useCallback((isSelected: boolean) => ({
+    paddingHorizontal: isSmallDevice ? 10 : Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: 20,
+    backgroundColor: isSelected ? colors.primary[500] : colors.background.secondary,
+    borderWidth: 1,
+    borderColor: isSelected ? colors.primary[500] : colors.border.light,
+  }), []);
+
+  const slotTextStyle = useCallback((isSelected: boolean) => ({
+    fontSize: isSmallDevice ? 11 : 12,
+    fontWeight: '600' as const,
+    color: isSelected ? '#fff' : colors.text.secondary,
+  }), []);
+
+  const containerStyle = useMemo(() => ({
+    backgroundColor: colors.background.primary,
+    borderRadius: 14,
+    padding: Spacing.sm,
+    marginBottom: Spacing.md,
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
+  }), []);
+
+  const rowStyle = useMemo(() => ({
+    flexDirection: 'row' as const,
+    flexWrap: 'wrap' as const,
+    gap: isSmallDevice ? 6 : Spacing.xs,
+  }), []);
+
+  const handleSlotPress = useCallback((value: string) => {
+    onSelectSlot(value);
+  }, [onSelectSlot]);
+
+  // ROHAN: Render slot button with pre-bound callback to avoid closure per map iteration
+  const renderSlotButton = useCallback((slot: typeof DELIVERY_SLOTS[0]) => (
+    <Pressable
+      key={slot.value}
+      onPress={() => handleSlotPress(slot.value)}
+      style={slotButtonStyle(selectedSlot === slot.value)}
+    >
+      <Text style={slotTextStyle(selectedSlot === slot.value)}>{slot.label}</Text>
+    </Pressable>
+  ), [handleSlotPress, selectedSlot, slotButtonStyle, slotTextStyle]);
+
   return (
-    <View style={{ backgroundColor: colors.background.primary, borderRadius: 14, padding: Spacing.sm, marginBottom: Spacing.md, shadowOpacity: 0.04, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1 }}>
+    <View style={containerStyle}>
       <Text style={{ fontSize: isSmallDevice ? 13 : 14, fontWeight: '700', color: colors.text.primary, marginBottom: Spacing.sm }}>Delivery Time Slot</Text>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: isSmallDevice ? 6 : Spacing.xs }}>
-        {DELIVERY_SLOTS.map(slot => (
-          <Pressable
-            key={slot.value}
-            onPress={() => onSelectSlot(slot.value)}
-            style={{ paddingHorizontal: isSmallDevice ? 10 : Spacing.sm, paddingVertical: Spacing.xs, borderRadius: 20, backgroundColor: selectedSlot === slot.value ? colors.primary[500] : colors.background.secondary, borderWidth: 1, borderColor: selectedSlot === slot.value ? colors.primary[500] : colors.border.light }}
-          >
-            <Text style={{ fontSize: isSmallDevice ? 11 : 12, fontWeight: '600', color: selectedSlot === slot.value ? '#fff' : colors.text.secondary }}>{slot.label}</Text>
-          </Pressable>
-        ))}
+      <View style={rowStyle}>
+        {DELIVERY_SLOTS.map(renderSlotButton)}
       </View>
     </View>
   );
-}
+});
+
+DeliverySlotPickerImpl.displayName = 'DeliverySlotPicker';
+const DeliverySlotPicker = DeliverySlotPickerImpl;
 
 function CheckoutPage() {
   const router = useRouter();

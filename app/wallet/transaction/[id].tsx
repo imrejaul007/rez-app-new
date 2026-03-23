@@ -52,6 +52,30 @@ function TransactionDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const isMounted = useIsMounted();
 
+  // ETHAN: crash guard — transaction id from route params could be undefined
+  if (!id) {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" />
+        <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
+          <View style={styles.headerContent}>
+            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
+            </Pressable>
+            <ThemedText style={styles.headerTitle}>Transaction</ThemedText>
+            <View style={{ width: 40 }} />
+          </View>
+        </LinearGradient>
+        <View style={styles.emptyState}>
+          <ThemedText style={styles.errorText}>Transaction not found</ThemedText>
+          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.retryButton}>
+            <ThemedText style={styles.retryButtonText}>Go Back</ThemedText>
+          </Pressable>
+        </View>
+      </View>
+    );
+  }
+
   useEffect(() => {
     if (!id) return;
     fetchTransaction();

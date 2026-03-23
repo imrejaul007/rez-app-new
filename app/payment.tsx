@@ -13,7 +13,10 @@ import {
   Platform,
   ActivityIndicator,
   TextInput,
-  Modal} from 'react-native';
+  Modal,
+  KeyboardAvoidingView,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -732,8 +735,10 @@ function PaymentPage() {
 
   if (isLoading) {
     return (
-      <ThemedView style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+      <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
+        {/* SOFIA: SafeAreaView prevents overlap with notch and dynamic island */}
+        <ThemedView style={styles.container}>
+          <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
         <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.headerBg}>
           <View style={styles.headerContainer}>
             <Pressable style={styles.backButton} onPress={handleBackPress}>
@@ -744,13 +749,20 @@ function PaymentPage() {
           </View>
         </LinearGradient>
         <FormPageSkeleton />
-      </ThemedView>
+        </ThemedView>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+    <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
+      {/* SOFIA: KeyboardAvoidingView prevents TextInput from being hidden by keyboard overlay */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoiding}
+      >
+        <ThemedView style={styles.container}>
+          <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
       <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.headerBg}>
         <View style={styles.headerContainer}>
           <Pressable
@@ -865,13 +877,24 @@ function PaymentPage() {
               </Elements>
             )}
           </View>
-        </View>
-      </Modal>
-    </ThemedView>
+          </View>
+        </Modal>
+        </ThemedView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeContainer: {
+    // SOFIA: SafeAreaView prevents content from hiding behind notch and home indicator
+    flex: 1,
+    backgroundColor: colors.background.secondary,
+  },
+  keyboardAvoiding: {
+    // SOFIA: Prevents TextInput from being covered by soft keyboard
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary},

@@ -195,10 +195,13 @@ const MyBookingsPage = () => {
 
   const formatTime = (timeStr: string): string => {
     if (!timeStr) return '';
-    const [hours, minutes] = timeStr.split(':').map(Number);
+    // ETHAN: crash guard — split could return incomplete array; parseInt could return NaN
+    const parts = timeStr.split(':').map(x => parseInt(x, 10));
+    const hours = !isNaN(parts[0]) ? parts[0] : 0;
+    const minutes = !isNaN(parts[1]) ? parts[1] : 0;
     const ampm = hours >= 12 ? 'PM' : 'AM';
     const displayHour = hours % 12 || 12;
-    return `${displayHour}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    return `${displayHour}:${String(minutes).padStart(2, '0')} ${ampm}`;
   };
 
   const formatDate = (dateStr: string): string => {

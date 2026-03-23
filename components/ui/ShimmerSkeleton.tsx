@@ -60,10 +60,11 @@ export const ShimmerSkeleton: React.FC<ShimmerSkeletonProps> = ({
   useEffect(() => {
     if (!animated) return;
 
-    // Continuous shimmer animation
+    // LUCA: Continuous shimmer animation loop with proper sequence
     shimmerAnim.value = withRepeat(
       withTiming(1, { duration: Timing.skeleton }),
-      -1
+      -1,
+      true // reverse = true for smooth back-and-forth
     );
 
     return () => {

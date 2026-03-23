@@ -340,6 +340,11 @@ function CartPage() {
     } catch (error) {
       platformAlertSimple('Error', 'Unable to move item to cart. Please try again.');
     }
+  }, [cartActions, isMounted]);
+
+  // ROHAN: Move onOfferApplied callback outside of JSX to prevent re-rendering CardOffersSection on every parent render
+  const handleCardOfferApplied = useCallback((offer: any) => {
+    cartActions.setCardOffer(offer);
   }, [cartActions]);
 
   const handleExpireItem = (itemId: string) => {
@@ -574,7 +579,8 @@ function CartPage() {
           <FlashList
             data={currentItems}
             renderItem={renderCartItem}
-            keyExtractor={(item, index) => `${item.id}-${index}`}
+            keyExtractor={(item) => `${item.id}`}
+            // ROHAN: Removed index from keyExtractor — indexes change on reorder/delete, breaking React key stability and list reconciliation
             contentContainerStyle={useMemo(() => [
               {
                 paddingHorizontal: isSmallDevice ? 12 : 16,
@@ -591,10 +597,7 @@ function CartPage() {
                 <CardOffersSection
                   storeId={(productItems[0] as any)?.store?.id || (productItems[0] as any)?.storeId}
                   orderValue={overallTotal}
-                  onOfferApplied={(offer) => {
-                    // Apply card offer via cart context - will be passed to checkout
-                    cartActions.setCardOffer(offer);
-                  }}
+                  onOfferApplied={handleCardOfferApplied}
                 />
               ) : null
             }

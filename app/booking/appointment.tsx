@@ -73,6 +73,20 @@ function AppointmentBookingPage() {
   const isMounted = useIsMounted();
   const { storeId } = useLocalSearchParams<{ storeId: string }>();
   const router = useRouter();
+
+  // ETHAN: crash guard — storeId from route params could be undefined
+  if (!storeId) {
+    return (
+      <ThemedView style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <ThemedText style={styles.errorText}>Store not found</ThemedText>
+        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backToStoreButton}>
+          <ThemedText style={styles.backToStoreText}>Go Back</ThemedText>
+        </Pressable>
+      </ThemedView>
+    );
+  }
+
   const backgroundColor = useThemeColor({}, 'background');
 
   // Screen fade-in animation
@@ -125,9 +139,17 @@ function AppointmentBookingPage() {
   // Check patch test status for color/tint services
   useEffect(() => {
     if (selectedService && (selectedService.name?.toLowerCase().includes('colour') || selectedService.name?.toLowerCase().includes('color') || selectedService.name?.toLowerCase().includes('tint'))) {
+      // ETHAN: crash guard — API call without error handling could crash; added try/catch
       apiClient.get('/consumer/patch-tests/check?category=hair_colour')
-        .then(res => setPatchTestStatus(res.data.data))
-        .catch(() => {});
+        .then(res => {
+          if (res?.success && res?.data) {
+            setPatchTestStatus(res.data?.data ?? null);
+          }
+        })
+        .catch((err) => {
+          console.warn('[Appointment] Patch test check failed:', err?.message);
+          setPatchTestStatus(null);
+        });
     } else {
       setPatchTestStatus(null);
     }
@@ -187,13 +209,16 @@ function AppointmentBookingPage() {
     // If store has working hours, use them
     if (store?.hours && store.hours.length > 0) {
       const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
-      const todayHours = store.hours.find(h => h.day.toLowerCase() === dayName.toLowerCase());
+      const todayHours = store.hours.find(h => h?.day?.toLowerCase() === dayName.toLowerCase());
 
       if (todayHours && !todayHours.closed) {
-        const openTime = todayHours.open.split(':');
-        const closeTime = todayHours.close.split(':');
-        startHour = parseInt(openTime[0]);
-        endHour = parseInt(closeTime[0]);
+        // ETHAN: crash guard — parseInt could return NaN; guard with fallback
+        const openTime = todayHours.open?.split(':') ?? ['9'];
+        const closeTime = todayHours.close?.split(':') ?? ['20'];
+        const parsedStartHour = parseInt(openTime?.[0] ?? '9', 10);
+        const parsedEndHour = parseInt(closeTime?.[0] ?? '20', 10);
+        startHour = !isNaN(parsedStartHour) ? parsedStartHour : 9;
+        endHour = !isNaN(parsedEndHour) ? parsedEndHour : 20;
       }
     }
 
@@ -284,12 +309,13 @@ function AppointmentBookingPage() {
 
       if (requiresUpfront && servicePrice > 0) {
         // Show confirmation with payment required message
+        // ETHAN: crash guard — selectedTime?.displayTime could be undefined; provide default
         const summary = `
-Service: ${selectedService?.name}
+Service: ${selectedService?.name ?? 'Unknown'}
 Date: ${formatDate(selectedDate)}
-Time: ${selectedTime?.displayTime}
+Time: ${selectedTime?.displayTime ?? 'N/A'}
 Duration: ${selectedService?.duration ? formatDuration(selectedService.duration) : 'N/A'}
-Price: ${currencySymbol}${servicePrice}
+Price: ${currencySymbol}${Math.max(0, servicePrice)}
 
 Payment Required: Full amount will be charged now.
 Free cancellation available 24 hours before appointment.
@@ -303,12 +329,13 @@ Free cancellation available 24 hours before appointment.
         );
       } else {
         // No upfront payment — show standard confirmation
+        // ETHAN: crash guard — selectedService?.price could be undefined/zero; use Math.max
         const summary = `
-Service: ${selectedService?.name}
+Service: ${selectedService?.name ?? 'Unknown'}
 Date: ${formatDate(selectedDate)}
-Time: ${selectedTime?.displayTime}
+Time: ${selectedTime?.displayTime ?? 'N/A'}
 Duration: ${selectedService?.duration ? formatDuration(selectedService.duration) : 'N/A'}
-Price: ${currencySymbol}${selectedService?.price}
+Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
         `.trim();
 
         platformAlertConfirm(
@@ -462,8 +489,9 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
         </View>
 
         <View style={styles.storeInfo}>
-          <ThemedText style={styles.storeName}>{store.name}</ThemedText>
-          {store.category && (
+          {/* ETHAN: crash guard — store.name could be undefined */}
+          <ThemedText style={styles.storeName}>{store?.name ?? 'Store'}</ThemedText>
+          {store?.category?.name && (
             <ThemedText style={styles.storeCategory}>{store.category.name}</ThemedText>
           )}
         </View>

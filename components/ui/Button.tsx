@@ -8,6 +8,7 @@ import {
 import Animated, {
   useSharedValue,
   withSpring,
+  useAnimatedStyle,
 } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
@@ -80,10 +81,12 @@ function Button({
   const textColor = variantText[variant];
 
   const handlePressIn = useCallback(() => {
+    // LUCA: Spring-based scale down (0.96) with natural bounce on press-in
     scaleAnim.value = withSpring(0.96, { damping: 14, stiffness: 180, overshootClamping: false });
   }, [scaleAnim]);
 
   const handlePressOut = useCallback(() => {
+    // LUCA: Spring-based scale back to 1.0 with satisfying overshoot and settle
     scaleAnim.value = withSpring(1, { damping: 10, stiffness: 160, overshootClamping: false });
   }, [scaleAnim]);
 
@@ -129,8 +132,13 @@ function Button({
     ...customTextStyle,
   };
 
+  // LUCA: Animated style for scale transform
+  const animatedButtonStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scaleAnim }],
+  }));
+
   return (
-    <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+    <Animated.View style={animatedButtonStyle}>
       <Pressable
         style={[containerStyle, style]}
         onPress={handlePress}

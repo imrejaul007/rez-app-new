@@ -5,6 +5,11 @@ import { colors } from '@/constants/theme';
 
 export const createStyles = (HORIZONTAL_PADDING: number, _screenData: { width: number; height: number }) =>
   StyleSheet.create({
+    safeContainer: {
+      // SOFIA: SafeAreaView ensures content avoids notch, status bar, and home indicator
+      flex: 1,
+      backgroundColor: Colors.background.secondary,
+    },
     page: {
       flex: 1,
       backgroundColor: Colors.background.secondary,

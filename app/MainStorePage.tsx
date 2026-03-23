@@ -13,6 +13,7 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   Linking} from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -194,8 +195,10 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   };
 
   return (
-    <ThemedView style={styles.page}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
+    <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
+      {/* SOFIA: SafeAreaView prevents content from hiding behind notch and dynamic island */}
+      <ThemedView style={styles.page}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       <MainStoreHeader
         storeName={d.currentStoreName || ""}
@@ -559,7 +562,8 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
         onBookTable={handleBookTable}
         onCallStore={handleCallStore}
       />
-    </ThemedView>
+      </ThemedView>
+    </SafeAreaView>
   );
 }
 

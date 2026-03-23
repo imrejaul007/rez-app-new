@@ -9,7 +9,10 @@ import {
   Pressable,
   ActivityIndicator,
   Dimensions,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { FormPageSkeleton } from '@/components/skeletons';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
@@ -22,6 +25,7 @@ import consultationApi from '@/services/consultationApi';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { responsiveFontSize } from '@/utils/responsive';
 
 const { width } = Dimensions.get('window');
 
@@ -47,6 +51,18 @@ function ConsultationBookingScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { storeId } = useLocalSearchParams<{ storeId: string }>();
+
+  // ETHAN: crash guard — storeId from route params could be undefined
+  if (!storeId) {
+    return (
+      <ThemedView style={styles.container}>
+        <ThemedText style={styles.errorText}>Clinic not found</ThemedText>
+        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
+        </Pressable>
+      </ThemedView>
+    );
+  }
 
   // Store data
   const [store, setStore] = useState<Store | null>(null);
@@ -262,70 +278,82 @@ function ConsultationBookingScreen() {
   // Loading state
   if (loading) {
     return (
-      <ThemedView style={styles.container}>
-        <LinearGradient
-          colors={[Colors.brand.purpleLight, Colors.brand.purple]}
-          style={styles.header}
-        >
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
-          </Pressable>
-          <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
-        </LinearGradient>
-        <View style={styles.loadingContainer}>
-          <FormPageSkeleton />
-        </View>
-      </ThemedView>
+      <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
+        <ThemedView style={styles.container}>
+          <LinearGradient
+            colors={[Colors.brand.purpleLight, Colors.brand.purple]}
+            style={styles.header}
+          >
+            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
+            </Pressable>
+            <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
+          </LinearGradient>
+          <View style={styles.loadingContainer}>
+            <FormPageSkeleton />
+          </View>
+        </ThemedView>
+      </SafeAreaView>
     );
   }
 
   // Error state
   if (error || !store) {
     return (
-      <ThemedView style={styles.container}>
-        <LinearGradient
-          colors={[Colors.brand.purpleLight, Colors.brand.purple]}
-          style={styles.header}
-        >
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
-          </Pressable>
-          <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
-        </LinearGradient>
-        <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle" size={64} color={Colors.error} />
-          <ThemedText style={styles.errorText}>{error || 'Clinic not found'}</ThemedText>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.errorButton}>
-            <Text style={styles.errorButtonText}>Go Back</Text>
-          </Pressable>
-        </View>
-      </ThemedView>
+      <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
+        <ThemedView style={styles.container}>
+          <LinearGradient
+            colors={[Colors.brand.purpleLight, Colors.brand.purple]}
+            style={styles.header}
+          >
+            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
+            </Pressable>
+            <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
+          </LinearGradient>
+          <View style={styles.errorContainer}>
+            <Ionicons name="alert-circle" size={64} color={Colors.error} />
+            <ThemedText style={styles.errorText}>{error || 'Clinic not found'}</ThemedText>
+            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.errorButton}>
+              <Text style={styles.errorButtonText}>Go Back</Text>
+            </Pressable>
+          </View>
+        </ThemedView>
+      </SafeAreaView>
     );
   }
 
   const selectedConsultationType = CONSULTATION_TYPES.find(c => c.id === selectedConsultation);
 
   return (
-    <ThemedView style={styles.container}>
-      {/* Header */}
-      <LinearGradient
-        colors={[Colors.brand.purpleLight, Colors.brand.purple]}
-        style={styles.header}
+    <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
+      {/* SOFIA: KeyboardAvoidingView wrapper for TextInput handling on both platforms */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardAvoiding}
       >
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
-        </Pressable>
-        <View style={styles.headerContent}>
-          <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
-          <ThemedText style={styles.headerSubtitle}>{store.name}</ThemedText>
-        </View>
-      </LinearGradient>
+        <ThemedView style={styles.container}>
+          {/* Header */}
+          <LinearGradient
+            colors={[Colors.brand.purpleLight, Colors.brand.purple]}
+            style={styles.header}
+          >
+            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
+            </Pressable>
+            <View style={styles.headerContent}>
+              <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
+              <ThemedText style={styles.headerSubtitle}>{store.name}</ThemedText>
+            </View>
+          </LinearGradient>
 
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-      >
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            showsVerticalScrollIndicator={false}
+            scrollEnabled={true}
+            keyboardShouldPersistTaps="handled"
+          >
         {/* Consultation Type Selection */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
@@ -578,36 +606,47 @@ function ConsultationBookingScreen() {
         <View style={styles.bottomSpacing} />
       </ScrollView>
 
-      {/* Fixed Bottom Button */}
-      <View style={styles.bottomButtonContainer}>
-        <Pressable
-          onPress={handleConfirmBooking}
-          disabled={isSubmitting || !selectedConsultation || !selectedDate || !selectedTime}
-        >
-          <LinearGradient
-            colors={
-              isSubmitting || !selectedConsultation || !selectedDate || !selectedTime
-                ? [colors.border.default, colors.text.tertiary]
-                : [Colors.brand.purpleLight, Colors.brand.purple]
-            }
-            style={styles.confirmButton}
-          >
-            {isSubmitting ? (
-              <ActivityIndicator color={colors.text.inverse} />
-            ) : (
-              <>
-                <Ionicons name="checkmark-circle" size={24} color={colors.text.inverse} />
-                <Text style={styles.confirmButtonText}>Confirm Consultation</Text>
-              </>
-            )}
-          </LinearGradient>
-        </Pressable>
-      </View>
-    </ThemedView>
+          {/* Fixed Bottom Button */}
+          <View style={styles.bottomButtonContainer}>
+            <Pressable
+              onPress={handleConfirmBooking}
+              disabled={isSubmitting || !selectedConsultation || !selectedDate || !selectedTime}
+            >
+              <LinearGradient
+                colors={
+                  isSubmitting || !selectedConsultation || !selectedDate || !selectedTime
+                    ? [colors.border.default, colors.text.tertiary]
+                    : [Colors.brand.purpleLight, Colors.brand.purple]
+                }
+                style={styles.confirmButton}
+              >
+                {isSubmitting ? (
+                  <ActivityIndicator color={colors.text.inverse} />
+                ) : (
+                  <>
+                    <Ionicons name="checkmark-circle" size={24} color={colors.text.inverse} />
+                    <Text style={styles.confirmButtonText}>Confirm Consultation</Text>
+                  </>
+                )}
+              </LinearGradient>
+            </Pressable>
+          </View>
+        </ThemedView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeContainer: {
+    // SOFIA: Safe area wrapper ensures content doesn't hide behind notch or home indicator
+    flex: 1,
+    backgroundColor: colors.background.secondary,
+  },
+  keyboardAvoiding: {
+    // SOFIA: Keyboard avoiding prevents TextInput from being covered by soft keyboard
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,
@@ -892,6 +931,7 @@ const styles = StyleSheet.create({
     height: Spacing.lg,
   },
   bottomButtonContainer: {
+    // SOFIA: Bottom inset padding prevents home indicator overlap on dynamic island devices
     position: 'absolute',
     bottom: 0,
     left: 0,
@@ -899,6 +939,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
+    paddingBottom: Spacing.lg + 16,
     borderTopWidth: 1,
     borderTopColor: colors.border.default,
     ...Shadows.medium,

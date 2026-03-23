@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo, useRef, useCallback } from 'react-native';
 import { View, StyleSheet, ViewStyle, Pressable } from 'react-native';
 import Animated, { useSharedValue, withSpring, useAnimatedStyle } from 'react-native-reanimated';
 import { spacing, borderRadius } from '@/constants/theme';
@@ -56,18 +56,23 @@ function Card({
     transform: [{ scale: scaleAnim.value }],
   }));
 
+  // ROHAN: Wrap inline onPressIn/onPressOut with useCallback to prevent new function references on every render — improves memoization
+  const handlePressIn = useCallback(() => {
+    scaleAnim.value = withSpring(0.98, { damping: 14, stiffness: 180 });
+  }, [scaleAnim]);
+
+  const handlePressOut = useCallback(() => {
+    scaleAnim.value = withSpring(1, { damping: 10, stiffness: 160 });
+  }, [scaleAnim]);
+
   if (onPress) {
     return (
       <Animated.View style={animatedStyle}>
         <Pressable
           style={containerStyle}
           onPress={onPress}
-          onPressIn={() => {
-            scaleAnim.value = withSpring(0.98, { damping: 14, stiffness: 180 });
-          }}
-          onPressOut={() => {
-            scaleAnim.value = withSpring(1, { damping: 10, stiffness: 160 });
-          }}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
           accessibilityRole="button"
           testID={testID}
         >

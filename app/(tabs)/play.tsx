@@ -364,8 +364,9 @@ function PlayScreen() {
               accessibilityRole="button"
               accessibilityHint="Double tap to upload the first video to this section"
             >
+              {/* MEERA: design token — hardcoded '#00A85C' (green) -> colors.success (mustard-to-navy gradient fits brand better) */}
               <LinearGradient
-                colors={[Colors.primary[500], '#00A85C', colors.nileBlue]}
+                colors={[Colors.primary[500], colors.success, colors.nileBlue]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.emptyButtonGradient}

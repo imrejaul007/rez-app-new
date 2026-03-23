@@ -158,8 +158,10 @@ class ApiClient {
     }
 
     if (!response.ok) {
+      // ETHAN: crash guard — data?.message could be non-string type; coerce safely
+      const errorMsg = typeof data?.message === 'string' ? data.message : `HTTP ${response.status}`;
       throw new ApiError({
-        message: data?.message || `HTTP ${response.status}`,
+        message: errorMsg,
         status: response.status,
         code: data?.code || 'HTTP_ERROR',
         details: data?.details,
@@ -167,10 +169,11 @@ class ApiClient {
     }
 
     // Return normalized ApiResponse format
+    // ETHAN: crash guard — data?.data could be null/undefined; null coalesce properly
     return {
       success: true,
-      data: data?.data || data,
-      message: data?.message,
+      data: data?.data ?? data ?? null,
+      message: typeof data?.message === 'string' ? data.message : undefined,
     };
   }
 
