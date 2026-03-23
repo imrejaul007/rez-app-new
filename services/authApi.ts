@@ -468,14 +468,18 @@ class AuthService {
         };
       }
 
-      logApiRequest('PUT', '/user/profile', { fields: Object.keys(data) });
+      // REGRESSION FIX (2026-03-23): Backend mounts authRoutes at /user/auth (see src/config/routes.ts
+      // line 352: app.use('/api/user/auth', authRoutes)), and the profile endpoint is declared as
+      // router.put('/profile', ...) inside authRoutes.ts. Full resolved path is therefore
+      // /api/user/auth/profile. The old path /user/profile was incorrect and returned 404 in production.
+      logApiRequest('PUT', '/user/auth/profile', { fields: Object.keys(data) });
 
       const response = await withRetry(
-        () => apiClient.put<User>('/user/profile', data),
+        () => apiClient.put<User>('/user/auth/profile', data),
         { maxRetries: 2 }
       );
 
-      logApiResponse('PUT', '/user/profile', response, Date.now() - startTime);
+      logApiResponse('PUT', '/user/auth/profile', response, Date.now() - startTime);
 
       // Validate response
       if (response.success && response.data) {

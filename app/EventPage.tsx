@@ -127,9 +127,20 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
 
   // Extract specific params to avoid infinite loop from params object reference changes
   // Support both 'eventId' and 'id' parameters (navigation uses 'id')
-  const eventIdParam = (params.eventId || params.id) as string | undefined;
-  const eventDataParam = params.eventData as string | undefined;
-  const eventTypeParam = params.eventType as string | undefined;
+  // Normalise: useLocalSearchParams can return string | string[] — always take the first element
+  // to guard against duplicate query params (e.g. ?id=a&id=b → ['a','b']).
+  const _rawEventId = params.eventId || params.id;
+  const eventIdParam: string | undefined = Array.isArray(_rawEventId)
+    ? _rawEventId[0]
+    : (_rawEventId as string | undefined);
+  const _rawEventData = params.eventData;
+  const eventDataParam: string | undefined = Array.isArray(_rawEventData)
+    ? _rawEventData[0]
+    : (_rawEventData as string | undefined);
+  const _rawEventType = params.eventType;
+  const eventTypeParam: string | undefined = Array.isArray(_rawEventType)
+    ? _rawEventType[0]
+    : (_rawEventType as string | undefined);
 
   // Parse dynamic event data from navigation params and fetch real data
   useEffect(() => {

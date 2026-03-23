@@ -606,7 +606,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
 
           {/* Section: Your Savings Breakdown */}
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: Spacing.md, marginTop: Spacing.md, marginBottom: Spacing.xs }}>
-            <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text.primary }}>Your Savings Breakdown</Text>
+            <Text style={{ fontSize: 16, fontWeight: '700', color: colors.text.primary }}>Your Savings Breakdown</Text>
             <Pressable onPress={() => setCoinEducationVisible(true)} hitSlop={8}>
               <Ionicons name="help-circle-outline" size={20} color={colors.neutral[400]} />
             </Pressable>
@@ -668,27 +668,27 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
                 marginHorizontal: Spacing.md,
                 marginVertical: Spacing.md,
                 padding: Spacing.md,
-                backgroundColor: '#FFF7ED',
+                backgroundColor: colors.tint.orange,
                 borderRadius: 14,
                 borderLeftWidth: 3,
-                borderLeftColor: '#F97316',
+                borderLeftColor: colors.brand.orange,
                 flexDirection: 'row',
                 alignItems: 'center',
                 gap: Spacing.md,
               }}
             >
-              <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: '#FFEDD5', justifyContent: 'center', alignItems: 'center' }}>
-                <Ionicons name="lock-open-outline" size={20} color="#F97316" />
+              <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: colors.background.accent, justifyContent: 'center', alignItems: 'center' }}>
+                <Ionicons name="lock-open-outline" size={20} color={colors.brand.orange} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ fontSize: 14, fontWeight: '700', color: '#111827', marginBottom: 2 }}>
+                <Text style={{ fontSize: 14, fontWeight: '700', color: colors.text.primary, marginBottom: 2 }}>
                   Unlock exclusive deals
                 </Text>
-                <Text style={{ fontSize: 12, color: '#6B7280' }}>
+                <Text style={{ fontSize: 12, color: colors.text.tertiary }}>
                   Verify your identity to access student, corporate & healthcare offers
                 </Text>
               </View>
-              <Ionicons name="chevron-forward" size={16} color="#F97316" />
+              <Ionicons name="chevron-forward" size={16} color={colors.brand.orange} />
             </Pressable>
           )}
 
@@ -809,7 +809,7 @@ const createStyles = (
     },
     frozenReason: {
       fontSize: Typography.caption.fontSize,
-      color: '#991B1B',
+      color: colors.errorScale[700],
       marginTop: 1,
     },
     expiryBanner: {

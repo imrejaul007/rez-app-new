@@ -1018,7 +1018,7 @@ function StorePage() {
           onClose={handleCloseAddedToCart}
           onViewCart={handleViewCart}
           product={addedToCartProduct}
-          cartItemCount={cartState.items.length}
+          cartItemCount={(cartState?.items ?? []).length}
           cartTotal={(cartState as any).total || 0}
         />
       )}

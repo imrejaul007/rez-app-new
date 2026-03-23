@@ -219,7 +219,7 @@ interface BadgeAvatarProps {
 
 const BadgeAvatar: React.FC<BadgeAvatarProps> = React.memo(({ size = 24, color }) => {
   const shieldColor = color || colors.lightMustard;
-  const iconColor = color === colors.brand.sky ? '#0EA5E9' : color === colors.brand.goldAccent ? '#D4AF37' : colors.nileBlue;
+  const iconColor = color === colors.brand.sky ? colors.brand.sky : color === colors.brand.goldAccent ? colors.brand.goldAccent : colors.nileBlue;
 
   // Memoize the style object so a new object isn't allocated on every render
   const shieldStyle = useMemo(() => ({
@@ -739,9 +739,9 @@ function HomeScreen() {
   const gradientColors = useMemo((): string[] => {
     switch (activeTab) {
       case 'prive': return [colors.neutral[800], colors.neutral[800], colors.neutral[900], colors.neutral[900]];
-      case 'mall': return ['#BAE6FD', '#E0F2FE', '#F0F9FF', colors.background.primary];
-      case 'cash': return [colors.lightPeach, '#FFE5D0', '#FFF0E6', colors.background.primary];
-      default: return ['#ffe8a8', '#fff0c4', colors.linen, colors.background.primary];
+      case 'mall': return [colors.infoScale[200], colors.tint.blueLight, colors.tint.blue, colors.background.primary];
+      case 'cash': return [colors.lightPeach, colors.background.peach, colors.background.accent, colors.background.primary];
+      default: return [colors.primary[300], colors.primary[200], colors.linen, colors.background.primary];
     }
   }, [activeTab]);
 
@@ -872,7 +872,7 @@ function HomeScreen() {
               <Ionicons name="cart-outline" size={24} color={tabStyles.iconColor} />
               {cartItemCount > 0 && (
                 <LinearGradient
-                  colors={[colors.error, '#FF5252']}
+                  colors={[colors.error, colors.errorScale[400]]}
                   style={viewStyles.cartBadgeModern}
                 >
                   <Text style={viewStyles.cartBadgeTextModern}>
@@ -1108,7 +1108,7 @@ function HomeScreen() {
       {streakCount > 0 && streakDisplay.emoji && activeTab === 'near-u' && (
         <View style={viewStyles.streakCard}>
           <LinearGradient
-            colors={['#FF6B35', '#FF8C42']}
+            colors={[colors.brand.orange, colors.brand.orange]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={viewStyles.streakGradient}
@@ -1332,7 +1332,7 @@ const viewStyles = StyleSheet.create({
   headerStreakText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#FF6B35',
+    color: colors.brand.orange,
   },
   // What's New Badge
   // Header Coin - Horizontal Pill Style

@@ -203,7 +203,11 @@ export function useDeepLinkHandler() {
 
       case 'store':
         await handler.trackAttribution('store', linkData.data);
-        router.push(`/Store?id=${linkData.data.storeId}`);
+        // REGRESSION FIX (2026-03-23): '/Store' does not exist as an Expo Router file-based route.
+        // The actual file is app/MainStorePage.tsx which resolves to route '/MainStorePage'.
+        // Using '/Store' caused a silent navigation failure — users tapping store deep links
+        // were dropped to the not-found screen instead of the store page.
+        router.push(`/MainStorePage?id=${linkData.data.storeId}`);
         break;
 
       case 'offer':

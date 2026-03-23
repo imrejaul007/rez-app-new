@@ -88,9 +88,21 @@ export function useMainStorePageData({ productId, initialProduct }: MainStorePag
   const initializedRef = useRef(false);
   const fullStoreDataRef = useRef<any>(null);
 
-  const storeDataParam = params.storeData as string | undefined;
-  const storeIdParam = params.storeId as string | undefined;
-  const storeTypeParam = params.storeType as string | undefined;
+  // Normalise params: useLocalSearchParams can return string | string[] — always take the
+  // first element so duplicate query params (e.g. ?storeId=a&storeId=b) don't produce
+  // a malformed API URL or silent type mismatch that crashes downstream code.
+  const _rawStoreData = params.storeData;
+  const storeDataParam: string | undefined = Array.isArray(_rawStoreData)
+    ? _rawStoreData[0]
+    : (_rawStoreData as string | undefined);
+  const _rawStoreId = params.storeId;
+  const storeIdParam: string | undefined = Array.isArray(_rawStoreId)
+    ? _rawStoreId[0]
+    : (_rawStoreId as string | undefined);
+  const _rawStoreType = params.storeType;
+  const storeTypeParam: string | undefined = Array.isArray(_rawStoreType)
+    ? _rawStoreType[0]
+    : (_rawStoreType as string | undefined);
 
   const shouldFetchStore = !!storeIdParam;
   const {

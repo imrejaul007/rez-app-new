@@ -754,7 +754,7 @@ const styles = StyleSheet.create({
 
   // Primary Button
   primaryButtonWrapper: {
-    borderRadius: BorderRadius.lg,
+    borderRadius: 26,
     overflow: 'hidden',
     shadowColor: colors.brand.purple,
     shadowOffset: { width: 0, height: 8 },
@@ -774,7 +774,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '700',
     letterSpacing: 0.3,
   },

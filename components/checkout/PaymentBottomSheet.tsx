@@ -45,12 +45,7 @@ function PaymentBottomSheet({
           <ThemedText style={styles.payNowLabel}>Total Amount</ThemedText>
         </View>
         <View style={styles.payNowRight}>
-          <LinearGradient
-            colors={[colors.lightMustard, colors.brand.goldRich]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.payNowButton}
-          >
+          <View style={styles.payNowButton}>
             <ThemedText style={styles.payNowButtonText}>
               {paymentExpanded ? 'Close' : 'Place Order'}
             </ThemedText>
@@ -59,7 +54,7 @@ function PaymentBottomSheet({
               size={18}
               color="white"
             />
-          </LinearGradient>
+          </View>
         </View>
       </Pressable>
 
@@ -177,10 +172,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
     paddingVertical: 16,
-    borderRadius: BorderRadius.md,
+    borderRadius: 26,
     gap: 6,
     minHeight: 52,
-    shadowColor: colors.lightMustard,
+    backgroundColor: colors.nileBlue,
+    shadowColor: colors.nileBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.4,
     shadowRadius: 8,
