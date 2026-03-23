@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   },
   tierName: {
     ...Typography.h2,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: Colors.text.inverse,
     marginTop: Spacing.sm
   },
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   },
   statValue: {
     ...Typography.h2,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: Colors.text.inverse
   },
   statLabel: {
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
   },
   progressTitle: {
     ...Typography.h4,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: '#1e293b'
   },
   progressSubtitle: {
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: '#1e293b',
     marginBottom: Spacing.base
   },
@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
   },
   shareButtonTitle: {
     ...Typography.bodyLarge,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: Colors.text.inverse
   },
   shareButtonSubtitle: {
@@ -602,7 +602,7 @@ const styles = StyleSheet.create({
   },
   referralCode: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: Colors.brand.purple,
     letterSpacing: 4,
     marginBottom: Spacing.md
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
   },
   rewardCardAmount: {
     ...Typography.bodyLarge,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: Colors.brand.purple
   },
   claimButton: {
@@ -668,7 +668,7 @@ const styles = StyleSheet.create({
   },
   totalClaimableText: {
     ...Typography.bodyLarge,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: '#1e293b',
     textAlign: 'center'
   },
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
   },
   userRankNumber: {
     ...Typography.h2,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: '#92400e'
   },
   userRankReferrals: {
@@ -718,7 +718,7 @@ const styles = StyleSheet.create({
   },
   leaderboardRankText: {
     ...Typography.body,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: Colors.text.inverse
   },
   leaderboardInfo: {

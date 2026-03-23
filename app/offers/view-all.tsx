@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   },
   megaOffersText: {
     fontSize: 32,
-    fontWeight: '900',
+    fontWeight: '800',
     color: Colors.text.inverse,
     backgroundColor: colors.brand.indigo,
     paddingHorizontal: Spacing.lg,
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
   },
   offersText: {
     fontSize: 32,
-    fontWeight: '900',
+    fontWeight: '800',
     color: Colors.text.primary,
   },
   scalloped: {

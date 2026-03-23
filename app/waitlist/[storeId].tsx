@@ -39,7 +39,7 @@ export default function WaitlistScreen() {
   const styles = StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background.primary },
     header: { flexDirection: 'row', alignItems: 'center', padding: 16, paddingTop: 48 },
-    title: { fontSize: 20, fontWeight: '700', color: colors.text.primary, marginLeft: 12 },
+    title: { fontSize: 22, fontWeight: '700', color: colors.text.primary, marginLeft: 12 },
     section: { padding: 16 },
     label: { fontSize: 14, fontWeight: '600', color: colors.text.secondary, marginBottom: 8 },
     input: { borderWidth: 1, borderColor: colors.border.default, borderRadius: 12, padding: 14, fontSize: 16, color: colors.text.primary, backgroundColor: colors.background.secondary, marginBottom: 16 },

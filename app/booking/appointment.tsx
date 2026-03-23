@@ -16,6 +16,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from 'react-native-reanimated';
 import { FormPageSkeleton } from '@/components/skeletons';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
@@ -72,6 +73,12 @@ function AppointmentBookingPage() {
   const { storeId } = useLocalSearchParams<{ storeId: string }>();
   const router = useRouter();
   const backgroundColor = useThemeColor({}, 'background');
+
+  // Screen fade-in animation
+  const fadeAnim = useSharedValue(0);
+  useEffect(() => {
+    fadeAnim.value = withTiming(1, { duration: 250, easing: Easing.ease });
+  }, [fadeAnim]);
   const textColor = useThemeColor({}, 'text');
   const borderColor = useThemeColor({}, 'border');
   const getCurrencySymbol = useGetCurrencySymbol();
@@ -395,11 +402,16 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
     );
   }
 
-  return (
-    <ThemedView style={styles.container}>
-      <Stack.Screen options={{ headerShown: false }} />
+  const fadeAnimStyle = useAnimatedStyle(() => ({
+    opacity: fadeAnim.value,
+  }));
 
-      {/* Header with Purple Gradient */}
+  return (
+    <Animated.View style={[styles.container, fadeAnimStyle]}>
+      <ThemedView style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+
+        {/* Header with Purple Gradient */}
       <LinearGradient
         colors={[colors.brand.purpleLight, colors.brand.purple]}
         style={styles.header}
@@ -430,7 +442,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
           <ThemedText style={styles.sectionTitle}>Select Service</ThemedText>
 
           {servicesLoading ? (
-            <ActivityIndicator color={colors.brand.purpleLight} style={{ marginVertical: 20 }} />
+            <ActivityIndicator color={colors.brand.purpleLight} style={{ marginVertical: Spacing.xl }} />
           ) : services.length > 0 ? (
             <View style={styles.servicesGrid}>
               {services.map((service) => {
@@ -657,11 +669,11 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
               {selectedService.requiresPaymentUpfront && selectedService.price > 0 && (
                 <View style={[styles.depositBanner, { backgroundColor: colors.tint.pink, borderColor: colors.brand.purpleLight }]}>
                   <Ionicons name="card-outline" size={16} color={colors.brand.purpleLight} />
-                  <View style={{ flex: 1, marginLeft: 8 }}>
+                  <View style={{ flex: 1, marginLeft: Spacing.xs }}>
                     <ThemedText style={[styles.depositText, { fontWeight: '600', color: colors.brand.purple }]}>
                       Payment required at booking · {currencySymbol}{selectedService.price}
                     </ThemedText>
-                    <ThemedText style={[styles.depositSub, { color: Colors.text.tertiary, marginTop: 2, fontSize: 12 }]}>
+                    <ThemedText style={[styles.depositSub, { color: Colors.text.tertiary, marginTop: Spacing.xs, fontSize: 12 }]}>
                       Full amount charged now · Free cancellation 24h before
                     </ThemedText>
                   </View>
@@ -715,7 +727,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
         {/* Patch Test Status for Color Services */}
         {patchTestStatus !== null && (
           <View style={{
-            padding: 14,
+            padding: Spacing.sm,
             backgroundColor: patchTestStatus.hasValidTest ? '#f0fdf4' : '#fff7ed',
             borderRadius: 12,
             borderWidth: 1,
@@ -725,7 +737,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
             <Text style={{ fontWeight: '700', fontSize: 14, color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }}>
               {patchTestStatus.hasValidTest ? '✓ Patch test on record' : '⚠️ Patch test required'}
             </Text>
-            <Text style={{ fontSize: 13, marginTop: 4, color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }}>
+            <Text style={{ fontSize: 13, marginTop: Spacing.xs, color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }}>
               {patchTestStatus.hasValidTest
                 ? `Last test: ${new Date(patchTestStatus.lastTest.testedAt).toLocaleDateString('en-IN')} — valid until ${new Date(patchTestStatus.lastTest.expiresAt).toLocaleDateString('en-IN')}`
                 : 'This service requires a patch test 48h before your appointment. The salon will contact you to arrange one.'}
@@ -760,7 +772,8 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
           </Pressable>
         </View>
       )}
-    </ThemedView>
+      </ThemedView>
+    </Animated.View>
   );
 }
 
@@ -907,7 +920,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.lg,
   },
   dateScroll: {
-    marginHorizontal: -20,
+    marginHorizontal: -Spacing.xl,
     paddingHorizontal: Spacing.lg,
   },
   dateScrollContent: {
@@ -934,8 +947,8 @@ const styles = StyleSheet.create({
     top: Spacing.xs,
     right: Spacing.xs,
     backgroundColor: colors.successScale[400],
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: Spacing.xs,
+    paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
   },
   todayBadgeText: {
@@ -956,7 +969,7 @@ const styles = StyleSheet.create({
   dateMonth: {
     ...Typography.bodySmall,
     color: Colors.text.tertiary,
-    marginTop: 2,
+    marginTop: Spacing.xs,
   },
   dateTextSelected: {
     color: colors.brand.purpleLight,
@@ -964,11 +977,11 @@ const styles = StyleSheet.create({
   timeGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
+    gap: Spacing.sm,
   },
   timeSlot: {
     width: '31%',
-    paddingVertical: 14,
+    paddingVertical: Spacing.sm,
     borderRadius: 10,
     borderWidth: 2,
     borderColor: Colors.border.default,
@@ -1015,7 +1028,7 @@ const styles = StyleSheet.create({
   },
   inputIconTop: {
     marginRight: Spacing.md,
-    marginTop: 2,
+    marginTop: Spacing.xs,
   },
   input: {
     flex: 1,
@@ -1107,16 +1120,20 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
   },
+  confirmButtonSmall: {
+    paddingHorizontal: isSmallDevice ? Spacing.sm : 0,
+  },
   confirmButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: Spacing.base,
-    gap: Spacing.sm,
+    paddingVertical: isSmallDevice ? Spacing.sm : Spacing.base,
+    gap: isSmallDevice ? Spacing.xs : Spacing.sm,
   },
   confirmButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
+    fontSize: isSmallDevice ? 14 : 16,
     color: Colors.background.primary,
   },
 });

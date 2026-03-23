@@ -156,7 +156,7 @@ const markdownStyles = StyleSheet.create({
     lineHeight: 28,
   },
   h3: {
-    fontSize: 17,
+    fontSize: 18,
     fontWeight: '600',
     color: Colors.text.primary,
     marginTop: Spacing.base,
@@ -682,10 +682,10 @@ const styles = StyleSheet.create({
     color: Colors.text.tertiary,
   },
   title: {
-    fontSize: 26,
+    fontSize: 28,
     fontWeight: '700',
     color: Colors.nileBlue,
-    lineHeight: 34,
+    lineHeight: 36,
     marginBottom: Spacing.base,
     letterSpacing: -0.3,
   },

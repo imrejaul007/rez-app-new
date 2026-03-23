@@ -916,13 +916,13 @@ const styles = StyleSheet.create({
   backBtn: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 20, // Pill-shaped button for 40x40
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'rgba(255,255,255,0.18)',
   },
   headerTitle: {
-    fontSize: 19,
+    fontSize: 18,
     fontWeight: '700',
     color: Colors.text.inverse,
     letterSpacing: 0.3,
@@ -970,7 +970,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 8,
     backgroundColor: C.white,
     borderWidth: 1,
     borderColor: C.border,
@@ -1000,7 +1000,7 @@ const styles = StyleSheet.create({
   statusPill: {
     paddingHorizontal: 14,
     paddingVertical: 6,
-    borderRadius: 16,
+    borderRadius: 12,
     backgroundColor: C.white,
     borderWidth: 1,
     borderColor: C.border,
@@ -1030,7 +1030,7 @@ const styles = StyleSheet.create({
   // ── Card ──
   card: {
     backgroundColor: C.white,
-    borderRadius: 16,
+    borderRadius: 12,
     padding: 14,
     gap: 12,
     borderWidth: 1,
@@ -1052,7 +1052,7 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 6,
+    borderRadius: 4,
   },
   typeBadgeText: {
     fontSize: 11,
@@ -1080,7 +1080,7 @@ const styles = StyleSheet.create({
     gap: 4,
     paddingHorizontal: 8,
     paddingVertical: 3,
-    borderRadius: 6,
+    borderRadius: 4,
   },
   statusBadgeText: {
     fontSize: 11,
@@ -1096,7 +1096,7 @@ const styles = StyleSheet.create({
   cardIcon: {
     width: 52,
     height: 52,
-    borderRadius: 14,
+    borderRadius: 12,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
@@ -1104,7 +1104,7 @@ const styles = StyleSheet.create({
   cardImage: {
     width: 52,
     height: 52,
-    borderRadius: 14,
+    borderRadius: 12,
   },
   cardInfo: {
     flex: 1,
@@ -1166,7 +1166,7 @@ const styles = StyleSheet.create({
   // Expanded details
   expandedSection: {
     backgroundColor: Colors.background.secondary,
-    borderRadius: 10,
+    borderRadius: 8,
     padding: 12,
     gap: 10,
   },
@@ -1281,7 +1281,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   emptyTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     color: C.text,
     marginBottom: 6,
@@ -1331,7 +1331,7 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    borderRadius: 20,
+    borderRadius: 24,
     backgroundColor: C.white,
     borderWidth: 1,
     borderColor: C.primary,

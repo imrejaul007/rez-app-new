@@ -43,7 +43,7 @@ import { useCurrentLocation } from '@/hooks/useLocation';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { useIsMounted } from '@/hooks/useIsMounted';
-
+import { isSmallDevice, wp, responsiveFontSize } from '@/utils/responsive';
 
 const { width } = Dimensions.get('window');
 

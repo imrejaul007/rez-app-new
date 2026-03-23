@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl },
   errorTitle: {
     ...Typography.h2,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: Colors.text.primary,
     marginBottom: Spacing.md,
     textAlign: 'center' },
@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     flex: 1 },
   successTitle: {
     ...Typography.h1,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: Colors.text.inverse,
     textAlign: 'center',
     marginBottom: Spacing.sm },
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs },
   amountValue: {
     fontSize: 32,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: Colors.text.inverse },
   voucherCard: {
     backgroundColor: Colors.background.primary,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     borderStyle: 'dashed' },
   voucherCode: {
     ...Typography.h2,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: colors.brand.amberDark,
     letterSpacing: 2 },
   copyIcon: {
@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md },
   instructionNumberText: {
     ...Typography.bodySmall,
-    fontWeight: 'bold',
+    fontWeight: '800',
     color: Colors.success },
   instructionText: {
     flex: 1,

@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   errorIcon: {
     marginBottom: Spacing.base },
   errorTitle: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '700',
     color: Colors.nileBlue,
     marginBottom: Spacing.sm },

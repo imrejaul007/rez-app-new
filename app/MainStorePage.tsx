@@ -38,6 +38,7 @@ import {
   PromotionBannerSkeleton,
 } from "@/components/skeletons";
 import { Colors, Spacing } from "@/constants/DesignSystem";
+import { spacing } from "@/constants/theme";
 import { createStyles } from "./MainStorePage.styles";
 import { withErrorBoundary } from "@/utils/withErrorBoundary";
 
@@ -292,22 +293,22 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
 
               {/* Active Campaigns Section */}
               {activeCampaigns.length > 0 && (
-                <View style={{ marginHorizontal: HORIZONTAL_PADDING, marginBottom: 8 }}>
-                  <Text style={{ fontWeight: '700', color: '#1a3a52', fontSize: 15, marginBottom: 8 }}>
+                <View style={{ marginHorizontal: HORIZONTAL_PADDING, marginBottom: spacing.xs }}>
+                  <Text style={{ fontWeight: '700', color: '#1a3a52', fontSize: 15, marginBottom: spacing.xs }}>
                     🎯 Active Offers
                   </Text>
                   {activeCampaigns.map((c: any) => (
                     <View key={c._id} style={{
-                      padding: 12,
+                      padding: spacing.md,
                       backgroundColor: '#fff',
                       borderRadius: 10,
                       borderWidth: 1,
                       borderColor: '#E8DCC4',
-                      marginBottom: 6,
+                      marginBottom: spacing.xs,
                       flexDirection: 'row',
                       alignItems: 'center',
                     }}>
-                      <Text style={{ fontSize: 20, marginRight: 10 }}>✨</Text>
+                      <Text style={{ fontSize: 20, marginRight: spacing.sm }}>✨</Text>
                       <View style={{ flex: 1 }}>
                         <Text style={{ fontWeight: '600', color: '#1a3a52', fontSize: 14 }}>{c.title}</Text>
                         <Text style={{ color: '#2A5577', fontSize: 13 }}>{c.description}</Text>
@@ -326,7 +327,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
               {upcomingDrop && (
                 <View style={{
                   margin: HORIZONTAL_PADDING,
-                  padding: 14,
+                  padding: spacing.sm,
                   backgroundColor: '#FFF9E6',
                   borderRadius: 12,
                   borderWidth: 1,
@@ -335,7 +336,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
                   alignItems: 'center',
                 }}>
                   <Text style={{ fontSize: 22 }}>🪙</Text>
-                  <View style={{ marginLeft: 10, flex: 1 }}>
+                  <View style={{ marginLeft: spacing.sm, flex: 1 }}>
                     <Text style={{ fontWeight: '700', color: '#1a3a52', fontSize: 14 }}>
                       Coin Drop Coming!
                     </Text>
