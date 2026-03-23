@@ -58,14 +58,63 @@ function GoldSavingsSipPage() {
   const [customAmount, setCustomAmount] = useState<string>('');
 
   useEffect(() => {
-    fetchGoldData();
+    let isMounted = true;
+
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get<GoldData>('/wallet/gold-sip');
+        if (isMounted && response?.data) {
+          setGoldData(response.data);
+        }
+      } catch (error) {
+        console.debug('[GoldSIP] API fetch failed, using fallback data');
+        if (isMounted) {
+          // Use fallback data if API not available
+          setGoldData({
+            activeSip: null,
+            holdings: {
+              grams: 2.34,
+              currentValue: 16005,
+              invested: 15000,
+              gainLoss: 1005,
+            },
+            history: [
+              {
+                date: '2024-02-01',
+                amount: 1000,
+                gramsBought: 0.146,
+                pricePerGram: 6840,
+              },
+              {
+                date: '2024-01-01',
+                amount: 1000,
+                gramsBought: 0.146,
+                pricePerGram: 6840,
+              },
+            ],
+            currentGoldPrice: FALLBACK_GOLD_PRICE,
+          });
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchData();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const fetchGoldData = async () => {
     try {
       setLoading(true);
       const response = await apiClient.get<GoldData>('/wallet/gold-sip');
-      if (response.data) {
+      if (response?.data) {
         setGoldData(response.data);
       }
     } catch (error) {
@@ -105,14 +154,21 @@ function GoldSavingsSipPage() {
       setSaving(true);
       const amount = customAmount ? parseInt(customAmount) : selectedAmount;
 
-      await apiClient.post('/wallet/gold-sip', {
+      if (isNaN(amount) || amount <= 0) {
+        console.warn('[GoldSIP] Invalid amount:', amount);
+        return;
+      }
+
+      const response = await apiClient.post('/wallet/gold-sip', {
         monthlyAmount: amount,
         deductionDate: selectedDate,
       });
 
-      // Refresh data
-      await fetchGoldData();
-      setCustomAmount('');
+      if (response) {
+        // Refresh data
+        await fetchGoldData();
+        setCustomAmount('');
+      }
     } catch (error) {
       console.error('[GoldSIP] Failed to start SIP:', error);
     } finally {

@@ -54,6 +54,32 @@ interface QRScannerProps {
   onManualEntry?: () => void;
 }
 
+/**
+ * QR Scanner fallback when camera permission is denied
+ * Allows user to manually enter QR code
+ */
+function PermissionDeniedScreen({ onClose, onManualEntry }: { onClose: () => void; onManualEntry?: () => void }) {
+  return (
+    <View style={styles.container}>
+      <View style={styles.permissionContainer}>
+        <View style={styles.permissionIcon}>
+          <Ionicons name="camera-off-outline" size={48} color={NUQTA_COLORS.orange} />
+        </View>
+        <Text style={styles.permissionTitle}>Camera Access Denied</Text>
+        <Text style={styles.permissionSubtext}>
+          Camera permission was denied. You can still enter the QR code manually.
+        </Text>
+        <Pressable style={styles.grantButton} onPress={() => onManualEntry?.()}>
+          <Text style={styles.grantButtonText}>Enter Code Manually</Text>
+        </Pressable>
+        <Pressable style={styles.cancelButton} onPress={onClose}>
+          <Text style={styles.cancelButtonText}>Cancel</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}
+
 function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
@@ -132,7 +158,7 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
     );
   }
 
-  if (!permission.granted) {
+  if (!permission?.granted) {
     return (
       <View style={styles.container}>
         <View style={styles.permissionContainer}>
@@ -143,7 +169,12 @@ function QRScanner({ onScan, onClose, onManualEntry }: QRScannerProps) {
           <Text style={styles.permissionSubtext}>
             To scan QR codes and pay at stores
           </Text>
-          <Pressable style={styles.grantButton} onPress={requestPermission}>
+          <Pressable style={styles.grantButton} onPress={() => {
+            requestPermission?.().catch((err) => {
+              console.error('[QRScanner] Camera permission error:', err);
+              onClose();
+            });
+          }}>
             <Text style={styles.grantButtonText}>Allow Camera Access</Text>
           </Pressable>
           <Pressable style={styles.cancelButton} onPress={onClose}>
