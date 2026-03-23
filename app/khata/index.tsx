@@ -14,6 +14,7 @@ import { useRouter } from 'expo-router';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import apiClient from '@/services/apiClient';
 
 interface KhataEntry {
   _id: string;
@@ -31,11 +32,8 @@ function ConsumerKhataScreen() {
 
   const loadCredits = async () => {
     try {
-      // TODO: Import and use actual api service
-      // const resp = await api.get('/consumer/khata');
-      // setCredits(resp.data?.data || []);
-      // For now, set empty data
-      setCredits([]);
+      const resp = await apiClient.get('/consumer/khata');
+      setCredits(resp.data?.data || resp.data?.credits || []);
     } catch (e) {
       console.error('Khata load error', e);
     } finally {
