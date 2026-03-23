@@ -105,9 +105,12 @@ export const useNotificationStore = create<NotificationStoreState>((set, get) =>
       const { settings } = get();
       if (!settings) return false;
 
+      // SS-001 FIX: Save previous settings snapshot for rollback
+      const previousSettings = settings;
       const newSettings = { ...settings, ...updates };
-      set({ settings: newSettings });
 
+      // Optimistic update
+      set({ settings: newSettings });
       await AsyncStorage.setItem(STORAGE_KEYS.NOTIFICATION_SETTINGS, JSON.stringify(newSettings));
 
       try {
@@ -116,8 +119,14 @@ export const useNotificationStore = create<NotificationStoreState>((set, get) =>
           await AsyncStorage.setItem(STORAGE_KEYS.LAST_SYNC, new Date().toISOString());
           return true;
         }
+        // SS-001 FIX: Roll back on non-success response
+        set({ settings: previousSettings, error: 'Failed to sync settings with server' });
+        await AsyncStorage.setItem(STORAGE_KEYS.NOTIFICATION_SETTINGS, JSON.stringify(previousSettings));
         return false;
       } catch (_err) {
+        // SS-001 FIX: Roll back on network/API error
+        set({ settings: previousSettings, error: 'Failed to sync settings with server' });
+        await AsyncStorage.setItem(STORAGE_KEYS.NOTIFICATION_SETTINGS, JSON.stringify(previousSettings));
         return false;
       }
     } catch (_err) {

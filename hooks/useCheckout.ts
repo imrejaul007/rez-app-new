@@ -27,6 +27,7 @@ import { createRazorpayPayment } from '@/services/razorpayApi';
 import { mapBackendCartToFrontend, mapFrontendCheckoutToBackendOrder } from '@/utils/dataMappers';
 import { showToast } from '@/components/common/ToastManager';
 import { useCartActions, useCartState, useGetCurrencySymbol, useWalletData, useRawWalletData, useRefreshWallet, useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
+// SS-002: wallet refresh after payment
 import {
   TAX_RATE,
   PLATFORM_FEE,
@@ -1421,6 +1422,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         // Non-blocking analytics
         try { analyticsService.trackFulfillmentOrderPlaced({ fulfillmentType: state.fulfillment.selectedType, storeId: state.store.id, orderId, cartValue: state.billSummary.itemTotal, paymentMethod: state.selectedPaymentMethod?.id || '' }); } catch {} // Silent: non-critical analytics
 
+        // SS-002 FIX: Refresh wallet after COD order so coin balance reflects deducted coins
+        refreshSharedWallet().catch(() => {});
+
         setState(prev => ({ ...prev, currentStep: 'success', loading: false }));
         router.replace(`/payment-success?orderId=${orderId}`);
       } else {
@@ -1646,6 +1650,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
       // Non-blocking analytics
       try { analyticsService.trackFulfillmentOrderPlaced({ fulfillmentType: state.fulfillment.selectedType, storeId: state.store.id, orderId, cartValue: state.billSummary.itemTotal, paymentMethod: 'wallet' }); } catch {} // Silent: non-critical analytics
+
+      // SS-002 FIX: Refresh wallet after wallet payment so the deducted coin balance is shown immediately
+      refreshSharedWallet().catch(() => {});
 
       router.replace(`/payment-success?orderId=${orderId}&transactionId=${transactionId}&paymentMethod=wallet`);
 
@@ -2088,6 +2095,9 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
 
             // Non-blocking analytics
             try { analyticsService.trackFulfillmentOrderPlaced({ fulfillmentType: state.fulfillment.selectedType, storeId: state.store.id, orderId, cartValue: state.billSummary.itemTotal, paymentMethod: 'razorpay' }); } catch {} // Silent: non-critical analytics
+
+            // SS-002 FIX: Refresh wallet after Razorpay payment so earned cashback/coins are reflected
+            refreshSharedWallet().catch(() => {});
 
             router.replace(
               `/payment-success?orderId=${orderId}&transactionId=${paymentResponse.transactionId}&paymentMethod=razorpay`

@@ -171,10 +171,12 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
     try {
       if (!settings) return false;
 
+      // SS-001 FIX: Capture previous settings for rollback
+      const previousSettings = settings;
       const newSettings = { ...settings, ...updates };
-      setSettings(newSettings);
 
-      // Save to local storage immediately
+      // Optimistic update
+      setSettings(newSettings);
       await AsyncStorage.setItem(STORAGE_KEYS.NOTIFICATION_SETTINGS, JSON.stringify(newSettings));
 
       // Sync with backend if authenticated
@@ -185,9 +187,17 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
             await AsyncStorage.setItem(STORAGE_KEYS.LAST_SYNC, new Date().toISOString());
             return true;
           } else {
+            // SS-001 FIX: Roll back optimistic update on failure
+            setSettings(previousSettings);
+            await AsyncStorage.setItem(STORAGE_KEYS.NOTIFICATION_SETTINGS, JSON.stringify(previousSettings));
+            setError('Failed to save settings. Changes reverted.');
             return false;
           }
         } catch (err) {
+          // SS-001 FIX: Roll back on network error
+          setSettings(previousSettings);
+          await AsyncStorage.setItem(STORAGE_KEYS.NOTIFICATION_SETTINGS, JSON.stringify(previousSettings));
+          setError('Network error. Settings changes reverted.');
           return false;
         }
       }

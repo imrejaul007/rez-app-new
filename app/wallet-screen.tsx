@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useFocusEffect } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,6 +16,8 @@ import {
   Dimensions,
   Platform,
   Share,
+  AppState,
+  AppStateStatus,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -95,6 +97,22 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
     });
     return () => subscription?.remove();
   }, []);
+
+  // SS-005 FIX: Refresh wallet when app returns to foreground (e.g. after payment in browser)
+  const appStateRef = useRef<AppStateStatus>(AppState.currentState);
+  useEffect(() => {
+    const subscription = AppState.addEventListener('change', (nextState: AppStateStatus) => {
+      if (
+        appStateRef.current.match(/inactive|background/) &&
+        nextState === 'active' &&
+        isAuthenticated
+      ) {
+        refreshWallet().catch(() => {});
+      }
+      appStateRef.current = nextState;
+    });
+    return () => subscription.remove();
+  }, [isAuthenticated, refreshWallet]);
 
   // Sync balance hidden state from AsyncStorage (same key as BalanceDisplay)
   useEffect(() => {

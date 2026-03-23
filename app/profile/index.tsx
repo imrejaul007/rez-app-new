@@ -47,9 +47,10 @@ function ProfilePage() {
   const { goBack, canGoBack } = useSafeNavigation();
   const { user: contextUser, completionStatus, refreshCompletionStatus } = useProfile();
 
-  // Fetch real user data directly from API to avoid stale cache
+  // SS-006 FIX: Fetch real user data on every screen focus so edits from
+  // profile/edit.tsx are visible immediately when navigating back here.
   const [liveUserData, setLiveUserData] = useState<{ name: string; email: string; avatar?: string | null; initials: string } | null>(null);
-  useEffect(() => {
+  const fetchLiveProfile = useCallback(() => {
     let cancelled = false;
     authService.getProfile().then(res => {
       if (cancelled || !res.success || !res.data) return;
@@ -66,6 +67,18 @@ function ProfilePage() {
     }).catch(() => {});
     return () => { cancelled = true; };
   }, []);
+
+  // Initial fetch on mount
+  useEffect(() => {
+    return fetchLiveProfile();
+  }, [fetchLiveProfile]);
+
+  // SS-006 FIX: Re-fetch whenever the profile screen regains focus
+  useFocusEffect(
+    useCallback(() => {
+      return fetchLiveProfile();
+    }, [fetchLiveProfile])
+  );
 
   // Merge live API data over context user
   const user = contextUser ? {

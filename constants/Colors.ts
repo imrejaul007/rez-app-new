@@ -1,5 +1,5 @@
 /**
- * Nuqta Color System
+ * Nuqta Color System - SINGLE SOURCE OF TRUTH
  *
  * Color palette based on Nuqta brand identity:
  * - Nile Blue: #1a3a52 (Primary dark)
@@ -7,15 +7,61 @@
  * - Linen: #faf1e0 (Light background)
  * - Light Peach: #ffd7b5 (Secondary accent)
  * - Lavender Mist: #dfebf7 (Tertiary accent)
+ *
+ * CRITICAL: All three REZ apps (Consumer, Merchant, Admin) must use these exact hex values.
+ * Do NOT hardcode hex values anywhere in components. Always reference these constants.
+ * Last updated: 2026-03-23
  */
 
-// Nuqta Brand Colors
+// ============================================================================
+// CORE BRAND COLORS - IMMUTABLE ACROSS ALL REZ APPS
+// ============================================================================
+
 export const NuqtaColors = {
   nileBlue: '#1a3a52',
   lightMustard: '#ffcd57',
   linen: '#faf1e0',
   lightPeach: '#ffd7b5',
   lavenderMist: '#dfebf7',
+} as const;
+
+// ============================================================================
+// REZ SHARED BRAND TOKENS - ALL APPS MUST USE THESE
+// ============================================================================
+
+export const SharedBrandColors = {
+  // Primary Accent (Mustard/Gold)
+  primary: {
+    50: '#FFF9E6',
+    100: '#FFF3CC',
+    200: '#FFE799',
+    300: '#FFDB66',
+    400: '#FFD433',
+    500: '#ffcd57', // PRIMARY BRAND COLOR
+    600: '#E6B84E',
+    700: '#CCA345',
+    800: '#B38F3C',
+    900: '#9A7A32',
+  },
+
+  // Primary Dark (Navy/Nile Blue)
+  secondary: {
+    50: '#E8EEF3',
+    100: '#D1DDE7',
+    200: '#A3BBCF',
+    300: '#7599B7',
+    400: '#47779F',
+    500: '#2A5577',
+    600: '#1a3a52', // PRIMARY DARK BRAND COLOR
+    700: '#163148',
+    800: '#12283D',
+    900: '#0E1F33',
+  },
+
+  // Extended Brand Palette
+  linen: '#faf1e0',
+  peach: '#ffd7b5',
+  lavender: '#dfebf7',
 } as const;
 
 const tintColorLight = '#ffcd57'; // Nuqta Mustard

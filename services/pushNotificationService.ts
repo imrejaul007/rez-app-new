@@ -4,6 +4,10 @@ import { Platform } from 'react-native';
 import Constants from 'expo-constants';
 import apiClient from './apiClient';
 
+// SS-004 FIX: Foreground notification data-refresh callback registry
+type DataRefreshCallback = (notificationData: any) => void;
+const dataRefreshCallbacks: DataRefreshCallback[] = [];
+
 // Configure notification behavior (wrapped in try-catch for emulator compatibility)
 try {
   Notifications.setNotificationHandler({
@@ -39,6 +43,18 @@ class PushNotificationService {
    */
   setNavigationHandler(handler: (data: any) => void): void {
     this.navigationHandler = handler;
+  }
+
+  /**
+   * SS-004 FIX: Register a callback to be invoked when a foreground notification
+   * arrives, so screens can refresh stale data without requiring the user to tap.
+   */
+  addDataRefreshListener(callback: DataRefreshCallback): () => void {
+    dataRefreshCallbacks.push(callback);
+    return () => {
+      const idx = dataRefreshCallbacks.indexOf(callback);
+      if (idx > -1) dataRefreshCallbacks.splice(idx, 1);
+    };
   }
 
   /**
@@ -196,8 +212,14 @@ class PushNotificationService {
 
     // Listener for when a notification is received while app is foregrounded
     this.notificationListener = Notifications.addNotificationReceivedListener((notification) => {
-
-      // You can handle foreground notifications here
+      // SS-004 FIX: Invoke registered data-refresh callbacks so screens can
+      // update their state when a relevant foreground notification arrives.
+      const data = notification.request.content.data;
+      if (data && dataRefreshCallbacks.length > 0) {
+        dataRefreshCallbacks.forEach(cb => {
+          try { cb(data); } catch (_e) { /* silent */ }
+        });
+      }
     });
 
     // Listener for when user taps on a notification

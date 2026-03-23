@@ -7,7 +7,9 @@ import { useEffect, useRef } from 'react';
 import { AppState, Platform } from 'react-native';
 import pushNotificationService from '@/services/pushNotificationService';
 import { handleNotificationDeepLink } from '@/utils/notificationDeepLinkHandler';
-import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
+import { useAuthUser, useIsAuthenticated, useRefreshWallet } from '@/stores/selectors';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '@/lib/queryKeys';
 
 export function usePushNotifications() {
   const user = useAuthUser();
@@ -15,6 +17,9 @@ export function usePushNotifications() {
   const appState = useRef(AppState.currentState);
   const initialized = useRef(false);
   const disableWebDevPush = Platform.OS === 'web' && __DEV__;
+  // SS-003 FIX: Used to refresh data when a notification is received/tapped
+  const refreshWallet = useRefreshWallet();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (disableWebDevPush || !isAuthenticated || !user || initialized.current) {
@@ -46,8 +51,34 @@ export function usePushNotifications() {
 
   const initializePushNotifications = async () => {
     try {
-      // Set navigation handler for deep linking
+      // SS-003 FIX: On notification tap, refresh relevant data before navigating
       pushNotificationService.setNavigationHandler((data) => {
+        const type: string = data?.type || '';
+
+        // Refresh wallet for any wallet/cashback/coins notification
+        if (
+          type === 'wallet_update' ||
+          type === 'cashback_received' ||
+          type === 'coins_earned'
+        ) {
+          refreshWallet().catch(() => {});
+        }
+
+        // Invalidate orders cache for order-related notifications
+        if (
+          type.startsWith('order_') ||
+          type.startsWith('delivery_') ||
+          type === 'out_for_delivery' ||
+          type === 'payment_success'
+        ) {
+          queryClient.invalidateQueries({ queryKey: queryKeys.orders.all }).catch(() => {});
+        }
+
+        // Invalidate profile/bookings for booking notifications
+        if (type.startsWith('booking_') || type.startsWith('service_')) {
+          queryClient.invalidateQueries({ queryKey: ['bookings'] }).catch(() => {});
+        }
+
         handleNotificationDeepLink(data);
       });
 
