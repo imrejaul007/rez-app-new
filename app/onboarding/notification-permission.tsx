@@ -125,7 +125,7 @@ function NotificationPermissionPage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background.secondary} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
       <View style={styles.content}>
         {/* Bell Animation/Illustration */}
@@ -217,7 +217,7 @@ function NotificationPermissionPage() {
         </Pressable>
 
         <View style={styles.footer}>
-          <Ionicons name="settings-outline" size={14} color={Colors.text.tertiary} />
+          <Ionicons name="settings-outline" size={14} color={colors.text.tertiary} />
           <ThemedText style={styles.footerText}>
             You can change this anytime in Settings
           </ThemedText>
@@ -230,7 +230,7 @@ function NotificationPermissionPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   content: {
     flex: 1,
@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
   },
   badgeText: {
     ...Typography.labelSmall,
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     right: 10,
     width: 80,
     height: 40,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.sm,
     padding: Spacing.sm,
     flexDirection: 'row',
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     left: 10,
     width: 80,
     height: 40,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.sm,
     padding: Spacing.sm,
     flexDirection: 'row',
@@ -329,13 +329,13 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.h1,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.md,
   },
   description: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing['2xl'],
   },
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   benefitItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     gap: Spacing.md,
@@ -365,19 +365,19 @@ const styles = StyleSheet.create({
   },
   benefitTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   benefitDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   buttonContainer: {
     padding: Spacing.lg,
     paddingBottom: Platform.OS === 'ios' ? Spacing['3xl'] : Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
     alignItems: 'center',
   },
   enableButton: {
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   },
   skipButtonText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   footer: {
     flexDirection: 'row',
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

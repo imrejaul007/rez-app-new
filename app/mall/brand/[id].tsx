@@ -37,18 +37,18 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const HERO_HEIGHT = SCREEN_HEIGHT * 0.35;
 
 const BADGE_COLORS: Record<BrandBadge, { bg: string; text: string }> = {
-  exclusive: { bg: Colors.warning, text: Colors.text.inverse },
-  premium: { bg: Colors.brand.purple, text: Colors.text.inverse },
-  new: { bg: Colors.warning, text: Colors.text.inverse },
-  trending: { bg: colors.brand.pink, text: Colors.text.inverse },
-  'top-rated': { bg: Colors.info, text: Colors.text.inverse },
-  verified: { bg: Colors.warning, text: Colors.text.inverse },
+  exclusive: { bg: Colors.warning, text: colors.text.inverse },
+  premium: { bg: Colors.brand.purple, text: colors.text.inverse },
+  new: { bg: Colors.warning, text: colors.text.inverse },
+  trending: { bg: colors.brand.pink, text: colors.text.inverse },
+  'top-rated': { bg: Colors.info, text: colors.text.inverse },
+  verified: { bg: Colors.warning, text: colors.text.inverse },
 };
 
 const TIER_COLORS: Record<BrandTier, { gradient: string[]; badge: string }> = {
-  standard: { gradient: [Colors.text.tertiary, Colors.text.secondary], badge: Colors.text.tertiary },
+  standard: { gradient: [colors.text.tertiary, colors.text.secondary], badge: colors.text.tertiary },
   premium: { gradient: [Colors.brand.purple, Colors.brand.purple], badge: Colors.brand.purple },
-  exclusive: { gradient: [Colors.warning, Colors.nileBlue], badge: Colors.nileBlue },
+  exclusive: { gradient: [Colors.warning, colors.nileBlue], badge: colors.nileBlue },
   luxury: { gradient: [Colors.warning, colors.warningScale[700]], badge: colors.brand.amberDeep },
 };
 
@@ -226,7 +226,7 @@ function BrandDetailPage() {
               style={[styles.backButton, { marginTop: 12 }]}
               onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
 
             {/* Logo & Brand Name */}
@@ -249,7 +249,7 @@ function BrandDetailPage() {
 
               {/* Tier Badge */}
               <View style={[styles.tierBadge, { backgroundColor: tierColors.badge }]}>
-                <Ionicons name="diamond-outline" size={14} color={Colors.text.inverse} />
+                <Ionicons name="diamond-outline" size={14} color={colors.text.inverse} />
                 <Text style={styles.tierBadgeText}>
                   {(brand.tier || 'standard').charAt(0).toUpperCase() + (brand.tier || 'standard').slice(1)}
                 </Text>
@@ -352,7 +352,7 @@ function BrandDetailPage() {
               >
                 <Text style={styles.categoryIcon}>{brand.mallCategory.icon}</Text>
                 <Text style={styles.categoryName}>{brand.mallCategory.name}</Text>
-                <Ionicons name="chevron-forward" size={18} color={Colors.text.tertiary} />
+                <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
               </Pressable>
             </View>
           )}
@@ -368,7 +368,7 @@ function BrandDetailPage() {
                   onPress={() => router.push(`/mall/collection/${collection.slug}` as any)}
                 >
                   <Text style={styles.collectionName}>{collection.name}</Text>
-                  <Ionicons name="chevron-forward" size={18} color={Colors.text.tertiary} />
+                  <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
                 </Pressable>
               ))}
             </View>
@@ -402,7 +402,7 @@ function BrandDetailPage() {
                   end={{ x: 1, y: 0 }}
                   style={styles.ctaGradient}
                 >
-                  <Ionicons name="cart-outline" size={22} color={Colors.text.inverse} />
+                  <Ionicons name="cart-outline" size={22} color={colors.text.inverse} />
                   <Text style={styles.ctaText}>Shop Now</Text>
                   <View style={styles.ctaCashback}>
                     <Text style={styles.ctaCashbackText}>
@@ -425,7 +425,7 @@ function BrandDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   scrollView: {
     flex: 1,
@@ -434,30 +434,30 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing['2xl'],
   },
   errorTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   backLink: {
     padding: Spacing.sm,
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
   logoContainer: {
     width: 100,
     height: 100,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     justifyContent: 'center',
     alignItems: 'center',
@@ -546,12 +546,12 @@ const styles = StyleSheet.create({
   logoFallbackText: {
     fontSize: 32,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   brandName: {
     ...Typography.h1,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
     marginBottom: Spacing.sm,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
   tierBadgeText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   ratingRow: {
     flexDirection: 'row',
@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
   ratingText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   ratingCount: {
     ...Typography.body,
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
   },
   // Cashback Card
   cashbackCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     marginTop: -30,
     borderRadius: BorderRadius.lg,
@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
   cashbackLabel: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   cashbackValue: {
@@ -621,7 +621,7 @@ const styles = StyleSheet.create({
   },
   cashbackCondition: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   bonusBadge: {
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
   // Stats Row
   statsRow: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     marginTop: Spacing.md,
     borderRadius: BorderRadius.lg,
@@ -666,23 +666,23 @@ const styles = StyleSheet.create({
   },
   statDivider: {
     width: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     marginVertical: Spacing.sm,
   },
   statValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   // Sections
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     marginTop: Spacing.md,
     borderRadius: BorderRadius.lg,
@@ -702,12 +702,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   description: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 22,
   },
   badgesContainer: {
@@ -723,12 +723,12 @@ const styles = StyleSheet.create({
   badgeText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   categoryItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
   },
@@ -740,20 +740,20 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   collectionItem: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   collectionName: {
     flex: 1,
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -761,7 +761,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   tag: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
@@ -769,7 +769,7 @@ const styles = StyleSheet.create({
   tagText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   bottomSpacer: {
     height: 100,
@@ -794,7 +794,7 @@ const styles = StyleSheet.create({
   ctaText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   ctaCashback: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
@@ -805,7 +805,7 @@ const styles = StyleSheet.create({
   ctaCashbackText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

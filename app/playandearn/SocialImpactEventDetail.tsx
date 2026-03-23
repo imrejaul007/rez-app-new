@@ -257,7 +257,7 @@ const SocialImpactEventDetail = () => {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? colors.text.primary : Colors.background.primary }]}>
+    <View style={[styles.container, { backgroundColor: isDark ? colors.text.primary : colors.background.primary }]}>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -267,14 +267,14 @@ const SocialImpactEventDetail = () => {
         <View style={[styles.header, { backgroundColor: isDark ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)' }]}>
           <View style={styles.headerContent}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={isDark ? Colors.text.inverse : Colors.text.primary} />
+              <Ionicons name="arrow-back" size={24} color={isDark ? colors.text.inverse : colors.text.primary} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
-              <Text style={[styles.headerTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{event.title}</Text>
-              <Text style={[styles.headerSubtitle, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{event.organizer}</Text>
+              <Text style={[styles.headerTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.title}</Text>
+              <Text style={[styles.headerSubtitle, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{event.organizer}</Text>
             </View>
             <Pressable style={styles.shareButton}>
-              <Ionicons name="share-social" size={24} color={isDark ? Colors.text.inverse : Colors.text.primary} />
+              <Ionicons name="share-social" size={24} color={isDark ? colors.text.inverse : colors.text.primary} />
             </Pressable>
           </View>
         </View>
@@ -287,29 +287,29 @@ const SocialImpactEventDetail = () => {
 
           {/* Quick Info */}
           <View style={styles.quickInfo}>
-            <View style={[styles.infoCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+            <View style={[styles.infoCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
               <View style={styles.infoHeader}>
                 <Ionicons name="calendar" size={16} color={Colors.info} />
-                <Text style={[styles.infoLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Date</Text>
+                <Text style={[styles.infoLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Date</Text>
               </View>
-              <Text style={[styles.infoValue, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{event.date}</Text>
+              <Text style={[styles.infoValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.date}</Text>
             </View>
-            <View style={[styles.infoCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+            <View style={[styles.infoCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
               <View style={styles.infoHeader}>
                 <Ionicons name="time" size={16} color={colors.brand.orange} />
-                <Text style={[styles.infoLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Time</Text>
+                <Text style={[styles.infoLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Time</Text>
               </View>
-              <Text style={[styles.infoValue, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{event.time}</Text>
+              <Text style={[styles.infoValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.time}</Text>
             </View>
           </View>
 
           {/* Location */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
             <View style={styles.locationHeader}>
               <Ionicons name="location" size={20} color={Colors.error} />
               <View style={styles.locationInfo}>
-                <Text style={[styles.locationTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{event.location}</Text>
-                <Text style={[styles.locationAddress, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{event.fullAddress}</Text>
+                <Text style={[styles.locationTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.location}</Text>
+                <Text style={[styles.locationAddress, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{event.fullAddress}</Text>
                 <Text style={[styles.locationDistance, { color: Colors.info }]}>{event.distance} away</Text>
               </View>
             </View>
@@ -319,9 +319,9 @@ const SocialImpactEventDetail = () => {
           </View>
 
           {/* Description */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
-            <Text style={[styles.sectionTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>About This Event</Text>
-            <Text style={[styles.sectionText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{event.description}</Text>
+          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
+            <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>About This Event</Text>
+            <Text style={[styles.sectionText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{event.description}</Text>
           </View>
 
           {/* Impact & Progress */}
@@ -331,16 +331,16 @@ const SocialImpactEventDetail = () => {
           >
             <View style={styles.impactHeader}>
               <Ionicons name="trending-up" size={20} color={Colors.gold} />
-              <Text style={[styles.impactTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Expected Impact</Text>
+              <Text style={[styles.impactTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Expected Impact</Text>
             </View>
             <Text style={[styles.impactText, { color: isDark ? '#6EE7B7' : '#047857' }]}>{event.impact}</Text>
             <View style={styles.progressHeader}>
-              <Text style={[styles.progressLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Participants</Text>
+              <Text style={[styles.progressLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Participants</Text>
               <Text style={[styles.progressValue, { color: Colors.gold }]}>
                 {event.enrolled}/{event.goal}
               </Text>
             </View>
-            <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+            <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
               <LinearGradient
                 colors={[Colors.gold, '#e6b84e']}
                 start={{ x: 0, y: 0 }}
@@ -351,16 +351,16 @@ const SocialImpactEventDetail = () => {
           </LinearGradient>
 
           {/* Rewards */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
             <View style={styles.sectionHeader}>
               <Ionicons name="ribbon" size={20} color={Colors.warning} />
-              <Text style={[styles.sectionTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Rewards</Text>
+              <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Rewards</Text>
             </View>
             <View style={styles.rewardsList}>
               <View style={[styles.rewardCard, { backgroundColor: isDark ? 'rgba(255, 205, 87, 0.1)' : colors.linen }]}>
                 <View style={styles.rewardHeader}>
                   <Text style={styles.rewardEmoji}>💰</Text>
-                  <Text style={[styles.rewardLabel, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{BRAND.COIN_NAME}</Text>
+                  <Text style={[styles.rewardLabel, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{BRAND.COIN_NAME}</Text>
                 </View>
                 <Text style={[styles.rewardAmount, { color: Colors.gold }]}>+{event.rewards.rezCoins}</Text>
               </View>
@@ -368,7 +368,7 @@ const SocialImpactEventDetail = () => {
                 <View style={[styles.rewardCard, { backgroundColor: isDark ? 'rgba(168, 85, 247, 0.1)' : '#FAF5FF' }]}>
                   <View style={styles.rewardHeader}>
                     <Text style={styles.rewardEmoji}>🏪</Text>
-                    <Text style={[styles.rewardLabel, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{event.rewards.brandName} Coins</Text>
+                    <Text style={[styles.rewardLabel, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.rewards.brandName} Coins</Text>
                   </View>
                   <Text style={[styles.rewardAmount, { color: colors.brand.purpleMedium }]}>+{event.rewards.brandedCoins}</Text>
                 </View>
@@ -377,53 +377,53 @@ const SocialImpactEventDetail = () => {
           </View>
 
           {/* Requirements */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
             <View style={styles.sectionHeader}>
               <Ionicons name="information-circle" size={20} color={Colors.info} />
-              <Text style={[styles.sectionTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Requirements</Text>
+              <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Requirements</Text>
             </View>
             <View style={styles.list}>
               {event.requirements.map((req: string, idx: number) => (
                 <View key={idx} style={styles.listItem}>
                   <Ionicons name="checkmark-circle" size={16} color={Colors.gold} />
-                  <Text style={[styles.listText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{req}</Text>
+                  <Text style={[styles.listText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{req}</Text>
                 </View>
               ))}
             </View>
           </View>
 
           {/* Benefits */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
             <View style={styles.sectionHeader}>
               <Ionicons name="heart" size={20} color={Colors.error} />
-              <Text style={[styles.sectionTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>What You Get</Text>
+              <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>What You Get</Text>
             </View>
             <View style={styles.list}>
               {event.benefits.map((benefit: string, idx: number) => (
                 <View key={idx} style={styles.listItem}>
                   <View style={[styles.benefitDot, { backgroundColor: Colors.error }]} />
-                  <Text style={[styles.listText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{benefit}</Text>
+                  <Text style={[styles.listText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{benefit}</Text>
                 </View>
               ))}
             </View>
           </View>
 
           {/* Schedule */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
-            <Text style={[styles.sectionTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Event Schedule</Text>
+          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
+            <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Event Schedule</Text>
             <View style={styles.scheduleList}>
               {event.schedule.map((item: any, idx: number) => (
                 <View key={idx} style={styles.scheduleItem}>
                   <Text style={[styles.scheduleTime, { color: Colors.info }]}>{item.time}</Text>
-                  <Text style={[styles.scheduleActivity, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{item.activity}</Text>
+                  <Text style={[styles.scheduleActivity, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{item.activity}</Text>
                 </View>
               ))}
             </View>
           </View>
 
           {/* Contact */}
-          <View style={[styles.sectionCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
-            <Text style={[styles.sectionTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Contact Organizer</Text>
+          <View style={[styles.sectionCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
+            <Text style={[styles.sectionTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Contact Organizer</Text>
             <View style={styles.contactList}>
               <Pressable onPress={handleCall} style={styles.contactItem}>
                 <Ionicons name="call" size={20} color={Colors.gold} />
@@ -448,7 +448,7 @@ const SocialImpactEventDetail = () => {
           style={[
             styles.registerButton,
             isRegistered && { backgroundColor: Colors.gold },
-            event.status === 'completed' && { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }
+            event.status === 'completed' && { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }
           ]}
         >
           {!isRegistered && event.status !== 'completed' ? (
@@ -456,7 +456,7 @@ const SocialImpactEventDetail = () => {
               <Text style={styles.registerButtonText}>Register Now</Text>
             </LinearGradient>
           ) : (
-            <Text style={[styles.registerButtonText, { color: isRegistered ? Colors.text.inverse : (isDark ? Colors.text.tertiary : Colors.text.tertiary) }]}>
+            <Text style={[styles.registerButtonText, { color: isRegistered ? colors.text.inverse : (isDark ? colors.text.tertiary : colors.text.tertiary) }]}>
               {isRegistered ? '✓ Registered Successfully' : 'Event Completed'}
             </Text>
           )}
@@ -466,12 +466,12 @@ const SocialImpactEventDetail = () => {
       {/* Confirmation Modal */}
       <Modal visible={showConfirmation} transparent animationType="fade" onRequestClose={() => setShowConfirmation(false)}>
         <View style={styles.modalOverlay}>
-          <View style={[styles.modalContent, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary }]}>
+          <View style={[styles.modalContent, { backgroundColor: isDark ? colors.text.primary : colors.background.primary }]}>
             <View style={[styles.modalIconContainer, { backgroundColor: 'rgba(255, 205, 87, 0.2)' }]}>
               <Ionicons name="checkmark-circle" size={32} color={Colors.gold} />
             </View>
-            <Text style={[styles.modalTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Processing...</Text>
-            <Text style={[styles.modalText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Confirming your registration</Text>
+            <Text style={[styles.modalTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Processing...</Text>
+            <Text style={[styles.modalText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Confirming your registration</Text>
           </View>
         </View>
       </Modal>
@@ -731,7 +731,7 @@ const styles = StyleSheet.create({
   registerButtonText: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
   },
   modalOverlay: {

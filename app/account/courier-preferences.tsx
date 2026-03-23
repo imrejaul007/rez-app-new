@@ -535,7 +535,7 @@ function CourierPreferencesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -543,9 +543,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.sm,
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   scrollView: {
     flex: 1,
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.base,
     padding: Spacing.base,
@@ -572,11 +572,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   radioItem: {
     flexDirection: 'row',
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: BorderRadius.md,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
   },
   radioLabel: {
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   weekdaysContainer: {
     flexDirection: 'row',
@@ -617,8 +617,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
-    backgroundColor: Colors.background.primary,
+    borderColor: colors.border.default,
+    backgroundColor: colors.background.primary,
   },
   weekdayButtonSelected: {
     backgroundColor: Colors.info,
@@ -627,10 +627,10 @@ const styles = StyleSheet.create({
   weekdayText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   weekdayTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   settingItem: {
     flexDirection: 'row',
@@ -640,22 +640,22 @@ const styles = StyleSheet.create({
   },
   settingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   inputLabel: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
   },
   textArea: {
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.sm,
     padding: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlignVertical: 'top',
     minHeight: 100,
   },
@@ -663,18 +663,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing['2xl'],
   },
   errorText: {
@@ -690,7 +690,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -707,7 +707,7 @@ const styles = StyleSheet.create({
     ...Shadows.strong,
   },
   savingText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
     marginLeft: Spacing.sm,
@@ -725,7 +725,7 @@ const styles = StyleSheet.create({
     ...Shadows.strong,
   },
   successText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
     marginLeft: Spacing.sm,

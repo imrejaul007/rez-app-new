@@ -135,7 +135,7 @@ const StoresNearYou = () => {
           <Ionicons name="alert-circle-outline" size={32} color={Colors.error} />
           <Text style={styles.errorText}>{error}</Text>
           <Pressable style={styles.retryButton} onPress={handleRetry}>
-            <Ionicons name="refresh" size={16} color={Colors.background.primary} />
+            <Ionicons name="refresh" size={16} color={colors.background.primary} />
             <Text style={styles.retryText}>Retry</Text>
           </Pressable>
         </View>
@@ -199,11 +199,11 @@ const StoresNearYou = () => {
                   <Text style={styles.detailText}>{store.rating}</Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <Ionicons name="location-outline" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
                   <Text style={styles.detailText}>{store.distance}</Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
                   <Text style={styles.detailText}>{store.deliveryTime}</Text>
                 </View>
               </View>
@@ -223,7 +223,7 @@ const StoresNearYou = () => {
               <Ionicons
                 name={store.isFavorite ? 'heart' : 'heart-outline'}
                 size={22}
-                color={store.isFavorite ? Colors.error : Colors.text.tertiary}
+                color={store.isFavorite ? Colors.error : colors.text.tertiary}
               />
             </Pressable>
           </Pressable>
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   errorContainer: {
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
   retryText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -297,29 +297,29 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   storeCount: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   storeList: {
     paddingHorizontal: Spacing.base,
   },
   storeCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   storeImage: {
     width: 90,
     height: 90,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   storeInfo: {
     flex: 1,
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   tagsRow: {
     flexDirection: 'row',
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   cashbackText: {
     fontSize: Typography.body.fontSize,

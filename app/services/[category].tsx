@@ -246,7 +246,7 @@ function ServiceCategoryPage() {
               onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
              
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.background.primary} />
+              <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
               <ThemedText style={styles.headerTitle}>Loading...</ThemedText>
@@ -276,7 +276,7 @@ function ServiceCategoryPage() {
               onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
              
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.background.primary} />
+              <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
               <ThemedText style={styles.headerTitle}>Services</ThemedText>
@@ -312,7 +312,7 @@ function ServiceCategoryPage() {
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
            
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.background.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <ThemedText style={styles.headerTitle}>
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.h2.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: -0.3,
   },
   cashbackPill: {
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   },
   cashbackPillText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   // Loading & Error states
@@ -522,7 +522,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
   },
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: 14,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0,0,0,0.06)',
   },
@@ -557,7 +557,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   sortOptionsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0,0,0,0.06)',
     paddingHorizontal: Spacing.base,
@@ -598,14 +598,14 @@ const styles = StyleSheet.create({
   // Service Card - Standard Card from TASK.md
   serviceCard: {
     width: CARD_WIDTH,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: CARD_GAP,
     overflow: 'hidden',
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.04)',
     // Shadow from Standard Card spec
-    shadowColor: Colors.nileBlue,
+    shadowColor: colors.nileBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -633,7 +633,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   cashbackBadgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.caption.fontSize,
     fontWeight: '700',
   },
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
   serviceName: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
     lineHeight: 18,
   },
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: Typography.body.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   originalPrice: {
     fontSize: Typography.bodySmall.fontSize,
@@ -692,7 +692,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   getServiceButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
   },

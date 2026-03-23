@@ -395,7 +395,7 @@ function ChallengesPage() {
         }}
       >
         <LinearGradient
-          colors={isClaimed ? [Colors.border.default, colors.neutral[300]] : difficultyColors}
+          colors={isClaimed ? [colors.border.default, colors.neutral[300]] : difficultyColors}
           style={styles.challengeGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -599,7 +599,7 @@ function ChallengesPage() {
                   <Ionicons
                     name={tab === 'completed' ? 'checkmark-circle' : (getTypeIcon(tab) as any)}
                     size={18}
-                    color={activeTab === tab ? Colors.text.inverse : Colors.text.tertiary}
+                    color={activeTab === tab ? colors.text.inverse : colors.text.tertiary}
                   />
                   <Text
                     style={[styles.tabText, activeTab === tab && styles.activeTabText]}
@@ -628,7 +628,7 @@ function ChallengesPage() {
             filteredChallenges.map((challenge) => renderChallengeCard(challenge))
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="trophy-outline" size={64} color={Colors.border.default} />
+              <Ionicons name="trophy-outline" size={64} color={colors.border.default} />
               <Text style={styles.emptyTitle}>No {activeTab} challenges</Text>
               <Text style={styles.emptyDescription}>
                 {activeTab === 'completed'
@@ -661,18 +661,18 @@ function ChallengesPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   centered: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
@@ -699,7 +699,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.body,
@@ -725,7 +725,7 @@ const styles = StyleSheet.create({
   coinsText: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statsRow: {
     flexDirection: 'row',
@@ -742,7 +742,7 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statLabel: {
     ...Typography.bodySmall,
@@ -755,7 +755,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
   },
   tabs: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -788,10 +788,10 @@ const styles = StyleSheet.create({
   tabText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   activeTabText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: 'bold',
   },
   scrollView: {
@@ -841,7 +841,7 @@ const styles = StyleSheet.create({
   challengeTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
     marginRight: Spacing.sm,
   },
@@ -859,7 +859,7 @@ const styles = StyleSheet.create({
   },
   typeBadgeText: {
     ...Typography.caption,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     textTransform: 'capitalize',
   },
@@ -883,13 +883,13 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 5,
   },
   progressText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: 'bold',
     marginLeft: Spacing.md,
     minWidth: 50,
@@ -907,7 +907,7 @@ const styles = StyleSheet.create({
   },
   rewardText: {
     ...Typography.body,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   multiplierText: {
@@ -927,7 +927,7 @@ const styles = StyleSheet.create({
   },
   difficultyText: {
     ...Typography.caption,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: 'bold',
     textTransform: 'uppercase',
   },
@@ -971,7 +971,7 @@ const styles = StyleSheet.create({
   claimButtonText: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   claimedBadge: {
     flexDirection: 'row',
@@ -997,12 +997,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
   },
   emptyDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
     textAlign: 'center',
   },
@@ -1027,7 +1027,7 @@ const styles = StyleSheet.create({
   refreshButtonText: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

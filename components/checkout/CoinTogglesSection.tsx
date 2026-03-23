@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { BRAND } from '@/constants/brand';
 import { PROMO_COIN_MAX_USAGE_PERCENTAGE } from '@/config/checkout.config';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 const { width } = Dimensions.get('window');
@@ -73,7 +73,7 @@ function CoinTogglesSection({
         <Ionicons
           name={coinSectionExpanded ? 'chevron-up' : 'chevron-down'}
           size={20}
-          color={Colors.neutral[500]}
+          color={colors.neutral[500]}
         />
       </Pressable>
 
@@ -164,7 +164,7 @@ function CoinTogglesSection({
               {coinSystem.nuqtaCoin.used > 0 && (
                 <View style={styles.coinSavingContainerEnhanced}>
                   <View style={styles.savingBadge}>
-                    <Ionicons name="gift" size={16} color={Colors.gold} />
+                    <Ionicons name="gift" size={16} color={colors.gold} />
                     <ThemedText style={styles.coinSavingTextEnhanced}>
                       You'll save {currencySymbol}{coinSystem.nuqtaCoin.used} on this order!
                     </ThemedText>
@@ -187,7 +187,7 @@ function CoinTogglesSection({
                 <Switch
                   value={coinSystem.promoCoin.used > 0}
                   onValueChange={(value) => onCoinToggle('promo', value)}
-                  trackColor={{ false: Colors.border.default, true: Colors.gold }}
+                  trackColor={{ false: colors.border.default, true: colors.gold }}
                   thumbColor={'white'}
                   accessibilityLabel="Use promo coins"
                   accessibilityRole="switch"
@@ -213,7 +213,7 @@ function CoinTogglesSection({
                 <View style={styles.coinSliderHeader}>
                   <View style={styles.coinHeaderLeft}>
                     <View style={styles.coinTitleRow}>
-                      <Ionicons name="storefront" size={20} color={Colors.gold} />
+                      <Ionicons name="storefront" size={20} color={colors.gold} />
                       <ThemedText style={styles.coinTitleWhite}>
                         {coinSystem.storePromoCoin.storeName
                           ? `${coinSystem.storePromoCoin.storeName} Coins`
@@ -287,7 +287,7 @@ function CoinTogglesSection({
                 {coinSystem.storePromoCoin.used > 0 && (
                   <View style={styles.coinSavingContainerEnhanced}>
                     <View style={styles.savingBadge}>
-                      <Ionicons name="gift" size={16} color={Colors.gold} />
+                      <Ionicons name="gift" size={16} color={colors.gold} />
                       <ThemedText style={styles.coinSavingTextEnhanced}>
                         {coinSystem.storePromoCoin.storeName || 'Store'} exclusive: You'll save {currencySymbol}{coinSystem.storePromoCoin.used}!
                       </ThemedText>
@@ -311,12 +311,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.successScale[50],
+    backgroundColor: colors.successScale[50],
     paddingHorizontal: Spacing.base,
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.successScale[200],
+    borderColor: colors.successScale[200],
   },
   coinSectionHeaderLeft: {
     flexDirection: 'row',
@@ -329,11 +329,11 @@ const styles = StyleSheet.create({
   coinSectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   coinSectionSubtitle: {
     fontSize: 13,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '500',
   },
   coinIconMedium: {
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     ...Platform.select({
       ios: {
-        shadowColor: Colors.gold,
+        shadowColor: colors.gold,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.12,
         shadowRadius: 6,
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
   coinTitleWhite: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.3,
   },
   coinAvailableRow: {
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   coinUsedBadgeWhite: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
@@ -410,12 +410,12 @@ const styles = StyleSheet.create({
   coinUsedTextPurple: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.gold,
+    color: colors.gold,
   },
   coinUsedTextGreen: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.gold,
+    color: colors.gold,
   },
   sliderContainerEnhanced: {
     marginBottom: 10,
@@ -459,12 +459,12 @@ const styles = StyleSheet.create({
   },
   coinSavingTextEnhanced: {
     fontSize: 13,
-    color: Colors.gold,
+    color: colors.gold,
     fontWeight: '600',
     flex: 1,
   },
   coinToggleCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
@@ -477,12 +477,12 @@ const styles = StyleSheet.create({
   coinToggleTitle: {
     ...Typography.bodyLarge,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   coinToggleSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     maxWidth: width * 0.6,
   },
   coinToggleRight: {
@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
   promoCoinValue: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
 });

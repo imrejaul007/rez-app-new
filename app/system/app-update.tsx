@@ -82,7 +82,7 @@ function AppUpdatePage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background.secondary} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
       <ScrollView
         contentContainerStyle={styles.scrollContent}
@@ -111,7 +111,7 @@ function AppUpdatePage() {
             <ThemedText style={styles.versionLabel}>Current</ThemedText>
             <ThemedText style={styles.versionText}>v{updateInfo.currentVersion}</ThemedText>
           </View>
-          <Ionicons name="arrow-forward" size={24} color={Colors.text.tertiary} />
+          <Ionicons name="arrow-forward" size={24} color={colors.text.tertiary} />
           <View style={[styles.versionBadge, styles.newVersionBadge]}>
             <ThemedText style={[styles.versionLabel, styles.newVersionLabel]}>New</ThemedText>
             <ThemedText style={[styles.versionText, styles.newVersionText]}>v{updateInfo.latestVersion}</ThemedText>
@@ -182,7 +182,7 @@ function AppUpdatePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   scrollContent: {
     flexGrow: 1,
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     ...Shadows.medium,
@@ -214,14 +214,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     ...Shadows.subtle,
   },
   title: {
     ...Typography.h1,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.lg,
     textAlign: 'center',
   },
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
   },
   versionLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   newVersionLabel: {
@@ -252,14 +252,14 @@ const styles = StyleSheet.create({
   },
   versionText: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   newVersionText: {
     color: Colors.midnightNavy,
   },
   releaseNotesCard: {
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   },
   releaseNotesTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   releaseNoteItem: {
     flexDirection: 'row',
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
   },
   releaseNoteText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   forceUpdateNotice: {
@@ -310,9 +310,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     padding: Spacing.lg,
     paddingBottom: Platform.OS === 'ios' ? Spacing['3xl'] : Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
   },
   updateButton: {
     borderRadius: BorderRadius.lg,
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   },
   laterButtonText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

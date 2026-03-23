@@ -15,7 +15,8 @@ import {
   Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { categoryFilters, quickChips } from './hooks/useExplore';
 
 const { width } = Dimensions.get('window');
@@ -71,7 +72,7 @@ const ExploreHeader = React.memo(function ExploreHeader({
           <Ionicons
             name={currentLocation?.source === 'gps' ? 'navigate' : 'location'}
             size={18}
-            color={Colors.gold}
+            color={colors.gold}
           />
           <View style={styles.locationText}>
             {isLocationLoading ? (
@@ -88,7 +89,7 @@ const ExploreHeader = React.memo(function ExploreHeader({
               </>
             )}
           </View>
-          <Ionicons name="chevron-down" size={16} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-down" size={16} color={colors.text.tertiary} />
         </Pressable>
 
         <View style={styles.headerActions}>
@@ -98,7 +99,7 @@ const ExploreHeader = React.memo(function ExploreHeader({
             accessibilityLabel="Open map view"
             accessibilityRole="button"
           >
-            <Ionicons name="map" size={22} color={Colors.nileBlue} />
+            <Ionicons name="map" size={22} color={colors.nileBlue} />
           </Pressable>
           <Pressable
             style={styles.coinsButton}
@@ -122,7 +123,7 @@ const ExploreHeader = React.memo(function ExploreHeader({
           accessibilityLabel="Search stores and products"
           accessibilityRole="search"
         >
-          <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="search" size={20} color={colors.text.tertiary} />
           <Text style={styles.searchPlaceholder}>
             {searchSuggestions[currentPlaceholder]}
           </Text>
@@ -133,7 +134,7 @@ const ExploreHeader = React.memo(function ExploreHeader({
           accessibilityLabel="Filter options"
           accessibilityRole="button"
         >
-          <Ionicons name="options" size={22} color={Colors.nileBlue} />
+          <Ionicons name="options" size={22} color={colors.nileBlue} />
         </Pressable>
       </View>
 
@@ -178,7 +179,7 @@ const ExploreHeader = React.memo(function ExploreHeader({
           </Pressable>
         ))}
         <View style={styles.bestValueTag}>
-          <Ionicons name="trending-up" size={14} color={Colors.text.inverse} />
+          <Ionicons name="trending-up" size={14} color={colors.text.inverse} />
           <Text style={styles.bestValueText}>Best Value</Text>
         </View>
       </ScrollView>
@@ -205,14 +206,14 @@ const ExploreHeader = React.memo(function ExploreHeader({
               name={chip.icon as any}
               size={16}
               color={
-                selectedChip === chip.id ? chip.color : Colors.text.tertiary
+                selectedChip === chip.id ? chip.color : colors.text.tertiary
               }
             />
             <Text
               style={[
                 styles.quickChipText,
                 selectedChip === chip.id && {
-                  color: Colors.nileBlue,
+                  color: colors.nileBlue,
                   fontWeight: '600' as const,
                 },
               ]}
@@ -228,10 +229,10 @@ const ExploreHeader = React.memo(function ExploreHeader({
 
 const styles = StyleSheet.create({
   headerContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   headerRow: {
     flexDirection: 'row',
@@ -244,7 +245,7 @@ const styles = StyleSheet.create({
   locationButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
@@ -256,11 +257,11 @@ const styles = StyleSheet.create({
   locationTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   locationSubtitle: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   locationSkeleton: {
     gap: Spacing.xs,
@@ -268,7 +269,7 @@ const styles = StyleSheet.create({
   skeletonLine: {
     height: Spacing.md,
     width: 100,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: Spacing.xs,
   },
   skeletonLineShort: {
@@ -284,14 +285,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   coinsButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.warningScale[50],
+    backgroundColor: colors.warningScale[50],
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
@@ -309,7 +310,7 @@ const styles = StyleSheet.create({
   coinsText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.gold,
+    color: colors.gold,
   },
   searchContainer: {
     flexDirection: 'row',
@@ -321,24 +322,24 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 14,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   searchPlaceholder: {
     flex: 1,
     marginLeft: 10,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterButton: {
     width: 44,
     height: 44,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -354,34 +355,34 @@ const styles = StyleSheet.create({
   categoryChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: 6,
   },
   categoryChipActive: {
-    backgroundColor: Colors.successScale[50],
-    borderColor: Colors.gold,
+    backgroundColor: colors.successScale[50],
+    borderColor: colors.gold,
   },
   categoryEmoji: {
     ...Typography.body,
   },
   categoryLabel: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   categoryLabelActive: {
-    color: Colors.gold,
+    color: colors.gold,
     fontWeight: '600',
   },
   bestValueTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.error,
+    backgroundColor: colors.error,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
@@ -390,7 +391,7 @@ const styles = StyleSheet.create({
   bestValueText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   quickChipsRow: {
     flexDirection: 'row',
@@ -404,18 +405,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: 6,
   },
   quickChipActive: {
-    backgroundColor: Colors.background.primary,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.background.primary,
+    borderColor: colors.nileBlue,
   },
   quickChipText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

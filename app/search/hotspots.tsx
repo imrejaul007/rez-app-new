@@ -30,7 +30,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Nuqta Design System
 const NUQTA = {
-  nileBlue: Colors.nileBlue,
+  nileBlue: colors.nileBlue,
   nileBlueLight: '#243f55',
   lightMustard: Colors.gold,
   mustardDark: '#e5b84d',
@@ -141,7 +141,7 @@ function HotspotsPage() {
     >
       {item.priority >= 90 && (
         <View style={styles.trendingBadge}>
-          <Ionicons name="flame" size={12} color={Colors.text.inverse} />
+          <Ionicons name="flame" size={12} color={colors.text.inverse} />
           <ThemedText style={styles.trendingText}>Trending</ThemedText>
         </View>
       )}
@@ -168,7 +168,7 @@ function HotspotsPage() {
         </View>
 
         <View style={styles.cityBadge}>
-          <Ionicons name="location-outline" size={12} color={Colors.text.tertiary} />
+          <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />
           <ThemedText style={styles.cityText}>{item.city}</ThemedText>
         </View>
 
@@ -189,7 +189,7 @@ function HotspotsPage() {
   const renderMapView = () => (
     <View style={styles.mapContainer}>
       <View style={styles.mapPlaceholder}>
-        <Ionicons name="map" size={64} color={Colors.text.tertiary} />
+        <Ionicons name="map" size={64} color={colors.text.tertiary} />
         <ThemedText style={styles.mapPlaceholderText}>Map View</ThemedText>
         <ThemedText style={styles.mapPlaceholderSubtext}>
           Interactive map with hotspot markers
@@ -237,7 +237,7 @@ function HotspotsPage() {
       >
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Nearby Hotspots</ThemedText>
           <View style={styles.viewToggle}>
@@ -296,7 +296,7 @@ function HotspotsPage() {
         </View>
       ) : hotspots.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="location-outline" size={48} color={Colors.text.tertiary} />
+          <Ionicons name="location-outline" size={48} color={colors.text.tertiary} />
           <ThemedText style={styles.emptyText}>No hotspots found in your area yet.</ThemedText>
         </View>
       ) : viewMode === 'list' ? (
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
   },
   viewToggle: {
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   toggleButtonActive: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   locationBar: {
     flexDirection: 'row',
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   },
   locationText: {
     ...Typography.body,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
   },
   listContent: {
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -408,17 +408,17 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   summaryDivider: {
     width: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   hotspotCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   },
   cityText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   hotspotStats: {
     flexDirection: 'row',
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   directionsButton: {
     padding: Spacing.xs,
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   retryButton: {
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   retryText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   emptyContainer: {
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   mapContainer: {
@@ -563,19 +563,19 @@ const styles = StyleSheet.create({
   },
   mapPlaceholder: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   mapPlaceholderText: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   mapPlaceholderSubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   mapCardsScroll: {
     position: 'absolute',
@@ -589,7 +589,7 @@ const styles = StyleSheet.create({
   mapCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     marginRight: Spacing.md,

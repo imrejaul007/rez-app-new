@@ -369,14 +369,14 @@ const FitnessCategoryPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>{config.icon} {config.title}</Text>
             <Text style={styles.headerSubtitle}>{totalCount} options available</Text>
           </View>
           <Pressable style={styles.searchButton} onPress={handleSearchOpen}>
-            <Ionicons name="search" size={24} color={Colors.text.inverse} />
+            <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
       </LinearGradient>
@@ -396,7 +396,7 @@ const FitnessCategoryPage: React.FC = () => {
               <Ionicons
                 name={filter.icon as any}
                 size={16}
-                color={selectedFilter === filter.id ? Colors.background.primary : Colors.text.tertiary}
+                color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />
               <Text
                 style={[
@@ -407,7 +407,7 @@ const FitnessCategoryPage: React.FC = () => {
                 {filter.label}
               </Text>
               {filter.id === 'nearby' && locationLoading && (
-                <ActivityIndicator size="small" color={Colors.text.inverse} style={{ marginLeft: Spacing.xs }} />
+                <ActivityIndicator size="small" color={colors.text.inverse} style={{ marginLeft: Spacing.xs }} />
               )}
             </Pressable>
           ))}
@@ -469,7 +469,7 @@ const FitnessCategoryPage: React.FC = () => {
                       </Text>
                     </View>
                     <View style={styles.metaItem}>
-                      <Ionicons name="location-outline" size={14} color={Colors.text.tertiary} />
+                      <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
                       <Text style={styles.metaText} numberOfLines={1}>
                         {item.distance ? formatDistance(item.distance) : item.location?.city || 'Bangalore'}
                       </Text>
@@ -491,7 +491,7 @@ const FitnessCategoryPage: React.FC = () => {
             ))
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="fitness-outline" size={64} color={Colors.border.default} />
+              <Ionicons name="fitness-outline" size={64} color={colors.border.default} />
               <Text style={styles.emptyTitle}>No {config.title.toLowerCase()} found</Text>
               <Text style={styles.emptyDescription}>
                 Try a different filter or check back later
@@ -518,15 +518,15 @@ const FitnessCategoryPage: React.FC = () => {
         <View style={styles.searchModal}>
           <View style={styles.searchHeader}>
             <Pressable onPress={handleSearchClose} style={styles.searchCloseButton}>
-              <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+              <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
             </Pressable>
             <View style={styles.searchInputContainer}>
-              <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="search" size={20} color={colors.text.tertiary} />
               <TextInput
                 ref={searchInputRef}
                 style={styles.searchInput}
                 placeholder={`Search ${config.title.toLowerCase()}...`}
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={searchQuery}
                 onChangeText={handleSearch}
                 autoFocus
@@ -534,7 +534,7 @@ const FitnessCategoryPage: React.FC = () => {
               />
               {searchQuery.length > 0 && (
                 <Pressable onPress={() => { setSearchQuery(''); setSearchResults([]); }}>
-                  <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+                  <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
                 </Pressable>
               )}
             </View>
@@ -568,13 +568,13 @@ const FitnessCategoryPage: React.FC = () => {
                       </Text>
                     </View>
                   </View>
-                  <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+                  <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
                 </Pressable>
               ))}
             </ScrollView>
           ) : searchQuery.length >= 2 ? (
             <View style={styles.searchEmpty}>
-              <Ionicons name="search-outline" size={48} color={Colors.border.default} />
+              <Ionicons name="search-outline" size={48} color={colors.border.default} />
               <Text style={styles.searchEmptyText}>No results found</Text>
             </View>
           ) : (
@@ -591,22 +591,22 @@ const FitnessCategoryPage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.primary },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background.primary },
-  loadingText: { marginTop: Spacing.md, ...Typography.body, color: Colors.text.tertiary },
+  container: { flex: 1, backgroundColor: colors.background.primary },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.primary },
+  loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: Spacing.lg },
   headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
-  headerTitle: { ...Typography.h3, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { ...Typography.h3, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
   searchButton: { padding: Spacing.sm },
   filtersContainer: {
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   filterChip: {
     flexDirection: 'row',
@@ -615,12 +615,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
   },
   filterChipActive: { backgroundColor: Colors.warning },
-  filterChipText: { ...Typography.body, color: Colors.text.tertiary },
-  filterChipTextActive: { color: Colors.text.inverse, fontWeight: '600' },
+  filterChipText: { ...Typography.body, color: colors.text.tertiary },
+  filterChipTextActive: { color: colors.text.inverse, fontWeight: '600' },
   locationBanner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -629,16 +629,16 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     backgroundColor: colors.tint.orange,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   locationBannerText: { ...Typography.bodySmall, color: Colors.warning },
   itemsList: { padding: Spacing.base, gap: Spacing.base },
   itemCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginBottom: Spacing.base,
   },
   itemImage: { width: '100%', height: 160 },
@@ -651,7 +651,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
   },
-  cashbackText: { ...Typography.bodySmall, fontWeight: '700', color: Colors.text.inverse },
+  cashbackText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
   itemInfo: { padding: Spacing.base },
   itemHeader: {
     flexDirection: 'row',
@@ -659,70 +659,70 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.sm,
   },
-  itemName: { ...Typography.h4, fontWeight: '700', color: Colors.nileBlue, flex: 1, marginRight: Spacing.sm },
+  itemName: { ...Typography.h4, fontWeight: '700', color: colors.nileBlue, flex: 1, marginRight: Spacing.sm },
   typeBadge: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
   },
-  typeText: { ...Typography.caption, fontWeight: '600', color: Colors.text.tertiary },
+  typeText: { ...Typography.caption, fontWeight: '600', color: colors.text.tertiary },
   itemMeta: { flexDirection: 'row', gap: Spacing.base, marginBottom: Spacing.md },
   ratingContainer: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  ratingText: { ...Typography.body, fontWeight: '600', color: Colors.nileBlue },
-  reviewCount: { ...Typography.bodySmall, color: Colors.text.tertiary },
+  ratingText: { ...Typography.body, fontWeight: '600', color: colors.nileBlue },
+  reviewCount: { ...Typography.bodySmall, color: colors.text.tertiary },
   metaItem: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, flex: 1 },
-  metaText: { ...Typography.bodySmall, color: Colors.text.tertiary },
+  metaText: { ...Typography.bodySmall, color: colors.text.tertiary },
   itemFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  priceText: { ...Typography.body, fontWeight: '600', color: Colors.nileBlue },
+  priceText: { ...Typography.body, fontWeight: '600', color: colors.nileBlue },
   bookButton: {
     backgroundColor: Colors.warning,
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
   },
-  bookButtonText: { ...Typography.body, fontWeight: '700', color: Colors.text.inverse },
+  bookButtonText: { ...Typography.body, fontWeight: '700', color: colors.text.inverse },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 60,
   },
-  emptyTitle: { ...Typography.h4, fontWeight: '700', color: Colors.nileBlue, marginTop: Spacing.base },
-  emptyDescription: { ...Typography.body, color: Colors.text.tertiary, marginTop: Spacing.sm, textAlign: 'center' },
+  emptyTitle: { ...Typography.h4, fontWeight: '700', color: colors.nileBlue, marginTop: Spacing.base },
+  emptyDescription: { ...Typography.body, color: colors.text.tertiary, marginTop: Spacing.sm, textAlign: 'center' },
   refreshButton: {
     marginTop: Spacing.xl,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.xl,
   },
-  refreshButtonText: { ...Typography.body, fontWeight: '700', color: Colors.text.inverse },
+  refreshButtonText: { ...Typography.body, fontWeight: '700', color: colors.text.inverse },
 
   // Search Modal Styles
-  searchModal: { flex: 1, backgroundColor: Colors.background.primary },
+  searchModal: { flex: 1, backgroundColor: colors.background.primary },
   searchHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.base,
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   searchCloseButton: { padding: Spacing.sm, marginRight: Spacing.sm },
   searchInputContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
     gap: Spacing.sm,
   },
-  searchInput: { flex: 1, ...Typography.bodyLarge, color: Colors.nileBlue },
+  searchInput: { flex: 1, ...Typography.bodyLarge, color: colors.nileBlue },
   searchLoading: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   searchResults: { flex: 1 },
   searchResultItem: {
@@ -730,18 +730,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
-  searchResultImage: { width: 56, height: 56, borderRadius: BorderRadius.md, backgroundColor: Colors.background.secondary },
+  searchResultImage: { width: 56, height: 56, borderRadius: BorderRadius.md, backgroundColor: colors.background.secondary },
   searchResultInfo: { flex: 1, marginLeft: Spacing.md },
-  searchResultName: { ...Typography.bodyLarge, fontWeight: '600', color: Colors.nileBlue },
+  searchResultName: { ...Typography.bodyLarge, fontWeight: '600', color: colors.nileBlue },
   searchResultMeta: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: Spacing.xs },
-  searchResultRating: { ...Typography.bodySmall, color: Colors.text.tertiary },
+  searchResultRating: { ...Typography.bodySmall, color: colors.text.tertiary },
   searchResultCashback: { ...Typography.bodySmall, color: Colors.success, fontWeight: '600' },
   searchEmpty: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  searchEmptyText: { ...Typography.bodyLarge, color: Colors.text.tertiary, marginTop: Spacing.md },
+  searchEmptyText: { ...Typography.bodyLarge, color: colors.text.tertiary, marginTop: Spacing.md },
   searchHint: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  searchHintText: { ...Typography.body, color: Colors.text.tertiary },
+  searchHintText: { ...Typography.body, color: colors.text.tertiary },
 });
 
 export default withErrorBoundary(FitnessCategoryPage, 'FitnessCategory');

@@ -354,14 +354,14 @@ function CheckoutPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   content: {
     flex: 1,
     backgroundColor: colors.offWhite,
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
     marginBottom: Spacing.sm,

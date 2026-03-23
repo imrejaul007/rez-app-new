@@ -30,14 +30,14 @@ import { useUserIdentityStore } from '@/stores/userIdentityStore';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const COLORS = {
-  white: Colors.background.primary,
-  navy: Colors.nileBlue,
-  gray50: Colors.background.secondary,
-  gray100: Colors.background.secondary,
-  gray200: Colors.border.default,
-  gray300: Colors.border.default,
-  gray600: Colors.text.tertiary,
-  gray800: Colors.text.primary,
+  white: colors.background.primary,
+  navy: colors.nileBlue,
+  gray50: colors.background.secondary,
+  gray100: colors.background.secondary,
+  gray200: colors.border.default,
+  gray300: colors.border.default,
+  gray600: colors.text.tertiary,
+  gray800: colors.text.primary,
   green500: Colors.success,
   emerald500: Colors.success,
   amber500: Colors.warning,

@@ -10,7 +10,7 @@ import { View, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface WalletQuickAction {
@@ -128,12 +128,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 1,
   },
   subtitle: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   actionsContainer: {
     paddingHorizontal: Spacing.base,
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.sm,
     minWidth: 68,
@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   actionLabel: {
     fontSize: 10,
     lineHeight: 13,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     fontWeight: '500',
   },

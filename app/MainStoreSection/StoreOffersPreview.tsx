@@ -155,7 +155,7 @@ function StoreOffersPreview({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginHorizontal: Spacing.base,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.bodyLarge,
     fontWeight: "700",
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   viewAllText: {
     ...Typography.body,
@@ -189,11 +189,11 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   offerCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 14,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   offerTopRow: {
     flexDirection: "row",
@@ -209,22 +209,22 @@ const styles = StyleSheet.create({
   offerBadgeText: {
     ...Typography.caption,
     fontWeight: "700",
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: "uppercase",
   },
   validityText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   offerTitle: {
     ...Typography.body,
     fontWeight: "600",
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
   },
   offerDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
   },
   offerBottomRow: {
@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
   applyButtonText: {
     ...Typography.bodySmall,
     fontWeight: "700",
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

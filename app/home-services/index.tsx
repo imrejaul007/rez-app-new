@@ -78,12 +78,12 @@ const HomeServicesPage: React.FC = () => {
     <View style={styles.container}>
       <LinearGradient colors={[colors.infoScale[400], colors.brand.blue]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}><Ionicons name="arrow-back" size={24} color={Colors.background.primary} /></Pressable>
+          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}><Ionicons name="arrow-back" size={24} color={colors.background.primary} /></Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Home Services</Text>
             <Text style={styles.headerSubtitle}>Professional services at home</Text>
           </View>
-          <Pressable style={styles.searchButton}><Ionicons name="search" size={24} color={Colors.background.primary} /></Pressable>
+          <Pressable style={styles.searchButton}><Ionicons name="search" size={24} color={colors.background.primary} /></Pressable>
         </View>
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
@@ -179,43 +179,43 @@ const HomeServicesPage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.primary },
+  container: { flex: 1, backgroundColor: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: 20 },
   headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: 16 },
   backButton: { padding: 8 },
   headerTitleContainer: { flex: 1, marginLeft: 8 },
-  headerTitle: { fontSize: 20, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { fontSize: 20, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.8)' },
   searchButton: { padding: 8 },
   statsRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16 },
   statItem: { alignItems: 'center', paddingHorizontal: 16 },
-  statValue: { fontSize: 18, fontWeight: '700', color: Colors.text.inverse },
+  statValue: { fontSize: 18, fontWeight: '700', color: colors.text.inverse },
   statLabel: { fontSize: 10, color: 'rgba(255,255,255,0.8)' },
   statDivider: { width: 1, height: 30, backgroundColor: 'rgba(255,255,255,0.3)' },
   section: { padding: 16 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: Colors.nileBlue, marginBottom: 12 },
+  sectionTitle: { fontSize: 18, fontWeight: '700', color: colors.nileBlue, marginBottom: 12 },
   viewAllText: { fontSize: 14, fontWeight: '600', color: Colors.brand.purple },
   categoriesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  categoryCard: { flexBasis: '30%', flexGrow: 1, flexShrink: 1, alignItems: 'center', padding: Spacing.md, backgroundColor: Colors.background.secondary, borderRadius: 16 },
+  categoryCard: { flexBasis: '30%', flexGrow: 1, flexShrink: 1, alignItems: 'center', padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: 16 },
   categoryIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
   categoryEmoji: { fontSize: 24 },
-  categoryTitle: { fontSize: 12, fontWeight: '600', color: Colors.nileBlue, marginBottom: 2, textAlign: 'center' },
-  categoryCount: { fontSize: 10, color: Colors.neutral[500] },
-  serviceCard: { width: 200, marginRight: 12, borderRadius: BorderRadius.lg, overflow: 'hidden', backgroundColor: Colors.background.primary, borderWidth: 1, borderColor: Colors.border.default },
+  categoryTitle: { fontSize: 12, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textAlign: 'center' },
+  categoryCount: { fontSize: 10, color: colors.neutral[500] },
+  serviceCard: { width: 200, marginRight: 12, borderRadius: BorderRadius.lg, overflow: 'hidden', backgroundColor: colors.background.primary, borderWidth: 1, borderColor: colors.border.default },
   serviceImage: { width: '100%', height: 120 },
   cashbackBadge: { position: 'absolute', top: 8, right: 8, backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: 8 },
-  cashbackText: { fontSize: 11, fontWeight: '700', color: Colors.text.inverse },
+  cashbackText: { fontSize: 11, fontWeight: '700', color: colors.text.inverse },
   serviceInfo: { padding: 12 },
-  serviceName: { fontSize: 15, fontWeight: '700', color: Colors.nileBlue, marginBottom: 2 },
-  serviceType: { fontSize: 12, color: Colors.neutral[500], marginBottom: 4 },
+  serviceName: { fontSize: 15, fontWeight: '700', color: colors.nileBlue, marginBottom: 2 },
+  serviceType: { fontSize: 12, color: colors.neutral[500], marginBottom: 4 },
   servicePrice: { fontSize: 14, fontWeight: '600', color: Colors.success },
   promoBanner: { marginHorizontal: 16 },
   promoGradient: { padding: Spacing.xl, borderRadius: BorderRadius.lg, alignItems: 'center' },
   promoEmoji: { fontSize: 40, marginBottom: 12 },
-  promoTitle: { fontSize: 18, fontWeight: '700', color: Colors.text.inverse, marginBottom: 4 },
+  promoTitle: { fontSize: 18, fontWeight: '700', color: colors.text.inverse, marginBottom: 4 },
   promoSubtitle: { fontSize: 13, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: 16 },
-  promoButton: { backgroundColor: Colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: 24 },
+  promoButton: { backgroundColor: colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: 24 },
   promoButtonText: { fontSize: 14, fontWeight: '700', color: Colors.success },
 });
 

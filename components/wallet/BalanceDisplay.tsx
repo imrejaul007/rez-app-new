@@ -24,7 +24,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ThemedText } from '@/components/ThemedText';
 import { WalletData, CoinType } from '@/types/wallet';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { BRAND } from '@/constants/brand';
 import { useIsMounted } from '@/hooks/useIsMounted';

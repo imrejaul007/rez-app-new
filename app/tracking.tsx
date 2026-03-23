@@ -421,7 +421,7 @@ function OrderTrackingScreen() {
         <View style={styles.deliveryPersonCard}>
           <View style={styles.deliveryPersonLeft}>
             <View style={styles.deliveryPersonAvatar}>
-              <Ionicons name="person" size={18} color={Colors.nileBlue} />
+              <Ionicons name="person" size={18} color={colors.nileBlue} />
             </View>
             <View>
               <ThemedText style={styles.deliveryPersonName}>
@@ -458,7 +458,7 @@ function OrderTrackingScreen() {
             <Ionicons
               name={order.fulfillmentType === 'pickup' ? 'bag-handle-outline' : order.fulfillmentType === 'drive_thru' ? 'car-outline' : order.fulfillmentType === 'dine_in' ? 'restaurant-outline' : 'bicycle-outline'}
               size={14}
-              color={Colors.nileBlue}
+              color={colors.nileBlue}
             />
             <ThemedText style={{ fontSize: 12, fontWeight: '600', color: colors.nileBlue }}>
               {order.fulfillmentType === 'pickup' ? 'Pickup' : order.fulfillmentType === 'drive_thru' ? 'Drive-Thru' : order.fulfillmentType === 'dine_in' ? 'Dine-In' : 'Delivery'}
@@ -476,7 +476,7 @@ function OrderTrackingScreen() {
           accessibilityRole="button"
           accessibilityHint="Double tap to view full order details"
         >
-          <Ionicons name="receipt-outline" size={16} color={Colors.nileBlue} />
+          <Ionicons name="receipt-outline" size={16} color={colors.nileBlue} />
           <ThemedText style={styles.secondaryButtonText}>View Details</ThemedText>
         </Pressable>
 
@@ -637,7 +637,7 @@ function OrderTrackingScreen() {
                 <Ionicons
                   name={selectedTab === 'active' ? 'receipt-outline' : 'checkmark-done-circle-outline'}
                   size={48}
-                  color={Colors.nileBlue}
+                  color={colors.nileBlue}
                 />
               </LinearGradient>
               <ThemedText style={styles.emptyTitle}>
@@ -671,18 +671,18 @@ function OrderTrackingScreen() {
 
 // Nuqta Color Palette - mapped to DesignSystem tokens
 const COLORS = {
-  primary: Colors.nileBlue,
-  primaryLight: Colors.background.tertiary,
+  primary: colors.nileBlue,
+  primaryLight: colors.background.tertiary,
   mustard: Colors.gold,
   peach: Colors.lightPeach,
   gold: Colors.gold,
   goldDark: Colors.primary[700],
-  navy: Colors.nileBlue,
-  text: Colors.text.primary,
-  textMuted: Colors.text.tertiary,
-  surface: Colors.background.secondary,
-  white: Colors.background.primary,
-  linen: Colors.background.secondary,
+  navy: colors.nileBlue,
+  text: colors.text.primary,
+  textMuted: colors.text.tertiary,
+  surface: colors.background.secondary,
+  white: colors.background.primary,
+  linen: colors.background.secondary,
 };
 
 const styles = StyleSheet.create({
@@ -763,7 +763,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   activeTabText: {
     color: 'white',
@@ -828,7 +828,7 @@ const styles = StyleSheet.create({
   orderNumberLarge: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   statusTextLarge: {
@@ -844,11 +844,11 @@ const styles = StyleSheet.create({
   estimatedTime: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   estimatedLabel: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
 
@@ -870,7 +870,7 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'right',
   },
 
@@ -881,7 +881,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   merchantAvatar: {
     width: 40,
@@ -906,12 +906,12 @@ const styles = StyleSheet.create({
   merchantName: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   orderItems: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 16,
   },
   orderAmount: {
@@ -930,7 +930,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     backgroundColor: 'rgba(223, 235, 247, 0.5)',
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   deliveryPersonLeft: {
     flexDirection: 'row',
@@ -961,7 +961,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -974,7 +974,7 @@ const styles = StyleSheet.create({
   trackingHeader: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 14,
   },
   modernTrackingSteps: {
@@ -992,7 +992,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 6,
@@ -1031,12 +1031,12 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: Colors.border.dark,
+    backgroundColor: colors.border.dark,
   },
   modernStepLine: {
     width: 2,
     height: 32,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   stepLineCompleted: {
     backgroundColor: Colors.gold,
@@ -1050,24 +1050,24 @@ const styles = StyleSheet.create({
   modernStepTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   stepActiveTitle: {
     color: COLORS.primary,
   },
   stepCompletedTitle: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   modernStepDescription: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 16,
     marginBottom: 2,
   },
   modernStepTimestamp: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
 
@@ -1147,12 +1147,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 8,
   },
   emptyDescription: {
     fontSize: 15,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 32,

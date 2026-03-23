@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
   donateButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   infoCard: {
     flexDirection: 'row',
@@ -623,7 +623,7 @@ const styles = StyleSheet.create({
   modalButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   donateAgainButton: {
     padding: PRIVE_SPACING.md,

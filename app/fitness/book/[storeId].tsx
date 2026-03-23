@@ -429,7 +429,7 @@ const FitnessBookingPage: React.FC = () => {
             <Ionicons
               name={tab.icon as any}
               size={18}
-              color={activeTab === tab.id ? Colors.background.primary : Colors.text.tertiary}
+              color={activeTab === tab.id ? colors.background.primary : colors.text.tertiary}
             />
             <Text style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}>
               {tab.label}
@@ -540,7 +540,7 @@ const FitnessBookingPage: React.FC = () => {
               <Text style={styles.className}>{cls.name}</Text>
               <Text style={styles.classInstructor}>{cls.instructor}</Text>
               <View style={styles.spotsRow}>
-                <Ionicons name="people" size={14} color={isFull ? Colors.error : Colors.text.tertiary} />
+                <Ionicons name="people" size={14} color={isFull ? Colors.error : colors.text.tertiary} />
                 <Text style={[styles.spotsText, isFull && styles.spotsTextFull]}>
                   {isFull ? 'Full' : `${cls.spots} spots left`}
                 </Text>
@@ -650,14 +650,14 @@ const FitnessBookingPage: React.FC = () => {
               style={styles.quantityButton}
               onPress={() => dayPassCount > 1 && setDayPassCount(dayPassCount - 1)}
             >
-              <Ionicons name="remove" size={20} color={Colors.nileBlue} />
+              <Ionicons name="remove" size={20} color={colors.nileBlue} />
             </Pressable>
             <Text style={styles.quantityValue}>{dayPassCount}</Text>
             <Pressable
               style={styles.quantityButton}
               onPress={() => dayPassCount < 5 && setDayPassCount(dayPassCount + 1)}
             >
-              <Ionicons name="add" size={20} color={Colors.nileBlue} />
+              <Ionicons name="add" size={20} color={colors.nileBlue} />
             </Pressable>
           </View>
         </View>
@@ -669,32 +669,32 @@ const FitnessBookingPage: React.FC = () => {
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Your Details</Text>
       <View style={styles.inputContainer}>
-        <Ionicons name="person" size={18} color={Colors.text.tertiary} />
+        <Ionicons name="person" size={18} color={colors.text.tertiary} />
         <TextInput
           style={styles.input}
           placeholder="Full Name *"
-          placeholderTextColor={Colors.text.tertiary}
+          placeholderTextColor={colors.text.tertiary}
           value={customerName}
           onChangeText={setCustomerName}
         />
       </View>
       <View style={styles.inputContainer}>
-        <Ionicons name="call" size={18} color={Colors.text.tertiary} />
+        <Ionicons name="call" size={18} color={colors.text.tertiary} />
         <TextInput
           style={styles.input}
           placeholder="Phone Number *"
-          placeholderTextColor={Colors.text.tertiary}
+          placeholderTextColor={colors.text.tertiary}
           value={customerPhone}
           onChangeText={setCustomerPhone}
           keyboardType="phone-pad"
         />
       </View>
       <View style={styles.inputContainer}>
-        <Ionicons name="mail" size={18} color={Colors.text.tertiary} />
+        <Ionicons name="mail" size={18} color={colors.text.tertiary} />
         <TextInput
           style={styles.input}
           placeholder="Email (Optional)"
-          placeholderTextColor={Colors.text.tertiary}
+          placeholderTextColor={colors.text.tertiary}
           value={customerEmail}
           onChangeText={setCustomerEmail}
           keyboardType="email-address"
@@ -731,12 +731,12 @@ const FitnessBookingPage: React.FC = () => {
           >
             <View style={styles.headerTop}>
               <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-                <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+                <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
               </Pressable>
               <View style={styles.headerInfo}>
                 <Text style={styles.headerTitle}>{displayName}</Text>
                 <View style={styles.cashbackRow}>
-                  <Ionicons name="gift" size={14} color={Colors.text.inverse} />
+                  <Ionicons name="gift" size={14} color={colors.text.inverse} />
                   <Text style={styles.cashbackText}>{displayCashback}% Cashback</Text>
                 </View>
               </View>
@@ -792,11 +792,11 @@ const FitnessBookingPage: React.FC = () => {
                 style={styles.bookButtonGradient}
               >
                 {submitting ? (
-                  <ActivityIndicator size="small" color={Colors.text.inverse} />
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
                   <>
                     <Text style={styles.bookButtonText}>Continue</Text>
-                    <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+                    <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
                   </>
                 )}
               </LinearGradient>
@@ -855,134 +855,134 @@ const FitnessBookingPage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background.primary },
-  loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: Colors.text.tertiary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.primary },
+  loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: colors.text.tertiary },
 
   header: { paddingHorizontal: Spacing.base, paddingBottom: Spacing.base },
   headerTop: { flexDirection: 'row', alignItems: 'center' },
   backBtn: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
   headerInfo: { flex: 1, marginLeft: Spacing.md },
-  headerTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.text.inverse },
   cashbackRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginTop: 2 },
   cashbackText: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.9)' },
 
-  tabsContainer: { backgroundColor: Colors.background.primary, paddingVertical: Spacing.md, paddingHorizontal: Spacing.base, borderBottomWidth: 1, borderBottomColor: Colors.border.default },
-  tab: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: Spacing.base, paddingVertical: 10, borderRadius: BorderRadius.xl, backgroundColor: Colors.background.secondary, marginRight: Spacing.sm },
+  tabsContainer: { backgroundColor: colors.background.primary, paddingVertical: Spacing.md, paddingHorizontal: Spacing.base, borderBottomWidth: 1, borderBottomColor: colors.border.default },
+  tab: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: Spacing.base, paddingVertical: 10, borderRadius: BorderRadius.xl, backgroundColor: colors.background.secondary, marginRight: Spacing.sm },
   tabActive: { backgroundColor: colors.brand.orange },
-  tabText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: Colors.text.tertiary },
-  tabTextActive: { color: Colors.text.inverse },
+  tabText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.tertiary },
+  tabTextActive: { color: colors.text.inverse },
 
   content: { flex: 1 },
   section: { padding: Spacing.base },
-  sectionTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: Colors.nileBlue, marginBottom: Spacing.md },
+  sectionTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.md },
 
   // Membership Plans
-  planCard: { backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, marginBottom: Spacing.md, borderWidth: 2, borderColor: Colors.border.default, position: 'relative' },
+  planCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, marginBottom: Spacing.md, borderWidth: 2, borderColor: colors.border.default, position: 'relative' },
   planCardSelected: { borderColor: colors.brand.orange },
   planCardPopular: { borderColor: Colors.brand.purple },
   popularBadge: { position: 'absolute', top: -1, right: 16, backgroundColor: Colors.brand.purple, paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderBottomLeftRadius: 8, borderBottomRightRadius: 8 },
-  popularBadgeText: { fontSize: Typography.overline.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  popularBadgeText: { fontSize: Typography.overline.fontSize, fontWeight: '700', color: colors.text.inverse },
   planHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: Spacing.md },
-  planName: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.nileBlue },
-  planDuration: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary, marginTop: 2 },
+  planName: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue },
+  planDuration: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, marginTop: 2 },
   planPriceContainer: { alignItems: 'flex-end' },
-  planOriginalPrice: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary, textDecorationLine: 'line-through' },
+  planOriginalPrice: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, textDecorationLine: 'line-through' },
   planPrice: { fontSize: 22, fontWeight: '700', color: colors.brand.orange },
-  planFeatures: { borderTopWidth: 1, borderTopColor: Colors.border.default, paddingTop: Spacing.md },
+  planFeatures: { borderTopWidth: 1, borderTopColor: colors.border.default, paddingTop: Spacing.md },
   featureRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: 6 },
-  featureText: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary, flex: 1 },
+  featureText: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, flex: 1 },
   selectedIndicator: { position: 'absolute', top: 16, left: 16 },
 
   // Date Selector
   dateScroll: { marginBottom: Spacing.sm },
-  dateCard: { width: 60, height: 72, borderRadius: BorderRadius.md, backgroundColor: Colors.background.primary, alignItems: 'center', justifyContent: 'center', marginRight: Spacing.sm, borderWidth: 1.5, borderColor: Colors.border.default },
+  dateCard: { width: 60, height: 72, borderRadius: BorderRadius.md, backgroundColor: colors.background.primary, alignItems: 'center', justifyContent: 'center', marginRight: Spacing.sm, borderWidth: 1.5, borderColor: colors.border.default },
   dateCardSelected: { borderColor: colors.brand.orange, backgroundColor: colors.brand.orange },
-  dateDay: { fontSize: Typography.caption.fontSize, fontWeight: '500', color: Colors.text.tertiary, textTransform: 'uppercase' },
-  dateNumber: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: Colors.nileBlue, marginVertical: 2 },
-  dateTextSelected: { color: Colors.text.inverse },
+  dateDay: { fontSize: Typography.caption.fontSize, fontWeight: '500', color: colors.text.tertiary, textTransform: 'uppercase' },
+  dateNumber: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.nileBlue, marginVertical: 2 },
+  dateTextSelected: { color: colors.text.inverse },
   todayDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: colors.brand.orange },
-  todayDotSelected: { backgroundColor: Colors.background.primary },
+  todayDotSelected: { backgroundColor: colors.background.primary },
 
   // Class Booking
-  classCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md, padding: Spacing.md, marginBottom: 10, borderWidth: 1.5, borderColor: Colors.border.default },
+  classCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, padding: Spacing.md, marginBottom: 10, borderWidth: 1.5, borderColor: colors.border.default },
   classCardSelected: { borderColor: colors.brand.orange, backgroundColor: colors.tint.orange },
   classCardFull: { opacity: 0.6 },
-  classTime: { width: 70, alignItems: 'center', paddingRight: Spacing.md, borderRightWidth: 1, borderRightColor: Colors.border.default },
-  classTimeText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '700', color: Colors.nileBlue },
-  classDuration: { fontSize: Typography.caption.fontSize, color: Colors.text.tertiary, marginTop: 2 },
+  classTime: { width: 70, alignItems: 'center', paddingRight: Spacing.md, borderRightWidth: 1, borderRightColor: colors.border.default },
+  classTimeText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '700', color: colors.nileBlue },
+  classDuration: { fontSize: Typography.caption.fontSize, color: colors.text.tertiary, marginTop: 2 },
   classInfo: { flex: 1, paddingHorizontal: Spacing.md },
-  className: { fontSize: Typography.body.fontSize, fontWeight: '600', color: Colors.nileBlue },
-  classInstructor: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary, marginTop: 2 },
+  className: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.nileBlue },
+  classInstructor: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, marginTop: 2 },
   spotsRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginTop: Spacing.xs },
-  spotsText: { fontSize: Typography.caption.fontSize, color: Colors.text.tertiary },
+  spotsText: { fontSize: Typography.caption.fontSize, color: colors.text.tertiary },
   spotsTextFull: { color: Colors.error },
   classPrice: { alignItems: 'center', gap: Spacing.xs },
   classPriceText: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.brand.orange },
 
   // Trainer Booking
   sessionTypeContainer: { flexDirection: 'row', gap: Spacing.sm },
-  sessionOption: { flex: 1, backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md, padding: Spacing.md, alignItems: 'center', borderWidth: 1.5, borderColor: Colors.border.default, position: 'relative' },
+  sessionOption: { flex: 1, backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, padding: Spacing.md, alignItems: 'center', borderWidth: 1.5, borderColor: colors.border.default, position: 'relative' },
   sessionOptionSelected: { borderColor: colors.brand.orange, backgroundColor: colors.tint.orange },
   saveBadge: { position: 'absolute', top: -8, right: 8, backgroundColor: Colors.success, paddingHorizontal: 6, paddingVertical: 2, borderRadius: BorderRadius.sm },
-  saveBadgeText: { fontSize: 9, fontWeight: '700', color: Colors.text.inverse },
-  sessionLabel: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: Colors.text.tertiary, textAlign: 'center', marginBottom: Spacing.xs },
-  sessionLabelSelected: { color: Colors.nileBlue },
-  sessionPrice: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: Colors.nileBlue },
+  saveBadgeText: { fontSize: 9, fontWeight: '700', color: colors.text.inverse },
+  sessionLabel: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: colors.text.tertiary, textAlign: 'center', marginBottom: Spacing.xs },
+  sessionLabelSelected: { color: colors.nileBlue },
+  sessionPrice: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.nileBlue },
   sessionPriceSelected: { color: colors.brand.orange },
 
   timeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  timeSlot: { width: (SCREEN_WIDTH - 48) / 4, paddingVertical: 10, borderRadius: 10, backgroundColor: Colors.background.primary, alignItems: 'center', borderWidth: 1.5, borderColor: Colors.border.default },
+  timeSlot: { width: (SCREEN_WIDTH - 48) / 4, paddingVertical: 10, borderRadius: 10, backgroundColor: colors.background.primary, alignItems: 'center', borderWidth: 1.5, borderColor: colors.border.default },
   timeSlotSelected: { borderColor: colors.brand.orange, backgroundColor: colors.tint.orange },
-  timeSlotDisabled: { backgroundColor: Colors.background.secondary, opacity: 0.5 },
-  timeSlotText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '500', color: Colors.text.tertiary },
+  timeSlotDisabled: { backgroundColor: colors.background.secondary, opacity: 0.5 },
+  timeSlotText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '500', color: colors.text.tertiary },
   timeSlotTextSelected: { color: colors.brand.orange, fontWeight: '600' },
-  timeSlotTextDisabled: { color: Colors.text.tertiary },
+  timeSlotTextDisabled: { color: colors.text.tertiary },
 
   // Day Pass
-  dayPassCard: { backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, borderWidth: 1.5, borderColor: Colors.border.default },
+  dayPassCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, borderWidth: 1.5, borderColor: colors.border.default },
   dayPassHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: Spacing.base },
-  dayPassTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.nileBlue },
-  dayPassSubtitle: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary, marginTop: 2 },
+  dayPassTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue },
+  dayPassSubtitle: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, marginTop: 2 },
   dayPassPrice: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.brand.orange },
-  dayPassFeatures: { borderBottomWidth: 1, borderBottomColor: Colors.border.default, paddingBottom: Spacing.md, marginBottom: Spacing.base },
+  dayPassFeatures: { borderBottomWidth: 1, borderBottomColor: colors.border.default, paddingBottom: Spacing.md, marginBottom: Spacing.base },
   quantitySelector: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  quantityLabel: { fontSize: Typography.body.fontSize, fontWeight: '600', color: Colors.nileBlue },
+  quantityLabel: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.nileBlue },
   quantityControls: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base },
-  quantityButton: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
-  quantityValue: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.nileBlue, width: 30, textAlign: 'center' },
+  quantityButton: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
+  quantityValue: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue, width: 30, textAlign: 'center' },
 
   // Customer Details
-  inputContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md, paddingHorizontal: 14, borderWidth: 1.5, borderColor: Colors.border.default, marginBottom: Spacing.md },
-  input: { flex: 1, height: 48, fontSize: Typography.body.fontSize, color: Colors.nileBlue, marginLeft: 10 },
+  inputContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, paddingHorizontal: 14, borderWidth: 1.5, borderColor: colors.border.default, marginBottom: Spacing.md },
+  input: { flex: 1, height: 48, fontSize: Typography.body.fontSize, color: colors.nileBlue, marginLeft: 10 },
 
   // Error Banner
   errorBanner: { position: 'absolute', top: 120, left: 16, right: 16, flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.errorScale[100], borderRadius: BorderRadius.md, padding: Spacing.md, gap: Spacing.sm, zIndex: 100 },
   errorText: { flex: 1, fontSize: Typography.body.fontSize, color: Colors.error, fontWeight: '500' },
 
   // Bottom Bar
-  bottomBar: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingTop: Spacing.base, backgroundColor: Colors.background.primary, borderTopWidth: 1, borderTopColor: Colors.border.default },
+  bottomBar: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingTop: Spacing.base, backgroundColor: colors.background.primary, borderTopWidth: 1, borderTopColor: colors.border.default },
   priceSection: {},
-  totalLabel: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary },
-  totalPrice: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: Colors.nileBlue },
+  totalLabel: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary },
+  totalPrice: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.nileBlue },
   cashbackEarn: { fontSize: Typography.caption.fontSize, color: Colors.success, fontWeight: '600' },
   bookButton: { borderRadius: BorderRadius['2xl'], overflow: 'hidden' },
   bookButtonGradient: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, paddingHorizontal: Spacing.xl, paddingVertical: 14 },
-  bookButtonText: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  bookButtonText: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.text.inverse },
 
   // Success Modal
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: Spacing.xl },
-  modalContent: { backgroundColor: Colors.background.primary, borderRadius: BorderRadius['2xl'], padding: Spacing.xl, width: '100%', maxWidth: 340, alignItems: 'center' },
+  modalContent: { backgroundColor: colors.background.primary, borderRadius: BorderRadius['2xl'], padding: Spacing.xl, width: '100%', maxWidth: 340, alignItems: 'center' },
   successIcon: { marginBottom: Spacing.base },
-  modalTitle: { fontSize: 22, fontWeight: '700', color: Colors.nileBlue, marginBottom: Spacing.sm },
-  modalMessage: { fontSize: Typography.body.fontSize, color: Colors.text.tertiary, textAlign: 'center', marginBottom: Spacing.lg },
-  modalDetails: { width: '100%', backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.md, padding: Spacing.base, marginBottom: Spacing.lg },
+  modalTitle: { fontSize: 22, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.sm },
+  modalMessage: { fontSize: Typography.body.fontSize, color: colors.text.tertiary, textAlign: 'center', marginBottom: Spacing.lg },
+  modalDetails: { width: '100%', backgroundColor: colors.background.secondary, borderRadius: BorderRadius.md, padding: Spacing.base, marginBottom: Spacing.lg },
   modalDetailRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: Spacing.sm },
-  modalDetailLabel: { fontSize: Typography.body.fontSize, color: Colors.text.tertiary },
-  modalDetailValue: { fontSize: Typography.body.fontSize, fontWeight: '700', color: Colors.nileBlue },
+  modalDetailLabel: { fontSize: Typography.body.fontSize, color: colors.text.tertiary },
+  modalDetailValue: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.nileBlue },
   doneButton: { width: '100%', borderRadius: BorderRadius.md, overflow: 'hidden' },
   doneButtonGradient: { paddingVertical: 14, alignItems: 'center' },
-  doneButtonText: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  doneButtonText: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.text.inverse },
 });
 
 export default withErrorBoundary(FitnessBookingPage, 'FitnessBookStoreId');

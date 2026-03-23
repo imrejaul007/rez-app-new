@@ -139,7 +139,7 @@ function HelpPage() {
       id: 'policies',
       title: 'Policies & Terms',
       icon: 'document-text',
-      iconColor: Colors.text.tertiary,
+      iconColor: colors.text.tertiary,
       itemCount: 5,
       route: '/help/policies',
     },
@@ -224,7 +224,7 @@ function HelpPage() {
         </View>
       </View>
 
-      <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+      <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
     </Pressable>
   );
 
@@ -246,7 +246,7 @@ function HelpPage() {
           <Ionicons
             name={isExpanded ? "chevron-up" : "chevron-down"}
             size={20}
-            color={Colors.text.tertiary}
+            color={colors.text.tertiary}
           />
         </View>
 
@@ -294,11 +294,11 @@ function HelpPage() {
         
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={18} color={Colors.text.tertiary} style={styles.searchIcon} />
+          <Ionicons name="search" size={18} color={colors.text.tertiary} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search for help..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
             returnKeyType="search"
@@ -313,7 +313,7 @@ function HelpPage() {
               accessibilityRole="button"
               accessibilityHint="Double tap to clear search text"
             >
-              <Ionicons name="close" size={18} color={Colors.text.tertiary} />
+              <Ionicons name="close" size={18} color={colors.text.tertiary} />
             </Pressable>
           )}
         </View>
@@ -351,7 +351,7 @@ function HelpPage() {
           
           {filteredFAQs.length === 0 && searchQuery && (
             <View style={styles.noResults}>
-              <Ionicons name="search" size={48} color={Colors.border.default} />
+              <Ionicons name="search" size={48} color={colors.border.default} />
               <ThemedText style={styles.noResultsTitle}>No results found</ThemedText>
               <ThemedText style={styles.noResultsText}>
                 Try searching with different keywords or browse our help categories above.
@@ -387,7 +387,7 @@ function HelpPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 20 : 0,
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerRight: {
     width: 40,
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     height: 48,
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   content: {
     flex: 1,
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.base,
   },
   
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   quickAction: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
@@ -478,20 +478,20 @@ const styles = StyleSheet.create({
   quickActionTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.xs,
     textAlign: 'center',
   },
   quickActionDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 16,
   },
   
   // Help Categories
   helpCategories: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     shadowColor: '#000',
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   categoryLeft: {
     flexDirection: 'row',
@@ -528,17 +528,17 @@ const styles = StyleSheet.create({
   categoryTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: 2,
   },
   categoryCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   
   // FAQ List
   faqList: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     shadowColor: '#000',
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
   },
   faqItem: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   faqHeader: {
     flexDirection: 'row',
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginRight: Spacing.md,
   },
   faqAnswer: {
@@ -571,13 +571,13 @@ const styles = StyleSheet.create({
   },
   faqAnswerText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   
   // No Results
   noResults: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 40,
     alignItems: 'center',
@@ -590,20 +590,20 @@ const styles = StyleSheet.create({
   noResultsTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
   },
   noResultsText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
   },
   
   // Contact Info
   contactInfo: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.xl,
     padding: Spacing.lg,
@@ -618,12 +618,12 @@ const styles = StyleSheet.create({
   contactTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   contactText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.base,
     lineHeight: 20,
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   contactButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     ...Typography.bodyLarge,
   },

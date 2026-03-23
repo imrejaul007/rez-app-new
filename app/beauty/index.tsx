@@ -34,16 +34,16 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const COLORS = {
   white: colors.background.primary,
   navy: colors.brand.navyDark,
-  gray50: Colors.background.secondary,
-  gray100: Colors.background.secondary,
-  gray200: Colors.border.default,
-  gray600: Colors.text.tertiary,
+  gray50: colors.background.secondary,
+  gray100: colors.background.secondary,
+  gray200: colors.border.default,
+  gray600: colors.text.tertiary,
   green500: Colors.success,
   primaryGreen: Colors.gold,
   pink500: colors.brand.pink,
   purple500: Colors.brand.purpleLight,
   amber500: Colors.warning,
-  background: Colors.background.secondary,
+  background: colors.background.secondary,
 };
 
 // Beauty categories

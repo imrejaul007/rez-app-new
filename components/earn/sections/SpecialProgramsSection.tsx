@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ProgramListItem, SpecialProgramSlug } from '@/services/specialProgramApi';
-import { Colors, Spacing } from '@/constants/DesignSystem';
+import { Spacing } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { specialPrograms } from '@/hooks/usePlayAndEarnData';
 import { earnStyles as styles } from './styles';
 
@@ -22,12 +23,12 @@ const SpecialProgramsSection = React.memo(function SpecialProgramsSection({
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Ionicons name="ribbon" size={24} color={Colors.warning} />
+        <Ionicons name="ribbon" size={24} color={colors.warning} />
         <Text style={styles.sectionTitle}>Special Programs</Text>
       </View>
 
       {(specialProgramsLoaded && apiSpecialPrograms.length === 0) ? (
-        <Text style={{ color: Colors.text.tertiary, textAlign: 'center', paddingVertical: Spacing.base }}>
+        <Text style={{ color: colors.text.tertiary, textAlign: 'center', paddingVertical: Spacing.base }}>
           No programs available right now
         </Text>
       ) : (apiSpecialPrograms.length > 0
@@ -39,7 +40,7 @@ const SpecialProgramsSection = React.memo(function SpecialProgramsSection({
           >
             <View style={styles.programHeader}>
               <View style={styles.programIconContainer}>
-                <Ionicons name={(program.icon || 'ribbon') as keyof typeof Ionicons.glyphMap} size={28} color={Colors.warning} />
+                <Ionicons name={(program.icon || 'ribbon') as keyof typeof Ionicons.glyphMap} size={28} color={colors.warning} />
               </View>
               <View style={styles.programContent}>
                 <View style={styles.programTitleRow}>
@@ -49,7 +50,7 @@ const SpecialProgramsSection = React.memo(function SpecialProgramsSection({
                 <View style={styles.programRewards}>
                   {program.benefits.slice(0, 3).map((benefit, idx) => (
                     <View key={idx} style={styles.programRewardItem}>
-                      <Ionicons name="checkmark-circle" size={12} color={Colors.gold} />
+                      <Ionicons name="checkmark-circle" size={12} color={colors.gold} />
                       <Text style={styles.programRewardText}>{benefit.title}</Text>
                     </View>
                   ))}
@@ -93,7 +94,7 @@ const SpecialProgramsSection = React.memo(function SpecialProgramsSection({
           >
             <View style={styles.programHeader}>
               <View style={styles.programIconContainer}>
-                <Ionicons name={program.icon} size={28} color={Colors.warning} />
+                <Ionicons name={program.icon} size={28} color={colors.warning} />
               </View>
               <View style={styles.programContent}>
                 <View style={styles.programTitleRow}>
@@ -103,7 +104,7 @@ const SpecialProgramsSection = React.memo(function SpecialProgramsSection({
                 <View style={styles.programRewards}>
                   {program.rewards.map((reward, idx) => (
                     <View key={idx} style={styles.programRewardItem}>
-                      <Ionicons name="checkmark-circle" size={12} color={Colors.gold} />
+                      <Ionicons name="checkmark-circle" size={12} color={colors.gold} />
                       <Text style={styles.programRewardText}>{reward}</Text>
                     </View>
                   ))}

@@ -1,5 +1,5 @@
 import { StyleSheet, Dimensions, Platform } from 'react-native';
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 const { width } = Dimensions.get('window');
@@ -7,7 +7,7 @@ const { width } = Dimensions.get('window');
 export const earnStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   scrollView: {
     flex: 1,
@@ -16,13 +16,13 @@ export const earnStyles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing['4xl'],
     paddingBottom: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: colors.slateLight,
   },
   headerTitle: {
     ...Typography.h2,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.base,
     fontFamily: 'Poppins',
   },
@@ -58,27 +58,27 @@ export const earnStyles = StyleSheet.create({
   },
   monthlyLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   monthlyValue: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   monthlyButtons: {
     flexDirection: 'row',
     gap: Spacing.sm,
   },
   walletButton: {
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.sm,
   },
   walletButtonText: {
     ...Typography.bodySmall,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '600',
   },
   howButton: {
@@ -89,7 +89,7 @@ export const earnStyles = StyleSheet.create({
   },
   howButtonText: {
     ...Typography.bodySmall,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '600',
   },
   section: {
@@ -110,7 +110,7 @@ export const earnStyles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h3,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontFamily: 'Poppins',
   },
   sectionSubtitle: {
@@ -121,7 +121,7 @@ export const earnStyles = StyleSheet.create({
   },
   viewAllLink: {
     ...Typography.bodySmall,
-    color: Colors.gold,
+    color: colors.gold,
   },
   quickEarnGrid: {
     flexDirection: 'row',
@@ -132,7 +132,7 @@ export const earnStyles = StyleSheet.create({
     width: (width - 44) / 2,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: colors.slateLight,
     ...Shadows.medium,
@@ -148,7 +148,7 @@ export const earnStyles = StyleSheet.create({
   quickEarnTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
   },
   quickEarnReward: {
@@ -186,7 +186,7 @@ export const earnStyles = StyleSheet.create({
   socialMediaTitle: {
     ...Typography.bodyLarge,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 2,
   },
   socialMediaSubtitle: {
@@ -227,11 +227,11 @@ export const earnStyles = StyleSheet.create({
   creatorTitle: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   creatorSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   exploreLink: {
     flexDirection: 'row',
@@ -256,7 +256,7 @@ export const earnStyles = StyleSheet.create({
   },
   creatorCTAText: {
     ...Typography.body,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   featuredCreatorsGrid: {
@@ -268,7 +268,7 @@ export const earnStyles = StyleSheet.create({
     flex: 1,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: '#E9D5FF',
   },
@@ -288,7 +288,7 @@ export const earnStyles = StyleSheet.create({
   creatorName: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   creatorStats: {
@@ -298,11 +298,11 @@ export const earnStyles = StyleSheet.create({
   },
   creatorStatText: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   creatorStatDivider: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   trendingSection: {
     marginBottom: Spacing.base,
@@ -310,7 +310,7 @@ export const earnStyles = StyleSheet.create({
   trendingTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   trendingScroll: {
@@ -321,7 +321,7 @@ export const earnStyles = StyleSheet.create({
     width: 140,
     marginRight: Spacing.md,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     overflow: 'hidden',
     ...Shadows.medium,
   },
@@ -359,7 +359,7 @@ export const earnStyles = StyleSheet.create({
   pickTagText: {
     ...Typography.overline,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: undefined,
     letterSpacing: undefined,
   },
@@ -386,7 +386,7 @@ export const earnStyles = StyleSheet.create({
   pickViewsText: {
     ...Typography.overline,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textTransform: undefined,
     letterSpacing: undefined,
   },
@@ -396,7 +396,7 @@ export const earnStyles = StyleSheet.create({
   pickTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   pickPriceRow: {
@@ -408,11 +408,11 @@ export const earnStyles = StyleSheet.create({
   pickPrice: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   pickBrand: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   pickStatsRow: {
     flexDirection: 'row',
@@ -421,7 +421,7 @@ export const earnStyles = StyleSheet.create({
   },
   pickStatText: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   pickStatDivider: {
     fontSize: 10,
@@ -450,11 +450,11 @@ export const earnStyles = StyleSheet.create({
   streakTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   streakSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   streakMilestones: {
     flexDirection: 'row',
@@ -465,7 +465,7 @@ export const earnStyles = StyleSheet.create({
     flex: 1,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: colors.slateLight,
     alignItems: 'center',
@@ -476,13 +476,13 @@ export const earnStyles = StyleSheet.create({
   },
   milestoneDay: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   milestoneCoins: {
     ...Typography.body,
     fontWeight: 'bold',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   milestoneCoinsCompleted: {
     color: colors.brand.orange,
@@ -512,7 +512,7 @@ export const earnStyles = StyleSheet.create({
   },
   checkinText: {
     ...Typography.body,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   shoppingCard: {
@@ -520,7 +520,7 @@ export const earnStyles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: colors.slateLight,
     marginBottom: Spacing.md,
@@ -540,12 +540,12 @@ export const earnStyles = StyleSheet.create({
   shoppingTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
   },
   shoppingDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   shoppingRewards: {
@@ -574,7 +574,7 @@ export const earnStyles = StyleSheet.create({
   highlightText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   socialGrid: {
     flexDirection: 'row',
@@ -585,20 +585,20 @@ export const earnStyles = StyleSheet.create({
     width: (width - 44) / 2,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: colors.slateLight,
   },
   socialTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.md,
     marginBottom: Spacing.xs,
   },
   socialDescription: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   socialCoins: {
@@ -615,7 +615,7 @@ export const earnStyles = StyleSheet.create({
   },
   socialHighlightText: {
     ...Typography.body,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
   },
   socialHighlightBold: {
@@ -656,7 +656,7 @@ export const earnStyles = StyleSheet.create({
   impactTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   impactBadge: {
     backgroundColor: 'rgba(255,205,87,0.2)',
@@ -667,11 +667,11 @@ export const earnStyles = StyleSheet.create({
   impactBadgeText: {
     fontSize: 10,
     fontWeight: 'bold',
-    color: Colors.gold,
+    color: colors.gold,
   },
   impactSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   impactActivities: {
     flexDirection: 'row',
@@ -682,7 +682,7 @@ export const earnStyles = StyleSheet.create({
     flex: 1,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
   },
   impactActivityIcon: {
@@ -691,14 +691,14 @@ export const earnStyles = StyleSheet.create({
   },
   impactActivityLabel: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
     textAlign: 'center',
   },
   impactActivityCoins: {
     ...Typography.bodySmall,
     fontWeight: 'bold',
-    color: Colors.gold,
+    color: colors.gold,
   },
   impactFooter: {
     padding: Spacing.md,
@@ -706,13 +706,13 @@ export const earnStyles = StyleSheet.create({
   },
   impactFooterText: {
     ...Typography.body,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
   },
   programCard: {
     padding: Spacing.lg,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: colors.slateLight,
     marginBottom: Spacing.md,
@@ -742,7 +742,7 @@ export const earnStyles = StyleSheet.create({
   programTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   programBadge: {
     ...Typography.h3,
@@ -758,15 +758,15 @@ export const earnStyles = StyleSheet.create({
   },
   programRewardText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   programEarnings: {
     ...Typography.body,
     fontWeight: 'bold',
-    color: Colors.warning,
+    color: colors.warning,
   },
   eligibilityButton: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingVertical: 10,
     borderRadius: BorderRadius.sm,
     alignItems: 'center',
@@ -780,10 +780,10 @@ export const earnStyles = StyleSheet.create({
   eligibilityText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   eligibilityTextActive: {
-    color: Colors.success,
+    color: colors.success,
   },
   eligibilityTextSuspended: {
     color: colors.error,
@@ -818,11 +818,11 @@ export const earnStyles = StyleSheet.create({
   eventsTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   eventsSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   eventsTypes: {
     flexDirection: 'row',
@@ -833,7 +833,7 @@ export const earnStyles = StyleSheet.create({
     flex: 1,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
   },
   eventTypeIcon: {
@@ -842,22 +842,22 @@ export const earnStyles = StyleSheet.create({
   },
   eventTypeLabel: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   eventsFooter: {
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   eventsFooterText: {
     ...Typography.body,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   bonusCard: {
     flexDirection: 'row',
     padding: Spacing.lg,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: '#FED7AA',
     marginBottom: Spacing.md,
@@ -877,12 +877,12 @@ export const earnStyles = StyleSheet.create({
   bonusTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
   },
   bonusDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   bonusFooter: {
@@ -893,7 +893,7 @@ export const earnStyles = StyleSheet.create({
   bonusReward: {
     ...Typography.body,
     fontWeight: 'bold',
-    color: Colors.gold,
+    color: colors.gold,
   },
   bonusTime: {
     flexDirection: 'row',
@@ -909,7 +909,7 @@ export const earnStyles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -924,12 +924,12 @@ export const earnStyles = StyleSheet.create({
   gameCard: {
     padding: 14,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: colors.tint.slate,
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.06,
         shadowRadius: 8,
@@ -969,7 +969,7 @@ export const earnStyles = StyleSheet.create({
   gameTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 6,
   },
   gamePlaysRow: {
@@ -1001,7 +1001,7 @@ export const earnStyles = StyleSheet.create({
   challengeCard: {
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
     borderColor: colors.slateLight,
     marginBottom: Spacing.md,
@@ -1023,11 +1023,11 @@ export const earnStyles = StyleSheet.create({
   challengeTitle: {
     ...Typography.body,
     fontWeight: 'bold',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   challengeTime: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   challengeReward: {
     alignItems: 'flex-end',
@@ -1035,11 +1035,11 @@ export const earnStyles = StyleSheet.create({
   challengeCoins: {
     ...Typography.bodySmall,
     fontWeight: 'bold',
-    color: Colors.warning,
+    color: colors.warning,
   },
   challengeProgress: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   challengeProgressBar: {
     height: 6,
@@ -1050,13 +1050,13 @@ export const earnStyles = StyleSheet.create({
   challengeProgressFill: {
     height: '100%',
     borderRadius: 3,
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
   },
   tournamentIconBg: {
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: Colors.warning,
+    backgroundColor: colors.warning,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1073,12 +1073,12 @@ export const earnStyles = StyleSheet.create({
     width: 7,
     height: 7,
     borderRadius: 4,
-    backgroundColor: Colors.error,
+    backgroundColor: colors.error,
   },
   tournamentLiveText: {
     fontSize: 10,
     fontWeight: '800',
-    color: Colors.error,
+    color: colors.error,
     letterSpacing: 0.5,
   },
   tournamentCard: {
@@ -1098,7 +1098,7 @@ export const earnStyles = StyleSheet.create({
   tournamentStatusText: {
     fontSize: 9,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.5,
   },
   tournamentTopRow: {
@@ -1113,7 +1113,7 @@ export const earnStyles = StyleSheet.create({
   tournamentTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 2,
   },
   tournamentPlayersRow: {
@@ -1146,7 +1146,7 @@ export const earnStyles = StyleSheet.create({
   tournamentStatBoxValue: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   tournamentStatBoxLabel: {
     fontSize: 10,
@@ -1158,14 +1158,14 @@ export const earnStyles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 6,
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
     borderRadius: 10,
     paddingVertical: 10,
   },
   tournamentCTAText: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   tournamentEmptyCard: {
     alignItems: 'center',
@@ -1205,7 +1205,7 @@ export const earnStyles = StyleSheet.create({
     borderColor: 'rgba(245,158,11,0.3)',
   },
   achievementLocked: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderColor: colors.slateLight,
     opacity: 0.6,
   },
@@ -1221,13 +1221,13 @@ export const earnStyles = StyleSheet.create({
   achievementTitle: {
     ...Typography.body,
     fontWeight: 'bold',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
   },
   achievementCoins: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.warning,
+    color: colors.warning,
   },
   achievementProgressContainer: {
     marginTop: Spacing.sm,
@@ -1240,12 +1240,12 @@ export const earnStyles = StyleSheet.create({
   },
   achievementProgressFill: {
     height: '100%',
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
     borderRadius: 2,
   },
   achievementProgressText: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   leaderboardCard: {
@@ -1258,13 +1258,13 @@ export const earnStyles = StyleSheet.create({
   leaderboardTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
   },
   leaderboardText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.base,
   },
@@ -1279,20 +1279,20 @@ export const earnStyles = StyleSheet.create({
   leaderboardButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   whyRezCard: {
     padding: Spacing.base,
     borderRadius: BorderRadius.xl,
     borderWidth: 1,
-    borderColor: Colors.border.default,
-    backgroundColor: Colors.background.primary,
+    borderColor: colors.border.default,
+    backgroundColor: colors.background.primary,
     ...Shadows.subtle,
   },
   whyRezTitle: {
     fontSize: 17,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.base,
   },
@@ -1318,13 +1318,13 @@ export const earnStyles = StyleSheet.create({
   whyRezItemTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
     textAlign: 'center',
   },
   whyRezItemSubtitle: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 15,
   },
@@ -1349,7 +1349,7 @@ export const earnStyles = StyleSheet.create({
   bottomCTATitle: {
     ...Typography.body,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   bottomCTASubtitle: {
     ...Typography.bodySmall,
@@ -1359,22 +1359,22 @@ export const earnStyles = StyleSheet.create({
     paddingVertical: Spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
   },
   emptySectionText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   bonusOppCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
     ...Shadows.subtle,
   },
   bonusOppRow: {
@@ -1388,12 +1388,12 @@ export const earnStyles = StyleSheet.create({
   bonusOppTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   bonusOppDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   bonusOppRight: {
     alignItems: 'flex-end',
@@ -1402,13 +1402,13 @@ export const earnStyles = StyleSheet.create({
   bonusOppReward: {
     fontSize: 13,
     fontWeight: '800',
-    color: Colors.success,
+    color: colors.success,
   },
   bonusOppTimeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: BorderRadius.sm,
@@ -1418,7 +1418,7 @@ export const earnStyles = StyleSheet.create({
   },
   bonusOppTime: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
 });

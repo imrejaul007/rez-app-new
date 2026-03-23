@@ -289,7 +289,7 @@ function ExtraCoinsPage() {
         <LinearGradient colors={['#0F172A', '#1E293B']} style={[styles.skeletonHero, { paddingTop: headerTop + 16 }]}>
           <View style={styles.headerRow}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtnDark}>
-              <Ionicons name="chevron-back" size={20} color={Colors.text.inverse} />
+              <Ionicons name="chevron-back" size={20} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitleLight}>{`Extra ${BRAND.COIN_NAME}`}</Text>
             <View style={{ width: 32 }} />
@@ -338,7 +338,7 @@ function ExtraCoinsPage() {
             HERO SECTION — Full-bleed dark gradient
         ═══════════════════════════════════════════════════ */}
         <LinearGradient
-          colors={['#0F172A', Colors.nileBlue, colors.brand.nileBlueLight]}
+          colors={['#0F172A', colors.nileBlue, colors.brand.nileBlueLight]}
           start={{ x: 0.2, y: 0 }}
           end={{ x: 0.8, y: 1 }}
           style={[styles.heroSection, { paddingTop: headerTop + 8 }]}
@@ -351,7 +351,7 @@ function ExtraCoinsPage() {
           {/* Header */}
           <View style={styles.headerRow}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtnDark}>
-              <Ionicons name="chevron-back" size={20} color={Colors.text.inverse} />
+              <Ionicons name="chevron-back" size={20} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitleLight}>{`Extra ${BRAND.COIN_NAME}`}</Text>
             <View style={{ width: 32 }} />
@@ -415,7 +415,7 @@ function ExtraCoinsPage() {
                   <Ionicons
                     name={streak.hasCheckedInToday ? 'checkmark-circle' : 'add-circle'}
                     size={16}
-                    color={streak.hasCheckedInToday ? Colors.text.inverse : '#0F172A'}
+                    color={streak.hasCheckedInToday ? colors.text.inverse : '#0F172A'}
                   />
                   <Text style={[styles.checkInText, streak.hasCheckedInToday && styles.checkInTextDone]}>
                     {isCheckingIn ? '...' : streak.hasCheckedInToday ? 'Checked In' : 'Daily Check-In'}
@@ -441,7 +441,7 @@ function ExtraCoinsPage() {
             <Ionicons name="cloud-offline-outline" size={36} color="#E8744F" />
             <Text style={styles.errorFullText}>{error}</Text>
             <Pressable style={styles.errorRetryBtn} onPress={handleRefresh}>
-              <Ionicons name="refresh" size={14} color={Colors.text.inverse} />
+              <Ionicons name="refresh" size={14} color={colors.text.inverse} />
               <Text style={styles.errorRetryText}>Try Again</Text>
             </Pressable>
           </View>
@@ -462,14 +462,14 @@ function ExtraCoinsPage() {
                 <Text style={styles.sectionTitle}>Active Boosts</Text>
                 <Pressable onPress={handleCampaignPress} style={styles.seeAllBtn}>
                   <Text style={styles.seeAllText}>View All</Text>
-                  <Ionicons name="chevron-forward" size={14} color={Colors.nileBlue} />
+                  <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                 </Pressable>
               </View>
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 14 }}>
                 {campaigns.map((campaign) => {
                   const timeLeft = formatTimeLeft(campaign.endTime);
                   const isEnded = timeLeft === 'Ended';
-                  const bg = campaign.backgroundColor || Colors.nileBlue;
+                  const bg = campaign.backgroundColor || colors.nileBlue;
                   return (
                     <Pressable key={campaign._id} onPress={handleCampaignPress}>
                       <LinearGradient
@@ -539,7 +539,7 @@ function ExtraCoinsPage() {
                     >
                       <View style={styles.dropHeader}>
                         <LinearGradient colors={[colors.brand.purple, colors.brand.purpleMedium]} style={styles.dropIcon}>
-                          <Ionicons name={icon} size={16} color={Colors.text.inverse} />
+                          <Ionicons name={icon} size={16} color={colors.text.inverse} />
                         </LinearGradient>
                         <View style={styles.dropMultiBadge}>
                           <Text style={styles.dropMultiText}>{drop.multiplier}X</Text>
@@ -572,7 +572,7 @@ function ExtraCoinsPage() {
                   style={styles.seeAllBtn}
                 >
                   <Text style={styles.seeAllText}>View All</Text>
-                  <Ionicons name="chevron-forward" size={14} color={Colors.nileBlue} />
+                  <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                 </Pressable>
               </View>
               <View style={styles.oppList}>
@@ -606,7 +606,7 @@ function ExtraCoinsPage() {
                     style={styles.earnCardGradient}
                   >
                     <View style={styles.earnIconCircle}>
-                      <Ionicons name={method.icon} size={22} color={Colors.text.inverse} />
+                      <Ionicons name={method.icon} size={22} color={colors.text.inverse} />
                     </View>
                     <Text style={styles.earnTitle}>{method.title}</Text>
                     <Text style={styles.earnDesc}>{method.desc}</Text>
@@ -637,12 +637,12 @@ function ExtraCoinsPage() {
                 <View key={i} style={styles.timelineStep}>
                   {/* Connecting line */}
                   {i < 2 && <View style={styles.timelineLine} />}
-                  <LinearGradient colors={[Colors.nileBlue, colors.brand.nileBlueLight]} style={styles.timelineNumber}>
+                  <LinearGradient colors={[colors.nileBlue, colors.brand.nileBlueLight]} style={styles.timelineNumber}>
                     <Text style={styles.timelineNumberText}>{item.step}</Text>
                   </LinearGradient>
                   <View style={styles.timelineContent}>
                     <View style={styles.timelineRow}>
-                      <Ionicons name={item.icon} size={16} color={Colors.nileBlue} />
+                      <Ionicons name={item.icon} size={16} color={colors.nileBlue} />
                       <Text style={styles.timelineTitle}>{item.title}</Text>
                     </View>
                     <Text style={styles.timelineText}>{item.text}</Text>
@@ -659,7 +659,7 @@ function ExtraCoinsPage() {
            
           >
             <LinearGradient
-              colors={[Colors.nileBlue, '#0F172A']}
+              colors={[colors.nileBlue, '#0F172A']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.bottomCtaGradient}
@@ -727,7 +727,7 @@ const styles = StyleSheet.create({
     ...Typography.h4,
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: -0.3 },
 
   // Balance
@@ -810,7 +810,7 @@ const styles = StyleSheet.create({
   streakPillText: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   checkInBtn: {
     borderRadius: BorderRadius.xl,
     overflow: 'hidden' },
@@ -825,9 +825,9 @@ const styles = StyleSheet.create({
   checkInText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   checkInTextDone: {
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   // ── Content area ──────────────────────────────
   contentArea: {
@@ -853,7 +853,7 @@ const styles = StyleSheet.create({
     ...Typography.h4,
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.3 },
   seeAllBtn: {
     flexDirection: 'row',
@@ -866,7 +866,7 @@ const styles = StyleSheet.create({
   seeAllText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.nileBlue },
+    color: colors.nileBlue },
 
   // ── Boost cards ───────────────────────────────
   boostCard: {
@@ -930,7 +930,7 @@ const styles = StyleSheet.create({
   boostTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     lineHeight: 20 },
   boostSubtitle: {
     ...Typography.bodySmall,
@@ -964,7 +964,7 @@ const styles = StyleSheet.create({
   // ── Coin Drop cards ───────────────────────────
   dropCard: {
     width: 155,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 18,
     padding: 14,
     alignItems: 'center',
@@ -987,30 +987,30 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: Spacing.sm,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: BorderRadius.sm },
   dropMultiText: {
     ...Typography.overline,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0,
     textTransform: 'none' },
   dropStoreName: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.xs },
   dropBoosted: {
     ...Typography.body,
     fontWeight: '800',
-    color: Colors.nileBlue },
+    color: colors.nileBlue },
   dropNormal: {
     ...Typography.overline,
     fontWeight: '400',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
     marginTop: 1,
     letterSpacing: 0,
@@ -1027,7 +1027,7 @@ const styles = StyleSheet.create({
   dropTimeText: {
     ...Typography.overline,
     fontWeight: '500',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: 0,
     textTransform: 'none' },
 
@@ -1059,7 +1059,7 @@ const styles = StyleSheet.create({
   earnTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   earnDesc: {
     fontSize: 11,
     color: 'rgba(255,255,255,0.7)',
@@ -1077,11 +1077,11 @@ const styles = StyleSheet.create({
   earnCoinsText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   // ── Timeline ──────────────────────────────────
   timelineCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     gap: 0,
@@ -1109,7 +1109,7 @@ const styles = StyleSheet.create({
   timelineNumberText: {
     fontSize: 13,
     fontWeight: '800',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   timelineContent: {
     flex: 1,
     paddingTop: 2 },
@@ -1121,10 +1121,10 @@ const styles = StyleSheet.create({
   timelineTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   timelineText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 17 },
 
   // ── Bottom CTA ────────────────────────────────
@@ -1142,7 +1142,7 @@ const styles = StyleSheet.create({
   bottomCtaText: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   // ── Error states ──────────────────────────────
   errorBanner: {
@@ -1164,7 +1164,7 @@ const styles = StyleSheet.create({
   errorBannerRetry: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.nileBlue },
+    color: colors.nileBlue },
   errorFull: {
     alignItems: 'center',
     paddingVertical: 60,
@@ -1172,7 +1172,7 @@ const styles = StyleSheet.create({
   errorFullText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginTop: Spacing.md,
     marginBottom: Spacing.base },
@@ -1180,14 +1180,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl },
   errorRetryText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   // ── Skeleton ──────────────────────────────────
   skeletonHero: {

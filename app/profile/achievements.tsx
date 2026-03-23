@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Achievements Screen
 // Displays user badges and achievements with progress tracking
@@ -106,12 +107,12 @@ function AchievementsPage() {
       >
         <View style={[
           styles.iconContainer,
-          { backgroundColor: isLocked ? Colors.background.secondary : `${achievement.color}20` }
+          { backgroundColor: isLocked ? colors.background.secondary : `${achievement.color}20` }
         ]}>
           <Ionicons
             name={achievement.icon as any}
             size={32}
-            color={isLocked ? Colors.text.tertiary : achievement.color}
+            color={isLocked ? colors.text.tertiary : achievement.color}
           />
         </View>
 
@@ -130,7 +131,7 @@ function AchievementsPage() {
                 styles.progressFill,
                 {
                   width: `${achievement.progress}%`,
-                  backgroundColor: isLocked ? Colors.border.default : achievement.color,
+                  backgroundColor: isLocked ? colors.border.default : achievement.color,
                 }
               ]}
             />
@@ -156,7 +157,7 @@ function AchievementsPage() {
 
       {/* Header */}
       <LinearGradient
-        colors={[Colors.gold, Colors.nileBlue, '#00695C']}
+        colors={[Colors.gold, colors.nileBlue, '#00695C']}
         style={styles.header}
       >
         <View style={styles.headerContent}>
@@ -314,7 +315,7 @@ function AchievementsPage() {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="trophy-outline" size={64} color={Colors.border.default} />
+              <Ionicons name="trophy-outline" size={64} color={colors.border.default} />
               <ThemedText style={styles.emptyText}>
                 {filter === 'unlocked'
                   ? 'No achievements unlocked yet'
@@ -409,7 +410,7 @@ function AchievementsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
@@ -437,7 +438,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
@@ -473,27 +474,27 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   summaryDivider: {
     width: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   filterContainer: {
     flexDirection: 'row',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     gap: Spacing.sm,
   },
   filterTab: {
     flex: 1,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
   },
   filterTabActive: {
@@ -502,10 +503,10 @@ const styles = StyleSheet.create({
   filterText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   content: {
     flex: 1,
@@ -519,7 +520,7 @@ const styles = StyleSheet.create({
   },
   achievementCard: {
     width: CARD_WIDTH,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Shadows.medium,
@@ -539,20 +540,20 @@ const styles = StyleSheet.create({
   achievementTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: 12,
     minHeight: 36,
   },
   achievementTitleLocked: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   progressContainer: {
     marginTop: 8,
   },
   progressBar: {
     height: 6,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 3,
     overflow: 'hidden',
     marginBottom: 4,
@@ -563,7 +564,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'right',
     fontWeight: '600',
   },
@@ -587,7 +588,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     flex: 1,
@@ -597,7 +598,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 16,
     textAlign: 'center',
   },
@@ -638,7 +639,7 @@ const styles = StyleSheet.create({
   errorButtonText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   errorContainer: {
     flex: 1,
@@ -657,7 +658,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
   },
 
@@ -670,7 +671,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius['2xl'],
     padding: Spacing.xl,
     width: '100%',
@@ -688,13 +689,13 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: 8,
   },
   modalDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: 20,
     lineHeight: 20,
@@ -705,7 +706,7 @@ const styles = StyleSheet.create({
   },
   modalProgressBar: {
     height: 8,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 8,
@@ -716,7 +717,7 @@ const styles = StyleSheet.create({
   },
   modalProgressText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     fontWeight: '600',
   },
@@ -745,7 +746,7 @@ const styles = StyleSheet.create({
   modalCloseText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
   },
 });

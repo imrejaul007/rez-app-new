@@ -217,14 +217,14 @@ function FlashSaleSuccessPage() {
                    
                   >
                     <ThemedText style={styles.promoCode}>{promoCode}</ThemedText>
-                    <Ionicons name="copy-outline" size={18} color={Colors.text.tertiary} />
+                    <Ionicons name="copy-outline" size={18} color={colors.text.tertiary} />
                   </Pressable>
                 </View>
               )}
 
               {/* Expiry Date */}
               <View style={styles.expirySection}>
-                <Ionicons name="calendar-outline" size={18} color={Colors.text.tertiary} />
+                <Ionicons name="calendar-outline" size={18} color={colors.text.tertiary} />
                 <ThemedText style={styles.expiryText}>
                   Valid until {formatDate(expiresAt)}
                 </ThemedText>
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center' },
   loadingText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h4,
     marginTop: Spacing.base },
   errorContainer: {
@@ -308,18 +308,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   errorIcon: {
     marginBottom: Spacing.xl },
   errorTitle: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
     textAlign: 'center' },
   errorMessage: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing['2xl'] },
   retryButton: {
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: BorderRadius.md },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600' },
   successGradient: {
@@ -344,7 +344,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   successTitle: {
     ...Typography.h1,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
     marginBottom: Spacing.sm },
   successSubtitle: {
@@ -378,9 +378,9 @@ const styles = StyleSheet.create({
   amountValue: {
     fontSize: 32,
     fontWeight: '800',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   voucherCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base },
   voucherLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.sm },
   voucherCodeBox: {
     flexDirection: 'row',
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
     color: colors.brand.amberDark,
     letterSpacing: 2 },
   copyIcon: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.sm,
     borderRadius: BorderRadius.sm },
   copiedText: {
@@ -425,22 +425,22 @@ const styles = StyleSheet.create({
     marginTop: Spacing.base,
     paddingTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default },
+    borderTopColor: colors.border.default },
   promoLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm },
   promoCodeBox: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm,
     padding: Spacing.md },
   promoCode: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
   expirySection: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.base },
   expiryText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.sm },
   instructionsCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
   instructionsTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.md },
   instructionItem: {
     flexDirection: 'row',
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md },
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
     padding: Spacing.base,
     alignItems: 'center' },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600' },
   secondaryButton: {
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
     padding: 14,
     alignItems: 'center' },
   secondaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600' } });
 

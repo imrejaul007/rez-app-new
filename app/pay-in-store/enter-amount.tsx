@@ -285,7 +285,7 @@ function EnterAmountScreen() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="chevron-back" size={24} color={Colors.text.primary} />
+            <Ionicons name="chevron-back" size={24} color={colors.text.primary} />
           </Pressable>
           <View style={styles.headerContent}>
             <Text style={styles.storeName} numberOfLines={1}>{displayStoreName}</Text>
@@ -312,7 +312,7 @@ function EnterAmountScreen() {
               <Text style={styles.storeErrorText}>{storeError}</Text>
             </View>
             <Pressable style={styles.retryButton} onPress={loadStoreDetails}>
-              <Ionicons name="refresh" size={18} color={Colors.text.inverse} />
+              <Ionicons name="refresh" size={18} color={colors.text.inverse} />
               <Text style={styles.retryButtonText}>Retry</Text>
             </Pressable>
           </View>
@@ -347,7 +347,7 @@ function EnterAmountScreen() {
 
           {/* EMI Banner - Nile Blue to Mustard */}
           <LinearGradient
-            colors={[Colors.nileBlue, Colors.gold]}
+            colors={[colors.nileBlue, Colors.gold]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.emiBanner}
@@ -423,7 +423,7 @@ function EnterAmountScreen() {
             <Ionicons
               name="chevron-forward"
               size={20}
-              color={numericAmount > 0 ? Colors.nileBlue : Colors.text.tertiary}
+              color={numericAmount > 0 ? colors.nileBlue : colors.text.tertiary}
             />
           </Pressable>
         </View>
@@ -491,7 +491,7 @@ function EnterAmountScreen() {
               style={styles.keypadButton}
               onPress={() => handleKeyPress('backspace')}
             >
-              <Ionicons name="backspace-outline" size={22} color={Colors.text.primary} />
+              <Ionicons name="backspace-outline" size={22} color={colors.text.primary} />
             </Pressable>
           </View>
         </View>
@@ -503,16 +503,16 @@ function EnterAmountScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     width: 40,
@@ -526,11 +526,11 @@ const styles = StyleSheet.create({
   },
   storeName: {
     ...Typography.h3,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   storeAddress: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   distanceWarning: {
@@ -565,14 +565,14 @@ const styles = StyleSheet.create({
   amountLabel: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
     marginTop: Spacing.base,
   },
   amountInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
     borderWidth: 2,
     borderColor: Colors.gold,
@@ -589,7 +589,7 @@ const styles = StyleSheet.create({
   amountDisplay: {
     fontSize: 32,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   emiBanner: {
     flexDirection: 'row',
@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
   emiIconText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emiContent: {
     flex: 1,
@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
   emiTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emiSubtitle: {
     ...Typography.caption,
@@ -628,13 +628,13 @@ const styles = StyleSheet.create({
   knowMoreText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textDecorationLine: 'underline',
   },
   offersTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   offersContainer: {
@@ -643,12 +643,12 @@ const styles = StyleSheet.create({
   },
   offerCard: {
     width: SCREEN_WIDTH * 0.55,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginRight: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     ...Shadows.subtle,
   },
   offerIconContainer: {
@@ -663,12 +663,12 @@ const styles = StyleSheet.create({
   offerTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   offerDescription: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 16,
   },
   offersLoading: {
@@ -680,14 +680,14 @@ const styles = StyleSheet.create({
     height: 80,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   noOffersText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   storeErrorContainer: {
     flexDirection: 'row',
@@ -723,12 +723,12 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   proceedContainer: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   proceedButton: {
     flexDirection: 'row',
@@ -741,25 +741,25 @@ const styles = StyleSheet.create({
     ...Shadows.medium,
   },
   proceedButtonDisabled: {
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     shadowOpacity: 0,
     elevation: 0,
   },
   proceedText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   proceedTextDisabled: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   keypadContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 6,
     paddingTop: 6,
     paddingBottom: Platform.OS === 'ios' ? Spacing.base : Spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   keypadRow: {
     flexDirection: 'row',
@@ -772,19 +772,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 10,
     marginHorizontal: 3,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 6,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   keypadText: {
     fontSize: 20,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   keypadSubText: {
     fontSize: 8,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 1,
     letterSpacing: 1,
   },

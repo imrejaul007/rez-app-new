@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 
 interface ProcessingOverlayProps {
   visible: boolean;
@@ -16,7 +16,7 @@ function ProcessingOverlay({ visible, message }: ProcessingOverlayProps) {
     <View style={styles.processingOverlay}>
       <View style={styles.processingContent}>
         <View style={styles.processingSpinner}>
-          <Ionicons name="sync" size={48} color={Colors.gold} />
+          <Ionicons name="sync" size={48} color={colors.gold} />
         </View>
         <ThemedText style={styles.processingMessage}>{message}</ThemedText>
         <ThemedText style={styles.processingWarning}>Please don't close the app</ThemedText>
@@ -43,13 +43,13 @@ const styles = StyleSheet.create({
   processingMessage: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 8,
     textAlign: 'center',
   },
   processingWarning: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: 'center',
   },
 });

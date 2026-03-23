@@ -145,7 +145,7 @@ function DowngradeConfirmationPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to cancel and return to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Confirm Downgrade</ThemedText>
           <View style={styles.headerRight} />
@@ -172,7 +172,7 @@ function DowngradeConfirmationPage() {
               </ThemedText>
             </View>
 
-            <Ionicons name="arrow-forward" size={32} color={Colors.text.tertiary} />
+            <Ionicons name="arrow-forward" size={32} color={colors.text.tertiary} />
 
             <View style={[styles.planBox, { borderColor: TIER_COLORS[newTier] }]}>
               <ThemedText style={styles.planLabel}>New Plan</ThemedText>
@@ -248,7 +248,7 @@ function DowngradeConfirmationPage() {
           accessibilityHint="Double tap to confirm you understand you will lose premium benefits"
         >
           <View style={[styles.checkbox, understood && styles.checkboxChecked]}>
-            {understood && <Ionicons name="checkmark" size={20} color={Colors.text.inverse} />}
+            {understood && <Ionicons name="checkmark" size={20} color={colors.text.inverse} />}
           </View>
           <ThemedText style={styles.checkboxLabel}>
             I understand I will lose these benefits and want to proceed with the downgrade
@@ -267,7 +267,7 @@ function DowngradeConfirmationPage() {
             accessibilityHint={understood ? 'Double tap to confirm downgrade' : 'Confirm checkbox first to enable this button'}
           >
             {isDowngrading ? (
-              <ActivityIndicator color={Colors.text.inverse} />
+              <ActivityIndicator color={colors.text.inverse} />
             ) : (
               <ThemedText style={styles.downgradeButtonText}>Confirm Downgrade</ThemedText>
             )}
@@ -293,7 +293,7 @@ function DowngradeConfirmationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   comparisonCard: {
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.lg,
     shadowColor: '#000',
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   },
   planLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   planName: {
@@ -383,11 +383,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   featuresContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     shadowColor: '#000',
@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.xl,
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
@@ -462,18 +462,18 @@ const styles = StyleSheet.create({
   },
   dateLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   dateValue: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   dateNote: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   checkboxContainer: {
     marginHorizontal: Spacing.lg,
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 2,
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   checkboxLabel: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 20,
   },
   actionsContainer: {
@@ -514,10 +514,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   downgradeButtonDisabled: {
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   downgradeButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold',
   },
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   keepPlanButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold',
   },

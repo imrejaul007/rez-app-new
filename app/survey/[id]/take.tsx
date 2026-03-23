@@ -13,10 +13,10 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const COLORS = {
   primary: colors.brand.green, // Survey-specific green — keep unique
-  white: Colors.background.primary,
-  textDark: Colors.text.primary,
-  textMuted: Colors.text.tertiary,
-  background: Colors.background.secondary,
+  white: colors.background.primary,
+  textDark: colors.text.primary,
+  textMuted: colors.text.tertiary,
+  background: colors.background.secondary,
   border: 'rgba(0, 0, 0, 0.08)',
   error: Colors.error,
 };
@@ -214,7 +214,7 @@ function SurveyTakePage() {
                     styles.checkbox,
                     isSelected && styles.checkboxSelected,
                   ]}>
-                    {isSelected && <Ionicons name="checkmark" size={14} color={Colors.text.inverse} />}
+                    {isSelected && <Ionicons name="checkmark" size={14} color={colors.text.inverse} />}
                   </View>
                   <Text style={[
                     styles.optionText,
@@ -409,7 +409,7 @@ function SurveyTakePage() {
             disabled={submitting}
           >
             {submitting ? (
-              <ActivityIndicator color={Colors.text.inverse} size="small" />
+              <ActivityIndicator color={colors.text.inverse} size="small" />
             ) : (
               <>
                 <Text style={styles.nextButtonText}>
@@ -418,7 +418,7 @@ function SurveyTakePage() {
                 <Ionicons
                   name={currentIndex === totalQuestions - 1 ? 'checkmark' : 'chevron-forward'}
                   size={20}
-                  color={Colors.text.inverse}
+                  color={colors.text.inverse}
                 />
               </>
             )}
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20 },
   errorText: { fontSize: 16, color: COLORS.textMuted, marginTop: 16, textAlign: 'center' },
   retryButton: { marginTop: 16, paddingHorizontal: 24, paddingVertical: 12, backgroundColor: COLORS.primary, borderRadius: 12 },
-  retryText: { color: Colors.text.inverse, fontSize: 14, fontWeight: '600' },
+  retryText: { color: colors.text.inverse, fontSize: 14, fontWeight: '600' },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: COLORS.white },
   exitButton: { padding: 8 },
   progressInfo: { flex: 1, alignItems: 'center' },
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
   scaleButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: COLORS.white, borderWidth: 1, borderColor: COLORS.border, justifyContent: 'center', alignItems: 'center' },
   scaleButtonSelected: { backgroundColor: COLORS.primary, borderColor: COLORS.primary },
   scaleText: { fontSize: 14, fontWeight: '600', color: COLORS.textDark },
-  scaleTextSelected: { color: Colors.text.inverse },
+  scaleTextSelected: { color: colors.text.inverse },
   scaleLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 12 },
   scaleLabelText: { fontSize: 12, color: COLORS.textMuted },
   textInputContainer: { backgroundColor: COLORS.white, borderRadius: 12, borderWidth: 1, borderColor: COLORS.border },
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
   nextButton: { backgroundColor: COLORS.primary },
   navButtonText: { fontSize: 15, fontWeight: '600', color: COLORS.textDark },
   navButtonTextDisabled: { color: COLORS.textMuted },
-  nextButtonText: { fontSize: 15, fontWeight: '600', color: Colors.text.inverse },
+  nextButtonText: { fontSize: 15, fontWeight: '600', color: colors.text.inverse },
 });
 
 export default withErrorBoundary(SurveyTakePage, 'SurveyIdTake');

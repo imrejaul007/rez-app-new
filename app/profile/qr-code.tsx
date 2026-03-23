@@ -58,7 +58,7 @@ const QRCodePage = () => {
       <StatusBar barStyle="light-content" backgroundColor={colors.lightMustard} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.header}>
+      <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable 
             style={styles.backButton} 
@@ -117,7 +117,7 @@ const QRCodePage = () => {
             <QRCode
               value={activeTab === 'profile' ? profileLink : walletId}
               size={220}
-              color={Colors.text.primary}
+              color={colors.text.primary}
               backgroundColor="white"
             />
           </View>
@@ -158,7 +158,7 @@ const QRCodePage = () => {
                   </ThemedText>
                 </View>
                 <View style={styles.instructionBox}>
-                  <Ionicons name="information-circle" size={20} color={Colors.text.tertiary} />
+                  <Ionicons name="information-circle" size={20} color={colors.text.tertiary} />
                   <ThemedText style={styles.instructionText}>
                     Share this QR code to receive payments directly to your REZ wallet
                   </ThemedText>
@@ -171,7 +171,7 @@ const QRCodePage = () => {
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
           <Pressable style={styles.actionButton} onPress={handleShare}>
-            <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.actionButtonGradient}>
+            <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.actionButtonGradient}>
               <Ionicons name="share-social" size={20} color="white" />
               <ThemedText style={styles.actionButtonText}>Share</ThemedText>
             </LinearGradient>
@@ -259,7 +259,7 @@ const QRCodePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
     textAlign: 'center',
   },
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   tabActive: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   tabText: {
     ...Typography.body,
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   qrCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.xl,
     shadowColor: '#000',
@@ -335,10 +335,10 @@ const styles = StyleSheet.create({
   qrPlaceholder: {
     width: 220,
     height: 220,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.lg,
@@ -357,13 +357,13 @@ const styles = StyleSheet.create({
     margin: 1,
   },
   qrDotFilled: {
-    backgroundColor: Colors.text.primary,
+    backgroundColor: colors.text.primary,
   },
   qrNote: {
     position: 'absolute',
     bottom: 10,
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   infoSection: {
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   avatarText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   infoText: {
     flex: 1,
@@ -393,26 +393,26 @@ const styles = StyleSheet.create({
   infoName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   infoEmail: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   linkBox: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
   },
   linkLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   linkText: {
     ...Typography.bodySmall,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   walletInfo: {
@@ -422,17 +422,17 @@ const styles = StyleSheet.create({
   walletId: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
   },
   walletBalance: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   instructionBox: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
     gap: Spacing.sm,
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
   instructionText: {
     flex: 1,
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18,
   },
   actionButtons: {
@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
   actionButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   actionButtonOutline: {
     flexDirection: 'row',
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
   },
   featuresSection: {
     marginTop: Spacing.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     shadowColor: '#000',
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
   featuresTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   featureItem: {
@@ -506,14 +506,14 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   featureText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
 });

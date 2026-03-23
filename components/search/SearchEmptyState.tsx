@@ -11,7 +11,8 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { NUQTA } from './searchTheme';
 
 interface SearchEmptyStateProps {
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 60,
     paddingHorizontal: 40,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius['2xl'],
     marginTop: Spacing.lg,
     marginHorizontal: Spacing.base,
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing['2xl'],
   },
   emptyActionText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
     textAlign: 'center',
@@ -304,7 +305,7 @@ const styles = StyleSheet.create({
   },
   popularProductCard: {
     width: 140,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     overflow: 'hidden',
     ...Platform.select({
@@ -316,7 +317,7 @@ const styles = StyleSheet.create({
   popularProductImage: {
     width: '100%',
     height: 120,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   popularProductInfo: {
     padding: 10,
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
   popularProductPrice: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 });
 

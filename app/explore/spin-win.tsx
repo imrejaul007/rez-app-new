@@ -217,7 +217,7 @@ function SpinWinPage() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerTitleContainer}>
           <Ionicons name="flash" size={20} color={Colors.warning} />
@@ -228,7 +228,7 @@ function SpinWinPage() {
             style={styles.historyButton}
             onPress={() => router.push('/explore/spin-history' as any)}
           >
-            <Ionicons name="time-outline" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="time-outline" size={20} color={colors.text.tertiary} />
           </Pressable>
           <Pressable
             style={styles.coinsBadge}
@@ -298,7 +298,7 @@ function SpinWinPage() {
             end={{ x: 1, y: 0 }}
             style={styles.banner}
           >
-            <Ionicons name="gift" size={20} color={Colors.text.inverse} />
+            <Ionicons name="gift" size={20} color={colors.text.inverse} />
             <View style={styles.bannerTextContainer}>
               <Text style={styles.bannerTitle}>Daily Free Spins</Text>
               <Text style={styles.bannerSubtitle}>Get 3 free spins every day! Win coins, cashback, discounts & vouchers.</Text>
@@ -350,11 +350,11 @@ function SpinWinPage() {
               ]}
             >
               <LinearGradient
-                colors={spinning || spinsLeft <= 0 ? [Colors.text.tertiary, Colors.text.tertiary] : [colors.success, colors.brand.greenDark]}
+                colors={spinning || spinsLeft <= 0 ? [colors.text.tertiary, colors.text.tertiary] : [colors.success, colors.brand.greenDark]}
                 style={styles.spinButtonGradient}
               >
                 {spinning ? (
-                  <Ionicons name="flash" size={24} color={Colors.text.inverse} />
+                  <Ionicons name="flash" size={24} color={colors.text.inverse} />
                 ) : spinsLeft > 0 ? (
                   <Text style={styles.spinButtonText}>SPIN</Text>
                 ) : (
@@ -376,7 +376,7 @@ function SpinWinPage() {
               colors={[colors.successScale[400], colors.tealGreen]}
               style={styles.resultCard}
             >
-              <Ionicons name="star" size={48} color={Colors.text.inverse} />
+              <Ionicons name="star" size={48} color={colors.text.inverse} />
               <Text style={styles.resultTitle}>You Won {wonPrize.label}!</Text>
               <Text style={styles.resultSubtitle}>
                 {wonPrize.type === 'coins'
@@ -446,7 +446,7 @@ const WHEEL_SIZE = width * 0.75;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -455,15 +455,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingTop: 50,
     paddingBottom: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerRight: {
     flexDirection: 'row',
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
   coinsText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   loadingContainer: {
     flex: 1,
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -535,12 +535,12 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.xs,
   },
   statLabel: {
     ...Typography.overline,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   bannerContainer: {
@@ -560,12 +560,12 @@ const styles = StyleSheet.create({
   bannerTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   bannerSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.inverse + 'E6',
+    color: colors.text.inverse + 'E6',
   },
   wheelContainer: {
     alignItems: 'center',
@@ -576,9 +576,9 @@ const styles = StyleSheet.create({
     width: WHEEL_SIZE,
     height: WHEEL_SIZE,
     borderRadius: WHEEL_SIZE / 2,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 8,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
   prizeLabel: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   spinButton: {
     position: 'absolute',
@@ -623,7 +623,7 @@ const styles = StyleSheet.create({
   spinButtonText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   pointer: {
     position: 'absolute',
@@ -650,13 +650,13 @@ const styles = StyleSheet.create({
   resultTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
   },
   resultSubtitle: {
     ...Typography.body,
-    color: Colors.text.inverse + 'E6',
+    color: colors.text.inverse + 'E6',
   },
   sectionContainer: {
     paddingHorizontal: Spacing.base,
@@ -671,7 +671,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   seeAllText: {
     ...Typography.bodySmall,
@@ -684,9 +684,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.sm,
   },
@@ -703,11 +703,11 @@ const styles = StyleSheet.create({
   prizeRowLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   prizeRowChance: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tipsContainer: {
     paddingHorizontal: Spacing.base,
@@ -716,11 +716,11 @@ const styles = StyleSheet.create({
   tipsTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   tipsList: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     gap: Spacing.sm,
@@ -740,7 +740,7 @@ const styles = StyleSheet.create({
   tipText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
     lineHeight: 20,
   },
@@ -752,11 +752,11 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h3,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   retryButton: {
@@ -768,7 +768,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BRAND } from '@/constants/brand';
 import { SkeletonBox } from '@/components/earn/SkeletonLoader';
 import { AvailableGame } from '@/services/gameApi';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { GAME_COLORS } from '@/hooks/usePlayAndEarnData';
 import { earnStyles as styles } from './styles';
@@ -27,7 +27,7 @@ const GamesGridSection = React.memo(function GamesGridSection({
       <View style={styles.sectionHeaderWithLink}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <View style={styles.gamesIconBg}>
-            <Ionicons name="game-controller" size={18} color={Colors.text.inverse} />
+            <Ionicons name="game-controller" size={18} color={colors.text.inverse} />
           </View>
           <View>
             <Text style={styles.sectionTitle}>Games</Text>
@@ -93,7 +93,7 @@ const GamesGridSection = React.memo(function GamesGridSection({
         }) : (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12, width: '100%' }}>
             {[1, 2, 3, 4, 5, 6].map(i => (
-              <View key={i} style={{ width: (width - 44) / 2, gap: Spacing.sm, padding: Spacing.base, backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.lg }}>
+              <View key={i} style={{ width: (width - 44) / 2, gap: Spacing.sm, padding: Spacing.base, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.lg }}>
                 <SkeletonBox width={40} height={40} borderRadius={20} />
                 <SkeletonBox width="80%" height={14} borderRadius={4} />
                 <SkeletonBox width="100%" height={6} borderRadius={3} />

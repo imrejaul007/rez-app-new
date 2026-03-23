@@ -12,7 +12,8 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { SearchSection, SearchCategory } from '@/types/search.types';
 import RecentSearches from './RecentSearches';
 import TrendingSearchesSection from './TrendingSearchesSection';
@@ -263,7 +264,7 @@ const styles = StyleSheet.create({
   quickSearchText: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.2,
   },
   quickSearchSubtext: {
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: (width - 46) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     overflow: 'hidden',
     borderWidth: 1,
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   cashbackBadgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '700',
     letterSpacing: 0.2,

@@ -4,7 +4,8 @@ import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { useRouter } from 'expo-router';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 
 interface OrderItem {
   id?: string;
@@ -51,7 +52,7 @@ function OrderItemsPreview({ items, currencySymbol }: OrderItemsPreviewProps) {
                 />
               ) : (
                 <View style={styles.orderItemImagePlaceholder}>
-                  <Ionicons name="cube-outline" size={24} color={Colors.neutral[400]} />
+                  <Ionicons name="cube-outline" size={24} color={colors.neutral[400]} />
                 </View>
               )}
               <View style={styles.orderItemQtyBadge}>
@@ -83,7 +84,7 @@ function OrderItemsPreview({ items, currencySymbol }: OrderItemsPreviewProps) {
 
 const styles = StyleSheet.create({
   orderItemsSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.base,
     marginBottom: Spacing.sm,
   },
@@ -97,12 +98,12 @@ const styles = StyleSheet.create({
   orderItemsTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   editCartText: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.gold,
+    color: colors.gold,
   },
   orderItemsScroll: {
     paddingHorizontal: Spacing.lg,
@@ -110,7 +111,7 @@ const styles = StyleSheet.create({
   },
   orderItemCard: {
     width: 100,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: 10,
     alignItems: 'center',
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -136,7 +137,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -4,
     right: -4,
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
     borderRadius: 10,
     paddingHorizontal: 6,
     paddingVertical: 2,
@@ -146,12 +147,12 @@ const styles = StyleSheet.create({
   orderItemQtyText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   orderItemName: {
     fontSize: 11,
     fontWeight: '500',
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
     textAlign: 'center',
     marginBottom: Spacing.xs,
     lineHeight: 14,
@@ -159,23 +160,23 @@ const styles = StyleSheet.create({
   orderItemPrice: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.gold,
+    color: colors.gold,
   },
   moreItemsCard: {
     width: 80,
-    backgroundColor: Colors.successScale[50],
+    backgroundColor: colors.successScale[50],
     borderRadius: BorderRadius.md,
     padding: 10,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.successScale[200],
+    borderColor: colors.successScale[200],
     borderStyle: 'dashed',
   },
   moreItemsText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.gold,
+    color: colors.gold,
   },
 });
 

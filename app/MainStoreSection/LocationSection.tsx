@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md },
   mapContainer: {
     width: "100%",
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     marginTop: -4 },
   address: {
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.md },
   directionsButton: {
     flexDirection: "row",

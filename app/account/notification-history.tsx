@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
@@ -162,7 +163,7 @@ function NotificationHistoryScreen() {
       case 'inapp':
         return Colors.brand.purpleLight;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -179,7 +180,7 @@ function NotificationHistoryScreen() {
       case 'security':
         return Colors.brand.purpleLight;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -280,7 +281,7 @@ function NotificationHistoryScreen() {
           accessibilityRole="button"
           accessibilityHint="Returns to previous screen"
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Notification History</Text>
@@ -324,7 +325,7 @@ function NotificationHistoryScreen() {
             accessibilityLabel="No notifications. You haven't received any notifications yet."
             accessibilityRole="text"
           >
-            <Ionicons name="notifications-off" size={64} color={Colors.border.default} />
+            <Ionicons name="notifications-off" size={64} color={colors.border.default} />
             <Text style={styles.emptyTitle}>No Notifications</Text>
             <Text style={styles.emptyText}>
               You haven't received any notifications yet.
@@ -337,7 +338,7 @@ function NotificationHistoryScreen() {
               <ActivityIndicator size="small" color={Colors.info} />
             </View>
           ) : !hasMore && notifications.length > 0 ? (
-            <Text style={{ textAlign: 'center', color: Colors.text.tertiary, ...Typography.bodySmall, paddingVertical: Spacing.base }}>
+            <Text style={{ textAlign: 'center', color: colors.text.tertiary, ...Typography.bodySmall, paddingVertical: Spacing.base }}>
               No more notifications
             </Text>
           ) : null
@@ -350,7 +351,7 @@ function NotificationHistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -358,9 +359,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.sm,
@@ -372,17 +373,17 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   unreadCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   markAllButton: {
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: 6,
   },
   markAllText: {
@@ -398,7 +399,7 @@ const styles = StyleSheet.create({
   },
   notificationItem: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -408,7 +409,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
@@ -425,7 +426,7 @@ const styles = StyleSheet.create({
   notificationTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     marginRight: Spacing.sm,
   },
@@ -434,11 +435,11 @@ const styles = StyleSheet.create({
   },
   notificationTime: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   notificationMessage: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
     marginBottom: Spacing.sm,
   },
@@ -466,12 +467,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -481,13 +482,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingHorizontal: 40,
   },

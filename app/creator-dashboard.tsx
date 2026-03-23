@@ -36,7 +36,7 @@ const formatCount = (count: number): string => {
 const tierColors: Record<string, { bg: string; text: string; border: string }> = {
   starter: { bg: colors.tint.greenLight, text: '#065F46', border: Colors.success },
   bronze: { bg: Colors.warningScale[50], text: colors.brand.amberDark, border: Colors.warning },
-  silver: { bg: Colors.background.secondary, text: colors.neutral[700], border: Colors.text.tertiary },
+  silver: { bg: colors.background.secondary, text: colors.neutral[700], border: colors.text.tertiary },
   gold: { bg: colors.tint.orange, text: '#9A3412', border: colors.brand.orange },
   platinum: { bg: colors.tint.purple, text: '#5B21B6', border: colors.brand.purpleLight },
 };
@@ -158,7 +158,7 @@ function CreatorDashboard() {
   if (loading) {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
         <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} />
         <ProfileSkeleton />
       </View>
@@ -172,7 +172,7 @@ function CreatorDashboard() {
   if (error && !earnings && !profile) {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
         <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} />
         <View style={styles.centerContainer}>
           <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
@@ -192,19 +192,19 @@ function CreatorDashboard() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
       <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} />
 
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={Colors.nileBlue} />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.nileBlue} />
         }
       >
         {/* Earnings Overview */}
         <LinearGradient
-          colors={[Colors.nileBlue, Colors.gold]}
+          colors={[colors.nileBlue, Colors.gold]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.earningsCard}
@@ -263,8 +263,8 @@ function CreatorDashboard() {
             style={styles.actionCard}
             onPress={() => router.push('/submit-pick')}
           >
-            <View style={[styles.actionIcon, { backgroundColor: Colors.background.tertiary }]}>
-              <Ionicons name="add-circle" size={24} color={Colors.nileBlue} />
+            <View style={[styles.actionIcon, { backgroundColor: colors.background.tertiary }]}>
+              <Ionicons name="add-circle" size={24} color={colors.nileBlue} />
             </View>
             <Text style={styles.actionText}>New Pick</Text>
           </Pressable>
@@ -344,12 +344,12 @@ function CreatorDashboard() {
                         <CachedImage source={pick.productImage} style={styles.pickImage} />
                       ) : (
                         <View style={[styles.pickImage, styles.pickImagePlaceholder]}>
-                          <Ionicons name="image-outline" size={18} color={Colors.border.default} />
+                          <Ionicons name="image-outline" size={18} color={colors.border.default} />
                         </View>
                       )}
                       {pick.videoUrl && (
                         <View style={styles.videoIndicator}>
-                          <Ionicons name="videocam" size={10} color={Colors.text.inverse} />
+                          <Ionicons name="videocam" size={10} color={colors.text.inverse} />
                         </View>
                       )}
                     </View>
@@ -427,7 +427,7 @@ function CreatorDashboard() {
                   {/* Show merchant reward if approved with reward */}
                   {pick.merchantApproval?.reward && pick.merchantApproval.reward.type !== 'none' && pick.merchantApproval.reward.amount > 0 && (
                     <View style={styles.merchantRewardRow}>
-                      <Ionicons name="gift-outline" size={12} color={Colors.nileBlue} />
+                      <Ionicons name="gift-outline" size={12} color={colors.nileBlue} />
                       <CachedImage source={NUQTA_COIN} style={styles.coinIcon13} />
                       <Text style={styles.merchantRewardText}>
                         +{pick.merchantApproval.reward.amount} {pick.merchantApproval.reward.type === 'branded_coins' ? 'branded' : BRAND.APP_NAME} reward
@@ -439,7 +439,7 @@ function CreatorDashboard() {
             })
           ) : (
             <View style={styles.emptyPicks}>
-              <Ionicons name="bag-outline" size={32} color={Colors.border.default} />
+              <Ionicons name="bag-outline" size={32} color={colors.border.default} />
               <Text style={styles.emptyText}>
                 {pickFilter === 'all' ? 'No picks yet' : `No ${pickFilter} picks`}
               </Text>
@@ -463,7 +463,7 @@ function CreatorDashboard() {
                   <CachedImage source={conv.productImage} style={styles.convImage} />
                 ) : (
                   <View style={[styles.convImage, styles.pickImagePlaceholder]}>
-                    <Ionicons name="cart-outline" size={16} color={Colors.border.default} />
+                    <Ionicons name="cart-outline" size={16} color={colors.border.default} />
                   </View>
                 )}
                 <View style={styles.convInfo}>
@@ -520,20 +520,20 @@ function CreatorDashboard() {
                   <View key={t} style={styles.tierItem}>
                     <View style={[
                       styles.tierDot,
-                      isPast && !isActive && { backgroundColor: tColors.border, borderColor: tColors.border },
-                      isActive && { backgroundColor: tColors.bg, borderColor: tColors.border, borderWidth: 2.5, transform: [{ scale: 1.35 }], shadowColor: tColors.border, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 5, elevation: 5 },
+                      isPast && !isActive && { backgroundColor: tcolors.border, borderColor: tcolors.border },
+                      isActive && { backgroundColor: tColors.bg, borderColor: tcolors.border, borderWidth: 2.5, transform: [{ scale: 1.35 }], shadowColor: tcolors.border, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 5, elevation: 5 },
                     ]}>
                       {isActive && (
-                        <Ionicons name={icon.filled as any} size={13} color={tColors.border} />
+                        <Ionicons name={icon.filled as any} size={13} color={tcolors.border} />
                       )}
                       {isPast && !isActive && (
-                        <Ionicons name={icon.outline as any} size={10} color={Colors.text.inverse} />
+                        <Ionicons name={icon.outline as any} size={10} color={colors.text.inverse} />
                       )}
                     </View>
                     <Text style={[
                       styles.tierName,
-                      isActive && { fontWeight: '700', color: tColors.border },
-                      isPast && !isActive && { color: Colors.text.tertiary },
+                      isActive && { fontWeight: '700', color: tcolors.border },
+                      isPast && !isActive && { color: colors.text.tertiary },
                     ]}>
                       {t.charAt(0).toUpperCase() + t.slice(1)}
                     </Text>
@@ -556,10 +556,10 @@ function CreatorDashboard() {
 
 function Header({ onBack }: { onBack: () => void }) {
   return (
-    <LinearGradient colors={[Colors.nileBlue, '#2d5a7b']} style={headerStyles.header}>
+    <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={headerStyles.header}>
       <View style={headerStyles.content}>
         <Pressable style={headerStyles.backButton} onPress={onBack}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
         <Text style={headerStyles.title}>Creator Dashboard</Text>
         <View style={headerStyles.spacer} />
@@ -590,7 +590,7 @@ const headerStyles = StyleSheet.create({
   title: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   spacer: { width: 40 },
 });
@@ -602,7 +602,7 @@ const headerStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   scrollView: {
     flex: 1,
@@ -616,29 +616,29 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     fontSize: 15,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorMessage: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },
   retryButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: 28,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 15,
     fontWeight: '600',
   },
@@ -671,12 +671,12 @@ const styles = StyleSheet.create({
   tierBadgeText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   totalEarnings: {
     fontSize: 32,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.lg,
   },
   earningsGrid: {
@@ -699,7 +699,7 @@ const styles = StyleSheet.create({
   earningsGridValue: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   earningsGridDivider: {
     width: 1,
@@ -726,13 +726,13 @@ const styles = StyleSheet.create({
   },
   actionCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: 14,
     alignItems: 'center',
     gap: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   actionIcon: {
     width: 44,
@@ -744,18 +744,18 @@ const styles = StyleSheet.create({
   actionText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 
   // Sections
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.base,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -766,14 +766,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 
   // Picks
   pickRowWrapper: {
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   pickRow: {
     flexDirection: 'row',
@@ -784,7 +784,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   pickImagePlaceholder: {
     justifyContent: 'center',
@@ -804,7 +804,7 @@ const styles = StyleSheet.create({
   pickTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 3,
   },
   pickMeta: {
@@ -813,11 +813,11 @@ const styles = StyleSheet.create({
   },
   pickMetaText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   pickMetaDot: {
     ...Typography.bodySmall,
-    color: Colors.border.default,
+    color: colors.border.default,
     marginHorizontal: Spacing.xs,
   },
   pickEarnings: {
@@ -829,17 +829,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   pickStatusText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   pickDeleteBtn: {
     padding: 6,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginLeft: Spacing.xs,
   },
 
@@ -853,18 +853,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   filterChipActive: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   filterChipText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Empty
@@ -875,12 +875,12 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   emptySubtext: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
 
@@ -891,13 +891,13 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   convImage: {
     width: 38,
     height: 38,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   convInfo: {
     flex: 1,
@@ -905,12 +905,12 @@ const styles = StyleSheet.create({
   convProduct: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   convBuyer: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   convRight: {
     alignItems: 'flex-end',
@@ -925,12 +925,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 6,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   convStatusText: {
     fontSize: 9,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Tier
@@ -950,15 +950,15 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
   },
   tierName: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
 
@@ -968,7 +968,7 @@ const styles = StyleSheet.create({
   positionRelative: { position: 'relative' },
   rejectionReasonText: { fontSize: 11, color: Colors.error, marginTop: 2, paddingLeft: 56 },
   merchantRewardRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2, paddingLeft: 56, gap: 4 },
-  merchantRewardText: { fontSize: 11, color: Colors.nileBlue, fontWeight: '500' },
+  merchantRewardText: { fontSize: 11, color: colors.nileBlue, fontWeight: '500' },
   convCoinRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   bottomSpacer: { height: 40 },
   coinIcon13: { width: 13, height: 13, borderRadius: 7 },

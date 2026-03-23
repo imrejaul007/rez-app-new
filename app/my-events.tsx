@@ -242,10 +242,10 @@ function MyEventsPage() {
              
             >
               {isCheckingInThis ? (
-                <ActivityIndicator size="small" color={Colors.text.inverse} />
+                <ActivityIndicator size="small" color={colors.text.inverse} />
               ) : (
                 <>
-                  <Ionicons name="qr-code-outline" size={14} color={Colors.text.inverse} />
+                  <Ionicons name="qr-code-outline" size={14} color={colors.text.inverse} />
                   <Text style={styles.checkInButtonText}>Check In</Text>
                 </>
               )}
@@ -299,7 +299,7 @@ function MyEventsPage() {
           style={styles.exploreButton}
           onPress={() => router.push('/events' as any)}
         >
-          <Ionicons name="compass-outline" size={18} color={Colors.text.inverse} />
+          <Ionicons name="compass-outline" size={18} color={colors.text.inverse} />
           <Text style={styles.exploreButtonText}>Explore Events</Text>
         </Pressable>
       </View>
@@ -319,14 +319,14 @@ function MyEventsPage() {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>My Events</Text>
             <Text style={styles.headerSubtitle}>Bookings & favorites</Text>
           </View>
           <Pressable onPress={() => router.push('/events' as any)} style={styles.backButton}>
-            <Ionicons name="add" size={24} color={Colors.text.inverse} />
+            <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
       </LinearGradient>
@@ -380,7 +380,7 @@ function MyEventsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingHorizontal: Spacing.base,
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
@@ -414,11 +414,11 @@ const styles = StyleSheet.create({
   },
   tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   tab: {
     flex: 1,
@@ -451,11 +451,11 @@ const styles = StyleSheet.create({
   bookingCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   bookingImage: {
     width: 64,
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
   bookingTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   bookingRef: {
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
   checkInButtonText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   favoritePrice: {
     ...Typography.body,
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
@@ -575,7 +575,7 @@ const styles = StyleSheet.create({
   exploreButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   authRequired: {
     flex: 1,
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
   authTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
   loginButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

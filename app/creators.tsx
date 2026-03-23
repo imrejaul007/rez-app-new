@@ -436,7 +436,7 @@ function CreatorsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -445,31 +445,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   searchContainer: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   searchBar: {
     flexDirection: 'row',
@@ -478,17 +478,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   searchInput: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   categoryContainer: {
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   categoryPill: {
     marginRight: Spacing.sm,
@@ -505,29 +505,29 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     overflow: 'hidden',
   },
   categoryPillTextActive: {
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   sortContainer: {
     flexDirection: 'row',
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     gap: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   sortPill: {
     flexDirection: 'row',
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   sortPillActive: {
     backgroundColor: Colors.info,
@@ -544,10 +544,10 @@ const styles = StyleSheet.create({
   sortPillText: {
     ...Typography.caption,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   sortPillTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   scrollView: {
     flex: 1,
@@ -558,12 +558,12 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   creatorCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   creatorHeader: {
     flexDirection: 'row',
@@ -596,7 +596,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flexShrink: 1,
   },
   featuredBadge: {
@@ -621,7 +621,7 @@ const styles = StyleSheet.create({
   },
   bio: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -646,7 +646,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   statsLeft: {
     flexDirection: 'row',
@@ -661,7 +661,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 
   // Footer
@@ -676,7 +676,7 @@ const styles = StyleSheet.create({
   footerText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Empty state
@@ -688,13 +688,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 
@@ -708,13 +708,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorMessage: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },
@@ -727,7 +727,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Header CTA
@@ -742,7 +742,7 @@ const styles = StyleSheet.create({
   headerCtaText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

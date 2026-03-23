@@ -174,7 +174,7 @@ function FAQPage() {
           <Ionicons
             name={isExpanded ? 'chevron-up' : 'chevron-down'}
             size={20}
-            color={Colors.text.tertiary}
+            color={colors.text.tertiary}
           />
         </Pressable>
 
@@ -239,7 +239,7 @@ function FAQPage() {
               accessibilityRole="button"
               accessibilityHint="Navigate to previous screen"
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle} accessible={true} accessibilityRole="header">FAQs</ThemedText>
             <View style={styles.placeholder} />
@@ -257,7 +257,7 @@ function FAQPage() {
         <LinearGradient colors={['#667eea', '#764ba2'] as const} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>FAQs</ThemedText>
             <View style={styles.placeholder} />
@@ -282,7 +282,7 @@ function FAQPage() {
       <LinearGradient colors={['#667eea', '#764ba2'] as const} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>FAQs</ThemedText>
           <View style={styles.placeholder} />
@@ -290,11 +290,11 @@ function FAQPage() {
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.text.tertiary} style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color={colors.text.tertiary} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search FAQs..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
             accessible={true}
@@ -310,7 +310,7 @@ function FAQPage() {
               accessibilityRole="button"
               accessibilityHint="Clear the search field"
             >
-              <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
             </Pressable>
           )}
         </View>
@@ -362,7 +362,7 @@ function FAQPage() {
             faqs.map(renderFAQ)
           ) : (
             <View style={styles.emptyContainer}>
-              <Ionicons name="search-outline" size={64} color={Colors.border.default} />
+              <Ionicons name="search-outline" size={64} color={colors.border.default} />
               <ThemedText style={styles.emptyTitle}>No FAQs Found</ThemedText>
               <ThemedText style={styles.emptyDescription}>
                 Try adjusting your search or browsing different categories
@@ -401,7 +401,7 @@ function FAQPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
     marginRight: 40,
   },
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   content: {
     flex: 1,
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   },
   resultsText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
   },
   categoriesScroll: {
@@ -465,13 +465,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
   },
   categoryChip: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     marginRight: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   categoryChipActive: {
     backgroundColor: '#667eea',
@@ -480,13 +480,13 @@ const styles = StyleSheet.create({
   categoryText: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   categoryTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   faqCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
     overflow: 'hidden',
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   },
   faqAnswer: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 22,
     marginBottom: Spacing.base,
   },
@@ -532,14 +532,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
   },
   tag: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 10,
     paddingVertical: Spacing.xs,
     borderRadius: 6,
   },
   tagText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   faqFooter: {
     flexDirection: 'row',
@@ -547,11 +547,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
   },
   helpfulText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   helpfulButtons: {
     flexDirection: 'row',
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   },
   helpfulCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   contactCard: {
     backgroundColor: colors.tint.blue,
@@ -598,7 +598,7 @@ const styles = StyleSheet.create({
   contactButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   loadingContainer: {
     flex: 1,
@@ -609,7 +609,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorText: {
     marginTop: Spacing.base,
@@ -625,7 +625,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -636,13 +636,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 });

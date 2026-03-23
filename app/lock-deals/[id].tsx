@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
  * Lock Deal Detail Page
@@ -126,7 +127,7 @@ const LockDealDetailPage: React.FC = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+            <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Deal Details</Text>
           <View style={{ width: 40 }} />
@@ -141,13 +142,13 @@ const LockDealDetailPage: React.FC = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+            <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Deal Not Found</Text>
           <View style={{ width: 40 }} />
         </View>
         <View style={styles.loadingContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
           <Text style={styles.emptyText}>This deal is no longer available.</Text>
         </View>
       </View>
@@ -173,7 +174,7 @@ const LockDealDetailPage: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <Text style={styles.headerTitle} numberOfLines={1}>Deal Details</Text>
         <View style={{ width: 40 }} />
@@ -192,7 +193,7 @@ const LockDealDetailPage: React.FC = () => {
           )}
           {deal.earningsMultiplier > 1 && (
             <View style={styles.multiplierBadge}>
-              <Ionicons name="flash" size={12} color={Colors.background.primary} />
+              <Ionicons name="flash" size={12} color={colors.background.primary} />
               <Text style={styles.multiplierText}>{deal.earningsMultiplier}x Earnings</Text>
             </View>
           )}
@@ -202,12 +203,12 @@ const LockDealDetailPage: React.FC = () => {
         <View style={styles.titleSection}>
           <Text style={styles.dealTitle}>{deal.title}</Text>
           <View style={styles.storeRow}>
-            <Ionicons name="storefront-outline" size={14} color={Colors.text.tertiary} />
+            <Ionicons name="storefront-outline" size={14} color={colors.text.tertiary} />
             <Text style={styles.storeText}>{storeName}</Text>
           </View>
           {storeAddress ? (
             <View style={styles.storeRow}>
-              <Ionicons name="location-outline" size={14} color={Colors.text.tertiary} />
+              <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
               <Text style={styles.storeText}>{storeAddress}</Text>
             </View>
           ) : null}
@@ -336,7 +337,7 @@ const LockDealDetailPage: React.FC = () => {
                 {index < 3 && <View style={styles.stepLine} />}
               </View>
               <View style={styles.stepContent}>
-                <Ionicons name={item.icon} size={16} color={Colors.nileBlue} />
+                <Ionicons name={item.icon} size={16} color={colors.nileBlue} />
                 <View style={styles.stepText}>
                   <Text style={styles.stepTitle}>{item.title}</Text>
                   <Text style={styles.stepDesc}>{item.desc}</Text>
@@ -370,13 +371,13 @@ const LockDealDetailPage: React.FC = () => {
         {/* Pickup window info */}
         <View style={styles.card}>
           <View style={styles.infoRow}>
-            <Ionicons name="calendar-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
             <Text style={styles.infoText}>
               Pickup within {deal.pickupWindowDays} days after locking
             </Text>
           </View>
           <View style={styles.infoRow}>
-            <Ionicons name="shield-checkmark-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="shield-checkmark-outline" size={16} color={colors.text.tertiary} />
             <Text style={styles.infoText}>
               Full deposit refund if you cancel before pickup
             </Text>
@@ -391,7 +392,7 @@ const LockDealDetailPage: React.FC = () => {
       <View style={styles.ctaContainer}>
         {userLock ? (
           <Pressable style={styles.viewLockButton} onPress={handleViewMyLock}>
-            <Ionicons name="lock-open" size={18} color={Colors.nileBlue} />
+            <Ionicons name="lock-open" size={18} color={colors.nileBlue} />
             <Text style={styles.viewLockText}>View My Lock</Text>
           </Pressable>
         ) : (
@@ -401,10 +402,10 @@ const LockDealDetailPage: React.FC = () => {
             disabled={!canLock || isLocking}
           >
             {isLocking ? (
-              <ActivityIndicator size="small" color={Colors.text.inverse} />
+              <ActivityIndicator size="small" color={colors.text.inverse} />
             ) : (
               <>
-                <Ionicons name="lock-closed" size={18} color={Colors.text.inverse} />
+                <Ionicons name="lock-closed" size={18} color={colors.text.inverse} />
                 <Text style={styles.lockButtonText}>
                   {isSoldOut ? 'Sold Out' : isExpired ? 'Deal Expired' : `Lock for ${currSymbol}${deal.depositAmount}`}
                 </Text>
@@ -420,7 +421,7 @@ const LockDealDetailPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -429,9 +430,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     width: 40,
@@ -442,7 +443,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     flex: 1,
     textAlign: 'center',
   },
@@ -454,7 +455,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
   },
   scrollContent: {
@@ -482,7 +483,7 @@ const styles = StyleSheet.create({
   discountText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   multiplierBadge: {
     flexDirection: 'row',
@@ -496,18 +497,18 @@ const styles = StyleSheet.create({
   multiplierText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Title Section
   titleSection: {
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   dealTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
     lineHeight: 26,
   },
@@ -519,7 +520,7 @@ const styles = StyleSheet.create({
   },
   storeText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
   },
   urgencyRow: {
@@ -539,15 +540,15 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.base,
     marginTop: Spacing.md,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   cardTitle: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 14,
   },
 
@@ -560,25 +561,25 @@ const styles = StyleSheet.create({
   },
   priceLabel: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   priceValue: {
     fontSize: Typography.h2.fontSize,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   priceOriginal: {
     alignItems: 'flex-end',
   },
   priceStrike: {
     fontSize: Typography.h4.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     marginVertical: Spacing.md,
   },
   breakdownRow: {
@@ -599,12 +600,12 @@ const styles = StyleSheet.create({
   },
   breakdownLabel: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   breakdownValue: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 
   // Rewards
@@ -627,11 +628,11 @@ const styles = StyleSheet.create({
   rewardTitle: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   rewardSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 1,
   },
   rewardAmount: {
@@ -652,7 +653,7 @@ const styles = StyleSheet.create({
   totalRewardLabel: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   totalRewardCoins: {
     fontSize: Typography.h4.fontSize,
@@ -688,19 +689,19 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     alignItems: 'center',
     justifyContent: 'center',
   },
   stepNumberText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   stepLine: {
     width: 2,
     height: 32,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     marginTop: Spacing.xs,
   },
   stepContent: {
@@ -716,11 +717,11 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   stepDesc: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
     lineHeight: 18,
   },
@@ -728,7 +729,7 @@ const styles = StyleSheet.create({
   // Description
   descriptionText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 22,
   },
 
@@ -740,13 +741,13 @@ const styles = StyleSheet.create({
   },
   termBullet: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginRight: Spacing.sm,
     lineHeight: 20,
   },
   termText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
     lineHeight: 20,
   },
@@ -760,7 +761,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
   },
 
@@ -772,9 +773,9 @@ const styles = StyleSheet.create({
     right: 0,
     padding: Spacing.base,
     paddingBottom: Platform.OS === 'ios' ? 34 : 16,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   lockButton: {
     flexDirection: 'row',
@@ -786,28 +787,28 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   lockButtonDisabled: {
-    backgroundColor: Colors.text.tertiary,
+    backgroundColor: colors.text.tertiary,
   },
   lockButtonText: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   viewLockButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingVertical: Spacing.base,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   viewLockText: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 });
 

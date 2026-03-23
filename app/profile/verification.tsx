@@ -527,10 +527,10 @@ function VerificationPage() {
                 </ThemedText>
               </View>
               {method.type === 'email' && (
-                <Ionicons name="mail-outline" size={20} color={Colors.text.tertiary} />
+                <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} />
               )}
               {method.type === 'document' && (
-                <Ionicons name="document-outline" size={20} color={Colors.text.tertiary} />
+                <Ionicons name="document-outline" size={20} color={colors.text.tertiary} />
               )}
               {method.type === 'auto' && (
                 <Ionicons name="flash-outline" size={20} color={config.color} />
@@ -544,13 +544,13 @@ function VerificationPage() {
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Email Address</ThemedText>
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 value={email}
                 onChangeText={setEmail}
                 placeholder={zone === 'corporate' ? 'your.name@company.com' : 'your.email@college.edu'}
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
@@ -570,13 +570,13 @@ function VerificationPage() {
             <View style={styles.section}>
               <ThemedText style={styles.sectionTitle}>Document Number (Optional)</ThemedText>
               <View style={styles.inputContainer}>
-                <Ionicons name="card-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+                <Ionicons name="card-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   value={documentNumber}
                   onChangeText={setDocumentNumber}
                   placeholder="Enter document/ID number"
-                  placeholderTextColor={Colors.text.tertiary}
+                  placeholderTextColor={colors.text.tertiary}
                 />
               </View>
             </View>
@@ -677,13 +677,13 @@ function VerificationPage() {
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Institution Name</ThemedText>
             <View style={styles.inputContainer}>
-              <Ionicons name="business-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="business-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 value={instituteName}
                 onChangeText={setInstituteName}
                 placeholder="Enter your school/college name"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
               />
             </View>
           </View>
@@ -693,13 +693,13 @@ function VerificationPage() {
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Department</ThemedText>
             <View style={styles.inputContainer}>
-              <Ionicons name="business-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="business-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 value={department}
                 onChangeText={setDepartment}
                 placeholder="Enter your department"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
               />
             </View>
           </View>
@@ -789,7 +789,7 @@ function VerificationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   centerContent: {
     justifyContent: 'center',
@@ -797,7 +797,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md,
   },
   header: {
@@ -850,7 +850,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: Spacing.sm,
   },
@@ -858,7 +858,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.sm,
     borderWidth: 2,
@@ -866,14 +866,14 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   methodCardActive: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   methodRadio: {
     width: 22,
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: Colors.border.medium,
+    borderColor: colors.border.medium,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
@@ -888,21 +888,21 @@ const styles = StyleSheet.create({
   },
   methodLabel: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   methodType: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.light,
+    borderColor: colors.border.light,
     paddingHorizontal: Spacing.md,
   },
   inputIcon: {
@@ -911,20 +911,20 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingVertical: Spacing.md,
   },
   helperText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
     paddingHorizontal: Spacing.xs,
   },
   uploadBox: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     borderWidth: 2,
-    borderColor: Colors.border.light,
+    borderColor: colors.border.light,
     borderStyle: 'dashed',
     minHeight: 160,
     justifyContent: 'center',
@@ -937,12 +937,12 @@ const styles = StyleSheet.create({
   },
   uploadText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.sm,
   },
   uploadSubtext: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   uploadedImageContainer: {
@@ -957,11 +957,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: Spacing.sm,
     right: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 12,
   },
   autoVerifyCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     alignItems: 'center',
@@ -969,13 +969,13 @@ const styles = StyleSheet.create({
   },
   autoVerifyTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginTop: Spacing.sm,
   },
   autoVerifyText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginTop: Spacing.xs,
   },
@@ -987,17 +987,17 @@ const styles = StyleSheet.create({
   optionChip: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: Colors.border.light,
+    borderColor: colors.border.light,
   },
   optionChipActive: {
     borderColor: 'transparent',
   },
   optionChipText: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   optionChipTextActive: {
     color: colors.background.primary,
@@ -1023,7 +1023,7 @@ const styles = StyleSheet.create({
   },
   disclaimerText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.md,
     lineHeight: 18,
@@ -1044,20 +1044,20 @@ const styles = StyleSheet.create({
   },
   verifiedTitle: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '700',
     marginBottom: Spacing.sm,
   },
   verifiedSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.sm,
     paddingHorizontal: Spacing.lg,
   },
   verifiedDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xl,
   },
   primaryButton: {
@@ -1080,7 +1080,7 @@ const styles = StyleSheet.create({
   },
   secondaryButtonText: {
     ...Typography.button,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '600',
   },
   // Modal styles
@@ -1090,7 +1090,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     padding: Spacing.lg,
@@ -1098,14 +1098,14 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: Spacing.xs,
   },
   modalSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },
@@ -1120,7 +1120,7 @@ const styles = StyleSheet.create({
   },
   modalOptionText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   modalCancelOption: {
@@ -1130,7 +1130,7 @@ const styles = StyleSheet.create({
   },
   modalCancelText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
 });

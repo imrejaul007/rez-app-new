@@ -133,7 +133,7 @@ function UGCUploadScreen() {
             accessibilityState={{ disabled: isUploading }}
             accessibilityHint="Returns to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>Upload Video</Text>
           <View style={styles.headerRight} />
@@ -389,12 +389,12 @@ function UGCUploadScreen() {
                 >
                   {isUploading ? (
                     <>
-                      <Ionicons name="hourglass-outline" size={20} color={Colors.text.inverse} />
+                      <Ionicons name="hourglass-outline" size={20} color={colors.text.inverse} />
                       <Text style={styles.uploadButtonText}>Uploading...</Text>
                     </>
                   ) : (
                     <>
-                      <Ionicons name="cloud-upload-outline" size={20} color={Colors.text.inverse} />
+                      <Ionicons name="cloud-upload-outline" size={20} color={colors.text.inverse} />
                       <Text style={styles.uploadButtonText}>Upload Video</Text>
                     </>
                   )}
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerRight: {
     width: 40,
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   videoWrapper: {
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
   },
   urlVideoText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   removeUrlButton: {
@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   infoItem: {
     flexDirection: 'row',
@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   uploadProgressContainer: {
     marginVertical: Spacing.sm,
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   required: {
     color: '#FCA5A5',
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     borderWidth: 2,
     borderColor: 'transparent',
   },
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
   },
   hashtagText: {
     ...Typography.bodySmall,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '500',
   },
   errorContainer: {
@@ -617,7 +617,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.base,
     shadowColor: '#000',
@@ -660,7 +660,7 @@ const styles = StyleSheet.create({
   productTaggingTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   productCount: {
     ...Typography.body,
@@ -694,7 +694,7 @@ const styles = StyleSheet.create({
   selectedProductsTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   productChipsContainer: {
     gap: Spacing.sm,

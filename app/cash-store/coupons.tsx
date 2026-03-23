@@ -184,7 +184,7 @@ function CouponsPage() {
         <View style={styles.badgesRow}>
           {item.isVerified && (
             <View style={styles.verifiedBadge}>
-              <Ionicons name="shield-checkmark" size={10} color={Colors.background.primary} />
+              <Ionicons name="shield-checkmark" size={10} color={colors.background.primary} />
               <Text style={styles.badgeText}>Verified</Text>
             </View>
           )}
@@ -238,10 +238,10 @@ function CouponsPage() {
            
           >
             <LinearGradient
-              colors={isCopied ? [Colors.nileBlue, colors.brand.nileBlueLight] : [colors.brand.caramel, colors.brand.caramel]}
+              colors={isCopied ? [colors.nileBlue, colors.brand.nileBlueLight] : [colors.brand.caramel, colors.brand.caramel]}
               style={styles.copyButtonGradient}
             >
-              <Ionicons name={isCopied ? 'checkmark' : 'copy'} size={14} color={Colors.background.primary} />
+              <Ionicons name={isCopied ? 'checkmark' : 'copy'} size={14} color={colors.background.primary} />
               <Text style={styles.copyText}>{isCopied ? 'COPIED' : 'COPY'}</Text>
             </LinearGradient>
           </Pressable>
@@ -250,7 +250,7 @@ function CouponsPage() {
         {/* Validity */}
         {item.validUntil && (
           <View style={styles.validityRow}>
-            <Ionicons name="time-outline" size={12} color={Colors.background.secondary0} />
+            <Ionicons name="time-outline" size={12} color={colors.background.secondary0} />
             <Text style={styles.validityText}>
               Valid till {new Date(item.validUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
             </Text>
@@ -279,7 +279,7 @@ function CouponsPage() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Coupon Codes</Text>
@@ -295,18 +295,18 @@ function CouponsPage() {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={18} color={Colors.background.secondary0} />
+          <Ionicons name="search" size={18} color={colors.background.secondary0} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search coupons or brands..."
-            placeholderTextColor={Colors.background.secondary0}
+            placeholderTextColor={colors.background.secondary0}
             value={searchQuery}
             onChangeText={setSearchQuery}
             autoCapitalize="none"
           />
           {searchQuery.length > 0 && (
             <Pressable onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={18} color={Colors.background.secondary0} />
+              <Ionicons name="close-circle" size={18} color={colors.background.secondary0} />
             </Pressable>
           )}
         </View>
@@ -353,7 +353,7 @@ function CouponsPage() {
           estimatedItemSize={100}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="pricetags-outline" size={48} color={Colors.background.secondary0} />
+              <Ionicons name="pricetags-outline" size={48} color={colors.background.secondary0} />
               <Text style={styles.emptyTitle}>No Coupons Found</Text>
               <Text style={styles.emptySubtitle}>
                 {searchQuery ? 'Try a different search term' : 'Check back later for new coupon codes'}
@@ -369,7 +369,7 @@ function CouponsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
 
   // Header
@@ -379,15 +379,15 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
     paddingBottom: 12,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[100],
+    borderBottomColor: colors.neutral[100],
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   countBadge: {
     backgroundColor: colors.brand.caramel,
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   countText: {
     fontSize: 12,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Search
@@ -423,24 +423,24 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: 14,
     paddingVertical: Platform.OS === 'ios' ? 12 : 8,
     gap: 10,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   searchInput: {
     flex: 1,
     fontSize: 14,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 
   // Filters
   filterContainer: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[100],
+    borderBottomColor: colors.neutral[100],
   },
   filterList: {
     paddingHorizontal: Spacing.base,
@@ -451,21 +451,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   filterChipActive: {
-    backgroundColor: Colors.nileBlue,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue,
   },
   filterChipText: {
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   filterChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
 
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: Colors.background.secondary0,
+    color: colors.background.secondary0,
   },
   errorContainer: {
     flex: 1,
@@ -495,12 +495,12 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.sm,
   },
   errorSubtitle: {
     fontSize: 14,
-    color: Colors.background.secondary0,
+    color: colors.background.secondary0,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
@@ -508,12 +508,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   retryText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -523,17 +523,17 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: Colors.background.secondary0,
+    color: colors.background.secondary0,
     textAlign: 'center',
   },
 
   // Coupon Card
   couponCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
   badgeText: {
     fontSize: 10,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   couponCardContent: {
     flexDirection: 'row',
@@ -582,9 +582,9 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 14,
     overflow: 'hidden',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.neutral[100],
+    borderColor: colors.neutral[100],
   },
   brandLogo: {
     width: 56,
@@ -599,14 +599,14 @@ const styles = StyleSheet.create({
   logoInitial: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   infoSection: {
     flex: 1,
   },
   brandName: {
     fontSize: 12,
-    color: Colors.background.secondary0,
+    color: colors.background.secondary0,
     fontWeight: '500',
     marginBottom: 2,
   },
@@ -619,14 +619,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 13,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     lineHeight: 18,
     marginBottom: Spacing.xs,
     fontWeight: '500',
   },
   minOrder: {
     fontSize: 11,
-    color: Colors.background.secondary0,
+    color: colors.background.secondary0,
     marginBottom: 6,
   },
   successRateRow: {
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
   successBarBg: {
     flex: 1,
     height: 4,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 2,
     overflow: 'hidden',
   },
@@ -661,7 +661,7 @@ const styles = StyleSheet.create({
   },
   dashedBorder: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingVertical: 10,
     paddingHorizontal: Spacing.md,
     borderRadius: 10,
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
   codeText: {
     fontSize: 14,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: 1.5,
     textAlign: 'center',
   },
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
   copyText: {
     fontSize: 11,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.5,
   },
 
@@ -703,7 +703,7 @@ const styles = StyleSheet.create({
   },
   validityText: {
     fontSize: 11,
-    color: Colors.background.secondary0,
+    color: colors.background.secondary0,
   },
 });
 

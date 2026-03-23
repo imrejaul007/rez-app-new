@@ -379,7 +379,7 @@ function PharmacyPage() {
         <Ionicons
           name={category.icon as any}
           size={16}
-          color={isSelected ? Colors.text.inverse : category.color}
+          color={isSelected ? colors.text.inverse : category.color}
         />
         <Text
           style={[
@@ -859,7 +859,7 @@ function PharmacyPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingHorizontal: Spacing.base,
@@ -886,7 +886,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
@@ -915,12 +915,12 @@ const styles = StyleSheet.create({
   cartBadgeText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
@@ -930,7 +930,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: Spacing.sm,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   content: {
     flex: 1,
@@ -959,7 +959,7 @@ const styles = StyleSheet.create({
   prescriptionBannerTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   prescriptionBannerText: {
     fontSize: 13,
@@ -979,7 +979,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingHorizontal: Spacing.base,
   },
   seeAllText: {
@@ -989,7 +989,7 @@ const styles = StyleSheet.create({
   },
   resultCount: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   categoriesScroll: {
     paddingHorizontal: Spacing.base,
@@ -1002,19 +1002,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginRight: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   categoryChipText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
     marginLeft: 6,
   },
   categoryChipTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   pharmaciesScroll: {
     paddingHorizontal: Spacing.base,
@@ -1022,7 +1022,7 @@ const styles = StyleSheet.create({
   },
   pharmacyCard: {
     width: 160,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginRight: Spacing.md,
@@ -1047,11 +1047,11 @@ const styles = StyleSheet.create({
   pharmacyName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   pharmacyLocation: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   pharmacyMeta: {
@@ -1068,7 +1068,7 @@ const styles = StyleSheet.create({
   pharmacyBadgeText: {
     fontSize: 9,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   pharmacyRating: {
     flexDirection: 'row',
@@ -1077,7 +1077,7 @@ const styles = StyleSheet.create({
   },
   pharmacyRatingText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.xs,
   },
   loadingContainer: {
@@ -1087,7 +1087,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     padding: 40,
@@ -1096,12 +1096,12 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
     textAlign: 'center',
   },
@@ -1113,14 +1113,14 @@ const styles = StyleSheet.create({
   },
   medicineCard: {
     width: (width - 40) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     margin: Spacing.xs,
     overflow: 'hidden',
   },
   medicineImageContainer: {
     height: 120,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -1146,7 +1146,7 @@ const styles = StyleSheet.create({
   discountText: {
     ...Typography.overline,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: 'none',
     letterSpacing: 0,
   },
@@ -1162,7 +1162,7 @@ const styles = StyleSheet.create({
   rxText: {
     ...Typography.overline,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: 'none',
     letterSpacing: 0,
   },
@@ -1172,17 +1172,17 @@ const styles = StyleSheet.create({
   medicineName: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 36,
   },
   medicinePackSize: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   medicineManufacturer: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   priceContainer: {
@@ -1194,11 +1194,11 @@ const styles = StyleSheet.create({
   sellingPrice: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   mrpPrice: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   addToCartButton: {
@@ -1214,7 +1214,7 @@ const styles = StyleSheet.create({
   addToCartText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   bottomPadding: {
     height: 100,
@@ -1242,7 +1242,7 @@ const styles = StyleSheet.create({
   floatingCartTotal: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   floatingCartAction: {
     flexDirection: 'row',
@@ -1252,7 +1252,7 @@ const styles = StyleSheet.create({
   floatingCartActionText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Modal Styles
   modalOverlay: {
@@ -1261,13 +1261,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   cartModalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     maxHeight: '85%',
   },
   prescriptionModalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     maxHeight: '90%',
@@ -1279,12 +1279,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   emptyCartContainer: {
     padding: 40,
@@ -1293,7 +1293,7 @@ const styles = StyleSheet.create({
   emptyCartText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.lg,
   },
@@ -1306,7 +1306,7 @@ const styles = StyleSheet.create({
   continueShoppingText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cartItems: {
     maxHeight: 300,
@@ -1316,13 +1316,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   cartItemImage: {
     width: 56,
     height: 56,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1338,7 +1338,7 @@ const styles = StyleSheet.create({
   cartItemName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   cartItemPrice: {
     ...Typography.body,
@@ -1361,13 +1361,13 @@ const styles = StyleSheet.create({
   quantityText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginHorizontal: Spacing.md,
   },
   cartSummary: {
     padding: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -1376,12 +1376,12 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   summaryValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   summaryValueFree: {
     ...Typography.body,
@@ -1392,12 +1392,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   totalLabel: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   totalValue: {
     ...Typography.h4,
@@ -1417,12 +1417,12 @@ const styles = StyleSheet.create({
   checkoutButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Prescription Modal Styles
   prescriptionInfo: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     paddingHorizontal: Spacing.base,
     marginTop: Spacing.base,
   },
@@ -1443,7 +1443,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.sm,
@@ -1468,29 +1468,29 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: Spacing.sm,
     right: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
   },
   modalSectionTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingHorizontal: Spacing.base,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   notesInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: 14,
     marginHorizontal: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlignVertical: 'top',
     minHeight: 80,
   },
   prescriptionTips: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginHorizontal: Spacing.base,
     marginTop: Spacing.base,
     padding: Spacing.md,
@@ -1499,7 +1499,7 @@ const styles = StyleSheet.create({
   tipsTitle: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   tipRow: {
@@ -1509,7 +1509,7 @@ const styles = StyleSheet.create({
   },
   tipText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.sm,
     flex: 1,
   },
@@ -1525,12 +1525,12 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   submitButtonDisabled: {
-    backgroundColor: Colors.text.tertiary,
+    backgroundColor: colors.text.tertiary,
   },
   submitPrescriptionText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

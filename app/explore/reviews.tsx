@@ -128,7 +128,7 @@ const AllReviewsPage = () => {
         );
       } else {
         stars.push(
-          <Ionicons key={i} name="star-outline" size={16} color={Colors.border.default} />
+          <Ionicons key={i} name="star-outline" size={16} color={colors.border.default} />
         );
       }
     }
@@ -153,7 +153,7 @@ const AllReviewsPage = () => {
             style={styles.backButton}
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+            <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>All Reviews</Text>
@@ -172,7 +172,7 @@ const AllReviewsPage = () => {
             <Ionicons
               name="time-outline"
               size={16}
-              color={sortBy === 'recent' ? Colors.gold : Colors.text.tertiary}
+              color={sortBy === 'recent' ? Colors.gold : colors.text.tertiary}
             />
             <Text style={[styles.sortText, sortBy === 'recent' && styles.sortTextActive]}>
               Recent
@@ -186,7 +186,7 @@ const AllReviewsPage = () => {
             <Ionicons
               name="arrow-up"
               size={16}
-              color={sortBy === 'highest' ? Colors.gold : Colors.text.tertiary}
+              color={sortBy === 'highest' ? Colors.gold : colors.text.tertiary}
             />
             <Text style={[styles.sortText, sortBy === 'highest' && styles.sortTextActive]}>
               Highest
@@ -200,7 +200,7 @@ const AllReviewsPage = () => {
             <Ionicons
               name="arrow-down"
               size={16}
-              color={sortBy === 'lowest' ? Colors.gold : Colors.text.tertiary}
+              color={sortBy === 'lowest' ? Colors.gold : colors.text.tertiary}
             />
             <Text style={[styles.sortText, sortBy === 'lowest' && styles.sortTextActive]}>
               Lowest
@@ -244,7 +244,7 @@ const AllReviewsPage = () => {
           {/* Empty State */}
           {!loading && !error && reviews.length === 0 && (
             <View style={styles.centerContainer}>
-              <Ionicons name="chatbubble-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="chatbubble-outline" size={48} color={colors.text.tertiary} />
               <Text style={styles.emptyTitle}>No Reviews Yet</Text>
               <Text style={styles.emptySubtext}>Be the first to leave a review!</Text>
             </View>
@@ -262,7 +262,7 @@ const AllReviewsPage = () => {
                 {review.cashback > 0 && (
                   <View style={styles.cashbackBadge}>
                     <View style={styles.cashbackIcon}>
-                      <Ionicons name="wallet-outline" size={12} color={Colors.text.inverse} />
+                      <Ionicons name="wallet-outline" size={12} color={colors.text.inverse} />
                     </View>
                     <Text style={styles.cashbackText}>{currencySymbol}{review.cashback}</Text>
                   </View>
@@ -289,7 +289,7 @@ const AllReviewsPage = () => {
                   </View>
                 )}
                 {review.storeId && (
-                  <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} style={{ marginLeft: 'auto' }} />
+                  <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} style={{ marginLeft: 'auto' }} />
                 )}
               </Pressable>
 
@@ -329,23 +329,23 @@ const AllReviewsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
     gap: Spacing.md,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -355,19 +355,19 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   sortContainer: {
     flexDirection: 'row',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     gap: 10,
   },
   sortTab: {
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     gap: 6,
   },
   sortTabActive: {
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   sortTextActive: {
     color: Colors.gold,
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   errorText: {
@@ -427,28 +427,28 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
   },
   reviewCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   ratingRow: {
     flexDirection: 'row',
@@ -465,7 +465,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginLeft: Spacing.sm,
   },
   cashbackBadge: {
@@ -489,11 +489,11 @@ const styles = StyleSheet.create({
   cashbackText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   reviewText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 22,
     marginBottom: Spacing.md,
   },
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 6,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   storeName: {
     ...Typography.body,
@@ -534,22 +534,22 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   userName: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   dotSeparator: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   timeText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   loadMoreContainer: {
     paddingVertical: Spacing.lg,
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   endOfListText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

@@ -44,14 +44,14 @@ const C = {
   success: Colors.success,               // was '#00C897'
   danger: Colors.error,                  // was '#FF4757'
   amber: Colors.warning,                 // was '#FFB23F'
-  bg: Colors.background.secondary,       // was '#F5F5FA'
-  card: Colors.background.primary,       // was colors.background.primary
-  textPrimary: Colors.text.primary,      // was colors.deepNavy
-  textSecondary: Colors.text.secondary,  // was colors.neutral[500]
-  textMuted: Colors.text.tertiary,       // was colors.neutral[400]
-  border: Colors.border.medium,          // was colors.neutral[200]
+  bg: colors.background.secondary,       // was '#F5F5FA'
+  card: colors.background.primary,       // was colors.background.primary
+  textPrimary: colors.text.primary,      // was colors.deepNavy
+  textSecondary: colors.text.secondary,  // was colors.neutral[500]
+  textMuted: colors.text.tertiary,       // was colors.neutral[400]
+  border: colors.border.medium,          // was colors.neutral[200]
   discountGradient: ['#FF6B35', '#FF4757'] as [string, string],  // keep unique
-  discountGradientDimmed: [Colors.text.tertiary, '#B0B0B0'] as [string, string],
+  discountGradientDimmed: [colors.text.tertiary, '#B0B0B0'] as [string, string],
 };
 
 const getRefName = (ref: string | { _id: string; name: string; [key: string]: any }): string | null => {
@@ -1084,7 +1084,7 @@ const s = StyleSheet.create({
   header: { paddingTop: Platform.OS === 'ios' ? 50 : (StatusBar.currentHeight || 40) + Spacing.xs },
   headerRow: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: 14 },
   headerBtn: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(255,255,255,0.1)' },
-  headerTitle: { flex: 1, ...Typography.h4, color: Colors.text.inverse, textAlign: 'center' },
+  headerTitle: { flex: 1, ...Typography.h4, color: colors.text.inverse, textAlign: 'center' },
 
   // Summary
   summaryRow: { flexDirection: 'row', marginHorizontal: Spacing.base, marginBottom: 14, backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: BorderRadius.sm + 2, paddingVertical: 10 },
@@ -1098,7 +1098,7 @@ const s = StyleSheet.create({
   tab: { flex: 1, paddingVertical: 11, alignItems: 'center', borderBottomWidth: 2, borderBottomColor: 'transparent' },
   tabActive: { borderBottomColor: C.accent },
   tabLabel: { ...Typography.bodySmall, fontWeight: '500', color: 'rgba(255,255,255,0.5)' },
-  tabLabelActive: { color: Colors.text.inverse, fontWeight: '700' },
+  tabLabelActive: { color: colors.text.inverse, fontWeight: '700' },
 
   // Scroll
   scroll: { flex: 1 },
@@ -1112,7 +1112,7 @@ const s = StyleSheet.create({
   searchInput: { flex: 1, ...Typography.body, color: C.textPrimary, paddingVertical: 10, marginLeft: Spacing.sm, ...(Platform.OS === 'web' ? { outlineStyle: 'none' } as any : {}) },
   searchClear: { padding: Spacing.xs, marginRight: Spacing.xs },
   searchBtn: { backgroundColor: C.accent, paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.sm },
-  searchBtnText: { fontSize: Typography.bodySmall.fontSize + 1, fontWeight: '700', color: Colors.text.inverse },
+  searchBtnText: { fontSize: Typography.bodySmall.fontSize + 1, fontWeight: '700', color: colors.text.inverse },
 
   // Search results banner
   searchResultsBanner: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md, paddingHorizontal: Spacing.xs },
@@ -1125,7 +1125,7 @@ const s = StyleSheet.create({
   filterChip: { paddingHorizontal: 14, paddingVertical: 7, borderRadius: BorderRadius.xl, backgroundColor: C.card, borderWidth: 1, borderColor: C.border },
   filterChipActive: { backgroundColor: C.headerDark, borderColor: C.headerDark },
   filterChipText: { ...Typography.bodySmall, fontWeight: '500', color: C.textSecondary },
-  filterChipTextActive: { color: Colors.text.inverse },
+  filterChipTextActive: { color: colors.text.inverse },
 
   // Featured section
   featSection: { marginBottom: Spacing.lg },
@@ -1135,7 +1135,7 @@ const s = StyleSheet.create({
     ...Platform.select({ ios: Shadows.md, android: { elevation: 3 }, web: { boxShadow: '0 2px 8px rgba(0,0,0,0.1)' } }),
   },
   featGradient: { padding: 14, alignItems: 'center' },
-  featDiscount: { fontSize: Typography.h1.fontSize, fontWeight: '900', color: Colors.text.inverse },
+  featDiscount: { fontSize: Typography.h1.fontSize, fontWeight: '900', color: colors.text.inverse },
   featOff: { ...Typography.bodySmall, fontWeight: '700', color: 'rgba(255,255,255,0.85)', letterSpacing: 2, marginTop: -2 },
   featCap: { ...Typography.overline, color: 'rgba(255,255,255,0.7)', marginTop: Spacing.xs },
   featBody: { padding: 10 },
@@ -1152,12 +1152,12 @@ const s = StyleSheet.create({
   cardDim: { opacity: 0.55 },
   cardBanner: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: 14 },
   cardBannerLeft: {},
-  cardBannerDiscount: { fontSize: 22, fontWeight: '900', color: Colors.text.inverse },
+  cardBannerDiscount: { fontSize: 22, fontWeight: '900', color: colors.text.inverse },
   cardBannerCap: { ...Typography.caption, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
   cardBannerBadges: { flexDirection: 'row', gap: 6 },
   badgeFeatured: { width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(255,255,255,0.25)', alignItems: 'center', justifyContent: 'center' },
   badgeNew: { backgroundColor: 'rgba(255,255,255,0.25)', paddingHorizontal: 6, paddingVertical: 2, borderRadius: BorderRadius.xs + 2 },
-  badgeNewText: { fontSize: 9, fontWeight: '800', color: Colors.text.inverse, letterSpacing: 1 },
+  badgeNewText: { fontSize: 9, fontWeight: '800', color: colors.text.inverse, letterSpacing: 1 },
 
   cardBody: { padding: 14 },
   cardTitle: { fontSize: 15, fontWeight: '700', color: C.textPrimary, marginBottom: 3 },
@@ -1184,12 +1184,12 @@ const s = StyleSheet.create({
 
   claimBtn: { borderRadius: BorderRadius.sm, overflow: 'hidden' },
   claimBtnGrad: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: 9, gap: Spacing.xs },
-  claimBtnText: { fontSize: Typography.bodySmall.fontSize + 1, fontWeight: '700', color: Colors.text.inverse },
+  claimBtnText: { fontSize: Typography.bodySmall.fontSize + 1, fontWeight: '700', color: colors.text.inverse },
 
   // My coupon actions
   myActions: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   useNowBtn: { backgroundColor: C.success, paddingHorizontal: 14, paddingVertical: Spacing.sm, borderRadius: BorderRadius.sm },
-  useNowText: { ...Typography.bodySmall, fontWeight: '700', color: Colors.text.inverse },
+  useNowText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
   trashBtn: { width: 30, height: 30, borderRadius: BorderRadius.sm, backgroundColor: '#FFF0F0', alignItems: 'center', justifyContent: 'center' },
 
   // Status pill
@@ -1197,7 +1197,7 @@ const s = StyleSheet.create({
   statusActive: { backgroundColor: 'rgba(255,255,255,0.25)' },
   statusUsed: { backgroundColor: 'rgba(255,255,255,0.2)' },
   statusExpired: { backgroundColor: 'rgba(255,255,255,0.2)' },
-  statusPillText: { ...Typography.overline, fontWeight: '700', color: Colors.text.inverse, letterSpacing: 0.5 },
+  statusPillText: { ...Typography.overline, fontWeight: '700', color: colors.text.inverse, letterSpacing: 0.5 },
 
   // Empty
   empty: { alignItems: 'center', paddingVertical: Spacing['5xl'] },
@@ -1205,15 +1205,15 @@ const s = StyleSheet.create({
   emptyTitle: { fontSize: 17, fontWeight: '700', color: C.textPrimary, marginBottom: 6 },
   emptyDesc: { fontSize: Typography.bodySmall.fontSize + 1, color: C.textMuted, textAlign: 'center', paddingHorizontal: Spacing['3xl'] + Spacing.sm, lineHeight: Typography.body.lineHeight, marginBottom: Spacing.lg },
   emptyBtn: { paddingHorizontal: Spacing.xl, paddingVertical: 11, borderRadius: BorderRadius.sm + 2 },
-  emptyBtnText: { ...Typography.body, fontWeight: '700', color: Colors.text.inverse },
+  emptyBtnText: { ...Typography.body, fontWeight: '700', color: colors.text.inverse },
 
   // ═══ MODAL ═══════════════════════════════════════════════════
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
-  modalSheet: { backgroundColor: Colors.background.primary, borderTopLeftRadius: BorderRadius['2xl'], borderTopRightRadius: BorderRadius['2xl'], maxHeight: '90%', minHeight: '50%' },
+  modalSheet: { backgroundColor: colors.background.primary, borderTopLeftRadius: BorderRadius['2xl'], borderTopRightRadius: BorderRadius['2xl'], maxHeight: '90%', minHeight: '50%' },
   handleBar: { width: 36, height: 4, borderRadius: BorderRadius.xs, backgroundColor: colors.neutral[300], alignSelf: 'center', marginTop: Spacing.md, marginBottom: Spacing.xs },
 
   modalHero: { marginHorizontal: Spacing.base, marginTop: Spacing.sm, padding: Spacing.xl, borderRadius: 14, alignItems: 'center' },
-  modalHeroDiscount: { fontSize: 34, fontWeight: '900', color: Colors.text.inverse },
+  modalHeroDiscount: { fontSize: 34, fontWeight: '900', color: colors.text.inverse },
   modalHeroCap: { fontSize: Typography.bodySmall.fontSize + 1, color: 'rgba(255,255,255,0.85)', marginTop: Spacing.xs },
   modalHeroSocial: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginTop: Spacing.sm, backgroundColor: 'rgba(0,0,0,0.15)', paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md },
   modalHeroSocialText: { ...Typography.caption, color: 'rgba(255,255,255,0.85)' },
@@ -1223,7 +1223,7 @@ const s = StyleSheet.create({
   modalDesc: { ...Typography.body, color: C.textSecondary, lineHeight: 22, marginBottom: Spacing.base },
 
   copyRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: '#FFF8F3', borderRadius: BorderRadius.sm + 2, borderWidth: 1, borderColor: '#FFE0CC', borderStyle: 'dashed', padding: Spacing.md, marginBottom: Spacing.base, gap: Spacing.md },
-  copyPill: { backgroundColor: Colors.background.primary, paddingHorizontal: Spacing.base, paddingVertical: 6, borderRadius: 6, borderWidth: 1, borderColor: '#FFD4B8' },
+  copyPill: { backgroundColor: colors.background.primary, paddingHorizontal: Spacing.base, paddingVertical: 6, borderRadius: 6, borderWidth: 1, borderColor: '#FFD4B8' },
   copyPillText: { ...Typography.bodyLarge, fontWeight: '800', color: C.accent, letterSpacing: 2 },
   copyAction: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
   copyActionText: { fontSize: Typography.bodySmall.fontSize + 1, fontWeight: '600', color: C.accent },
@@ -1255,11 +1255,11 @@ const s = StyleSheet.create({
 
   termItem: { ...Typography.bodySmall, color: C.textSecondary, lineHeight: Typography.body.lineHeight, marginBottom: Spacing.xs, paddingLeft: Spacing.xs },
 
-  modalBar: { flexDirection: 'row', alignItems: 'center', padding: Spacing.base, paddingBottom: Platform.OS === 'ios' ? 30 : Spacing.base, borderTopWidth: 1, borderTopColor: '#F3F3F8', gap: Spacing.md, backgroundColor: Colors.background.primary },
+  modalBar: { flexDirection: 'row', alignItems: 'center', padding: Spacing.base, paddingBottom: Platform.OS === 'ios' ? 30 : Spacing.base, borderTopWidth: 1, borderTopColor: '#F3F3F8', gap: Spacing.md, backgroundColor: colors.background.primary },
   modalShareBtn: { width: 44, height: 44, borderRadius: BorderRadius.md, borderWidth: 1, borderColor: '#FFE0CC', alignItems: 'center', justifyContent: 'center' },
   modalMainBtn: { flex: 1, borderRadius: BorderRadius.md, overflow: 'hidden' },
   modalMainBtnGrad: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, gap: 6 },
-  modalMainBtnText: { fontSize: 15, fontWeight: '700', color: Colors.text.inverse },
+  modalMainBtnText: { fontSize: 15, fontWeight: '700', color: colors.text.inverse },
 });
 
 export default withErrorBoundary(CouponsPage, 'Coupons');

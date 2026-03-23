@@ -180,7 +180,7 @@ function TermsPage() {
       >
         {/* Last Updated Badge */}
         <View style={styles.updateBadge}>
-          <Ionicons name="time-outline" size={16} color={Colors.text.tertiary} />
+          <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
           <ThemedText style={styles.updateText}>
             Last updated: {TERMS_CONTENT.lastUpdated}
           </ThemedText>
@@ -219,7 +219,7 @@ function TermsPage() {
               <Ionicons
                 name={expandedSection === index ? 'chevron-up' : 'chevron-down'}
                 size={24}
-                color={Colors.text.tertiary}
+                color={colors.text.tertiary}
               />
             </Pressable>
             {expandedSection === index && (
@@ -244,7 +244,7 @@ function TermsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   updateBadge: {
@@ -295,10 +295,10 @@ const styles = StyleSheet.create({
   },
   updateText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tocCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   },
   tocTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   tocItem: {
@@ -322,11 +322,11 @@ const styles = StyleSheet.create({
   },
   tocText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   sectionCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.md,
     overflow: 'hidden',
@@ -356,19 +356,19 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   sectionContent: {
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
     paddingTop: Spacing.md,
   },
   sectionText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 22,
   },
   footer: {
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 });

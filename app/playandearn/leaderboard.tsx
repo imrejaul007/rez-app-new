@@ -38,14 +38,14 @@ const COLORS = {
   primary: Colors.brand.purpleLight,
   primaryDark: Colors.brand.purple,
   white: colors.background.primary,
-  background: Colors.background.secondary,
-  navy: Colors.nileBlue,
-  gray50: Colors.background.secondary,
-  gray100: Colors.background.secondary,
-  gray200: Colors.border.default,
-  gray400: Colors.text.tertiary,
-  gray500: Colors.text.tertiary,
-  gray600: Colors.text.secondary,
+  background: colors.background.secondary,
+  navy: colors.nileBlue,
+  gray50: colors.background.secondary,
+  gray100: colors.background.secondary,
+  gray200: colors.border.default,
+  gray400: colors.text.tertiary,
+  gray500: colors.text.tertiary,
+  gray600: colors.text.secondary,
   green500: Colors.success,
   greenDark: Colors.success,
   amber400: Colors.warning,
@@ -378,7 +378,7 @@ const Leaderboard = () => {
         {/* Rank Up Indicator */}
         {hasRankedUp && (
           <View style={styles.rankUpBadge}>
-            <Ionicons name="trending-up" size={12} color={Colors.text.inverse} />
+            <Ionicons name="trending-up" size={12} color={colors.text.inverse} />
           </View>
         )}
       </Animated.View>

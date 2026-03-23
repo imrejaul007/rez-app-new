@@ -317,9 +317,9 @@ function TriviaPage() {
   const getOptionTextStyle = (optionIndex: number) => {
     if (gameState !== 'answered') return styles.optionText;
     const correctIndex = questions[currentIndex]?.correctIndex;
-    if (optionIndex === correctIndex) return [styles.optionText, { color: Colors.text.inverse }];
-    if (optionIndex === selectedOption) return [styles.optionText, { color: Colors.text.inverse }];
-    return [styles.optionText, { color: Colors.text.tertiary }];
+    if (optionIndex === correctIndex) return [styles.optionText, { color: colors.text.inverse }];
+    if (optionIndex === selectedOption) return [styles.optionText, { color: colors.text.inverse }];
+    return [styles.optionText, { color: colors.text.tertiary }];
   };
 
   const currentQuestion = questions[currentIndex];
@@ -365,10 +365,10 @@ function TriviaPage() {
           style={styles.startButtonGradient}
         >
           {loading ? (
-            <ActivityIndicator color={Colors.text.inverse} />
+            <ActivityIndicator color={colors.text.inverse} />
           ) : (
             <>
-              <Ionicons name="play" size={22} color={Colors.text.inverse} />
+              <Ionicons name="play" size={22} color={colors.text.inverse} />
               <ThemedText style={styles.startButtonText}>Start Quiz</ThemedText>
             </>
           )}
@@ -446,10 +446,10 @@ function TriviaPage() {
                 </View>
                 <Text style={getOptionTextStyle(i)} numberOfLines={2}>{option}</Text>
                 {gameState === 'answered' && i === currentQuestion.correctIndex && (
-                  <Ionicons name="checkmark-circle" size={22} color={Colors.text.inverse} style={{ marginLeft: 'auto' }} />
+                  <Ionicons name="checkmark-circle" size={22} color={colors.text.inverse} style={{ marginLeft: 'auto' }} />
                 )}
                 {gameState === 'answered' && i === selectedOption && i !== currentQuestion.correctIndex && (
-                  <Ionicons name="close-circle" size={22} color={Colors.text.inverse} style={{ marginLeft: 'auto' }} />
+                  <Ionicons name="close-circle" size={22} color={colors.text.inverse} style={{ marginLeft: 'auto' }} />
                 )}
               </Pressable>
             </Animated.View>
@@ -500,12 +500,12 @@ function TriviaPage() {
               colors={['#FF6B6B', colors.error]}
               style={styles.startButtonGradient}
             >
-              <Ionicons name="refresh" size={20} color={Colors.text.inverse} />
+              <Ionicons name="refresh" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.startButtonText}>Play Again</ThemedText>
             </LinearGradient>
           </Pressable>
           <Pressable style={styles.backToGamesBtn} onPress={() => router.push('/games' as any)}>
-            <Ionicons name="game-controller" size={18} color={Colors.text.primary} />
+            <Ionicons name="game-controller" size={18} color={colors.text.primary} />
             <ThemedText style={styles.backToGamesText}>More Games</ThemedText>
           </Pressable>
         </View>
@@ -519,14 +519,14 @@ function TriviaPage() {
         options={{
           title: 'Trivia Challenge',
           headerStyle: { backgroundColor: '#FFD93D' },
-          headerTintColor: Colors.text.primary,
+          headerTintColor: colors.text.primary,
           headerTitleStyle: { fontWeight: 'bold' },
           headerLeft: () => (
             <Pressable
               onPress={handleBackPress}
               style={styles.headerBackButton}
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
           ),
         }}
@@ -592,24 +592,24 @@ const styles = StyleSheet.create({
     ...Typography.h1,
     fontSize: 48,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   gameTitle: {
     ...Typography.h1,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   gameSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.xl,
     textAlign: 'center',
   },
   rulesCard: {
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.xl,
@@ -622,7 +622,7 @@ const styles = StyleSheet.create({
   rulesTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   ruleItem: {
@@ -645,7 +645,7 @@ const styles = StyleSheet.create({
   },
   ruleText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   startButton: {
@@ -668,7 +668,7 @@ const styles = StyleSheet.create({
   startButtonText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Playing
   playingContent: {
@@ -697,13 +697,13 @@ const styles = StyleSheet.create({
   questionCounter: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   timerBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.md,
@@ -728,15 +728,15 @@ const styles = StyleSheet.create({
   categoryText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   scoreBadge: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   questionCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     marginBottom: Spacing.lg,
@@ -751,7 +751,7 @@ const styles = StyleSheet.create({
   questionText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     lineHeight: 26,
   },
@@ -761,7 +761,7 @@ const styles = StyleSheet.create({
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     gap: Spacing.md,
@@ -784,19 +784,19 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   optionLetterText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   optionText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   // Completed
@@ -815,11 +815,11 @@ const styles = StyleSheet.create({
   },
   completedSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xl,
   },
   scoreCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -833,14 +833,14 @@ const styles = StyleSheet.create({
   },
   scoreCardLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   scoreCardValue: {
     ...Typography.h1,
     fontSize: 48,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginVertical: Spacing.xs,
   },
   scoreCardPercent: {
@@ -851,7 +851,7 @@ const styles = StyleSheet.create({
   coinsEarnedCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
@@ -871,7 +871,7 @@ const styles = StyleSheet.create({
   coinsEarnedText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   actionButtons: {
     width: '100%',
@@ -891,7 +891,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.md,
     gap: Spacing.sm,
@@ -904,7 +904,7 @@ const styles = StyleSheet.create({
   backToGamesText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 });
 

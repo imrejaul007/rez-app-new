@@ -107,7 +107,7 @@ const SmartPicks = () => {
             <View style={styles.titleRow}>
               <Text style={styles.sectionTitle}>Smart Picks by ${BRAND.APP_NAME}</Text>
               <View style={styles.aiTag}>
-                <Ionicons name="sparkles" size={12} color={Colors.text.inverse} />
+                <Ionicons name="sparkles" size={12} color={colors.text.inverse} />
                 <Text style={styles.aiTagText}>AI</Text>
               </View>
             </View>
@@ -138,7 +138,7 @@ const SmartPicks = () => {
           <View style={styles.titleRow}>
             <Text style={styles.sectionTitle}>Smart Picks by ${BRAND.APP_NAME}</Text>
             <View style={styles.aiTag}>
-              <Ionicons name="sparkles" size={12} color={Colors.text.inverse} />
+              <Ionicons name="sparkles" size={12} color={colors.text.inverse} />
               <Text style={styles.aiTagText}>AI</Text>
             </View>
           </View>
@@ -178,7 +178,7 @@ const SmartPicks = () => {
                     {item.distance && (
                       <>
                         <View style={styles.dot} />
-                        <Ionicons name="location" size={10} color={Colors.text.tertiary} />
+                        <Ionicons name="location" size={10} color={colors.text.tertiary} />
                         <Text style={styles.itemDistance}>{item.distance}</Text>
                       </>
                     )}
@@ -195,7 +195,7 @@ const SmartPicks = () => {
                   )}
                   {item.buyers && (
                     <View style={styles.buyersRow}>
-                      <Ionicons name="people" size={10} color={Colors.text.tertiary} />
+                      <Ionicons name="people" size={10} color={colors.text.tertiary} />
                       <Text style={styles.buyersText}>{item.buyers} bought</Text>
                     </View>
                   )}
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   retryButton: {
     marginTop: Spacing.sm,
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   aiTag: {
     flexDirection: 'row',
@@ -282,11 +282,11 @@ const styles = StyleSheet.create({
   aiTagText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   sectionSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   picksContainer: {
@@ -295,11 +295,11 @@ const styles = StyleSheet.create({
   },
   pickCard: {
     width: width * 0.8,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginRight: Spacing.md,
   },
   pickHeader: {
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   pickTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     flex: 1,
   },
   itemRow: {
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
   itemName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   itemMeta: {
     flexDirection: 'row',
@@ -347,7 +347,7 @@ const styles = StyleSheet.create({
   },
   itemStore: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   dot: {
     width: 3,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   },
   itemDistance: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   itemRight: {
     alignItems: 'flex-end',
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
   itemPrice: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   cashbackBadge: {
     backgroundColor: colors.successScale[50],
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   },
   buyersText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   trendingRow: {
     flexDirection: 'row',

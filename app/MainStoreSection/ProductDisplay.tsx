@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: "700",
   },
   ratingDivider: {

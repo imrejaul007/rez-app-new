@@ -250,7 +250,7 @@ function SettingInput({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.md,
     overflow: 'hidden',
@@ -304,11 +304,11 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   sectionDescription: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   sectionBody: {
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   },
   inputLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   inputWrapper: {
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   },
   input: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     flex: 1,
     textAlign: 'right',
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   },
   inputSuffix: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.xs,
   },
   infoBox: {
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 18,
   },
   footer: {
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     right: 0,
     padding: Spacing.base,
     paddingBottom: Platform.OS === 'ios' ? Spacing.xl : Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
     borderTopColor: Colors.gray[100],
   },

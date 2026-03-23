@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 28,
   },
   titleSmall: {

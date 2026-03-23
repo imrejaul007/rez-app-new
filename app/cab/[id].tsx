@@ -458,7 +458,7 @@ function CabDetailsPage() {
             
             return (
               <View style={[styles.headerImage, styles.placeholderImage]}>
-                <Ionicons name="car" size={64} color={Colors.text.tertiary} />
+                <Ionicons name="car" size={64} color={colors.text.tertiary} />
                 <Text style={styles.placeholderText}>Cab Image</Text>
               </View>
             );
@@ -470,7 +470,7 @@ function CabDetailsPage() {
           
           <View style={styles.headerActions}>
             <Pressable style={styles.backButton} onPress={handleBack}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             
             <View style={styles.headerRightActions}>
@@ -482,7 +482,7 @@ function CabDetailsPage() {
                 />
               </Pressable>
               <Pressable style={styles.actionButton}>
-                <Ionicons name="share-outline" size={24} color={Colors.text.inverse} />
+                <Ionicons name="share-outline" size={24} color={colors.text.inverse} />
               </Pressable>
             </View>
           </View>
@@ -547,7 +547,7 @@ function CabDetailsPage() {
                 </View>
               </View>
               <View style={styles.cashbackBadge}>
-                <Ionicons name="cash" size={20} color={Colors.text.inverse} />
+                <Ionicons name="cash" size={20} color={colors.text.inverse} />
                 <Text style={styles.cashbackText}>
                   {cab.cashback.percentage}% Cashback
                 </Text>
@@ -683,11 +683,11 @@ function CabDetailsPage() {
             >
               <View style={styles.bookButtonContent}>
                 <View style={styles.bookButtonLeft}>
-                  <Ionicons name="calendar" size={22} color={Colors.text.inverse} />
+                  <Ionicons name="calendar" size={22} color={colors.text.inverse} />
                   <Text style={styles.bookButtonText}>Book Now</Text>
                 </View>
                 <View style={styles.bookButtonRight}>
-                  <Ionicons name="arrow-forward" size={22} color={Colors.text.inverse} />
+                  <Ionicons name="arrow-forward" size={22} color={colors.text.inverse} />
                 </View>
               </View>
             </LinearGradient>
@@ -739,7 +739,7 @@ function CabDetailsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary },
+    backgroundColor: colors.background.primary },
   scrollView: {
     flex: 1 },
   scrollContent: {
@@ -753,11 +753,11 @@ const styles = StyleSheet.create({
   loadingText: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base },
   loadingSubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm },
   errorContainer: {
     flex: 1,
@@ -777,7 +777,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.brand.amber,
     borderRadius: BorderRadius.md },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600' },
   headerContainer: {
@@ -788,12 +788,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%' },
   placeholderImage: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center' },
   placeholderText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md },
   headerGradient: {
     position: 'absolute',
@@ -840,7 +840,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: 'rgba(255,255,255,0.5)' },
   indicatorActive: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     width: 24 },
   infoCardWrapper: {
     marginTop: -20,
@@ -857,11 +857,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   storeCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     gap: Spacing.md },
@@ -874,7 +874,7 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs },
   storeBadge: {
     flexDirection: 'row',
@@ -890,11 +890,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.brand.amber,
     borderRadius: BorderRadius.sm },
   viewStoreButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600' },
   priceContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg },
   priceRow: {
@@ -903,7 +903,7 @@ const styles = StyleSheet.create({
     alignItems: 'center' },
   priceLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs },
   priceValueContainer: {
     flexDirection: 'row',
@@ -915,7 +915,7 @@ const styles = StyleSheet.create({
     color: colors.brand.amber },
   originalPrice: {
     ...Typography.h4,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through' },
   cashbackBadge: {
     backgroundColor: colors.brand.amber,
@@ -924,12 +924,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     alignItems: 'center' },
   cashbackText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
     marginTop: Spacing.xs },
   cashbackAmount: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '800',
     marginTop: 2 },
@@ -941,7 +941,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     marginTop: Spacing.md },
   discountText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '700' },
   detailsGrid: {
@@ -950,7 +950,7 @@ const styles = StyleSheet.create({
     gap: Spacing.base },
   detailItem: {
     width: (screenWidth - 48) / 2,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     alignItems: 'center' },
@@ -964,22 +964,22 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm },
   detailLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs },
   detailValue: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   descriptionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md },
   description: {
     ...Typography.body,
     fontSize: 15,
     lineHeight: 24,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
   bookButtonContainer: {
     position: 'absolute',
     bottom: 30,
@@ -988,9 +988,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.md,
     paddingBottom: Platform.OS === 'ios' ? Spacing.xl : Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -8 },
     shadowOpacity: 0.15,
@@ -998,12 +998,12 @@ const styles = StyleSheet.create({
     elevation: 16,
     zIndex: 1001 },
   priceInfoCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default },
+    borderColor: colors.border.default },
   priceInfoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1013,7 +1013,7 @@ const styles = StyleSheet.create({
   priceInfoLabel: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
     textTransform: 'uppercase',
     letterSpacing: 0.5 },
@@ -1024,11 +1024,11 @@ const styles = StyleSheet.create({
   priceInfoValue: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.5 },
   priceInfoOriginal: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
     fontWeight: '600' },
   cashbackInfo: {
@@ -1066,7 +1066,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: Spacing.md },
   bookButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: '800',
     letterSpacing: 0.5 },

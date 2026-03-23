@@ -116,7 +116,7 @@ export default memo(function AIReviewSummary({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     borderWidth: 1,
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
   },
   summaryText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
     lineHeight: 20,
   },

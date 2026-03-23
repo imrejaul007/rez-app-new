@@ -131,7 +131,7 @@ function ActivityFeedPage() {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="calendar-outline" size={64} color={Colors.border.default} />
+      <Ionicons name="calendar-outline" size={64} color={colors.border.default} />
       <ThemedText style={styles.emptyText}>No activities yet</ThemedText>
       <ThemedText style={styles.emptySubtext}>
         Your activity timeline will appear here
@@ -145,7 +145,7 @@ function ActivityFeedPage() {
       <StatusBar barStyle="light-content" backgroundColor={colors.lightMustard} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.header}>
+      <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable 
             style={styles.backButton} 
@@ -261,7 +261,7 @@ function ActivityFeedPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     ...Typography.overline,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '700',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   filterContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.base,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -359,9 +359,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   filterPillActive: {
     backgroundColor: Colors.gold,
@@ -375,10 +375,10 @@ const styles = StyleSheet.create({
   filterPillText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterPillTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   listContent: {
     paddingHorizontal: Spacing.base,
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   },
   activityCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: 18,
     marginBottom: 14,
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
     elevation: 3,
     borderWidth: 1,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
   },
   activityIcon: {
     width: 54,
@@ -419,19 +419,19 @@ const styles = StyleSheet.create({
   activityTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     marginRight: Spacing.sm,
     letterSpacing: -0.2,
   },
   activityTime: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   activityDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
     marginBottom: Spacing.sm,
     marginTop: 2,
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     flex: 1,
@@ -468,12 +468,12 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
   },
   loadingContainer: {
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
 });

@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { BRAND } from '@/constants/brand';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface AppliedRedemption {
@@ -94,10 +94,10 @@ function OrderConfirmationModal({
               </View>
               {(billSummary?.lockFeeDiscount || 0) > 0 && (
                 <View style={styles.confirmSummaryRow}>
-                  <ThemedText style={[styles.confirmSummaryLabel, { color: Colors.nileBlue }]}>
+                  <ThemedText style={[styles.confirmSummaryLabel, { color: colors.nileBlue }]}>
                     Lock Fee Already Paid
                   </ThemedText>
-                  <ThemedText style={[styles.confirmSummaryValue, { color: Colors.nileBlue }]}>
+                  <ThemedText style={[styles.confirmSummaryValue, { color: colors.nileBlue }]}>
                     -{currencySymbol}{(billSummary?.lockFeeDiscount || 0).toFixed(0)}
                   </ThemedText>
                 </View>
@@ -114,10 +114,10 @@ function OrderConfirmationModal({
               )}
               {(billSummary?.coinDiscount || 0) > 0 && (
                 <View style={styles.confirmSummaryRow}>
-                  <ThemedText style={[styles.confirmSummaryLabel, { color: Colors.gold }]}>
+                  <ThemedText style={[styles.confirmSummaryLabel, { color: colors.gold }]}>
                     Coin Discount
                   </ThemedText>
-                  <ThemedText style={[styles.confirmSummaryValue, { color: Colors.gold }]}>
+                  <ThemedText style={[styles.confirmSummaryValue, { color: colors.gold }]}>
                     -{currencySymbol}{(billSummary?.coinDiscount || 0).toFixed(0)}
                   </ThemedText>
                 </View>
@@ -154,7 +154,7 @@ function OrderConfirmationModal({
                   <Ionicons
                     name={selectedPaymentMethod === 'cod' ? 'cash' : 'card'}
                     size={18}
-                    color={Colors.gold}
+                    color={colors.gold}
                   />
                 )}
                 <ThemedText style={styles.confirmPaymentValue}>
@@ -165,7 +165,7 @@ function OrderConfirmationModal({
 
             {/* Trust Badge */}
             <View style={styles.confirmTrustBadge}>
-              <Ionicons name="lock-closed" size={14} color={Colors.neutral[500]} />
+              <Ionicons name="lock-closed" size={14} color={colors.neutral[500]} />
               <ThemedText style={styles.confirmTrustText}>
                 Your payment is secured with 256-bit encryption
               </ThemedText>
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   confirmModalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     overflow: 'hidden',
@@ -223,13 +223,13 @@ const styles = StyleSheet.create({
   confirmModalTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   confirmModalBody: {
     padding: Spacing.lg,
   },
   confirmSummaryCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -240,57 +240,57 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   confirmSummaryLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   confirmSummaryValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   confirmTotalRow: {
     borderBottomWidth: 0,
     marginTop: Spacing.sm,
     paddingTop: Spacing.md,
     borderTopWidth: 2,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   confirmTotalLabel: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   confirmTotalValue: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.gold,
+    color: colors.gold,
   },
   confirmPaymentMethod: {
     marginBottom: Spacing.base,
   },
   confirmPaymentLabel: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   confirmPaymentBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.successScale[50],
+    backgroundColor: colors.successScale[50],
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     gap: 10,
     borderWidth: 1,
-    borderColor: Colors.successScale[200],
+    borderColor: colors.successScale[200],
   },
   confirmPaymentValue: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.gold,
+    color: colors.gold,
   },
   confirmTrustBadge: {
     flexDirection: 'row',
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
   },
   confirmTrustText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   confirmModalFooter: {
     flexDirection: 'row',
@@ -309,19 +309,19 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['2xl'],
     gap: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   confirmCancelButton: {
     flex: 1,
     paddingVertical: Spacing.base,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   confirmCancelText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   confirmPayButton: {
     flex: 2,
@@ -335,7 +335,7 @@ const styles = StyleSheet.create({
   confirmPayText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

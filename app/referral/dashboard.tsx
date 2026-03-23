@@ -269,14 +269,14 @@ function ReferralDashboard() {
           accessibilityHint="Opens share options to invite friends"
         >
           <LinearGradient colors={[Colors.brand.purple, '#a78bfa']} style={styles.shareButtonGradient}>
-            <Ionicons name="share-social" size={24} color={Colors.text.inverse} />
+            <Ionicons name="share-social" size={24} color={colors.text.inverse} />
             <View style={styles.shareButtonText}>
               <Text style={styles.shareButtonTitle}>Invite Friends</Text>
               <Text style={styles.shareButtonSubtitle}>
                 Earn {currencySymbol}{currentTierData.rewards.perReferral} per referral
               </Text>
             </View>
-            <Ionicons name="chevron-forward" size={24} color={Colors.text.inverse} />
+            <Ionicons name="chevron-forward" size={24} color={colors.text.inverse} />
           </LinearGradient>
         </Pressable>
 
@@ -417,13 +417,13 @@ function ReferralDashboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary
+    backgroundColor: colors.background.secondary
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary
+    backgroundColor: colors.background.secondary
   },
   header: {
     paddingTop: 60,
@@ -440,12 +440,12 @@ const styles = StyleSheet.create({
   tierName: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginTop: Spacing.sm
   },
   tierBadgeText: {
     ...Typography.body,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     opacity: 0.9,
     marginTop: Spacing.xs
   },
@@ -462,22 +462,22 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.inverse
+    color: colors.text.inverse
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     opacity: 0.9,
     marginTop: Spacing.xs
   },
   statDivider: {
     width: 1,
     height: 40,
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     opacity: 0.3
   },
   progressSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginTop: -20,
     marginHorizontal: Spacing.base,
     borderRadius: BorderRadius.lg,
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
     textAlign: 'right'
   },
   nextTierRewards: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base
   },
@@ -537,10 +537,10 @@ const styles = StyleSheet.create({
   },
   rewardText: {
     ...Typography.body,
-    color: Colors.text.secondary
+    color: colors.text.secondary
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginTop: Spacing.base,
     marginHorizontal: Spacing.base,
     borderRadius: BorderRadius.lg,
@@ -581,16 +581,16 @@ const styles = StyleSheet.create({
   shareButtonTitle: {
     ...Typography.bodyLarge,
     fontWeight: '800',
-    color: Colors.text.inverse
+    color: colors.text.inverse
   },
   shareButtonSubtitle: {
     ...Typography.body,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     opacity: 0.9,
     marginTop: 2
   },
   referralCodeBox: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center'
@@ -626,7 +626,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.md
   },
@@ -657,7 +657,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm
   },
   claimButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600'
   },
@@ -703,7 +703,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.sm,
     gap: Spacing.md
@@ -719,7 +719,7 @@ const styles = StyleSheet.create({
   leaderboardRankText: {
     ...Typography.body,
     fontWeight: '800',
-    color: Colors.text.inverse
+    color: colors.text.inverse
   },
   leaderboardInfo: {
     flex: 1

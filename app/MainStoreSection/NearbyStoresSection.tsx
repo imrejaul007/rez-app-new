@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: "700",
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   storesList: {
@@ -164,11 +164,11 @@ const styles = StyleSheet.create({
   },
   storeName: {
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   storeDistance: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

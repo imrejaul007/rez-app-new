@@ -214,7 +214,7 @@ function LocationHistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   clearButton: {
     padding: Spacing.sm,
@@ -248,7 +248,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   listContainer: {
@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   historyItem: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
     shadowColor: '#000',
@@ -290,35 +290,35 @@ const styles = StyleSheet.create({
   },
   timeText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   addressText: {
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
     marginBottom: Spacing.xs,
     lineHeight: 22,
   },
   cityText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   coordinatesContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.sm,
     borderRadius: 6,
     marginBottom: Spacing.sm,
   },
   coordinatesText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   dateText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyState: {
     flex: 1,
@@ -329,13 +329,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   },
   errorSubtitle: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.lg,
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },

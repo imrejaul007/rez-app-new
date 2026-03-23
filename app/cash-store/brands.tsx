@@ -226,7 +226,7 @@ function CashStoreBrandsPage() {
         if (!url) throw new Error('No URL available');
 
         await WebBrowser.openBrowserAsync(url, {
-          toolbarColor: Colors.nileBlue,
+          toolbarColor: colors.nileBlue,
           controlsColor: colors.background.primary,
         });
       } else if (brand.storeId) {
@@ -296,7 +296,7 @@ function CashStoreBrandsPage() {
                   style={[styles.chip, styles.chipActive]}
                 >
                   {cat.icon ? (
-                    <Ionicons name={cat.icon as any} size={12} color={Colors.text.inverse} />
+                    <Ionicons name={cat.icon as any} size={12} color={colors.text.inverse} />
                   ) : null}
                   <Text style={[styles.chipText, styles.chipTextActive]}>
                     {cat.name}
@@ -331,7 +331,7 @@ function CashStoreBrandsPage() {
               onPress={() => handleCategorySelect('all')}
               style={styles.clearFilterBtn}
             >
-              <Ionicons name="close-circle" size={12} color={Colors.text.tertiary} />
+              <Ionicons name="close-circle" size={12} color={colors.text.tertiary} />
               <Text style={styles.clearFilterText}>Clear</Text>
             </Pressable>
           )}
@@ -340,7 +340,7 @@ function CashStoreBrandsPage() {
           onPress={() => setShowSortModal(true)}
           style={styles.sortBtn}
         >
-          <Ionicons name="swap-vertical" size={13} color={Colors.nileBlue} />
+          <Ionicons name="swap-vertical" size={13} color={colors.nileBlue} />
           <Text style={styles.sortBtnText}>{currentSortLabel}</Text>
           <Ionicons name="chevron-down" size={11} color="#B0B8C1" />
         </Pressable>
@@ -353,7 +353,7 @@ function CashStoreBrandsPage() {
     if (isLoadingMore) {
       return (
         <View style={styles.footerLoader}>
-          <ActivityIndicator size="small" color={Colors.nileBlue} />
+          <ActivityIndicator size="small" color={colors.nileBlue} />
           <Text style={styles.footerText}>Loading more brands...</Text>
         </View>
       );
@@ -440,7 +440,7 @@ function CashStoreBrandsPage() {
         <View style={[styles.stickyHeader, { paddingTop: skeletonTop }]}>
           <View style={styles.headerRow}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-              <Ionicons name="chevron-back" size={20} color={Colors.nileBlue} />
+              <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
             </Pressable>
             <Text style={styles.headerTitle}>Brands</Text>
             <View style={{ width: 36 }} />
@@ -474,7 +474,7 @@ function CashStoreBrandsPage() {
       <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
         <View style={styles.headerRow}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-            <Ionicons name="chevron-back" size={20} color={Colors.nileBlue} />
+            <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
           </Pressable>
           <View style={styles.headerTitleWrap}>
             <Text style={styles.headerTitle}>Brands</Text>
@@ -490,7 +490,7 @@ function CashStoreBrandsPage() {
             onPress={() => setShowSortModal(true)}
             style={styles.headerSortBtn}
           >
-            <Ionicons name="options-outline" size={18} color={Colors.nileBlue} />
+            <Ionicons name="options-outline" size={18} color={colors.nileBlue} />
           </Pressable>
         </View>
 
@@ -518,7 +518,7 @@ function CashStoreBrandsPage() {
               hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             >
               <View style={styles.searchClearBtn}>
-                <Ionicons name="close" size={12} color={Colors.text.inverse} />
+                <Ionicons name="close" size={12} color={colors.text.inverse} />
               </View>
             </Pressable>
           )}
@@ -536,8 +536,8 @@ function CashStoreBrandsPage() {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            tintColor={Colors.nileBlue}
-            colors={[Colors.nileBlue]}
+            tintColor={colors.nileBlue}
+            colors={[colors.nileBlue]}
           />
         }
         onEndReached={handleLoadMore}
@@ -567,7 +567,7 @@ function CashStoreBrandsPage() {
                 onPress={() => setShowSortModal(false)}
                 style={styles.modalCloseBtn}
               >
-                <Ionicons name="close" size={18} color={Colors.text.tertiary} />
+                <Ionicons name="close" size={18} color={colors.text.tertiary} />
               </Pressable>
             </View>
             {SORT_OPTIONS.map((option, index) => {
@@ -590,7 +590,7 @@ function CashStoreBrandsPage() {
                   </Text>
                   {isActive && (
                     <View style={styles.modalCheckCircle}>
-                      <Ionicons name="checkmark" size={14} color={Colors.text.inverse} />
+                      <Ionicons name="checkmark" size={14} color={colors.text.inverse} />
                     </View>
                   )}
                 </Pressable>
@@ -649,7 +649,7 @@ const styles = StyleSheet.create({
 
   // ── Sticky Header ──
   stickyHeader: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.md,
     ...Platform.select({
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.5,
   },
   countBadge: {
@@ -727,14 +727,14 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   searchBarFocused: {
-    borderColor: Colors.nileBlue,
-    backgroundColor: Colors.background.primary,
+    borderColor: colors.nileBlue,
+    backgroundColor: colors.background.primary,
   },
   searchInput: {
     flex: 1,
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     paddingVertical: 0,
   },
   searchClearBtn: {
@@ -771,7 +771,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: '#E8E2DB',
   },
@@ -784,7 +784,7 @@ const styles = StyleSheet.create({
     color: '#7C8A97',
   },
   chipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   skeletonChipsRow: {
     flexDirection: 'row',
@@ -829,7 +829,7 @@ const styles = StyleSheet.create({
   clearFilterText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   sortBtn: {
     flexDirection: 'row',
@@ -838,7 +838,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 7,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: '#EDEAE6',
     ...Platform.select({
@@ -855,7 +855,7 @@ const styles = StyleSheet.create({
   sortBtnText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 
   // ── Footer ──
@@ -917,7 +917,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6,
   },
   emptySubtitle: {
@@ -931,12 +931,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     paddingVertical: 11,
     borderRadius: 14,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   emptyResetText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // ── Sort Modal ──
@@ -946,7 +946,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     paddingHorizontal: Spacing.lg,
@@ -956,7 +956,7 @@ const styles = StyleSheet.create({
   modalHandle: {
     width: 36,
     height: 4,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 2,
     alignSelf: 'center',
     marginBottom: Spacing.base,
@@ -970,7 +970,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     ...Typography.h4,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.3,
   },
   modalCloseBtn: {
@@ -1002,7 +1002,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalOptionIconActive: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   modalOptionText: {
     flex: 1,
@@ -1034,7 +1034,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 14,
     borderRadius: 18,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     gap: 12,
     borderWidth: 1,
     borderColor: '#F0EBE4',

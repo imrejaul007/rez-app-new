@@ -124,7 +124,7 @@ function BankOffersListScreen() {
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.header}>
           <Pressable style={styles.headerBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Bank Offers</ThemedText>
           <View style={styles.headerBtnPlaceholder} />
@@ -133,7 +133,7 @@ function BankOffersListScreen() {
           <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
           <ThemedText style={styles.errorText}>{error}</ThemedText>
           <Pressable style={styles.retryButton} onPress={fetchOffers}>
-            <Ionicons name="refresh" size={18} color={Colors.text.inverse} />
+            <Ionicons name="refresh" size={18} color={colors.text.inverse} />
             <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
           </Pressable>
         </View>
@@ -148,21 +148,21 @@ function BankOffersListScreen() {
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.header}>
           <Pressable style={styles.headerBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Bank Offers</ThemedText>
           <View style={styles.headerBtnPlaceholder} />
         </View>
         <View style={styles.emptyState}>
           <View style={styles.emptyIconWrap}>
-            <Ionicons name="card-outline" size={48} color={Colors.text.tertiary} />
+            <Ionicons name="card-outline" size={48} color={colors.text.tertiary} />
           </View>
           <ThemedText style={styles.emptyTitle}>No Bank Offers Available</ThemedText>
           <ThemedText style={styles.emptySubtext}>
             Check back soon for exciting bank and card offers!
           </ThemedText>
           <Pressable style={styles.retryButton} onPress={fetchOffers}>
-            <Ionicons name="refresh" size={18} color={Colors.text.inverse} />
+            <Ionicons name="refresh" size={18} color={colors.text.inverse} />
             <ThemedText style={styles.retryButtonText}>Refresh</ThemedText>
           </Pressable>
         </View>
@@ -178,7 +178,7 @@ function BankOffersListScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.headerBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Bank Offers</ThemedText>
         <View style={styles.headerBtnPlaceholder} />
@@ -221,7 +221,7 @@ function BankOffersListScreen() {
                     />
                   ) : (
                     <View style={styles.bankLogoPlaceholder}>
-                      <Ionicons name="card" size={24} color={Colors.text.inverse} />
+                      <Ionicons name="card" size={24} color={colors.text.inverse} />
                     </View>
                   )}
                   <View style={styles.cardGradientInfo}>
@@ -273,7 +273,7 @@ function BankOffersListScreen() {
                 <View style={styles.cardFooter}>
                   {offer.validUntil ? (
                     <View style={styles.validityRow}>
-                      <Ionicons name="calendar-outline" size={14} color={Colors.text.tertiary} />
+                      <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
                       <ThemedText style={styles.validityText}>
                         Valid till {formatDate(offer.validUntil)}
                       </ThemedText>
@@ -281,7 +281,7 @@ function BankOffersListScreen() {
                   ) : (
                     <View />
                   )}
-                  <Ionicons name="chevron-forward" size={18} color={Colors.text.tertiary} />
+                  <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
                 </View>
               </View>
             </Pressable>
@@ -298,22 +298,22 @@ function BankOffersListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   errorContainer: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   errorContent: {
     flex: 1,
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   retryButton: {
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     ...Typography.body,
   },
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     width: 88,
     height: 88,
     borderRadius: 44,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.base,
@@ -397,12 +397,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.sm,
@@ -410,12 +410,12 @@ const styles = StyleSheet.create({
 
   // Card
   card: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   cardGradient: {
     paddingHorizontal: Spacing.base,
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   bankLogoPlaceholder: {
     width: 48,
@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
   bankName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cardNetwork: {
     ...Typography.bodySmall,
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   discountText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h4,
     fontWeight: '800',
     lineHeight: 22,
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
   offerTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 10,
     lineHeight: 21,
   },
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
   },
   validityText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

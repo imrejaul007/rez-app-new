@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   grid: {
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   methodName: {
     fontSize: 14,
     fontWeight: "600",
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   acceptedRow: {
     flexDirection: "row",

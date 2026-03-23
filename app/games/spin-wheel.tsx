@@ -203,7 +203,7 @@ function SpinWheelPage() {
         {/* Info Banner */}
         <View style={styles.infoBanner}>
           <LinearGradient
-            colors={[Colors.background.secondary, Colors.border.default]}
+            colors={[colors.background.secondary, colors.border.default]}
             style={styles.infoBannerGradient}
           >
             <Ionicons name="information-circle" size={24} color={Colors.brand.purpleLight} />
@@ -298,7 +298,7 @@ function SpinWheelPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   contentContainer: {
     paddingBottom: 120,
@@ -307,12 +307,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   backButton: {
     marginLeft: Platform.OS === 'ios' ? 8 : 16,
@@ -336,12 +336,12 @@ const styles = StyleSheet.create({
   infoBannerTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   infoBannerText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   statsSection: {
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   statsTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   statsGrid: {
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
@@ -369,19 +369,19 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
     marginBottom: Spacing.xs,
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   historySection: {
     margin: Spacing.base,
     marginTop: Spacing.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.sm,
     ...Shadows.medium,
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   ctaTitle: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   ctaButton: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     shadowColor: '#000',

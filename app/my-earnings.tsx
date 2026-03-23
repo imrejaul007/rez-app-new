@@ -283,7 +283,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
           <Text style={styles.errorTitle}>Something went wrong</Text>
           <Text style={styles.errorMessage}>{error}</Text>
           <Pressable style={styles.retryButton} onPress={() => fetchEarnings()}>
-            <Ionicons name="refresh" size={18} color={Colors.text.inverse} />
+            <Ionicons name="refresh" size={18} color={colors.text.inverse} />
             <Text style={styles.retryButtonText}>Retry</Text>
           </Pressable>
         </View>
@@ -312,13 +312,13 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
               accessibilityLabel="Export earnings report"
               accessibilityRole="button"
             >
-              <Ionicons name="download-outline" size={22} color={Colors.text.inverse} />
+              <Ionicons name="download-outline" size={22} color={colors.text.inverse} />
             </Pressable>
             <Pressable
               style={styles.headerIconButton}
               onPress={() => router.push('/earnings-history' as any)}
             >
-              <Ionicons name="time-outline" size={22} color={Colors.text.inverse} />
+              <Ionicons name="time-outline" size={22} color={colors.text.inverse} />
             </Pressable>
           </View>
         </View>
@@ -469,7 +469,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
 
               {data.recentTransactions.length === 0 ? (
                 <View style={styles.emptyTransactions}>
-                  <Ionicons name="receipt-outline" size={32} color={Colors.border.default} />
+                  <Ionicons name="receipt-outline" size={32} color={colors.border.default} />
                   <Text style={styles.emptyTransactionsText}>
                     {selectedPeriod === 'all' ? 'No earnings yet' : 'No earnings in this period'}
                   </Text>
@@ -518,7 +518,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerRight: {
     width: 40,
@@ -573,10 +573,10 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   periodChipActive: {
     backgroundColor: colors.brand.pink,
@@ -585,10 +585,10 @@ const styles = StyleSheet.create({
   periodChipText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   periodChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Total earnings card
   totalCard: {
@@ -609,7 +609,7 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: 42,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.lg,
   },
   balanceRow: {
@@ -636,14 +636,14 @@ const styles = StyleSheet.create({
   balanceValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   walletButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
   },
@@ -665,7 +665,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   viewAllText: {
     fontSize: 14,
@@ -685,7 +685,7 @@ const styles = StyleSheet.create({
   },
   breakdownCard: {
     width: (width - 48) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
@@ -705,23 +705,23 @@ const styles = StyleSheet.create({
   },
   breakdownLabel: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   breakdownValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   breakdownPercentage: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   // Chart
   chartCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 20,
     shadowColor: '#000',
@@ -733,7 +733,7 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.lg,
     textAlign: 'center',
   },
@@ -741,7 +741,7 @@ const styles = StyleSheet.create({
   transactionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.sm,
@@ -765,12 +765,12 @@ const styles = StyleSheet.create({
   transactionDescription: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   transactionDate: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   transactionRight: {
     alignItems: 'flex-end',
@@ -801,7 +801,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     fontSize: 16,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   // Error state
   errorContainer: {
@@ -813,13 +813,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorMessage: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -835,11 +835,11 @@ const styles = StyleSheet.create({
   retryButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Zero state
   zeroStateCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing['2xl'],
     alignItems: 'center',
@@ -853,13 +853,13 @@ const styles = StyleSheet.create({
   zeroStateTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   zeroStateDescription: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.lg,
@@ -878,12 +878,12 @@ const styles = StyleSheet.create({
   emptyTransactions: {
     alignItems: 'center',
     padding: Spacing['2xl'],
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
   },
   emptyTransactionsText: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
 });

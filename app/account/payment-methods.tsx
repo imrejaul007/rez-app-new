@@ -718,7 +718,7 @@ function PaymentMethodsManagementPage() {
           paymentMethods.map(renderPaymentCard)
         ) : (
           <View style={styles.emptyContainer}>
-            <Ionicons name="card-outline" size={64} color={Colors.border.default} />
+            <Ionicons name="card-outline" size={64} color={colors.border.default} />
             <ThemedText style={styles.emptyText}>No payment methods saved</ThemedText>
             <ThemedText style={styles.emptySubtext}>
               Add a payment method to make checkout faster
@@ -744,7 +744,7 @@ function PaymentMethodsManagementPage() {
                 {modalMode === 'edit' ? 'Edit Payment Method' : 'Add Payment Method'}
               </ThemedText>
               <Pressable onPress={() => setModalMode(null)}>
-                <Ionicons name="close" size={24} color={Colors.text.primary} />
+                <Ionicons name="close" size={24} color={colors.text.primary} />
               </Pressable>
             </View>
 
@@ -1071,7 +1071,7 @@ function PaymentMethodsManagementPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
@@ -1098,7 +1098,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
@@ -1117,9 +1117,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     gap: Spacing.md,
   },
   quickAddButton: {
@@ -1127,7 +1127,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     gap: Spacing.sm,
@@ -1135,7 +1135,7 @@ const styles = StyleSheet.create({
   quickAddText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   content: {
     flex: 1,
@@ -1145,7 +1145,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   paymentCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -1176,13 +1176,13 @@ const styles = StyleSheet.create({
   cardBrand: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   cardNumber: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   defaultBadge: {
     flexDirection: 'row',
@@ -1203,12 +1203,12 @@ const styles = StyleSheet.create({
   },
   cardholderName: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.xs,
   },
   cardExpiry: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   cardNickname: {
     ...Typography.bodySmall,
@@ -1222,7 +1222,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   actionButton: {
     flexDirection: 'row',
@@ -1231,7 +1231,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   loadingContainer: {
@@ -1242,7 +1242,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     flex: 1,
@@ -1253,12 +1253,12 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
     textAlign: 'center',
   },
@@ -1270,7 +1270,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     maxHeight: '90%',
@@ -1281,12 +1281,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalForm: {
     padding: Spacing.lg,
@@ -1303,7 +1303,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     gap: Spacing.sm,
   },
   typeOptionActive: {
@@ -1312,27 +1312,27 @@ const styles = StyleSheet.create({
   typeOptionText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   typeOptionTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   label: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   input: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   row: {
     flexDirection: 'row',
@@ -1356,7 +1356,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Error Banner Styles
@@ -1388,10 +1388,10 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   cardTypeOptionActive: {
     backgroundColor: Colors.brand.purpleLight,
@@ -1400,10 +1400,10 @@ const styles = StyleSheet.create({
   cardTypeOptionText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   cardTypeOptionTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Account Type Toggle Styles
@@ -1417,10 +1417,10 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   accountTypeOptionActive: {
     backgroundColor: Colors.info,
@@ -1429,10 +1429,10 @@ const styles = StyleSheet.create({
   accountTypeOptionText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   accountTypeOptionTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 export default withErrorBoundary(PaymentMethodsManagementPage, 'AccountPaymentMethods');

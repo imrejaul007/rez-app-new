@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, {} from 'react';
 import { View, Pressable, StyleSheet, Dimensions, Platform } from 'react-native';
@@ -95,7 +96,7 @@ function VisitStoreButton({
                 <Ionicons
                   name="storefront"
                   size={isSmallScreen ? IconSize.md : IconSize.lg}
-                  color={Colors.text.white}
+                  color={colors.text.white}
                   style={styles.storeIcon}
                 />
               )}
@@ -106,7 +107,7 @@ function VisitStoreButton({
                   <Ionicons
                     name="refresh"
                     size={isSmallScreen ? IconSize.md : IconSize.lg}
-                    color={Colors.text.white}
+                    color={colors.text.white}
                   />
                 </Animated.View>
               )}
@@ -133,7 +134,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.md,
     paddingBottom: Platform.OS === 'ios' ? 30 : Spacing.md,
@@ -168,7 +169,7 @@ const styles = StyleSheet.create({
 
   // Modern Typography
   buttonText: {
-    color: Colors.text.white,
+    color: colors.text.white,
     ...Typography.h4,
     letterSpacing: 0.5,
     textAlign: 'center' } });

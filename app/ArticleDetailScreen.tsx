@@ -142,7 +142,7 @@ const markdownStyles = StyleSheet.create({
   h1: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.xl,
     marginBottom: Spacing.md,
     lineHeight: 32,
@@ -150,7 +150,7 @@ const markdownStyles = StyleSheet.create({
   h2: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.lg,
     marginBottom: 10,
     lineHeight: 28,
@@ -158,20 +158,20 @@ const markdownStyles = StyleSheet.create({
   h3: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
     lineHeight: 24,
   },
   paragraph: {
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 26,
     marginBottom: Spacing.md,
   },
   bold: {
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   list: {
     marginVertical: Spacing.sm,
@@ -191,7 +191,7 @@ const markdownStyles = StyleSheet.create({
   listText: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 24,
   },
   spacer: {
@@ -343,7 +343,7 @@ function ArticleDetailScreen() {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <StatusBar barStyle="dark-content" />
-        <Ionicons name="alert-circle-outline" size={64} color={Colors.text.tertiary} />
+        <Ionicons name="alert-circle-outline" size={64} color={colors.text.tertiary} />
         <Text style={styles.errorText}>{error || 'Article not found'}</Text>
         <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
           <Text style={styles.backButtonText}>Go Back</Text>
@@ -363,7 +363,7 @@ function ArticleDetailScreen() {
           onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
          
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
 
         <View style={styles.headerActions}>
@@ -375,7 +375,7 @@ function ArticleDetailScreen() {
             <Ionicons
               name={isBookmarked ? "bookmark" : "bookmark-outline"}
               size={22}
-              color={isBookmarked ? Colors.gold : Colors.text.primary}
+              color={isBookmarked ? Colors.gold : colors.text.primary}
             />
           </Pressable>
           <Pressable
@@ -383,7 +383,7 @@ function ArticleDetailScreen() {
             onPress={handleShare}
            
           >
-            <Ionicons name="share-outline" size={22} color={Colors.text.primary} />
+            <Ionicons name="share-outline" size={22} color={colors.text.primary} />
           </Pressable>
         </View>
       </View>
@@ -431,7 +431,7 @@ function ArticleDetailScreen() {
             </View>
             {article.readTime && (
               <View style={styles.readTimeBadge}>
-                <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+                <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
                 <Text style={styles.readTimeText}>{article.readTime} min read</Text>
               </View>
             )}
@@ -461,16 +461,16 @@ function ArticleDetailScreen() {
               <Ionicons
                 name={isLiked ? "heart" : "heart-outline"}
                 size={20}
-                color={isLiked ? colors.error : Colors.text.tertiary}
+                color={isLiked ? colors.error : colors.text.tertiary}
               />
               <Text style={styles.statText}>{formatCount(likesCount)}</Text>
             </Pressable>
             <View style={styles.statItem}>
-              <Ionicons name="eye-outline" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="eye-outline" size={20} color={colors.text.tertiary} />
               <Text style={styles.statText}>{formatCount(article.engagement?.views || 0)}</Text>
             </View>
             <View style={styles.statItem}>
-              <Ionicons name="bookmark-outline" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="bookmark-outline" size={20} color={colors.text.tertiary} />
               <Text style={styles.statText}>{formatCount(article.engagement?.bookmarks || 0)}</Text>
             </View>
           </View>
@@ -549,7 +549,7 @@ function ArticleDetailScreen() {
                       onPress={() => handleAddToCart(product)}
                      
                     >
-                      <Ionicons name="add" size={20} color={Colors.text.inverse} />
+                      <Ionicons name="add" size={20} color={colors.text.inverse} />
                     </Pressable>
                   </Pressable>
                 ))}
@@ -568,7 +568,7 @@ function ArticleDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   centerContent: {
     justifyContent: 'center',
@@ -577,12 +577,12 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingHorizontal: Spacing['2xl'],
   },
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius['2xl'],
   },
   backButtonText: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: colors.neutral[100],
   },
@@ -626,14 +626,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: SCREEN_WIDTH,
     height: 220,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     position: 'relative',
   },
   imagePlaceholder: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     zIndex: 10,
   },
   featuredImage: {
@@ -667,7 +667,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   categoryBadgeText: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
     ...Typography.bodySmall,
     fontWeight: '600',
     textTransform: 'capitalize',
@@ -679,12 +679,12 @@ const styles = StyleSheet.create({
   },
   readTimeText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   title: {
     fontSize: 28,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     lineHeight: 36,
     marginBottom: Spacing.base,
     letterSpacing: -0.3,
@@ -698,7 +698,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.md,
   },
   authorInfo: {
@@ -707,12 +707,12 @@ const styles = StyleSheet.create({
   authorName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   dateText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statsRow: {
     flexDirection: 'row',
@@ -727,7 +727,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   divider: {
@@ -745,7 +745,7 @@ const styles = StyleSheet.create({
   tagsSectionTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -770,7 +770,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
     paddingTop: Spacing.xl,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   productsSectionHeader: {
     flexDirection: 'row',
@@ -781,18 +781,18 @@ const styles = StyleSheet.create({
   productsSectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   productsScrollContainer: {
     gap: Spacing.md,
   },
   productCard: {
     width: 160,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginRight: Spacing.md,
     ...Platform.select({
       ios: {
@@ -809,7 +809,7 @@ const styles = StyleSheet.create({
   productImage: {
     width: '100%',
     height: 140,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   productInfo: {
     padding: Spacing.md,
@@ -817,7 +817,7 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6,
     lineHeight: 18,
   },
@@ -833,7 +833,7 @@ const styles = StyleSheet.create({
   },
   productOriginalPrice: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   cashbackBadge: {

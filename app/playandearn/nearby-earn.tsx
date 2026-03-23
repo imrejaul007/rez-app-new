@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
   // ---- Layout ----
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
 
   // ---- Header ----
@@ -617,20 +617,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   headerRight: {
     width: 40,
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
   },
   toggleContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: 3,
   },
@@ -657,15 +657,15 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   toggleBtnActive: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   toggleText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   toggleTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // ---- Centered / State containers ----
@@ -679,7 +679,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: 14,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 
@@ -696,13 +696,13 @@ const styles = StyleSheet.create({
   noLocationTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   noLocationSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -720,7 +720,7 @@ const styles = StyleSheet.create({
   enableLocationText: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // ---- Empty State ----
@@ -728,7 +728,7 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.lg,
@@ -736,13 +736,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 
@@ -757,11 +757,11 @@ const styles = StyleSheet.create({
     marginTop: 18,
     paddingHorizontal: 28,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     borderRadius: BorderRadius.md,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -781,7 +781,7 @@ const styles = StyleSheet.create({
   },
   resultCountText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 14,
     fontWeight: '500',
   },
@@ -790,12 +790,12 @@ const styles = StyleSheet.create({
   storeCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
     ...Shadows.subtle,
   },
   storeCardLeft: {
@@ -805,7 +805,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: 14,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   storePlaceholder: {
     width: 52,
@@ -817,7 +817,7 @@ const styles = StyleSheet.create({
   storePlaceholderText: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cashbackBadge: {
     position: 'absolute',
@@ -828,12 +828,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     paddingVertical: 2,
     borderWidth: 2,
-    borderColor: Colors.background.primary,
+    borderColor: colors.background.primary,
   },
   cashbackBadgeText: {
     ...Typography.overline,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: 'none',
     letterSpacing: 0,
   },
@@ -844,7 +844,7 @@ const styles = StyleSheet.create({
   storeCardName: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 3,
   },
   storeCardMeta: {
@@ -860,7 +860,7 @@ const styles = StyleSheet.create({
   },
   metaText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   chipsScroll: {
     maxHeight: 28,
@@ -907,7 +907,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: '35%',
     height: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     opacity: 0.8,
   },
   roadH2: {
@@ -916,7 +916,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: '70%',
     height: 6,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     opacity: 0.6,
   },
   roadV1: {
@@ -925,7 +925,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: '30%',
     width: 6,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     opacity: 0.7,
   },
   roadV2: {
@@ -934,7 +934,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: '65%',
     width: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     opacity: 0.8,
   },
 
@@ -1012,13 +1012,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: Colors.background.primary,
+    borderColor: colors.background.primary,
     ...Shadows.medium,
   },
   markerInitial: {
     ...Typography.body,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   markerTail: {
     width: 0,
@@ -1031,7 +1031,7 @@ const styles = StyleSheet.create({
     marginTop: -2,
   },
   markerLabelWrap: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 6,
@@ -1042,7 +1042,7 @@ const styles = StyleSheet.create({
   markerLabel: {
     ...Typography.overline,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     maxWidth: 60,
     textAlign: 'center',
     textTransform: 'none',
@@ -1083,7 +1083,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     backgroundColor: colors.infoScale[400],
     borderWidth: 3,
-    borderColor: Colors.background.primary,
+    borderColor: colors.background.primary,
     shadowColor: colors.infoScale[400],
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.5,
@@ -1122,11 +1122,11 @@ const styles = StyleSheet.create({
   mapInfoTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   mapInfoSub: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 1,
   },
   mapInfoRight: {
@@ -1139,7 +1139,7 @@ const styles = StyleSheet.create({
   },
   mapInfoRadiusLabel: {
     ...Typography.overline,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
     textTransform: 'none',
     letterSpacing: 0,
@@ -1153,7 +1153,7 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     ...Shadows.subtle,
@@ -1163,7 +1163,7 @@ const styles = StyleSheet.create({
     top: 3,
     fontSize: 8,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Map Store List (below the map)
@@ -1175,7 +1175,7 @@ const styles = StyleSheet.create({
   mapStoreListTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   mapStoreList: {
     flex: 1,
@@ -1187,11 +1187,11 @@ const styles = StyleSheet.create({
   mapStoreItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
     ...Shadows.subtle,
   },
   mapStoreIcon: {
@@ -1204,7 +1204,7 @@ const styles = StyleSheet.create({
   mapStoreIconText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   mapStoreInfo: {
     flex: 1,

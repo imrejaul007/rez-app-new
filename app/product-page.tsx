@@ -772,7 +772,7 @@ function StorePage() {
               <ThemedText style={styles.errorTitle}>Oops! Something went wrong</ThemedText>
               <ThemedText style={styles.errorMessage}>{error}</ThemedText>
               <Pressable style={styles.retryButton} onPress={retryFetch}>
-                <Ionicons name="refresh-outline" size={20} color={Colors.text.inverse} />
+                <Ionicons name="refresh-outline" size={20} color={colors.text.inverse} />
                 <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
               </Pressable>
             </View>
@@ -997,7 +997,7 @@ function StorePage() {
               onPress={handleCloseReviewForm}
               style={styles.closeButton}
             >
-              <Ionicons name="close" size={28} color={Colors.text.primary} />
+              <Ionicons name="close" size={28} color={colors.text.primary} />
             </Pressable>
           </View>
 
@@ -1064,7 +1064,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 100,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   webScrollContent: {
     paddingBottom: Platform.OS === 'web' ? 40 : 20,
@@ -1076,14 +1076,14 @@ const styles = StyleSheet.create({
     marginTop: Spacing['2xl'],
     marginBottom: Spacing.xl,
     marginHorizontal: 0,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   // Write Review Card styles (ReZ brand colors: green #ffcd57, golden #F59E0B)
   writeReviewCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.base,
     padding: Spacing.base,
@@ -1116,7 +1116,7 @@ const styles = StyleSheet.create({
   writeReviewTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   writeReviewSubtitle: {
@@ -1140,21 +1140,21 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   closeButton: {
     padding: Spacing.xs,
@@ -1162,14 +1162,14 @@ const styles = StyleSheet.create({
   loadingContainer: {
     padding: Spacing['2xl'],
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     margin: Spacing.base,
     borderRadius: BorderRadius.md,
     gap: Spacing.md,
   },
   loadingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   errorContainer: {
@@ -1208,7 +1208,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -1250,7 +1250,7 @@ const styles = StyleSheet.create({
   lockedBadgeText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   lockedSubtext: {
     ...Typography.body,
@@ -1262,7 +1262,7 @@ const styles = StyleSheet.create({
   viewCartButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderRadius: 10,

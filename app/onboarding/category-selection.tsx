@@ -26,9 +26,9 @@ const categories: CategoryItem[] = [
   { id: 'fashion', name: 'Fashion', icon: 'shirt-outline', isEnabled: true, color: Colors.gold },
   { id: 'food', name: 'Food & Dining', icon: 'restaurant-outline', isEnabled: true, color: Colors.gold },
   { id: 'grocery', name: 'Grocery', icon: 'cart-outline', isEnabled: true, color: Colors.gold },
-  { id: 'electronics', name: 'Electronics', icon: 'phone-portrait-outline', isEnabled: true, color: Colors.nileBlue },
+  { id: 'electronics', name: 'Electronics', icon: 'phone-portrait-outline', isEnabled: true, color: colors.nileBlue },
   { id: 'beauty', name: 'Beauty', icon: 'sparkles-outline', isEnabled: true, color: Colors.gold },
-  { id: 'medicine', name: 'Medicine', icon: 'medical-outline', isEnabled: false, color: Colors.text.tertiary },
+  { id: 'medicine', name: 'Medicine', icon: 'medical-outline', isEnabled: false, color: colors.text.tertiary },
 ];
 
 function CategorySelectionScreen() {
@@ -68,7 +68,7 @@ function CategorySelectionScreen() {
     <View style={styles.container}>
       {/* Background */}
       <LinearGradient
-        colors={[Colors.background.secondary, '#EDF2F7', Colors.background.secondary]}
+        colors={[colors.background.secondary, '#EDF2F7', colors.background.secondary]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -147,7 +147,7 @@ function CategorySelectionScreen() {
                       <Ionicons
                         name={category.icon as any}
                         size={22}
-                        color={!category.isEnabled ? colors.neutral[400] : isSelected ? category.color : Colors.text.primary}
+                        color={!category.isEnabled ? colors.neutral[400] : isSelected ? category.color : colors.text.primary}
                       />
                     </View>
                     <Text
@@ -161,7 +161,7 @@ function CategorySelectionScreen() {
                     </Text>
                     {isSelected && (
                       <View style={[styles.checkmark, { backgroundColor: category.color }]}>
-                        <Ionicons name="checkmark" size={14} color={Colors.text.inverse} />
+                        <Ionicons name="checkmark" size={14} color={colors.text.inverse} />
                       </View>
                     )}
                     {!category.isEnabled && (
@@ -182,13 +182,13 @@ function CategorySelectionScreen() {
            
           >
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[Colors.gold, colors.nileBlue]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.primaryButton}
             >
               <Text style={styles.primaryButtonText}>Continue</Text>
-              <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+              <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
             </LinearGradient>
           </Pressable>
         </View>
@@ -270,14 +270,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
     letterSpacing: -0.5,
   },
   subtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.base,
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
   cashbackTitle: {
     ...Typography.h4,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: 1,
   },
   cashbackSubtitle: {
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   categoriesTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   categoriesList: {
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   categoryItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderWidth: 2,
@@ -353,13 +353,13 @@ const styles = StyleSheet.create({
   },
   categoryItemDisabled: {
     opacity: 0.6,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   categoryIcon: {
     width: 44,
     height: 44,
     borderRadius: 14,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 14,
@@ -367,11 +367,11 @@ const styles = StyleSheet.create({
   categoryName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   categoryNameDisabled: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   checkmark: {
     width: 24,
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   comingSoonBadge: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 10,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   comingSoonText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Primary Button
@@ -411,7 +411,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '700',
   },

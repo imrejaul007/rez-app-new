@@ -79,7 +79,7 @@ function ArticleDetailPage() {
               onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
 
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
               <ThemedText style={styles.headerTitle}>Article</ThemedText>
@@ -107,7 +107,7 @@ function ArticleDetailPage() {
               onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
              
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
               <ThemedText style={styles.headerTitle}>Article</ThemedText>
@@ -115,7 +115,7 @@ function ArticleDetailPage() {
           </View>
         </LinearGradient>
         <View style={styles.errorContainer}>
-          <Ionicons name="document-text-outline" size={64} color={Colors.border.default} />
+          <Ionicons name="document-text-outline" size={64} color={colors.border.default} />
           <ThemedText style={styles.errorTitle}>{error || 'Article not found'}</ThemedText>
           <ThemedText style={styles.errorSubtitle}>
             The article you're looking for doesn't exist or has been removed.
@@ -130,7 +130,7 @@ function ArticleDetailPage() {
               end={{ x: 1, y: 0 }}
               style={styles.backToListGradient}
             >
-              <Ionicons name="arrow-back" size={20} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.backToListText}>Go Back</ThemedText>
             </LinearGradient>
           </Pressable>
@@ -151,7 +151,7 @@ function ArticleDetailPage() {
           colors={['rgba(0, 0, 0, 0.6)', 'rgba(0, 0, 0, 0.4)']}
           style={styles.floatingBackGradient}
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </LinearGradient>
       </Pressable>
 
@@ -214,12 +214,12 @@ function ArticleDetailPage() {
                     {article.author.name}
                   </ThemedText>
                   <View style={styles.metaRow}>
-                    <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+                    <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
                     <ThemedText style={styles.metaText}>
                       {article.readTime || '5 min read'}
                     </ThemedText>
                     <ThemedText style={styles.metaDot}>•</ThemedText>
-                    <Ionicons name="eye-outline" size={14} color={Colors.text.tertiary} />
+                    <Ionicons name="eye-outline" size={14} color={colors.text.tertiary} />
                     <ThemedText style={styles.metaText}>{article.viewCount}</ThemedText>
                   </View>
                 </View>
@@ -281,13 +281,13 @@ function ArticleDetailPage() {
 // Markdown Styles
 const markdownStyles = StyleSheet.create({
   body: {
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontSize: 17,
     lineHeight: 28,
     fontWeight: '400',
   },
   heading1: {
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontSize: 28,
     fontWeight: '700',
     marginTop: 24,
@@ -295,7 +295,7 @@ const markdownStyles = StyleSheet.create({
     lineHeight: 36,
   },
   heading2: {
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontSize: 24,
     fontWeight: '700',
     marginTop: 24,
@@ -303,7 +303,7 @@ const markdownStyles = StyleSheet.create({
     lineHeight: 32,
   },
   heading3: {
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontSize: 20,
     fontWeight: '600',
     marginTop: 20,
@@ -313,13 +313,13 @@ const markdownStyles = StyleSheet.create({
   paragraph: {
     marginTop: 0,
     marginBottom: 16,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontSize: 17,
     lineHeight: 28,
   },
   strong: {
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   em: {
     fontStyle: 'italic',
@@ -362,8 +362,8 @@ const markdownStyles = StyleSheet.create({
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   code_block: {
-    backgroundColor: Colors.text.primary,
-    color: Colors.background.secondary,
+    backgroundColor: colors.text.primary,
+    color: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.base,
@@ -379,7 +379,7 @@ const markdownStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   headerGradient: {
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.5,
   },
   floatingBackButton: {
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     height: '50%',
   },
   articleContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     marginTop: -24,
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   },
   articleTitle: {
     ...Typography.display,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 40,
     marginBottom: 20,
     letterSpacing: -0.5,
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
   authorName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6,
   },
   metaRow: {
@@ -525,12 +525,12 @@ const styles = StyleSheet.create({
   },
   metaText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   metaDot: {
     ...Typography.bodySmall,
-    color: Colors.border.default,
+    color: colors.border.default,
     marginHorizontal: 2,
   },
   actionButtons: {
@@ -542,15 +542,15 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     marginBottom: Spacing.xl,
   },
   contentSection: {
@@ -561,13 +561,13 @@ const styles = StyleSheet.create({
   },
   tagsDivider: {
     height: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     marginBottom: Spacing.xl,
   },
   tagsLabel: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   tagsContainer: {
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
     fontWeight: '500',
   },
@@ -617,13 +617,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
   backToListText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

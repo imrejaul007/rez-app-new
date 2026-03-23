@@ -307,7 +307,7 @@ function GiftsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   giftCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -391,11 +391,11 @@ const styles = StyleSheet.create({
   },
   giftAmount: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   giftSender: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: 2,
   },
   statusBadge: {
@@ -415,7 +415,7 @@ const styles = StyleSheet.create({
   },
   messageText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontStyle: 'italic',
   },
   giftCardFooter: {
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   expiryText: {
     ...Typography.caption,
@@ -470,13 +470,13 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },

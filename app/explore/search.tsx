@@ -150,12 +150,12 @@ const ExploreSearchPage = () => {
             style={styles.backButton}
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+            <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
 
           {/* Search Input */}
           <View style={styles.searchBar}>
-            <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="search" size={20} color={colors.text.tertiary} />
             <TextInput
               style={styles.searchInput}
               placeholder="Search stores, products..."
@@ -168,7 +168,7 @@ const ExploreSearchPage = () => {
             />
             {searchQuery.length > 0 && (
               <Pressable onPress={clearSearch}>
-                <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+                <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
               </Pressable>
             )}
           </View>
@@ -233,7 +233,7 @@ const ExploreSearchPage = () => {
           {/* Initial State - No Search Yet */}
           {!hasSearched && !loading && (
             <View style={styles.centerContainer}>
-              <Ionicons name="search" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="search" size={48} color={colors.text.tertiary} />
               <Text style={styles.centerTitle}>{`Search ${BRAND.APP_NAME}`}</Text>
               <Text style={styles.centerSubtext}>Find stores, products, and deals near you</Text>
             </View>
@@ -242,7 +242,7 @@ const ExploreSearchPage = () => {
           {/* Empty State */}
           {hasSearched && !loading && !error && currentResults.length === 0 && (
             <View style={styles.centerContainer}>
-              <Ionicons name="search-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="search-outline" size={48} color={colors.text.tertiary} />
               <Text style={styles.centerTitle}>No {activeTab} found</Text>
               <Text style={styles.centerSubtext}>Try a different search term</Text>
             </View>
@@ -259,7 +259,7 @@ const ExploreSearchPage = () => {
                 <CachedImage source={store.image} style={styles.storeImage} />
               ) : (
                 <View style={[styles.storeImage, styles.storePlaceholder]}>
-                  <Ionicons name="storefront" size={28} color={Colors.text.tertiary} />
+                  <Ionicons name="storefront" size={28} color={colors.text.tertiary} />
                 </View>
               )}
 
@@ -276,7 +276,7 @@ const ExploreSearchPage = () => {
                   )}
                   {store.distance && (
                     <View style={styles.infoBadge}>
-                      <Ionicons name="location" size={12} color={Colors.text.tertiary} />
+                      <Ionicons name="location" size={12} color={colors.text.tertiary} />
                       <Text style={styles.infoText}>{store.distance}</Text>
                     </View>
                   )}
@@ -302,7 +302,7 @@ const ExploreSearchPage = () => {
                 <CachedImage source={product.image} style={styles.productImage} />
               ) : (
                 <View style={[styles.productImage, styles.productPlaceholder]}>
-                  <Ionicons name="cube" size={28} color={Colors.text.tertiary} />
+                  <Ionicons name="cube" size={28} color={colors.text.tertiary} />
                 </View>
               )}
 
@@ -336,7 +336,7 @@ const ExploreSearchPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -344,14 +344,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
     gap: Spacing.md,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: BorderRadius.md,
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.body,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   tabsContainer: {
     flexDirection: 'row',
@@ -382,19 +382,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     gap: 6,
   },
   tabActive: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   tabText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   resultsList: {
@@ -414,17 +414,17 @@ const styles = StyleSheet.create({
   centerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
   },
   centerText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   centerSubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
     textAlign: 'center',
   },
@@ -442,24 +442,24 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
   storeCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   storeImage: {
     width: 80,
     height: 80,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   storePlaceholder: {
     justifyContent: 'center',
@@ -473,11 +473,11 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   storeCategory: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   storeFooter: {
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   cashbackBadge: {
     backgroundColor: colors.successScale[50],
@@ -520,18 +520,18 @@ const styles = StyleSheet.create({
   },
   productCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   productImage: {
     width: 80,
     height: 80,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   productPlaceholder: {
     justifyContent: 'center',
@@ -545,11 +545,11 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   productStore: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   priceRow: {
@@ -561,11 +561,11 @@ const styles = StyleSheet.create({
   productPrice: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   originalPrice: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   offerBadge: {

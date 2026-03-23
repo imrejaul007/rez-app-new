@@ -427,7 +427,7 @@ function LanguageSettingsPage() {
 
         {/* Info Card */}
         <View style={styles.infoCard}>
-          <Ionicons name="information-circle-outline" size={24} color={Colors.text.tertiary} />
+          <Ionicons name="information-circle-outline" size={24} color={colors.text.tertiary} />
           <View style={styles.infoContent}>
             <ThemedText style={styles.infoTitle}>Language & Region Info</ThemedText>
             <ThemedText style={styles.infoText}>
@@ -447,7 +447,7 @@ function LanguageSettingsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   placeholder: {
     width: 40,
@@ -489,10 +489,10 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   summaryCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   summaryContent: {
     gap: Spacing.md,
@@ -523,7 +523,7 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   summaryValue: {
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
@@ -551,11 +551,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   sectionDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.lg,
     lineHeight: 20,
   },
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   languageOption: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     borderWidth: 2,
@@ -596,7 +596,7 @@ const styles = StyleSheet.create({
   languageName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   selectedLanguageName: {
@@ -604,13 +604,13 @@ const styles = StyleSheet.create({
   },
   languageNative: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   selectedLanguageNative: {
     color: Colors.brand.purpleLight,
   },
   regionOption: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     borderWidth: 2,
@@ -631,7 +631,7 @@ const styles = StyleSheet.create({
   regionName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   selectedRegionName: {
@@ -639,7 +639,7 @@ const styles = StyleSheet.create({
   },
   regionDetails: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   selectedRegionDetails: {
     color: Colors.brand.purpleLight,
@@ -659,13 +659,13 @@ const styles = StyleSheet.create({
   },
   settingLabel: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
     marginBottom: 2,
   },
   settingDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 16,
   },
   toggleGroup: {
@@ -676,7 +676,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   toggleButtonActive: {
     backgroundColor: Colors.brand.purpleLight,
@@ -684,10 +684,10 @@ const styles = StyleSheet.create({
   toggleButtonText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   toggleButtonTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   infoCard: {
     backgroundColor: '#F0F9FF',

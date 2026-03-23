@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useEffect, useState } from 'react';
 import {
@@ -265,7 +266,7 @@ function SectionDetailPage() {
           onPress={handleBack}
          
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
 
         <View style={styles.headerContent}>
@@ -313,7 +314,7 @@ function SectionDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     backgroundColor: Colors.brand.purple,
@@ -337,7 +338,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h3,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   countBadge: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     color: Colors.brand.purple,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,

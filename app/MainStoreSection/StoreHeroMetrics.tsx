@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   },
   metricValue: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: "700",
     fontSize: 14,
   },

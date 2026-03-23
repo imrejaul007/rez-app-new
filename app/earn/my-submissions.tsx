@@ -43,8 +43,8 @@ interface SubmissionItem {
 }
 
 const COLORS = {
-  white: Colors.background.primary,
-  navy: Colors.nileBlue,
+  white: colors.background.primary,
+  navy: colors.nileBlue,
   navyLight: '#2A5577',
   linen: Colors.linen,
   mustard: Colors.gold,

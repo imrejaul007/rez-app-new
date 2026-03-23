@@ -35,10 +35,10 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const OFFER_BADGE_COLORS: Record<string, { bg: string; text: string }> = {
-  'limited-time': { bg: Colors.error, text: Colors.background.primary },
-  'mall-exclusive': { bg: Colors.warning, text: Colors.background.primary },
-  'flash-sale': { bg: Colors.warning, text: Colors.background.primary },
-  'best-deal': { bg: Colors.brand.purpleLight, text: Colors.background.primary },
+  'limited-time': { bg: Colors.error, text: colors.background.primary },
+  'mall-exclusive': { bg: Colors.warning, text: colors.background.primary },
+  'flash-sale': { bg: Colors.warning, text: colors.background.primary },
+  'best-deal': { bg: Colors.brand.purpleLight, text: colors.background.primary },
 };
 
 interface OfferCardProps {
@@ -66,7 +66,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, currencySymbol })
             contentFit="cover"
           />
         ) : (
-          <View style={[styles.offerImage, { backgroundColor: Colors.background.secondary }]} />
+          <View style={[styles.offerImage, { backgroundColor: colors.background.secondary }]} />
         )}
         {offer.badge && badgeStyle && (
           <View style={[styles.offerBadge, { backgroundColor: badgeStyle.bg }]}>
@@ -107,7 +107,7 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, currencySymbol })
             <Ionicons
               name={daysRemaining <= 3 ? 'time-outline' : 'calendar-outline'}
               size={14}
-              color={daysRemaining <= 3 ? Colors.error : Colors.text.tertiary}
+              color={daysRemaining <= 3 ? Colors.error : colors.text.tertiary}
             />
             <Text
               style={[
@@ -233,7 +233,7 @@ function AllOffersPage() {
         end={{ x: 1, y: 1 }}
         style={styles.headerGradient}
       >
-        <Ionicons name="gift-outline" size={32} color={Colors.text.inverse} />
+        <Ionicons name="gift-outline" size={32} color={colors.text.inverse} />
         <Text style={styles.headerTitle}>Exclusive Offers</Text>
         <Text style={styles.headerSubtitle}>
           Limited-time deals with extra cashback
@@ -326,7 +326,7 @@ function AllOffersPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   listContent: {
     paddingBottom: 120,
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 26,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginTop: Spacing.md,
     marginBottom: Spacing.xs,
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
@@ -360,12 +360,12 @@ const styles = StyleSheet.create({
   resultCount: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   offerCard: {
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     ...Platform.select({
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   offerImageContainer: {
     height: 140,
     position: 'relative',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   offerImage: {
     ...StyleSheet.absoluteFillObject,
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
   valueTagText: {
     ...Typography.body,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   offerContent: {
     padding: Spacing.base,
@@ -428,23 +428,23 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     marginRight: Spacing.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   brandName: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   offerTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
     lineHeight: 22,
   },
   offerSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
   },
   offerFooter: {
@@ -460,7 +460,7 @@ const styles = StyleSheet.create({
   validityText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   validityTextUrgent: {
     color: Colors.error,
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
   minPurchase: {
     ...Typography.caption,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   exclusiveTag: {
     flexDirection: 'row',
@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
   exclusiveText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   loadingMore: {
     paddingVertical: Spacing.lg,

@@ -214,7 +214,7 @@ function ProfileVisibilityPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   placeholder: {
     width: 40,
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   currentSection: {
     marginBottom: Spacing.xl,
@@ -264,11 +264,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   currentCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     flexDirection: 'row',
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   },
   currentLabel: {
     fontSize: Typography.bodyLarge.fontSize,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
   },
   currentValue: {
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   optionCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
     shadowColor: '#000',
@@ -326,12 +326,12 @@ const styles = StyleSheet.create({
   optionTitle: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   optionDescription: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   selectedIndicator: {
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   infoCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     shadowColor: '#000',
@@ -358,12 +358,12 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginLeft: Spacing.sm,
   },
   infoText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   footer: {

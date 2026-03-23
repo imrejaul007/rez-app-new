@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md },
   strip: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     flexDirection: 'row',
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     alignItems: 'center' },
   proofText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
     flex: 1 },
   dotsContainer: {
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.border.default },
+    backgroundColor: colors.border.default },
   dotActive: {
     backgroundColor: Colors.gold,
     width: 12 } });

@@ -493,7 +493,7 @@ function EarnFromSocialMediaPage() {
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 120 }}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.nileBlue]} />
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.nileBlue]} />
       }
     >
       {/* Earnings Summary Card — only show if user has any activity */}
@@ -517,7 +517,7 @@ function EarnFromSocialMediaPage() {
             </View>
           </View>
           <View style={styles.earningsPostsRow}>
-            <Ionicons name="document-text-outline" size={14} color={Colors.text.tertiary} />
+            <Ionicons name="document-text-outline" size={14} color={colors.text.tertiary} />
             <ThemedText style={styles.earningsPostsText}>
               {earnings.postsSubmitted} post{earnings.postsSubmitted !== 1 ? 's' : ''} submitted
               {earnings.postsApproved > 0 ? ` · ${earnings.postsApproved} approved` : ''}
@@ -559,7 +559,7 @@ function EarnFromSocialMediaPage() {
       {/* Info Card */}
       <View style={styles.infoCard}>
         <View style={styles.infoIconContainer}>
-          <Ionicons name="gift-outline" size={24} color={Colors.nileBlue} />
+          <Ionicons name="gift-outline" size={24} color={colors.nileBlue} />
         </View>
         <View style={styles.infoContent}>
           <ThemedText style={styles.infoTitle}>Earn Coins</ThemedText>
@@ -616,13 +616,13 @@ function EarnFromSocialMediaPage() {
               pending: colors.brand.amberDeep,
               approved: '#047857',
               rejected: Colors.error,
-              credited: Colors.nileBlue,
+              credited: colors.nileBlue,
             };
             const statusBgColors: Record<string, string> = {
               pending: colors.tint.amberLight,
               approved: colors.tint.green,
               rejected: colors.errorScale[100],
-              credited: Colors.background.tertiary,
+              credited: colors.background.tertiary,
             };
             const statusIcons: Record<string, string> = {
               pending: 'time-outline',
@@ -643,7 +643,7 @@ function EarnFromSocialMediaPage() {
                     <Ionicons
                       name={`logo-${post.platform}` as any}
                       size={18}
-                      color={PLATFORM_CONFIG[post.platform as PlatformType]?.color || Colors.text.tertiary}
+                      color={PLATFORM_CONFIG[post.platform as PlatformType]?.color || colors.text.tertiary}
                     />
                   </View>
                   <View style={styles.submissionInfo}>
@@ -657,13 +657,13 @@ function EarnFromSocialMediaPage() {
                   </View>
                 </View>
                 <View style={styles.submissionRight}>
-                  <View style={[styles.submissionStatusBadge, { backgroundColor: statusBgColors[post.status] || Colors.background.secondary }]}>
+                  <View style={[styles.submissionStatusBadge, { backgroundColor: statusBgColors[post.status] || colors.background.secondary }]}>
                     <Ionicons
                       name={(statusIcons[post.status] || 'help-circle-outline') as any}
                       size={12}
-                      color={statusColors[post.status] || Colors.text.tertiary}
+                      color={statusColors[post.status] || colors.text.tertiary}
                     />
-                    <ThemedText style={[styles.submissionStatusText, { color: statusColors[post.status] || Colors.text.tertiary }]}>
+                    <ThemedText style={[styles.submissionStatusText, { color: statusColors[post.status] || colors.text.tertiary }]}>
                       {statusLabels[post.status] || post.status}
                     </ThemedText>
                   </View>
@@ -690,7 +690,7 @@ function EarnFromSocialMediaPage() {
         ].map((tip, index) => (
           <View key={index} style={styles.tipRow}>
             <View style={styles.tipIconCircle}>
-              <Ionicons name={tip.icon as any} size={16} color={Colors.nileBlue} />
+              <Ionicons name={tip.icon as any} size={16} color={colors.nileBlue} />
             </View>
             <ThemedText style={styles.tipText}>{tip.text}</ThemedText>
           </View>
@@ -706,7 +706,7 @@ function EarnFromSocialMediaPage() {
       {selectedOrder && (
         <View style={styles.selectedOrderCard}>
           <View style={styles.selectedOrderHeader}>
-            <Ionicons name="receipt-outline" size={20} color={Colors.nileBlue} />
+            <Ionicons name="receipt-outline" size={20} color={colors.nileBlue} />
             <ThemedText style={styles.selectedOrderTitle}>Earning for:</ThemedText>
           </View>
           <ThemedText style={styles.selectedOrderName}>{selectedOrder.productName}</ThemedText>
@@ -733,7 +733,7 @@ function EarnFromSocialMediaPage() {
                 <Ionicons
                   name={config.icon as any}
                   size={28}
-                  color={isSelected ? config.color : Colors.text.tertiary}
+                  color={isSelected ? config.color : colors.text.tertiary}
                 />
                 <ThemedText style={[styles.platformLabel, isSelected && { color: config.color }]}>
                   {config.label}
@@ -756,7 +756,7 @@ function EarnFromSocialMediaPage() {
             <Ionicons
               name="link-outline"
               size={28}
-              color={submissionMode === 'url' ? Colors.nileBlue : Colors.text.tertiary}
+              color={submissionMode === 'url' ? colors.nileBlue : colors.text.tertiary}
             />
             <ThemedText style={[styles.modeTitle, submissionMode === 'url' && styles.modeTitleSelected]}>
               Paste Post URL
@@ -774,7 +774,7 @@ function EarnFromSocialMediaPage() {
             <Ionicons
               name="images-outline"
               size={28}
-              color={submissionMode === 'media' ? Colors.nileBlue : Colors.text.tertiary}
+              color={submissionMode === 'media' ? colors.nileBlue : colors.text.tertiary}
             />
             <ThemedText style={[styles.modeTitle, submissionMode === 'media' && styles.modeTitleSelected]}>
               Upload Photo/Video
@@ -822,7 +822,7 @@ function EarnFromSocialMediaPage() {
         {selectedOrder && (
           <View style={styles.selectedOrderCard}>
             <View style={styles.selectedOrderHeader}>
-              <Ionicons name="receipt-outline" size={20} color={Colors.nileBlue} />
+              <Ionicons name="receipt-outline" size={20} color={colors.nileBlue} />
               <ThemedText style={styles.selectedOrderTitle}>Earning for:</ThemedText>
             </View>
             <ThemedText style={styles.selectedOrderName}>{selectedOrder.productName}</ThemedText>
@@ -895,7 +895,7 @@ function EarnFromSocialMediaPage() {
         {selectedOrder && (
           <View style={styles.selectedOrderCard}>
             <View style={styles.selectedOrderHeader}>
-              <Ionicons name="receipt-outline" size={20} color={Colors.nileBlue} />
+              <Ionicons name="receipt-outline" size={20} color={colors.nileBlue} />
               <ThemedText style={styles.selectedOrderTitle}>Earning for:</ThemedText>
             </View>
             <ThemedText style={styles.selectedOrderName}>{selectedOrder.productName}</ThemedText>
@@ -924,7 +924,7 @@ function EarnFromSocialMediaPage() {
               onPress={handlePickMedia}
              
             >
-              <Ionicons name="add-circle-outline" size={32} color={Colors.nileBlue} />
+              <Ionicons name="add-circle-outline" size={32} color={colors.nileBlue} />
               <ThemedText style={styles.pickMediaText}>Pick from Gallery</ThemedText>
             </Pressable>
           )}
@@ -1032,7 +1032,7 @@ function EarnFromSocialMediaPage() {
           onPress={handleRetry}
          
         >
-          <Ionicons name="refresh-outline" size={20} color={Colors.text.inverse} />
+          <Ionicons name="refresh-outline" size={20} color={colors.text.inverse} />
           <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
         </Pressable>
         <Pressable
@@ -1068,7 +1068,7 @@ function EarnFromSocialMediaPage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
       <LinearGradient
@@ -1110,7 +1110,7 @@ function EarnFromSocialMediaPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
 
   // Header Styles
@@ -1136,7 +1136,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h4,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
     textAlign: 'center',
     marginLeft: -40,
@@ -1148,11 +1148,11 @@ const styles = StyleSheet.create({
   // Main Content
   mainContent: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   content: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
 
   // Orders Container
@@ -1162,7 +1162,7 @@ const styles = StyleSheet.create({
 
   // Earnings Summary Card
   earningsSummaryCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     margin: Spacing.lg,
     marginBottom: 0,
     padding: Spacing.lg,
@@ -1172,7 +1172,7 @@ const styles = StyleSheet.create({
   earningsSummaryTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   earningsRow: {
@@ -1188,17 +1188,17 @@ const styles = StyleSheet.create({
   earningsStatValue: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   earningsStatLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   earningsStatDivider: {
     width: 1,
     height: Spacing['2xl'],
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   earningsPostsRow: {
     flexDirection: 'row',
@@ -1207,16 +1207,16 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
   },
   earningsPostsText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // How It Works
   howItWorksCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     margin: Spacing.lg,
     marginBottom: 0,
     padding: Spacing.lg,
@@ -1226,7 +1226,7 @@ const styles = StyleSheet.create({
   howItWorksTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   stepsRow: {
@@ -1250,12 +1250,12 @@ const styles = StyleSheet.create({
   stepLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   stepDesc: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 
@@ -1268,7 +1268,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 14,
     marginBottom: Spacing.sm,
@@ -1284,7 +1284,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1294,11 +1294,11 @@ const styles = StyleSheet.create({
   submissionPlatformName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   submissionDate: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   submissionRight: {
@@ -1320,12 +1320,12 @@ const styles = StyleSheet.create({
   submissionCoins: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 
   // Tips Card
   tipsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     margin: Spacing.lg,
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
@@ -1334,7 +1334,7 @@ const styles = StyleSheet.create({
   tipsTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   tipRow: {
@@ -1347,20 +1347,20 @@ const styles = StyleSheet.create({
     width: Spacing['2xl'],
     height: Spacing['2xl'],
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.tertiary,
+    backgroundColor: colors.background.tertiary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   tipText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
 
   // Info Card
   infoCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.tertiary,
+    backgroundColor: colors.background.tertiary,
     margin: Spacing.lg,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
@@ -1370,7 +1370,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
@@ -1381,12 +1381,12 @@ const styles = StyleSheet.create({
   infoTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   infoDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Loading State
@@ -1399,7 +1399,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Empty State
@@ -1412,18 +1412,18 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
   shopNowButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing['2xl'],
     paddingVertical: Spacing.md,
     borderRadius: 25,
@@ -1431,7 +1431,7 @@ const styles = StyleSheet.create({
   shopNowText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Orders List
@@ -1441,7 +1441,7 @@ const styles = StyleSheet.create({
   ordersTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
 
@@ -1456,7 +1456,7 @@ const styles = StyleSheet.create({
   },
   platformHeaderText: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 
   // Section Container
@@ -1467,12 +1467,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   sectionSubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.base,
   },
 
@@ -1484,22 +1484,22 @@ const styles = StyleSheet.create({
   },
   platformButton: {
     width: (width - 64) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     alignItems: 'center',
     gap: Spacing.sm,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   platformButtonSelected: {
-    borderColor: Colors.nileBlue,
-    backgroundColor: Colors.background.tertiary,
+    borderColor: colors.nileBlue,
+    backgroundColor: colors.background.tertiary,
   },
   platformLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Mode Options
@@ -1507,31 +1507,31 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   modeCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.base,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   modeCardSelected: {
-    borderColor: Colors.nileBlue,
-    backgroundColor: Colors.background.tertiary,
+    borderColor: colors.nileBlue,
+    backgroundColor: colors.background.tertiary,
   },
   modeTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   modeTitleSelected: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   modeDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     position: 'absolute',
     bottom: Spacing.sm,
     left: 64,
@@ -1555,18 +1555,18 @@ const styles = StyleSheet.create({
   continueButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Selected Order Card
   selectedOrderCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.lg,
     borderLeftWidth: 4,
-    borderLeftColor: Colors.nileBlue,
+    borderLeftColor: colors.nileBlue,
   },
   selectedOrderHeader: {
     flexDirection: 'row',
@@ -1577,19 +1577,19 @@ const styles = StyleSheet.create({
   selectedOrderTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   selectedOrderName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   selectedStoreName: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   selectedCashback: {
@@ -1607,13 +1607,13 @@ const styles = StyleSheet.create({
 
   // Step Card
   stepCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
   },
   stepSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
   },
 
@@ -1622,34 +1622,34 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   urlInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 80,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     textAlignVertical: 'top',
   },
 
   // Pick Media Button
   pickMediaButton: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     alignItems: 'center',
     gap: Spacing.sm,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderStyle: 'dashed',
     marginBottom: Spacing.base,
   },
   pickMediaText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 
   // Media Grid
@@ -1684,7 +1684,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: Spacing.xs,
     right: Spacing.xs,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 11,
   },
 
@@ -1704,7 +1704,7 @@ const styles = StyleSheet.create({
   uploadButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   buttonDisabled: {
     opacity: 0.6,
@@ -1724,11 +1724,11 @@ const styles = StyleSheet.create({
   uploadingText: {
     ...Typography.bodyLarge,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   progressText: {
     ...Typography.body,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '600',
   },
 
@@ -1745,13 +1745,13 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.md,
   },
   successDescription: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing['2xl'],
   },
@@ -1764,7 +1764,7 @@ const styles = StyleSheet.create({
   doneButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 
   // Error State
@@ -1780,13 +1780,13 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.md,
   },
   errorDescription: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing['2xl'],
   },
@@ -1799,7 +1799,7 @@ const styles = StyleSheet.create({
   retryButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.sm,
@@ -1808,10 +1808,10 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cancelButton: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.sm,
@@ -1819,7 +1819,7 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Bottom Space

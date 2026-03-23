@@ -274,7 +274,7 @@ function ChangePasswordPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
@@ -337,12 +337,12 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginLeft: 12,
   },
   infoText: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   formContainer: {
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   passwordInputContainer: {
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     paddingHorizontal: Spacing.base,
     ...Platform.select({
       ios: {
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: Spacing.base,
     fontSize: 16,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   eyeButton: {
     padding: Spacing.sm,
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
   tipsTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   tipsList: {
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   },
   tipText: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: 8,
   },
   footer: {

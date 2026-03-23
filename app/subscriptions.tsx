@@ -110,10 +110,10 @@ function SubscriptionsPage() {
 
   const getTierColor = (tier: string) => {
     switch (tier) {
-      case 'free': return Colors.text.secondary;
+      case 'free': return colors.text.secondary;
       case 'premium': return Colors.gold;
       case 'vip': return colors.brand.purpleLight;
-      default: return Colors.text.primary;
+      default: return colors.text.primary;
     }
   };
 
@@ -123,7 +123,7 @@ function SubscriptionsPage() {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Subscriptions</Text>
           <View style={{ width: 32 }} />
@@ -141,12 +141,12 @@ function SubscriptionsPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Subscriptions</Text>
         <View style={{ width: 32 }} />
@@ -218,7 +218,7 @@ function SubscriptionsPage() {
         {tiers.length === 0 && !error && (
           <View style={styles.emptyContainer}>
             <View style={styles.emptyIconCircle}>
-              <Ionicons name="card-outline" size={36} color={Colors.text.tertiary} />
+              <Ionicons name="card-outline" size={36} color={colors.text.tertiary} />
             </View>
             <Text style={styles.emptyTitle}>No Plans Available</Text>
             <Text style={styles.emptyText}>
@@ -308,7 +308,7 @@ function SubscriptionsPage() {
           </View>
           <Pressable style={styles.buyButton} onPress={handleSubscribe}>
             <Text style={styles.buyButtonText}>Subscribe Now</Text>
-            <Ionicons name="arrow-forward" size={20} color={Colors.background.primary} />
+            <Ionicons name="arrow-forward" size={20} color={colors.background.primary} />
           </Pressable>
         </View>
       )}
@@ -319,7 +319,7 @@ function SubscriptionsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -328,9 +328,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.xs,
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   content: {
     flex: 1,
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   // Empty
@@ -372,20 +372,20 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: Colors.text.tertiary + '15',
+    backgroundColor: colors.text.tertiary + '15',
     alignItems: 'center',
     justifyContent: 'center',
   },
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   // Error
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   errorText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   // Banner
   banner: {
@@ -423,12 +423,12 @@ const styles = StyleSheet.create({
   bannerTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   bannerSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   // Sections
   section: {
@@ -438,13 +438,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   // Cycle toggle
   cycleToggle: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 4,
     gap: 4,
@@ -461,10 +461,10 @@ const styles = StyleSheet.create({
   cycleButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   cycleButtonTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   saveBadge: {
     backgroundColor: Colors.success + '20',
@@ -486,7 +486,7 @@ const styles = StyleSheet.create({
   activeCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     gap: Spacing.md,
@@ -504,19 +504,19 @@ const styles = StyleSheet.create({
   activePlatform: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   activePlan: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   activeExpiry: {
     alignItems: 'flex-end',
   },
   activeExpiryLabel: {
     fontSize: 11,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   activeExpiryValue: {
     ...Typography.body,
@@ -529,14 +529,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   summary: {},
   summaryPlatform: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: 2,
   },
   summaryRow: {
@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
   summaryPrice: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   summarySavings: {
     ...Typography.bodySmall,
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
   buyButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

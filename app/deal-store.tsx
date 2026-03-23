@@ -180,14 +180,14 @@ const DealStorePage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Deal Store</Text>
             <Text style={styles.headerSubtitle}>All deals in one place</Text>
           </View>
           <Pressable style={styles.searchButton}>
-            <Ionicons name="search" size={24} color={Colors.text.inverse} />
+            <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
@@ -243,8 +243,8 @@ const DealStorePage: React.FC = () => {
                     <Text style={styles.categoryTitle}>{category.title}</Text>
                     <Text style={styles.categorySubtitle}>{category.subtitle}</Text>
                   </View>
-                  <View style={[styles.categoryBadge, { backgroundColor: category.badgeBg || Colors.background.primary }]}>
-                    <Text style={[styles.categoryBadgeText, { color: category.badgeColor || Colors.nileBlue }]}>
+                  <View style={[styles.categoryBadge, { backgroundColor: category.badgeBg || colors.background.primary }]}>
+                    <Text style={[styles.categoryBadgeText, { color: category.badgeColor || colors.nileBlue }]}>
                       {category.badge}
                     </Text>
                   </View>
@@ -297,7 +297,7 @@ const DealStorePage: React.FC = () => {
           ))
         ) : (
           <View style={styles.emptyContainer}>
-            <Ionicons name="search-outline" size={64} color={Colors.text.tertiary} />
+            <Ionicons name="search-outline" size={64} color={colors.text.tertiary} />
             <Text style={styles.emptyText}>No deals found</Text>
             {filteredDealName && (
               <Text style={styles.emptySubtext}>
@@ -338,7 +338,7 @@ const DealStorePage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontSize: Typography.h2.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   heroSubtitle: {
@@ -390,15 +390,15 @@ const styles = StyleSheet.create({
   filtersContainer: {
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   filterChip: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
   },
   filterChipActive: {
@@ -406,10 +406,10 @@ const styles = StyleSheet.create({
   },
   filterChipText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   categorySection: {
@@ -426,15 +426,15 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2,
   },
   categorySubtitle: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   categoryBadge: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.xl,
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
   categoryBadgeText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   dealsGrid: {
     flexDirection: 'row',
@@ -453,11 +453,11 @@ const styles = StyleSheet.create({
   },
   dealCard: {
     width: '48%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginBottom: Spacing.xs,
   },
   dealImageContainer: {
@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
   timerText: {
     fontSize: Typography.overline.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   dealInfo: {
     padding: Spacing.md,
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
   dealStore: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
   },
   dealCashback: {
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
   ctaTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.sm,
   },
   ctaSubtitle: {
@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
   },
   ctaButton: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius['2xl'],
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     padding: 40,
@@ -566,13 +566,13 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptySubtext: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xl,
     textAlign: 'center',
   },
@@ -585,7 +585,7 @@ const styles = StyleSheet.create({
   clearFilterText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   noDealsContainer: {
     width: '100%',
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
   },
   noDealsText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

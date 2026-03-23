@@ -129,7 +129,7 @@ function BillingHistoryPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Billing History</ThemedText>
           <View style={styles.headerRight} />
@@ -200,7 +200,7 @@ function BillingHistoryPage() {
 
             {summary.memberSince && (
               <View style={styles.membershipInfo}>
-                <Ionicons name="calendar-outline" size={16} color={Colors.text.tertiary} />
+                <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
                 <ThemedText style={styles.membershipText}>
                   Member since {new Date(summary.memberSince).toLocaleDateString('en-US', {
                     month: 'long',
@@ -220,7 +220,7 @@ function BillingHistoryPage() {
             <TransactionListSkeleton />
           ) : transactions.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons name="receipt-outline" size={64} color={Colors.border.default} />
+              <Ionicons name="receipt-outline" size={64} color={colors.border.default} />
               <ThemedText style={styles.emptyTitle}>No Transactions Yet</ThemedText>
               <ThemedText style={styles.emptyDescription}>
                 Your billing history will appear here once you make a subscription payment.
@@ -280,7 +280,7 @@ function BillingHistoryPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to chat with customer support about billing inquiries"
           >
-            <Ionicons name="chatbubble-outline" size={20} color={Colors.text.inverse} />
+            <Ionicons name="chatbubble-outline" size={20} color={colors.text.inverse} />
             <ThemedText style={styles.supportButtonText}>Contact Support</ThemedText>
           </Pressable>
         </View>
@@ -292,7 +292,7 @@ function BillingHistoryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   summaryCard: {
     flex: 1,
     minWidth: '47%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
@@ -340,12 +340,12 @@ const styles = StyleSheet.create({
   summaryValue: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   summaryLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   membershipInfo: {
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   },
   membershipText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   historySection: {
     paddingHorizontal: Spacing.lg,
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   loadingContainer: {
@@ -375,25 +375,25 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   emptyState: {
     alignItems: 'center',
     padding: 40,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     ...Shadows.subtle,
   },
   emptyTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
   },
   emptyDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.sm,
     lineHeight: 20,
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
   },
   emptyButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginTop: Spacing.md,
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   },
   helpCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -444,12 +444,12 @@ const styles = StyleSheet.create({
   helpTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   helpText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   supportButton: {
@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   supportButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },

@@ -685,7 +685,7 @@ function CardOffersPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
 
   // Header
   header: {
@@ -955,7 +955,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginLeft: -10 },
   dividerLine: {
     flex: 1,
@@ -967,7 +967,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: -10 },
   cardFooter: {
     padding: Spacing.lg,

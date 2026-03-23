@@ -106,7 +106,7 @@ function getGradientColors(backgroundColor?: string): [string, string] {
   if (backgroundColor) {
     return [backgroundColor, shadeColor(backgroundColor, -30)];
   }
-  return [Colors.nileBlue, '#0f2536'];
+  return [colors.nileBlue, '#0f2536'];
 }
 
 function shadeColor(color: string, percent: number): string {
@@ -278,7 +278,7 @@ function OffersPage() {
         <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
           <View style={styles.headerRow}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-              <Ionicons name="chevron-back" size={20} color={Colors.nileBlue} />
+              <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
             </Pressable>
             <Text style={styles.headerTitle}>Offers</Text>
             <View style={styles.headerSpacer} />
@@ -308,7 +308,7 @@ function OffersPage() {
       <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
         <View style={styles.headerRow}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-            <Ionicons name="chevron-back" size={20} color={Colors.nileBlue} />
+            <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Offers</Text>
           <View style={styles.headerSpacer} />
@@ -339,7 +339,7 @@ function OffersPage() {
               onPress={handleRefresh}
               style={styles.retryBtn}
             >
-              <Ionicons name="refresh" size={14} color={Colors.text.inverse} />
+              <Ionicons name="refresh" size={14} color={colors.text.inverse} />
               <Text style={styles.retryText}>Try Again</Text>
             </Pressable>
           </View>
@@ -371,7 +371,7 @@ function OffersPage() {
               style={styles.browseBtn}
             >
               <Text style={styles.browseBtnText}>Browse Cash Store</Text>
-              <Ionicons name="arrow-forward" size={14} color={Colors.text.inverse} />
+              <Ionicons name="arrow-forward" size={14} color={colors.text.inverse} />
             </Pressable>
           </View>
         ) : hasContent ? (
@@ -379,7 +379,7 @@ function OffersPage() {
             {/* ─── Hero Summary Banner ──────────────────── */}
             <View style={styles.heroBannerWrap}>
               <LinearGradient
-                colors={[Colors.nileBlue, '#0f2536']}
+                colors={[colors.nileBlue, '#0f2536']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.heroBanner}
@@ -389,7 +389,7 @@ function OffersPage() {
                 <View style={styles.heroContent}>
                   <View style={styles.heroIconRow}>
                     <View style={styles.heroIconBadge}>
-                      <Ionicons name="flash" size={18} color={Colors.nileBlue} />
+                      <Ionicons name="flash" size={18} color={colors.nileBlue} />
                     </View>
                     {totalOffers > 0 && (
                       <View style={styles.heroCountBadge}>
@@ -418,7 +418,7 @@ function OffersPage() {
                     style={styles.seeAllBtn}
                   >
                     <Text style={styles.seeAllText}>See All</Text>
-                    <Ionicons name="chevron-forward" size={14} color={Colors.nileBlue} />
+                    <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                   </Pressable>
                 </View>
 
@@ -481,7 +481,7 @@ function OffersPage() {
                     style={styles.seeAllBtn}
                   >
                     <Text style={styles.seeAllText}>See All</Text>
-                    <Ionicons name="chevron-forward" size={14} color={Colors.nileBlue} />
+                    <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                   </Pressable>
                 </View>
 
@@ -640,7 +640,7 @@ function OffersPage() {
                     style={styles.seeAllBtn}
                   >
                     <Text style={styles.seeAllText}>See All</Text>
-                    <Ionicons name="chevron-forward" size={14} color={Colors.nileBlue} />
+                    <Ionicons name="chevron-forward" size={14} color={colors.nileBlue} />
                   </Pressable>
                 </View>
 
@@ -728,7 +728,7 @@ const styles = StyleSheet.create({
 
   // ── Sticky Header ──
   stickyHeader: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
@@ -749,7 +749,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.3 },
 
   // ── Skeleton ──
@@ -773,14 +773,14 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
     marginBottom: Spacing.base },
   retryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl },
@@ -788,7 +788,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   // ── Error Banner (partial failure) ──
   errorBanner: {
@@ -864,7 +864,7 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
     letterSpacing: -0.3 },
   heroSubtitle: {
@@ -892,7 +892,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.2 },
   seeAllBtn: {
     flexDirection: 'row',
@@ -903,9 +903,9 @@ const styles = StyleSheet.create({
   seeAllText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.nileBlue },
+    color: colors.nileBlue },
   sectionCountBadge: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: BorderRadius.md,
@@ -919,7 +919,7 @@ const styles = StyleSheet.create({
   // ── Featured Coupon Card ──
   couponCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: 10,
     overflow: 'hidden',
@@ -928,7 +928,7 @@ const styles = StyleSheet.create({
     ...Shadows.subtle },
   couponLeft: {
     width: 90,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.md },
@@ -950,7 +950,7 @@ const styles = StyleSheet.create({
   couponTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 3,
     letterSpacing: -0.2 },
   couponDesc: {
@@ -973,7 +973,7 @@ const styles = StyleSheet.create({
   couponCodeText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace' },
   couponTimeBadge: {
     flexDirection: 'row',
@@ -1029,7 +1029,7 @@ const styles = StyleSheet.create({
   multiplierText: {
     fontSize: 19,
     fontWeight: '900',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.5 },
   campaignTimeBadge: {
     flexDirection: 'row',
@@ -1049,7 +1049,7 @@ const styles = StyleSheet.create({
     ...Typography.h4,
     fontSize: 17,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
     letterSpacing: -0.2 },
   campaignSubtitle: {
@@ -1069,7 +1069,7 @@ const styles = StyleSheet.create({
   dropCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     marginBottom: 10,
@@ -1105,7 +1105,7 @@ const styles = StyleSheet.create({
   dropStoreName: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
     letterSpacing: -0.2 },
   dropRatesRow: {
@@ -1165,7 +1165,7 @@ const styles = StyleSheet.create({
   dropMultiplierText: {
     ...Typography.bodyLarge,
     fontWeight: '900',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.3 },
 
   // ── Brand Cards (horizontal scroll) ──
@@ -1173,7 +1173,7 @@ const styles = StyleSheet.create({
     paddingRight: Spacing.base },
   brandCard: {
     width: 110,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     marginRight: 10,
@@ -1202,7 +1202,7 @@ const styles = StyleSheet.create({
   brandName: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
     marginBottom: Spacing.xs,
     letterSpacing: -0.2 },
@@ -1231,7 +1231,7 @@ const styles = StyleSheet.create({
     gap: 10 },
   quickActionCard: {
     width: (SCREEN_WIDTH - Spacing['2xl'] - 10) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: Spacing.base,
     flexDirection: 'row',
@@ -1248,7 +1248,7 @@ const styles = StyleSheet.create({
   quickActionLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     flex: 1 },
 
   // ── Empty State ──
@@ -1270,7 +1270,7 @@ const styles = StyleSheet.create({
     ...Typography.h4,
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 6,
     textAlign: 'center' },
   emptySubtitle: {
@@ -1282,14 +1282,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl },
   browseBtnText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   // Extracted inline styles
   headerSpacer: { width: 32 },

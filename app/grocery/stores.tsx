@@ -241,7 +241,7 @@ const GroceryStoresPage: React.FC = () => {
             </View>
           )}
         </View>
-        <Ionicons name="chevron-forward" size={20} color={Colors.neutral[400]} />
+        <Ionicons name="chevron-forward" size={20} color={colors.neutral[400]} />
       </Pressable>
     );
   };
@@ -255,7 +255,7 @@ const GroceryStoresPage: React.FC = () => {
         >
           <View style={styles.headerTop}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={Colors.background.primary} />
+              <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitle}>Grocery Stores</Text>
@@ -279,7 +279,7 @@ const GroceryStoresPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.background.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Grocery Stores</Text>
@@ -289,11 +289,11 @@ const GroceryStoresPage: React.FC = () => {
 
         {/* Search */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.neutral[400]} />
+          <Ionicons name="search" size={20} color={colors.neutral[400]} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search stores..."
-            placeholderTextColor={Colors.neutral[400]}
+            placeholderTextColor={colors.neutral[400]}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -315,7 +315,7 @@ const GroceryStoresPage: React.FC = () => {
               <Ionicons
                 name={filter.icon as any}
                 size={16}
-                color={selectedFilter === filter.key ? Colors.background.primary : Colors.neutral[500]}
+                color={selectedFilter === filter.key ? colors.background.primary : colors.neutral[500]}
               />
               <Text
                 style={[
@@ -364,7 +364,7 @@ const GroceryStoresPage: React.FC = () => {
           </Text>
           {filteredStores.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons name="storefront-outline" size={48} color={Colors.neutral[400]} />
+              <Ionicons name="storefront-outline" size={48} color={colors.neutral[400]} />
               <Text style={styles.emptyText}>No stores found</Text>
             </View>
           ) : (
@@ -434,7 +434,7 @@ function getFallbackStores(): Store[] {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     fontSize: 13,
@@ -466,7 +466,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
@@ -475,14 +475,14 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 15,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   filtersContainer: {
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   filterChip: {
     flexDirection: 'row',
@@ -490,7 +490,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     marginRight: 8,
     gap: 6,
   },
@@ -499,10 +499,10 @@ const styles = StyleSheet.create({
   },
   filterChipText: {
     fontSize: 13,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   filterChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   section: {
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     paddingHorizontal: Spacing.base,
     marginBottom: Spacing.md,
   },
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     fontSize: 12,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   featuredContent: {
     flexDirection: 'row',
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginRight: 10,
   },
   featuredInfo: {
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
   featuredName: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   featuredMeta: {
     flexDirection: 'row',
@@ -579,7 +579,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   deliveryBadge: {
     flexDirection: 'row',
@@ -589,7 +589,7 @@ const styles = StyleSheet.create({
   deliveryText: {
     fontSize: 12,
     fontWeight: '500',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storesList: {
     paddingHorizontal: Spacing.base,
@@ -597,18 +597,18 @@ const styles = StyleSheet.create({
   storeCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   storeImage: {
     width: 56,
     height: 56,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
   },
   storeCashbackBadge: {
     position: 'absolute',
@@ -622,7 +622,7 @@ const styles = StyleSheet.create({
   storeCashbackText: {
     fontSize: 10,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeInfo: {
     flex: 1,
@@ -631,7 +631,7 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   storeMeta: {
     flexDirection: 'row',
@@ -641,14 +641,14 @@ const styles = StyleSheet.create({
   storeRating: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginLeft: 2,
   },
   dot: {
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: Colors.neutral[400],
+    backgroundColor: colors.neutral[400],
     marginHorizontal: 6,
   },
   storeDelivery: {
@@ -662,14 +662,14 @@ const styles = StyleSheet.create({
     marginTop: 6,
   },
   tagBadge: {
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: 4,
   },
   tagText: {
     fontSize: 10,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     fontWeight: '500',
   },
   emptyState: {
@@ -678,7 +678,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginTop: Spacing.md,
   },
 });

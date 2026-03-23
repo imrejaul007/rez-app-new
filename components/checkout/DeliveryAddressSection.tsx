@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Pressable, TextInput, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface Address {
@@ -57,7 +57,7 @@ function DeliveryAddressSection({
           >
             <View style={styles.addressCardContent}>
               <View style={styles.addressIconContainer}>
-                <Ionicons name="location" size={24} color={Colors.gold} />
+                <Ionicons name="location" size={24} color={colors.gold} />
               </View>
               <View style={styles.addressDetails}>
                 <ThemedText style={styles.addressName}>
@@ -86,15 +86,15 @@ function DeliveryAddressSection({
             style={styles.addAddressCard}
             onPress={onOpenAddressModal}
           >
-            <Ionicons name="add-circle-outline" size={24} color={Colors.gold} />
+            <Ionicons name="add-circle-outline" size={24} color={colors.gold} />
             <ThemedText style={styles.addAddressText}>Add Delivery Address</ThemedText>
-            <Ionicons name="chevron-forward" size={20} color={Colors.neutral[400]} />
+            <Ionicons name="chevron-forward" size={20} color={colors.neutral[400]} />
           </Pressable>
         )}
 
         {!selectedAddress && (
           <View style={styles.addressWarning}>
-            <Ionicons name="warning" size={16} color={Colors.warning} />
+            <Ionicons name="warning" size={16} color={colors.warning} />
             <ThemedText style={styles.addressWarningText}>
               Please add a delivery address to proceed with your order
             </ThemedText>
@@ -108,24 +108,24 @@ function DeliveryAddressSection({
     return (
       <View style={styles.section}>
         <ThemedText style={styles.sectionTitle}>Pickup Location</ThemedText>
-        <View style={[styles.addressCard, { borderColor: Colors.nileBlue, borderWidth: 1.5 }]}>
+        <View style={[styles.addressCard, { borderColor: colors.nileBlue, borderWidth: 1.5 }]}>
           <View style={styles.addressCardContent}>
             <View style={[styles.addressIconContainer, { backgroundColor: '#f0f6fa' }]}>
-              <Ionicons name="storefront-outline" size={24} color={Colors.nileBlue} />
+              <Ionicons name="storefront-outline" size={24} color={colors.nileBlue} />
             </View>
             <View style={styles.addressDetails}>
-              <ThemedText style={[styles.addressName, { color: Colors.nileBlue }]}>{store?.name}</ThemedText>
+              <ThemedText style={[styles.addressName, { color: colors.nileBlue }]}>{store?.name}</ThemedText>
               <ThemedText style={styles.addressText}>
                 Ready in ~{fulfillmentAvailableTypes.find(t => t.type === 'pickup')?.estimatedTime || '15-20 min'}
               </ThemedText>
             </View>
-            <Ionicons name="navigate-outline" size={22} color={Colors.nileBlue} />
+            <Ionicons name="navigate-outline" size={22} color={colors.nileBlue} />
           </View>
         </View>
         <TextInput
           style={[styles.specialInstructionsInput, { marginTop: 10 }]}
           placeholder="Pickup instructions (optional)"
-          placeholderTextColor={Colors.neutral[400]}
+          placeholderTextColor={colors.neutral[400]}
           value={pickupInstructions || ''}
           onChangeText={(text) => onSetFulfillmentDetails({ pickupInstructions: text })}
           maxLength={200}
@@ -138,24 +138,24 @@ function DeliveryAddressSection({
     return (
       <View style={styles.section}>
         <ThemedText style={styles.sectionTitle}>Drive-Thru</ThemedText>
-        <View style={[styles.addressCard, { borderColor: Colors.nileBlue, borderWidth: 1.5 }]}>
+        <View style={[styles.addressCard, { borderColor: colors.nileBlue, borderWidth: 1.5 }]}>
           <View style={styles.addressCardContent}>
             <View style={[styles.addressIconContainer, { backgroundColor: '#f0f6fa' }]}>
-              <Ionicons name="car-outline" size={24} color={Colors.nileBlue} />
+              <Ionicons name="car-outline" size={24} color={colors.nileBlue} />
             </View>
             <View style={styles.addressDetails}>
-              <ThemedText style={[styles.addressName, { color: Colors.nileBlue }]}>{store?.name}</ThemedText>
+              <ThemedText style={[styles.addressName, { color: colors.nileBlue }]}>{store?.name}</ThemedText>
               <ThemedText style={styles.addressText}>
                 Est. wait: {fulfillmentAvailableTypes.find(t => t.type === 'drive_thru')?.estimatedTime || '5-10 min'}
               </ThemedText>
             </View>
-            <Ionicons name="navigate-outline" size={22} color={Colors.nileBlue} />
+            <Ionicons name="navigate-outline" size={22} color={colors.nileBlue} />
           </View>
         </View>
         <TextInput
           style={[styles.specialInstructionsInput, { marginTop: 10 }]}
           placeholder="Vehicle description (color, model) - optional"
-          placeholderTextColor={Colors.neutral[400]}
+          placeholderTextColor={colors.neutral[400]}
           value={vehicleInfo || ''}
           onChangeText={(text) => onSetFulfillmentDetails({ vehicleInfo: text })}
           maxLength={100}
@@ -168,13 +168,13 @@ function DeliveryAddressSection({
     return (
       <View style={styles.section}>
         <ThemedText style={styles.sectionTitle}>Dine-In</ThemedText>
-        <View style={[styles.addressCard, { borderColor: Colors.nileBlue, borderWidth: 1.5 }]}>
+        <View style={[styles.addressCard, { borderColor: colors.nileBlue, borderWidth: 1.5 }]}>
           <View style={styles.addressCardContent}>
             <View style={[styles.addressIconContainer, { backgroundColor: '#f0f6fa' }]}>
-              <Ionicons name="restaurant-outline" size={24} color={Colors.nileBlue} />
+              <Ionicons name="restaurant-outline" size={24} color={colors.nileBlue} />
             </View>
             <View style={styles.addressDetails}>
-              <ThemedText style={[styles.addressName, { color: Colors.nileBlue }]}>{store?.name}</ThemedText>
+              <ThemedText style={[styles.addressName, { color: colors.nileBlue }]}>{store?.name}</ThemedText>
               <ThemedText style={styles.addressText}>Order from your table</ThemedText>
             </View>
           </View>
@@ -182,7 +182,7 @@ function DeliveryAddressSection({
         <TextInput
           style={[styles.specialInstructionsInput, { marginTop: 10 }]}
           placeholder="Table number *"
-          placeholderTextColor={Colors.neutral[400]}
+          placeholderTextColor={colors.neutral[400]}
           value={tableNumber || ''}
           onChangeText={(text) => onSetFulfillmentDetails({ tableNumber: text })}
           maxLength={20}
@@ -196,7 +196,7 @@ function DeliveryAddressSection({
 
 const styles = StyleSheet.create({
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
     marginBottom: Spacing.sm,
@@ -204,14 +204,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   addressCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     overflow: 'hidden',
   },
   addressCardContent: {
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.successScale[50],
+    backgroundColor: colors.successScale[50],
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
@@ -235,43 +235,43 @@ const styles = StyleSheet.create({
   addressName: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.neutral[900],
+    color: colors.neutral[900],
     marginBottom: 4,
   },
   addressText: {
     fontSize: 14,
-    color: Colors.neutral[600],
+    color: colors.neutral[600],
     lineHeight: 20,
     marginBottom: 2,
   },
   addressCityText: {
     fontSize: 13,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginBottom: 2,
   },
   addressPhoneText: {
     fontSize: 13,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginTop: 4,
   },
   changeAddressButton: {
     paddingHorizontal: 12,
     paddingVertical: 6,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     borderRadius: 8,
   },
   changeAddressText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.gold,
+    color: colors.gold,
   },
   addAddressCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderStyle: 'dashed',
     padding: 16,
     gap: 12,
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '500',
-    color: Colors.gold,
+    color: colors.gold,
   },
   addressWarning: {
     flexDirection: 'row',
@@ -297,14 +297,14 @@ const styles = StyleSheet.create({
     color: colors.brand.amberDark,
   },
   specialInstructionsInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: 14,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
 });
 

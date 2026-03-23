@@ -234,7 +234,7 @@ const GroceryComparePage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.background.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Compare Prices</Text>
@@ -244,11 +244,11 @@ const GroceryComparePage: React.FC = () => {
 
         {/* Search */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.neutral[400]} />
+          <Ionicons name="search" size={20} color={colors.neutral[400]} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search products to compare..."
-            placeholderTextColor={Colors.neutral[400]}
+            placeholderTextColor={colors.neutral[400]}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -295,7 +295,7 @@ const GroceryComparePage: React.FC = () => {
       >
         {filteredItems.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons name="analytics-outline" size={64} color={Colors.neutral[400]} />
+            <Ionicons name="analytics-outline" size={64} color={colors.neutral[400]} />
             <Text style={styles.emptyTitle}>No products to compare</Text>
             <Text style={styles.emptyText}>Try searching for a product</Text>
           </View>
@@ -359,7 +359,7 @@ function getFallbackCompareItems(): CompareItem[] {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     fontSize: 13,
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
@@ -400,20 +400,20 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 15,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   categoriesContainer: {
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   categoryChip: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     marginRight: 8,
   },
   categoryChipActive: {
@@ -421,34 +421,34 @@ const styles = StyleSheet.create({
   },
   categoryChipText: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   categoryChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   content: {
     padding: Spacing.base,
   },
   compareCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   productHeader: {
     flexDirection: 'row',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[100],
+    borderBottomColor: colors.neutral[100],
   },
   productImage: {
     width: 70,
     height: 70,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
   },
   productInfo: {
     flex: 1,
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
   },
   priceRange: {
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
   },
   priceRangeText: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   savingsBadge: {
     alignSelf: 'flex-start',
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     position: 'relative',
   },
   bestDealRow: {
@@ -515,13 +515,13 @@ const styles = StyleSheet.create({
   bestDealText: {
     fontSize: 10,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeLogo: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   storeInfo: {
     flex: 1,
@@ -530,11 +530,11 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   deliveryTime: {
     fontSize: 12,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginTop: 2,
   },
   priceSection: {
@@ -543,14 +543,14 @@ const styles = StyleSheet.create({
   storePrice: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   bestPrice: {
     color: Colors.success,
   },
   originalPrice: {
     fontSize: 12,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
     textDecorationLine: 'line-through',
   },
   cashbackText: {
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     right: 8,
     top: 8,
-    backgroundColor: Colors.neutral[400],
+    backgroundColor: colors.neutral[400],
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
   outOfStockText: {
     fontSize: 9,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyState: {
     alignItems: 'center',
@@ -580,12 +580,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.base,
   },
   emptyText: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginTop: Spacing.xs,
   },
 });

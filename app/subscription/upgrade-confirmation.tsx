@@ -196,7 +196,7 @@ function UpgradeConfirmationPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to cancel and return to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Confirm Upgrade</ThemedText>
           <View style={styles.headerRight} />
@@ -293,7 +293,7 @@ function UpgradeConfirmationPage() {
               </ThemedText>
               <ThemedText style={styles.timingPrice}>{currencySymbol}{getTierPrice(newTier)}/month from next cycle</ThemedText>
             </View>
-            <Ionicons name="calendar-outline" size={24} color={Colors.text.tertiary} />
+            <Ionicons name="calendar-outline" size={24} color={colors.text.tertiary} />
           </Pressable>
         </View>
 
@@ -328,13 +328,13 @@ function UpgradeConfirmationPage() {
             accessibilityHint={`Double tap to ${timing === 'immediate' ? 'proceed to payment' : 'schedule your upgrade'}`}
           >
             {isUpgrading ? (
-              <ActivityIndicator color={Colors.text.inverse} />
+              <ActivityIndicator color={colors.text.inverse} />
             ) : (
               <>
                 <ThemedText style={styles.confirmButtonText}>
                   {timing === 'immediate' ? 'Confirm & Pay' : 'Schedule Upgrade'}
                 </ThemedText>
-                <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+                <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
               </>
             )}
           </Pressable>
@@ -376,7 +376,7 @@ function UpgradeConfirmationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
     paddingBottom: Spacing.lg,
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
   backButton: {
     padding: Spacing.sm },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     flex: 1 },
   summaryCard: {
     margin: Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     shadowColor: '#000',
@@ -431,10 +431,10 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base },
   benefitsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     shadowColor: '#000',
@@ -456,16 +456,16 @@ const styles = StyleSheet.create({
   benefitText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
   timingOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 2,
-    borderColor: Colors.border.default },
+    borderColor: colors.border.default },
   timingOptionSelected: {
     borderColor: Colors.brand.purpleLight,
     backgroundColor: '#8B5CF605' },
@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: BorderRadius.md,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md },
@@ -488,11 +488,11 @@ const styles = StyleSheet.create({
   timingTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs },
   timingDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18 },
   timingPrice: {
     ...Typography.body,
@@ -512,16 +512,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.sm },
   confirmButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold' },
   cancelButton: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingVertical: Spacing.base,
     borderRadius: BorderRadius.md,
     alignItems: 'center' },
   cancelButtonText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.bodyLarge,
     fontWeight: '600' } });
 

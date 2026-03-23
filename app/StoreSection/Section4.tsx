@@ -186,7 +186,7 @@ export default memo(function Section4({
           colors={[Colors.gold, Colors.warning]}
           style={styles.iconContainer}
         >
-          <Ionicons name={icon} size={24} color={Colors.nileBlue} />
+          <Ionicons name={icon} size={24} color={colors.nileBlue} />
         </LinearGradient>
 
         {/* Text Content */}
@@ -200,7 +200,7 @@ export default memo(function Section4({
           <View style={styles.couponWrapper}>
             {imageLoading && !errored && (
               <View style={styles.loaderContainer}>
-                <ActivityIndicator size="small" color={Colors.text.inverse} />
+                <ActivityIndicator size="small" color={colors.text.inverse} />
               </View>
             )}
 
@@ -219,7 +219,7 @@ export default memo(function Section4({
               />
             ) : (
               <LinearGradient
-                colors={[Colors.gold, Colors.nileBlue]}
+                colors={[Colors.gold, colors.nileBlue]}
                 style={styles.fallback}
               >
                 <ThemedText style={styles.fallbackPercent}>%</ThemedText>
@@ -245,7 +245,7 @@ const styles = StyleSheet.create({
   cardWrapper: {
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     ...Platform.select({
       ios: {
         shadowColor: colors.lightMustard,
@@ -255,14 +255,14 @@ const styles = StyleSheet.create({
       android: {
         elevation: 6 } }),
     borderWidth: 1,
-    borderColor: Colors.border.default },
+    borderColor: colors.border.default },
 
   card: {
     borderRadius: BorderRadius.lg,
     overflow: 'hidden' },
 
   cardAndroid: {
-    backgroundColor: Colors.background.primary },
+    backgroundColor: colors.background.primary },
 
   cardContent: {
     flexDirection: "row",
@@ -301,13 +301,13 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.body,
     fontWeight: "700",
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 3,
     lineHeight: 20 },
 
   subtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18,
     fontWeight: '500' },
 
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     transform: [{ rotate: "6deg" }],
     overflow: "hidden",
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     ...Platform.select({
       ios: {
         shadowColor: colors.lightMustard,
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
     justifyContent: "center" },
 
   fallbackPercent: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: "800" },
 
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: "center",
     justifyContent: "center",
     transform: [{ rotate: "-6deg" }],
@@ -395,4 +395,4 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     borderBottomWidth: 1,
     borderStyle: "dashed",
-    borderColor: Colors.border.default } });
+    borderColor: colors.border.default } });

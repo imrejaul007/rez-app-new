@@ -140,7 +140,7 @@ function OTPVerificationScreen() {
     <View style={styles.container}>
       {/* Background */}
       <LinearGradient
-        colors={[Colors.background.secondary, '#EDF2F7', Colors.background.secondary]}
+        colors={[colors.background.secondary, '#EDF2F7', colors.background.secondary]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -169,7 +169,7 @@ function OTPVerificationScreen() {
             {/* Shield Icon */}
             <View style={styles.iconContainer}>
               <LinearGradient
-                colors={[Colors.gold, Colors.nileBlue]}
+                colors={[Colors.gold, colors.nileBlue]}
                 style={styles.iconGradient}
               >
                 <Ionicons name="shield-checkmark" size={32} color={colors.background.primary} />
@@ -232,7 +232,7 @@ function OTPVerificationScreen() {
           <View style={styles.resendContainer}>
             {timer > 0 ? (
               <View style={styles.timerPill}>
-                <Ionicons name="time-outline" size={16} color={Colors.text.tertiary} />
+                <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
                 <Text style={styles.timerText}>Resend in {timer}s</Text>
               </View>
             ) : (
@@ -258,7 +258,7 @@ function OTPVerificationScreen() {
               colors={
                 authLoading || !otp.every(digit => digit.length === 1)
                   ? [colors.neutral[300], colors.neutral[300]]
-                  : [Colors.gold, Colors.nileBlue]
+                  : [Colors.gold, colors.nileBlue]
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -380,14 +380,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.base,
@@ -418,8 +418,8 @@ const styles = StyleSheet.create({
     height: 56,
     borderRadius: 14,
     borderWidth: 2,
-    borderColor: Colors.border.default,
-    backgroundColor: Colors.background.primary,
+    borderColor: colors.border.default,
+    backgroundColor: colors.background.primary,
     overflow: 'hidden',
   },
   otpInputWrapperFocused: {
@@ -438,7 +438,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
   otpInputFilled: {
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   },
   timerText: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   resendButton: {
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '700',
   },

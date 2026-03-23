@@ -161,7 +161,7 @@ function SpinHistoryPage() {
     if (loading) return null;
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="game-controller-outline" size={64} color={Colors.border.default} />
+        <Ionicons name="game-controller-outline" size={64} color={colors.border.default} />
         <Text style={styles.emptyTitle}>No Spins Yet</Text>
         <Text style={styles.emptyText}>Play the Spin & Win game to see your history here</Text>
         <Pressable
@@ -190,7 +190,7 @@ function SpinHistoryPage() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Spin History</Text>
         <View style={styles.totalBadge}>
@@ -228,7 +228,7 @@ function SpinHistoryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -237,22 +237,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingTop: 50,
     paddingBottom: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   totalBadge: {
     backgroundColor: 'rgba(245, 158, 11, 0.15)',
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   listContent: {
     padding: Spacing.base,
@@ -299,17 +299,17 @@ const styles = StyleSheet.create({
   itemPrize: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   itemStore: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   itemDate: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   typeBadge: {
     paddingHorizontal: 10,
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   emptyContainer: {
     flex: 1,
@@ -334,12 +334,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   emptyText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     maxWidth: 280,
   },
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   playButtonText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   footerLoader: {
     paddingVertical: Spacing.lg,

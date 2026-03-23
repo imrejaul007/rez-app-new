@@ -103,12 +103,12 @@ export default function RescheduleBookingScreen() {
   const timeSlots = generateTimeSlots();
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: Colors.background.secondary }]}>
-      <View style={[styles.header, { backgroundColor: Colors.background.primary }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background.secondary }]}>
+      <View style={[styles.header, { backgroundColor: colors.background.primary }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </TouchableOpacity>
-        <Text style={[styles.title, { color: Colors.text.primary }]}>Reschedule Appointment</Text>
+        <Text style={[styles.title, { color: colors.text.primary }]}>Reschedule Appointment</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -169,8 +169,8 @@ export default function RescheduleBookingScreen() {
 
         {/* Info */}
         <View style={styles.infoBox}>
-          <Ionicons name="information-circle-outline" size={16} color={Colors.text.secondary} />
-          <Text style={[styles.infoText, { color: Colors.text.secondary }]}>
+          <Ionicons name="information-circle-outline" size={16} color={colors.text.secondary} />
+          <Text style={[styles.infoText, { color: colors.text.secondary }]}>
             The merchant will be notified of your reschedule request
           </Text>
         </View>
@@ -180,7 +180,7 @@ export default function RescheduleBookingScreen() {
 
       {/* Confirm Button */}
       {selectedDate && selectedTime && (
-        <View style={[styles.footer, { backgroundColor: Colors.background.primary }]}>
+        <View style={[styles.footer, { backgroundColor: colors.background.primary }]}>
           <Pressable
             style={[
               styles.confirmBtn,
@@ -190,7 +190,7 @@ export default function RescheduleBookingScreen() {
             disabled={loading}
           >
             {loading ? (
-              <ActivityIndicator size="small" color={Colors.background.primary} />
+              <ActivityIndicator size="small" color={colors.background.primary} />
             ) : (
               <Text style={styles.confirmBtnText}>Confirm Reschedule</Text>
             )}
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   title: { ...Typography.h4, fontWeight: '700' },
   content: { flex: 1, paddingHorizontal: Spacing.lg, paddingTop: Spacing.lg },
@@ -228,16 +228,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   dateButtonSelected: {
     backgroundColor: colors.brand.purpleLight,
     borderColor: colors.brand.purpleLight,
   },
-  dateButtonText: { fontSize: 12, fontWeight: '500', color: Colors.text.secondary },
-  dateButtonTextSelected: { fontWeight: '700', color: Colors.background.primary },
+  dateButtonText: { fontSize: 12, fontWeight: '500', color: colors.text.secondary },
+  dateButtonTextSelected: { fontWeight: '700', color: colors.background.primary },
   timesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -249,20 +249,20 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   timeButtonSelected: {
     backgroundColor: colors.brand.purpleLight,
     borderColor: colors.brand.purpleLight,
   },
-  timeButtonText: { fontSize: 13, fontWeight: '500', color: Colors.text.secondary },
-  timeButtonTextSelected: { fontWeight: '700', color: Colors.background.primary },
+  timeButtonText: { fontSize: 13, fontWeight: '500', color: colors.text.secondary },
+  timeButtonTextSelected: { fontWeight: '700', color: colors.background.primary },
   infoBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -273,8 +273,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   confirmBtn: { paddingVertical: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center' },
-  confirmBtnText: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.background.primary },
+  confirmBtnText: { ...Typography.bodyLarge, fontWeight: '700', color: colors.background.primary },
 });

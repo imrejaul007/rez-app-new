@@ -155,7 +155,7 @@ function BrandDetailPage() {
 
   const renderHeader = () => (
     <LinearGradient
-      colors={[Colors.gold, Colors.nileBlue, '#00695C']}
+      colors={[Colors.gold, colors.nileBlue, '#00695C']}
       style={styles.header}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
@@ -171,7 +171,7 @@ function BrandDetailPage() {
           onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
          
         >
-          <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
         </Pressable>
 
         <ThemedText style={styles.headerTitle} numberOfLines={1}>
@@ -184,7 +184,7 @@ function BrandDetailPage() {
             onPress={handleShare}
            
           >
-            <Ionicons name="share-outline" size={20} color={Colors.text.inverse} />
+            <Ionicons name="share-outline" size={20} color={colors.text.inverse} />
           </Pressable>
 
           <Pressable
@@ -195,7 +195,7 @@ function BrandDetailPage() {
             <Ionicons
               name={isFavorite ? "heart" : "heart-outline"}
               size={20}
-              color={isFavorite ? "#FF6B6B" : Colors.background.primary}
+              color={isFavorite ? "#FF6B6B" : colors.background.primary}
             />
           </Pressable>
         </View>
@@ -222,7 +222,7 @@ function BrandDetailPage() {
           end={{ x: 1, y: 1 }}
         >
           <View style={styles.logoShine} />
-          <ThemedText style={[styles.brandLogoText, { color: brand?.logoColor || Colors.nileBlue }]}>
+          <ThemedText style={[styles.brandLogoText, { color: brand?.logoColor || colors.nileBlue }]}>
             {brand?.logo}
           </ThemedText>
         </LinearGradient>
@@ -238,7 +238,7 @@ function BrandDetailPage() {
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
-            <Ionicons name="star" size={12} color={Colors.nileBlue} />
+            <Ionicons name="star" size={12} color={colors.nileBlue} />
             <ThemedText style={styles.featuredText}>Featured Brand</ThemedText>
           </LinearGradient>
         </View>
@@ -347,7 +347,7 @@ function BrandDetailPage() {
         onPress={() => setShowPurchaseModal(true)}
       >
         <LinearGradient
-          colors={[Colors.gold, Colors.nileBlue]}
+          colors={[Colors.gold, colors.nileBlue]}
           style={styles.rewardButtonGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
@@ -357,12 +357,12 @@ function BrandDetailPage() {
 
           <View style={styles.rewardButtonContent}>
             <View style={styles.rewardIconContainer}>
-              <Ionicons name="gift" size={22} color={Colors.text.inverse} />
+              <Ionicons name="gift" size={22} color={colors.text.inverse} />
             </View>
             <ThemedText style={styles.rewardButtonText}>
               Earn up to {brand?.cashbackRate || 12}% Reward
             </ThemedText>
-            <Ionicons name="chevron-forward" size={20} color={Colors.text.inverse} />
+            <Ionicons name="chevron-forward" size={20} color={colors.text.inverse} />
           </View>
         </LinearGradient>
       </Pressable>
@@ -385,7 +385,7 @@ function BrandDetailPage() {
         <View style={styles.timelineStep}>
           <View style={styles.timelineStepNumber}>
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[Colors.gold, colors.nileBlue]}
               style={styles.stepNumberGradient}
             >
               <ThemedText style={styles.stepNumber}>1</ThemedText>
@@ -437,7 +437,7 @@ function BrandDetailPage() {
             <Ionicons name="pricetag" size={18} color={Colors.gold} />
           </View>
           <ThemedText style={styles.bottomActionText}>Reward Rates</ThemedText>
-          <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
         </View>
       </Pressable>
 
@@ -447,7 +447,7 @@ function BrandDetailPage() {
             <Ionicons name="document-text" size={18} color={Colors.gold} />
           </View>
           <ThemedText style={styles.bottomActionText}>Offer Terms</ThemedText>
-          <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
         </View>
       </Pressable>
     </Animated.View>
@@ -458,12 +458,12 @@ function BrandDetailPage() {
       <View style={styles.loadingContainer}>
         <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
         <LinearGradient
-          colors={[Colors.gold, Colors.nileBlue]}
+          colors={[Colors.gold, colors.nileBlue]}
           style={styles.loadingHeader}
         >
           <View style={styles.headerContent}>
             <Pressable style={styles.glassButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Loading...</ThemedText>
             <View style={{ width: 94 }} />
@@ -481,7 +481,7 @@ function BrandDetailPage() {
         {renderHeader()}
         <View style={styles.errorContent}>
           <View style={styles.errorIconContainer}>
-            <Ionicons name="alert-circle-outline" size={56} color={Colors.text.tertiary} />
+            <Ionicons name="alert-circle-outline" size={56} color={colors.text.tertiary} />
           </View>
           <ThemedText style={styles.errorTitle}>Brand not found</ThemedText>
           <ThemedText style={styles.errorText}>
@@ -489,7 +489,7 @@ function BrandDetailPage() {
           </ThemedText>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[Colors.gold, colors.nileBlue]}
               style={styles.backButton}
             >
               <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
@@ -551,7 +551,7 @@ function BrandDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
 
   // Background
   backgroundGradient: {
@@ -621,7 +621,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
     textAlign: 'center',
     letterSpacing: -0.3,
@@ -681,7 +681,7 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: 26,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.5,
     marginBottom: Spacing.md },
   featuredBadge: {
@@ -701,7 +701,7 @@ const styles = StyleSheet.create({
   featuredText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: 0.3 },
 
   // Stats
@@ -746,13 +746,13 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.2,
     marginBottom: 3 },
   statSubtext: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
 
   // Notice
   noticeSection: {
@@ -780,7 +780,7 @@ const styles = StyleSheet.create({
   noticeTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.2 },
   noticeText: {
     ...Typography.body,
@@ -827,7 +827,7 @@ const styles = StyleSheet.create({
   rewardButtonText: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: -0.2,
     flex: 1 },
 
@@ -838,7 +838,7 @@ const styles = StyleSheet.create({
   timelineSectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.3,
     marginBottom: Spacing.base },
   timelineContainer: {
@@ -869,17 +869,17 @@ const styles = StyleSheet.create({
   stepNumber: {
     ...Typography.h4,
     fontWeight: '800',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   timelineStepContent: {
     alignItems: 'center' },
   timelineStepTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2 },
   timelineStepSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500' },
   timelineConnector: {
     flexDirection: 'row',
@@ -919,12 +919,12 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue },
+    color: colors.nileBlue },
 
   // Loading
   loadingContainer: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   loadingHeader: {
     paddingTop: Platform.OS === 'android' ? 50 : 60,
     paddingBottom: Spacing.lg,
@@ -945,13 +945,13 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.5)' },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500' },
 
   // Error
   errorContainer: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   errorContent: {
     flex: 1,
     justifyContent: 'center',
@@ -970,11 +970,11 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.xl },
@@ -985,7 +985,7 @@ const styles = StyleSheet.create({
   backButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   // Bottom Space
   bottomSpace: {

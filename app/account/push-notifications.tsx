@@ -122,8 +122,8 @@ function PushNotificationsScreen() {
         accessibilityRole="switch"
         accessibilityState={{ checked: value, disabled: disabled || saving }}
         accessibilityHint={disabled ? 'Enable push notifications first' : `Toggle to ${value ? 'disable' : 'enable'} ${title.toLowerCase()}`}
-        trackColor={{ false: Colors.border.default, true: Colors.info }}
-        thumbColor={value ? colors.background.primary : Colors.background.secondary}
+        trackColor={{ false: colors.border.default, true: Colors.info }}
+        thumbColor={value ? colors.background.primary : colors.background.secondary}
       />
     </View>
   );
@@ -169,7 +169,7 @@ function PushNotificationsScreen() {
           accessibilityRole="button"
           accessibilityHint="Navigate to notification settings"
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle} accessibilityRole="header">Push Notifications</Text>
         <View style={{ width: 40 }} />
@@ -249,7 +249,7 @@ function PushNotificationsScreen() {
       {/* Saving Indicator */}
       {saving && (
         <View style={styles.savingIndicator}>
-          <ActivityIndicator size="small" color={Colors.text.inverse} />
+          <ActivityIndicator size="small" color={colors.text.inverse} />
           <Text style={styles.savingText}>Saving...</Text>
         </View>
       )}
@@ -257,7 +257,7 @@ function PushNotificationsScreen() {
       {/* Success Message */}
       {showSuccessMessage && (
         <View style={styles.successIndicator}>
-          <Ionicons name="checkmark-circle" size={20} color={Colors.text.inverse} />
+          <Ionicons name="checkmark-circle" size={20} color={colors.text.inverse} />
           <Text style={styles.successText}>Settings saved!</Text>
         </View>
       )}
@@ -268,7 +268,7 @@ function PushNotificationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -276,9 +276,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.sm,
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   scrollView: {
     flex: 1,
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     ...Shadows.medium,
@@ -307,12 +307,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginLeft: Spacing.md,
   },
   settingItem: {
@@ -323,28 +323,28 @@ const styles = StyleSheet.create({
   },
   settingTitle: {
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   disabledText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing['2xl'],
   },
   errorText: {
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   savingText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
     marginLeft: Spacing.sm,
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   successText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
     marginLeft: Spacing.sm,

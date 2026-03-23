@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import type { Store, FormData } from './types';
 
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
     maxHeight: '80%',
@@ -290,16 +290,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     margin: Spacing.base,
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   merchantList: {
     flex: 1,
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     gap: Spacing.md,
   },
   merchantItemSelected: {
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   merchantLogoPlaceholder: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -340,12 +340,12 @@ const styles = StyleSheet.create({
   merchantName: {
     ...Typography.bodyLarge,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   merchantCategory: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   merchantCashback: {
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     padding: 40,
@@ -370,12 +370,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptySubtext: {
     marginTop: Spacing.xs,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   addMerchantButton: {
     flexDirection: 'row',
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     marginTop: Spacing.sm,
     marginHorizontal: Spacing.base,
@@ -407,11 +407,11 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     gap: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   cantFindMerchantText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
 
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressModalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -431,23 +431,23 @@ const styles = StyleSheet.create({
   },
   progressModalTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
   },
   progressModalSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
   },
   progressModalSpeed: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   progressBar: {
     width: '100%',
     height: 4,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 2,
     marginTop: Spacing.base,
     overflow: 'hidden',
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   },
   cancelUploadButtonText: {
     ...Typography.body,
-    color: Colors.error,
+    color: colors.error,
     fontWeight: '600',
   },
 
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   infoModalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     maxWidth: 400,
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
   infoModalTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.md,
   },
   infoModalBody: {
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   },
   infoModalText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 22,
     marginBottom: Spacing.md,
   },
@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
   },
   infoModalBullet: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 24,
     paddingLeft: Spacing.sm,
   },
@@ -520,6 +520,6 @@ const styles = StyleSheet.create({
   infoModalCloseButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });

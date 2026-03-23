@@ -294,7 +294,7 @@ function RingSizerPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Ring Sizer</ThemedText>
           <View style={styles.headerRight} />
@@ -336,7 +336,7 @@ function RingSizerPage() {
             <Ionicons
               name="resize-outline"
               size={24}
-              color={selectedMethod === 'measure' ? Colors.brand.purple : Colors.text.tertiary}
+              color={selectedMethod === 'measure' ? Colors.brand.purple : colors.text.tertiary}
             />
             <ThemedText style={[
               styles.methodButtonText,
@@ -360,7 +360,7 @@ function RingSizerPage() {
             <Ionicons
               name="git-compare-outline"
               size={24}
-              color={selectedMethod === 'compare' ? Colors.brand.purple : Colors.text.tertiary}
+              color={selectedMethod === 'compare' ? Colors.brand.purple : colors.text.tertiary}
             />
             <ThemedText style={[
               styles.methodButtonText,
@@ -384,7 +384,7 @@ function RingSizerPage() {
             <Ionicons
               name="help-circle-outline"
               size={24}
-              color={selectedMethod === 'guide' ? Colors.brand.purple : Colors.text.tertiary}
+              color={selectedMethod === 'guide' ? Colors.brand.purple : colors.text.tertiary}
             />
             <ThemedText style={[
               styles.methodButtonText,
@@ -407,7 +407,7 @@ function RingSizerPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   headerBg: {
     paddingTop: StatusBar.currentHeight || 50,
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 20,
     fontWeight: 'bold',
     flex: 1,
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   methodSelection: {
     flexDirection: 'row',
     marginVertical: 20,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 16,
     padding: 8,
     shadowColor: '#000',
@@ -484,14 +484,14 @@ const styles = StyleSheet.create({
   methodButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 4,
   },
   methodButtonTextActive: {
     color: Colors.brand.purple,
   },
   methodContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 16,
     padding: 20,
     marginBottom: 20,
@@ -504,12 +504,12 @@ const styles = StyleSheet.create({
   methodTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 8,
   },
   methodDescription: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
     marginBottom: 20,
   },
@@ -519,20 +519,20 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: 8,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
   },
   inputPrefix: {
     fontSize: 16,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginRight: 8,
   },
   inputWrapper: {
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
   inputValue: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   measurementButtons: {
     flexDirection: 'row',
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   measurementButton: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
@@ -563,10 +563,10 @@ const styles = StyleSheet.create({
   measurementButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   measurementButtonTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   resultContainer: {
     backgroundColor: colors.successScale[50],
@@ -599,7 +599,7 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: 16,
     textAlign: 'center',
   },
@@ -609,7 +609,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   sizeItem: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 8,
@@ -622,14 +622,14 @@ const styles = StyleSheet.create({
   sizeText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   sizeTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   sizeDescription: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   guideSection: {
@@ -638,12 +638,12 @@ const styles = StyleSheet.create({
   guideSectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: 8,
   },
   guideText: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
 });

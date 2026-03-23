@@ -310,7 +310,7 @@ function ReelsPage() {
                 )}
               </LinearGradient>
               <View style={styles.followBadge}>
-                <Ionicons name="add" size={10} color={Colors.text.inverse} />
+                <Ionicons name="add" size={10} color={colors.text.inverse} />
               </View>
             </Pressable>
           )}
@@ -332,7 +332,7 @@ function ReelsPage() {
             style={styles.actionButton}
             onPress={() => router.push(`/social/comments/${item.id}` as any)}
           >
-            <Ionicons name="chatbubble-ellipses-outline" size={28} color={Colors.text.inverse} />
+            <Ionicons name="chatbubble-ellipses-outline" size={28} color={colors.text.inverse} />
             <Text style={styles.actionCount}>{formatNumber(item.comments)}</Text>
           </Pressable>
 
@@ -347,14 +347,14 @@ function ReelsPage() {
 
           {/* Share */}
           <Pressable style={styles.actionButton} onPress={() => handleShare(item)}>
-            <Ionicons name="paper-plane-outline" size={26} color={Colors.text.inverse} />
+            <Ionicons name="paper-plane-outline" size={26} color={colors.text.inverse} />
             <Text style={styles.actionCount}>{formatNumber(item.shares)}</Text>
           </Pressable>
 
           {/* Shop */}
           {item.store && (
             <Pressable style={styles.shopButton} onPress={() => handleShop(item)}>
-              <Ionicons name="bag-handle" size={22} color={Colors.text.inverse} />
+              <Ionicons name="bag-handle" size={22} color={colors.text.inverse} />
             </Pressable>
           )}
         </View>
@@ -398,7 +398,7 @@ function ReelsPage() {
               {item.store.logo ? (
                 <CachedImage source={item.store.logo} style={styles.storeLogo} />
               ) : (
-                <Ionicons name="storefront" size={13} color={Colors.text.inverse} />
+                <Ionicons name="storefront" size={13} color={colors.text.inverse} />
               )}
               <Text style={styles.storeText}>{item.store.name}</Text>
               <Ionicons name="chevron-forward" size={12} color="rgba(255,255,255,0.7)" />
@@ -407,7 +407,7 @@ function ReelsPage() {
 
           {/* Music / Audio indicator */}
           <View style={styles.musicRow}>
-            <Ionicons name="musical-notes" size={13} color={Colors.text.inverse} />
+            <Ionicons name="musical-notes" size={13} color={colors.text.inverse} />
             <Text style={styles.musicText} numberOfLines={1}>
               Original audio - {item.creator?.name || 'Unknown'}
             </Text>
@@ -441,7 +441,7 @@ function ReelsPage() {
             end={{ x: 1, y: 0 }}
             style={styles.createReelGradient}
           >
-            <Ionicons name="add-circle" size={18} color={Colors.text.inverse} />
+            <Ionicons name="add-circle" size={18} color={colors.text.inverse} />
             <Text style={styles.createReelText}>Create Reel</Text>
           </LinearGradient>
         </Pressable>
@@ -459,7 +459,7 @@ function ReelsPage() {
           style={styles.headerButton}
           onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
         >
-          <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
         </Pressable>
 
         {/* Feed Tabs */}
@@ -491,7 +491,7 @@ function ReelsPage() {
           style={styles.headerButton}
           onPress={() => router.push('/social/upload' as any)}
         >
-          <Ionicons name="camera-outline" size={22} color={Colors.text.inverse} />
+          <Ionicons name="camera-outline" size={22} color={colors.text.inverse} />
         </Pressable>
       </View>
 
@@ -520,7 +520,7 @@ function ReelsPage() {
           estimatedItemSize={250}
           ListFooterComponent={loadingMore ? (
             <View style={styles.footerLoader}>
-              <ActivityIndicator size="small" color={Colors.text.inverse} />
+              <ActivityIndicator size="small" color={colors.text.inverse} />
             </View>
           ) : null}
         />
@@ -565,13 +565,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: 'rgba(255,255,255,0.55)'},
   feedTabActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '700'},
   tabIndicator: {
     width: 20,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginTop: Spacing.xs},
   tabDivider: {
     width: 1,
@@ -671,14 +671,14 @@ const styles = StyleSheet.create({
     width: 45,
     height: 45,
     borderRadius: 22.5,
-    backgroundColor: Colors.text.primary,
+    backgroundColor: colors.text.primary,
     borderWidth: 2,
     borderColor: colors.text.primary,
     justifyContent: 'center',
     alignItems: 'center'},
   avatarText: {
     ...Typography.h4,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '700'},
   followBadge: {
     position: 'absolute',
@@ -700,7 +700,7 @@ const styles = StyleSheet.create({
   actionCount: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textShadowColor: 'rgba(0,0,0,0.5)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3},
@@ -730,7 +730,7 @@ const styles = StyleSheet.create({
   creatorName: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textShadowColor: 'rgba(0,0,0,0.5)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3},
@@ -752,7 +752,7 @@ const styles = StyleSheet.create({
   tagText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textShadowColor: 'rgba(0,0,0,0.5)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 3},
@@ -775,7 +775,7 @@ const styles = StyleSheet.create({
   storeText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse},
+    color: colors.text.inverse},
   musicRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -802,7 +802,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.sm},
   emptySubtext: {
     ...Typography.body,
@@ -822,7 +822,7 @@ const styles = StyleSheet.create({
   createReelText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse},
+    color: colors.text.inverse},
 
   // ===== Footer =====
   footerLoader: {

@@ -162,7 +162,7 @@ function LocationSettingsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Location Settings</Text>
         <View style={styles.headerRight} />
@@ -333,7 +333,7 @@ function LocationSettingsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerRight: {
     width: 40,
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   locationCard: {
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     marginBottom: 0,
   },
   permissionCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     flexDirection: 'row',
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
   permissionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   permissionStatus: {
@@ -412,12 +412,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   permissionButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
   settingItem: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
@@ -440,19 +440,19 @@ const styles = StyleSheet.create({
   settingTitle: {
     ...Typography.bodyLarge,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   settingSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18,
   },
   disabledText: {
     color: '#C7C7CC',
   },
   languageContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     ...Shadows.medium,
@@ -470,14 +470,14 @@ const styles = StyleSheet.create({
   },
   languageText: {
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   selectedLanguageText: {
     color: colors.brand.ios,
     fontWeight: '600',
   },
   actionButton: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     flexDirection: 'row',
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
   },
   actionSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18,
   },
 });

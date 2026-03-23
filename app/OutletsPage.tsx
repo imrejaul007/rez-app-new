@@ -387,7 +387,7 @@ function OutletsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   headerGradient: {
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   errorContainer: {
@@ -477,12 +477,12 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   errorMessage: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
     lineHeight: 22,
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -524,13 +524,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   emptyText: {
     ...Typography.body,
     fontSize: 15,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: 28,
@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     alignItems: 'center',
@@ -576,18 +576,18 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
     marginTop: 2,
   },
 
   // Outlet Card
   outletCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.base,
@@ -617,7 +617,7 @@ const styles = StyleSheet.create({
   outletName: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6,
   },
   statusBadge: {
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -650,11 +650,11 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginVertical: Spacing.base,
   },
   infoSection: {
@@ -668,7 +668,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
@@ -676,7 +676,7 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 20,
     paddingTop: 5,
   },
@@ -686,7 +686,7 @@ const styles = StyleSheet.create({
   },
   hoursLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   hoursValue: {
@@ -716,7 +716,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   callButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },

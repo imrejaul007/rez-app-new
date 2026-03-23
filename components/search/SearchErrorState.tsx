@@ -8,7 +8,8 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { NUQTA } from './searchTheme';
 
 interface SearchErrorStateProps {
@@ -55,7 +56,7 @@ function SearchErrorState({ error, onRetry }: SearchErrorStateProps) {
           colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]}
           style={styles.retryButtonGradient}
         >
-          <Ionicons name="refresh" size={18} color={Colors.text.inverse} />
+          <Ionicons name="refresh" size={18} color={colors.text.inverse} />
           <Text style={styles.retryButtonText}>Try Again</Text>
         </LinearGradient>
       </Pressable>
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },

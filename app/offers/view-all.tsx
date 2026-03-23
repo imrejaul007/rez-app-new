@@ -364,7 +364,7 @@ function ViewAllOffersScreen() {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={handleBack} style={styles.backButton}>
-            <Ionicons name="chevron-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="chevron-back" size={24} color={colors.text.inverse} />
           </Pressable>
 
           <View style={styles.headerCenter}>
@@ -379,7 +379,7 @@ function ViewAllOffersScreen() {
 
           <View style={styles.headerRight}>
             <Pressable onPress={handleShare} style={styles.headerButton}>
-              <Ionicons name="share-outline" size={20} color={Colors.text.inverse} />
+              <Ionicons name="share-outline" size={20} color={colors.text.inverse} />
             </Pressable>
             <Pressable onPress={handleFavorite} style={styles.headerButton}>
               <Ionicons
@@ -438,7 +438,7 @@ function ViewAllOffersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 10,
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   pointsText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
   megaOffersText: {
     fontSize: 32,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     backgroundColor: colors.brand.indigo,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
@@ -517,7 +517,7 @@ const styles = StyleSheet.create({
   offersText: {
     fontSize: 32,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   scalloped: {
     height: 20,
@@ -530,13 +530,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 20,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
   content: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   contentContainer: {
     padding: Spacing.base,
@@ -551,11 +551,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   offersCount: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   columnWrapper: {
     justifyContent: 'space-between',
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
   },
   productCard: {
     width: CARD_WIDTH,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     elevation: 3,
@@ -581,7 +581,7 @@ const styles = StyleSheet.create({
   productImagePlaceholder: {
     width: '100%',
     height: 120,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -592,12 +592,12 @@ const styles = StyleSheet.create({
   productTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   storeName: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   cashBack: {
@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
   },
   distance: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     alignItems: 'center',
@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -646,7 +646,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   footerLoader: {
     paddingVertical: 20,

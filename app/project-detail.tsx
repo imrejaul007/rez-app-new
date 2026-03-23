@@ -230,7 +230,7 @@ function ProjectDetailPage() {
         return Colors.warning;
       case 'pending':
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -257,7 +257,7 @@ function ProjectDetailPage() {
       case 'hard':
         return Colors.error;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -300,7 +300,7 @@ function ProjectDetailPage() {
               accessibilityRole="button"
               accessibilityHint="Navigate to previous screen"
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle} accessible={true} accessibilityRole="header">Project Details</ThemedText>
             <View style={styles.headerRight} />
@@ -341,7 +341,7 @@ function ProjectDetailPage() {
                   </ThemedText>
                 </View>
                 <View style={styles.metaItem}>
-                  <Ionicons name="time-outline" size={16} color={Colors.text.tertiary} />
+                  <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
                   <ThemedText style={styles.metaText}>
                     {project.estimatedTime || 0} min
                   </ThemedText>
@@ -394,14 +394,14 @@ function ProjectDetailPage() {
                   <ThemedText style={styles.sectionTitle}>Project Stats</ThemedText>
                   <View style={styles.statsRow}>
                     <View style={styles.statItem}>
-                      <Ionicons name="eye-outline" size={20} color={Colors.text.tertiary} />
+                      <Ionicons name="eye-outline" size={20} color={colors.text.tertiary} />
                       <ThemedText style={styles.statValue}>
                         {project.analytics.totalViews || 0}
                       </ThemedText>
                       <ThemedText style={styles.statLabel}>Views</ThemedText>
                     </View>
                     <View style={styles.statItem}>
-                      <Ionicons name="document-text-outline" size={20} color={Colors.text.tertiary} />
+                      <Ionicons name="document-text-outline" size={20} color={colors.text.tertiary} />
                       <ThemedText style={styles.statValue}>
                         {project.analytics.totalSubmissions || 0}
                       </ThemedText>
@@ -430,7 +430,7 @@ function ProjectDetailPage() {
                         'hourglass'
                       } 
                       size={16} 
-                      color={Colors.text.inverse} 
+                      color={colors.text.inverse} 
                     />
                     <ThemedText style={styles.statusBadgeText}>
                       {getStatusLabel(userSubmission.status)}
@@ -527,7 +527,7 @@ function ProjectDetailPage() {
                           : 'send'
                       } 
                       size={20} 
-                      color={Colors.text.inverse} 
+                      color={colors.text.inverse} 
                     />
                     <ThemedText style={styles.submitButtonText}>
                       {userSubmission 
@@ -574,7 +574,7 @@ function ProjectDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   scrollView: {
     flex: 1 },
   scrollContent: {
@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   errorText: {
     marginTop: Spacing.base,
     ...Typography.h4,
@@ -599,20 +599,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default },
+    borderBottomColor: colors.border.default },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   headerTitle: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.5 },
   headerRight: {
     width: 40 },
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
   projectTitle: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     marginRight: Spacing.md },
   featuredBadge: {
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.base },
   metaText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: 6 },
   rewardText: {
     ...Typography.bodyLarge,
@@ -679,7 +679,7 @@ const styles = StyleSheet.create({
     marginLeft: 6 },
   description: {
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 24,
     marginBottom: Spacing.xl },
   section: {
@@ -687,7 +687,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md },
   instructionItem: {
     flexDirection: 'row',
@@ -703,12 +703,12 @@ const styles = StyleSheet.create({
   instructionNumberText: {
     ...Typography.body,
     fontWeight: '800',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   instructionText: {
     flex: 1,
     ...Typography.body,
     fontSize: 15,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 22 },
   tagsContainer: {
     flexDirection: 'row',
@@ -728,23 +728,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md },
   statItem: {
     alignItems: 'center' },
   statValue: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs },
   submissionStatusContainer: {
     marginTop: Spacing.lg,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     ...Shadows.medium },
   statusBadge: {
@@ -759,20 +759,20 @@ const styles = StyleSheet.create({
   statusBadgeText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   reviewCommentsContainer: {
     marginTop: Spacing.md,
     padding: Spacing.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm },
   reviewCommentsLabel: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs },
   reviewCommentsText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 20 },
   qualityScoreContainer: {
     flexDirection: 'row',
@@ -782,7 +782,7 @@ const styles = StyleSheet.create({
   qualityScoreLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   qualityScoreText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
@@ -815,7 +815,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   viewSubmissionButton: {
     flexDirection: 'row',
     alignItems: 'center',

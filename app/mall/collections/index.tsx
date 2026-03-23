@@ -66,7 +66,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onPress }) 
           contentFit="cover"
         />
       ) : (
-        <View style={[styles.collectionImage, { backgroundColor: Colors.nileBlue }]} />
+        <View style={[styles.collectionImage, { backgroundColor: colors.nileBlue }]} />
       )}
       <LinearGradient
         colors={['transparent', 'rgba(0,0,0,0.8)']}
@@ -74,7 +74,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onPress }) 
       />
       <View style={styles.cardContent}>
         <View style={styles.typeBadge}>
-          <Ionicons name={getTypeIcon(collection.type) as any} size={12} color={Colors.text.inverse} />
+          <Ionicons name={getTypeIcon(collection.type) as any} size={12} color={colors.text.inverse} />
           <Text style={styles.typeBadgeText}>
             {(collection.type || 'curated').charAt(0).toUpperCase() + (collection.type || 'curated').slice(1)}
           </Text>
@@ -216,7 +216,7 @@ function AllCollectionsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   listContent: {
     padding: Spacing.base,
@@ -227,12 +227,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   collectionCard: {
     width: SCREEN_WIDTH - 32,
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     borderRadius: BorderRadius.xl,
     overflow: 'hidden',
-    backgroundColor: Colors.text.secondary,
+    backgroundColor: colors.text.secondary,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -280,14 +280,14 @@ const styles = StyleSheet.create({
   typeBadgeText: {
     fontSize: 11,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   collectionName: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 4,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 2 },

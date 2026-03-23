@@ -304,11 +304,11 @@ function GiftCardsPage() {
         <View style={styles.content}>
           {/* Search */}
           <View style={styles.searchContainer}>
-            <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="search" size={20} color={colors.text.tertiary} />
             <TextInput
               style={styles.searchInput}
               placeholder="Search brands"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
@@ -346,7 +346,7 @@ function GiftCardsPage() {
             <CardGridSkeleton />
           ) : error ? (
             <View style={styles.errorContainer}>
-              <Ionicons name="alert-circle-outline" size={40} color={Colors.text.tertiary} />
+              <Ionicons name="alert-circle-outline" size={40} color={colors.text.tertiary} />
               <ThemedText style={styles.errorText}>{error}</ThemedText>
               <Pressable style={styles.retryButton} onPress={fetchCatalog}>
                 <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
@@ -407,7 +407,7 @@ function GiftCardsPage() {
               style={styles.modalClose}
               onPress={() => setSelectedCard(null)}
             >
-              <Ionicons name="close" size={24} color={Colors.text.primary} />
+              <Ionicons name="close" size={24} color={colors.text.primary} />
             </Pressable>
 
             <View style={styles.modalHeader}>
@@ -477,7 +477,7 @@ function GiftCardsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   categoriesScroll: {
     marginBottom: Spacing.md,
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   categoryChip: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.full,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
@@ -566,14 +566,14 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   categoryTextActive: {
     color: colors.background.primary,
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   listContent: {
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.md,
     marginBottom: Spacing.lg,
@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
   giftCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
   },
   giftCardBrand: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   giftCardCashback: {
     ...Typography.bodySmall,
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
   },
   giftCardRange: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   buyButton: {
     backgroundColor: Colors.primary[600],
@@ -655,7 +655,7 @@ const styles = StyleSheet.create({
     color: colors.background.primary,
   },
   myGiftCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
   },
   myGiftCardBrand: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   usedBadge: {
     backgroundColor: Colors.gray[200],
@@ -682,16 +682,16 @@ const styles = StyleSheet.create({
   },
   usedBadgeText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   myGiftCardAmount: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   myGiftCardOriginal: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '400',
   },
   myGiftCardCode: {
@@ -705,7 +705,7 @@ const styles = StyleSheet.create({
   codeText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
   },
   copyButton: {
@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
   },
   myGiftCardExpiry: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyState: {
     flex: 1,
@@ -723,13 +723,13 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },
@@ -753,7 +753,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     padding: Spacing.lg,
@@ -775,7 +775,7 @@ const styles = StyleSheet.create({
   },
   modalBrand: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   cashbackBadge: {
@@ -793,7 +793,7 @@ const styles = StyleSheet.create({
   },
   modalLabel: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   denominationGrid: {
@@ -816,7 +816,7 @@ const styles = StyleSheet.create({
   },
   denominationText: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   denominationTextActive: {
     color: Colors.primary[600],

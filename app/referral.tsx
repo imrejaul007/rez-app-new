@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Referral Program Page
 // Invite friends and earn rewards
@@ -301,7 +302,7 @@ const ReferralPageContent = () => {
       case 'active':
         return { backgroundColor: Colors.warning };
       case 'pending':
-        return { backgroundColor: Colors.text.tertiary };
+        return { backgroundColor: colors.text.tertiary };
       case 'expired':
         return { backgroundColor: Colors.error };
       default:
@@ -350,7 +351,7 @@ const ReferralPageContent = () => {
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
-        <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.header}>
+        <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
@@ -393,7 +394,7 @@ const ReferralPageContent = () => {
       <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.header}>
+      <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
@@ -545,7 +546,7 @@ const ReferralPageContent = () => {
           accessibilityHint="Opens the full referral dashboard with tier progression and leaderboard"
         >
           <LinearGradient
-            colors={[Colors.gold, Colors.nileBlue]}
+            colors={[Colors.gold, colors.nileBlue]}
             style={styles.dashboardButtonGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
@@ -636,7 +637,7 @@ const ReferralPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -654,7 +655,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
     textAlign: 'center',
   },
@@ -669,7 +670,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   codeCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     marginBottom: Spacing.lg,
@@ -682,7 +683,7 @@ const styles = StyleSheet.create({
   codeTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   codeBox: {
@@ -723,7 +724,7 @@ const styles = StyleSheet.create({
   shareButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   section: {
     marginBottom: Spacing.lg,
@@ -731,12 +732,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   stepCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -762,16 +763,16 @@ const styles = StyleSheet.create({
   stepTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   stepDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   statsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
@@ -780,7 +781,7 @@ const styles = StyleSheet.create({
   statsTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
     textAlign: 'center',
   },
@@ -796,7 +797,7 @@ const styles = StyleSheet.create({
   statDivider: {
     width: 1,
     height: 40,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   statValue: {
     fontSize: 28,
@@ -806,11 +807,11 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   termsCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -818,24 +819,24 @@ const styles = StyleSheet.create({
   termsTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   termsText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorText: {
     marginTop: Spacing.md,
@@ -858,10 +859,10 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   historyCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -876,11 +877,11 @@ const styles = StyleSheet.create({
   historyName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   historyPhone: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   statusBadge: {
@@ -891,7 +892,7 @@ const styles = StyleSheet.create({
   statusText: {
     ...Typography.overline,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: 'capitalize',
   },
   historyReward: {
@@ -912,7 +913,7 @@ const styles = StyleSheet.create({
   },
   historyDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   dashboardButton: {
     borderRadius: BorderRadius.lg,
@@ -931,7 +932,7 @@ const styles = StyleSheet.create({
   dashboardButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
     textAlign: 'center',
   },

@@ -50,12 +50,12 @@ const PickCard = React.memo(({ pick, onPress }: { pick: CreatorPick; onPress: ()
         <CachedImage source={pick.productImage} style={styles.pickImage} contentFit="cover" />
       ) : (
         <View style={[styles.pickImage, styles.pickImagePlaceholder]}>
-          <Ionicons name="image-outline" size={24} color={Colors.border.default} />
+          <Ionicons name="image-outline" size={24} color={colors.border.default} />
         </View>
       )}
       {pick.videoUrl && (
         <View style={styles.videoIndicator}>
-          <Ionicons name="videocam" size={12} color={Colors.text.inverse} />
+          <Ionicons name="videocam" size={12} color={colors.text.inverse} />
         </View>
       )}
     </View>
@@ -65,7 +65,7 @@ const PickCard = React.memo(({ pick, onPress }: { pick: CreatorPick; onPress: ()
       <View style={styles.pickFooter}>
         <Text style={styles.pickPrice}>{BRAND.CURRENCY_CODE} {pick.productPrice?.toLocaleString()}</Text>
         <View style={styles.pickStats}>
-          <Ionicons name="eye-outline" size={12} color={Colors.text.tertiary} />
+          <Ionicons name="eye-outline" size={12} color={colors.text.tertiary} />
           <Text style={styles.pickStatText}>{formatCount(pick.views)}</Text>
         </View>
       </View>
@@ -194,10 +194,10 @@ function CreatorProfilePage() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <LinearGradient colors={[Colors.nileBlue, '#2d5a7b']} style={styles.header}>
+        <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Creator Profile</Text>
             <View style={{ width: 40 }} />
@@ -216,10 +216,10 @@ function CreatorProfilePage() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <LinearGradient colors={[Colors.nileBlue, '#2d5a7b']} style={styles.header}>
+        <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Creator Profile</Text>
             <View style={{ width: 40 }} />
@@ -249,10 +249,10 @@ function CreatorProfilePage() {
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.nileBlue, '#2d5a7b']} style={styles.header}>
+      <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>{creator.name}</Text>
           <Pressable
@@ -262,7 +262,7 @@ function CreatorProfilePage() {
               title: creator.name,
             }).catch(() => {}); }}
           >
-            <Ionicons name="share-social-outline" size={22} color={Colors.text.inverse} />
+            <Ionicons name="share-social-outline" size={22} color={colors.text.inverse} />
           </Pressable>
         </View>
       </LinearGradient>
@@ -289,7 +289,7 @@ function CreatorProfilePage() {
                 {creator.avatar ? (
                   <CachedImage source={creator.avatar} style={styles.avatarImage} />
                 ) : (
-                  <Ionicons name="person" size={40} color={Colors.text.inverse} />
+                  <Ionicons name="person" size={40} color={colors.text.inverse} />
                 )}
               </LinearGradient>
             </View>
@@ -320,7 +320,7 @@ function CreatorProfilePage() {
                 style={styles.editProfileButton}
                 onPress={() => router.push('/creator/edit')}
               >
-                <Ionicons name="create-outline" size={16} color={Colors.nileBlue} />
+                <Ionicons name="create-outline" size={16} color={colors.nileBlue} />
                 <Text style={styles.editProfileButtonText}>Edit</Text>
               </Pressable>
             ) : (
@@ -330,7 +330,7 @@ function CreatorProfilePage() {
                 disabled={followLoading}
               >
                 {followLoading ? (
-                  <ActivityIndicator size="small" color={isFollowing ? Colors.text.tertiary : Colors.text.inverse} />
+                  <ActivityIndicator size="small" color={isFollowing ? colors.text.tertiary : colors.text.inverse} />
                 ) : (
                   <Text style={[styles.followButtonText, isFollowing && styles.followingButtonText]}>
                     {isFollowing ? 'Following' : 'Follow'}
@@ -383,7 +383,7 @@ function CreatorProfilePage() {
               onPress={() => router.push('/creator-dashboard')}
              
             >
-              <Ionicons name="analytics-outline" size={18} color={Colors.text.inverse} />
+              <Ionicons name="analytics-outline" size={18} color={colors.text.inverse} />
               <Text style={styles.dashboardButtonText}>Go to Dashboard</Text>
             </Pressable>
             {creator.stats.engagementRate != null && (
@@ -424,7 +424,7 @@ function CreatorProfilePage() {
                       'link' as any
                     }
                     size={18}
-                    color={Colors.text.tertiary}
+                    color={colors.text.tertiary}
                   />
                   <Text style={styles.socialLinkText}>{link.platform}</Text>
                 </Pressable>
@@ -451,7 +451,7 @@ function CreatorProfilePage() {
             </View>
           ) : (
             <View style={styles.emptyPicks}>
-              <Ionicons name="bag-outline" size={40} color={Colors.border.default} />
+              <Ionicons name="bag-outline" size={40} color={colors.border.default} />
               <Text style={styles.emptyPicksText}>No picks yet</Text>
             </View>
           )}
@@ -460,7 +460,7 @@ function CreatorProfilePage() {
         {/* Joined Date */}
         {creator.joinedAt && (
           <View style={styles.joinedSection}>
-            <Ionicons name="calendar-outline" size={14} color={Colors.text.tertiary} />
+            <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
             <Text style={styles.joinedText}>
               Joined {new Date(creator.joinedAt).toLocaleDateString('en-US', {
                 month: 'long',
@@ -483,7 +483,7 @@ function CreatorProfilePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -506,7 +506,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   shareButton: {
     width: 40,
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -540,25 +540,25 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorMessage: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
   retryButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -567,21 +567,21 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
   },
   goBackButtonText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.body,
     fontWeight: '500',
   },
 
   // Profile
   profileSection: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   coverImage: {
     width: width,
     height: 140,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   profileInfo: {
     flexDirection: 'row',
@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
   creatorName: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flexShrink: 1,
   },
   tierBadge: {
@@ -632,7 +632,7 @@ const styles = StyleSheet.create({
   },
   bioText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 20,
   },
   followButton: {
@@ -645,55 +645,55 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   followingButton: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   followButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   followingButtonText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   editProfileButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginTop: 4,
   },
   editProfileButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   ownProfileActions: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     padding: Spacing.base,
     marginTop: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   dashboardButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
   },
   dashboardButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   extraStatsRow: {
     flexDirection: 'row',
@@ -702,7 +702,7 @@ const styles = StyleSheet.create({
   },
   extraStatItem: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm,
     padding: Spacing.md,
     alignItems: 'center',
@@ -711,12 +711,12 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   extraStatLabel: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
 
@@ -743,11 +743,11 @@ const styles = StyleSheet.create({
   // Stats
   statsGrid: {
     flexDirection: 'row',
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     paddingVertical: Spacing.base,
     marginTop: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   statBox: {
     flex: 1,
@@ -756,28 +756,28 @@ const styles = StyleSheet.create({
   statBoxValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   statBoxLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   statDivider: {
     width: 1,
     height: 36,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     alignSelf: 'center',
   },
 
   // Social
   socialSection: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     padding: Spacing.base,
     marginTop: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   socialLinks: {
     flexDirection: 'row',
@@ -791,11 +791,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   socialLinkText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
     textTransform: 'capitalize',
   },
@@ -808,24 +808,24 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   picksGrid: {
     gap: Spacing.md,
   },
   pickCard: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     flexDirection: 'row',
   },
   pickImage: {
     width: 100,
     height: 100,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   pickImagePlaceholder: {
     justifyContent: 'center',
@@ -847,13 +847,13 @@ const styles = StyleSheet.create({
   pickTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 18,
     marginBottom: 2,
   },
   pickBrand: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   pickFooter: {
@@ -864,7 +864,7 @@ const styles = StyleSheet.create({
   pickPrice: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   pickStats: {
     flexDirection: 'row',
@@ -873,7 +873,7 @@ const styles = StyleSheet.create({
   },
   pickStatText: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   pickTagBadge: {
     position: 'absolute',
@@ -887,7 +887,7 @@ const styles = StyleSheet.create({
   pickTagText: {
     fontSize: 10,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyPicks: {
     alignItems: 'center',
@@ -895,7 +895,7 @@ const styles = StyleSheet.create({
   },
   emptyPicksText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
   },
 
@@ -909,7 +909,7 @@ const styles = StyleSheet.create({
   },
   joinedText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

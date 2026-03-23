@@ -443,13 +443,13 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: Spacing['2xl'] - 4,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary },
+    backgroundColor: colors.background.primary },
 
   // Modern Button with Purple Tint
   button: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.purpleLight,
+    backgroundColor: colors.background.purpleLight,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     ...Shadows.subtle },
@@ -479,7 +479,7 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs - 1 },
   titleSaved: {
     color: Colors.successScale[700] },

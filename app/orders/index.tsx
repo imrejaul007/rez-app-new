@@ -482,7 +482,7 @@ function OrdersListScreen() {
       <LinearGradient colors={Gradients.nileBlue as any} style={styles.gradientHeader}>
         <View style={styles.headerContent}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.background.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>My Orders</Text>
           <View style={{ width: 32 }} />
@@ -588,7 +588,7 @@ function OrdersListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   centered: {
     flex: 1,
@@ -617,21 +617,21 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h2,
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
 
   // Search & Filters
   searchSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm,
     paddingHorizontal: Spacing.md,
     height: 40,
@@ -640,7 +640,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 14,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingVertical: 0,
   },
   filterRow: {
@@ -658,9 +658,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.medium,
+    borderColor: colors.border.medium,
   },
   filterChipActive: {
     backgroundColor: Colors.secondary[600],
@@ -669,10 +669,10 @@ const styles = StyleSheet.create({
   filterChipText: {
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   filterChipTextActive: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
   sortButton: {
     flexDirection: 'row',
@@ -701,7 +701,7 @@ const styles = StyleSheet.create({
 
   // Order Card
   orderCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -714,7 +714,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   orderInfo: {
     flex: 1,
@@ -722,7 +722,7 @@ const styles = StyleSheet.create({
   orderNumber: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   orderDate: {
@@ -730,7 +730,7 @@ const styles = StyleSheet.create({
     color: Colors.gray[500],
   },
   fulfillmentBadge: {
-    backgroundColor: Colors.background.lavender,
+    backgroundColor: colors.background.lavender,
     paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 6,
@@ -748,7 +748,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 11,
     fontWeight: '600',
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
 
   // Order Items
@@ -764,7 +764,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.border.light,
+    backgroundColor: colors.border.light,
   },
   itemInfo: {
     flex: 1,
@@ -773,7 +773,7 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 14,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   itemQuantity: {
@@ -783,7 +783,7 @@ const styles = StyleSheet.create({
   itemPrice: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   moreItems: {
     fontSize: 12,
@@ -799,7 +799,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
   },
   totalSection: {
     flex: 1,
@@ -812,7 +812,7 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   paymentStatus: {
     alignItems: 'flex-end',
@@ -828,7 +828,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
     marginTop: Spacing.md,
   },
   quickActionPill: {
@@ -838,12 +838,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.medium,
+    borderColor: colors.border.medium,
   },
   quickActionPrimary: {
-    backgroundColor: Colors.background.lavender,
+    backgroundColor: colors.background.lavender,
     borderColor: Colors.secondary[200],
   },
   quickActionDanger: {
@@ -860,7 +860,7 @@ const styles = StyleSheet.create({
   orderActions: {
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
     marginTop: Spacing.md,
   },
 
@@ -875,7 +875,7 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 20,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   emptySubtext: {
@@ -893,7 +893,7 @@ const styles = StyleSheet.create({
   shopButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
 
   // Error
@@ -911,7 +911,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
 
   // Footer loader

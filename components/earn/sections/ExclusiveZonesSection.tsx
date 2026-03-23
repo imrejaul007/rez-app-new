@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, Pressable, ScrollView, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
 export interface ExclusiveZoneItem {
@@ -32,7 +33,7 @@ const ExclusiveZonesSection = React.memo(function ExclusiveZonesSection({
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Ionicons name="shield-checkmark" size={24} color={Colors.gold} />
+        <Ionicons name="shield-checkmark" size={24} color={colors.gold} />
         <Text style={styles.sectionTitle}>Exclusive Zones</Text>
       </View>
 
@@ -68,7 +69,7 @@ const ExclusiveZonesSection = React.memo(function ExclusiveZonesSection({
             )}
             {zone.userEligible && (
               <View style={zoneStyles.verifiedBadge}>
-                <Ionicons name="checkmark-circle" size={12} color={Colors.success} />
+                <Ionicons name="checkmark-circle" size={12} color={colors.success} />
                 <Text style={zoneStyles.verifiedText}>Verified</Text>
               </View>
             )}
@@ -141,7 +142,7 @@ const zoneStyles = StyleSheet.create({
   },
   verifiedText: {
     fontSize: 10,
-    color: Colors.success,
+    color: colors.success,
     fontWeight: '600',
   },
   verifyBadge: {

@@ -123,8 +123,8 @@ const ExploreReelsPage = () => {
         {item.creator?.avatar ? (
           <CachedImage source={item.creator.avatar} style={styles.avatar} />
         ) : (
-          <View style={[styles.avatar, { backgroundColor: Colors.text.tertiary, justifyContent: 'center', alignItems: 'center' }]}>
-            <Ionicons name="person" size={10} color={Colors.text.inverse} />
+          <View style={[styles.avatar, { backgroundColor: colors.text.tertiary, justifyContent: 'center', alignItems: 'center' }]}>
+            <Ionicons name="person" size={10} color={colors.text.inverse} />
           </View>
         )}
         <Text style={styles.userName}>{item.creator?.name || 'Creator'}</Text>
@@ -133,13 +133,13 @@ const ExploreReelsPage = () => {
       {/* Play Button */}
       <View style={styles.playOverlay}>
         <View style={styles.playButton}>
-          <Ionicons name="play" size={20} color={Colors.text.inverse} />
+          <Ionicons name="play" size={20} color={colors.text.inverse} />
         </View>
       </View>
 
       {/* Views Count */}
       <View style={styles.viewsContainer}>
-        <Ionicons name="eye" size={12} color={Colors.text.inverse} />
+        <Ionicons name="eye" size={12} color={colors.text.inverse} />
         <Text style={styles.viewsText}>{formatCount(item.stats?.views || 0)}</Text>
       </View>
 
@@ -153,25 +153,25 @@ const ExploreReelsPage = () => {
         </Text>
         {item.store?.name && (
           <View style={styles.storeRow}>
-            <Ionicons name="storefront" size={10} color={Colors.text.inverse} />
+            <Ionicons name="storefront" size={10} color={colors.text.inverse} />
             <Text style={styles.storeName}>{item.store.name}</Text>
           </View>
         )}
 
         {item.products && item.products.length > 0 && item.products[0]?.price != null && (
           <View style={styles.savedBadge}>
-            <Ionicons name="pricetag" size={10} color={Colors.text.inverse} />
+            <Ionicons name="pricetag" size={10} color={colors.text.inverse} />
             <Text style={styles.savedText}>{currencySymbol}{item.products[0].price}</Text>
           </View>
         )}
 
         <View style={styles.statsRow}>
           <View style={styles.stat}>
-            <Ionicons name={item.isLiked ? 'heart' : 'heart-outline'} size={14} color={item.isLiked ? Colors.error : Colors.background.primary} />
+            <Ionicons name={item.isLiked ? 'heart' : 'heart-outline'} size={14} color={item.isLiked ? Colors.error : colors.background.primary} />
             <Text style={styles.statText}>{formatCount(item.stats?.likes || 0)}</Text>
           </View>
           <View style={styles.stat}>
-            <Ionicons name="chatbubble" size={14} color={Colors.text.inverse} />
+            <Ionicons name="chatbubble" size={14} color={colors.text.inverse} />
             <Text style={styles.statText}>{formatCount(item.stats?.comments || 0)}</Text>
           </View>
         </View>
@@ -183,7 +183,7 @@ const ExploreReelsPage = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top']}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -191,11 +191,11 @@ const ExploreReelsPage = () => {
           style={styles.backButton}
           onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <Text style={styles.headerTitle}>Reels & Reviews</Text>
         <Pressable style={styles.createButton} onPress={() => navigateTo('/explore/search')}>
-          <Ionicons name="search" size={22} color={Colors.nileBlue} />
+          <Ionicons name="search" size={22} color={colors.nileBlue} />
         </Pressable>
       </View>
 
@@ -210,7 +210,7 @@ const ExploreReelsPage = () => {
             <Ionicons
               name={tab.icon as any}
               size={16}
-              color={activeTab === tab.id ? Colors.background.primary : Colors.text.tertiary}
+              color={activeTab === tab.id ? colors.background.primary : colors.text.tertiary}
             />
             <Text
               style={[
@@ -272,7 +272,7 @@ const ExploreReelsPage = () => {
         ListEmptyComponent={
           !loading && !error ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="videocam-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="videocam-outline" size={48} color={colors.text.tertiary} />
               <Text style={styles.emptyText}>No reels yet</Text>
               <Text style={styles.emptySubtext}>Be the first to share your experience!</Text>
             </View>
@@ -288,7 +288,7 @@ const ExploreReelsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -297,26 +297,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   createButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -332,19 +332,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     gap: 6,
   },
   tabActive: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   tabText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   createCTA: {
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
   createCTATitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   createCTASubtitle: {
     ...Typography.bodySmall,
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -434,12 +434,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   emptySubtext: {
     marginTop: Spacing.xs,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   row: {
     justifyContent: 'space-between',
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
     height: REEL_HEIGHT,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   reelImage: {
     width: '100%',
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   userName: {
     ...Typography.overline,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   playOverlay: {
     position: 'absolute',
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
   viewsText: {
     ...Typography.overline,
     fontWeight: '500',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   gradient: {
     position: 'absolute',
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeRow: {
     flexDirection: 'row',
@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
   },
   storeName: {
     ...Typography.overline,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     opacity: 0.9,
   },
   savedBadge: {
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
   savedText: {
     fontSize: 9,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statsRow: {
     flexDirection: 'row',
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     ...Typography.caption,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

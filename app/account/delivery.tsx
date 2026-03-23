@@ -138,7 +138,7 @@ function DeliverySettingsScreen() {
             <Ionicons 
               name={getAddressTypeIcon(address.type)} 
               size={16} 
-              color={Colors.text.inverse} 
+              color={colors.text.inverse} 
             />
           </View>
           <View style={styles.addressTitleContainer}>
@@ -249,7 +249,7 @@ function DeliverySettingsScreen() {
             accessibilityHint="Double tap to return to account settings"
           >
             <View style={styles.backButtonInner}>
-              <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </View>
           </Pressable>
           
@@ -267,7 +267,7 @@ function DeliverySettingsScreen() {
             accessibilityRole="button"
             accessibilityHint="Double tap to add a new delivery address"
           >
-            <Ionicons name="add-outline" size={22} color={Colors.text.inverse} />
+            <Ionicons name="add-outline" size={22} color={colors.text.inverse} />
           </Pressable>
         </View>
       </LinearGradient>

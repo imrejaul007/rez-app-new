@@ -457,7 +457,7 @@ function DailyCheckInPage() {
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerTitleContainer}>
           <Ionicons name="calendar" size={20} color={Colors.info} />
@@ -539,7 +539,7 @@ function DailyCheckInPage() {
               style={styles.infoBanner}
             >
               <View style={styles.infoBannerHeader}>
-                <Ionicons name="gift" size={20} color={Colors.text.inverse} />
+                <Ionicons name="gift" size={20} color={colors.text.inverse} />
                 <Text style={styles.infoBannerTitle}>Complete Your Check-In!</Text>
               </View>
               <Text style={styles.infoBannerText}>
@@ -548,13 +548,13 @@ function DailyCheckInPage() {
             </LinearGradient>
           ) : (
             <LinearGradient
-              colors={[Colors.nileBlue, Colors.nileBlue]}
+              colors={[colors.nileBlue, colors.nileBlue]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.infoBanner}
             >
               <View style={styles.infoBannerHeader}>
-                <Ionicons name="gift" size={20} color={Colors.text.inverse} />
+                <Ionicons name="gift" size={20} color={colors.text.inverse} />
                 <Text style={styles.infoBannerTitle}>How Daily Check-In Works!</Text>
               </View>
               <Text style={styles.infoBannerText}>
@@ -568,7 +568,7 @@ function DailyCheckInPage() {
         {!loading && (<>
         <View style={styles.sectionContainer}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="calendar" size={16} color={Colors.text.primary} />
+            <Ionicons name="calendar" size={16} color={colors.text.primary} />
             <Text style={styles.sectionTitle}>Daily Check-In Calendar</Text>
           </View>
           {calendarError ? (
@@ -581,7 +581,7 @@ function DailyCheckInPage() {
             </View>
           ) : checkInRewards.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="calendar-outline" size={32} color={Colors.text.tertiary} />
+              <Ionicons name="calendar-outline" size={32} color={colors.text.tertiary} />
               <Text style={styles.emptyText}>No check-in data available</Text>
             </View>
           ) : (
@@ -652,7 +652,7 @@ function DailyCheckInPage() {
             <LinearGradient
               colors={
                 (hasCheckedInToday || todayReward?.claimed)
-                  ? [Colors.gold, Colors.nileBlue]
+                  ? [Colors.gold, colors.nileBlue]
                   : checkInStarted
                     ? [Colors.warning, colors.warningScale[700]]
                     : [Colors.success, colors.brand.greenDark]
@@ -663,17 +663,17 @@ function DailyCheckInPage() {
             >
               {(hasCheckedInToday || todayReward?.claimed) ? (
                 <View style={styles.checkInButtonContent}>
-                  <Ionicons name="checkmark-circle" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.text.inverse} />
                   <Text style={styles.checkInButtonText}>Checked In Today</Text>
                 </View>
               ) : checkInStarted ? (
                 <View style={styles.checkInButtonContent}>
-                  <Ionicons name="time" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="time" size={20} color={colors.text.inverse} />
                   <Text style={styles.checkInButtonText}>Share & Submit Post to Complete</Text>
                 </View>
               ) : (
                 <View style={styles.checkInButtonContent}>
-                  <Ionicons name="calendar" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="calendar" size={20} color={colors.text.inverse} />
                   <Text style={styles.checkInButtonText}>Check In Now (+{currencySymbol}{todayReward?.coins})</Text>
                 </View>
               )}
@@ -727,7 +727,7 @@ function DailyCheckInPage() {
         {/* Affiliate Stats Dashboard */}
         <View style={styles.sectionContainer}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="trending-up" size={16} color={Colors.text.primary} />
+            <Ionicons name="trending-up" size={16} color={colors.text.primary} />
             <Text style={styles.sectionTitle}>Your Affiliate Performance</Text>
           </View>
           <View style={styles.affiliateGrid}>
@@ -751,7 +751,7 @@ function DailyCheckInPage() {
               colors={['rgba(139, 92, 246, 0.1)', 'rgba(236, 72, 153, 0.1)']}
               style={styles.affiliateCard}
             >
-              <Ionicons name="cart" size={20} color={Colors.nileBlue} />
+              <Ionicons name="cart" size={20} color={colors.nileBlue} />
               <Text style={styles.affiliateValue}>{affiliateStats.purchases}</Text>
               <Text style={styles.affiliateLabel}>Purchases Made</Text>
             </LinearGradient>
@@ -789,7 +789,7 @@ function DailyCheckInPage() {
           }}
         >
           <View style={styles.sectionHeader}>
-            <Ionicons name="share-social" size={16} color={Colors.text.primary} />
+            <Ionicons name="share-social" size={16} color={colors.text.primary} />
             <Text style={styles.sectionTitle}>Share Promotional Posters</Text>
             {checkInStarted && (
               <View style={styles.requiredBadge}>
@@ -807,7 +807,7 @@ function DailyCheckInPage() {
             </View>
           ) : promotionalPosters.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="images-outline" size={32} color={Colors.text.tertiary} />
+              <Ionicons name="images-outline" size={32} color={colors.text.tertiary} />
               <Text style={styles.emptyText}>No promotional posters available</Text>
               <Text style={styles.emptySubtext}>Check back later for new campaigns!</Text>
             </View>
@@ -838,7 +838,7 @@ function DailyCheckInPage() {
                       <View style={styles.posterBonus}>
                         <Text style={styles.posterBonusText}>+{currencySymbol}{poster.shareBonus} bonus</Text>
                       </View>
-                      <Ionicons name="share-social" size={16} color={Colors.text.inverse} />
+                      <Ionicons name="share-social" size={16} color={colors.text.inverse} />
                     </View>
                   </View>
                 </LinearGradient>
@@ -851,12 +851,12 @@ function DailyCheckInPage() {
         {/* Submission History */}
         <View style={styles.sectionContainer}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="link" size={16} color={Colors.text.primary} />
+            <Ionicons name="link" size={16} color={colors.text.primary} />
             <Text style={styles.sectionTitle}>Your Submissions</Text>
           </View>
           {submissions.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="document-text-outline" size={32} color={Colors.text.tertiary} />
+              <Ionicons name="document-text-outline" size={32} color={colors.text.tertiary} />
               <Text style={styles.emptyText}>No submissions yet</Text>
               <Text style={styles.emptySubtext}>Share your first poster to start earning!</Text>
             </View>
@@ -885,7 +885,7 @@ function DailyCheckInPage() {
                     )}
                     {(submission.status === 'approved' || submission.status === 'credited') && (
                       <View style={styles.statusBadgeApproved}>
-                        <Ionicons name="checkmark-circle" size={12} color={Colors.nileBlue} />
+                        <Ionicons name="checkmark-circle" size={12} color={colors.nileBlue} />
                         <Text style={styles.statusTextApproved}>Approved</Text>
                       </View>
                     )}
@@ -900,7 +900,7 @@ function DailyCheckInPage() {
                 </View>
                 {(submission.status === 'approved' || submission.status === 'credited') && (
                   <View style={styles.submissionFooter}>
-                    <Ionicons name="trophy" size={12} color={Colors.nileBlue} />
+                    <Ionicons name="trophy" size={12} color={colors.nileBlue} />
                     <Text style={styles.submissionFooterText}>
                       Approved{submission.approvedAt ? ` on ${new Date(submission.approvedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}` : ''} - {currencySymbol}{submission.shareBonus} credited!
                     </Text>
@@ -932,7 +932,7 @@ function DailyCheckInPage() {
             </View>
           ) : streakBonuses.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="trophy-outline" size={32} color={Colors.text.tertiary} />
+              <Ionicons name="trophy-outline" size={32} color={colors.text.tertiary} />
               <Text style={styles.emptyText}>No streak bonuses available</Text>
             </View>
           ) : (
@@ -941,7 +941,7 @@ function DailyCheckInPage() {
               // Dynamic colors based on index
               const colors = [
                 { bg: 'rgba(59, 130, 246, 0.2)', icon: Colors.info },
-                { bg: 'rgba(139, 92, 246, 0.2)', icon: Colors.nileBlue },
+                { bg: 'rgba(139, 92, 246, 0.2)', icon: colors.nileBlue },
                 { bg: 'rgba(236, 72, 153, 0.2)', icon: colors.brand.pink },
               ];
               const colorSet = colors[index % colors.length];
@@ -1120,7 +1120,7 @@ function DailyCheckInPage() {
               value={submitUrl}
               onChangeText={setSubmitUrl}
               placeholder={`https://${selectedPlatform}.com/your-post-link`}
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               autoCapitalize="none"
               autoCorrect={false}
             />
@@ -1156,14 +1156,14 @@ function DailyCheckInPage() {
                 disabled={submitting}
               >
                 <LinearGradient
-                  colors={submitting ? [Colors.text.tertiary, Colors.text.tertiary] : [Colors.nileBlue, Colors.nileBlue]}
+                  colors={submitting ? [colors.text.tertiary, colors.text.tertiary] : [colors.nileBlue, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.submitButtonGradient}
                 >
                   {submitting ? (
                     <View style={styles.submitButtonLoading}>
-                      <ActivityIndicator size="small" color={Colors.text.inverse} />
+                      <ActivityIndicator size="small" color={colors.text.inverse} />
                       <Text style={styles.submitButtonText}>Submitting...</Text>
                     </View>
                   ) : (
@@ -1182,7 +1182,7 @@ function DailyCheckInPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -1190,15 +1190,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1210,7 +1210,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   scrollContent: {
     paddingBottom: 120,
@@ -1224,7 +1224,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -1242,12 +1242,12 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.xs,
   },
   statLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   infoBannerContainer: {
@@ -1267,7 +1267,7 @@ const styles = StyleSheet.create({
   infoBannerTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   infoBannerText: {
     ...Typography.bodySmall,
@@ -1287,7 +1287,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   calendarGrid: {
     flexDirection: 'row',
@@ -1298,9 +1298,9 @@ const styles = StyleSheet.create({
     width: (width - 32 - 48) / 6,
     aspectRatio: 1,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
     padding: Spacing.xs,
@@ -1317,7 +1317,7 @@ const styles = StyleSheet.create({
   },
   calendarDayLabel: {
     fontSize: 9,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   calendarCoinContainer: {
@@ -1329,15 +1329,15 @@ const styles = StyleSheet.create({
   calendarCoinText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   bonusDay: {
     marginTop: Spacing.sm,
     padding: Spacing.md,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1351,7 +1351,7 @@ const styles = StyleSheet.create({
   bonusCoinText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   bonusLabel: {
     ...Typography.caption,
@@ -1385,7 +1385,7 @@ const styles = StyleSheet.create({
   checkInButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   affiliateGrid: {
     flexDirection: 'row',
@@ -1402,12 +1402,12 @@ const styles = StyleSheet.create({
   affiliateValue: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   affiliateLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   affiliateTip: {
@@ -1474,7 +1474,7 @@ const styles = StyleSheet.create({
   posterTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 2,
   },
   posterSubtitle: {
@@ -1495,14 +1495,14 @@ const styles = StyleSheet.create({
   posterBonusText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   submissionCard: {
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginBottom: Spacing.md,
   },
   submissionHeader: {
@@ -1515,12 +1515,12 @@ const styles = StyleSheet.create({
   submissionTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   submissionDate: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   submissionLink: {
@@ -1566,7 +1566,7 @@ const styles = StyleSheet.create({
   statusTextApproved: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   statusBadgeRejected: {
     flexDirection: 'row',
@@ -1587,7 +1587,7 @@ const styles = StyleSheet.create({
   submissionBonus: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   submissionFooter: {
     flexDirection: 'row',
@@ -1596,17 +1596,17 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   submissionFooterText: {
     ...Typography.caption,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   submissionFooterPending: {
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   submissionFooterPendingText: {
     ...Typography.caption,
@@ -1620,10 +1620,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   streakCardAchieved: {
     backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -1643,11 +1643,11 @@ const styles = StyleSheet.create({
   streakTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   streakDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   streakReward: {
     ...Typography.body,
@@ -1661,11 +1661,11 @@ const styles = StyleSheet.create({
   tipsTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   tipsList: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     gap: Spacing.sm,
@@ -1684,7 +1684,7 @@ const styles = StyleSheet.create({
   },
   tipText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
     lineHeight: 20,
   },
@@ -1704,7 +1704,7 @@ const styles = StyleSheet.create({
   rewardAmount: {
     fontSize: 36,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
@@ -1725,7 +1725,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     overflow: 'hidden',
@@ -1750,7 +1750,7 @@ const styles = StyleSheet.create({
   modalPosterTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.sm,
   },
   modalPosterSubtitle: {
@@ -1763,7 +1763,7 @@ const styles = StyleSheet.create({
   shareOptionsTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   shareButtonsGrid: {
@@ -1788,7 +1788,7 @@ const styles = StyleSheet.create({
   shareButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   shareBonusInfo: {
     padding: Spacing.md,
@@ -1800,23 +1800,23 @@ const styles = StyleSheet.create({
   },
   shareBonusText: {
     ...Typography.bodySmall,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
     fontWeight: '600',
   },
   closeButton: {
     paddingVertical: 14,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
   },
   closeButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   submitModalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     padding: Spacing.xl,
@@ -1838,27 +1838,27 @@ const styles = StyleSheet.create({
   submitModalTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   submitModalSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   inputLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   urlInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   submitTip: {
@@ -1894,14 +1894,14 @@ const styles = StyleSheet.create({
   cancelButton: {
     flex: 1,
     paddingVertical: 14,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
   },
   cancelButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   submitButton: {
     flex: 1,
@@ -1923,7 +1923,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   errorContainer: {
     padding: Spacing.xl,
@@ -1950,26 +1950,26 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyContainer: {
     padding: Spacing['2xl'],
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.sm,
   },
   emptySubtext: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.xs,
   },
@@ -1980,7 +1980,7 @@ const styles = StyleSheet.create({
   skeletonTitleBar: {
     width: 160,
     height: 16,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: BorderRadius.sm,
     marginBottom: Spacing.md,
   },
@@ -1992,17 +1992,17 @@ const styles = StyleSheet.create({
   skeletonCalendarDay: {
     width: (width - 72) / 3,
     height: 70,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
   },
   skeletonBonusDay: {
     height: 50,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     marginTop: Spacing.sm,
   },
   skeletonBlock: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   // Affiliate onboarding styles
   affiliateOnboarding: {
@@ -2018,12 +2018,12 @@ const styles = StyleSheet.create({
   affiliateOnboardingTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   affiliateOnboardingText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.xs,
     lineHeight: 18,
@@ -2076,7 +2076,7 @@ const styles = StyleSheet.create({
   skeletonPostersRow: { flexDirection: 'row', gap: Spacing.md },
   skeletonPosterItem: { flex: 1, height: 140, borderRadius: BorderRadius.lg },
   countdownContainer: { marginTop: Spacing.sm, alignItems: 'center' },
-  countdownText: { fontSize: 13, color: Colors.text.tertiary },
+  countdownText: { fontSize: 13, color: colors.text.tertiary },
   streakResetBanner: { marginTop: 10, backgroundColor: colors.errorScale[50], borderRadius: BorderRadius.sm, padding: 10, flexDirection: 'row', alignItems: 'center' },
   streakResetText: { flex: 1, marginLeft: Spacing.sm, ...Typography.bodySmall, color: '#991B1B' },
   bottomSpacer: { height: 120 },

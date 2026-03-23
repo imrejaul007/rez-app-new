@@ -328,7 +328,7 @@ function ScheduledDropsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   calendarContent: {
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   },
   calendarDay: {
     width: 64,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -415,12 +415,12 @@ const styles = StyleSheet.create({
   },
   dayName: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   dayNumber: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   dayTextToday: {
@@ -446,13 +446,13 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   dropCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
   },
   dropTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   typeBadge: {
     borderRadius: BorderRadius.sm,
@@ -494,12 +494,12 @@ const styles = StyleSheet.create({
   },
   dropDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.xs,
   },
   dropDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   dropRight: {
     alignItems: 'center',
@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
   },
   dropCurrency: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   claimableBadge: {
@@ -546,7 +546,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 18,
   },
 });

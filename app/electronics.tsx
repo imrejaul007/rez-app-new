@@ -335,8 +335,8 @@ const ElectronicsPage: React.FC = () => {
       {item.logo ? (
         <CachedImage source={{ uri: item.logo }} style={styles.brandLogoImage} />
       ) : (
-        <View style={[styles.brandLogoImage, { backgroundColor: Colors.neutral[100], justifyContent: 'center', alignItems: 'center', borderRadius: 20 }]}>
-          <Ionicons name="storefront-outline" size={24} color={Colors.neutral[400]} />
+        <View style={[styles.brandLogoImage, { backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center', borderRadius: 20 }]}>
+          <Ionicons name="storefront-outline" size={24} color={colors.neutral[400]} />
         </View>
       )}
       <Text style={styles.brandName} numberOfLines={1}>{item.name}</Text>
@@ -361,8 +361,8 @@ const ElectronicsPage: React.FC = () => {
         {imageUri ? (
           <CachedImage source={{ uri: imageUri }} style={styles.productImage} />
         ) : (
-          <View style={[styles.productImage, { backgroundColor: Colors.neutral[100], justifyContent: 'center', alignItems: 'center' }]}>
-            <Ionicons name="cube-outline" size={36} color={Colors.neutral[300]} />
+          <View style={[styles.productImage, { backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center' }]}>
+            <Ionicons name="cube-outline" size={36} color={colors.neutral[300]} />
           </View>
         )}
         {cashback > 0 && (
@@ -401,7 +401,7 @@ const ElectronicsPage: React.FC = () => {
         ) : subcategories.length === 0 ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIconWrapper}>
-              <Ionicons name="grid-outline" size={32} color={Colors.neutral[300]} />
+              <Ionicons name="grid-outline" size={32} color={colors.neutral[300]} />
             </View>
             <Text style={styles.emptyTitle}>No subcategories found</Text>
           </View>
@@ -429,7 +429,7 @@ const ElectronicsPage: React.FC = () => {
         ) : stores.length === 0 ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIconWrapper}>
-              <Ionicons name="storefront-outline" size={32} color={Colors.neutral[300]} />
+              <Ionicons name="storefront-outline" size={32} color={colors.neutral[300]} />
             </View>
             <Text style={styles.emptyTitle}>No brands found</Text>
           </View>
@@ -469,7 +469,7 @@ const ElectronicsPage: React.FC = () => {
       {/* Promo Banner */}
       <View style={styles.promoBanner}>
         <LinearGradient colors={[colors.warningScale[400], colors.warningScale[700]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.promoGradient}>
-          <Ionicons name="flash" size={40} color={Colors.text.inverse} style={{ marginBottom: 12 }} />
+          <Ionicons name="flash" size={40} color={colors.text.inverse} style={{ marginBottom: 12 }} />
           <Text style={styles.promoTitle}>Flash Sale</Text>
           <Text style={styles.promoSubtitle}>Up to 50% off on select electronics</Text>
           <Pressable
@@ -494,7 +494,7 @@ const ElectronicsPage: React.FC = () => {
     return (
       <View style={styles.emptyState}>
         <View style={styles.emptyIconWrapper}>
-          <Ionicons name="cube-outline" size={36} color={Colors.neutral[300]} />
+          <Ionicons name="cube-outline" size={36} color={colors.neutral[300]} />
         </View>
         <Text style={styles.emptyTitle}>No products found</Text>
         <Text style={styles.emptySubtitle}>Try changing your filter or check back later</Text>
@@ -527,14 +527,14 @@ const ElectronicsPage: React.FC = () => {
       <LinearGradient colors={[colors.infoScale[400], '#1D4ED8']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.background.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Electronics</Text>
             <Text style={styles.headerSubtitle}>Latest gadgets & accessories</Text>
           </View>
           <Pressable style={styles.cartButton} onPress={() => router.push('/cart' as any)}>
-            <Ionicons name="cart-outline" size={24} color={Colors.background.primary} />
+            <Ionicons name="cart-outline" size={24} color={colors.background.primary} />
           </Pressable>
         </View>
         <View style={styles.statsRow}>
@@ -592,69 +592,69 @@ const ElectronicsPage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.primary },
+  container: { flex: 1, backgroundColor: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: 20 },
   headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: 16 },
   backButton: { padding: 8 },
   headerTitleContainer: { flex: 1, marginLeft: 8 },
-  headerTitle: { fontSize: 20, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { fontSize: 20, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.8)' },
   cartButton: { padding: 8 },
   statsRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 16 },
   statItem: { alignItems: 'center', paddingHorizontal: 20 },
-  statValue: { fontSize: 20, fontWeight: '700', color: Colors.text.inverse },
+  statValue: { fontSize: 20, fontWeight: '700', color: colors.text.inverse },
   statLabel: { fontSize: 11, color: 'rgba(255,255,255,0.8)' },
   statDivider: { width: 1, height: 30, backgroundColor: 'rgba(255,255,255,0.3)' },
   filtersContainer: {
     height: 52,
     justifyContent: 'center',
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
-  filterChip: { paddingHorizontal: Spacing.base, paddingVertical: 7, borderRadius: BorderRadius.xl, backgroundColor: Colors.neutral[100], marginRight: 8 },
+  filterChip: { paddingHorizontal: Spacing.base, paddingVertical: 7, borderRadius: BorderRadius.xl, backgroundColor: colors.neutral[100], marginRight: 8 },
   filterChipActive: { backgroundColor: Colors.brand.purple },
-  filterChipText: { fontSize: 14, color: Colors.neutral[500] },
-  filterChipTextActive: { color: Colors.text.inverse, fontWeight: '600' },
+  filterChipText: { fontSize: 14, color: colors.neutral[500] },
+  filterChipTextActive: { color: colors.text.inverse, fontWeight: '600' },
   section: { padding: 16 },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: Colors.nileBlue, marginBottom: 12 },
+  sectionTitle: { fontSize: 18, fontWeight: '700', color: colors.nileBlue, marginBottom: 12 },
   viewAllText: { fontSize: 14, fontWeight: '600', color: Colors.brand.purple },
   categoriesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  categoryCard: { width: (SCREEN_WIDTH - 56) / 3, alignItems: 'center', padding: Spacing.md, backgroundColor: Colors.background.secondary, borderRadius: 16 },
+  categoryCard: { width: (SCREEN_WIDTH - 56) / 3, alignItems: 'center', padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: 16 },
   categoryIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], backgroundColor: '#3B82F620', justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
-  categoryTitle: { fontSize: 12, fontWeight: '600', color: Colors.nileBlue, marginBottom: 2, textAlign: 'center' },
-  categoryCount: { fontSize: 10, color: Colors.neutral[500] },
-  brandCard: { width: 100, alignItems: 'center', padding: Spacing.md, backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.lg, marginRight: 12 },
+  categoryTitle: { fontSize: 12, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textAlign: 'center' },
+  categoryCount: { fontSize: 10, color: colors.neutral[500] },
+  brandCard: { width: 100, alignItems: 'center', padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.lg, marginRight: 12 },
   brandLogoImage: { width: 40, height: 40, borderRadius: 20, marginBottom: 8 },
-  brandName: { fontSize: 12, fontWeight: '600', color: Colors.nileBlue, marginBottom: 2, textAlign: 'center' },
+  brandName: { fontSize: 12, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textAlign: 'center' },
   brandDiscount: { fontSize: 10, color: Colors.success, fontWeight: '600' },
   productsRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 12 },
-  productCard: { width: (SCREEN_WIDTH - 44) / 2, backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border.default },
+  productCard: { width: (SCREEN_WIDTH - 44) / 2, backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.border.default },
   productCardSpacer: { width: (SCREEN_WIDTH - 44) / 2 },
   productImage: { width: '100%', height: 140 },
   cashbackBadge: { position: 'absolute', top: 8, right: 8, backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: 8 },
-  cashbackText: { fontSize: 11, fontWeight: '700', color: Colors.text.inverse },
+  cashbackText: { fontSize: 11, fontWeight: '700', color: colors.text.inverse },
   productInfo: { padding: 12 },
-  productBrand: { fontSize: 11, color: Colors.neutral[500], marginBottom: 2 },
-  productName: { fontSize: 14, fontWeight: '600', color: Colors.nileBlue, marginBottom: 4 },
+  productBrand: { fontSize: 11, color: colors.neutral[500], marginBottom: 2 },
+  productName: { fontSize: 14, fontWeight: '600', color: colors.nileBlue, marginBottom: 4 },
   ratingContainer: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginBottom: 8 },
-  ratingText: { fontSize: 12, color: Colors.nileBlue, fontWeight: '600' },
+  ratingText: { fontSize: 12, color: colors.nileBlue, fontWeight: '600' },
   priceRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   productPrice: { fontSize: 15, fontWeight: '700', color: colors.neutral[900] },
-  originalPrice: { fontSize: 12, color: Colors.neutral[500], textDecorationLine: 'line-through' },
+  originalPrice: { fontSize: 12, color: colors.neutral[500], textDecorationLine: 'line-through' },
   promoBanner: { marginHorizontal: 16, marginTop: 8 },
   promoGradient: { padding: Spacing.xl, borderRadius: BorderRadius.lg, alignItems: 'center' },
-  promoTitle: { fontSize: 18, fontWeight: '700', color: Colors.text.inverse, marginBottom: 4 },
+  promoTitle: { fontSize: 18, fontWeight: '700', color: colors.text.inverse, marginBottom: 4 },
   promoSubtitle: { fontSize: 13, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: 16 },
-  promoButton: { backgroundColor: Colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: 24 },
+  promoButton: { backgroundColor: colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: 24 },
   promoButtonText: { fontSize: 14, fontWeight: '700', color: colors.warningScale[400] },
   // Empty states
   emptyState: { alignItems: 'center', paddingVertical: 24 },
-  emptyIconWrapper: { width: 72, height: 72, borderRadius: 36, backgroundColor: Colors.neutral[100], justifyContent: 'center', alignItems: 'center', marginBottom: 12 },
-  emptyTitle: { fontSize: 15, fontWeight: '600', color: Colors.nileBlue, marginBottom: 4 },
-  emptySubtitle: { fontSize: 13, color: Colors.neutral[500] },
+  emptyIconWrapper: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center', marginBottom: 12 },
+  emptyTitle: { fontSize: 15, fontWeight: '600', color: colors.nileBlue, marginBottom: 4 },
+  emptySubtitle: { fontSize: 13, color: colors.neutral[500] },
 });
 
 export default withErrorBoundary(ElectronicsPage, 'Electronics');

@@ -493,7 +493,7 @@ const StoreListPage: React.FC = () => {
                       <Ionicons
                         name={(subSub.icon + '-outline') as keyof typeof Ionicons.glyphMap}
                         size={14}
-                        color={selectedSubSubCategory === subSub.slug ? Colors.text.inverse : Colors.text.tertiary}
+                        color={selectedSubSubCategory === subSub.slug ? colors.text.inverse : colors.text.tertiary}
                         style={styles.subSubCategoryChipIcon}
                       />
                     )}
@@ -681,12 +681,12 @@ const StoreListPage: React.FC = () => {
           <View style={styles.sortModalContent}>
             {/* Drag handle */}
             <View style={{ alignItems: 'center', paddingVertical: Spacing.sm }}>
-              <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: Colors.border.default }} />
+              <View style={{ width: 36, height: 4, borderRadius: 2, backgroundColor: colors.border.default }} />
             </View>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Sort By</Text>
               <Pressable onPress={() => setShowSortModal(false)}>
-                <Ionicons name="close-circle" size={28} color={Colors.border.default} />
+                <Ionicons name="close-circle" size={28} color={colors.border.default} />
               </Pressable>
             </View>
 
@@ -706,8 +706,8 @@ const StoreListPage: React.FC = () => {
                
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                  <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: sortBy === option.key ? option.color + '15' : Colors.background.secondary, alignItems: 'center', justifyContent: 'center' }}>
-                    <Ionicons name={option.icon} size={16} color={sortBy === option.key ? option.color : Colors.text.tertiary} />
+                  <View style={{ width: 32, height: 32, borderRadius: 10, backgroundColor: sortBy === option.key ? option.color + '15' : colors.background.secondary, alignItems: 'center', justifyContent: 'center' }}>
+                    <Ionicons name={option.icon} size={16} color={sortBy === option.key ? option.color : colors.text.tertiary} />
                   </View>
                   <Text style={[
                     styles.sortOptionText,
@@ -741,7 +741,7 @@ const StoreListPage: React.FC = () => {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Select Subcategory</Text>
               <Pressable onPress={() => setShowSubcategoryModal(false)}>
-                <Ionicons name="close" size={24} color={Colors.text.tertiary} />
+                <Ionicons name="close" size={24} color={colors.text.tertiary} />
               </Pressable>
             </View>
 
@@ -814,7 +814,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
   return StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Colors.background.secondary,
+      backgroundColor: colors.background.secondary,
     },
     safeArea: {
       flex: 1,
@@ -831,7 +831,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       justifyContent: 'space-between',
       paddingHorizontal: horizontalPadding,
       paddingVertical: Spacing.sm,
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderBottomWidth: 1,
       borderBottomColor: 'rgba(0, 0, 0, 0.04)',
     },
@@ -839,7 +839,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       ...Typography.bodySmall,
       fontSize: 13,
       fontWeight: '600',
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
     },
     activeFilterIndicator: {
       flexDirection: 'row',
@@ -886,7 +886,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       alignItems: 'center',
       justifyContent: 'flex-end',
       gap: Spacing.sm,
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderBottomWidth: 1,
       borderBottomColor: 'rgba(0, 0, 0, 0.05)',
     },
@@ -898,7 +898,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       flexShrink: 0,
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       paddingHorizontal: Spacing.md,
       paddingVertical: Spacing.sm,
       borderRadius: BorderRadius.xl,
@@ -932,10 +932,10 @@ const createStyles = (screenData: { width: number; height: number }) => {
     headerSortButtonText: {
       ...Typography.bodySmall,
       fontWeight: '700',
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
     },
     quickFilterContainer: {
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderBottomWidth: 1,
       borderBottomColor: 'rgba(0, 0, 0, 0.04)',
     },
@@ -950,10 +950,10 @@ const createStyles = (screenData: { width: number; height: number }) => {
       alignItems: 'center',
       paddingHorizontal: Spacing.md + 2,
       paddingVertical: Spacing.sm,
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderRadius: BorderRadius['2xl'] - 2,
       borderWidth: 1.5,
-      borderColor: Colors.border.default,
+      borderColor: colors.border.default,
       shadowColor: '#000',
       shadowOpacity: 0.03,
       shadowRadius: 4,
@@ -972,10 +972,10 @@ const createStyles = (screenData: { width: number; height: number }) => {
       ...Typography.bodySmall,
       fontSize: 12.5,
       fontWeight: '600',
-      color: Colors.text.secondary,
+      color: colors.text.secondary,
     },
     quickFilterChipTextActive: {
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
       fontWeight: '700',
     },
     loadingMoreContainer: {
@@ -990,7 +990,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       ...Typography.bodySmall,
       fontSize: 13,
       fontWeight: '500',
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
     },
     modalOverlay: {
       flex: 1,
@@ -998,7 +998,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       justifyContent: 'flex-end',
     },
     sortModalContent: {
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderTopLeftRadius: 28,
       borderTopRightRadius: 28,
       paddingTop: Spacing.sm,
@@ -1015,7 +1015,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
     modalTitle: {
       ...Typography.h3,
       fontWeight: '800',
-      color: Colors.text.primary,
+      color: colors.text.primary,
       letterSpacing: -0.3,
     },
     sortOption: {
@@ -1026,7 +1026,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       paddingHorizontal: Spacing.base,
       borderRadius: BorderRadius.md + 2,
       marginBottom: 6,
-      backgroundColor: Colors.background.secondary,
+      backgroundColor: colors.background.secondary,
     },
     sortOptionActive: {
       backgroundColor: Colors.successScale[50],
@@ -1037,7 +1037,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       ...Typography.body,
       fontSize: 15,
       fontWeight: '500',
-      color: Colors.text.secondary,
+      color: colors.text.secondary,
     },
     sortOptionTextActive: {
       color: colors.successScale[700],
@@ -1046,13 +1046,13 @@ const createStyles = (screenData: { width: number; height: number }) => {
     subcategoryContainer: {
       paddingHorizontal: horizontalPadding,
       paddingVertical: Spacing.sm,
-      backgroundColor: Colors.background.secondary,
+      backgroundColor: colors.background.secondary,
     },
     subcategoryDropdown: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       paddingHorizontal: Spacing.base,
       paddingVertical: Spacing.md,
       borderRadius: BorderRadius.md + 2,
@@ -1067,10 +1067,10 @@ const createStyles = (screenData: { width: number; height: number }) => {
     subcategoryLabel: {
       ...Typography.body,
       fontWeight: '600',
-      color: Colors.text.secondary,
+      color: colors.text.secondary,
     },
     subSubCategoryContainer: {
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderBottomWidth: 1,
       borderBottomColor: 'rgba(0, 0, 0, 0.04)',
     },
@@ -1092,10 +1092,10 @@ const createStyles = (screenData: { width: number; height: number }) => {
       alignItems: 'center',
       paddingHorizontal: Spacing.md + 2,
       paddingVertical: Spacing.sm,
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderRadius: BorderRadius['2xl'] - 2,
       borderWidth: 1.5,
-      borderColor: Colors.border.default,
+      borderColor: colors.border.default,
     },
     subSubCategoryChipActive: {
       backgroundColor: colors.brand.green,
@@ -1108,10 +1108,10 @@ const createStyles = (screenData: { width: number; height: number }) => {
       ...Typography.bodySmall,
       fontSize: 13,
       fontWeight: '500',
-      color: Colors.text.secondary,
+      color: colors.text.secondary,
     },
     subSubCategoryChipTextActive: {
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
       fontWeight: '600',
     },
   });

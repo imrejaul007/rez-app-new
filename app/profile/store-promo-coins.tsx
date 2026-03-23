@@ -124,7 +124,7 @@ function StorePromoCoinsPage() {
     <View style={styles.container}>
       {/* Header */}
       <LinearGradient
-        colors={[Colors.gold, Colors.nileBlue]}
+        colors={[Colors.gold, colors.nileBlue]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
@@ -137,7 +137,7 @@ function StorePromoCoinsPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Store Promo Coins</ThemedText>
           <View style={styles.headerPlaceholder} />
@@ -165,7 +165,7 @@ function StorePromoCoinsPage() {
               accessibilityLabel={`Available promo coins: ${summary.totalAvailable}`}
               accessibilityRole="summary"
             >
-              <Ionicons name="diamond" size={24} color={Colors.text.inverse} />
+              <Ionicons name="diamond" size={24} color={colors.text.inverse} />
               <ThemedText style={styles.summaryValue}>
                 {summary.totalAvailable}
               </ThemedText>
@@ -177,7 +177,7 @@ function StorePromoCoinsPage() {
               accessibilityLabel={`Total coins earned: ${summary.totalEarned}`}
               accessibilityRole="summary"
             >
-              <Ionicons name="trending-up" size={24} color={Colors.text.inverse} />
+              <Ionicons name="trending-up" size={24} color={colors.text.inverse} />
               <ThemedText style={styles.summaryValue}>
                 {summary.totalEarned}
               </ThemedText>
@@ -191,7 +191,7 @@ function StorePromoCoinsPage() {
               accessibilityLabel={`Coins used: ${summary.totalUsed}`}
               accessibilityRole="summary"
             >
-              <Ionicons name="cart" size={24} color={Colors.text.inverse} />
+              <Ionicons name="cart" size={24} color={colors.text.inverse} />
               <ThemedText style={styles.summaryValue}>
                 {summary.totalUsed}
               </ThemedText>
@@ -203,7 +203,7 @@ function StorePromoCoinsPage() {
               accessibilityLabel={`Active stores: ${summary.storeCount}`}
               accessibilityRole="summary"
             >
-              <Ionicons name="storefront" size={24} color={Colors.text.inverse} />
+              <Ionicons name="storefront" size={24} color={colors.text.inverse} />
               <ThemedText style={styles.summaryValue}>
                 {summary.storeCount}
               </ThemedText>
@@ -230,7 +230,7 @@ function StorePromoCoinsPage() {
             </View>
           ) : storeCoins.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="storefront-outline" size={64} color={Colors.text.tertiary} />
+              <Ionicons name="storefront-outline" size={64} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyTitle}>No Store Coins Yet</ThemedText>
               <ThemedText style={styles.emptySubtitle}>
                 Complete orders to earn store-specific coins!
@@ -322,7 +322,7 @@ function StorePromoCoinsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerPlaceholder: {
     width: 40,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   summaryValue: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginTop: Spacing.sm,
   },
   summaryLabel: {
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   infoBannerText: {
     flex: 1,
     ...Typography.bodySmall,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     lineHeight: 18,
   },
   storeListContainer: {
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   loadingContainer: {
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -432,22 +432,22 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
   },
   emptySubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
     textAlign: 'center',
   },
   storeCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -482,12 +482,12 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   storeLastEarned: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   coinBadge: {
     flexDirection: 'row',
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
   },
   statItem: {
     flex: 1,
@@ -518,17 +518,17 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statDivider: {
     width: 1,
     height: 32,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   expiryContainer: {
     flexDirection: 'row',
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
     gap: 6,
   },
   expiryText: {

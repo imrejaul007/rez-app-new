@@ -58,8 +58,8 @@ const HotRightNow = () => {
 
   const getOfferBadgeColor = (offer: string) => {
     if (offer?.toLowerCase().includes('cashback')) return Colors.gold;
-    if (offer?.toLowerCase().includes('off')) return Colors.nileBlue;
-    if (offer?.toLowerCase().includes('buy')) return Colors.nileBlue;
+    if (offer?.toLowerCase().includes('off')) return colors.nileBlue;
+    if (offer?.toLowerCase().includes('buy')) return colors.nileBlue;
     return Colors.gold;
   };
 
@@ -124,7 +124,7 @@ const HotRightNow = () => {
                 {product.price > 0 && <Text style={styles.price}>{'\u20B9'}{product.price.toLocaleString('en-IN')}</Text>}
                 {product.distance && (
                   <View style={styles.distanceContainer}>
-                    <Ionicons name="location" size={12} color={Colors.text.tertiary} />
+                    <Ionicons name="location" size={12} color={colors.text.tertiary} />
                     <Text style={styles.distanceText}>{product.distance}</Text>
                   </View>
                 )}
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   retryButton: {
     marginTop: Spacing.sm,
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   viewAllText: {
     fontSize: Typography.body.fontSize,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   productCard: {
     width: CARD_WIDTH,
     marginBottom: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     shadowColor: '#000',
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: CARD_WIDTH * 0.8,
     position: 'relative',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   productImage: {
     width: '100%',
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   offerBadgeText: {
     fontSize: Typography.caption.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   productInfo: {
     padding: Spacing.md,
@@ -231,12 +231,12 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2,
   },
   storeName: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   priceRow: {
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   distanceContainer: {
     flexDirection: 'row',
@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   },
   distanceText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

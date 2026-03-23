@@ -110,8 +110,8 @@ function BonusZonePage() {
         options={{
           headerShown: true,
           title: 'Bonus Zone',
-          headerStyle: { backgroundColor: Colors.background.primary },
-          headerTintColor: Colors.nileBlue,
+          headerStyle: { backgroundColor: colors.background.primary },
+          headerTintColor: colors.nileBlue,
         }}
       />
 
@@ -143,7 +143,7 @@ function BonusZonePage() {
             {/* Search Bar */}
             <View style={styles.searchContainer}>
               <View style={styles.searchInputWrapper}>
-                <Ionicons name="search-outline" size={18} color={Colors.text.tertiary} style={styles.searchIcon} />
+                <Ionicons name="search-outline" size={18} color={colors.text.tertiary} style={styles.searchIcon} />
                 <TextInput
                   style={styles.searchInput}
                   placeholder="Search campaigns..."
@@ -160,7 +160,7 @@ function BonusZonePage() {
                     style={styles.searchClearButton}
                     hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   >
-                    <Ionicons name="close-circle" size={18} color={Colors.text.tertiary} />
+                    <Ionicons name="close-circle" size={18} color={colors.text.tertiary} />
                   </Pressable>
                 )}
               </View>
@@ -216,13 +216,13 @@ function BonusZonePage() {
                   style={{ marginTop: Spacing.base, paddingHorizontal: Spacing.lg, paddingVertical: 10, backgroundColor: colors.brand.orange, borderRadius: BorderRadius.sm }}
                   onPress={fetchCampaigns}
                 >
-                  <Text style={{ color: Colors.text.inverse, fontWeight: '600', ...Typography.body }}>Retry</Text>
+                  <Text style={{ color: colors.text.inverse, fontWeight: '600', ...Typography.body }}>Retry</Text>
                 </Pressable>
               </View>
             ) : filteredCampaigns.length === 0 ? (
               /* Empty State */
               <View style={styles.emptyContainer}>
-                <Ionicons name={searchQuery.trim() ? 'search-outline' : 'gift-outline'} size={48} color={Colors.border.default} />
+                <Ionicons name={searchQuery.trim() ? 'search-outline' : 'gift-outline'} size={48} color={colors.border.default} />
                 <Text style={styles.emptyTitle}>
                   {searchQuery.trim() ? 'No matching campaigns' : 'No campaigns available'}
                 </Text>
@@ -250,9 +250,9 @@ function BonusZonePage() {
               style={styles.historyLink}
               onPress={() => router.push('/bonus-zone-history' as any)}
             >
-              <Ionicons name="receipt-outline" size={18} color={Colors.text.tertiary} />
+              <Ionicons name="receipt-outline" size={18} color={colors.text.tertiary} />
               <Text style={styles.historyLinkText}>View Claim History</Text>
-              <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
             </Pressable>
           </>
         )}
@@ -273,34 +273,34 @@ function BonusZonePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   contentContainer: {
     paddingBottom: 120,
   },
   header: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.base,
     paddingBottom: Spacing.lg,
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.sm,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
     textAlign: 'center',
   },
   searchContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.xs,
@@ -308,7 +308,7 @@ const styles = StyleSheet.create({
   searchInputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: 10,
     paddingHorizontal: Spacing.md,
     height: 40,
@@ -319,16 +319,16 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.body,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     paddingVertical: 0,
   },
   searchClearButton: {
     marginLeft: Spacing.xs,
   },
   filtersContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   filtersContent: {
     paddingHorizontal: Spacing.base,
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
   },
   filterTabActive: {
@@ -348,10 +348,10 @@ const styles = StyleSheet.create({
   filterTabText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterTabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   loadingContainer: {
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   emptyContainer: {
@@ -371,12 +371,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
   },
   emptySubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 6,
     textAlign: 'center',
   },
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   sectionLabel: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.md,
   },
   resultCount: {
@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
   },
   resultCountText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   historyLink: {
@@ -408,15 +408,15 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.base,
     marginTop: Spacing.base,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: Spacing.sm,
   },
   historyLinkText: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

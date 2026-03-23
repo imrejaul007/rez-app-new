@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { BRAND } from '@/constants/brand';
 import { LiveTournament } from '@/services/tournamentApi';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
@@ -25,7 +25,7 @@ const TournamentsSection = React.memo(function TournamentsSection({
       <View style={styles.sectionHeaderWithLink}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
           <View style={styles.tournamentIconBg}>
-            <Ionicons name="trophy" size={18} color={Colors.text.inverse} />
+            <Ionicons name="trophy" size={18} color={colors.text.inverse} />
           </View>
           <View>
             <Text style={styles.sectionTitle}>Tournaments</Text>
@@ -107,7 +107,7 @@ const TournamentsSection = React.memo(function TournamentsSection({
                 <Text style={styles.tournamentCTAText}>
                   {tournament.isParticipant ? 'View Tournament' : 'Join Now'}
                 </Text>
-                <Ionicons name="arrow-forward" size={16} color={Colors.nileBlue} />
+                <Ionicons name="arrow-forward" size={16} color={colors.nileBlue} />
               </View>
             </LinearGradient>
           </Pressable>

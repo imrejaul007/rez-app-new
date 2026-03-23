@@ -825,7 +825,7 @@ function StoreVisitPageInner() {
               )}
               {(store.location?.address || store.location?.city) && (
                 <View style={styles.addressRow}>
-                  <Ionicons name="location-outline" size={12} color={Colors.text.tertiary} />
+                  <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />
                   <Text style={styles.addressText} numberOfLines={1}>
                     {[store.location?.address, store.location?.city].filter(Boolean).join(', ')}
                   </Text>
@@ -851,7 +851,7 @@ function StoreVisitPageInner() {
               <View>
                 <Text style={styles.cardTitle}>Live Availability</Text>
                 <View style={styles.lastUpdatedContainer}>
-                  <Ionicons name="time-outline" size={10} color={Colors.text.tertiary} />
+                  <Ionicons name="time-outline" size={10} color={colors.text.tertiary} />
                   <Text style={styles.lastUpdatedText}>{getTimeSinceUpdate()}</Text>
                 </View>
               </View>
@@ -883,7 +883,7 @@ function StoreVisitPageInner() {
                   onPress={() => router.push('/my-visits')}
                   style={styles.viewMyVisitsBtn}
                 >
-                  <Ionicons name="list-outline" size={14} color={Colors.nileBlue} />
+                  <Ionicons name="list-outline" size={14} color={colors.nileBlue} />
                   <Text style={styles.viewMyVisitsText}>View My Visits</Text>
                 </Pressable>
               </View>
@@ -901,7 +901,7 @@ function StoreVisitPageInner() {
           </View>
           <View style={styles.hoursContainer}>
             <LinearGradient
-              colors={isOpen ? [Colors.gold, Colors.nileBlue] : [Colors.error, Colors.error]}
+              colors={isOpen ? [Colors.gold, colors.nileBlue] : [Colors.error, Colors.error]}
               style={styles.statusBadge}
             >
               <Ionicons name={isOpen ? "checkmark-circle" : "close-circle"} size={16} color="white" />
@@ -909,7 +909,7 @@ function StoreVisitPageInner() {
             </LinearGradient>
             {isOpen && (
               <View style={styles.hoursTextContainer}>
-                <Ionicons name="time" size={18} color={Colors.nileBlue} />
+                <Ionicons name="time" size={18} color={colors.nileBlue} />
                 <Text style={styles.hoursText}>
                   {todayHours.open} - {todayHours.close}
                 </Text>
@@ -929,10 +929,10 @@ function StoreVisitPageInner() {
 
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>
-              <Ionicons name="person" size={14} color={Colors.nileBlue} /> Name *
+              <Ionicons name="person" size={14} color={colors.nileBlue} /> Name *
             </Text>
             <View style={styles.inputWrapper}>
-              <Ionicons name="person-outline" size={18} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={18} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="Enter your name"
@@ -945,10 +945,10 @@ function StoreVisitPageInner() {
 
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>
-              <Ionicons name="call" size={14} color={Colors.nileBlue} /> Phone Number *
+              <Ionicons name="call" size={14} color={colors.nileBlue} /> Phone Number *
             </Text>
             <View style={styles.inputWrapper}>
-              <Ionicons name="call-outline" size={18} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="call-outline" size={18} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="Enter 10-digit phone number"
@@ -963,10 +963,10 @@ function StoreVisitPageInner() {
 
           <View style={styles.inputContainer}>
             <Text style={styles.inputLabel}>
-              <Ionicons name="mail" size={14} color={Colors.text.tertiary} /> Email (Optional)
+              <Ionicons name="mail" size={14} color={colors.text.tertiary} /> Email (Optional)
             </Text>
             <View style={styles.inputWrapper}>
-              <Ionicons name="mail-outline" size={18} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={18} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder="Enter your email"
@@ -1001,12 +1001,12 @@ function StoreVisitPageInner() {
               {paymentMethod === 'none' ? (
                 <View style={styles.paymentOptionInner}>
                   <Ionicons name="walk-outline" size={20} color={Colors.gold} />
-                  <Text style={[styles.paymentOptionText, { color: Colors.nileBlue }]}>No Payment Required</Text>
+                  <Text style={[styles.paymentOptionText, { color: colors.nileBlue }]}>No Payment Required</Text>
                   <Text style={styles.paymentOptionSubtext}>Just visiting</Text>
                 </View>
               ) : (
                 <View style={styles.paymentOptionInner}>
-                  <Ionicons name="walk-outline" size={22} color={Colors.text.tertiary} />
+                  <Ionicons name="walk-outline" size={22} color={colors.text.tertiary} />
                   <Text style={styles.paymentOptionText}>No Payment Required</Text>
                   <Text style={styles.paymentOptionSubtext}>Just visiting</Text>
                 </View>
@@ -1024,12 +1024,12 @@ function StoreVisitPageInner() {
               {paymentMethod === 'pay_at_store' ? (
                 <View style={styles.paymentOptionInner}>
                   <Ionicons name="storefront-outline" size={20} color={Colors.gold} />
-                  <Text style={[styles.paymentOptionText, { color: Colors.nileBlue }]}>Pay at Store</Text>
+                  <Text style={[styles.paymentOptionText, { color: colors.nileBlue }]}>Pay at Store</Text>
                   <Text style={styles.paymentOptionSubtext}>Pay when you arrive</Text>
                 </View>
               ) : (
                 <View style={styles.paymentOptionInner}>
-                  <Ionicons name="storefront-outline" size={22} color={Colors.text.tertiary} />
+                  <Ionicons name="storefront-outline" size={22} color={colors.text.tertiary} />
                   <Text style={styles.paymentOptionText}>Pay at Store</Text>
                   <Text style={styles.paymentOptionSubtext}>Pay when you arrive</Text>
                 </View>
@@ -1048,7 +1048,7 @@ function StoreVisitPageInner() {
           </View>
 
           <View style={styles.sectionHeader}>
-            <Ionicons name="calendar" size={16} color={Colors.nileBlue} />
+            <Ionicons name="calendar" size={16} color={colors.nileBlue} />
             <Text style={styles.sectionLabel}>Select Date</Text>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dateScroll}>
@@ -1094,7 +1094,7 @@ function StoreVisitPageInner() {
           </ScrollView>
 
           <View style={[styles.sectionHeader, styles.sectionHeaderSpaced]}>
-            <Ionicons name="time" size={16} color={Colors.nileBlue} />
+            <Ionicons name="time" size={16} color={colors.nileBlue} />
             <Text style={styles.sectionLabel}>Select Time</Text>
             {loadingSlots && (
               <ActivityIndicator size="small" color={Colors.gold} style={{ marginLeft: 8 }} />
@@ -1125,7 +1125,7 @@ function StoreVisitPageInner() {
                 >
                   {isBooked ? (
                     <View style={[styles.timeSlot, styles.timeSlotBooked]}>
-                      <Text style={[styles.timeText, { color: Colors.text.tertiary }]}>{time}</Text>
+                      <Text style={[styles.timeText, { color: colors.text.tertiary }]}>{time}</Text>
                       <Text style={styles.bookedText}>Booked</Text>
                     </View>
                   ) : isSelected ? (
@@ -1159,7 +1159,7 @@ function StoreVisitPageInner() {
                 <Ionicons
                   name={isClosed ? "close-circle-outline" : "time-outline"}
                   size={24}
-                  color={isClosed ? Colors.error : Colors.text.tertiary}
+                  color={isClosed ? Colors.error : colors.text.tertiary}
                 />
                 <Text style={styles.noTimeSlotsText}>
                   {isClosed
@@ -1185,9 +1185,9 @@ function StoreVisitPageInner() {
             >
               <View style={styles.buttonContent}>
                 {gettingQueue ? (
-                  <ActivityIndicator size="small" color={Colors.nileBlue} />
+                  <ActivityIndicator size="small" color={colors.nileBlue} />
                 ) : (
-                  <Ionicons name="ticket" size={20} color={Colors.nileBlue} />
+                  <Ionicons name="ticket" size={20} color={colors.nileBlue} />
                 )}
                 <Text style={styles.secondaryButtonText}>
                   {gettingQueue ? 'Getting...' : queueNumber ? `Queue #${queueNumber}` : 'Get Queue'}
@@ -1215,9 +1215,9 @@ function StoreVisitPageInner() {
           >
             <View style={styles.primaryButtonInner}>
               {schedulingVisit ? (
-                <ActivityIndicator size="small" color={Colors.nileBlue} />
+                <ActivityIndicator size="small" color={colors.nileBlue} />
               ) : (
-                <Ionicons name="calendar" size={20} color={Colors.nileBlue} />
+                <Ionicons name="calendar" size={20} color={colors.nileBlue} />
               )}
               <Text style={styles.primaryButtonText}>
                 {schedulingVisit
@@ -1232,7 +1232,7 @@ function StoreVisitPageInner() {
             onPress={() => router.push('/my-visits')}
             style={styles.viewPlannedVisitsBtn}
           >
-            <Ionicons name="list-outline" size={16} color={Colors.nileBlue} />
+            <Ionicons name="list-outline" size={16} color={colors.nileBlue} />
             <Text style={styles.viewPlannedVisitsText}>View My Planned Visits</Text>
           </Pressable>
         </View>
@@ -1244,7 +1244,7 @@ function StoreVisitPageInner() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 30,
@@ -1286,15 +1286,15 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   storeCategory: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 1,
   },
   addressText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontSize: 12,
     flex: 1,
   },
@@ -1313,7 +1313,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '600',
   },
   errorContainer: {
@@ -1325,7 +1325,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -1337,18 +1337,18 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   retryButtonText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontSize: 16,
     fontWeight: '700',
   },
   card: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     marginBottom: Spacing.md,
     ...Shadows.subtle,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -1372,7 +1372,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   lastUpdatedContainer: {
     flexDirection: 'row',
@@ -1382,7 +1382,7 @@ const styles = StyleSheet.create({
   },
   lastUpdatedText: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   crowdStatusContainer: {
@@ -1411,19 +1411,19 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
-    backgroundColor: Colors.background.secondary,
+    borderColor: colors.border.default,
+    backgroundColor: colors.background.secondary,
   },
   queueNumberLabel: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 4,
     fontWeight: '600',
   },
   queueNumberValue: {
     fontSize: 28,
     fontWeight: '900',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: 1,
   },
   hoursContainer: {
@@ -1453,7 +1453,7 @@ const styles = StyleSheet.create({
   },
   hoursText: {
     fontSize: 14,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '600',
   },
   sectionHeader: {
@@ -1468,15 +1468,15 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 6,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     paddingHorizontal: 14,
     height: 48,
@@ -1487,13 +1487,13 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 14,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '500',
   },
   sectionLabel: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   dateScroll: {
     marginTop: Spacing.xs,
@@ -1502,7 +1502,7 @@ const styles = StyleSheet.create({
   dateCard: {
     backgroundColor: 'white',
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     width: 64,
     height: 84,
@@ -1516,7 +1516,7 @@ const styles = StyleSheet.create({
   },
   dateDay: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
     textTransform: 'uppercase',
   },
@@ -1526,7 +1526,7 @@ const styles = StyleSheet.create({
   dateNumber: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginVertical: 2,
   },
   dateNumberSelected: {
@@ -1534,7 +1534,7 @@ const styles = StyleSheet.create({
   },
   dateLabel: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   dateLabelSelected: {
@@ -1549,7 +1549,7 @@ const styles = StyleSheet.create({
   timeSlot: {
     backgroundColor: 'white',
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     paddingVertical: 10,
     width: (SCREEN_WIDTH - 32 - 24) / 4,
@@ -1564,12 +1564,12 @@ const styles = StyleSheet.create({
   },
   timeSlotBooked: {
     opacity: 0.4,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   timeText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   timeTextSelected: {
     color: Colors.gold,
@@ -1580,13 +1580,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 20,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     marginTop: Spacing.sm,
   },
   noTimeSlotsText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: 6,
     lineHeight: 18,
@@ -1620,7 +1620,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   primaryButtonText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontSize: 15,
     fontWeight: '700',
   },
@@ -1634,13 +1634,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'white',
     borderWidth: 1.5,
-    borderColor: Colors.nileBlue,
+    borderColor: colors.nileBlue,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
   },
   secondaryButtonText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontSize: 13,
     fontWeight: '700',
   },
@@ -1656,7 +1656,7 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     borderRadius: BorderRadius.md,
   },
   directionsButtonText: {
@@ -1671,7 +1671,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: BorderRadius.md,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     overflow: 'hidden',
   },
   paymentOptionSelected: {
@@ -1688,13 +1688,13 @@ const styles = StyleSheet.create({
   paymentOptionText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
   paymentOptionTextSelected: {
     fontSize: 12,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
   },
 
@@ -1705,17 +1705,17 @@ const styles = StyleSheet.create({
   addressRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
   queueWaitRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: Spacing.sm },
   queueWaitText: { fontSize: 13, color: Colors.gold, fontWeight: '600' },
-  queueSizeText: { fontSize: 12, color: Colors.text.tertiary, marginTop: Spacing.xs },
+  queueSizeText: { fontSize: 12, color: colors.text.tertiary, marginTop: Spacing.xs },
   viewMyVisitsBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10, paddingVertical: 6, paddingHorizontal: Spacing.md, borderRadius: BorderRadius.md, backgroundColor: Colors.gold + '15' },
-  viewMyVisitsText: { fontSize: 13, color: Colors.nileBlue, fontWeight: '700' },
+  viewMyVisitsText: { fontSize: 13, color: colors.nileBlue, fontWeight: '700' },
   paymentOptionsRow: { flexDirection: 'row', gap: 10 },
-  paymentOptionSubtext: { fontSize: 11, color: Colors.text.tertiary, textAlign: 'center' },
+  paymentOptionSubtext: { fontSize: 11, color: colors.text.tertiary, textAlign: 'center' },
   sectionHeaderSpaced: { marginTop: 24 },
-  bookedText: { fontSize: 10, color: Colors.text.tertiary, fontWeight: '600' },
+  bookedText: { fontSize: 10, color: colors.text.tertiary, fontWeight: '600' },
   allBookedBanner: { backgroundColor: Colors.errorScale[50], padding: Spacing.md, borderRadius: BorderRadius.sm, marginTop: Spacing.sm, flexDirection: 'row', alignItems: 'center', gap: 8 },
   allBookedText: { color: Colors.error, fontSize: 13, flex: 1 },
   viewPlannedVisitsBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: Spacing.sm },
-  viewPlannedVisitsText: { fontSize: 14, color: Colors.nileBlue, fontWeight: '700' },
+  viewPlannedVisitsText: { fontSize: 14, color: colors.nileBlue, fontWeight: '700' },
 });
 
 // Wrap component with ErrorBoundary for production safety

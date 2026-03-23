@@ -166,7 +166,7 @@ function MyVisitsPage() {
       case 'checked_in':
         return Colors.info; // Blue
       case 'completed':
-        return Colors.text.tertiary; // Gray
+        return colors.text.tertiary; // Gray
       case 'cancelled':
         return Colors.error; // Red
       default:
@@ -403,7 +403,7 @@ function MyVisitsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -443,13 +443,13 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   tab: {
     flex: 1,
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
   tabText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   activeTabText: {
     color: colors.brand.green,
@@ -486,24 +486,24 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.xl,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
   },
   visitCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.base,
     ...Shadows.subtle,
     borderWidth: 1,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
   },
   storeHeader: {
     flexDirection: 'row',
@@ -525,12 +525,12 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   visitNumber: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   statusBadge: {
@@ -556,12 +556,12 @@ const styles = StyleSheet.create({
   },
   detailText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
   },
   actionsContainer: {
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
     paddingTop: Spacing.base,
   },
   actionsRow: {
@@ -609,7 +609,7 @@ const styles = StyleSheet.create({
   browseButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   visitTypeBadgeRow: {
     flexDirection: 'row',
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
   queueNumberText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

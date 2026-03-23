@@ -200,7 +200,7 @@ function BillHistoryPage() {
         return Colors.warning;
       case 'pending':
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -362,7 +362,7 @@ function BillHistoryPage() {
         )}
       </View>
 
-      <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+      <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
     </Pressable>
   ), []);
 
@@ -392,7 +392,7 @@ function BillHistoryPage() {
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Bill Details</Text>
               <Pressable onPress={() => setShowDetailModal(false)}>
-                <Ionicons name="close" size={24} color={Colors.text.tertiary} />
+                <Ionicons name="close" size={24} color={colors.text.tertiary} />
               </Pressable>
             </View>
 
@@ -535,7 +535,7 @@ function BillHistoryPage() {
                   style={styles.resubmitButton}
                   onPress={() => resubmitBill(selectedBill._id)}
                 >
-                  <Ionicons name="refresh" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="refresh" size={20} color={colors.text.inverse} />
                   <Text style={styles.resubmitButtonText}>Resubmit Bill</Text>
                 </Pressable>
               )}
@@ -549,7 +549,7 @@ function BillHistoryPage() {
   // Render empty state
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Ionicons name="receipt-outline" size={80} color={Colors.border.default} />
+      <Ionicons name="receipt-outline" size={80} color={colors.border.default} />
       <Text style={styles.emptyStateTitle}>No Bills Yet</Text>
       <Text style={styles.emptyStateText}>
         Upload your bills to start earning cashback on offline purchases
@@ -558,7 +558,7 @@ function BillHistoryPage() {
         style={styles.uploadButton}
         onPress={() => router?.push && router.push('/bill-upload')}
       >
-        <Ionicons name="add" size={20} color={Colors.text.inverse} />
+        <Ionicons name="add" size={20} color={colors.text.inverse} />
         <Text style={styles.uploadButtonText}>Upload Bill</Text>
       </Pressable>
     </View>
@@ -569,7 +569,7 @@ function BillHistoryPage() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={handleGoBack}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Bill History</Text>
         <Pressable onPress={() => router?.push && router.push('/bill-upload')}>
@@ -640,21 +640,21 @@ function BillHistoryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   statsContainer: {
     flexDirection: 'row',
@@ -663,7 +663,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
@@ -671,11 +671,11 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   filtersContainer: {
@@ -686,10 +686,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginRight: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   filterButtonActive: {
     backgroundColor: '#FF6B35',
@@ -697,18 +697,18 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   filterButtonTextActive: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
   billList: {
     flex: 1,
   },
   billCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.md,
@@ -733,7 +733,7 @@ const styles = StyleSheet.create({
   merchantName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   statusBadge: {
@@ -757,11 +757,11 @@ const styles = StyleSheet.create({
   },
   billDetailLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   billDetailValue: {
     ...Typography.bodySmall,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   cashbackContainer: {
@@ -787,7 +787,7 @@ const styles = StyleSheet.create({
   },
   creditedText: {
     ...Typography.caption,
-    color: Colors.background.primary,
+    color: colors.background.primary,
     fontWeight: '600',
   },
   rejectionContainer: {
@@ -814,7 +814,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyState: {
     flex: 1,
@@ -825,12 +825,12 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     ...Typography.h3,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
   },
   emptyStateText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.sm,
     marginBottom: Spacing.xl,
@@ -845,7 +845,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   uploadButtonText: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -856,7 +856,7 @@ const styles = StyleSheet.create({
   },
   emptyFilterText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   // Modal styles
   modalContainer: {
@@ -865,7 +865,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
     maxHeight: '90%',
@@ -876,12 +876,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalBody: {
     flex: 1,
@@ -889,17 +889,17 @@ const styles = StyleSheet.create({
   fullBillImage: {
     width: '100%',
     height: 300,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   detailSection: {
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   detailSectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   statusBadgeLarge: {
@@ -921,11 +921,11 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   detailValue: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   cashbackDetailContainer: {
@@ -992,7 +992,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   resubmitButtonText: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },

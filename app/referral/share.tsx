@@ -157,7 +157,7 @@ function ReferralSharePage() {
             accessibilityLabel="Go back"
             accessibilityRole="button"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>Share & Earn</Text>
           <View style={{ width: 40 }} />
@@ -200,7 +200,7 @@ function ReferralSharePage() {
           <ThemedText style={styles.sectionTitle}>Referral Link</ThemedText>
           <Pressable style={styles.linkContainer} onPress={handleCopyLink}>
             <Text style={styles.linkText} numberOfLines={1}>{referralLink}</Text>
-            <Ionicons name="copy-outline" size={18} color={Colors.text.tertiary} />
+            <Ionicons name="copy-outline" size={18} color={colors.text.tertiary} />
           </Pressable>
         </View>
 
@@ -217,7 +217,7 @@ function ReferralSharePage() {
                 accessibilityRole="button"
               >
                 <View style={[styles.platformIcon, { backgroundColor: template.color }]}>
-                  <Ionicons name={template.icon as any} size={24} color={Colors.text.inverse} />
+                  <Ionicons name={template.icon as any} size={24} color={colors.text.inverse} />
                 </View>
                 <Text style={styles.platformText}>
                   {template.type.charAt(0).toUpperCase() + template.type.slice(1)}
@@ -240,7 +240,7 @@ function ReferralSharePage() {
           accessibilityRole="button"
         >
           <LinearGradient colors={['#7c3aed', '#a78bfa']} style={styles.nativeShareGradient}>
-            <Ionicons name="share-social" size={22} color={Colors.text.inverse} />
+            <Ionicons name="share-social" size={22} color={colors.text.inverse} />
             <Text style={styles.nativeShareText}>More Sharing Options</Text>
           </LinearGradient>
         </Pressable>
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f8fafc',
   },
-  loadingText: { marginTop: Spacing.md, ...Typography.body, color: Colors.text.tertiary },
+  loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 44,
     paddingBottom: Spacing.xl,
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  headerTitle: { ...Typography.h3, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { ...Typography.h3, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: {
     ...Typography.body,
     color: 'rgba(255,255,255,0.9)',
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   },
   qrSection: {
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     marginTop: Spacing.base,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   },
   qrSubtext: { ...Typography.bodySmall, color: '#94a3b8', textAlign: 'center' },
   codeSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginTop: Spacing.base,
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
   },
   copyText: { ...Typography.bodySmall, fontWeight: '600', color: '#7c3aed' },
   linkSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginTop: Spacing.base,
@@ -372,9 +372,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.slateLight,
   },
-  linkText: { flex: 1, ...Typography.bodySmall, color: Colors.text.tertiary, marginRight: Spacing.sm },
+  linkText: { flex: 1, ...Typography.bodySmall, color: colors.text.tertiary, marginRight: Spacing.sm },
   platformsSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginTop: Spacing.base,
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     gap: 10,
   },
-  nativeShareText: { ...Typography.bodyLarge, fontWeight: '600', color: Colors.text.inverse },
+  nativeShareText: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.inverse },
 });
 
 export default withErrorBoundary(ReferralSharePage, 'ReferralShare');

@@ -114,7 +114,7 @@ function OfferCommentsPage() {
     if (length >= 200) return { label: 'Excellent', color: Colors.success };
     if (length >= 100) return { label: 'Great (+5 bonus)', color: Colors.primary[600] };
     if (length >= 50) return { label: 'Good', color: Colors.info };
-    if (length >= 20) return { label: 'Minimum met', color: Colors.text.tertiary };
+    if (length >= 20) return { label: 'Minimum met', color: colors.text.tertiary };
     return { label: `${20 - length} more chars needed`, color: Colors.error };
   };
 
@@ -242,7 +242,7 @@ function OfferCommentsPage() {
             estimatedItemSize={120}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
-                <Ionicons name="pricetags-outline" size={64} color={Colors.text.tertiary} />
+                <Ionicons name="pricetags-outline" size={64} color={colors.text.tertiary} />
                 <ThemedText style={styles.emptyTitle}>No Active Offers</ThemedText>
                 <ThemedText style={styles.emptyText}>
                   Check back later for offers you can comment on.
@@ -259,7 +259,7 @@ function OfferCommentsPage() {
                   Commenting on: {selectedOffer.title}
                 </ThemedText>
                 <Pressable onPress={() => setSelectedOffer(null)}>
-                  <Ionicons name="close" size={20} color={Colors.text.tertiary} />
+                  <Ionicons name="close" size={20} color={colors.text.tertiary} />
                 </Pressable>
               </View>
               <TextInput
@@ -267,7 +267,7 @@ function OfferCommentsPage() {
                 value={commentText}
                 onChangeText={setCommentText}
                 placeholder="Share your thoughts about this offer (min 20 chars)..."
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 multiline
                 maxLength={1000}
               />
@@ -311,7 +311,7 @@ function OfferCommentsPage() {
           estimatedItemSize={80}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="chatbubbles-outline" size={64} color={Colors.text.tertiary} />
+              <Ionicons name="chatbubbles-outline" size={64} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyTitle}>No Comments Yet</ThemedText>
               <ThemedText style={styles.emptyText}>
                 Comment on active offers to see your history here.
@@ -327,7 +327,7 @@ function OfferCommentsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     ...Shadows.subtle,
   },
   tab: {
@@ -372,7 +372,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     ...Typography.label,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabTextActive: {
     color: Colors.primary[600],
@@ -390,7 +390,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   offerCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
@@ -413,11 +413,11 @@ const styles = StyleSheet.create({
   },
   offerTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   offerStore: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: 2,
   },
   commentCountBadge: {
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   },
   offerDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.xs,
   },
   offerFooter: {
@@ -457,10 +457,10 @@ const styles = StyleSheet.create({
   },
   offerEndDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   commentInputContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
     borderTopColor: Colors.gray[200],
     padding: Spacing.base,
@@ -479,11 +479,11 @@ const styles = StyleSheet.create({
     marginRight: Spacing.sm,
   },
   commentInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 80,
     maxHeight: 150,
     textAlignVertical: 'top',
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
   },
   charCount: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   submitButton: {
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
     color: colors.background.primary,
   },
   myCommentCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
   },
   myCommentText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   myCommentFooter: {
     flexDirection: 'row',
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
   },
   myCommentDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     alignItems: 'center',
@@ -572,12 +572,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.md,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingHorizontal: Spacing.xl,
   },

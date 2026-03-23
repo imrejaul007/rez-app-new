@@ -353,7 +353,7 @@ function SubmitPickPage() {
           <CachedImage source={product.images[0]} style={styles.productThumb} />
         ) : (
           <View style={[styles.productThumb, styles.productThumbPlaceholder]}>
-            <Ionicons name="cube-outline" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="cube-outline" size={20} color={colors.text.tertiary} />
           </View>
         )}
         <View style={styles.productInfo}>
@@ -384,8 +384,8 @@ function SubmitPickPage() {
   if (submitted) {
     return (
       <View style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
-        <LinearGradient colors={[Colors.nileBlue, '#2d5a7b']} style={styles.header}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+        <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
           <Text style={styles.headerTitle}>Pick Submitted!</Text>
         </LinearGradient>
         <View style={styles.successContainer}>
@@ -428,12 +428,12 @@ function SubmitPickPage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.nileBlue, '#2d5a7b']} style={styles.header}>
+      <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
         <Text style={styles.headerTitle}>Submit a Pick</Text>
       </LinearGradient>
@@ -449,7 +449,7 @@ function SubmitPickPage() {
         {!selectedProduct ? (
           <View>
             <View style={styles.searchBox}>
-              <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="search" size={20} color={colors.text.tertiary} />
               <TextInput
                 style={styles.searchInput}
                 placeholder="Search products..."
@@ -487,7 +487,7 @@ function SubmitPickPage() {
               <CachedImage source={selectedProduct.images[0]} style={styles.selectedProductImg} />
             ) : (
               <View style={[styles.selectedProductImg, styles.productThumbPlaceholder]}>
-                <Ionicons name="cube-outline" size={30} color={Colors.text.tertiary} />
+                <Ionicons name="cube-outline" size={30} color={colors.text.tertiary} />
               </View>
             )}
             <View style={styles.selectedProductInfo}>
@@ -518,7 +518,7 @@ function SubmitPickPage() {
                 <CachedImage source={photoUri} style={styles.mediaPickerThumb} />
                 {uploadingPhoto && (
                   <View style={styles.mediaThumbOverlay}>
-                    <ActivityIndicator size="small" color={Colors.text.inverse} />
+                    <ActivityIndicator size="small" color={colors.text.inverse} />
                   </View>
                 )}
                 {uploadedPhotoUrl && !uploadingPhoto && (
@@ -548,11 +548,11 @@ function SubmitPickPage() {
             {videoUri ? (
               <View style={styles.mediaThumbWrap}>
                 <View style={styles.mediaVideoThumb}>
-                  <Ionicons name="videocam" size={24} color={Colors.text.inverse} />
+                  <Ionicons name="videocam" size={24} color={colors.text.inverse} />
                 </View>
                 {uploadingVideo && (
                   <View style={styles.mediaThumbOverlay}>
-                    <ActivityIndicator size="small" color={Colors.text.inverse} />
+                    <ActivityIndicator size="small" color={colors.text.inverse} />
                   </View>
                 )}
                 {uploadedVideoUrl && !uploadingVideo && (
@@ -613,7 +613,7 @@ function SubmitPickPage() {
             maxLength={30}
           />
           <Pressable style={styles.addTagBtn} onPress={addTag}>
-            <Ionicons name="add" size={20} color={Colors.text.inverse} />
+            <Ionicons name="add" size={20} color={colors.text.inverse} />
           </Pressable>
         </View>
         {tags.length > 0 && (
@@ -649,10 +649,10 @@ function SubmitPickPage() {
             style={styles.submitBtnGradient}
           >
             {submitting ? (
-              <ActivityIndicator color={Colors.text.inverse} />
+              <ActivityIndicator color={colors.text.inverse} />
             ) : (
               <>
-                <Ionicons name="rocket-outline" size={20} color={Colors.text.inverse} />
+                <Ionicons name="rocket-outline" size={20} color={colors.text.inverse} />
                 <Text style={styles.submitBtnText}>Submit Pick</Text>
               </>
             )}
@@ -666,7 +666,7 @@ function SubmitPickPage() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   header: {
     paddingTop: Platform.OS === 'ios' ? 54 : (StatusBar.currentHeight || 40) + 10,
     paddingBottom: Spacing.lg,
@@ -680,39 +680,39 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center', justifyContent: 'center',
   },
-  headerTitle: { ...Typography.h3, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { ...Typography.h3, fontWeight: '700', color: colors.text.inverse },
   scroll: { flex: 1 },
   scrollContent: { padding: Spacing.base },
 
   sectionLabel: {
-    ...Typography.body, fontWeight: '600', color: Colors.text.secondary,
+    ...Typography.body, fontWeight: '600', color: colors.text.secondary,
     marginBottom: Spacing.sm, marginLeft: 2,
   },
 
   // Search
   searchBox: {
     flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md, paddingHorizontal: 14, paddingVertical: Spacing.md,
-    borderWidth: 1, borderColor: Colors.border.default,
+    backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, paddingHorizontal: 14, paddingVertical: Spacing.md,
+    borderWidth: 1, borderColor: colors.border.default,
   },
-  searchInput: { flex: 1, ...Typography.body, fontSize: 15, color: Colors.text.primary },
+  searchInput: { flex: 1, ...Typography.body, fontSize: 15, color: colors.text.primary },
   searchResults: {
-    backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md, marginTop: Spacing.sm,
-    borderWidth: 1, borderColor: Colors.border.default, overflow: 'hidden',
+    backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, marginTop: Spacing.sm,
+    borderWidth: 1, borderColor: colors.border.default, overflow: 'hidden',
   },
   dropdownList: {
     maxHeight: 300,
   },
   searchResultItem: {
     flexDirection: 'row', alignItems: 'center', padding: Spacing.md, gap: Spacing.md,
-    borderBottomWidth: 1, borderBottomColor: Colors.background.secondary,
+    borderBottomWidth: 1, borderBottomColor: colors.background.secondary,
   },
   productThumb: { width: 48, height: 48, borderRadius: BorderRadius.sm },
-  productThumbPlaceholder: { backgroundColor: Colors.background.secondary, alignItems: 'center', justifyContent: 'center' },
+  productThumbPlaceholder: { backgroundColor: colors.background.secondary, alignItems: 'center', justifyContent: 'center' },
   productInfo: { flex: 1 },
-  productName: { ...Typography.body, fontWeight: '600', color: Colors.text.primary },
-  productMeta: { ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: 2 },
-  noResults: { ...Typography.bodySmall, fontSize: 13, color: Colors.text.tertiary, textAlign: 'center', marginTop: Spacing.base },
+  productName: { ...Typography.body, fontWeight: '600', color: colors.text.primary },
+  productMeta: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: 2 },
+  noResults: { ...Typography.bodySmall, fontSize: 13, color: colors.text.tertiary, textAlign: 'center', marginTop: Spacing.base },
 
   // Media picker
   mediaPickerRow: {
@@ -720,8 +720,8 @@ const styles = StyleSheet.create({
   },
   mediaPickerBtn: {
     flex: 1, alignItems: 'center', gap: 6,
-    backgroundColor: Colors.background.primary, borderRadius: 14, paddingVertical: 14,
-    borderWidth: 2, borderColor: Colors.border.default, borderStyle: 'dashed',
+    backgroundColor: colors.background.primary, borderRadius: 14, paddingVertical: 14,
+    borderWidth: 2, borderColor: colors.border.default, borderStyle: 'dashed',
   },
   mediaPickerBtnActive: {
     borderColor: Colors.brand.purple, borderStyle: 'solid', backgroundColor: '#FAF5FF',
@@ -737,7 +737,7 @@ const styles = StyleSheet.create({
     width: 52, height: 52, borderRadius: 10,
   },
   mediaVideoThumb: {
-    width: 52, height: 52, borderRadius: 10, backgroundColor: Colors.text.primary,
+    width: 52, height: 52, borderRadius: 10, backgroundColor: colors.text.primary,
     alignItems: 'center', justifyContent: 'center',
   },
   mediaThumbOverlay: {
@@ -747,42 +747,42 @@ const styles = StyleSheet.create({
   },
   mediaPickerCheckmark: {
     position: 'absolute', top: -4, right: -4,
-    backgroundColor: Colors.background.primary, borderRadius: 10,
+    backgroundColor: colors.background.primary, borderRadius: 10,
   },
   mediaPickerLabel: {
-    ...Typography.bodySmall, fontSize: 13, fontWeight: '600', color: Colors.text.secondary,
+    ...Typography.bodySmall, fontSize: 13, fontWeight: '600', color: colors.text.secondary,
   },
   mediaPickerProgress: {
     ...Typography.caption, color: Colors.brand.purple, fontWeight: '600',
   },
   mediaHint: {
-    ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: 6, marginLeft: 2,
+    ...Typography.bodySmall, color: colors.text.tertiary, marginTop: 6, marginLeft: 2,
   },
 
   loadingMoreContainer: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     paddingVertical: Spacing.md, gap: Spacing.sm,
   },
-  loadingMoreText: { ...Typography.bodySmall, color: Colors.text.tertiary },
+  loadingMoreText: { ...Typography.bodySmall, color: colors.text.tertiary },
 
   // Selected product
   selectedProductCard: {
     flexDirection: 'row', alignItems: 'center', gap: Spacing.md,
-    backgroundColor: Colors.background.primary, borderRadius: 14, padding: 14,
+    backgroundColor: colors.background.primary, borderRadius: 14, padding: 14,
     borderWidth: 2, borderColor: Colors.brand.purple,
   },
   selectedProductImg: { width: 60, height: 60, borderRadius: 10 },
   selectedProductInfo: { flex: 1 },
-  selectedProductName: { ...Typography.body, fontSize: 15, fontWeight: '600', color: Colors.text.primary },
-  selectedProductMeta: { ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: 2 },
+  selectedProductName: { ...Typography.body, fontSize: 15, fontWeight: '600', color: colors.text.primary },
+  selectedProductMeta: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: 2 },
   removeProductBtn: { padding: Spacing.xs },
 
   // Form inputs
   textInput: {
-    backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md, paddingHorizontal: 14, paddingVertical: Spacing.md,
-    ...Typography.body, fontSize: 15, color: Colors.text.primary, borderWidth: 1, borderColor: Colors.border.default,
+    backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, paddingHorizontal: 14, paddingVertical: Spacing.md,
+    ...Typography.body, fontSize: 15, color: colors.text.primary, borderWidth: 1, borderColor: colors.border.default,
   },
-  charCount: { ...Typography.caption, color: Colors.text.tertiary, textAlign: 'right', marginTop: Spacing.xs },
+  charCount: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'right', marginTop: Spacing.xs },
 
   // Tags
   tagInputRow: { flexDirection: 'row', gap: Spacing.sm },
@@ -811,17 +811,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     paddingVertical: Spacing.base, gap: 10,
   },
-  submitBtnText: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.inverse },
+  submitBtnText: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse },
 
   // Success
   successContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl },
   successIcon: { marginBottom: Spacing.lg },
-  successTitle: { fontSize: 22, fontWeight: '700', color: Colors.text.primary, textAlign: 'center' },
-  successSubtitle: { ...Typography.body, color: Colors.text.tertiary, textAlign: 'center', marginTop: Spacing.sm, lineHeight: 20 },
+  successTitle: { fontSize: 22, fontWeight: '700', color: colors.text.primary, textAlign: 'center' },
+  successSubtitle: { ...Typography.body, color: colors.text.tertiary, textAlign: 'center', marginTop: Spacing.sm, lineHeight: 20 },
   primaryBtn: {
     backgroundColor: Colors.brand.purple, borderRadius: 14, paddingVertical: 14, paddingHorizontal: Spacing['2xl'], marginTop: 28,
   },
-  primaryBtnText: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.inverse },
+  primaryBtnText: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse },
   secondaryBtn: { marginTop: 14, paddingVertical: 10 },
   secondaryBtnText: { ...Typography.body, fontWeight: '600', color: Colors.brand.purple },
 });

@@ -471,20 +471,20 @@ function CartPage() {
           {serviceItem.serviceBookingDetails && (
             <View style={styles.serviceBookingDetails}>
               <View style={styles.serviceBookingRow}>
-                <Ionicons name="calendar-outline" size={16} color={Colors.nileBlue} />
+                <Ionicons name="calendar-outline" size={16} color={colors.nileBlue} />
                 <ThemedText style={styles.serviceBookingText}>
                   {serviceItem.bookingDateFormatted || 'Date not set'}
                 </ThemedText>
               </View>
               <View style={styles.serviceBookingRow}>
-                <Ionicons name="time-outline" size={16} color={Colors.nileBlue} />
+                <Ionicons name="time-outline" size={16} color={colors.nileBlue} />
                 <ThemedText style={styles.serviceBookingText}>
                   {serviceItem.bookingTimeFormatted || 'Time not set'}
                 </ThemedText>
               </View>
               {serviceItem.serviceBookingDetails.duration && (
                 <View style={styles.serviceBookingRow}>
-                  <Ionicons name="hourglass-outline" size={16} color={Colors.nileBlue} />
+                  <Ionicons name="hourglass-outline" size={16} color={colors.nileBlue} />
                   <ThemedText style={styles.serviceBookingText}>
                     {serviceItem.serviceBookingDetails.duration} min
                   </ThemedText>
@@ -528,14 +528,14 @@ function CartPage() {
 
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name={icon as any} size={64} color={Colors.border.default} />
+        <Ionicons name={icon as any} size={64} color={colors.border.default} />
         <ThemedText style={styles.emptyTitle}>{title}</ThemedText>
         <ThemedText style={styles.emptySubtitle}>{subtitle}</ThemedText>
         <Pressable
           style={styles.browseCTAButton}
           onPress={() => router.push('/(tabs)')}
         >
-          <Ionicons name="storefront" size={20} color={Colors.text.inverse} />
+          <Ionicons name="storefront" size={20} color={colors.text.inverse} />
           <ThemedText style={styles.browseCTAButtonText}>Browse Stores</ThemedText>
         </Pressable>
       </View>
@@ -619,7 +619,7 @@ function CartPage() {
               Apply at checkout
             </ThemedText>
           </View>
-          <Ionicons name="chevron-forward" size={18} color={Colors.nileBlue} />
+          <Ionicons name="chevron-forward" size={18} color={colors.nileBlue} />
         </Pressable>
       )}
 
@@ -670,7 +670,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.sm,
     marginBottom: Spacing.base,
-    shadowColor: Colors.nileBlue, // Nile Blue shadow
+    shadowColor: colors.nileBlue, // Nile Blue shadow
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.08,
     shadowRadius: 12,
@@ -692,13 +692,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: isSmallDevice ? 18 : 22,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.md,
     textAlign: 'center',
   },
   emptySubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.lg,
@@ -715,7 +715,7 @@ const styles = StyleSheet.create({
   browseCTAButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   loadingContainer: {
     flex: 1,
@@ -739,7 +739,7 @@ const styles = StyleSheet.create({
   },
   serviceBookingText: {
     ...Typography.bodySmall,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '500',
   },
   walletBanner: {
@@ -765,11 +765,11 @@ const styles = StyleSheet.create({
   walletBannerTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   walletBannerSubtitle: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 1,
   },
 });

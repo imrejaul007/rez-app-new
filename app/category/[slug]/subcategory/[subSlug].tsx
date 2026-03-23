@@ -285,7 +285,7 @@ function SubcategoryPage() {
             <ThemedText style={styles.statText}>{item.rating?.toFixed(1) || '4.5'}</ThemedText>
           </View>
           <View style={styles.statItem}>
-            <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+            <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
             <ThemedText style={styles.statText}>{item.deliveryTime}</ThemedText>
           </View>
           {item.cashback && (
@@ -352,7 +352,7 @@ function SubcategoryPage() {
       <ThemedView style={styles.container}>
         {/* Header */}
         <LinearGradient
-          colors={[Colors.gold, Colors.nileBlue]}
+          colors={[Colors.gold, colors.nileBlue]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.header}
@@ -363,7 +363,7 @@ function SubcategoryPage() {
               style={styles.backButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
               <ThemedText style={styles.headerTitle}>{subcategoryName}</ThemedText>
@@ -375,7 +375,7 @@ function SubcategoryPage() {
               onPress={() => router.push(`/search?category=${subSlug}` as any)}
               style={styles.searchButton}
             >
-              <Ionicons name="search" size={22} color={Colors.text.inverse} />
+              <Ionicons name="search" size={22} color={colors.text.inverse} />
             </Pressable>
           </View>
         </LinearGradient>
@@ -422,7 +422,7 @@ function SubcategoryPage() {
             <Ionicons
               name={activeTab === 'stores' ? 'storefront-outline' : 'cube-outline'}
               size={64}
-              color={Colors.border.default}
+              color={colors.border.default}
             />
             <ThemedText style={styles.emptyTitle}>
               No {activeTab} found
@@ -475,7 +475,7 @@ function SubcategoryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
@@ -514,15 +514,15 @@ const styles = StyleSheet.create({
   },
   tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   tabsContainerDark: {
-    backgroundColor: Colors.text.primary,
-    borderBottomColor: Colors.text.secondary,
+    backgroundColor: colors.text.primary,
+    borderBottomColor: colors.text.secondary,
   },
   tab: {
     flex: 1,
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
   tabText: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: 6,
   },
   activeTabText: {
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     flex: 1,
@@ -565,12 +565,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   listContent: {
@@ -579,19 +579,19 @@ const styles = StyleSheet.create({
   },
   // Store card styles
   storeCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base,
     overflow: 'hidden',
     ...Shadows.medium,
   },
   storeCardDark: {
-    backgroundColor: Colors.text.primary,
+    backgroundColor: colors.text.primary,
   },
   storeBanner: {
     width: '100%',
     height: 140,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   storeInfo: {
     padding: Spacing.md,
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     marginRight: Spacing.md,
   },
   storeNameContainer: {
@@ -617,12 +617,12 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   storeDistance: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   storeStats: {
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.xs,
   },
   cashbackBadge: {
@@ -658,19 +658,19 @@ const styles = StyleSheet.create({
   },
   productCard: {
     width: (SCREEN_WIDTH - 48) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.base,
     overflow: 'hidden',
     ...Shadows.subtle,
   },
   productCardDark: {
-    backgroundColor: Colors.text.primary,
+    backgroundColor: colors.text.primary,
   },
   productImage: {
     width: '100%',
     height: 150,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   discountBadge: {
     position: 'absolute',
@@ -684,7 +684,7 @@ const styles = StyleSheet.create({
   discountText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   productInfo: {
     padding: 10,
@@ -692,12 +692,12 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 36,
   },
   productStore: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   priceRow: {
@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
   },
   originalPrice: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
     marginLeft: 6,
   },

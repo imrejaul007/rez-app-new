@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React from 'react';
 import {
@@ -21,7 +22,7 @@ function GoldSavingsHistoryPage() {
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
         <Pressable onPress={() => goBack('/gold-savings' as any)} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Gold Transaction History</ThemedText>
         <View style={{ width: 40 }} />
@@ -43,7 +44,7 @@ function GoldSavingsHistoryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -53,8 +54,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
-    backgroundColor: Colors.background.primary,
+    borderBottomColor: colors.border.default,
+    backgroundColor: colors.background.primary,
   },
   backButton: {
     width: 40,
@@ -64,7 +65,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h4,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   emptyContainer: {
     flex: 1,
@@ -76,19 +77,19 @@ const styles = StyleSheet.create({
     width: 96,
     height: 96,
     borderRadius: 48,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.lg,
   },
   emptyTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
   },

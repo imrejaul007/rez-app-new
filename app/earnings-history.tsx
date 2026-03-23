@@ -103,7 +103,7 @@ function EarningsHistoryPage() {
   const filters = [
     { label: 'All', value: 'all', icon: 'list', gradient: [Colors.brand.purpleLight, Colors.brand.purple] },
     { label: 'Projects', value: 'project', icon: 'briefcase', gradient: [Colors.brand.purpleLight, Colors.brand.purple] },
-    { label: 'Referrals', value: 'referral', icon: 'people', gradient: [Colors.gold, Colors.nileBlue] },
+    { label: 'Referrals', value: 'referral', icon: 'people', gradient: [Colors.gold, colors.nileBlue] },
     { label: 'Social', value: 'social_media', icon: 'share-social', gradient: [colors.warningScale[400], colors.warningScale[700]] },
     { label: 'Spin', value: 'spin', icon: 'trophy', gradient: [colors.brand.pink, colors.deepPink] },
     { label: 'Events', value: 'events', icon: 'ticket', gradient: [Colors.brand.purple, colors.brand.purpleDeep] },
@@ -215,7 +215,7 @@ function EarningsHistoryPage() {
       case 'project':
         return [Colors.brand.purpleLight, Colors.brand.purple];
       case 'referral':
-        return [Colors.gold, Colors.nileBlue];
+        return [Colors.gold, colors.nileBlue];
       case 'social_media':
         return [colors.warningScale[400], colors.warningScale[700]];
       case 'spin':
@@ -223,7 +223,7 @@ function EarningsHistoryPage() {
       case 'withdrawal':
         return [Colors.error, colors.error];
       default:
-        return [Colors.text.tertiary, Colors.text.secondary];
+        return [colors.text.tertiary, colors.text.secondary];
     }
   };
 
@@ -236,7 +236,7 @@ function EarningsHistoryPage() {
       case 'failed':
         return Colors.error;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -340,7 +340,7 @@ function EarningsHistoryPage() {
         ]}
       >
         <LinearGradient
-          colors={[Colors.background.primary, Colors.background.secondary]}
+          colors={[colors.background.primary, colors.background.secondary]}
           style={styles.transactionGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -356,7 +356,7 @@ function EarningsHistoryPage() {
                 <Ionicons
                   name={getTypeIcon(transaction.type) as any}
                   size={20}
-                  color={Colors.text.inverse}
+                  color={colors.text.inverse}
                 />
               </LinearGradient>
               <View style={styles.transactionInfo}>
@@ -439,7 +439,7 @@ function EarningsHistoryPage() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              <Ionicons name="arrow-back" size={20} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={20} color={colors.text.inverse} />
             </LinearGradient>
           </Pressable>
 
@@ -468,9 +468,9 @@ function EarningsHistoryPage() {
               end={{ x: 1, y: 1 }}
             >
               {exporting ? (
-                <ActivityIndicator size="small" color={Colors.text.inverse} />
+                <ActivityIndicator size="small" color={colors.text.inverse} />
               ) : (
-                <Ionicons name="download-outline" size={20} color={Colors.text.inverse} />
+                <Ionicons name="download-outline" size={20} color={colors.text.inverse} />
               )}
             </LinearGradient>
           </Pressable>
@@ -488,7 +488,7 @@ function EarningsHistoryPage() {
           accessibilityRole="summary"
         >
           <LinearGradient
-            colors={[Colors.background.primary, Colors.background.secondary]}
+            colors={[colors.background.primary, colors.background.secondary]}
             style={styles.summaryGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -534,7 +534,7 @@ function EarningsHistoryPage() {
             }}
            
           >
-            <Ionicons name="calendar-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
             <ThemedText style={styles.dateFilterText}>Last 7 days</ThemedText>
           </Pressable>
 
@@ -549,7 +549,7 @@ function EarningsHistoryPage() {
             }}
            
           >
-            <Ionicons name="calendar-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
             <ThemedText style={styles.dateFilterText}>Last 30 days</ThemedText>
           </Pressable>
 
@@ -609,12 +609,12 @@ function EarningsHistoryPage() {
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                 >
-                  <Ionicons name={filter.icon as any} size={16} color={Colors.text.inverse} />
+                  <Ionicons name={filter.icon as any} size={16} color={colors.text.inverse} />
                   <ThemedText style={styles.filterTextActive}>{filter.label}</ThemedText>
                 </LinearGradient>
               ) : (
                 <>
-                  <Ionicons name={filter.icon as any} size={16} color={Colors.text.tertiary} />
+                  <Ionicons name={filter.icon as any} size={16} color={colors.text.tertiary} />
                   <ThemedText style={styles.filterText}>{filter.label}</ThemedText>
                 </>
               )}
@@ -663,7 +663,7 @@ function EarningsHistoryPage() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="wallet-outline" size={48} color={Colors.text.inverse} />
+                <Ionicons name="wallet-outline" size={48} color={colors.text.inverse} />
               </LinearGradient>
               <ThemedText style={styles.emptyTitle}>No transactions yet</ThemedText>
               <ThemedText style={styles.emptyDescription}>
@@ -689,7 +689,7 @@ function EarningsHistoryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 10 : Spacing.lg,
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h1,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: -0.5,
     marginBottom: Spacing.xs,
   },
@@ -770,9 +770,9 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
@@ -781,19 +781,19 @@ const styles = StyleSheet.create({
   },
   dateFilterText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   dateRangeDisplay: {
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm,
     marginTop: Spacing.xs,
   },
   dateRangeText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   summaryCard: {
@@ -821,7 +821,7 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
     marginBottom: Spacing.xs,
   },
@@ -845,9 +845,9 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
@@ -867,12 +867,12 @@ const styles = StyleSheet.create({
   },
   filterText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   filterTextActive: {
     ...Typography.body,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '700',
   },
   content: {
@@ -891,7 +891,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   errorContainer: {
@@ -903,13 +903,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorMessage: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
     paddingHorizontal: 40,
@@ -930,7 +930,7 @@ const styles = StyleSheet.create({
   retryText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyContainer: {
     flex: 1,
@@ -954,12 +954,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   emptyDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingHorizontal: 40,
   },
@@ -1006,12 +1006,12 @@ const styles = StyleSheet.create({
   transactionSource: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   transactionDescription: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   transactionRight: {
@@ -1043,16 +1043,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   transactionDate: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   transactionMeta: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
     flex: 1,
     textAlign: 'right',

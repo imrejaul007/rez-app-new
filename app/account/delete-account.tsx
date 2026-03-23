@@ -103,7 +103,7 @@ function DeleteAccountPage() {
             accessibilityLabel="Go back"
             accessibilityHint="Double tap to return to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
 
           <ThemedText style={styles.headerTitle}>Delete Account</ThemedText>
@@ -180,10 +180,10 @@ function DeleteAccountPage() {
           accessibilityState={{ disabled: confirmationText !== requiredText || isLoading }}
         >
           {isLoading ? (
-            <ActivityIndicator color={Colors.text.inverse} size="small" />
+            <ActivityIndicator color={colors.text.inverse} size="small" />
           ) : (
             <>
-              <Ionicons name="trash" size={20} color={Colors.text.inverse} />
+              <Ionicons name="trash" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.deleteButtonText}>Delete Account</ThemedText>
             </>
           )}
@@ -238,7 +238,7 @@ function DeleteAccountPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   placeholder: {
     width: 40,
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   deletionCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.xl,
@@ -320,7 +320,7 @@ const styles = StyleSheet.create({
   deletionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   deletionList: {
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   },
   deletionText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.sm,
   },
   confirmationContainer: {
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   confirmationLabel: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   requiredText: {
@@ -349,14 +349,14 @@ const styles = StyleSheet.create({
     color: Colors.error,
   },
   confirmationInput: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -400,13 +400,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#FCA5A5',
   },
   deleteButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
     marginLeft: Spacing.sm,
   },
   alternativesCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     ...Platform.select({
@@ -427,12 +427,12 @@ const styles = StyleSheet.create({
   alternativesTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   alternativesText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
     lineHeight: 20,
   },

@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 /**
  * Privé Campaigns Browse Screen
  * Browse and join active Privé campaigns
@@ -69,8 +70,8 @@ export default function PriveCampaignsScreen() {
 
   if (!priveCampaignsEnabled) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: Colors.background }]}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={Colors.text} />
@@ -91,8 +92,8 @@ export default function PriveCampaignsScreen() {
 
   if (error) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: Colors.background }]}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={Colors.text} />
@@ -110,8 +111,8 @@ export default function PriveCampaignsScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: Colors.background }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -243,7 +244,7 @@ function CampaignCard({ campaign, onJoin }: CampaignCardProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -252,7 +253,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: colors.border,
   },
   headerTitle: {
     ...Typography.heading3,
@@ -275,7 +276,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
     backgroundColor: Colors.white,
   },
   filterChipActive: {

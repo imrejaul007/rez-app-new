@@ -260,7 +260,7 @@ function SlotsPage() {
             </>
           ) : (
             <>
-              <Ionicons name="sad" size={28} color={Colors.text.tertiary} />
+              <Ionicons name="sad" size={28} color={colors.text.tertiary} />
               <Text style={styles.resultTitle}>No match. Try again!</Text>
             </>
           )}
@@ -279,10 +279,10 @@ function SlotsPage() {
           style={styles.spinButtonGradient}
         >
           {spinning ? (
-            <ActivityIndicator color={Colors.text.inverse} />
+            <ActivityIndicator color={colors.text.inverse} />
           ) : (
             <>
-              <Ionicons name="play" size={24} color={Colors.text.inverse} />
+              <Ionicons name="play" size={24} color={colors.text.inverse} />
               <Text style={styles.spinButtonText}>SPIN</Text>
             </>
           )}
@@ -332,7 +332,7 @@ function SlotsPage() {
 
       {/* Back to Games */}
       <Pressable style={styles.backToGamesBtn} onPress={() => router.push('/games' as any)}>
-        <Ionicons name="game-controller" size={18} color={Colors.text.primary} />
+        <Ionicons name="game-controller" size={18} color={colors.text.primary} />
         <ThemedText style={styles.backToGamesText}>More Games</ThemedText>
       </Pressable>
     </View>
@@ -351,7 +351,7 @@ function SlotsPage() {
               onPress={handleBackPress}
               style={styles.headerBackButton}
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
           ) }}
       />
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: 14,
     marginBottom: Spacing.base,
@@ -409,12 +409,12 @@ const styles = StyleSheet.create({
   balanceText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue },
+    color: colors.nileBlue },
   balanceRight: {},
   spinCostText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   // Machine
   machineContainer: {
     width: '100%',
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: Spacing.sm,
     gap: 0 },
@@ -455,12 +455,12 @@ const styles = StyleSheet.create({
   reelWindow: {
     width: 80,
     height: 90,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     overflow: 'hidden' },
   reelSymbol: {
     fontSize: 44 },
@@ -505,13 +505,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.success },
   resultCardLose: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default },
+    borderColor: colors.border.default },
   resultTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   resultAmount: {
     ...Typography.h3,
     fontWeight: '800',
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
   spinButtonText: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 2 },
   // Stats
   statsRow: {
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg },
   statBox: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: 14,
     alignItems: 'center',
@@ -556,15 +556,15 @@ const styles = StyleSheet.create({
   statBoxValue: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   statBoxLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2 },
   // Paytable
   paytable: {
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.base,
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
   paytableTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
     textAlign: 'center' },
   paytableRow: {
@@ -581,20 +581,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary },
+    borderBottomColor: colors.background.secondary },
   paytableSymbols: {
     ...Typography.bodyLarge,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
   paytableAmount: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue },
+    color: colors.nileBlue },
   // Back
   backToGamesBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     paddingVertical: 14,
     width: '100%',
@@ -603,6 +603,6 @@ const styles = StyleSheet.create({
   backToGamesText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary } });
+    color: colors.text.primary } });
 
 export default withErrorBoundary(SlotsPage, 'GamesSlots');

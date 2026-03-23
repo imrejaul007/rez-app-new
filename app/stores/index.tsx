@@ -225,7 +225,7 @@ const StoresPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>{config.icon} {config.title}</Text>
@@ -235,17 +235,17 @@ const StoresPage: React.FC = () => {
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="search" size={20} color={colors.text.tertiary} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search stores..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
             <Pressable onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
             </Pressable>
           )}
         </View>
@@ -266,7 +266,7 @@ const StoresPage: React.FC = () => {
               <Ionicons
                 name={filter.icon as any}
                 size={14}
-                color={selectedFilter === filter.id ? Colors.background.primary : Colors.text.tertiary}
+                color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />
               <Text style={[
                 styles.filterChipText,
@@ -293,7 +293,7 @@ const StoresPage: React.FC = () => {
         {/* Error State */}
         {error && (
           <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
+            <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
             <Text style={styles.errorText}>{error}</Text>
             <Pressable style={[styles.retryButton, { backgroundColor: config.color }]} onPress={handleRefresh}>
               <Text style={styles.retryButtonText}>Try Again</Text>
@@ -328,12 +328,12 @@ const StoresPage: React.FC = () => {
                 <View style={styles.badgesContainer}>
                   {store.isVerified && (
                     <View style={styles.verifiedBadge}>
-                      <Ionicons name="shield-checkmark" size={10} color={Colors.text.inverse} />
+                      <Ionicons name="shield-checkmark" size={10} color={colors.text.inverse} />
                     </View>
                   )}
                   {store.is60Min && (
                     <View style={styles.fastBadge}>
-                      <Ionicons name="flash" size={10} color={Colors.text.inverse} />
+                      <Ionicons name="flash" size={10} color={colors.text.inverse} />
                       <Text style={styles.fastBadgeText}>60m</Text>
                     </View>
                   )}
@@ -369,18 +369,18 @@ const StoresPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.md,
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
@@ -421,14 +421,14 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: Typography.body.fontSize,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   filtersContainer: {
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   filterChip: {
     flexDirection: 'row',
@@ -436,16 +436,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
     gap: 6,
   },
   filterChipText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   errorContainer: {
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: Typography.bodyLarge.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.md,
     marginBottom: Spacing.base,
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyContainer: {
     justifyContent: 'center',
@@ -484,12 +484,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   storesGrid: {
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
   },
   storeCard: {
     width: (SCREEN_WIDTH - 36) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     elevation: 2,
@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
   fastBadgeText: {
     fontSize: 9,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cashbackBadge: {
     position: 'absolute',
@@ -551,7 +551,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     fontSize: Typography.caption.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeInfo: {
     padding: Spacing.md,
@@ -559,12 +559,12 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: Typography.body.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2,
   },
   storeCategory: {
     fontSize: Typography.caption.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   storeMeta: {
@@ -580,11 +580,11 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   distanceText: {
     fontSize: Typography.caption.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

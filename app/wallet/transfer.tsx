@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // P2P Coin Transfer Page
 // Send Nuqta Coins to other users
@@ -252,17 +253,17 @@ function TransferPage() {
     <>
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+        <Ionicons name="search" size={20} color={colors.text.tertiary} />
         <TextInput
           style={styles.searchInput}
           placeholder="Search by phone or name"
-          placeholderTextColor={Colors.text.tertiary}
+          placeholderTextColor={colors.text.tertiary}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
         {searchQuery.length > 0 && (
           <Pressable onPress={() => setSearchQuery('')}>
-            <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
           </Pressable>
         )}
       </View>
@@ -276,7 +277,7 @@ function TransferPage() {
           <ActivityIndicator color={Colors.primary[600]} style={{ marginVertical: Spacing.lg }} />
         ) : recipients.length === 0 ? (
           <View style={styles.emptyState}>
-            <Ionicons name="people-outline" size={40} color={Colors.text.tertiary} />
+            <Ionicons name="people-outline" size={40} color={colors.text.tertiary} />
             <ThemedText style={styles.emptyText}>
               {searchQuery ? 'No users found' : 'No recent recipients'}
             </ThemedText>
@@ -299,7 +300,7 @@ function TransferPage() {
                   <ThemedText style={styles.recipientPhone}>{recipient.phone}</ThemedText>
                 ) : null}
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
           ))
         )}
@@ -310,7 +311,7 @@ function TransferPage() {
         style={styles.qrButton}
         onPress={() => platformAlertSimple('Coming Soon', 'QR code scanning will be available in a future update.')}
       >
-        <Ionicons name="qr-code" size={22} color={Colors.nileBlue} />
+        <Ionicons name="qr-code" size={22} color={colors.nileBlue} />
         <ThemedText style={styles.qrButtonText}>Scan QR Code</ThemedText>
       </Pressable>
     </>
@@ -350,7 +351,7 @@ function TransferPage() {
             onChangeText={(text) => setAmount(text.replace(/[^0-9]/g, ''))}
             keyboardType="number-pad"
             placeholder="0"
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             autoFocus
           />
         </View>
@@ -385,7 +386,7 @@ function TransferPage() {
           value={note}
           onChangeText={setNote}
           placeholder="Thanks for dinner!"
-          placeholderTextColor={Colors.text.tertiary}
+          placeholderTextColor={colors.text.tertiary}
           multiline
         />
       </View>
@@ -407,7 +408,7 @@ function TransferPage() {
         disabled={!isAmountValid || loading}
       >
         {loading ? (
-          <ActivityIndicator color={Colors.background.primary} />
+          <ActivityIndicator color={colors.background.primary} />
         ) : (
           <View style={styles.sendButtonContent}>
             <CachedImage source={nuqtaCoinImage} style={styles.sendButtonIcon} />
@@ -423,7 +424,7 @@ function TransferPage() {
   const renderOtpStep = () => (
     <View style={styles.otpContainer}>
       <View style={styles.otpIconContainer}>
-        <Ionicons name="shield-checkmark" size={48} color={Colors.nileBlue} />
+        <Ionicons name="shield-checkmark" size={48} color={colors.nileBlue} />
       </View>
       <ThemedText style={styles.otpTitle}>Verify Transfer</ThemedText>
       <ThemedText style={styles.otpSubtitle}>
@@ -435,7 +436,7 @@ function TransferPage() {
         onChangeText={setOtp}
         keyboardType="number-pad"
         placeholder="------"
-        placeholderTextColor={Colors.text.tertiary}
+        placeholderTextColor={colors.text.tertiary}
         maxLength={6}
         autoFocus
       />
@@ -445,7 +446,7 @@ function TransferPage() {
         disabled={!otp || otp.length < 6 || loading}
       >
         {loading ? (
-          <ActivityIndicator color={Colors.background.primary} />
+          <ActivityIndicator color={colors.background.primary} />
         ) : (
           <ThemedText style={styles.sendButtonText}>Verify & Send</ThemedText>
         )}
@@ -504,7 +505,7 @@ function TransferPage() {
           }
         }}
       >
-        <Ionicons name="share-outline" size={18} color={Colors.nileBlue} />
+        <Ionicons name="share-outline" size={18} color={colors.nileBlue} />
         <ThemedText style={styles.shareButtonText}>Share Receipt</ThemedText>
       </Pressable>
 
@@ -516,7 +517,7 @@ function TransferPage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
       <LinearGradient
@@ -528,7 +529,7 @@ function TransferPage() {
             style={styles.backButton}
             onPress={() => step === 'amount' ? setStep('recipient') : step === 'otp' ? setStep('amount') : router.canGoBack() ? router.back() : router.replace('/(tabs)')}
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>
             {step === 'success' ? 'Transfer Complete' : step === 'otp' ? 'Verify Transfer' : 'Send Coins'}
@@ -558,7 +559,7 @@ function TransferPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -577,7 +578,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
     marginRight: 40,
   },
@@ -594,7 +595,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     paddingHorizontal: 14,
     paddingVertical: Spacing.md,
@@ -605,7 +606,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   section: {
     marginBottom: Spacing.base,
@@ -613,7 +614,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.md,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -625,12 +626,12 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   recipientCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     marginBottom: Spacing.sm,
@@ -648,7 +649,7 @@ const styles = StyleSheet.create({
   avatarText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   recipientInfo: {
     flex: 1,
@@ -656,11 +657,11 @@ const styles = StyleSheet.create({
   recipientName: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   recipientPhone: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   qrButton: {
@@ -676,7 +677,7 @@ const styles = StyleSheet.create({
   qrButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   selectedRecipient: {
     alignItems: 'center',
@@ -694,22 +695,22 @@ const styles = StyleSheet.create({
   avatarTextLarge: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   selectedName: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   selectedPhone: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   balanceCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     marginBottom: Spacing.lg,
@@ -726,19 +727,19 @@ const styles = StyleSheet.create({
   },
   balanceLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   balanceValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   amountInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     ...Shadows.subtle,
@@ -746,13 +747,13 @@ const styles = StyleSheet.create({
   currencySymbol: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginRight: Spacing.sm,
   },
   amountInput: {
     ...Typography.display,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minWidth: 80,
     textAlign: 'center',
   },
@@ -764,16 +765,16 @@ const styles = StyleSheet.create({
   },
   quickAmountButton: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.sm,
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: Colors.border.medium,
+    borderColor: colors.border.medium,
   },
   quickAmountButtonSelected: {
-    backgroundColor: Colors.nileBlue,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue,
   },
   quickAmountText: {
     ...Typography.body,
@@ -781,14 +782,14 @@ const styles = StyleSheet.create({
     color: Colors.gray[700],
   },
   quickAmountTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   noteInput: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 72,
     textAlignVertical: 'top',
     ...Shadows.subtle,
@@ -808,7 +809,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   sendButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     borderRadius: BorderRadius.lg,
     paddingVertical: Spacing.base,
     alignItems: 'center',
@@ -830,7 +831,7 @@ const styles = StyleSheet.create({
   sendButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   successContainer: {
     alignItems: 'center',
@@ -842,21 +843,21 @@ const styles = StyleSheet.create({
   successTitle: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   successSubtitle: {
     fontSize: 15,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   successPhone: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xl,
   },
   transactionCard: {
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -884,12 +885,12 @@ const styles = StyleSheet.create({
   },
   transactionLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   transactionValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   shareButton: {
     flexDirection: 'row',
@@ -904,11 +905,11 @@ const styles = StyleSheet.create({
   shareButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   doneButton: {
     width: '100%',
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     borderRadius: BorderRadius.lg,
     paddingVertical: Spacing.base,
     alignItems: 'center',
@@ -916,7 +917,7 @@ const styles = StyleSheet.create({
   doneButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   otpContainer: {
     alignItems: 'center',
@@ -934,24 +935,24 @@ const styles = StyleSheet.create({
   otpTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   otpSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
     paddingHorizontal: Spacing.lg,
   },
   otpInput: {
     width: '80%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     letterSpacing: 8,
     marginBottom: Spacing.xl,

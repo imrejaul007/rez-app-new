@@ -140,17 +140,17 @@ function BrandsPage() {
     <View style={styles.headerContent}>
       {/* Search Bar */}
       <View style={styles.searchContainer}>
-        <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+        <Ionicons name="search" size={20} color={colors.text.tertiary} />
         <TextInput
           style={styles.searchInput}
           placeholder="Search brands..."
-          placeholderTextColor={Colors.text.tertiary}
+          placeholderTextColor={colors.text.tertiary}
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
         {searchQuery.length > 0 && (
           <Pressable onPress={() => setSearchQuery('')}>
-            <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
           </Pressable>
         )}
       </View>
@@ -186,7 +186,7 @@ function BrandsPage() {
 
   const renderEmpty = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="storefront-outline" size={64} color={Colors.border.default} />
+      <Ionicons name="storefront-outline" size={64} color={colors.border.default} />
       <Text style={styles.emptyTitle}>No brands found</Text>
       <Text style={styles.emptyText}>
         Try adjusting your search or filters
@@ -206,7 +206,7 @@ function BrandsPage() {
             style={styles.backButton}
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
           >
-            <Ionicons name="chevron-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="chevron-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>
             {categorySlug
@@ -248,7 +248,7 @@ function BrandsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : 40,
@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   placeholder: {
     width: 40,
@@ -282,7 +282,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     height: 48,
@@ -303,7 +303,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: Spacing.sm,
     fontSize: Typography.body.fontSize,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   filterRow: {
     flexDirection: 'row',
@@ -314,9 +314,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   filterPillActive: {
     backgroundColor: Colors.gold,
@@ -325,14 +325,14 @@ const styles = StyleSheet.create({
   filterPillText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterPillTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   resultCount: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   loadingContainer: {
     flex: 1,
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     fontSize: Typography.bodyLarge.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   listContent: {
     paddingBottom: 100,
@@ -355,7 +355,7 @@ const styles = StyleSheet.create({
     flexBasis: '46%',
     flexGrow: 1,
     flexShrink: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.md,
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: Typography.body.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     color: Colors.gold,
   },
   tagBadge: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: 6,
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: Typography.overline.fontSize,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tagTextPremium: {
     color: Colors.warning,
@@ -445,7 +445,7 @@ const styles = StyleSheet.create({
   ratingValue: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     padding: 40,
@@ -454,13 +454,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 });

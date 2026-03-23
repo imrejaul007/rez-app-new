@@ -188,7 +188,7 @@ const EarnLikeThem = () => {
           onPress={() => navigateTo('/explore/map')}
         >
           <Text style={styles.ctaText}>Start Earning Nearby</Text>
-          <Ionicons name="arrow-forward" size={18} color={Colors.text.inverse} />
+          <Ionicons name="arrow-forward" size={18} color={colors.text.inverse} />
         </Pressable>
 
         {/* Footer */}
@@ -221,13 +221,13 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
     marginBottom: 6,
   },
   subtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
   stepNumberText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   stepIconContainer: {
     width: 44,
@@ -268,11 +268,11 @@ const styles = StyleSheet.create({
   stepTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   stepSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   statsRow: {
@@ -282,13 +282,13 @@ const styles = StyleSheet.create({
   },
   statBox: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     paddingVertical: Spacing.base,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     minHeight: 70,
   },
   statBoxHighlight: {
@@ -298,14 +298,14 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   statValueHighlight: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   statLabelHighlight: {
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   ctaText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   footer: {
     alignItems: 'center',
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   skeletonContainer: {
@@ -342,13 +342,13 @@ const styles = StyleSheet.create({
   skeletonValue: {
     width: 60,
     height: 22,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 4,
   },
   skeletonLabel: {
     width: 80,
     height: 12,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 4,
   },
   skeletonLight: {
@@ -357,7 +357,7 @@ const styles = StyleSheet.create({
   skeletonFooter: {
     width: 200,
     height: 12,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 4,
   },
 });

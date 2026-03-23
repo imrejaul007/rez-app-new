@@ -2,7 +2,7 @@
 import React, { Suspense, lazy, useMemo } from 'react';
 import { View, ActivityIndicator } from 'react-native';
 import WriteReviewModal from '@/components/WriteReviewModal';
-import { Colors } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 
 const LazyAboutModal = lazy(() => import('@/components/AboutModal'));
 const LazyWalkInDealsModal = lazy(() => import('@/components/WalkInDealsModal'));
@@ -10,7 +10,7 @@ const LazyReviewModal = lazy(() => import('@/components/ReviewModal'));
 
 const ModalFallback = () => (
   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-    <ActivityIndicator size="large" color={Colors.gold} />
+    <ActivityIndicator size="large" color={colors.gold} />
   </View>
 );
 

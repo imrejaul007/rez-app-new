@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Messages Index Page
 // Shows all conversations with stores
@@ -176,7 +177,7 @@ function MessagesIndexPage() {
     if (error) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name="alert-circle-outline" size={64} color={Colors.text.tertiary} />
+          <Ionicons name="alert-circle-outline" size={64} color={colors.text.tertiary} />
           <ThemedText style={styles.emptyText}>Error Loading Messages</ThemedText>
           <ThemedText style={styles.emptySubtext}>{error}</ThemedText>
           <Pressable style={styles.retryButton} onPress={() => loadConversations(1, false)}>
@@ -188,7 +189,7 @@ function MessagesIndexPage() {
 
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="chatbubbles-outline" size={64} color={Colors.text.tertiary} />
+        <Ionicons name="chatbubbles-outline" size={64} color={colors.text.tertiary} />
         <ThemedText style={styles.emptyText}>No messages yet</ThemedText>
         <ThemedText style={styles.emptySubtext}>
           {searchQuery
@@ -233,7 +234,7 @@ function MessagesIndexPage() {
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.text.tertiary} style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color={colors.text.tertiary} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search conversations..."
@@ -301,7 +302,7 @@ function MessagesIndexPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 40 : 20,
@@ -369,18 +370,18 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     gap: Spacing.md,
   },
   filterTab: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   filterTabActive: {
     backgroundColor: PROFILE_COLORS.primary,
@@ -388,10 +389,10 @@ const styles = StyleSheet.create({
   filterTabText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterTabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyContainer: {
     flex: 1,
@@ -403,12 +404,12 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
     textAlign: 'center',
   },
@@ -420,7 +421,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.base,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
 });

@@ -358,17 +358,17 @@ function OrderTrackingScreen() {
 function getStatusColor(status: string): string {
   switch (status) {
     case 'delivered':
-      return Colors.nileBlue;
+      return colors.nileBlue;
     case 'out_for_delivery':
     case 'dispatched':
-      return Colors.nileBlue;
+      return colors.nileBlue;
     case 'preparing':
     case 'ready':
       return Colors.gold;
     case 'cancelled':
       return Colors.error;
     default:
-      return Colors.text.tertiary;
+      return colors.text.tertiary;
   }
 }
 
@@ -404,10 +404,10 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['2xl'],
   },
   headerCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   orderHeaderRow: {
     flexDirection: 'row',
@@ -417,12 +417,12 @@ const styles = StyleSheet.create({
   },
   orderNumber: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   orderDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   liveIndicatorContainer: {
     alignItems: 'flex-end',
@@ -439,18 +439,18 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     marginRight: 6,
   },
   liveText: {
     fontSize: 11,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   offlineText: {
     fontSize: 11,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statusBadge: {
     alignSelf: 'flex-start',
@@ -461,15 +461,15 @@ const styles = StyleSheet.create({
   statusText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginTop: Spacing.sm,
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     padding: Spacing.base,
     paddingBottom: Spacing.md,
   },
@@ -481,15 +481,15 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.md,
     marginBottom: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   itemsCount: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   itemsTotal: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   itemRow: {
     flexDirection: 'row',
@@ -501,16 +501,16 @@ const styles = StyleSheet.create({
   itemName: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   itemQuantity: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.md,
   },
   moreItems: {
     ...Typography.caption,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
   },
@@ -521,17 +521,17 @@ const styles = StyleSheet.create({
   addressName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   addressText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 20,
   },
   addressPhone: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   actions: {
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   cancelButton: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: Colors.error,
     paddingVertical: 14,
@@ -552,7 +552,7 @@ const styles = StyleSheet.create({
     color: Colors.error,
   },
   supportButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingVertical: 14,
     borderRadius: BorderRadius.sm,
     alignItems: 'center',
@@ -560,12 +560,12 @@ const styles = StyleSheet.create({
   supportButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorText: {
     ...Typography.h4,
@@ -574,7 +574,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
   },
   retryButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.sm,
@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Service Booking Styles
   serviceBookingCard: {
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
   serviceBookingName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   serviceBookingStatus: {
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
   },
   serviceBookingText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
   },
 });

@@ -329,7 +329,7 @@ function UploadPage() {
                   type === 'reel' ? 'videocam' : 'timer'
                 }
                 size={20}
-                color={contentType === type ? Colors.primary[600] : Colors.text.tertiary}
+                color={contentType === type ? Colors.primary[600] : colors.text.tertiary}
               />
               <ThemedText style={[
                 styles.typeText,
@@ -360,7 +360,7 @@ function UploadPage() {
                 {((contentType === 'post' && media.length < 10) ||
                   (contentType !== 'post' && media.length === 0)) && (
                   <Pressable style={styles.addMediaButton} onPress={handlePickMedia}>
-                    <Ionicons name="add" size={32} color={Colors.text.tertiary} />
+                    <Ionicons name="add" size={32} color={colors.text.tertiary} />
                   </Pressable>
                 )}
               </View>
@@ -370,7 +370,7 @@ function UploadPage() {
               <Ionicons
                 name={contentType === 'reel' ? 'videocam-outline' : 'camera-outline'}
                 size={48}
-                color={Colors.text.tertiary}
+                color={colors.text.tertiary}
               />
               <ThemedText style={styles.uploadText}>
                 {contentType === 'reel'
@@ -393,7 +393,7 @@ function UploadPage() {
               value={title}
               onChangeText={setTitle}
               placeholder="Give your reel a title (min 3 chars)..."
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               maxLength={100}
             />
             <ThemedText style={styles.charCount}>{title.length}/100</ThemedText>
@@ -408,7 +408,7 @@ function UploadPage() {
             value={caption}
             onChangeText={setCaption}
             placeholder="Write a caption..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             multiline
             maxLength={2200}
           />
@@ -430,7 +430,7 @@ function UploadPage() {
                 value={productSearchQuery}
                 onChangeText={setProductSearchQuery}
                 placeholder="Search products..."
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 autoFocus
               />
               {searchingProducts && <ActivityIndicator size="small" style={{ marginTop: 4 }} />}
@@ -441,8 +441,8 @@ function UploadPage() {
                   onPress={() => handleSelectProduct(p)}
                 >
                   <Ionicons name="cube" size={16} color={Colors.primary[600]} />
-                  <ThemedText style={{ flex: 1, ...Typography.body, color: Colors.text.primary }}>{p.name}</ThemedText>
-                  {p.price ? <ThemedText style={{ ...Typography.caption, color: Colors.text.tertiary }}>{p.price}</ThemedText> : null}
+                  <ThemedText style={{ flex: 1, ...Typography.body, color: colors.text.primary }}>{p.name}</ThemedText>
+                  {p.price ? <ThemedText style={{ ...Typography.caption, color: colors.text.tertiary }}>{p.price}</ThemedText> : null}
                 </Pressable>
               ))}
             </View>
@@ -457,7 +457,7 @@ function UploadPage() {
                   <Pressable
                     onPress={() => setTaggedProducts(prev => prev.filter(p => p.id !== product.id))}
                   >
-                    <Ionicons name="close" size={16} color={Colors.text.tertiary} />
+                    <Ionicons name="close" size={16} color={colors.text.tertiary} />
                   </Pressable>
                 </View>
               ))}
@@ -484,7 +484,7 @@ function UploadPage() {
                 value={storeSearchQuery}
                 onChangeText={setStoreSearchQuery}
                 placeholder="Search stores..."
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 autoFocus
               />
               {searchingStores && <ActivityIndicator size="small" style={{ marginTop: 4 }} />}
@@ -495,7 +495,7 @@ function UploadPage() {
                   onPress={() => handleSelectStore(s)}
                 >
                   <Ionicons name="storefront" size={16} color={Colors.primary[600]} />
-                  <ThemedText style={{ ...Typography.body, color: Colors.text.primary }}>{s.name}</ThemedText>
+                  <ThemedText style={{ ...Typography.body, color: colors.text.primary }}>{s.name}</ThemedText>
                 </Pressable>
               ))}
             </View>
@@ -509,7 +509,7 @@ function UploadPage() {
                   <Pressable
                     onPress={() => setTaggedStores(prev => prev.filter(s => s.id !== store.id))}
                   >
-                    <Ionicons name="close" size={16} color={Colors.text.tertiary} />
+                    <Ionicons name="close" size={16} color={colors.text.tertiary} />
                   </Pressable>
                 </View>
               ))}
@@ -524,10 +524,10 @@ function UploadPage() {
         {/* Location */}
         <Pressable style={styles.optionRow}>
           <View style={styles.optionLeft}>
-            <Ionicons name="location-outline" size={24} color={Colors.text.secondary} />
+            <Ionicons name="location-outline" size={24} color={colors.text.secondary} />
             <ThemedText style={styles.optionLabel}>Add Location</ThemedText>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
         </Pressable>
 
         {/* Earn Coins Info */}
@@ -550,7 +550,7 @@ function UploadPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
   },
   typeSelector: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     margin: Spacing.base,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xs,
@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
   },
   typeText: {
     ...Typography.label,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   typeTextActive: {
     color: Colors.primary[600],
@@ -617,7 +617,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   uploadArea: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -628,13 +628,13 @@ const styles = StyleSheet.create({
   },
   uploadText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md,
     textAlign: 'center',
   },
   uploadHint: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   mediaGrid: {
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: Spacing.xs,
     right: Spacing.xs,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.full,
   },
   addMediaButton: {
@@ -682,30 +682,30 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   titleInput: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     ...Shadows.subtle,
   },
   captionInput: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 100,
     textAlignVertical: 'top',
     ...Shadows.subtle,
   },
   charCount: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'right',
     marginTop: Spacing.xs,
   },
@@ -729,17 +729,17 @@ const styles = StyleSheet.create({
   },
   tagPrice: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyTagText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   optionRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.lg,
     padding: Spacing.base,
@@ -753,7 +753,7 @@ const styles = StyleSheet.create({
   },
   optionLabel: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   earnCard: {
     flexDirection: 'row',
@@ -774,7 +774,7 @@ const styles = StyleSheet.create({
   },
   earnText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 });
 

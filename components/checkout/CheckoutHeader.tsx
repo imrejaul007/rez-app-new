@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { BRAND } from '@/constants/brand';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface CheckoutHeaderProps {
@@ -29,7 +29,7 @@ function CheckoutHeader({
 
   return (
     <>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.gold} />
       <LinearGradient
         colors={[colors.lightMustard, colors.nileBlue]}
         style={styles.header}
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h4,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
     textAlign: 'center',
     marginLeft: -40,
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   coinsText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
     marginLeft: Spacing.xs,
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   amountText: {
     fontSize: 42,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 10,
     letterSpacing: -1,
   },
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
   },
   cashbackText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 13,
     fontWeight: '600',
   },

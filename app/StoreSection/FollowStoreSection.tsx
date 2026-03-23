@@ -300,12 +300,12 @@ function FollowStoreSection({
             ]}
           >
             {isLoading ? (
-              <ActivityIndicator size="small" color={isFollowing ? Colors.nileBlue : Colors.gold} />
+              <ActivityIndicator size="small" color={isFollowing ? colors.nileBlue : Colors.gold} />
             ) : (
               <Ionicons
                 name={isFollowing ? 'heart' : 'heart-outline'}
                 size={28}
-                color={isFollowing ? Colors.nileBlue : Colors.gold}
+                color={isFollowing ? colors.nileBlue : Colors.gold}
               />
             )}
           </Animated.View>
@@ -331,7 +331,7 @@ function FollowStoreSection({
           <Ionicons
             name={isFollowing ? 'checkmark' : 'add'}
             size={20}
-            color={isFollowing ? Colors.nileBlue : Colors.gold}
+            color={isFollowing ? colors.nileBlue : Colors.gold}
           />
         </View>
       </Pressable>
@@ -428,7 +428,7 @@ function FollowStoreSection({
               <Ionicons
                 name={notificationsEnabled ? 'notifications' : 'notifications-outline'}
                 size={20}
-                color={notificationsEnabled ? Colors.background.primary : Colors.text.secondary}
+                color={notificationsEnabled ? colors.background.primary : colors.text.secondary}
               />
             </View>
             <View style={styles.notificationTextContainer}>
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius['2xl'],
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.12,
         shadowRadius: 24 },
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
 
   loadingText: {
     ...Typography.body,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
 
   cardContent: {
     flexDirection: 'row',
@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
     letterSpacing: -0.3 },
 
@@ -573,7 +573,7 @@ const styles = StyleSheet.create({
 
   subtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500' },
 
   // Action Badge
@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 16 },
@@ -673,12 +673,12 @@ const styles = StyleSheet.create({
   notificationTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2 },
 
   notificationSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
 
   // Premium Glass Toggle Switch
   toggle: {
@@ -698,7 +698,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     ...Platform.select({
@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
         elevation: 3 } }) },
 
   toggleKnobActive: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 2,
     borderColor: Colors.success },
 
@@ -722,7 +722,7 @@ const styles = StyleSheet.create({
   benefitsTitle: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: 14,
     textTransform: 'uppercase',
     letterSpacing: 0.8 },
@@ -742,7 +742,7 @@ const styles = StyleSheet.create({
     borderColor: GLASS.lightBorder,
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.06,
         shadowRadius: 10 },
@@ -762,7 +762,7 @@ const styles = StyleSheet.create({
   benefitText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center' } });
 
 export default withErrorBoundary(FollowStoreSection, 'StoreSectionFollowStoreSection');

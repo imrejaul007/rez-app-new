@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Feedback Page
 // App feedback submission
@@ -155,7 +156,7 @@ function FeedbackPage() {
         >
           <View style={styles.headerContent}>
             <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.white} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.white} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Feedback</ThemedText>
             <View style={styles.placeholder} />
@@ -191,7 +192,7 @@ function FeedbackPage() {
       >
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.white} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.white} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Feedback</ThemedText>
           <View style={styles.placeholder} />
@@ -250,7 +251,7 @@ function FeedbackPage() {
                 <Ionicons
                   name={category.icon as any}
                   size={24}
-                  color={selectedCategory === category.id ? Colors.primary[600] : Colors.text.tertiary}
+                  color={selectedCategory === category.id ? Colors.primary[600] : colors.text.tertiary}
                 />
                 <ThemedText style={[
                   styles.categoryLabel,
@@ -277,7 +278,7 @@ function FeedbackPage() {
                 ? "What feature would you like to see? How would it help you?"
                 : "Share your thoughts..."
             }
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             multiline
             maxLength={1000}
           />
@@ -301,7 +302,7 @@ function FeedbackPage() {
             ))}
             {screenshots.length < 3 && (
               <Pressable style={styles.addButton} onPress={handlePickImage}>
-                <Ionicons name="camera-outline" size={28} color={Colors.text.tertiary} />
+                <Ionicons name="camera-outline" size={28} color={colors.text.tertiary} />
                 <ThemedText style={styles.addButtonText}>Add Photo</ThemedText>
               </Pressable>
             )}
@@ -319,7 +320,7 @@ function FeedbackPage() {
             value={email}
             onChangeText={setEmail}
             placeholder="your@email.com"
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             keyboardType="email-address"
             autoCapitalize="none"
           />
@@ -336,14 +337,14 @@ function FeedbackPage() {
         >
           {loading ? (
             <>
-              <ActivityIndicator color={Colors.text.white} />
+              <ActivityIndicator color={colors.text.white} />
               {uploadingImages && (
                 <ThemedText style={styles.submitButtonText}>Uploading images...</ThemedText>
               )}
             </>
           ) : (
             <>
-              <Ionicons name="paper-plane" size={20} color={Colors.text.white} />
+              <Ionicons name="paper-plane" size={20} color={colors.text.white} />
               <ThemedText style={styles.submitButtonText}>Submit Feedback</ThemedText>
             </>
           )}
@@ -365,7 +366,7 @@ function FeedbackPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -383,7 +384,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     flex: 1,
     ...Typography.h3,
-    color: Colors.text.white,
+    color: colors.text.white,
     textAlign: 'center',
     marginRight: 40,
   },
@@ -413,7 +414,7 @@ const styles = StyleSheet.create({
   },
   introText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   section: {
@@ -421,12 +422,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   sectionSubtitle: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   ratingContainer: {
@@ -450,7 +451,7 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: '48%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -465,7 +466,7 @@ const styles = StyleSheet.create({
   },
   categoryLabel: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   categoryLabelSelected: {
@@ -473,26 +474,26 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   textInput: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     ...Shadows.subtle,
   },
   textArea: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 120,
     textAlignVertical: 'top',
     ...Shadows.subtle,
   },
   charCount: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'right',
     marginTop: Spacing.xs,
   },
@@ -515,7 +516,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -8,
     right: -8,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.full,
   },
   addButton: {
@@ -532,7 +533,7 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   submitButton: {
     flexDirection: 'row',
@@ -549,7 +550,7 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     ...Typography.button,
-    color: Colors.text.white,
+    color: colors.text.white,
   },
   noteCard: {
     flexDirection: 'row',
@@ -561,7 +562,7 @@ const styles = StyleSheet.create({
   },
   noteText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
     lineHeight: 18,
   },
@@ -576,12 +577,12 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     ...Typography.h1,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   successText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.xl,
@@ -595,7 +596,7 @@ const styles = StyleSheet.create({
   },
   doneButtonText: {
     ...Typography.button,
-    color: Colors.text.white,
+    color: colors.text.white,
   },
 });
 

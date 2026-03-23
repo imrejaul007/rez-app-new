@@ -163,7 +163,7 @@ const CoinHuntScreen: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={handleGoBack}>
-          <Ionicons name="arrow-back" size={20} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={20} color={colors.nileBlue} />
         </Pressable>
         <View>
           <Text style={styles.headerTitle}>🪙 Coin Hunt</Text>
@@ -255,7 +255,7 @@ const CoinHuntScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -275,11 +275,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   statsRow: {
     flexDirection: 'row',
@@ -327,12 +327,12 @@ const styles = StyleSheet.create({
   readyTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   readySubtitle: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: 'center',
     marginBottom: Spacing.xl,
     lineHeight: 22,
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
   startButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   gameArea: {
     flex: 1,
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
   coinValue: {
     fontSize: 12,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   gameOverOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   gameOverTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   gameOverScore: {
     fontSize: 18,
@@ -410,23 +410,23 @@ const styles = StyleSheet.create({
   playAgainText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   infoCard: {
     margin: Spacing.base,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   infoTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   infoItem: {
     fontSize: 12,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginBottom: Spacing.xs,
   },
 });

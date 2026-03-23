@@ -27,7 +27,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 // Nuqta Design System
 const NUQTA = {
-  nileBlue: Colors.nileBlue,
+  nileBlue: colors.nileBlue,
   nileBlueLight: '#243f55',
   lightMustard: Colors.gold,
   mustardDark: '#e5b84d',
@@ -116,7 +116,7 @@ function AISearchPage() {
       case 'product': return NUQTA.nileBlue;
       case 'store': return Colors.info;
       case 'offer': return Colors.success;
-      default: return Colors.text.tertiary;
+      default: return colors.text.tertiary;
     }
   };
 
@@ -161,7 +161,7 @@ function AISearchPage() {
         )}
       </View>
 
-      <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+      <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
     </Pressable>
   ), [currencySymbol, handleResultPress]);
 
@@ -175,7 +175,7 @@ function AISearchPage() {
       >
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>AI Search</ThemedText>
           <View style={{ width: 40 }} />
@@ -202,7 +202,7 @@ function AISearchPage() {
             disabled={!query.trim() || searching}
           >
             {searching ? (
-              <ActivityIndicator color={Colors.text.inverse} size="small" />
+              <ActivityIndicator color={colors.text.inverse} size="small" />
             ) : (
               <Ionicons name="search" size={20} color={NUQTA.nileBlue} />
             )}
@@ -311,7 +311,7 @@ function AISearchPage() {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="search-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="search-outline" size={48} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyTitle}>No results found</ThemedText>
               <ThemedText style={styles.emptyText}>
                 Try rephrasing your search or being more specific
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
   },
   searchContainer: {
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     maxHeight: 80,
   },
   searchButton: {
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   aiInfoCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -410,14 +410,14 @@ const styles = StyleSheet.create({
   },
   aiText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
   },
   sectionTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
   },
   promptsContainer: {
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     ...Shadows.subtle,
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   featuresSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     ...Shadows.subtle,
@@ -466,7 +466,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   loadingContainer: {
     flex: 1,
@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   listContent: {
@@ -502,18 +502,18 @@ const styles = StyleSheet.create({
   },
   parsedText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   resultsSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   resultCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -573,7 +573,7 @@ const styles = StyleSheet.create({
   },
   resultSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   resultPrice: {
     ...Typography.body,
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   retryButton: {
@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
   },
   retryText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     ...Typography.body,
   },

@@ -26,14 +26,14 @@ const COLORS = {
   primaryDark: colors.brand.goldRich,
   white: colors.background.primary,
   black: '#000000',
-  textDark: Colors.nileBlue,
-  textMuted: Colors.text.tertiary,
+  textDark: colors.nileBlue,
+  textMuted: colors.text.tertiary,
   background: colors.linen,
   success: Colors.success,
   error: Colors.error,
   pending: Colors.warning,
   cardBg: colors.background.primary,
-  border: Colors.border.default,
+  border: colors.border.default,
 };
 
 interface ZoneEligibility {

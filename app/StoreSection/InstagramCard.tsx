@@ -106,7 +106,7 @@ function InstagramCard({ productData, disabled = false, onError }: InstagramCard
       accessibilityState={{ disabled: disabled || isNavigating, busy: isNavigating }}
     >
       <LinearGradient
-        colors={disabled ? [colors.lavenderMist, '#b8d4ed'] : [colors.lightPeach, Colors.gold, Colors.nileBlue]}
+        colors={disabled ? [colors.lavenderMist, '#b8d4ed'] : [colors.lightPeach, Colors.gold, colors.nileBlue]}
         style={[styles.gradientBackground, { padding: responsivePadding }]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -115,9 +115,9 @@ function InstagramCard({ productData, disabled = false, onError }: InstagramCard
         <View style={styles.content}>
           <View style={styles.iconContainer}>
             {isNavigating ? (
-              <ActivityIndicator size="small" color={Colors.text.inverse} />
+              <ActivityIndicator size="small" color={colors.text.inverse} />
             ) : (
-              <Ionicons name="logo-instagram" size={24} color={Colors.text.inverse} />
+              <Ionicons name="logo-instagram" size={24} color={colors.text.inverse} />
             )}
           </View>
           <Text style={styles.title}>
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.h4,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: -0.2,
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 0, height: 1 },

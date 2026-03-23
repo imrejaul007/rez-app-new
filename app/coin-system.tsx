@@ -129,7 +129,7 @@ const EARNING_METHODS: EarningMethod[] = [
     icon: 'game-controller',
     title: 'Games',
     description: 'Play daily games for coins and prizes',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     backgroundColor: colors.tint.purpleLight,
   },
   {
@@ -164,7 +164,7 @@ const EARNING_METHODS: EarningMethod[] = [
     icon: 'star',
     title: 'Reviews',
     description: 'Write product and store reviews for coins',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     backgroundColor: colors.indigoMist,
   },
 ];
@@ -243,7 +243,7 @@ const FAQItemComponent = ({ faq, index, isExpanded, onToggle }: {
       >
         <Text style={styles.faqQuestionText}>{faq.question}</Text>
         <Animated.View style={chevronStyle}>
-          <Ionicons name="chevron-down" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-down" size={20} color={colors.text.tertiary} />
         </Animated.View>
       </Pressable>
       {isExpanded && (
@@ -353,7 +353,7 @@ const CoinSystemPage = () => {
         <Text style={styles.earningTitle}>{method.title}</Text>
         <Text style={styles.earningDescription}>{method.description}</Text>
       </View>
-      <Ionicons name="chevron-forward" size={18} color={Colors.border.default} />
+      <Ionicons name="chevron-forward" size={18} color={colors.border.default} />
     </View>
   );
 
@@ -372,13 +372,13 @@ const CoinSystemPage = () => {
           </View>
           {index < SPENDING_PRIORITY.length - 1 && (
             <View style={styles.priorityArrow}>
-              <Ionicons name="arrow-down" size={18} color={Colors.border.default} />
+              <Ionicons name="arrow-down" size={18} color={colors.border.default} />
             </View>
           )}
         </React.Fragment>
       ))}
       <View style={styles.priorityNote}>
-        <Ionicons name="information-circle" size={16} color={Colors.text.tertiary} />
+        <Ionicons name="information-circle" size={16} color={colors.text.tertiary} />
         <Text style={styles.priorityNoteText}>
           Coins with the nearest expiry are used first within each type
         </Text>
@@ -424,11 +424,11 @@ const CoinSystemPage = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
       <LinearGradient
-        colors={[Colors.nileBlue, '#2d5a7b'] as const}
+        colors={[colors.nileBlue, '#2d5a7b'] as const}
         style={styles.header}
       >
         <View style={styles.headerContent}>
@@ -438,7 +438,7 @@ const CoinSystemPage = () => {
             accessibilityLabel="Go back"
             accessibilityRole="button"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>ReZ Coin System</Text>
           <View style={styles.headerPlaceholder} />
@@ -475,7 +475,7 @@ const CoinSystemPage = () => {
         {/* Section: Coin Types */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="layers" size={22} color={Colors.nileBlue} />
+            <Ionicons name="layers" size={22} color={colors.nileBlue} />
             <Text style={styles.sectionTitle}>Coin Types</Text>
           </View>
           {COIN_TYPES.map(renderCoinTypeCard)}
@@ -484,7 +484,7 @@ const CoinSystemPage = () => {
         {/* Section: How to Earn */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="trending-up" size={22} color={Colors.nileBlue} />
+            <Ionicons name="trending-up" size={22} color={colors.nileBlue} />
             <Text style={styles.sectionTitle}>How to Earn</Text>
           </View>
           <View style={styles.earningList}>
@@ -495,7 +495,7 @@ const CoinSystemPage = () => {
         {/* Section: Spending Priority */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="swap-vertical" size={22} color={Colors.nileBlue} />
+            <Ionicons name="swap-vertical" size={22} color={colors.nileBlue} />
             <Text style={styles.sectionTitle}>Spending Priority</Text>
           </View>
           <Text style={styles.sectionSubtitle}>
@@ -507,7 +507,7 @@ const CoinSystemPage = () => {
         {/* Section: Expiry Rules */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="time" size={22} color={Colors.nileBlue} />
+            <Ionicons name="time" size={22} color={colors.nileBlue} />
             <Text style={styles.sectionTitle}>Expiry Rules</Text>
           </View>
           <Text style={styles.sectionSubtitle}>
@@ -519,7 +519,7 @@ const CoinSystemPage = () => {
         {/* Section: FAQ */}
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
-            <Ionicons name="help-circle" size={22} color={Colors.nileBlue} />
+            <Ionicons name="help-circle" size={22} color={colors.nileBlue} />
             <Text style={styles.sectionTitle}>Frequently Asked Questions</Text>
           </View>
           <View style={styles.faqList}>
@@ -537,14 +537,14 @@ const CoinSystemPage = () => {
             accessibilityRole="button"
           >
             <LinearGradient
-              colors={[Colors.nileBlue, '#2d5a7b'] as const}
+              colors={[colors.nileBlue, '#2d5a7b'] as const}
               style={styles.ctaGradient}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
             >
               <Ionicons name="wallet" size={22} color={Colors.gold} />
               <Text style={styles.ctaText}>View My Wallet</Text>
-              <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+              <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
             </LinearGradient>
           </Pressable>
         </View>
@@ -562,7 +562,7 @@ const CoinSystemPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -585,7 +585,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
   },
   headerPlaceholder: {
@@ -620,7 +620,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
     paddingVertical: 28,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginBottom: Spacing.sm,
   },
   introIconRow: {
@@ -632,13 +632,13 @@ const styles = StyleSheet.create({
   introTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   introSubtitle: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 21,
   },
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
   section: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginBottom: Spacing.sm,
   },
   sectionHeader: {
@@ -659,23 +659,23 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   sectionSubtitle: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.base,
     lineHeight: 20,
   },
 
   // Coin Type Cards
   coinCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.light,
+    borderColor: colors.border.light,
     borderLeftWidth: 4,
     ...Shadows.subtle,
   },
@@ -716,7 +716,7 @@ const styles = StyleSheet.create({
   },
   coinDescription: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 19,
     marginBottom: Spacing.md,
   },
@@ -729,13 +729,13 @@ const styles = StyleSheet.create({
   },
   coinDetailLabel: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
     width: 90,
   },
   coinDetailValue: {
     fontSize: 12,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
     flex: 1,
   },
@@ -747,11 +747,11 @@ const styles = StyleSheet.create({
   earningCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 14,
     borderWidth: 1,
-    borderColor: Colors.border.light,
+    borderColor: colors.border.light,
   },
   earningIconContainer: {
     width: 42,
@@ -767,18 +767,18 @@ const styles = StyleSheet.create({
   earningTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   earningDescription: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 17,
   },
 
   // Spending Priority
   priorityContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.lg,
     alignItems: 'center',
@@ -789,7 +789,7 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingVertical: 10,
     paddingHorizontal: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     gap: Spacing.md,
     ...Shadows.subtle,
@@ -804,7 +804,7 @@ const styles = StyleSheet.create({
   priorityNumberText: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   priorityIconBg: {
     width: 36,
@@ -816,7 +816,7 @@ const styles = StyleSheet.create({
   priorityName: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   priorityArrow: {
@@ -832,7 +832,7 @@ const styles = StyleSheet.create({
   },
   priorityNoteText: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
     lineHeight: 17,
   },
@@ -842,35 +842,35 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   expiryTableHeader: {
     flexDirection: 'row',
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingVertical: 12,
     paddingHorizontal: 12,
   },
   expiryTableHeaderText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   expiryTableRow: {
     flexDirection: 'row',
     paddingVertical: 12,
     paddingHorizontal: 12,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
   },
   expiryTableRowEven: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   expiryTableCell: {
     fontSize: 13,
   },
   expiryTableText: {
     fontSize: 13,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   expiryDot: {
@@ -884,10 +884,10 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   faqItem: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.light,
+    borderColor: colors.border.light,
     overflow: 'hidden',
   },
   faqQuestion: {
@@ -900,7 +900,7 @@ const styles = StyleSheet.create({
   faqQuestionText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     marginRight: 12,
   },
@@ -909,7 +909,7 @@ const styles = StyleSheet.create({
   },
   faqAnswerText: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 22,
     paddingHorizontal: Spacing.base,
     paddingBottom: 14,
@@ -923,7 +923,7 @@ const styles = StyleSheet.create({
   ctaButton: {
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
-    shadowColor: Colors.nileBlue,
+    shadowColor: colors.nileBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
@@ -940,7 +940,7 @@ const styles = StyleSheet.create({
   ctaText: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
     textAlign: 'center',
   },

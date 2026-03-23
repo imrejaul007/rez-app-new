@@ -122,7 +122,7 @@ function GoingOutPage() {
                   accessibilityLabel="No products available. We're working on adding amazing products for you. Check back soon for the latest deals!"
                 >
                   <View style={styles.emptyIconContainer}>
-                    <Ionicons name="storefront-outline" size={64} color={Colors.border.default} />
+                    <Ionicons name="storefront-outline" size={64} color={colors.border.default} />
                   </View>
                   <ThemedText style={styles.emptyTitle}>No products available</ThemedText>
                   <ThemedText style={styles.emptySubtitle}>
@@ -179,7 +179,7 @@ function GoingOutPage() {
                   accessibilityLabel="No products found in this category. Try selecting a different category or browse all products."
                 >
                   <View style={styles.emptyIconContainer}>
-                    <Ionicons name="search-outline" size={64} color={Colors.border.default} />
+                    <Ionicons name="search-outline" size={64} color={colors.border.default} />
                   </View>
                   <ThemedText style={styles.emptyTitle}>No products found</ThemedText>
                   <ThemedText style={styles.emptySubtitle}>
@@ -243,7 +243,7 @@ function GoingOutPage() {
                   accessibilityRole="text"
                   accessibilityLabel="Keep typing. Enter at least 2 characters to start searching"
                 >
-                  <Ionicons name="information-circle-outline" size={48} color={Colors.border.default} />
+                  <Ionicons name="information-circle-outline" size={48} color={colors.border.default} />
                   <ThemedText style={styles.searchHintTitle}>Keep typing...</ThemedText>
                   <ThemedText style={styles.searchHintText}>
                     Enter at least 2 characters to start searching
@@ -280,7 +280,7 @@ function GoingOutPage() {
                   accessibilityLabel={`No results found for ${state.searchQuery}. Try different keywords or browse our categories`}
                 >
                   <View style={styles.emptyIconContainer}>
-                    <Ionicons name="search-outline" size={80} color={Colors.border.default} />
+                    <Ionicons name="search-outline" size={80} color={colors.border.default} />
                   </View>
                   <ThemedText style={styles.emptyTitle}>No results found</ThemedText>
                   <ThemedText style={styles.emptySubtitle}>
@@ -328,7 +328,7 @@ function GoingOutPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   content: {
     flex: 1,
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   },
   searchResultsContainer: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginTop: Spacing.lg,
     borderRadius: 28,
     marginHorizontal: Spacing.base,
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     }),
   },
   allProductsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginTop: 28,
     paddingTop: Spacing.xl,
     borderRadius: 28,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingTop: 28,
     paddingBottom: Spacing.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     borderRadius: 28,
     marginTop: 20,
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: 32,
     fontWeight: '900',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.8,
     flex: 1,
   },
@@ -439,19 +439,19 @@ const styles = StyleSheet.create({
     }),
   },
   categoryBadgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '800',
     letterSpacing: 0.5,
   },
   categoryCount: {
     ...Typography.h4,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
     letterSpacing: 0.2,
   },
   productsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.base,
     ...Platform.select({
@@ -474,7 +474,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 80,
     paddingHorizontal: Spacing['3xl'],
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     marginTop: Spacing.lg,
     ...Platform.select({
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.xl,
@@ -504,13 +504,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.md,
     textAlign: 'center',
   },
   emptySubtitle: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: Spacing['2xl'],
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
     }),
   },
   emptyActionText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     marginTop: Spacing.base,
@@ -577,11 +577,11 @@ const styles = StyleSheet.create({
   searchResultsTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   searchHint: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontStyle: 'italic',
     marginTop: 4,
   },
@@ -593,14 +593,14 @@ const styles = StyleSheet.create({
   },
   searchQueryText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontStyle: 'italic',
   },
   loadingContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 60,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     borderBottomLeftRadius: BorderRadius['2xl'],
     borderBottomRightRadius: BorderRadius['2xl'],
@@ -608,7 +608,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   searchEmptyState: {
@@ -616,14 +616,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 80,
     paddingHorizontal: Spacing['3xl'],
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomLeftRadius: BorderRadius['2xl'],
     borderBottomRightRadius: BorderRadius['2xl'],
     marginHorizontal: Spacing.base,
   },
   emptySuggestion: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
     lineHeight: 20,
@@ -633,7 +633,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 60,
     paddingHorizontal: Spacing['3xl'],
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomLeftRadius: BorderRadius['2xl'],
     borderBottomRightRadius: BorderRadius['2xl'],
     marginHorizontal: Spacing.base,
@@ -641,13 +641,13 @@ const styles = StyleSheet.create({
   searchHintTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   searchHintText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
   },

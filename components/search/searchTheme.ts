@@ -1,16 +1,15 @@
 import { colors } from '@/constants/theme';
-import { Colors } from '@/constants/DesignSystem';
 
 // ============================================
 // NUQTA DESIGN SYSTEM - Premium Color Palette
 // ============================================
 export const NUQTA = {
   // Primary Colors
-  nileBlue: Colors.nileBlue,
-  lightMustard: Colors.gold,
-  linen: Colors.linen,
-  lightPeach: Colors.lightPeach,
-  lavenderMist: Colors.lavenderMist,
+  nileBlue: colors.nileBlue,
+  lightMustard: colors.gold,
+  linen: colors.linen,
+  lightPeach: colors.lightPeach,
+  lavenderMist: colors.lavenderMist,
 
   // Derived Shades
   nileBlueLight: '#243f55',
@@ -23,10 +22,10 @@ export const NUQTA = {
 
   // Semantic Colors
   text: {
-    primary: Colors.nileBlue,
+    primary: colors.nileBlue,
     secondary: '#4a6580',
     muted: '#8aa3b8',
-    inverse: Colors.background.primary,
+    inverse: colors.background.primary,
   },
 
   // Glass Effects

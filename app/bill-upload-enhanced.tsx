@@ -220,7 +220,7 @@ function EnhancedBillUploadPage() {
               style={styles.cameraCloseButton}
               onPress={() => setShowCamera(false)}
             >
-              <Ionicons name="close" size={32} color={Colors.text.inverse} />
+              <Ionicons name="close" size={32} color={colors.text.inverse} />
             </Pressable>
 
             <View style={styles.cameraGuidelines}>
@@ -244,7 +244,7 @@ function EnhancedBillUploadPage() {
                   );
                 }}
               >
-                <Ionicons name="camera-reverse" size={32} color={Colors.text.inverse} />
+                <Ionicons name="camera-reverse" size={32} color={colors.text.inverse} />
               </Pressable>
 
               <Pressable
@@ -273,11 +273,11 @@ function EnhancedBillUploadPage() {
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={handleGoBack}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Upload Bill</Text>
           <Pressable onPress={() => setShowRequirements(true)}>
-            <Ionicons name="information-circle-outline" size={24} color={Colors.text.primary} />
+            <Ionicons name="information-circle-outline" size={24} color={colors.text.primary} />
           </Pressable>
         </View>
 
@@ -398,7 +398,7 @@ function EnhancedBillUploadPage() {
             disabled={!canProceed || isUploading || isProcessing}
           >
             {isUploading ? (
-              <ActivityIndicator color={Colors.text.inverse} />
+              <ActivityIndicator color={colors.text.inverse} />
             ) : (
               <>
                 <Text style={styles.submitButtonText}>
@@ -423,7 +423,7 @@ function EnhancedBillUploadPage() {
       >
         <View style={styles.modalHeader}>
           <Pressable onPress={() => setShowRequirements(false)}>
-            <Ionicons name="close" size={24} color={Colors.text.primary} />
+            <Ionicons name="close" size={24} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.modalTitle}>Requirements</Text>
           <View style={{ width: 24 }} />
@@ -468,7 +468,7 @@ function EnhancedBillUploadPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   scrollView: {
     flex: 1,
@@ -478,14 +478,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   infoBanner: {
     flexDirection: 'row',
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   uploadOptionsContainer: {
@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
   },
   uploadOption: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   uploadOptionText: {
     marginTop: Spacing.sm,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   imagePreviewContainer: {
@@ -554,12 +554,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     right: 8,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
   },
   helperText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
     textAlign: 'center',
   },
@@ -594,7 +594,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   correctionButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -644,12 +644,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#CCC',
   },
   submitButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
   submitButtonSubtext: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     marginTop: Spacing.xs,
   },
@@ -676,14 +676,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cameraGuidelinesText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   cameraGuidelinesSubtext: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     marginBottom: Spacing.lg,
     textAlign: 'center',
@@ -692,7 +692,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 200,
     borderWidth: 2,
-    borderColor: Colors.background.primary,
+    borderColor: colors.background.primary,
     borderRadius: BorderRadius.md,
   },
   cameraControls: {
@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -727,14 +727,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 });
 

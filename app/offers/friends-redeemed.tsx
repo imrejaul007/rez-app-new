@@ -282,7 +282,7 @@ function FriendsRedeemedPage() {
         </View>
       ) : error ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
           <ThemedText style={styles.emptyTitle}>Something went wrong</ThemedText>
           <ThemedText style={styles.emptyText}>{error}</ThemedText>
           <Pressable style={styles.retryButton} onPress={handleRefresh}>
@@ -343,7 +343,7 @@ function FriendsRedeemedPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginRight: Spacing.sm,
     ...Shadows.subtle,
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
   },
   friendFilterName: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   friendFilterNameActive: {
     color: Colors.primary[600],
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   offerCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   friendAvatarLarge: {
     width: 40,
@@ -462,11 +462,11 @@ const styles = StyleSheet.create({
   },
   friendName: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   redeemedTime: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   offerInfo: {
     flexDirection: 'row',
@@ -489,12 +489,12 @@ const styles = StyleSheet.create({
   },
   offerTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   offerStore: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   offerMeta: {
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   retryButton: {
@@ -568,12 +568,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 });

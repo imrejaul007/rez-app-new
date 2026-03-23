@@ -419,15 +419,15 @@ function SettingsPage() {
           <Switch
             value={item.value}
             onValueChange={item.onPress}
-            trackColor={{ false: Colors.border.default, true: colors.primary[300] }}
-            thumbColor={item.value ? Colors.background.primary : Colors.background.primary}
+            trackColor={{ false: colors.border.default, true: colors.primary[300] }}
+            thumbColor={item.value ? colors.background.primary : colors.background.primary}
           />
         )}
         {item.type === 'navigation' && (
-          <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
         )}
         {item.type === 'action' && (
-          <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
         )}
       </View>
     </Pressable>
@@ -492,7 +492,7 @@ function SettingsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 20 : 0,
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerRight: {
     width: 40,
@@ -533,12 +533,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.md,
     marginLeft: Spacing.xs,
   },
   sectionItems: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     shadowColor: '#000',
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   settingsItemLeft: {
     flexDirection: 'row',
@@ -575,12 +575,12 @@ const styles = StyleSheet.create({
   settingsTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: 2,
   },
   settingsDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18,
   },
   settingsItemRight: {
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
   },
   appInfoText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   bottomSpace: {

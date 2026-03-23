@@ -32,12 +32,12 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = (SCREEN_WIDTH - 48 - 12) / 2;
 
 const COLORS = {
-  white: Colors.background.primary,
-  navy: Colors.nileBlue,
+  white: colors.background.primary,
+  navy: colors.nileBlue,
   gray100: Colors.gray[100],
-  gray200: Colors.border.medium,
-  gray400: Colors.text.tertiary,
-  gray500: Colors.text.secondary,
+  gray200: colors.border.medium,
+  gray400: colors.text.tertiary,
+  gray500: colors.text.secondary,
   gray600: Colors.gray[600],
   green500: Colors.success,
   amber400: colors.warningScale[400],

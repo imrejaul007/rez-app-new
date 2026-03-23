@@ -12,7 +12,8 @@ import Animated, { interpolate, useAnimatedStyle, useSharedValue, withSpring } f
 import { ThemedText } from '@/components/ThemedText';
 import { AccountTabsProps, AccountTabType } from '@/types/account.types';
 import { TAB_ORDER } from '@/data/accountData';
-import { Colors, Timing, BorderRadius } from '@/constants/DesignSystem';
+import { Timing, BorderRadius } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 
 const PILL_INSET = 3;
 
@@ -96,10 +97,10 @@ const styles = StyleSheet.create({
     top: PILL_INSET,
     bottom: PILL_INSET,
     borderRadius: BorderRadius.xl - PILL_INSET,
-    backgroundColor: Colors.primary[500],
+    backgroundColor: colors.primary[500],
     ...Platform.select({
       ios: {
-        shadowColor: Colors.primary[700],
+        shadowColor: colors.primary[700],
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 6,
@@ -118,11 +119,11 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.gray[600],
+    color: colors.gray[600],
     letterSpacing: 0.1,
   },
   activeTabText: {
-    color: Colors.secondary[600],
+    color: colors.secondary[600],
     fontWeight: '700',
   },
 });

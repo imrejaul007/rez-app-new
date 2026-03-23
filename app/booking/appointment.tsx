@@ -418,7 +418,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.background.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Book Appointment</ThemedText>
           <View style={{ width: 40 }} />
@@ -609,22 +609,22 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
             <ThemedText style={styles.sectionTitle}>Your Details</ThemedText>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: textColor }]}
                 placeholder="Full Name *"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={customerName}
                 onChangeText={setCustomerName}
               />
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="call-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="call-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: textColor }]}
                 placeholder="Phone Number *"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={customerPhone}
                 onChangeText={setCustomerPhone}
                 keyboardType="phone-pad"
@@ -632,11 +632,11 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: textColor }]}
                 placeholder="Email (Optional)"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={customerEmail}
                 onChangeText={setCustomerEmail}
                 keyboardType="email-address"
@@ -645,11 +645,11 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
             </View>
 
             <View style={[styles.inputContainer, styles.textAreaContainer]}>
-              <Ionicons name="document-text-outline" size={20} color={Colors.text.tertiary} style={styles.inputIconTop} />
+              <Ionicons name="document-text-outline" size={20} color={colors.text.tertiary} style={styles.inputIconTop} />
               <TextInput
                 style={[styles.input, styles.textArea, { color: textColor }]}
                 placeholder="Special Instructions (Optional)"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={specialInstructions}
                 onChangeText={setSpecialInstructions}
                 multiline
@@ -673,7 +673,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                     <ThemedText style={[styles.depositText, { fontWeight: '600', color: colors.brand.purple }]}>
                       Payment required at booking · {currencySymbol}{selectedService.price}
                     </ThemedText>
-                    <ThemedText style={[styles.depositSub, { color: Colors.text.tertiary, marginTop: Spacing.xs, fontSize: 12 }]}>
+                    <ThemedText style={[styles.depositSub, { color: colors.text.tertiary, marginTop: Spacing.xs, fontSize: 12 }]}>
                       Full amount charged now · Free cancellation 24h before
                     </ThemedText>
                   </View>
@@ -715,7 +715,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
               {/* Cancellation Policy */}
               <View style={styles.summaryDivider} />
               <View style={styles.policyRow}>
-                <Ionicons name="information-circle-outline" size={14} color={Colors.text.tertiary} />
+                <Ionicons name="information-circle-outline" size={14} color={colors.text.tertiary} />
                 <ThemedText style={styles.policyText}>
                   Free cancellation up to 24h before · Late cancellations may incur a fee.
                 </ThemedText>
@@ -761,11 +761,11 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
               style={styles.confirmButtonGradient}
             >
               {submitting ? (
-                <ActivityIndicator color={Colors.background.primary} />
+                <ActivityIndicator color={colors.background.primary} />
               ) : (
                 <>
                   <ThemedText style={styles.confirmButtonText}>Confirm Appointment</ThemedText>
-                  <Ionicons name="checkmark-circle" size={24} color={Colors.background.primary} />
+                  <Ionicons name="checkmark-circle" size={24} color={colors.background.primary} />
                 </>
               )}
             </LinearGradient>
@@ -799,7 +799,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   backToStoreText: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -825,7 +825,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
   storeInfo: {
     alignItems: 'center',
@@ -833,7 +833,7 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.background.primary,
+    color: colors.background.primary,
     marginBottom: Spacing.xs,
   },
   storeCategory: {
@@ -865,11 +865,11 @@ const styles = StyleSheet.create({
     aspectRatio: 0.85,
     borderRadius: BorderRadius.md,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     padding: Spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   serviceCardSelected: {
     borderColor: colors.brand.purpleLight,
@@ -892,14 +892,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     marginBottom: Spacing.xs,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   serviceNameSelected: {
     color: colors.brand.purple,
   },
   serviceDuration: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   serviceDurationSelected: {
@@ -908,7 +908,7 @@ const styles = StyleSheet.create({
   servicePrice: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   servicePriceSelected: {
     color: colors.brand.purple,
@@ -916,7 +916,7 @@ const styles = StyleSheet.create({
   noDataText: {
     textAlign: 'center',
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     paddingVertical: Spacing.lg,
   },
   dateScroll: {
@@ -931,11 +931,11 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: BorderRadius.md,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     position: 'relative',
   },
   dateCardSelected: {
@@ -954,21 +954,21 @@ const styles = StyleSheet.create({
   todayBadgeText: {
     fontSize: 9,
     fontWeight: '600',
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
   dateDay: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   dateNumber: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   dateMonth: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   dateTextSelected: {
@@ -984,39 +984,39 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: 10,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   timeSlotSelected: {
     borderColor: colors.brand.purpleLight,
     backgroundColor: colors.tint.pink,
   },
   timeSlotDisabled: {
-    backgroundColor: Colors.background.secondary,
-    borderColor: Colors.border.default,
+    backgroundColor: colors.background.secondary,
+    borderColor: colors.border.default,
     opacity: 0.5,
   },
   timeText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   timeTextSelected: {
     color: colors.brand.purpleLight,
     fontWeight: '700',
   },
   timeTextDisabled: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
   },
   textAreaContainer: {
@@ -1041,11 +1041,11 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   summaryCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -1055,21 +1055,21 @@ const styles = StyleSheet.create({
   },
   summaryDivider: {
     height: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   summaryLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   summaryValue: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   summaryLabelBold: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   summaryValueBold: {
     ...Typography.h4,
@@ -1090,7 +1090,7 @@ const styles = StyleSheet.create({
   },
   depositSub: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   policyRow: {
@@ -1102,7 +1102,7 @@ const styles = StyleSheet.create({
   policyText: {
     ...Typography.bodySmall,
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
     lineHeight: 16,
   },
@@ -1113,7 +1113,7 @@ const styles = StyleSheet.create({
     right: 0,
     padding: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     ...Shadows.medium,
   },
   confirmButton: {
@@ -1134,7 +1134,7 @@ const styles = StyleSheet.create({
     ...Typography.bodyLarge,
     fontWeight: '600',
     fontSize: isSmallDevice ? 14 : 16,
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
 });
 

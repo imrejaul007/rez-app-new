@@ -121,7 +121,7 @@ const MyServicesPage = () => {
       case 'cancelled':
         return Colors.error;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -196,7 +196,7 @@ const MyServicesPage = () => {
         </Text>
       </View>
 
-      <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+      <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
     </Pressable>
   ), [currencySymbol]);
 
@@ -213,7 +213,7 @@ const MyServicesPage = () => {
         style={styles.createButton}
         onPress={() => router.push('/(tabs)/earn' as any)}
       >
-        <Ionicons name="add" size={20} color={Colors.text.inverse} />
+        <Ionicons name="add" size={20} color={colors.text.inverse} />
         <Text style={styles.createButtonText}>Explore Projects</Text>
       </Pressable>
     </View>
@@ -231,14 +231,14 @@ const MyServicesPage = () => {
       <LinearGradient colors={[Colors.success, colors.successScale[700]]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={handleBackPress}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>My Services</Text>
           <Pressable
             style={styles.addButton}
             onPress={() => router.push('/(tabs)/earn' as any)}
           >
-            <Ionicons name="add" size={24} color={Colors.text.inverse} />
+            <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
@@ -282,7 +282,7 @@ const MyServicesPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerRight: {
     width: 40,
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   projectCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -354,12 +354,12 @@ const styles = StyleSheet.create({
   projectTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   projectDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   projectMeta: {
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   },
   dateText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   loadingContainer: {
     flex: 1,
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     flex: 1,
@@ -418,13 +418,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
   createButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   infoBanner: {
     flexDirection: 'row',
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
   infoBannerText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 });
 

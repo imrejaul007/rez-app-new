@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import React, { useState, useEffect } from 'react';
 import {
   View,
@@ -69,7 +70,7 @@ const VerifiedReviews = () => {
         );
       } else {
         stars.push(
-          <Ionicons key={i} name="star-outline" size={16} color={Colors.border.default} />
+          <Ionicons key={i} name="star-outline" size={16} color={colors.border.default} />
         );
       }
     }
@@ -113,7 +114,7 @@ const VerifiedReviews = () => {
           </View>
         </View>
         <View style={styles.emptyContainer}>
-          <Ionicons name="chatbubble-outline" size={32} color={Colors.text.tertiary} />
+          <Ionicons name="chatbubble-outline" size={32} color={colors.text.tertiary} />
           <Text style={styles.emptyText}>No reviews available yet</Text>
         </View>
       </View>
@@ -147,7 +148,7 @@ const VerifiedReviews = () => {
               {review.cashback > 0 && (
                 <View style={styles.cashbackBadge}>
                   <View style={styles.cashbackIcon}>
-                    <Ionicons name="wallet-outline" size={12} color={Colors.background.primary} />
+                    <Ionicons name="wallet-outline" size={12} color={colors.background.primary} />
                   </View>
                   <Text style={styles.cashbackText}>{currencySymbol}{review.cashback}</Text>
                 </View>
@@ -197,7 +198,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   retryButton: {
     marginTop: Spacing.sm,
@@ -218,7 +219,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -230,11 +231,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   sectionSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   allReviewsText: {
@@ -246,12 +247,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
   },
   reviewCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   ratingRow: {
     flexDirection: 'row',
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
   ratingNumber: {
     fontSize: Typography.body.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginLeft: Spacing.sm,
   },
   cashbackBadge: {
@@ -291,11 +292,11 @@ const styles = StyleSheet.create({
   cashbackText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   reviewText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 22,
     marginBottom: Spacing.md,
   },
@@ -327,15 +328,15 @@ const styles = StyleSheet.create({
   },
   userName: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   dotSeparator: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   timeText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

@@ -266,7 +266,7 @@ const LuckyDraw = () => {
               </View>
               <View style={styles.heroStatDivider} />
               <View style={styles.heroStatBox}>
-                <Ionicons name="game-controller" size={24} color={Colors.text.inverse} />
+                <Ionicons name="game-controller" size={24} color={colors.text.inverse} />
                 <Text style={styles.heroStatValue}>{maxPlays - todayPlays}/{maxPlays}</Text>
                 <Text style={styles.heroStatLabel}>Spins Left</Text>
               </View>
@@ -364,7 +364,7 @@ const LuckyDraw = () => {
               <Text style={styles.errorText}>{error}</Text>
               <Pressable onPress={retryGame}>
                 <LinearGradient colors={[COLORS.amber, COLORS.orange]} style={styles.retryButton}>
-                  <Ionicons name="refresh" size={18} color={Colors.text.inverse} />
+                  <Ionicons name="refresh" size={18} color={colors.text.inverse} />
                   <Text style={styles.retryButtonText}>Try Again</Text>
                 </LinearGradient>
               </Pressable>
@@ -414,12 +414,12 @@ const LuckyDraw = () => {
                
               >
                 <LinearGradient
-                  colors={todayPlays >= maxPlays ? [Colors.text.tertiary, Colors.neutral[500]] : [COLORS.amber, COLORS.orange]}
+                  colors={todayPlays >= maxPlays ? [colors.text.tertiary, colors.neutral[500]] : [COLORS.amber, COLORS.orange]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.spinButton}
                 >
-                  <Ionicons name={todayPlays >= maxPlays ? "time-outline" : "dice"} size={22} color={Colors.text.inverse} />
+                  <Ionicons name={todayPlays >= maxPlays ? "time-outline" : "dice"} size={22} color={colors.text.inverse} />
                   <Text style={styles.spinButtonText}>
                     {todayPlays >= maxPlays ? 'Come Back Tomorrow' : 'Spin Now!'}
                   </Text>
@@ -468,12 +468,12 @@ const styles = StyleSheet.create({
     width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.base },
   heroIconText: { fontSize: 40 },
-  heroTitle: { ...Typography.h1, fontWeight: '800', color: Colors.text.inverse, marginBottom: Spacing.sm },
+  heroTitle: { ...Typography.h1, fontWeight: '800', color: colors.text.inverse, marginBottom: Spacing.sm },
   heroSubtitle: { ...Typography.body, fontSize: 15, color: 'rgba(255,255,255,0.9)', marginBottom: Spacing.xl },
   heroStatsRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing['2xl'] },
   heroStatBox: { alignItems: 'center' },
   heroStatIcon: { width: 28, height: 28, marginBottom: Spacing.sm },
-  heroStatValue: { ...Typography.h2, fontWeight: '800', color: Colors.text.inverse },
+  heroStatValue: { ...Typography.h2, fontWeight: '800', color: colors.text.inverse },
   heroStatLabel: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)', marginTop: Spacing.xs },
   heroStatDivider: { width: 1, height: 50, backgroundColor: 'rgba(255,255,255,0.3)' },
   decorCircle: { position: 'absolute', borderRadius: 100, backgroundColor: 'rgba(255,255,255,0.1)' },
@@ -505,14 +505,14 @@ const styles = StyleSheet.create({
     width: 96, height: 96, borderRadius: 48, backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.lg },
   resultIconText: { fontSize: 48 },
-  resultTitle: { ...Typography.display, fontWeight: '800', color: Colors.text.inverse, marginBottom: Spacing.xs },
-  resultSubtitleText: { ...Typography.h3, fontWeight: '700', color: Colors.text.inverse, marginBottom: Spacing.lg },
+  resultTitle: { ...Typography.display, fontWeight: '800', color: colors.text.inverse, marginBottom: Spacing.xs },
+  resultSubtitleText: { ...Typography.h3, fontWeight: '700', color: colors.text.inverse, marginBottom: Spacing.lg },
   earnedBox: {
     paddingHorizontal: Spacing['2xl'], paddingVertical: Spacing.lg, borderRadius: BorderRadius.lg,
     backgroundColor: 'rgba(255,255,255,0.15)', alignItems: 'center' },
   earnedRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 6 },
   earnedCoin: { width: 36, height: 36 },
-  earnedValue: { fontSize: 44, fontWeight: '800', color: Colors.text.inverse },
+  earnedValue: { fontSize: 44, fontWeight: '800', color: colors.text.inverse },
   earnedLabel: { ...Typography.bodySmall, fontSize: 13, color: 'rgba(255,255,255,0.8)' },
 
   // Confetti
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   retryButton: {
     flexDirection: 'row', alignItems: 'center', gap: Spacing.sm,
     paddingVertical: 14, paddingHorizontal: Spacing['2xl'], borderRadius: BorderRadius.md },
-  retryButtonText: { ...Typography.body, fontWeight: '600', color: Colors.text.inverse },
+  retryButtonText: { ...Typography.body, fontWeight: '600', color: colors.text.inverse },
 
   // Prize Table
   prizeTable: {
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
   spinButton: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 10, paddingVertical: 18, borderRadius: BorderRadius.lg },
-  spinButtonText: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: Colors.text.inverse },
+  spinButtonText: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: colors.text.inverse },
 
   // Actions
   secondaryAction: {

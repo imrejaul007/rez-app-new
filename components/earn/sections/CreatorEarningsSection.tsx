@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BRAND } from '@/constants/brand';
 import { SkeletonBox } from '@/components/earn/SkeletonLoader';
 import { Creator, CreatorPick } from '@/services/creatorsApi';
-import { Colors, Spacing } from '@/constants/DesignSystem';
+import { Spacing } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
@@ -41,7 +41,7 @@ const CreatorEarningsSection = React.memo(function CreatorEarningsSection({
           colors={[colors.brand.purpleMedium, colors.brand.pink]}
           style={styles.creatorIcon}
         >
-          <Ionicons name="sparkles" size={20} color={Colors.text.inverse} />
+          <Ionicons name="sparkles" size={20} color={colors.text.inverse} />
         </LinearGradient>
         <View style={styles.creatorHeaderText}>
           <Text style={styles.creatorTitle}>Become a Creator</Text>
@@ -70,13 +70,13 @@ const CreatorEarningsSection = React.memo(function CreatorEarningsSection({
               />
               {creator.verified && (
                 <View style={styles.verifiedBadge}>
-                  <Ionicons name="checkmark-circle" size={16} color={Colors.info} />
+                  <Ionicons name="checkmark-circle" size={16} color={colors.info} />
                 </View>
               )}
             </View>
             <Text style={styles.creatorName}>{creator.name}</Text>
             <View style={styles.creatorStats}>
-              <Ionicons name="star" size={12} color={Colors.warning} />
+              <Ionicons name="star" size={12} color={colors.warning} />
               <Text style={styles.creatorStatText}>{creator.rating}</Text>
               <Text style={styles.creatorStatDivider}>{'\u2022'}</Text>
               <Text style={styles.creatorStatText}>{creator.totalPicks} picks</Text>
@@ -121,7 +121,7 @@ const CreatorEarningsSection = React.memo(function CreatorEarningsSection({
                 />
                 {pick.videoUrl && (
                   <View style={styles.pickVideoBadge}>
-                    <Ionicons name="videocam" size={11} color={Colors.text.inverse} />
+                    <Ionicons name="videocam" size={11} color={colors.text.inverse} />
                   </View>
                 )}
                 <Pressable
@@ -134,7 +134,7 @@ const CreatorEarningsSection = React.memo(function CreatorEarningsSection({
                   <Ionicons
                     name={likedPicks.has(pick.id) ? 'heart' : 'heart-outline'}
                     size={16}
-                    color={likedPicks.has(pick.id) ? Colors.error : Colors.text.primary}
+                    color={likedPicks.has(pick.id) ? colors.error : colors.text.primary}
                   />
                 </Pressable>
                 <View style={styles.pickTag}>
@@ -152,7 +152,7 @@ const CreatorEarningsSection = React.memo(function CreatorEarningsSection({
                   <Text style={styles.pickBrand}>{pick.productBrand}</Text>
                 </View>
                 <View style={styles.pickStatsRow}>
-                  <Ionicons name="eye-outline" size={12} color={Colors.text.tertiary} />
+                  <Ionicons name="eye-outline" size={12} color={colors.text.tertiary} />
                   <Text style={styles.pickStatText}>{(pick.views / 1000).toFixed(1)}k</Text>
                   <Text style={styles.pickStatDivider}>{'\u2022'}</Text>
                   <Text style={styles.pickStatText}>{pick.purchases} sold</Text>
@@ -197,7 +197,7 @@ const CreatorEarningsSection = React.memo(function CreatorEarningsSection({
             end={{ x: 1, y: 0 }}
             style={styles.creatorCTAGradient}
           >
-            <Ionicons name="time" size={20} color={Colors.text.inverse} />
+            <Ionicons name="time" size={20} color={colors.text.inverse} />
             <Text style={styles.creatorCTAText}>Application Under Review</Text>
           </LinearGradient>
         </View>

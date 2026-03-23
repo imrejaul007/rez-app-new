@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Call Support Page
 // Phone support options with callback request — config-driven
@@ -277,7 +278,7 @@ function CallSupportPage() {
           accessibilityLabel="Go back"
           accessibilityRole="button"
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.white} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.white} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Call Support</ThemedText>
         <View style={styles.placeholder} />
@@ -314,7 +315,7 @@ function CallSupportPage() {
             accessibilityLabel="Retry loading"
             accessibilityRole="button"
           >
-            <Ionicons name="refresh" size={20} color={Colors.text.white} />
+            <Ionicons name="refresh" size={20} color={colors.text.white} />
             <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
           </Pressable>
         </View>
@@ -445,7 +446,7 @@ function CallSupportPage() {
                 <ThemedText style={styles.callNowNumber}>{primaryPhone.displayNumber}</ThemedText>
                 <ThemedText style={styles.callNowSubtext}>{primaryPhone.label}</ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={24} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
             </Pressable>
           )}
 
@@ -488,7 +489,7 @@ function CallSupportPage() {
                     <Ionicons
                       name={category.icon as any}
                       size={24}
-                      color={selectedCategory === category.id ? Colors.primary[600] : Colors.text.tertiary}
+                      color={selectedCategory === category.id ? Colors.primary[600] : colors.text.tertiary}
                     />
                     <ThemedText style={[
                       styles.categoryLabel,
@@ -511,7 +512,7 @@ function CallSupportPage() {
                   value={countryCode}
                   onChangeText={setCountryCode}
                   placeholder="+971"
-                  placeholderTextColor={Colors.text.tertiary}
+                  placeholderTextColor={colors.text.tertiary}
                   keyboardType="phone-pad"
                   maxLength={5}
                   accessibilityLabel="Country code"
@@ -523,7 +524,7 @@ function CallSupportPage() {
                   onChangeText={setPhoneNumber}
                   onBlur={() => markTouched('phone')}
                   placeholder="Enter phone number"
-                  placeholderTextColor={Colors.text.tertiary}
+                  placeholderTextColor={colors.text.tertiary}
                   keyboardType="phone-pad"
                   maxLength={15}
                   accessibilityLabel="Phone number"
@@ -543,7 +544,7 @@ function CallSupportPage() {
                 value={notes}
                 onChangeText={setNotes}
                 placeholder="Describe your issue briefly..."
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 multiline
                 maxLength={500}
                 accessibilityLabel="Additional notes"
@@ -566,10 +567,10 @@ function CallSupportPage() {
               accessibilityHint="Submit your callback request"
             >
               {loading || pageState === 'submitting' ? (
-                <ActivityIndicator color={Colors.text.white} />
+                <ActivityIndicator color={colors.text.white} />
               ) : (
                 <>
-                  <Ionicons name="call-outline" size={20} color={Colors.text.white} />
+                  <Ionicons name="call-outline" size={20} color={colors.text.white} />
                   <ThemedText style={styles.requestButtonText}>Request Callback</ThemedText>
                 </>
               )}
@@ -593,7 +594,7 @@ function CallSupportPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -611,7 +612,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     flex: 1,
     ...Typography.h3,
-    color: Colors.text.white,
+    color: colors.text.white,
     textAlign: 'center',
     marginRight: 40,
   },
@@ -634,7 +635,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   // Error
   errorContainer: {
@@ -646,11 +647,11 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -666,7 +667,7 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     ...Typography.button,
-    color: Colors.text.white,
+    color: colors.text.white,
   },
   // Status
   statusBanner: {
@@ -697,12 +698,12 @@ const styles = StyleSheet.create({
   },
   statusText: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   // Hours
   hoursCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -710,7 +711,7 @@ const styles = StyleSheet.create({
   },
   hoursTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   hoursRow: {
@@ -720,11 +721,11 @@ const styles = StyleSheet.create({
   },
   hoursLabel: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   hoursValue: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   // Call Now
   callNowCard: {
@@ -755,11 +756,11 @@ const styles = StyleSheet.create({
   },
   callNowNumber: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   callNowSubtext: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   // High wait
   highWaitBanner: {
@@ -773,7 +774,7 @@ const styles = StyleSheet.create({
   },
   highWaitText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   // Section
@@ -782,17 +783,17 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   sectionSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.lg,
   },
   inputLabel: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
     marginTop: Spacing.md,
   },
@@ -804,7 +805,7 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: '48%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -819,7 +820,7 @@ const styles = StyleSheet.create({
   },
   categoryLabel: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   categoryLabelSelected: {
@@ -836,14 +837,14 @@ const styles = StyleSheet.create({
   phoneInput: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     ...Shadows.subtle,
     overflow: 'hidden',
   },
   countryCodeInput: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.base,
     width: 72,
@@ -858,7 +859,7 @@ const styles = StyleSheet.create({
   phoneTextInput: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
   },
@@ -870,15 +871,15 @@ const styles = StyleSheet.create({
   },
   charCount: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   notesInput: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 80,
     textAlignVertical: 'top',
     ...Shadows.subtle,
@@ -899,7 +900,7 @@ const styles = StyleSheet.create({
   },
   requestButtonText: {
     ...Typography.button,
-    color: Colors.text.white,
+    color: colors.text.white,
   },
   // Info
   infoCard: {
@@ -912,7 +913,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
     lineHeight: 18,
   },
@@ -928,19 +929,19 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   successText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.xl,
   },
   successCard: {
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.xl,
@@ -966,11 +967,11 @@ const styles = StyleSheet.create({
   },
   successLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   successValue: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     textAlign: 'right',
     marginLeft: Spacing.md,
@@ -1000,7 +1001,7 @@ const styles = StyleSheet.create({
   },
   doneButtonText: {
     ...Typography.button,
-    color: Colors.text.white,
+    color: colors.text.white,
   },
 });
 

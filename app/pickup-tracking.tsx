@@ -101,7 +101,7 @@ function PickupTrackingScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <View style={{ flex: 1 }}>
           <Text style={styles.headerTitle}>Pickup Order</Text>
@@ -118,7 +118,7 @@ function PickupTrackingScreen() {
       {/* Ready Banner */}
       {isReady && (
         <View style={styles.readyBanner}>
-          <Ionicons name="bag-check" size={28} color={Colors.text.inverse} />
+          <Ionicons name="bag-check" size={28} color={colors.text.inverse} />
           <View style={{ marginLeft: 12, flex: 1 }}>
             <Text style={styles.readyTitle}>Your order is ready!</Text>
             <Text style={styles.readySub}>Head to the store to pick it up</Text>
@@ -128,7 +128,7 @@ function PickupTrackingScreen() {
 
       {isDone && (
         <View style={[styles.readyBanner, { backgroundColor: Colors.success }]}>
-          <Ionicons name="checkmark-done-circle" size={28} color={Colors.text.inverse} />
+          <Ionicons name="checkmark-done-circle" size={28} color={colors.text.inverse} />
           <View style={{ marginLeft: 12, flex: 1 }}>
             <Text style={styles.readyTitle}>Order picked up!</Text>
             <Text style={styles.readySub}>Enjoy your meal</Text>
@@ -146,7 +146,7 @@ function PickupTrackingScreen() {
             <View key={step.key} style={styles.timelineRow}>
               <View style={styles.timelineLeft}>
                 <View style={[styles.timelineDot, isActive && styles.timelineDotActive, isCurrent && styles.timelineDotCurrent]}>
-                  <Ionicons name={step.icon} size={16} color={isActive ? Colors.text.inverse : Colors.text.tertiary} />
+                  <Ionicons name={step.icon} size={16} color={isActive ? colors.text.inverse : colors.text.tertiary} />
                 </View>
                 {idx < STATUS_STEPS.length - 1 && (
                   <View style={[styles.timelineLine, isActive && styles.timelineLineActive]} />
@@ -166,7 +166,7 @@ function PickupTrackingScreen() {
       <View style={styles.storeCard}>
         <Text style={styles.sectionTitle}>Pickup Location</Text>
         <View style={styles.storeRow}>
-          <Ionicons name="storefront-outline" size={22} color={Colors.nileBlue} />
+          <Ionicons name="storefront-outline" size={22} color={colors.nileBlue} />
           <View style={{ flex: 1, marginLeft: 12 }}>
             <Text style={styles.storeName}>{order?.store?.name || 'Store'}</Text>
             {storeAddress ? <Text style={styles.storeAddr}>{storeAddress}</Text> : null}
@@ -174,7 +174,7 @@ function PickupTrackingScreen() {
         </View>
         {estimatedReady && (
           <View style={styles.estRow}>
-            <Ionicons name="time-outline" size={18} color={Colors.text.tertiary} />
+            <Ionicons name="time-outline" size={18} color={colors.text.tertiary} />
             <Text style={styles.estText}>
               Ready by {new Date(estimatedReady).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Text>
@@ -182,7 +182,7 @@ function PickupTrackingScreen() {
         )}
         {storeCoords && (
           <Pressable style={styles.directionsBtn} onPress={openMaps}>
-            <Ionicons name="navigate" size={18} color={Colors.text.inverse} />
+            <Ionicons name="navigate" size={18} color={colors.text.inverse} />
             <Text style={styles.directionsText}>Get Directions</Text>
           </Pressable>
         )}
@@ -212,55 +212,55 @@ function PickupTrackingScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   center: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing.lg },
-  loadingText: { marginTop: Spacing.md, ...Typography.body, color: Colors.text.tertiary },
+  loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   errorText: { marginTop: Spacing.md, ...Typography.body, color: Colors.error, textAlign: 'center' },
-  retryBtn: { marginTop: Spacing.base, paddingHorizontal: Spacing.xl, paddingVertical: 10, backgroundColor: Colors.nileBlue, borderRadius: BorderRadius.sm },
-  retryText: { color: Colors.text.inverse, fontWeight: '600' },
+  retryBtn: { marginTop: Spacing.base, paddingHorizontal: Spacing.xl, paddingVertical: 10, backgroundColor: colors.nileBlue, borderRadius: BorderRadius.sm },
+  retryText: { color: colors.text.inverse, fontWeight: '600' },
 
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingTop: Platform.OS === 'ios' ? 56 : Spacing.base, paddingBottom: Spacing.md, backgroundColor: Colors.background.primary },
+  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingTop: Platform.OS === 'ios' ? 56 : Spacing.base, paddingBottom: Spacing.md, backgroundColor: colors.background.primary },
   backBtn: { padding: Spacing.sm, marginRight: Spacing.sm },
-  headerTitle: { ...Typography.h4, fontWeight: '700', color: Colors.nileBlue },
-  headerSub: { ...Typography.bodySmall, fontSize: 13, color: Colors.text.tertiary, marginTop: 2 },
+  headerTitle: { ...Typography.h4, fontWeight: '700', color: colors.nileBlue },
+  headerSub: { ...Typography.bodySmall, fontSize: 13, color: colors.text.tertiary, marginTop: 2 },
   liveBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.successScale[100], paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md },
   liveDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.success, marginRight: Spacing.xs },
   liveText: { ...Typography.caption, fontWeight: '700', color: Colors.success },
 
   readyBanner: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.gold, marginHorizontal: Spacing.base, marginTop: Spacing.base, padding: Spacing.base, borderRadius: 14 },
-  readyTitle: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.inverse },
+  readyTitle: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse },
   readySub: { ...Typography.bodySmall, fontSize: 13, color: '#ffffffcc', marginTop: 2 },
 
-  timelineCard: { backgroundColor: Colors.background.primary, margin: Spacing.base, padding: Spacing.base, borderRadius: 14, ...Shadows.subtle },
-  sectionTitle: { ...Typography.body, fontSize: 15, fontWeight: '700', color: Colors.nileBlue, marginBottom: 14 },
+  timelineCard: { backgroundColor: colors.background.primary, margin: Spacing.base, padding: Spacing.base, borderRadius: 14, ...Shadows.subtle },
+  sectionTitle: { ...Typography.body, fontSize: 15, fontWeight: '700', color: colors.nileBlue, marginBottom: 14 },
   timelineRow: { flexDirection: 'row', minHeight: 52 },
   timelineLeft: { alignItems: 'center', width: 36 },
-  timelineDot: { width: 32, height: 32, borderRadius: BorderRadius.lg, backgroundColor: Colors.border.default, alignItems: 'center', justifyContent: 'center' },
-  timelineDotActive: { backgroundColor: Colors.nileBlue },
+  timelineDot: { width: 32, height: 32, borderRadius: BorderRadius.lg, backgroundColor: colors.border.default, alignItems: 'center', justifyContent: 'center' },
+  timelineDotActive: { backgroundColor: colors.nileBlue },
   timelineDotCurrent: { backgroundColor: Colors.gold },
-  timelineLine: { width: 2, flex: 1, backgroundColor: Colors.border.default, marginVertical: Spacing.xs },
-  timelineLineActive: { backgroundColor: Colors.nileBlue },
+  timelineLine: { width: 2, flex: 1, backgroundColor: colors.border.default, marginVertical: Spacing.xs },
+  timelineLineActive: { backgroundColor: colors.nileBlue },
   timelineContent: { flex: 1, marginLeft: Spacing.md, justifyContent: 'center' },
-  timelineLabel: { ...Typography.body, color: Colors.text.tertiary },
-  timelineLabelActive: { color: Colors.nileBlue, fontWeight: '600' },
+  timelineLabel: { ...Typography.body, color: colors.text.tertiary },
+  timelineLabelActive: { color: colors.nileBlue, fontWeight: '600' },
 
-  storeCard: { backgroundColor: Colors.background.primary, marginHorizontal: Spacing.base, padding: Spacing.base, borderRadius: 14, ...Shadows.subtle },
+  storeCard: { backgroundColor: colors.background.primary, marginHorizontal: Spacing.base, padding: Spacing.base, borderRadius: 14, ...Shadows.subtle },
   storeRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 10 },
-  storeName: { ...Typography.body, fontSize: 15, fontWeight: '600', color: Colors.nileBlue },
-  storeAddr: { ...Typography.bodySmall, fontSize: 13, color: Colors.text.tertiary, marginTop: 2 },
+  storeName: { ...Typography.body, fontSize: 15, fontWeight: '600', color: colors.nileBlue },
+  storeAddr: { ...Typography.bodySmall, fontSize: 13, color: colors.text.tertiary, marginTop: 2 },
   estRow: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md },
-  estText: { ...Typography.bodySmall, fontSize: 13, color: Colors.text.tertiary, marginLeft: 6 },
-  directionsBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.nileBlue, paddingVertical: Spacing.md, borderRadius: 10, gap: 6 },
-  directionsText: { color: Colors.text.inverse, fontWeight: '600', ...Typography.body },
+  estText: { ...Typography.bodySmall, fontSize: 13, color: colors.text.tertiary, marginLeft: 6 },
+  directionsBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: colors.nileBlue, paddingVertical: Spacing.md, borderRadius: 10, gap: 6 },
+  directionsText: { color: colors.text.inverse, fontWeight: '600', ...Typography.body },
 
-  itemsCard: { backgroundColor: Colors.background.primary, margin: Spacing.base, padding: Spacing.base, borderRadius: 14, ...Shadows.subtle },
-  itemRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: Spacing.sm, borderBottomWidth: 1, borderBottomColor: Colors.background.secondary },
-  itemQty: { width: 30, ...Typography.bodySmall, fontSize: 13, fontWeight: '600', color: Colors.text.tertiary },
-  itemName: { flex: 1, ...Typography.body, color: Colors.nileBlue },
-  itemPrice: { ...Typography.body, fontWeight: '600', color: Colors.nileBlue },
+  itemsCard: { backgroundColor: colors.background.primary, margin: Spacing.base, padding: Spacing.base, borderRadius: 14, ...Shadows.subtle },
+  itemRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: Spacing.sm, borderBottomWidth: 1, borderBottomColor: colors.background.secondary },
+  itemQty: { width: 30, ...Typography.bodySmall, fontSize: 13, fontWeight: '600', color: colors.text.tertiary },
+  itemName: { flex: 1, ...Typography.body, color: colors.nileBlue },
+  itemPrice: { ...Typography.body, fontWeight: '600', color: colors.nileBlue },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', paddingTop: Spacing.md, marginTop: Spacing.xs },
-  totalLabel: { ...Typography.body, fontSize: 15, fontWeight: '700', color: Colors.nileBlue },
-  totalValue: { ...Typography.body, fontSize: 15, fontWeight: '700', color: Colors.nileBlue },
+  totalLabel: { ...Typography.body, fontSize: 15, fontWeight: '700', color: colors.nileBlue },
+  totalValue: { ...Typography.body, fontSize: 15, fontWeight: '700', color: colors.nileBlue },
 });
 
 export default withErrorBoundary(PickupTrackingScreen, 'PickupTracking');

@@ -402,7 +402,7 @@ function AccountPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
 
   // Header
   header: {
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
 
   // Tabs
   tabsWrapper: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.sm },
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 17,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6 },
   errorMessage: {
     fontSize: 14,

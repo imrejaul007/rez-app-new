@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React from 'react';
 import {
@@ -212,7 +213,7 @@ const PlayAndEarn = () => {
             </>
           ) : (
             <View style={{ paddingVertical: 40, alignItems: 'center' }}>
-              <ActivityIndicator size="small" color={Colors.nileBlue} />
+              <ActivityIndicator size="small" color={colors.nileBlue} />
             </View>
           )}
 

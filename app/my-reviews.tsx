@@ -219,7 +219,7 @@ function MyReviewsPage() {
         {/* Review Stats */}
         <View style={styles.reviewStats}>
           <View style={styles.stat}>
-            <Ionicons name="thumbs-up-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="thumbs-up-outline" size={16} color={colors.text.tertiary} />
             <Text style={styles.statText}>{review.helpful || 0} helpful</Text>
           </View>
           {review.merchantReply && (
@@ -268,8 +268,8 @@ function MyReviewsPage() {
             accessibilityRole="button"
             accessibilityHint={isPending ? 'Opens editor to modify your review' : 'Only pending reviews can be edited'}
           >
-            <Ionicons name="create-outline" size={16} color={isPending ? Colors.text.tertiary : Colors.border.default} />
-            <Text style={[styles.actionButtonText, !isPending && { color: Colors.border.default }]}>Edit</Text>
+            <Ionicons name="create-outline" size={16} color={isPending ? colors.text.tertiary : colors.border.default} />
+            <Text style={[styles.actionButtonText, !isPending && { color: colors.border.default }]}>Edit</Text>
           </Pressable>
         </View>
       </View>
@@ -371,7 +371,7 @@ function MyReviewsPage() {
             ListEmptyComponent={
               reviews.length === 0 ? (
                 <View style={styles.centerContainer}>
-                  <Ionicons name="create-outline" size={64} color={Colors.border.default} />
+                  <Ionicons name="create-outline" size={64} color={colors.border.default} />
                   <Text style={styles.emptyTitle}>No Reviews Yet</Text>
                   <Text style={styles.emptyText}>
                     You haven't written any reviews yet.{'\n'}
@@ -389,7 +389,7 @@ function MyReviewsPage() {
                 </View>
               ) : (
                 <View style={styles.centerContainer}>
-                  <Ionicons name="filter-outline" size={48} color={Colors.border.default} />
+                  <Ionicons name="filter-outline" size={48} color={colors.border.default} />
                   <Text style={styles.emptyTitle}>No {activeFilter} reviews</Text>
                   <Text style={styles.emptyText}>
                     You don't have any {activeFilter} reviews yet.
@@ -408,7 +408,7 @@ function MyReviewsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -430,25 +430,25 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSpacer: {
     width: 40,
   },
   filterTabs: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
     gap: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   filterTab: {
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   filterTabActive: {
     backgroundColor: colors.brand.green,
@@ -457,10 +457,10 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterTabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   content: {
     flex: 1,
@@ -475,18 +475,18 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -499,18 +499,18 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.xl,
@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   reviewsList: {
     padding: 16,
@@ -533,11 +533,11 @@ const styles = StyleSheet.create({
   reviewsCount: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   reviewCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md,
   },
   storeLogoPlaceholder: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -571,12 +571,12 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   reviewDate: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   starsContainer: {
     flexDirection: 'row',
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
   },
   reviewComment: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 20,
     marginBottom: Spacing.md,
   },
@@ -603,7 +603,7 @@ const styles = StyleSheet.create({
     gap: Spacing.base,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
     marginBottom: Spacing.md,
   },
   stat: {
@@ -613,10 +613,10 @@ const styles = StyleSheet.create({
   },
   statText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   merchantReply: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderLeftWidth: 3,
     borderLeftColor: colors.brand.green,
     padding: Spacing.md,
@@ -638,7 +638,7 @@ const styles = StyleSheet.create({
   replyText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 18,
   },
   actions: {
@@ -703,7 +703,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   actionButtonDisabled: {
     opacity: 0.5,
@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   loadMoreContainer: {
     flexDirection: 'row',
@@ -723,7 +723,7 @@ const styles = StyleSheet.create({
   },
   loadMoreText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

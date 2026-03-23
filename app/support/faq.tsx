@@ -721,7 +721,7 @@ const styles = StyleSheet.create({
   },
   expandedFAQItem: {
     borderColor: Colors.secondary[600],
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     shadowOpacity: 0.12,
     elevation: 4,
     borderWidth: 2,
@@ -795,7 +795,7 @@ const styles = StyleSheet.create({
     textTransform: 'capitalize',
   },
   feedbackContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: 12,
     padding: 16,
     marginTop: 8,
@@ -832,7 +832,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     padding: 12,
-    backgroundColor: Colors.background.accent,
+    backgroundColor: colors.background.accent,
     borderRadius: 8,
     marginTop: 8,
   },

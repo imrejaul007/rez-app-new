@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "700",
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   usersList: {
@@ -190,11 +190,11 @@ const styles = StyleSheet.create({
   earningText: {
     fontSize: 15,
     fontWeight: "600",
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   timeText: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   coinsContainer: {

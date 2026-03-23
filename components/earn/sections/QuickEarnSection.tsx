@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { QuickAction } from '@/services/quickActionsApi';
-import { Colors } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
 interface QuickEarnSectionProps {
@@ -17,7 +17,7 @@ const QuickEarnSection = React.memo(function QuickEarnSection({
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Ionicons name="flash" size={24} color={Colors.warning} />
+        <Ionicons name="flash" size={24} color={colors.warning} />
         <Text style={styles.sectionTitle}>Earn Now</Text>
       </View>
 
@@ -35,10 +35,10 @@ const QuickEarnSection = React.memo(function QuickEarnSection({
             <Text style={styles.quickEarnReward}>{action.subtitle}</Text>
             {action.achievementProgress && (
               <View style={{ marginTop: 4, width: '100%' }}>
-                <View style={{ height: 3, backgroundColor: Colors.border.default, borderRadius: 2, overflow: 'hidden' }}>
+                <View style={{ height: 3, backgroundColor: colors.border.default, borderRadius: 2, overflow: 'hidden' }}>
                   <View style={{ height: 3, backgroundColor: action.iconColor, borderRadius: 2, width: `${Math.min(action.achievementProgress.progress, 100)}%` }} />
                 </View>
-                <Text style={{ fontSize: 9, color: Colors.text.tertiary, marginTop: 2 }}>{action.achievementProgress.progress}%</Text>
+                <Text style={{ fontSize: 9, color: colors.text.tertiary, marginTop: 2 }}>{action.achievementProgress.progress}%</Text>
               </View>
             )}
           </Pressable>

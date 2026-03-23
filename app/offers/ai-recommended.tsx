@@ -233,7 +233,7 @@ function AIRecommendedPage() {
             <ThemedText style={styles.discountText}>{item.discountLabel} OFF</ThemedText>
           </View>
           <View style={styles.expiryContainer}>
-            <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+            <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
             <ThemedText style={styles.expiryText}>{item.expiresIn}</ThemedText>
           </View>
         </View>
@@ -273,7 +273,7 @@ function AIRecommendedPage() {
         {headerComponent()}
         <View style={styles.errorContainer}>
           <View style={styles.errorIconWrap}>
-            <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
+            <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
           </View>
           <ThemedText style={styles.errorTitle}>Could not load offers</ThemedText>
           <ThemedText style={styles.errorSubtitle}>{error}</ThemedText>
@@ -347,7 +347,7 @@ function AIRecommendedPage() {
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <View style={styles.emptyIconWrap}>
-              <Ionicons name="sparkles-outline" size={36} color={Colors.text.tertiary} />
+              <Ionicons name="sparkles-outline" size={36} color={colors.text.tertiary} />
             </View>
             <ThemedText style={styles.emptyTitle}>No recommendations yet</ThemedText>
             <ThemedText style={styles.emptySubtitle}>Check back later for personalized offers</ThemedText>
@@ -368,7 +368,7 @@ function AIRecommendedPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   },
   statsCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -434,15 +434,15 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statDivider: {
     width: 1,
-    backgroundColor: Colors.border.light,
+    backgroundColor: colors.border.light,
   },
   offerCard: {
     width: '48%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     marginBottom: Spacing.md,
@@ -476,12 +476,12 @@ const styles = StyleSheet.create({
   },
   offerTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   offerStore: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   reasonContainer: {
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   },
   expiryText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -540,12 +540,12 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   errorSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },
@@ -574,12 +574,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   emptySubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   footerLoader: {
     paddingVertical: Spacing.lg,

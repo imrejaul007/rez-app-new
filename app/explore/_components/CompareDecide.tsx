@@ -101,7 +101,7 @@ const CompareDecide = () => {
           </Pressable>
         </View>
         <View style={styles.emptyContainer}>
-          <Ionicons name="git-compare-outline" size={32} color={Colors.text.tertiary} />
+          <Ionicons name="git-compare-outline" size={32} color={colors.text.tertiary} />
           <Text style={styles.emptyText}>No comparisons available</Text>
           <Text style={styles.emptySubtext}>Start comparing products to find the best deals</Text>
         </View>
@@ -130,7 +130,7 @@ const CompareDecide = () => {
           {/* Product Info */}
           <View style={styles.productRow}>
             <View style={styles.productImagePlaceholder}>
-              <Ionicons name="layers-outline" size={32} color={Colors.text.tertiary} />
+              <Ionicons name="layers-outline" size={32} color={colors.text.tertiary} />
             </View>
             <View style={styles.productInfo}>
               <Text style={styles.productName}>{comparison.name}</Text>
@@ -155,7 +155,7 @@ const CompareDecide = () => {
                     styles.platformIcon,
                     option.isBest && styles.platformIconBest,
                   ]}>
-                    <Ionicons name="storefront" size={16} color={option.isBest ? Colors.background.primary : Colors.text.tertiary} />
+                    <Ionicons name="storefront" size={16} color={option.isBest ? colors.background.primary : colors.text.tertiary} />
                   </View>
                   <View style={styles.platformDetails}>
                     <View style={styles.platformNameRow}>
@@ -219,18 +219,18 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.base,
     paddingVertical: 40,
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
     gap: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptySubtext: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -242,11 +242,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   sectionSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   compareMoreText: {
@@ -256,11 +256,11 @@ const styles = StyleSheet.create({
   },
   compareCard: {
     marginHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   productRow: {
     flexDirection: 'row',
@@ -268,13 +268,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     paddingBottom: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   productImagePlaceholder: {
     width: 70,
     height: 70,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -285,11 +285,11 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   optionsCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   optionsTable: {
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: Spacing.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
   },
   optionRowBest: {
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -336,10 +336,10 @@ const styles = StyleSheet.create({
   platformName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   platformNameBest: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   ratingBadge: {
     flexDirection: 'row',
@@ -357,11 +357,11 @@ const styles = StyleSheet.create({
   },
   deliveryText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   cashbackCell: {
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: BorderRadius.sm,
@@ -372,18 +372,18 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gold,
   },
   cashbackCellNone: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   cashbackText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   cashbackTextBest: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cashbackTextNone: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   viewAllButton: {
     marginTop: Spacing.base,

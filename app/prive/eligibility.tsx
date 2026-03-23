@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
   tierLabel: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 2,
   },
   tierLabelLocked: {
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   },
   progressBarBg: {
     height: 8,
-    backgroundColor: Colors.text.primary,
+    backgroundColor: colors.text.primary,
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -451,7 +451,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: '#444',
     borderWidth: 2,
-    borderColor: Colors.text.primary,
+    borderColor: colors.text.primary,
   },
   markerDotActive: {
     backgroundColor: COLORS.gold,
@@ -503,7 +503,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.text.primary,
+    borderBottomColor: colors.text.primary,
   },
   thresholdInfo: {
     flexDirection: 'row',
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
   },
   pillarProgressBg: {
     height: 6,
-    backgroundColor: Colors.text.primary,
+    backgroundColor: colors.text.primary,
     borderRadius: 3,
     overflow: 'hidden',
     marginBottom: Spacing.sm,
@@ -631,7 +631,7 @@ const styles = StyleSheet.create({
   },
   progressRingBg: {
     position: 'absolute',
-    backgroundColor: Colors.text.primary,
+    backgroundColor: colors.text.primary,
   },
   progressRingFill: {
     position: 'absolute',

@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
@@ -116,7 +117,7 @@ const LearnDetailPage = () => {
       'platform-guide': Colors.brand.purpleLight,
       'coin-types': Colors.warning,
     };
-    return colors[cat] || Colors.text.tertiary;
+    return colors[cat] || colors.text.tertiary;
   };
 
   if (loading) {
@@ -150,7 +151,7 @@ const LearnDetailPage = () => {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle} numberOfLines={1}>Learn</Text>
@@ -182,7 +183,7 @@ const LearnDetailPage = () => {
         {/* Meta Row */}
         <View style={styles.metaRow}>
           <View style={styles.metaItem}>
-            <Ionicons name="time-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
             <Text style={styles.metaText}>{content.estimatedMinutes} min read</Text>
           </View>
           <View style={styles.metaItem}>
@@ -275,10 +276,10 @@ const LearnDetailPage = () => {
               end={{ x: 1, y: 0 }}
             >
               {completing ? (
-                <ActivityIndicator size="small" color={Colors.text.inverse} />
+                <ActivityIndicator size="small" color={colors.text.inverse} />
               ) : (
                 <>
-                  <Ionicons name="gift-outline" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="gift-outline" size={20} color={colors.text.inverse} />
                   <Text style={styles.completeText}>
                     Mark Complete & Earn {content.coinReward} Coins
                   </Text>
@@ -295,25 +296,25 @@ const LearnDetailPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.xl,
     gap: Spacing.md,
   },
   errorText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   retryButton: {
@@ -324,7 +325,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   retryText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   header: {
@@ -333,7 +334,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     width: 40,
@@ -348,7 +349,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerRight: {
     width: 40,
@@ -381,7 +382,7 @@ const styles = StyleSheet.create({
   contentTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 32,
     marginBottom: Spacing.md,
   },
@@ -398,11 +399,11 @@ const styles = StyleSheet.create({
   },
   metaText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginBottom: Spacing.lg,
   },
   bodyContainer: {
@@ -414,21 +415,21 @@ const styles = StyleSheet.create({
   heading1: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   heading2: {
     fontSize: 19,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: 14,
     marginBottom: 6,
   },
   heading3: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md,
     marginBottom: Spacing.xs,
   },
@@ -439,24 +440,24 @@ const styles = StyleSheet.create({
   },
   bullet: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginRight: Spacing.sm,
     lineHeight: 22,
   },
   bulletText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 22,
   },
   paragraph: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 24,
   },
   noContent: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: 40,
   },
@@ -467,9 +468,9 @@ const styles = StyleSheet.create({
     right: 0,
     padding: Spacing.base,
     paddingBottom: Spacing.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   claimedBar: {
     flexDirection: 'row',
@@ -503,7 +504,7 @@ const styles = StyleSheet.create({
   completeText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

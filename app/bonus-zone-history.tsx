@@ -110,7 +110,7 @@ function ClaimRow({ claim, onPress }: { claim: BonusClaim; onPress: () => void }
       {campaignSlug && (
         <View style={styles.navigateHint}>
           <Text style={styles.navigateHintText}>View campaign</Text>
-          <Ionicons name="chevron-forward" size={14} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={14} color={colors.text.tertiary} />
         </View>
       )}
     </Pressable>
@@ -209,8 +209,8 @@ function BonusZoneHistoryPage() {
         options={{
           headerShown: true,
           title: 'Claim History',
-          headerStyle: { backgroundColor: Colors.background.primary },
-          headerTintColor: Colors.nileBlue,
+          headerStyle: { backgroundColor: colors.background.primary },
+          headerTintColor: colors.nileBlue,
         }}
       />
 
@@ -271,7 +271,7 @@ function BonusZoneHistoryPage() {
         ) : claims.length === 0 ? (
           /* Empty State */
           <View style={styles.emptyContainer}>
-            <Ionicons name="document-text-outline" size={48} color={Colors.border.default} />
+            <Ionicons name="document-text-outline" size={48} color={colors.border.default} />
             <Text style={styles.emptyTitle}>
               {activeFilter !== 'all' ? `No ${activeFilter} claims` : 'No claims yet'}
             </Text>
@@ -320,30 +320,30 @@ function BonusZoneHistoryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   contentContainer: {
     paddingBottom: 120,
   },
   header: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.base,
     paddingBottom: Spacing.lg,
     alignItems: 'center',
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.sm,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
     textAlign: 'center',
   },
@@ -358,9 +358,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginRight: Spacing.sm,
   },
   filterTabActive: {
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterTabTextActive: {
     color: colors.brand.orange,
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   emptyContainer: {
@@ -395,13 +395,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
   },
   emptySubtitle: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 6,
     textAlign: 'center',
   },
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     ...Typography.body,
   },
@@ -425,11 +425,11 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   claimCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   claimTop: {
     flexDirection: 'row',
@@ -444,11 +444,11 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   claimDate: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   claimRight: {
@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
     color: colors.brand.orange,
   },
   rewardAmountRejected: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   statusBadge: {
@@ -503,12 +503,12 @@ const styles = StyleSheet.create({
     marginTop: 10,
     paddingTop: 10,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
     gap: Spacing.xs,
   },
   navigateHintText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // ---- Load More ----
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 14,
     marginTop: Spacing.xs,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
     borderColor: '#FED7AA',

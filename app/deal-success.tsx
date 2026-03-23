@@ -220,7 +220,7 @@ function DealSuccessPage() {
             colors={[Colors.success, colors.brand.greenDark]}
             style={styles.successGradient}
           >
-            <Ionicons name="checkmark" size={48} color={Colors.background.primary} />
+            <Ionicons name="checkmark" size={48} color={colors.background.primary} />
           </LinearGradient>
         </Animated.View>
 
@@ -240,7 +240,7 @@ function DealSuccessPage() {
               <Ionicons
                 name={copiedCode ? 'checkmark' : 'copy-outline'}
                 size={20}
-                color={copiedCode ? Colors.success : Colors.nileBlue}
+                color={copiedCode ? Colors.success : colors.nileBlue}
               />
             </Pressable>
           </View>
@@ -249,7 +249,7 @@ function DealSuccessPage() {
           )}
           {expiresAt && (
             <View style={styles.expiryRow}>
-              <Ionicons name="time-outline" size={16} color={Colors.neutral[500]} />
+              <Ionicons name="time-outline" size={16} color={colors.neutral[500]} />
               <ThemedText style={styles.expiryText}>
                 Valid until {formatDate(expiresAt)}
               </ThemedText>
@@ -294,7 +294,7 @@ function DealSuccessPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -304,11 +304,11 @@ const styles = StyleSheet.create({
   loadingText: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.sm },
   loadingSubtext: {
     fontSize: 14,
-    color: Colors.neutral[500] },
+    color: colors.neutral[500] },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -319,16 +319,16 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm },
   errorMessage: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: 'center',
     marginBottom: Spacing.sm },
   errorHint: {
     fontSize: 13,
-    color: Colors.neutral[400],
+    color: colors.neutral[400],
     textAlign: 'center',
     marginBottom: Spacing.xl },
   primaryBtn: {
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center' },
   primaryBtnText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     fontSize: 16 },
   secondaryBtn: {
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   backLink: {
     paddingVertical: Spacing.md },
   backLinkText: {
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     fontSize: 14 },
   content: {
     flex: 1,
@@ -374,14 +374,14 @@ const styles = StyleSheet.create({
   successTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm },
   successSubtitle: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: 'center' },
   codeCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     width: '100%',
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base },
   codeLabel: {
     fontSize: 12,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginBottom: Spacing.md,
     textTransform: 'uppercase',
     letterSpacing: 1 },
@@ -406,11 +406,11 @@ const styles = StyleSheet.create({
   codeText: {
     fontSize: 28,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: 2 },
   copyButton: {
     padding: Spacing.sm,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     borderRadius: BorderRadius.sm },
   copiedText: {
     fontSize: 12,
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm },
   expiryText: {
     fontSize: 13,
-    color: Colors.neutral[500] },
+    color: colors.neutral[500] },
   infoBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 13,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     lineHeight: 18 },
   bottomButtons: {
     padding: Spacing.xl,
@@ -448,14 +448,14 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.base,
     alignItems: 'center' },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '700' },
   secondaryButton: {
     paddingVertical: Spacing.md,
     alignItems: 'center' },
   secondaryButtonText: {
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     fontSize: 14 } });
 
 export default withErrorBoundary(DealSuccessPage, 'DealSuccess');

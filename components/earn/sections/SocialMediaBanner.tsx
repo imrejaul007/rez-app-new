@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
@@ -27,13 +26,13 @@ const SocialMediaBanner = React.memo(function SocialMediaBanner({
         <View style={styles.socialMediaLeft}>
           <View style={styles.socialMediaIconRow}>
             <View style={styles.socialMediaIcon}>
-              <Ionicons name="logo-instagram" size={18} color={Colors.text.inverse} />
+              <Ionicons name="logo-instagram" size={18} color={colors.text.inverse} />
             </View>
             <View style={[styles.socialMediaIcon, { marginLeft: -6 }]}>
-              <Ionicons name="logo-facebook" size={18} color={Colors.text.inverse} />
+              <Ionicons name="logo-facebook" size={18} color={colors.text.inverse} />
             </View>
             <View style={[styles.socialMediaIcon, { marginLeft: -6 }]}>
-              <Ionicons name="logo-youtube" size={18} color={Colors.text.inverse} />
+              <Ionicons name="logo-youtube" size={18} color={colors.text.inverse} />
             </View>
           </View>
           <Text style={styles.socialMediaTitle}>Earn from Social Media</Text>

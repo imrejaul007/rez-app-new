@@ -24,7 +24,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: string
   registered: { label: 'Registered', color: Colors.info, icon: 'checkmark-circle' },
   checked_in: { label: 'Checked In', color: Colors.warning, icon: 'location' },
   completed: { label: 'Completed', color: Colors.success, icon: 'trophy' },
-  cancelled: { label: 'Cancelled', color: Colors.text.tertiary, icon: 'close-circle' },
+  cancelled: { label: 'Cancelled', color: colors.text.tertiary, icon: 'close-circle' },
   no_show: { label: 'No Show', color: Colors.error, icon: 'alert-circle' },
 };
 
@@ -116,18 +116,18 @@ function MyParticipationsScreen() {
         <View style={styles.cardDetails}>
           {event?.eventDate && (
             <View style={styles.detailRow}>
-              <Ionicons name="calendar-outline" size={14} color={Colors.text.tertiary} />
+              <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
               <Text style={styles.detailText}>{formatDate(event.eventDate)}</Text>
             </View>
           )}
           {event?.location?.city && (
             <View style={styles.detailRow}>
-              <Ionicons name="location-outline" size={14} color={Colors.text.tertiary} />
+              <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
               <Text style={styles.detailText}>{event.location.city}</Text>
             </View>
           )}
           <View style={styles.detailRow}>
-            <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+            <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
             <Text style={styles.detailText}>Registered {formatDate(item.registeredAt)}</Text>
           </View>
         </View>
@@ -209,7 +209,7 @@ function MyParticipationsScreen() {
           estimatedItemSize={120}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="heart-outline" size={56} color={Colors.text.tertiary} />
+              <Ionicons name="heart-outline" size={56} color={colors.text.tertiary} />
               <Text style={styles.emptyTitle}>No participations yet</Text>
               <Text style={styles.emptySubtitle}>
                 Browse social impact events and start making a difference!
@@ -231,14 +231,14 @@ function MyParticipationsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.08)',
   },
@@ -253,11 +253,11 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 1,
   },
   tabsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.08)',
   },
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
   },
   tabActive: {
@@ -279,7 +279,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabTextActive: {
     color: colors.deepNavy,
@@ -289,7 +289,7 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
   },
   card: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   },
   cardOrganizer: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   statusBadge: {
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   rewardsRow: {
     flexDirection: 'row',
@@ -388,7 +388,7 @@ const styles = StyleSheet.create({
   },
   emptySubtitle: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.sm,
     paddingHorizontal: 40,

@@ -87,7 +87,7 @@ function StoreInfoCard({
           </View>
           {distance && (
             <View style={styles.distanceContainer}>
-              <Ionicons name="location-outline" size={14} color={Colors.text.secondary} />
+              <Ionicons name="location-outline" size={14} color={colors.text.secondary} />
               <ThemedText style={styles.distanceText}>{distance}</ThemedText>
             </View>
           )}
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: 22,
     fontWeight: "700",
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   metaRow: {
     flexDirection: "row",
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 14,
     fontWeight: "600",
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   distanceContainer: {
     flexDirection: "row",
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   distanceText: {
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   tagsRow: {
     flexDirection: "row",

@@ -114,10 +114,10 @@ function HotspotDetailPage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.nileBlue, Colors.nileBlueLight]} style={styles.header}>
+      <LinearGradient colors={[colors.nileBlue, colors.nileBlueLight]} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
@@ -150,12 +150,12 @@ function HotspotDetailPage() {
       {/* Content */}
       {loading ? (
         <View style={styles.centerContainer}>
-          <ActivityIndicator size="large" color={Colors.nileBlue} />
+          <ActivityIndicator size="large" color={colors.nileBlue} />
           <ThemedText style={styles.loadingText}>Loading offers...</ThemedText>
         </View>
       ) : error ? (
         <View style={styles.centerContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={Colors.nileBlue} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.nileBlue} />
           <ThemedText style={styles.errorText}>{error}</ThemedText>
           <Pressable style={styles.retryButton} onPress={() => {
             setLoading(true);
@@ -196,7 +196,7 @@ function HotspotDetailPage() {
                   <CachedImage source={offer.store.logo} style={styles.storeLogo} contentFit="cover" />
                 ) : (
                   <View style={styles.storeLogoPlaceholder}>
-                    <Ionicons name="storefront" size={24} color={Colors.nileBlue} />
+                    <Ionicons name="storefront" size={24} color={colors.nileBlue} />
                   </View>
                 )}
               </View>
@@ -305,15 +305,15 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorText: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: 10,
     borderRadius: BorderRadius.md,
@@ -326,11 +326,11 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   emptyText: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   content: {
@@ -343,13 +343,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.base,
   },
   offerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     marginBottom: Spacing.md,
@@ -365,7 +365,7 @@ const styles = StyleSheet.create({
     width: 52,
     height: 52,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   storeLogoPlaceholder: {
     width: 52,
@@ -381,17 +381,17 @@ const styles = StyleSheet.create({
   offerTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2,
   },
   offerStore: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   offerDescription: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 16,
   },
   discountBadge: {
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
   discountText: {
     fontSize: 12,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 });
 

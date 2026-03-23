@@ -384,11 +384,11 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   if (walletLoading && !walletData) {
     return (
       <View style={styles.root}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
         <LinearGradient colors={Gradients.nileBlue} style={styles.headerBg}>
           <View style={styles.headerContainer}>
             <Pressable style={styles.backButton} onPress={handleBackPress}>
-              <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>{walletHeaderTitle}</Text>
             <View style={styles.headerRight} />
@@ -403,11 +403,11 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   if (!walletData && !walletLoading) {
     return (
       <View style={styles.root}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
         <LinearGradient colors={Gradients.nileBlue} style={styles.headerBg}>
           <View style={styles.headerContainer}>
             <Pressable style={styles.backButton} onPress={handleBackPress}>
-              <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>{walletHeaderTitle}</Text>
             <View style={styles.headerRight} />
@@ -432,9 +432,9 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
 
   if (!walletData) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background.secondary }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.secondary }}>
         <ActivityIndicator size="large" color={Colors.primary[600]} />
-        <ThemedText style={{ marginTop: Spacing.md, color: Colors.text.secondary }}>Loading wallet...</ThemedText>
+        <ThemedText style={{ marginTop: Spacing.md, color: colors.text.secondary }}>Loading wallet...</ThemedText>
       </View>
     );
   }
@@ -442,7 +442,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   return (
     <FeatureErrorBoundary featureName="Wallet">
       <Animated.View style={styles.root} entering={FadeIn.duration(300)}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
         {/* Fixed Header */}
         <LinearGradient colors={Gradients.nileBlue} style={styles.headerBg}>
@@ -453,7 +453,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
               accessibilityLabel="Go back"
               accessibilityRole="button"
             >
-              <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>{walletHeaderTitle}</Text>
             <Pressable
@@ -462,7 +462,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
               accessibilityLabel="Wallet settings"
               accessibilityRole="button"
             >
-              <Ionicons name="settings-outline" size={20} color={Colors.text.inverse} />
+              <Ionicons name="settings-outline" size={20} color={colors.text.inverse} />
             </Pressable>
           </View>
 
@@ -485,9 +485,9 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
             <RefreshControl
               refreshing={walletRefreshing}
               onRefresh={handleRefresh}
-              tintColor={Colors.nileBlue}
-              colors={[Colors.nileBlue]}
-              progressBackgroundColor={Colors.background.primary}
+              tintColor={colors.nileBlue}
+              colors={[colors.nileBlue]}
+              progressBackgroundColor={colors.background.primary}
             />
           }
         >
@@ -729,7 +729,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
   const horizontalPadding = isSmallScreen ? 10 : isTablet ? 24 : 14;
 
   return StyleSheet.create({
-    root: { flex: 1, backgroundColor: Colors.background.primary },
+    root: { flex: 1, backgroundColor: colors.background.primary },
     headerBg: {
       paddingTop: Platform.OS === 'ios' ? 50 : 40,
       paddingBottom: Spacing.base,
@@ -737,7 +737,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       borderBottomLeftRadius: BorderRadius.xl,
       borderBottomRightRadius: BorderRadius.xl,
       overflow: 'hidden',
-      shadowColor: Colors.nileBlue,
+      shadowColor: colors.nileBlue,
       shadowOpacity: 0.15,
       elevation: 8,
     },
@@ -763,7 +763,7 @@ const createStyles = (screenData: { width: number; height: number }) => {
       justifyContent: 'center',
     },
     headerTitle: {
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
       fontSize: isTablet ? Typography.h2.fontSize : isSmallScreen ? Typography.h4.fontSize : Typography.h3.fontSize,
       fontWeight: '800',
       textAlign: 'center',
@@ -771,18 +771,18 @@ const createStyles = (screenData: { width: number; height: number }) => {
     headerRight: { width: 36 },
     scroll: { flex: 1 },
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-    loadingText: { fontSize: Typography.body.fontSize, color: Colors.text.secondary },
+    loadingText: { fontSize: Typography.body.fontSize, color: colors.text.secondary },
     errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: Spacing['2xl'] },
-    errorTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: Colors.text.primary, marginTop: Spacing.md },
-    errorDetails: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.secondary, marginTop: Spacing.xs + 2, textAlign: 'center' },
+    errorTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.text.primary, marginTop: Spacing.md },
+    errorDetails: { fontSize: Typography.bodySmall.fontSize, color: colors.text.secondary, marginTop: Spacing.xs + 2, textAlign: 'center' },
     retryButton: {
-      backgroundColor: Colors.nileBlue,
+      backgroundColor: colors.nileBlue,
       paddingHorizontal: Spacing.lg,
       paddingVertical: Spacing.sm + 2,
       borderRadius: BorderRadius.md,
       marginTop: Spacing.sm + 2,
     },
-    retryButtonText: { color: Colors.text.inverse, fontSize: Typography.bodySmall.fontSize, fontWeight: '600' },
+    retryButtonText: { color: colors.text.inverse, fontSize: Typography.bodySmall.fontSize, fontWeight: '600' },
     frozenBanner: {
       flexDirection: 'row',
       alignItems: 'center',

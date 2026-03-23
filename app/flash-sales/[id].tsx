@@ -584,7 +584,7 @@ function FlashSaleDetailPage() {
                
               >
                 <LinearGradient
-                  colors={isEnded ? [Colors.text.tertiary, Colors.text.tertiary] : isProcessingPayment ? [Colors.brand.purple, Colors.brand.purple] : [Colors.error, colors.error]}
+                  colors={isEnded ? [colors.text.tertiary, colors.text.tertiary] : isProcessingPayment ? [Colors.brand.purple, Colors.brand.purple] : [Colors.error, colors.error]}
                   style={styles.getOfferButtonGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -689,11 +689,11 @@ const styles = StyleSheet.create({
     gap: Spacing.base },
   loadingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '500' },
   errorSafeArea: {
     flex: 1,
-    backgroundColor: Colors.background.primary },
+    backgroundColor: colors.background.primary },
   errorBackButton: {
     padding: Spacing.base },
   errorContainer: {
@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     marginTop: Spacing.sm },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600' },
 
@@ -770,7 +770,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
     gap: Spacing.xs },
   flashBadgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '700',
     letterSpacing: 0.5 },
@@ -791,7 +791,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minWidth: 70 },
   timerNumber: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h2,
     fontWeight: '700' },
   timerLabel: {
@@ -800,13 +800,13 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     letterSpacing: 1 },
   timerSeparator: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h2,
     fontWeight: '700' },
 
   // Content Card
   contentCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     marginTop: -24,
@@ -827,7 +827,7 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: BorderRadius.md },
   storeLogoPlaceholder: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center' },
   storeBadgeText: {
@@ -837,11 +837,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 32 },
   description: {
     fontSize: 15,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 22 },
 
   // Price Card
@@ -856,7 +856,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs },
   priceLabel: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500' },
   priceRow: {
     flexDirection: 'row',
@@ -867,7 +867,7 @@ const styles = StyleSheet.create({
     color: Colors.error },
   originalPrice: {
     ...Typography.h4,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through' },
   discountCircle: {
     width: 70,
@@ -877,7 +877,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center' },
   discountNumber: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: '800' },
   discountOff: {
@@ -887,7 +887,7 @@ const styles = StyleSheet.create({
 
   // Stock Card
   stockCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     gap: Spacing.md },
@@ -909,13 +909,13 @@ const styles = StyleSheet.create({
     color: Colors.error },
   stockCount: {
     ...Typography.body,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   stockCountBold: {
     fontWeight: '700',
     color: colors.neutral[700] },
   progressBarContainer: {
     height: 10,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 5,
     overflow: 'hidden' },
   progressBar: {
@@ -926,7 +926,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between' },
   stockFooterText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
 
   // Promo Code Card
   promoCodeCard: {
@@ -949,7 +949,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center' },
   promoCodeLabel: {
@@ -964,7 +964,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 10 },
@@ -975,11 +975,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     ...Typography.body },
   copyButtonTextSuccess: {
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   // How to Use
   howToUseCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     gap: Spacing.base },
@@ -1001,7 +1001,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center' },
   stepNumberText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '700' },
   stepIcon: {
@@ -1009,11 +1009,11 @@ const styles = StyleSheet.create({
   stepText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
 
   // Terms Card
   termsCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     gap: Spacing.md },
@@ -1031,18 +1031,18 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.text.tertiary,
+    backgroundColor: colors.text.tertiary,
     marginTop: 7 },
   termText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20 },
 
   // Stats Card
   statsCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     justifyContent: 'space-around' },
@@ -1053,7 +1053,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.xs },
@@ -1063,10 +1063,10 @@ const styles = StyleSheet.create({
     color: colors.neutral[700] },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   statDivider: {
     width: 1,
-    backgroundColor: Colors.border.default },
+    backgroundColor: colors.border.default },
 
   bottomSpacing: {
     height: 180 },
@@ -1077,9 +1077,9 @@ const styles = StyleSheet.create({
     bottom: 75,
     left: 0,
     right: 0,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     ...Shadows.strong },
   bottomSafeArea: {
     paddingBottom: Spacing.base },
@@ -1093,11 +1093,11 @@ const styles = StyleSheet.create({
     gap: 2 },
   bottomPriceLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   bottomPrice: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   getOfferButton: {
     flex: 1,
     marginLeft: Spacing.base,
@@ -1111,7 +1111,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.base,
     gap: Spacing.sm },
   getOfferButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 17,
     fontWeight: '700' },
 
@@ -1123,7 +1123,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.xl },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius['2xl'],
     padding: 28,
     alignItems: 'center',
@@ -1139,11 +1139,11 @@ const styles = StyleSheet.create({
   modalTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm },
   modalMessage: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl },
   modalCodeContainer: {
@@ -1152,7 +1152,7 @@ const styles = StyleSheet.create({
     alignItems: 'center' },
   modalCodeLabel: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 10 },
   modalCodeBox: {
     flexDirection: 'row',
@@ -1171,7 +1171,7 @@ const styles = StyleSheet.create({
     color: colors.brand.amberDark,
     letterSpacing: 2 },
   modalCopyIcon: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: 6,
     borderRadius: 6 },
   modalCopiedText: {
@@ -1188,7 +1188,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   modalButtonPrimary: {
     flex: 1,
     borderRadius: BorderRadius.md,
@@ -1200,11 +1200,11 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     gap: 6 },
   modalButtonTextSecondary: {
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     ...Typography.bodyLarge,
     fontWeight: '600' },
   modalButtonTextPrimary: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600' } });
 

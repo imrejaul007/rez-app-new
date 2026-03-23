@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: "700",
-    color: Colors.text.primary },
+    color: colors.text.primary },
   viewAll: {
     fontSize: 14,
     fontWeight: "600",
@@ -221,15 +221,15 @@ const styles = StyleSheet.create({
     color: colors.background.primary },
   validity: {
     fontSize: 12,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   offerTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 4 },
   offerDescription: {
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.md },
   offerFooter: {
     flexDirection: "row",

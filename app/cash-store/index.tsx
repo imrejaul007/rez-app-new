@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
@@ -18,11 +19,11 @@ function CashStorePage() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={22} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={22} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerTitleContainer}>
           <View style={styles.headerIcon}>
-            <Ionicons name="cash" size={16} color={Colors.text.inverse} />
+            <Ionicons name="cash" size={16} color={colors.text.inverse} />
           </View>
           <View>
             <Text style={styles.headerTitle}>Cash Store</Text>
@@ -33,7 +34,7 @@ function CashStorePage() {
           style={styles.trackButton}
           onPress={() => router.push('/account/cashback' as any)}
         >
-          <Ionicons name="time" size={20} color={Colors.nileBlue} />
+          <Ionicons name="time" size={20} color={colors.nileBlue} />
         </Pressable>
       </View>
 
@@ -47,31 +48,31 @@ function CashStorePage() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40, height: 40, borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary, justifyContent: 'center', alignItems: 'center',
+    backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center',
   },
   headerTitleContainer: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   headerIcon: {
     width: 32, height: 32, borderRadius: 10,
-    backgroundColor: Colors.nileBlue, justifyContent: 'center', alignItems: 'center',
+    backgroundColor: colors.nileBlue, justifyContent: 'center', alignItems: 'center',
   },
-  headerTitle: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.primary },
-  headerSubtitle: { ...Typography.caption, color: Colors.text.tertiary, fontWeight: '500' },
+  headerTitle: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.primary },
+  headerSubtitle: { ...Typography.caption, color: colors.text.tertiary, fontWeight: '500' },
   trackButton: {
     width: 40, height: 40, borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary, justifyContent: 'center', alignItems: 'center',
+    backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center',
   },
 });
 

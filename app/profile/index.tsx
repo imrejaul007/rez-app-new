@@ -816,7 +816,7 @@ function ProfilePage() {
               <View style={styles.partnerContent}>
                 <View style={styles.partnerLeft}>
                   <View style={styles.partnerIconContainer}>
-                    <Ionicons name="trophy" size={28} color={Colors.nileBlue} />
+                    <Ionicons name="trophy" size={28} color={colors.nileBlue} />
                   </View>
                   <View style={styles.partnerText}>
                     <ThemedText style={styles.partnerTitle}>
@@ -832,7 +832,7 @@ function ProfilePage() {
                     <Ionicons name="star" size={12} color={PROFILE_COLORS.gold} />
                     <ThemedText style={styles.partnerLevelText}>Level 1</ThemedText>
                   </View>
-                  <Ionicons name="chevron-forward" size={20} color={Colors.nileBlue} />
+                  <Ionicons name="chevron-forward" size={20} color={colors.nileBlue} />
                 </View>
               </View>
             </LinearGradient>
@@ -1414,7 +1414,7 @@ const styles = StyleSheet.create({
   partnerTitle: {
     fontSize: 16,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 3,
   },
   partnerSubtitle: {

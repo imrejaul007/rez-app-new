@@ -165,7 +165,7 @@ function SocialImpactPage() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top']}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.secondary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -197,7 +197,7 @@ function SocialImpactPage() {
             style={styles.heroGradient}
           >
             <View style={styles.heroIcon}>
-              <Ionicons name="business" size={28} color={Colors.background.primary} />
+              <Ionicons name="business" size={28} color={colors.background.primary} />
             </View>
             <Text style={styles.heroTitle}>Corporate CSR Meets Social Impact</Text>
             <Text style={styles.heroDesc}>
@@ -307,7 +307,7 @@ function SocialImpactPage() {
         <View style={styles.activitiesContainer}>
           {filteredActivities.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons name="calendar-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="calendar-outline" size={48} color={colors.text.tertiary} />
               <Text style={styles.emptyStateTitle}>No events found</Text>
               <Text style={styles.emptyStateText}>
                 {activeTab === 'all'
@@ -381,7 +381,7 @@ function SocialImpactPage() {
                 {/* Details */}
                 <View style={styles.detailsGrid}>
                   <View style={styles.detailRow}>
-                    <Ionicons name="calendar-outline" size={14} color={Colors.text.tertiary} />
+                    <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
                     <Text style={styles.detailText}>
                       {event.eventDate
                         ? new Date(event.eventDate).toLocaleDateString('en-IN', {
@@ -391,12 +391,12 @@ function SocialImpactPage() {
                     </Text>
                   </View>
                   <View style={styles.detailRow}>
-                    <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+                    <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
                     <Text style={styles.detailText}>{formatEventTime(event.eventTime)}</Text>
                   </View>
                 </View>
                 <View style={styles.locationRow}>
-                  <Ionicons name="location-outline" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
                   <Text style={styles.detailText}>
                     {event.location?.address || 'Location TBD'}
                     {event.location?.city ? ` • ${event.location.city}` : ''}
@@ -463,7 +463,7 @@ function SocialImpactPage() {
                 {/* CTA */}
                 {event.eventStatus === 'completed' ? (
                   <View style={styles.completedButton}>
-                    <Ionicons name="checkmark" size={16} color={Colors.text.tertiary} />
+                    <Ionicons name="checkmark" size={16} color={colors.text.tertiary} />
                     <Text style={styles.completedButtonText}>Completed</Text>
                   </View>
                 ) : event.isEnrolled ? (
@@ -506,17 +506,17 @@ function SocialImpactPage() {
             </Text>
             <View style={styles.bottomCTAStats}>
               <View style={styles.bottomCTAStat}>
-                <Ionicons name="people" size={14} color={Colors.text.tertiary} />
+                <Ionicons name="people" size={14} color={colors.text.tertiary} />
                 <Text style={styles.bottomCTAStatText}>
                   {stats.totalEventsCompleted > 0 ? `${stats.totalEventsCompleted} completed` : 'Join now'}
                 </Text>
               </View>
               <View style={styles.bottomCTAStat}>
-                <Ionicons name="heart" size={14} color={Colors.text.tertiary} />
+                <Ionicons name="heart" size={14} color={colors.text.tertiary} />
                 <Text style={styles.bottomCTAStatText}>{events.length} events</Text>
               </View>
               <View style={styles.bottomCTAStat}>
-                <Ionicons name="business" size={14} color={Colors.text.tertiary} />
+                <Ionicons name="business" size={14} color={colors.text.tertiary} />
                 <Text style={styles.bottomCTAStatText}>
                   {new Set(events.filter(e => e.sponsor).map(e => e.sponsor?._id)).size || 0} CSR Partners
                 </Text>
@@ -535,7 +535,7 @@ function SocialImpactPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -546,7 +546,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyState: {
     alignItems: 'center',
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   header: {
@@ -570,7 +570,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(0, 0, 0, 0.08)',
   },
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
   },
   headerSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   heroSection: {
@@ -620,7 +620,7 @@ const styles = StyleSheet.create({
   },
   heroDesc: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -639,7 +639,7 @@ const styles = StyleSheet.create({
   },
   csrBenefitItem: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
@@ -690,7 +690,7 @@ const styles = StyleSheet.create({
   },
   statLabel: {
     fontSize: Typography.caption.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statValue: {
     fontSize: 22,
@@ -706,7 +706,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: 'rgba(0, 0, 0, 0.08)',
     marginRight: Spacing.sm,
@@ -718,17 +718,17 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   activitiesContainer: {
     paddingHorizontal: Spacing.base,
     gap: Spacing.md,
   },
   activityCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     borderWidth: 1,
@@ -749,7 +749,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     width: '100%',
     height: 140,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   eventImage: {
     width: '100%',
@@ -771,12 +771,12 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   liveText: {
     fontSize: Typography.overline.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   activityHeader: {
     flexDirection: 'row',
@@ -846,14 +846,14 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 4,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   organizerEmoji: {
     fontSize: Typography.body.fontSize,
   },
   organizerText: {
     fontSize: Typography.caption.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
   },
   sponsorRow: {
@@ -887,7 +887,7 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: Typography.caption.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   impactSection: {
     backgroundColor: 'rgba(59, 130, 246, 0.06)',
@@ -928,7 +928,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     fontSize: Typography.overline.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   rewardsSection: {
     marginBottom: Spacing.md,
@@ -937,7 +937,7 @@ const styles = StyleSheet.create({
   rewardsTitle: {
     fontSize: Typography.caption.fontSize,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   rewardsGrid: {
@@ -964,7 +964,7 @@ const styles = StyleSheet.create({
   },
   rewardLabel: {
     fontSize: Typography.overline.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   rewardValue: {
     fontSize: Typography.h4.fontSize,
@@ -990,7 +990,7 @@ const styles = StyleSheet.create({
   completedButtonText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   registerButton: {
     borderRadius: BorderRadius.md,
@@ -1005,7 +1005,7 @@ const styles = StyleSheet.create({
   registerButtonText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   viewDetailsButton: {
     flexDirection: 'row',
@@ -1044,7 +1044,7 @@ const styles = StyleSheet.create({
   },
   bottomCTADesc: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.base,
   },
@@ -1059,7 +1059,7 @@ const styles = StyleSheet.create({
   },
   bottomCTAStatText: {
     fontSize: Typography.caption.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

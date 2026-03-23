@@ -177,10 +177,10 @@ const BrandPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Pressable onPress={() => router.push('/search' as any)} style={styles.searchButton}>
-            <Ionicons name="search" size={24} color={Colors.text.inverse} />
+            <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
@@ -223,7 +223,7 @@ const BrandPage: React.FC = () => {
         {/* Error State */}
         {error && (
           <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
+            <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
             <Text style={styles.errorText}>{error}</Text>
             <Pressable style={[styles.retryButton, { backgroundColor: brandConfig.color }]} onPress={handleRefresh}>
               <Text style={styles.retryButtonText}>Try Again</Text>
@@ -293,18 +293,18 @@ const BrandPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.md,
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: Typography.h2.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   brandDescription: {
@@ -364,7 +364,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statLabel: {
     fontSize: Typography.caption.fontSize,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: Typography.bodyLarge.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.md,
     marginBottom: Spacing.base,
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyContainer: {
     justifyContent: 'center',
@@ -411,12 +411,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   productsContainer: {
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.base,
   },
   productsGrid: {
@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
   },
   productCard: {
     width: (SCREEN_WIDTH - 44) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     elevation: 2,
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   discountText: {
     fontSize: Typography.overline.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cashbackBadge: {
     position: 'absolute',
@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     fontSize: Typography.overline.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   productInfo: {
     padding: Spacing.md,
@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 6,
     minHeight: 36,
   },
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   priceContainer: {
     flexDirection: 'row',
@@ -508,11 +508,11 @@ const styles = StyleSheet.create({
   price: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   originalPrice: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
 });

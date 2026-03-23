@@ -8,7 +8,8 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { SearchSuggestion } from '@/types/search.types';
 import { NUQTA } from './searchTheme';
 
@@ -127,7 +128,7 @@ function SuggestionItem({
 
 const styles = StyleSheet.create({
   suggestionsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     margin: Spacing.base,
     borderRadius: BorderRadius.xl,
     padding: Spacing.base,

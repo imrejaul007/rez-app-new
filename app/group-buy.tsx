@@ -182,7 +182,7 @@ const GroupBuyPage = () => {
     if (groupBuying.availableGroups.length === 0) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name="people-outline" size={64} color={Colors.border.default} />
+          <Ionicons name="people-outline" size={64} color={colors.border.default} />
           <Text style={styles.emptyTitle}>No Active Groups</Text>
           <Text style={styles.emptyText}>
             Be the first to create a group and start saving!
@@ -248,7 +248,7 @@ const GroupBuyPage = () => {
     if (groupBuying.myGroups.length === 0) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name="people-circle-outline" size={64} color={Colors.border.default} />
+          <Ionicons name="people-circle-outline" size={64} color={colors.border.default} />
           <Text style={styles.emptyTitle}>No Groups Yet</Text>
           <Text style={styles.emptyText}>
             Join or create a group to start saving with friends!
@@ -343,7 +343,7 @@ const GroupBuyPage = () => {
     if (groupBuying.availableProducts.length === 0) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name="cube-outline" size={64} color={Colors.border.default} />
+          <Ionicons name="cube-outline" size={64} color={colors.border.default} />
           <Text style={styles.emptyTitle}>No Products Available</Text>
           <Text style={styles.emptyText}>
             Check back later for new group buying deals!
@@ -379,13 +379,13 @@ const GroupBuyPage = () => {
               </View>
               <View style={styles.productMeta}>
                 <View style={styles.productMetaItem}>
-                  <Ionicons name="people" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="people" size={14} color={colors.text.tertiary} />
                   <Text style={styles.productMetaText}>
                     {product.minMembers}-{product.maxMembers} members
                   </Text>
                 </View>
                 <View style={styles.productMetaItem}>
-                  <Ionicons name="time" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="time" size={14} color={colors.text.tertiary} />
                   <Text style={styles.productMetaText}>
                     {product.expiryDuration}h duration
                   </Text>
@@ -459,7 +459,7 @@ const GroupBuyPage = () => {
           <Ionicons
             name="people"
             size={20}
-            color={activeTab === 'available' ? Colors.brand.purpleLight : Colors.text.tertiary}
+            color={activeTab === 'available' ? Colors.brand.purpleLight : colors.text.tertiary}
           />
           <Text
             style={[styles.tabText, activeTab === 'available' && styles.tabTextActive]}
@@ -475,7 +475,7 @@ const GroupBuyPage = () => {
           <Ionicons
             name="person-circle"
             size={20}
-            color={activeTab === 'my-groups' ? Colors.brand.purpleLight : Colors.text.tertiary}
+            color={activeTab === 'my-groups' ? Colors.brand.purpleLight : colors.text.tertiary}
           />
           <Text
             style={[styles.tabText, activeTab === 'my-groups' && styles.tabTextActive]}
@@ -491,7 +491,7 @@ const GroupBuyPage = () => {
           <Ionicons
             name="cube"
             size={20}
-            color={activeTab === 'products' ? Colors.brand.purpleLight : Colors.text.tertiary}
+            color={activeTab === 'products' ? Colors.brand.purpleLight : colors.text.tertiary}
           />
           <Text
             style={[styles.tabText, activeTab === 'products' && styles.tabTextActive]}
@@ -534,7 +534,7 @@ const GroupBuyPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -556,7 +556,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
@@ -579,11 +579,11 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 2,
   },
   joinCodeButton: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.xl,
     borderRadius: BorderRadius.md,
     justifyContent: 'center',
@@ -595,9 +595,9 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   tab: {
     flex: 1,
@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
   tabText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabTextActive: {
     color: Colors.brand.purpleLight,
@@ -636,7 +636,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     flex: 1,
@@ -647,13 +647,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.xl,
@@ -674,12 +674,12 @@ const styles = StyleSheet.create({
   createButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   joinButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.md,
@@ -693,7 +693,7 @@ const styles = StyleSheet.create({
     color: Colors.brand.purpleLight,
   },
   expandedSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     marginTop: -8,
     marginBottom: Spacing.base,
@@ -724,10 +724,10 @@ const styles = StyleSheet.create({
   actionButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   leaveButton: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 2,
     borderColor: Colors.error,
   },
@@ -739,7 +739,7 @@ const styles = StyleSheet.create({
   productCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.md,
     padding: Spacing.base,
@@ -756,12 +756,12 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   productStore: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   productPriceRow: {
@@ -797,7 +797,7 @@ const styles = StyleSheet.create({
   },
   productMetaText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   createGroupButton: {
     marginLeft: Spacing.md,

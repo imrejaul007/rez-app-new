@@ -3,7 +3,6 @@ import { View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { BRAND } from '@/constants/brand';
-import { Colors } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
@@ -38,7 +37,7 @@ const SocialImpactSection = React.memo(function SocialImpactSection({
               colors={[colors.lightMustard, colors.infoScale[400]]}
               style={styles.impactIcon}
             >
-              <Ionicons name="heart" size={28} color={Colors.text.inverse} />
+              <Ionicons name="heart" size={28} color={colors.text.inverse} />
             </LinearGradient>
             <View style={styles.impactHeaderText}>
               <View style={styles.impactTitleRow}>
@@ -49,7 +48,7 @@ const SocialImpactSection = React.memo(function SocialImpactSection({
               </View>
               <Text style={styles.impactSubtitle}>Earn while making a difference</Text>
             </View>
-            <Ionicons name="chevron-forward" size={24} color={Colors.text.tertiary} />
+            <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
           </View>
 
           <View style={styles.impactActivities}>

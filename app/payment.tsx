@@ -396,12 +396,12 @@ function PaymentPage() {
 
   const getMethodColor = (type: string) => {
     switch (type) {
-      case 'upi': return Colors.nileBlue;
+      case 'upi': return colors.nileBlue;
       case 'card': return Colors.info;
       case 'wallet': return Colors.gold;
       case 'netbanking': return Colors.success;
       case 'paypal': return '#0070BA';
-      default: return Colors.text.tertiary;
+      default: return colors.text.tertiary;
     }
   };
 
@@ -433,7 +433,7 @@ function PaymentPage() {
               accessibilityRole="button"
             >
               <View style={[styles.methodIconContainer, { backgroundColor: methodColor }]}>
-                <Ionicons name={getMethodIcon(method.type)} size={22} color={Colors.text.inverse} />
+                <Ionicons name={getMethodIcon(method.type)} size={22} color={colors.text.inverse} />
               </View>
 
               <View style={styles.methodInfo}>
@@ -448,7 +448,7 @@ function PaymentPage() {
                 </View>
               </View>
 
-              <Ionicons name="chevron-forward" size={18} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
             </Pressable>
           );
         })}
@@ -478,7 +478,7 @@ function PaymentPage() {
       >
         <View style={styles.methodHeader}>
           <View style={[styles.methodIconContainer, { backgroundColor: getMethodColor(selectedMethod.type) }]}>
-            <Ionicons name={getMethodIcon(selectedMethod.type)} size={22} color={Colors.text.inverse} />
+            <Ionicons name={getMethodIcon(selectedMethod.type)} size={22} color={colors.text.inverse} />
           </View>
           <View style={styles.methodHeaderInfo}>
             <ThemedText style={styles.methodHeaderName}>{selectedMethod.name}</ThemedText>
@@ -493,7 +493,7 @@ function PaymentPage() {
           <View style={styles.formContainer}>
             <ThemedText style={styles.formLabel}>Enter UPI ID</ThemedText>
             <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={styles.textInput}
                 placeholder="user@paytm"
@@ -501,7 +501,7 @@ function PaymentPage() {
                 onChangeText={setUpiId}
                 keyboardType="email-address"
                 autoCapitalize="none"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 accessibilityLabel="UPI ID input"
               />
             </View>
@@ -511,10 +511,10 @@ function PaymentPage() {
               disabled={!upiId || isProcessing}
             >
               <LinearGradient
-                colors={[Colors.nileBlue, '#2A5577'] as const}
+                colors={[colors.nileBlue, '#2A5577'] as const}
                 style={styles.payButtonGradient}
               >
-                <Ionicons name="shield-checkmark-outline" size={18} color={Colors.text.inverse} />
+                <Ionicons name="shield-checkmark-outline" size={18} color={colors.text.inverse} />
                 <ThemedText style={styles.payButtonText}>
                   Pay {displayCurrency}{amount.toLocaleString()}
                 </ThemedText>
@@ -539,14 +539,14 @@ function PaymentPage() {
               disabled={isProcessing}
             >
               <LinearGradient
-                colors={[Colors.nileBlue, '#2A5577'] as const}
+                colors={[colors.nileBlue, '#2A5577'] as const}
                 style={styles.payButtonGradient}
               >
                 {isProcessing ? (
-                  <ActivityIndicator size="small" color={Colors.text.inverse} />
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
                   <>
-                    <Ionicons name="card-outline" size={18} color={Colors.text.inverse} />
+                    <Ionicons name="card-outline" size={18} color={colors.text.inverse} />
                     <ThemedText style={styles.payButtonText}>
                       Pay {displayCurrency}{amount.toLocaleString()} with Card
                     </ThemedText>
@@ -574,7 +574,7 @@ function PaymentPage() {
                   accessibilityRole="radio"
                 >
                   <View style={[styles.walletIcon, { backgroundColor: getMethodColor('wallet') }]}>
-                    <Ionicons name="wallet-outline" size={18} color={Colors.text.inverse} />
+                    <Ionicons name="wallet-outline" size={18} color={colors.text.inverse} />
                   </View>
                   <ThemedText style={styles.walletText}>{wallet.toUpperCase()}</ThemedText>
                 </Pressable>
@@ -587,10 +587,10 @@ function PaymentPage() {
               disabled={isProcessing}
             >
               <LinearGradient
-                colors={[Colors.nileBlue, '#2A5577'] as const}
+                colors={[colors.nileBlue, '#2A5577'] as const}
                 style={styles.payButtonGradient}
               >
-                <Ionicons name="shield-checkmark-outline" size={18} color={Colors.text.inverse} />
+                <Ionicons name="shield-checkmark-outline" size={18} color={colors.text.inverse} />
                 <ThemedText style={styles.payButtonText}>
                   Pay with {walletType.toUpperCase()}
                 </ThemedText>
@@ -621,7 +621,7 @@ function PaymentPage() {
                   accessibilityRole="radio"
                 >
                   <View style={[styles.walletIcon, { backgroundColor: getMethodColor('netbanking') }]}>
-                    <Ionicons name="business-outline" size={18} color={Colors.text.inverse} />
+                    <Ionicons name="business-outline" size={18} color={colors.text.inverse} />
                   </View>
                   <ThemedText style={styles.walletText}>{bank.name}</ThemedText>
                 </Pressable>
@@ -634,10 +634,10 @@ function PaymentPage() {
               disabled={!bankCode || isProcessing}
             >
               <LinearGradient
-                colors={[Colors.nileBlue, '#2A5577'] as const}
+                colors={[colors.nileBlue, '#2A5577'] as const}
                 style={styles.payButtonGradient}
               >
-                <Ionicons name="shield-checkmark-outline" size={18} color={Colors.text.inverse} />
+                <Ionicons name="shield-checkmark-outline" size={18} color={colors.text.inverse} />
                 <ThemedText style={styles.payButtonText}>
                   Pay {displayCurrency}{amount.toLocaleString()}
                 </ThemedText>
@@ -652,7 +652,7 @@ function PaymentPage() {
   const renderProcessing = () => (
     <View style={styles.processingContainer}>
       <View style={styles.processingIcon}>
-        <ActivityIndicator size="large" color={Colors.nileBlue} />
+        <ActivityIndicator size="large" color={colors.nileBlue} />
       </View>
 
       <ThemedText style={styles.processingTitle}>Processing Payment</ThemedText>
@@ -700,12 +700,12 @@ function PaymentPage() {
        
       >
         <LinearGradient
-          colors={[Colors.nileBlue, '#2A5577'] as const}
+          colors={[colors.nileBlue, '#2A5577'] as const}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.retryButton}
         >
-          <Ionicons name="refresh" size={20} color={Colors.text.inverse} />
+          <Ionicons name="refresh" size={20} color={colors.text.inverse} />
           <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
         </LinearGradient>
       </Pressable>
@@ -733,11 +733,11 @@ function PaymentPage() {
   if (isLoading) {
     return (
       <ThemedView style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
-        <LinearGradient colors={[Colors.nileBlue, '#2A5577'] as const} style={styles.headerBg}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+        <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.headerBg}>
           <View style={styles.headerContainer}>
             <Pressable style={styles.backButton} onPress={handleBackPress}>
-              <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>{headerLabel}</ThemedText>
             <View style={styles.placeholder} />
@@ -750,8 +750,8 @@ function PaymentPage() {
 
   return (
     <ThemedView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
-      <LinearGradient colors={[Colors.nileBlue, '#2A5577'] as const} style={styles.headerBg}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+      <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.headerBg}>
         <View style={styles.headerContainer}>
           <Pressable
             style={styles.backButton}
@@ -759,7 +759,7 @@ function PaymentPage() {
             accessibilityLabel={currentStep === 'details' ? 'Back to payment methods' : 'Back'}
             accessibilityRole="button"
           >
-            <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>{headerLabel}</ThemedText>
           <View style={styles.placeholder} />
@@ -837,7 +837,7 @@ function PaymentPage() {
             <View style={styles.modalHeader}>
               <ThemedText style={styles.modalTitle}>Card Payment</ThemedText>
               <Pressable onPress={handleStripeCardCancel} style={styles.modalClose}>
-                <Ionicons name="close" size={22} color={Colors.text.tertiary} />
+                <Ionicons name="close" size={22} color={colors.text.tertiary} />
               </Pressable>
             </View>
             {stripeClientSecret && (
@@ -848,9 +848,9 @@ function PaymentPage() {
                   appearance: {
                     theme: 'stripe',
                     variables: {
-                      colorPrimary: Colors.nileBlue,
-                      colorBackground: Colors.background.primary,
-                      colorText: Colors.text.primary,
+                      colorPrimary: colors.nileBlue,
+                      colorBackground: colors.background.primary,
+                      colorText: colors.text.primary,
                       colorDanger: Colors.error,
                       fontFamily: 'system-ui, -apple-system, sans-serif',
                       borderRadius: '12px'}}}}
@@ -874,13 +874,13 @@ function PaymentPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary},
+    backgroundColor: colors.background.secondary},
   headerBg: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
     paddingBottom: Spacing.xl,
     borderBottomLeftRadius: BorderRadius['2xl'],
     borderBottomRightRadius: BorderRadius['2xl'],
-    shadowColor: Colors.nileBlue,
+    shadowColor: colors.nileBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
@@ -899,7 +899,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'},
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h4,
     fontWeight: '700'},
   placeholder: {
@@ -919,7 +919,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginBottom: Spacing.xs},
   amountValue: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 32,
     fontWeight: '900',
     letterSpacing: -0.5},
@@ -931,33 +931,33 @@ const styles = StyleSheet.create({
     paddingBottom: 100,
     flexGrow: 1},
   stepContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginTop: Spacing.sm,
     marginBottom: Spacing.base,
     ...Shadows.medium,
     borderWidth: 1,
-    borderColor: Colors.border.light},
+    borderColor: colors.border.light},
   stepTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs},
   stepSubtitle: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.base},
   methodsGrid: {
     gap: 10},
   methodCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 14,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     ...Shadows.subtle},
   methodIconContainer: {
     width: 44,
@@ -971,7 +971,7 @@ const styles = StyleSheet.create({
   methodName: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs},
   methodDetails: {
     flexDirection: 'row',
@@ -994,7 +994,7 @@ const styles = StyleSheet.create({
     color: colors.brand.amberDeep},
   methodTime: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500'},
   securityRow: {
     flexDirection: 'row',
@@ -1004,10 +1004,10 @@ const styles = StyleSheet.create({
     marginTop: Spacing.base,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light},
+    borderTopColor: colors.border.light},
   securityText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500'},
   methodHeader: {
     flexDirection: 'row',
@@ -1015,31 +1015,31 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     paddingBottom: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light},
+    borderBottomColor: colors.border.light},
   methodHeaderInfo: {
     marginLeft: 14},
   methodHeaderName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2},
   methodHeaderGateway: {
     fontSize: 13,
-    color: Colors.text.tertiary},
+    color: colors.text.tertiary},
   formContainer: {
     gap: 14},
   formLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6},
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     paddingHorizontal: 14},
   inputIcon: {
     marginRight: 10},
@@ -1047,7 +1047,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     fontSize: 15,
-    color: Colors.text.primary},
+    color: colors.text.primary},
   stripeInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1070,13 +1070,13 @@ const styles = StyleSheet.create({
     flex: 1,
     minWidth: '45%',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: 14,
     borderWidth: 1.5,
-    borderColor: Colors.border.default},
+    borderColor: colors.border.default},
   selectedWalletOption: {
-    borderColor: Colors.nileBlue,
+    borderColor: colors.nileBlue,
     backgroundColor: '#F0F4F8'},
   walletIcon: {
     width: 36,
@@ -1088,7 +1088,7 @@ const styles = StyleSheet.create({
   walletText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.primary},
+    color: colors.text.primary},
   payButton: {
     marginTop: 6},
   payButtonGradient: {
@@ -1099,7 +1099,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'},
   payButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '700'},
   disabledButton: {
@@ -1112,11 +1112,11 @@ const styles = StyleSheet.create({
   processingTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm},
   processingSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: 30},
   progressContainer: {
@@ -1126,17 +1126,17 @@ const styles = StyleSheet.create({
   progressBar: {
     width: '100%',
     height: 6,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 3,
     overflow: 'hidden',
     marginBottom: Spacing.md},
   progressFill: {
     height: '100%',
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     borderRadius: 3},
   progressText: {
     fontSize: 13,
-    color: Colors.text.tertiary},
+    color: colors.text.tertiary},
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -1144,7 +1144,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     fontSize: 14,
-    color: Colors.text.tertiary},
+    color: colors.text.tertiary},
   serviceInfo: {
     alignItems: 'center',
     marginBottom: Spacing.md,
@@ -1152,7 +1152,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(255, 255, 255, 0.2)'},
   serviceName: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '600',
     marginBottom: 4},
@@ -1194,7 +1194,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'flex-end'},
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: Spacing.lg,
@@ -1207,16 +1207,16 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light},
+    borderBottomColor: colors.border.light},
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.primary},
+    color: colors.text.primary},
   modalClose: {
     width: 32,
     height: 32,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center'},
   // Payment Failed
@@ -1228,7 +1228,7 @@ const styles = StyleSheet.create({
   failedTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base},
   failedErrorBox: {
     flexDirection: 'row',
@@ -1259,14 +1259,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'},
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '700'},
   changMethodButton: {
     paddingVertical: 10},
   changeMethodText: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600'}});
 
 export default withErrorBoundary(PaymentPage, 'Payment');

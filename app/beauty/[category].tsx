@@ -306,14 +306,14 @@ const BeautyCategoryPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>{config.icon} {config.title}</Text>
             <Text style={styles.headerSubtitle}>{config.subtitle}</Text>
           </View>
           <Pressable style={styles.searchButton} onPress={handleSearch}>
-            <Ionicons name="search" size={24} color={Colors.text.inverse} />
+            <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
@@ -352,7 +352,7 @@ const BeautyCategoryPage: React.FC = () => {
                 <Ionicons
                   name={filter.icon as any}
                   size={14}
-                  color={selectedFilter === filter.id ? Colors.background.primary : Colors.text.tertiary}
+                  color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
                 />
               )}
               <Text style={[
@@ -380,7 +380,7 @@ const BeautyCategoryPage: React.FC = () => {
         {/* Error State */}
         {error && (
           <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
+            <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
             <Text style={styles.errorText}>{error}</Text>
             <Pressable style={styles.retryButton} onPress={handleRefresh}>
               <Text style={styles.retryButtonText}>Try Again</Text>
@@ -425,7 +425,7 @@ const BeautyCategoryPage: React.FC = () => {
                 {/* Verified Badge */}
                 {item.isVerified && (
                   <View style={styles.verifiedBadge}>
-                    <Ionicons name="shield-checkmark" size={12} color={Colors.text.inverse} />
+                    <Ionicons name="shield-checkmark" size={12} color={colors.text.inverse} />
                     <Text style={styles.verifiedText}>Verified</Text>
                   </View>
                 )}
@@ -447,7 +447,7 @@ const BeautyCategoryPage: React.FC = () => {
                       )}
                     </View>
                     <View style={styles.metaItem}>
-                      <Ionicons name="location-outline" size={14} color={Colors.text.tertiary} />
+                      <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
                       <Text style={styles.metaText}>{item.distance}</Text>
                     </View>
                   </View>
@@ -483,18 +483,18 @@ const BeautyCategoryPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statLabel: {
     ...Typography.caption,
@@ -553,9 +553,9 @@ const styles = StyleSheet.create({
   filtersContainer: {
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   filterChip: {
     flexDirection: 'row',
@@ -563,16 +563,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
     gap: 6,
   },
   filterChipText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   errorContainer: {
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.md,
     marginBottom: Spacing.base,
@@ -598,7 +598,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyContainer: {
     flex: 1,
@@ -614,12 +614,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -631,14 +631,14 @@ const styles = StyleSheet.create({
   exploreButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   itemsList: {
     padding: Spacing.base,
     gap: Spacing.base,
   },
   itemCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     elevation: 2,
@@ -663,7 +663,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   verifiedBadge: {
     position: 'absolute',
@@ -680,7 +680,7 @@ const styles = StyleSheet.create({
   verifiedText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   itemInfo: {
     padding: Spacing.base,
@@ -695,11 +695,11 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginRight: Spacing.sm,
   },
   typeBadge: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 10,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
@@ -707,7 +707,7 @@ const styles = StyleSheet.create({
   typeText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   itemMeta: {
     flexDirection: 'row',
@@ -722,11 +722,11 @@ const styles = StyleSheet.create({
   ratingText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   reviewCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   metaItem: {
     flexDirection: 'row',
@@ -735,7 +735,7 @@ const styles = StyleSheet.create({
   },
   metaText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   itemFooter: {
     flexDirection: 'row',
@@ -743,17 +743,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
   },
   priceLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   priceText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   bookButton: {
     paddingHorizontal: Spacing.xl,
@@ -763,7 +763,7 @@ const styles = StyleSheet.create({
   bookButtonText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

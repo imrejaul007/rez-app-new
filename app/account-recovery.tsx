@@ -120,7 +120,7 @@ function AccountRecoveryPage() {
             We'll send a verification code via SMS
           </ThemedText>
         </View>
-        <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+        <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
       </Pressable>
 
       <Pressable
@@ -136,7 +136,7 @@ function AccountRecoveryPage() {
             We'll send a recovery link to your email
           </ThemedText>
         </View>
-        <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+        <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
       </Pressable>
 
       <View style={styles.helpSection}>
@@ -185,7 +185,7 @@ function AccountRecoveryPage() {
           value={input}
           onChangeText={setInput}
           placeholder={method === 'phone' ? '10 digit number' : 'your@email.com'}
-          placeholderTextColor={Colors.text.tertiary}
+          placeholderTextColor={colors.text.tertiary}
           keyboardType={method === 'phone' ? 'phone-pad' : 'email-address'}
           autoCapitalize="none"
           maxLength={method === 'phone' ? 10 : undefined}
@@ -227,7 +227,7 @@ function AccountRecoveryPage() {
         value={otp}
         onChangeText={setOtp}
         placeholder="000000"
-        placeholderTextColor={Colors.text.tertiary}
+        placeholderTextColor={colors.text.tertiary}
         keyboardType="number-pad"
         maxLength={6}
         textAlign="center"
@@ -307,7 +307,7 @@ function AccountRecoveryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -366,13 +366,13 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
@@ -400,12 +400,12 @@ const styles = StyleSheet.create({
   },
   methodTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   methodDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   helpSection: {
     marginTop: Spacing.xl,
@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
   },
   helpText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   helpLink: {
     ...Typography.label,
@@ -434,15 +434,15 @@ const styles = StyleSheet.create({
   },
   countryCodeText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   textInput: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     ...Shadows.subtle,
   },
   phoneInput: {
@@ -450,11 +450,11 @@ const styles = StyleSheet.create({
   },
   otpInput: {
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     ...Typography.h1,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: 16,
     marginBottom: Spacing.lg,
     ...Shadows.subtle,
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
   },
   resendText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   resendLink: {
     ...Typography.label,
@@ -496,12 +496,12 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     ...Typography.h1,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   successText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },

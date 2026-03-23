@@ -134,14 +134,14 @@ function BookingDetailPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return Colors.nileBlue;
+      case 'confirmed': return colors.nileBlue;
       case 'pending': return Colors.warning;
       case 'completed': return Colors.success;
       case 'cancelled':
       case 'no_show': return Colors.error;
       case 'assigned':
       case 'in_progress': return Colors.brand.purple;
-      default: return Colors.text.tertiary;
+      default: return colors.text.tertiary;
     }
   };
 
@@ -175,7 +175,7 @@ function BookingDetailPage() {
       case 'pending': return Colors.warning;
       case 'refunded': return Colors.info;
       case 'failed': return Colors.error;
-      default: return Colors.text.tertiary;
+      default: return colors.text.tertiary;
     }
   };
 
@@ -227,14 +227,14 @@ function BookingDetailPage() {
       <StatusBar barStyle="light-content" />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.nileBlue, '#0f2a3d']} style={styles.header}>
+      <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.header}>
         <View style={styles.headerRow}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>Booking Details</Text>
           <Pressable style={styles.shareBtn} onPress={handleShare}>
-            <Ionicons name="share-outline" size={22} color={Colors.text.inverse} />
+            <Ionicons name="share-outline" size={22} color={colors.text.inverse} />
           </Pressable>
         </View>
 
@@ -242,7 +242,7 @@ function BookingDetailPage() {
         <View style={styles.headerStatusRow}>
           {isTravel && (
             <View style={styles.headerCategoryBadge}>
-              <Ionicons name={categoryIcon as any} size={18} color={Colors.text.inverse} />
+              <Ionicons name={categoryIcon as any} size={18} color={colors.text.inverse} />
               <Text style={styles.headerCategoryText}>
                 {booking.serviceCategory?.name || 'Travel'}
               </Text>
@@ -295,7 +295,7 @@ function BookingDetailPage() {
               </View>
               <View style={styles.routeLine}>
                 <View style={styles.routeDash} />
-                <Ionicons name={categoryIcon as any} size={18} color={Colors.nileBlue} />
+                <Ionicons name={categoryIcon as any} size={18} color={colors.nileBlue} />
                 <View style={styles.routeDash} />
               </View>
               <View style={styles.routePoint}>
@@ -453,7 +453,7 @@ function BookingDetailPage() {
                 <View style={[styles.policyDot, {
                   backgroundColor: tier.refundPercentage >= 75 ? Colors.success :
                     tier.refundPercentage >= 50 ? Colors.warning :
-                      tier.refundPercentage > 0 ? Colors.error : Colors.text.tertiary
+                      tier.refundPercentage > 0 ? Colors.error : colors.text.tertiary
                 }]} />
                 <Text style={styles.policyText}>
                   {tier.hoursBeforeDeparture > 0
@@ -516,8 +516,8 @@ function BookingDetailPage() {
           {/* Download E-Ticket */}
           {booking.eTicketUrl && (
             <Pressable style={styles.actionButton} onPress={handleDownloadTicket}>
-              <LinearGradient colors={[Colors.nileBlue, '#0f2a3d']} style={styles.actionGradient}>
-                <Ionicons name="download-outline" size={20} color={Colors.text.inverse} />
+              <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.actionGradient}>
+                <Ionicons name="download-outline" size={20} color={colors.text.inverse} />
                 <Text style={styles.actionButtonText}>Download E-Ticket</Text>
               </LinearGradient>
             </Pressable>
@@ -546,7 +546,7 @@ function BookingDetailPage() {
             style={styles.actionOutline}
             onPress={() => platformAlertSimple('Support', 'Contact us at support@rez.app')}
           >
-            <Ionicons name="headset-outline" size={20} color={Colors.nileBlue} />
+            <Ionicons name="headset-outline" size={20} color={colors.nileBlue} />
             <Text style={styles.actionOutlineText}>Contact Support</Text>
           </Pressable>
         </View>
@@ -591,12 +591,12 @@ function PriceRow({ label, value, symbol, isDiscount }: { label: string; value: 
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing.lg },
-  loadingText: { marginTop: Spacing.md, ...Typography.body, color: Colors.text.tertiary },
+  loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   errorText: { marginTop: Spacing.md, ...Typography.body, fontSize: 16, color: Colors.error, textAlign: 'center' },
-  retryBtn: { marginTop: Spacing.lg, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, backgroundColor: Colors.nileBlue, borderRadius: BorderRadius.md },
-  retryBtnText: { color: Colors.text.inverse, ...Typography.body, fontWeight: '600' },
+  retryBtn: { marginTop: Spacing.lg, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, backgroundColor: colors.nileBlue, borderRadius: BorderRadius.md },
+  retryBtnText: { color: colors.text.inverse, ...Typography.body, fontWeight: '600' },
 
   // Header
   header: {
@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     justifyContent: 'center', alignItems: 'center',
   },
-  headerTitle: { ...Typography.h4, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.inverse },
   shareBtn: {
     width: 40, height: 40, borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.15)',
@@ -635,20 +635,20 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.xl,
   },
-  headerCategoryText: { ...Typography.caption, fontWeight: '600', color: Colors.text.inverse },
+  headerCategoryText: { ...Typography.caption, fontWeight: '600', color: colors.text.inverse },
   headerStatus: {
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.xl,
   },
-  headerStatusText: { ...Typography.caption, fontWeight: '600', color: Colors.text.inverse },
+  headerStatusText: { ...Typography.caption, fontWeight: '600', color: colors.text.inverse },
 
   // Content
   scrollContent: { padding: Spacing.base, paddingBottom: 120 },
 
   // Cards
   card: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
@@ -659,57 +659,57 @@ const styles = StyleSheet.create({
     }),
   },
   cardRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  label: { ...Typography.caption, color: Colors.text.tertiary, marginBottom: Spacing.xs },
-  bookingNumber: { ...Typography.h3, fontWeight: '700', color: Colors.nileBlue, letterSpacing: 1 },
+  label: { ...Typography.caption, color: colors.text.tertiary, marginBottom: Spacing.xs },
+  bookingNumber: { ...Typography.h3, fontWeight: '700', color: colors.nileBlue, letterSpacing: 1 },
   paymentBadge: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md },
   paymentBadgeText: { ...Typography.caption, fontWeight: '600' },
-  pnrSection: { marginTop: Spacing.md, paddingTop: Spacing.md, borderTopWidth: 1, borderTopColor: Colors.background.secondary },
-  pnrValue: { ...Typography.h4, fontWeight: '600', color: Colors.nileBlue, letterSpacing: 2 },
-  refValue: { ...Typography.body, fontWeight: '500', color: Colors.text.secondary },
-  cardTitle: { ...Typography.body, fontSize: 16, fontWeight: '600', color: Colors.text.primary, marginBottom: Spacing.base },
+  pnrSection: { marginTop: Spacing.md, paddingTop: Spacing.md, borderTopWidth: 1, borderTopColor: colors.background.secondary },
+  pnrValue: { ...Typography.h4, fontWeight: '600', color: colors.nileBlue, letterSpacing: 2 },
+  refValue: { ...Typography.body, fontWeight: '500', color: colors.text.secondary },
+  cardTitle: { ...Typography.body, fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: Spacing.base },
 
   // Route
   routeContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   routePoint: { alignItems: 'center', flex: 1 },
   routeDot: { width: 12, height: 12, borderRadius: 6, marginBottom: Spacing.sm },
-  routeCity: { ...Typography.body, fontSize: 16, fontWeight: '600', color: Colors.text.primary },
-  routeCode: { ...Typography.caption, color: Colors.text.tertiary, marginTop: 2 },
+  routeCity: { ...Typography.body, fontSize: 16, fontWeight: '600', color: colors.text.primary },
+  routeCode: { ...Typography.caption, color: colors.text.tertiary, marginTop: 2 },
   routeLine: { flexDirection: 'row', alignItems: 'center', flex: 1, gap: Spacing.xs },
-  routeDash: { flex: 1, height: 1, backgroundColor: Colors.border.default },
+  routeDash: { flex: 1, height: 1, backgroundColor: colors.border.default },
 
   // Details
   detailsList: { gap: Spacing.md },
   detailRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  detailLabel: { ...Typography.caption, color: Colors.text.tertiary, width: 80 },
-  detailValue: { ...Typography.body, fontWeight: '500', color: Colors.text.primary, flex: 1 },
+  detailLabel: { ...Typography.caption, color: colors.text.tertiary, width: 80 },
+  detailValue: { ...Typography.body, fontWeight: '500', color: colors.text.primary, flex: 1 },
 
   // Pricing
   priceList: { gap: Spacing.sm },
   priceRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: Spacing.xs },
-  priceLabel: { ...Typography.body, color: Colors.text.tertiary },
-  priceValue: { ...Typography.body, fontWeight: '500', color: Colors.text.primary },
+  priceLabel: { ...Typography.body, color: colors.text.tertiary },
+  priceValue: { ...Typography.body, fontWeight: '500', color: colors.text.primary },
   discountValue: { color: Colors.success },
-  totalDivider: { height: 1, backgroundColor: Colors.background.secondary, marginVertical: Spacing.sm },
+  totalDivider: { height: 1, backgroundColor: colors.background.secondary, marginVertical: Spacing.sm },
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: Spacing.xs },
-  totalLabel: { ...Typography.body, fontSize: 16, fontWeight: '600', color: Colors.text.primary },
-  totalValue: { ...Typography.h4, fontWeight: '700', color: Colors.nileBlue },
+  totalLabel: { ...Typography.body, fontSize: 16, fontWeight: '600', color: colors.text.primary },
+  totalValue: { ...Typography.h4, fontWeight: '700', color: colors.nileBlue },
 
   // Cashback
-  cashbackNote: { ...Typography.caption, color: Colors.text.tertiary, marginTop: Spacing.md },
+  cashbackNote: { ...Typography.caption, color: colors.text.tertiary, marginTop: Spacing.md },
 
   // Policy
   policyRow: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.sm, marginBottom: Spacing.sm },
   policyDot: { width: 8, height: 8, borderRadius: 4, marginTop: 5 },
-  policyText: { ...Typography.caption, color: Colors.text.secondary, flex: 1, lineHeight: 18 },
+  policyText: { ...Typography.caption, color: colors.text.secondary, flex: 1, lineHeight: 18 },
   policyPct: { fontWeight: '600' },
 
   // Rating
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  ratingScore: { ...Typography.body, fontWeight: '600', color: Colors.text.primary, marginLeft: Spacing.sm },
-  ratingReview: { ...Typography.body, color: Colors.text.secondary, marginTop: Spacing.sm, lineHeight: 20 },
+  ratingScore: { ...Typography.body, fontWeight: '600', color: colors.text.primary, marginLeft: Spacing.sm },
+  ratingReview: { ...Typography.body, color: colors.text.secondary, marginTop: Spacing.sm, lineHeight: 20 },
 
   // Notes
-  notesText: { ...Typography.body, color: Colors.text.secondary, lineHeight: 20 },
+  notesText: { ...Typography.body, color: colors.text.secondary, lineHeight: 20 },
 
   // Actions
   actions: { marginTop: Spacing.sm, gap: Spacing.sm },
@@ -718,23 +718,23 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: Spacing.sm, paddingVertical: Spacing.base,
   },
-  actionButtonText: { ...Typography.body, fontSize: 16, fontWeight: '600', color: Colors.text.inverse },
+  actionButtonText: { ...Typography.body, fontSize: 16, fontWeight: '600', color: colors.text.inverse },
   actionOutline: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: Spacing.sm, paddingVertical: Spacing.md, borderRadius: BorderRadius.md,
-    borderWidth: 1.5, borderColor: Colors.nileBlue, backgroundColor: Colors.text.inverse,
+    borderWidth: 1.5, borderColor: colors.nileBlue, backgroundColor: colors.text.inverse,
   },
-  actionOutlineText: { ...Typography.body, fontWeight: '600', color: Colors.nileBlue },
+  actionOutlineText: { ...Typography.body, fontWeight: '600', color: colors.nileBlue },
   cancelAction: { borderColor: Colors.error },
   cancelActionText: { ...Typography.body, fontWeight: '600', color: Colors.error },
 
   // Timestamps
   timestamps: {
     marginTop: Spacing.base, paddingTop: Spacing.base,
-    borderTopWidth: 1, borderTopColor: Colors.border.default,
+    borderTopWidth: 1, borderTopColor: colors.border.default,
     gap: Spacing.xs,
   },
-  timestampText: { ...Typography.caption, color: Colors.text.tertiary, textAlign: 'center' },
+  timestampText: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'center' },
 });
 
 export default withErrorBoundary(BookingDetailPage, 'BookingDetail');

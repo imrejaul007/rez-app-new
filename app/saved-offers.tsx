@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Saved/Favorite Offers Page
 import React, { useState, useEffect, useCallback } from 'react';
@@ -82,13 +83,13 @@ function SavedOffersScreen() {
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.header}>
           <Pressable style={styles.headerBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Save</ThemedText>
           <View style={styles.headerBtn} />
         </View>
         <View style={styles.emptyContainer}>
-          <Ionicons name="log-in-outline" size={64} color={Colors.border.default} />
+          <Ionicons name="log-in-outline" size={64} color={colors.border.default} />
           <ThemedText style={styles.emptyTitle}>Login Required</ThemedText>
           <ThemedText style={styles.emptySubtitle}>Please login to view your saved offers</ThemedText>
         </View>
@@ -112,7 +113,7 @@ function SavedOffersScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.headerBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Save</ThemedText>
         <View style={styles.headerBtn}>
@@ -126,7 +127,7 @@ function SavedOffersScreen() {
 
       {offers.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Ionicons name="bookmark-outline" size={64} color={Colors.border.default} />
+          <Ionicons name="bookmark-outline" size={64} color={colors.border.default} />
           <ThemedText style={styles.emptyTitle}>No Saved Offers</ThemedText>
           <ThemedText style={styles.emptySubtitle}>
             Tap the bookmark icon on any offer to save it here
@@ -164,7 +165,7 @@ function SavedOffersScreen() {
                     <CachedImage source={offer.image} style={styles.cardImage} contentFit="cover" />
                   ) : (
                     <View style={[styles.cardImage, styles.imagePlaceholder]}>
-                      <Ionicons name="image-outline" size={30} color={Colors.border.default} />
+                      <Ionicons name="image-outline" size={30} color={colors.border.default} />
                     </View>
                   )}
                   {/* Remove button */}
@@ -211,32 +212,32 @@ function SavedOffersScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md },
-  headerBtn: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: Colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
+  headerBtn: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
   headerTitle: { fontSize: Typography.h4.fontSize, fontWeight: '600' },
   countBadge: { backgroundColor: Colors.info, borderRadius: 10, paddingHorizontal: Spacing.sm, paddingVertical: 2 },
-  countText: { color: Colors.text.inverse, fontSize: Typography.bodySmall.fontSize, fontWeight: '600' },
+  countText: { color: colors.text.inverse, fontSize: Typography.bodySmall.fontSize, fontWeight: '600' },
   scroll: { flex: 1 },
   grid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: Spacing.base, gap: Spacing.md, paddingBottom: 120 },
-  card: { width: CARD_WIDTH, backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border.default },
+  card: { width: CARD_WIDTH, backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, overflow: 'hidden', borderWidth: 1, borderColor: colors.border.default },
   imageContainer: { position: 'relative' },
-  cardImage: { width: '100%', height: CARD_WIDTH * 0.7, backgroundColor: Colors.background.secondary },
+  cardImage: { width: '100%', height: CARD_WIDTH * 0.7, backgroundColor: colors.background.secondary },
   imagePlaceholder: { justifyContent: 'center', alignItems: 'center' },
   removeBtn: { position: 'absolute', top: 8, right: 8, width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.9)', justifyContent: 'center', alignItems: 'center' },
   cashbackBadge: { position: 'absolute', bottom: 8, left: 8, backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: 6 },
-  cashbackText: { color: Colors.text.inverse, fontSize: Typography.caption.fontSize, fontWeight: '700' },
+  cashbackText: { color: colors.text.inverse, fontSize: Typography.caption.fontSize, fontWeight: '700' },
   expiredOverlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' },
-  expiredText: { color: Colors.text.inverse, fontSize: Typography.body.fontSize, fontWeight: '700' },
+  expiredText: { color: colors.text.inverse, fontSize: Typography.body.fontSize, fontWeight: '700' },
   cardInfo: { padding: 10 },
-  cardTitle: { fontSize: Typography.body.fontSize, fontWeight: '600', color: Colors.text.primary, marginBottom: 3 },
-  cardStore: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary, marginBottom: Spacing.xs },
+  cardTitle: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.primary, marginBottom: 3 },
+  cardStore: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, marginBottom: Spacing.xs },
   cardExpiry: { fontSize: Typography.caption.fontSize, color: Colors.warning },
   emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: Spacing['2xl'] },
-  emptyTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: Colors.text.primary, marginTop: Spacing.base },
-  emptySubtitle: { fontSize: Typography.body.fontSize, color: Colors.text.tertiary, textAlign: 'center', marginTop: Spacing.sm, lineHeight: 20 },
+  emptyTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.primary, marginTop: Spacing.base },
+  emptySubtitle: { fontSize: Typography.body.fontSize, color: colors.text.tertiary, textAlign: 'center', marginTop: Spacing.sm, lineHeight: 20 },
   browseButton: { backgroundColor: Colors.info, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: 10, marginTop: Spacing.lg },
-  browseButtonText: { color: Colors.text.inverse, fontSize: Typography.body.fontSize, fontWeight: '600' },
+  browseButtonText: { color: colors.text.inverse, fontSize: Typography.body.fontSize, fontWeight: '600' },
 });
 
 export default withErrorBoundary(SavedOffersScreen, 'SavedOffers');

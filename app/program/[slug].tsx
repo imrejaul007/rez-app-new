@@ -286,7 +286,7 @@ function ProgramDetailScreen() {
             <Ionicons
               name={req.met ? 'checkmark-circle' : 'ellipse-outline'}
               size={20}
-              color={req.met ? Colors.success : Colors.text.tertiary}
+              color={req.met ? Colors.success : colors.text.tertiary}
             />
             <Text style={[styles.requirementText, req.met && styles.requirementMet]}>
               {req.label}
@@ -342,7 +342,7 @@ function ProgramDetailScreen() {
         <View style={styles.timelineLine} />
         <View style={styles.timelineStep}>
           <View style={styles.timelineDot} />
-          <Text style={[styles.timelineLabel, { color: Colors.text.tertiary }]}>Approved</Text>
+          <Text style={[styles.timelineLabel, { color: colors.text.tertiary }]}>Approved</Text>
         </View>
       </View>
     </View>
@@ -416,7 +416,7 @@ function ProgramDetailScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.headerButton} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-          <Ionicons name="arrow-back" size={24} color={isPrive ? colors.background.primary : Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={isPrive ? colors.background.primary : colors.text.primary} />
         </Pressable>
         <Text style={[styles.headerTitle, isPrive && styles.headerTitleDark]}>
           {eligibility?.program.name || 'Program Details'}
@@ -432,7 +432,7 @@ function ProgramDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   containerDark: {
     backgroundColor: colors.midGrayAlt,
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   headerButton: {
     width: 40,
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerTitleDark: {
     color: colors.background.primary,
@@ -473,12 +473,12 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md,
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginTop: Spacing.md,
     marginBottom: Spacing.lg,
@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
 
   // Cards
   card: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -533,13 +533,13 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: Spacing.md,
   },
   cardSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 
   // Meter
@@ -563,12 +563,12 @@ const styles = StyleSheet.create({
   },
   meterValue: {
     ...Typography.labelSmall,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
   },
   meterCap: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Multiplier
@@ -597,7 +597,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -606,12 +606,12 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   statLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 
@@ -622,14 +622,14 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     gap: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   campaignBadge: {
     fontSize: 20,
   },
   campaignTitle: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
 
@@ -649,13 +649,13 @@ const styles = StyleSheet.create({
   },
   benefitTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 2,
   },
   benefitDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 
   // Hero
@@ -671,13 +671,13 @@ const styles = StyleSheet.create({
   heroTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   heroSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     paddingHorizontal: Spacing.base,
   },
@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
   },
   requirementText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   requirementMet: {
@@ -737,13 +737,13 @@ const styles = StyleSheet.create({
   pendingTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   pendingSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -780,21 +780,21 @@ const styles = StyleSheet.create({
   },
   timelineLabel: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 
   // Inactive
   inactiveTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },
   inactiveSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
 });

@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
  * Collection Brands Page
@@ -226,7 +227,7 @@ function CollectionBrandsPage() {
         options={{
           headerTitle: collection?.name || 'Collection',
           headerTransparent: true,
-          headerTintColor: Colors.text.inverse,
+          headerTintColor: colors.text.inverse,
         }}
       />
 
@@ -244,7 +245,7 @@ function CollectionBrandsPage() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={handleRefresh}
-              tintColor={Colors.text.inverse}
+              tintColor={colors.text.inverse}
               colors={[Colors.warning]}
             />
           }
@@ -260,12 +261,12 @@ function CollectionBrandsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     height: 240,
     position: 'relative',
-    backgroundColor: Colors.text.secondary,
+    backgroundColor: colors.text.secondary,
   },
   headerImage: {
     ...StyleSheet.absoluteFillObject,
@@ -291,14 +292,14 @@ const styles = StyleSheet.create({
   typeBadgeText: {
     fontSize: 11,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   headerTitle: {
     fontSize: 26,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 6,
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: 0, height: 2 },
@@ -325,7 +326,7 @@ const styles = StyleSheet.create({
   resultCount: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   loadingMore: {
     paddingVertical: Spacing.lg,

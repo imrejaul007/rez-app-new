@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
  * Product/Store Comparison Page
@@ -31,11 +32,11 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const COLORS = {
   primaryGreen: Colors.gold,
   primaryGold: Colors.warning,
-  textPrimary: Colors.text.primary,
-  textSecondary: Colors.text.tertiary,
-  white: Colors.background.primary,
-  background: Colors.background.secondary,
-  border: Colors.border.default,
+  textPrimary: colors.text.primary,
+  textSecondary: colors.text.tertiary,
+  white: colors.background.primary,
+  background: colors.background.secondary,
+  border: colors.border.default,
 };
 
 interface CompareItem {

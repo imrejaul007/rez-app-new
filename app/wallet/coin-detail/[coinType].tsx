@@ -103,8 +103,8 @@ function CoinDetailPage() {
     return (
       <View style={[styles.root, { justifyContent: 'center', alignItems: 'center', padding: 24 }]}>
         <StatusBar barStyle="light-content" backgroundColor={coinInfo.amountColor} />
-        <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
-        <ThemedText style={{ marginTop: 12, color: Colors.text.secondary, textAlign: 'center' }}>
+        <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
+        <ThemedText style={{ marginTop: 12, color: colors.text.secondary, textAlign: 'center' }}>
           Failed to load wallet data
         </ThemedText>
         <Pressable
@@ -123,7 +123,7 @@ function CoinDetailPage() {
 
       {/* Hero Header */}
       <LinearGradient
-        colors={[Colors.nileBlue, coinInfo.amountColor + '60'] as const}
+        colors={[colors.nileBlue, coinInfo.amountColor + '60'] as const}
         style={styles.header}
       >
         <View style={styles.headerRow}>
@@ -273,15 +273,15 @@ const styles = StyleSheet.create({
   },
   warningTitle: { fontSize: 13, fontWeight: '700', color: colors.brand.amberDark },
   warningText: { fontSize: 11, color: colors.brand.amberDark, marginTop: 1 },
-  sectionTitle: { fontSize: 14, fontWeight: '700', color: Colors.text.primary, marginBottom: 10 },
+  sectionTitle: { fontSize: 14, fontWeight: '700', color: colors.text.primary, marginBottom: 10 },
   ruleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 5 },
-  ruleText: { fontSize: 13, color: Colors.text.secondary, flex: 1 },
+  ruleText: { fontSize: 13, color: colors.text.secondary, flex: 1 },
   merchantRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 8 },
   merchantBorder: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#F0F0F0' },
   merchantIcon: { width: 32, height: 32, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginRight: 10 },
-  merchantName: { fontSize: 13, fontWeight: '600', color: Colors.text.primary },
+  merchantName: { fontSize: 13, fontWeight: '600', color: colors.text.primary },
   merchantAmount: { fontSize: 14, fontWeight: '800' },
-  conversionText: { fontSize: 12, color: Colors.text.tertiary, lineHeight: 18 },
+  conversionText: { fontSize: 12, color: colors.text.tertiary, lineHeight: 18 },
 });
 
 export default withErrorBoundary(CoinDetailPage, 'WalletCoinDetailCoinType');

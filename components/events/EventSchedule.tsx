@@ -14,7 +14,7 @@ import {
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { EventItem } from '@/types/homepage.types';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface ScheduleItem {
@@ -60,7 +60,7 @@ const EventSchedule = React.memo(function EventSchedule({
               ]}
             >
               <View style={styles.scheduleTimeCol}>
-                <Ionicons name="time-outline" size={18} color={Colors.brand.purpleLight} />
+                <Ionicons name="time-outline" size={18} color={colors.brand.purpleLight} />
                 <Text style={styles.scheduleTimeText}>{item.startTime || ''}</Text>
               </View>
               <View style={styles.scheduleContent}>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   scheduleRow: {
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
   },
   scheduleRowBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   scheduleTimeCol: {
     width: 44,
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   },
   scheduleTimeText: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
     textAlign: 'center',
   },
@@ -141,11 +141,11 @@ const styles = StyleSheet.create({
   scheduleItemTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   scheduleItemDesc: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   sponsorsScroll: {
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: Spacing.base,
     padding: Spacing.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     minWidth: 80,
   },
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,

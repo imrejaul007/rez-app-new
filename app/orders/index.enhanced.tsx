@@ -198,7 +198,7 @@ function OrdersListScreen() {
       case 'cancelled':
         return Colors.error;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -495,7 +495,7 @@ function OrdersListScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   centered: {
     flex: 1,
@@ -507,15 +507,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: Spacing.md,
     gap: Spacing.sm,
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   searchContainer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm,
     paddingHorizontal: Spacing.md,
   },
@@ -527,17 +527,17 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   clearIcon: {
     fontSize: 18,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     padding: Spacing.xs,
   },
   filterButton: {
     width: 48,
     height: 40,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm,
     justifyContent: 'center',
     alignItems: 'center',
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   filterBadgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 10,
     fontWeight: '700',
   },
@@ -569,7 +569,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   orderCard: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   orderInfo: {
     flex: 1,
@@ -595,12 +595,12 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   orderDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statusBadge: {
     paddingHorizontal: Spacing.md,
@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 11,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   orderItems: {
     marginBottom: Spacing.md,
@@ -624,7 +624,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   itemInfo: {
     flex: 1,
@@ -633,17 +633,17 @@ const styles = StyleSheet.create({
   itemName: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   itemQuantity: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   itemPrice: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   moreItems: {
     ...Typography.caption,
@@ -657,20 +657,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
   },
   totalSection: {
     flex: 1,
   },
   totalLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   totalAmount: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   trackButton: {
     backgroundColor: Colors.brand.purple,
@@ -681,7 +681,7 @@ const styles = StyleSheet.create({
   trackButtonText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyState: {
     flex: 1,
@@ -692,17 +692,17 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.h3,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
   clearFiltersButton: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderWidth: 1,
     borderColor: Colors.brand.purple,
     paddingHorizontal: Spacing.xl,
@@ -723,12 +723,12 @@ const styles = StyleSheet.create({
   shopButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorText: {
     ...Typography.body,
@@ -746,7 +746,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   footerLoader: {
     paddingVertical: Spacing.lg,
@@ -758,7 +758,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
     maxHeight: '80%',
@@ -769,16 +769,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalClose: {
     fontSize: 24,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     padding: Spacing.xs,
   },
   modalBody: {
@@ -790,7 +790,7 @@ const styles = StyleSheet.create({
   filterSectionTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textTransform: 'uppercase',
     marginBottom: Spacing.md,
   },
@@ -802,7 +802,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.sm,
     marginBottom: Spacing.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   filterOptionActive: {
     backgroundColor: Colors.infoScale[50],
@@ -811,7 +811,7 @@ const styles = StyleSheet.create({
   },
   filterOptionText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   filterOptionTextActive: {
     color: Colors.brand.purple,
@@ -827,13 +827,13 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   clearFiltersButtonModal: {
     flex: 1,
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.sm,
     alignItems: 'center',
@@ -841,7 +841,7 @@ const styles = StyleSheet.create({
   clearFiltersButtonTextModal: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   applyFiltersButton: {
     flex: 1,
@@ -853,7 +853,7 @@ const styles = StyleSheet.create({
   applyFiltersButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

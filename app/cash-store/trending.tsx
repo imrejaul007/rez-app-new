@@ -371,8 +371,8 @@ function TrendingOffersPage() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={handleRefresh}
-              tintColor={Colors.nileBlue}
-              colors={[Colors.nileBlue]}
+              tintColor={colors.nileBlue}
+              colors={[colors.nileBlue]}
             />
           }
         >
@@ -381,7 +381,7 @@ function TrendingOffersPage() {
               <Ionicons
                 name={hasError ? 'cloud-offline-outline' : 'flame-outline'}
                 size={32}
-                color={hasError ? '#E8744F' : Colors.nileBlue}
+                color={hasError ? '#E8744F' : colors.nileBlue}
               />
             </View>
             <Text style={styles.emptyTitle}>
@@ -395,7 +395,7 @@ function TrendingOffersPage() {
                 onPress={handleRefresh}
                 style={styles.retryBtn}
               >
-                <Ionicons name="refresh" size={14} color={Colors.text.inverse} />
+                <Ionicons name="refresh" size={14} color={colors.text.inverse} />
                 <Text style={styles.retryBtnText}>Try Again</Text>
               </Pressable>
             )}
@@ -423,7 +423,7 @@ function TrendingOffersPage() {
       <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
         <View style={styles.headerRow}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-            <Ionicons name="chevron-back" size={20} color={Colors.nileBlue} />
+            <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
           </Pressable>
           <View style={styles.headerTitleWrap}>
             <Text style={styles.headerTitle}>Trending Offers</Text>
@@ -445,8 +445,8 @@ function TrendingOffersPage() {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            tintColor={Colors.nileBlue}
-            colors={[Colors.nileBlue]}
+            tintColor={colors.nileBlue}
+            colors={[colors.nileBlue]}
           />
         }
       >
@@ -454,7 +454,7 @@ function TrendingOffersPage() {
         {totalBrands > 0 && (
           <View style={styles.statsBar}>
             <View style={styles.statItem}>
-              <Ionicons name="pricetag" size={13} color={Colors.nileBlue} />
+              <Ionicons name="pricetag" size={13} color={colors.nileBlue} />
               <Text style={styles.statText}>{totalBrands} Brands</Text>
             </View>
             <View style={styles.statDivider} />
@@ -479,7 +479,7 @@ function TrendingOffersPage() {
                   colors={['#E8744F', colors.error]}
                   style={styles.sectionIconWrap}
                 >
-                  <Ionicons name="flash" size={14} color={Colors.text.inverse} />
+                  <Ionicons name="flash" size={14} color={colors.text.inverse} />
                 </LinearGradient>
                 <Text style={styles.sectionTitle}>Limited Time Offers</Text>
               </View>
@@ -538,7 +538,7 @@ function TrendingOffersPage() {
                   colors={[colors.successScale[700], colors.successScale[400]]}
                   style={styles.sectionIconWrap}
                 >
-                  <Ionicons name="flame" size={14} color={Colors.text.inverse} />
+                  <Ionicons name="flame" size={14} color={colors.text.inverse} />
                 </LinearGradient>
                 <Text style={styles.sectionTitle}>Highest Cashback</Text>
               </View>
@@ -566,7 +566,7 @@ function TrendingOffersPage() {
             <Text style={styles.trustText}>All clicks tracked via secure affiliate links</Text>
           </View>
           <View style={styles.trustRow}>
-            <Ionicons name="time" size={14} color={Colors.nileBlue} />
+            <Ionicons name="time" size={14} color={colors.nileBlue} />
             <Text style={styles.trustText}>Cashback credited within 7-14 days</Text>
           </View>
         </View>
@@ -754,7 +754,7 @@ const BrandCard = React.memo(({
   }));
 
   const isHot = showHotTag || brand.cashbackRate >= 10;
-  const cashbackColor = isHot ? colors.successScale[700] : Colors.nileBlue;
+  const cashbackColor = isHot ? colors.successScale[700] : colors.nileBlue;
   const cashbackBg = isHot ? colors.tint.greenLight : '#F0F4F8';
 
   return (
@@ -823,7 +823,7 @@ const BrandCard = React.memo(({
 
           {isHot && (
             <View style={styles.hotTag}>
-              <Ionicons name="flame" size={10} color={Colors.text.inverse} />
+              <Ionicons name="flame" size={10} color={colors.text.inverse} />
               <Text style={styles.hotTagText}>Hot Deal</Text>
             </View>
           )}
@@ -837,9 +837,9 @@ const BrandCard = React.memo(({
           </View>
           <View style={styles.arrowCircle}>
             {isTracking ? (
-              <Ionicons name="hourglass" size={11} color={Colors.nileBlue} />
+              <Ionicons name="hourglass" size={11} color={colors.nileBlue} />
             ) : (
-              <Ionicons name="arrow-forward" size={12} color={Colors.nileBlue} />
+              <Ionicons name="arrow-forward" size={12} color={colors.nileBlue} />
             )}
           </View>
         </View>
@@ -916,7 +916,7 @@ const BrandSkeletonCard = React.memo(({ index }: { index: number }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   scrollContent: {
     paddingBottom: 0,
@@ -927,12 +927,12 @@ const styles = StyleSheet.create({
 
   // ── Sticky Header ──
   stickyHeader: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.md,
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.06,
         shadowRadius: 8,
@@ -964,7 +964,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.5,
   },
   headerCountBadge: {
@@ -988,7 +988,7 @@ const styles = StyleSheet.create({
     marginTop: 14,
     paddingVertical: 10,
     paddingHorizontal: 14,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     gap: 0,
     borderWidth: 1,
@@ -1050,7 +1050,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 17,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.3,
   },
   sectionCountBadge: {
@@ -1075,7 +1075,7 @@ const styles = StyleSheet.create({
   },
   offerCard: {
     width: 180,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 18,
     padding: Spacing.base,
     alignItems: 'center',
@@ -1084,7 +1084,7 @@ const styles = StyleSheet.create({
     borderColor: '#F0EBE4',
     overflow: 'hidden',
     ...Platform.select({
-      ios: { shadowColor: Colors.nileBlue, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.08, shadowRadius: 10 },
+      ios: { shadowColor: colors.nileBlue, shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.08, shadowRadius: 10 },
       android: { elevation: 3 },
       web: { boxShadow: '0 3px 10px rgba(26,58,82,0.08)' },
     }),
@@ -1121,7 +1121,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: 14,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
@@ -1142,14 +1142,14 @@ const styles = StyleSheet.create({
   offerLogoInitial: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Title
   offerTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: 6,
     maxWidth: '95%',
@@ -1171,7 +1171,7 @@ const styles = StyleSheet.create({
   offerCashbackValue: {
     ...Typography.h4,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.5,
   },
   offerCashbackValueHot: {

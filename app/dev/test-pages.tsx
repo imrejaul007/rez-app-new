@@ -214,7 +214,7 @@ function TestPagesScreen() {
               <Ionicons
                 name={expandedCategory === category.title ? 'chevron-up' : 'chevron-down'}
                 size={20}
-                color={Colors.text.tertiary}
+                color={colors.text.tertiary}
               />
             </Pressable>
 
@@ -230,7 +230,7 @@ function TestPagesScreen() {
                       <Ionicons name={page.icon as any} size={18} color={category.color} />
                     </View>
                     <ThemedText style={styles.pageName}>{page.name}</ThemedText>
-                    <Ionicons name="chevron-forward" size={18} color={Colors.text.tertiary} />
+                    <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
                   </Pressable>
                 ))}
               </View>
@@ -265,7 +265,7 @@ function TestPagesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   categoryContainer: {
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   categoryHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderLeftWidth: 4,
@@ -363,20 +363,20 @@ const styles = StyleSheet.create({
   },
   categoryTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   pagesContainer: {
     marginTop: Spacing.xs,
     marginLeft: Spacing.lg,
     borderLeftWidth: 2,
-    borderLeftColor: Colors.border.light,
+    borderLeftColor: colors.border.light,
     paddingLeft: Spacing.md,
   },
   pageItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginBottom: Spacing.xs,
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   },
   pageName: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   quickLinksSection: {
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   },
   quickLinksTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   quickLinksGrid: {
@@ -410,7 +410,7 @@ const styles = StyleSheet.create({
   },
   quickLinkCard: {
     width: '31%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
   },
   quickLinkText: {
     ...Typography.caption,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
 });

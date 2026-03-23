@@ -629,7 +629,7 @@ function UGCDetailScreen() {
   if (error || !video) {
     return (
       <View style={styles.container}>
-        <Ionicons name="videocam-off-outline" size={64} color={Colors.text.tertiary} />
+        <Ionicons name="videocam-off-outline" size={64} color={colors.text.tertiary} />
         <Text style={styles.errorText}>{error || 'Video not found'}</Text>
         <Pressable style={styles.retryButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
           <Text style={styles.retryButtonText}>Go Back</Text>
@@ -763,7 +763,7 @@ function UGCDetailScreen() {
       {/* Play/Pause Indicator */}
       <Animated.View style={[styles.playPauseIndicator, playPauseOpacityStyle]}>
         <View style={styles.playPauseCircle}>
-          <Ionicons name={isPlaying ? 'pause' : 'play'} size={50} color={Colors.text.inverse} />
+          <Ionicons name={isPlaying ? 'pause' : 'play'} size={50} color={colors.text.inverse} />
         </View>
       </Animated.View>
 
@@ -787,16 +787,16 @@ function UGCDetailScreen() {
       {/* Top Bar */}
       <View style={styles.topBar}>
         <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
 
         <View style={styles.topBarRight}>
           <Pressable style={styles.topBarButton} onPress={handleMuteToggle}>
-            <Ionicons name={isMuted ? 'volume-mute' : 'volume-high'} size={22} color={Colors.text.inverse} />
+            <Ionicons name={isMuted ? 'volume-mute' : 'volume-high'} size={22} color={colors.text.inverse} />
           </Pressable>
 
           <Pressable style={styles.topBarButton} onPress={() => router.push('/cart')}>
-            <Ionicons name="bag-outline" size={22} color={Colors.text.inverse} />
+            <Ionicons name="bag-outline" size={22} color={colors.text.inverse} />
             {cartState.items.length > 0 && (
               <View style={styles.cartBadge}>
                 <Text style={styles.cartBadgeText}>{cartState.items.length}</Text>
@@ -823,7 +823,7 @@ function UGCDetailScreen() {
           </Pressable>
           {!isFollowing && (
             <Pressable style={styles.followBadge} onPress={handleFollow}>
-              <Ionicons name="add" size={12} color={Colors.text.inverse} />
+              <Ionicons name="add" size={12} color={colors.text.inverse} />
             </Pressable>
           )}
         </View>
@@ -851,7 +851,7 @@ function UGCDetailScreen() {
 
         {/* More Options */}
         <Pressable style={styles.actionButton} onPress={() => setReportModalVisible(true)}>
-          <Ionicons name="ellipsis-horizontal" size={24} color={Colors.text.inverse} />
+          <Ionicons name="ellipsis-horizontal" size={24} color={colors.text.inverse} />
         </Pressable>
       </View>
 
@@ -891,7 +891,7 @@ function UGCDetailScreen() {
         {products.length > 0 && (
           <View style={styles.productsSection}>
             <View style={styles.productsHeader}>
-              <Ionicons name="bag-handle" size={14} color={Colors.text.inverse} />
+              <Ionicons name="bag-handle" size={14} color={colors.text.inverse} />
               <Text style={styles.productsTitle}>Shop Products</Text>
               <View style={styles.productsBadge}>
                 <Text style={styles.productsBadgeText}>{products.length}</Text>
@@ -924,7 +924,7 @@ function UGCDetailScreen() {
                           addToCart(product, 1);
                         }}
                       >
-                        <Ionicons name="add" size={14} color={Colors.text.inverse} />
+                        <Ionicons name="add" size={14} color={colors.text.inverse} />
                       </Pressable>
                     </View>
                   </View>
@@ -969,11 +969,11 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0, 0, 0, 0.3)'},
   loadingText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
     ...Typography.bodyLarge},
   errorText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
     ...Typography.bodyLarge},
   retryButton: {
@@ -983,7 +983,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: 25},
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600'},
 
   // Overlays
@@ -1060,7 +1060,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'},
   cartBadgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.overline,
     fontWeight: '700'},
 
@@ -1079,7 +1079,7 @@ const styles = StyleSheet.create({
     height: 52,
     borderRadius: 26,
     borderWidth: 2,
-    borderColor: Colors.text.inverse},
+    borderColor: colors.text.inverse},
   followBadge: {
     position: 'absolute',
     bottom: -8,
@@ -1096,7 +1096,7 @@ const styles = StyleSheet.create({
   actionButton: {
     alignItems: 'center'},
   actionCount: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
     marginTop: Spacing.xs},
@@ -1113,7 +1113,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.sm},
   creatorName: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '700'},
   followButton: {
@@ -1123,21 +1123,21 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 4},
   followButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600'},
   followingBadge: {
     marginLeft: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.text.inverse,
+    borderColor: colors.text.inverse,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: 4},
   followingText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall},
   caption: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     lineHeight: 20,
     marginBottom: Spacing.sm},
@@ -1147,7 +1147,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     marginBottom: Spacing.md},
   tag: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600'},
 
@@ -1163,7 +1163,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
     gap: 6},
   productsTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
     flex: 1},
@@ -1173,7 +1173,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: BorderRadius.sm},
   productsBadgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.overline,
     fontWeight: '700'},
   productsList: {
@@ -1190,12 +1190,12 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 70,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.text.primary,
+    backgroundColor: colors.text.primary,
     marginBottom: 6},
   productInfo: {
     flex: 1},
   productName: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.caption,
     fontWeight: '500',
     marginBottom: Spacing.xs},
@@ -1225,6 +1225,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.2)'},
   progressBar: {
     height: '100%',
-    backgroundColor: Colors.background.primary}});
+    backgroundColor: colors.background.primary}});
 
 export default withErrorBoundary(UGCDetailScreen, 'UGCDetailScreen');

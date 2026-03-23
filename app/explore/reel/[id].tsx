@@ -288,8 +288,8 @@ const ReelDetailPage = () => {
       {item.userAvatar ? (
         <CachedImage source={item.userAvatar} style={styles.commentAvatar} />
       ) : (
-        <View style={[styles.commentAvatar, { backgroundColor: Colors.border.default, justifyContent: 'center', alignItems: 'center' }]}>
-          <Ionicons name="person" size={14} color={Colors.text.tertiary} />
+        <View style={[styles.commentAvatar, { backgroundColor: colors.border.default, justifyContent: 'center', alignItems: 'center' }]}>
+          <Ionicons name="person" size={14} color={colors.text.tertiary} />
         </View>
       )}
       <View style={styles.commentContent}>
@@ -303,7 +303,7 @@ const ReelDetailPage = () => {
             style={styles.commentAction}
             onPress={() => handleCommentLike(item.id, item.isLiked || false)}
           >
-            <Ionicons name={item.isLiked ? 'heart' : 'heart-outline'} size={14} color={item.isLiked ? Colors.error : Colors.text.tertiary} />
+            <Ionicons name={item.isLiked ? 'heart' : 'heart-outline'} size={14} color={item.isLiked ? Colors.error : colors.text.tertiary} />
             <Text style={styles.commentActionText}>{item.likes}</Text>
           </Pressable>
           <Pressable
@@ -394,10 +394,10 @@ const ReelDetailPage = () => {
             style={styles.backButton}
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Pressable style={styles.moreButton} onPress={handleOptionsMenu}>
-            <Ionicons name="ellipsis-horizontal" size={24} color={Colors.text.inverse} />
+            <Ionicons name="ellipsis-horizontal" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
@@ -410,18 +410,18 @@ const ReelDetailPage = () => {
             <Ionicons
               name={isLiked ? 'heart' : 'heart-outline'}
               size={28}
-              color={isLiked ? Colors.error : Colors.text.inverse}
+              color={isLiked ? Colors.error : colors.text.inverse}
             />
             <Text style={styles.actionText}>{likesCount}</Text>
           </Pressable>
 
           <Pressable style={styles.actionButton} onPress={() => commentInputRef.current?.focus()}>
-            <Ionicons name="chatbubble-outline" size={26} color={Colors.text.inverse} />
+            <Ionicons name="chatbubble-outline" size={26} color={colors.text.inverse} />
             <Text style={styles.actionText}>{reel.stats?.comments || 0}</Text>
           </Pressable>
 
           <Pressable style={styles.actionButton} onPress={handleShare}>
-            <Ionicons name="share-social-outline" size={26} color={Colors.text.inverse} />
+            <Ionicons name="share-social-outline" size={26} color={colors.text.inverse} />
             <Text style={styles.actionText}>{reel.stats.shares}</Text>
           </Pressable>
 
@@ -432,7 +432,7 @@ const ReelDetailPage = () => {
             <Ionicons
               name={isSaved ? 'bookmark' : 'bookmark-outline'}
               size={26}
-              color={isSaved ? Colors.warning : Colors.text.inverse}
+              color={isSaved ? Colors.warning : colors.text.inverse}
             />
           </Pressable>
         </View>
@@ -483,7 +483,7 @@ const ReelDetailPage = () => {
                 style={styles.storeButton}
                 onPress={() => navigateTo(`/MainStorePage?storeId=${reel.store?.id}`)}
               >
-                <Ionicons name="storefront" size={14} color={Colors.text.inverse} />
+                <Ionicons name="storefront" size={14} color={colors.text.inverse} />
                 <Text style={styles.storeName}>{reel.store.name}</Text>
                 {reel.products && reel.products.length > 0 && (
                   <View style={styles.cashbackBadge}>
@@ -528,12 +528,12 @@ const ReelDetailPage = () => {
           {reel.store && (
           <View style={styles.savingsContainer}>
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[Colors.gold, colors.nileBlue]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.savingsBadge}
             >
-              <Ionicons name="eye" size={16} color={Colors.text.inverse} />
+              <Ionicons name="eye" size={16} color={colors.text.inverse} />
               <Text style={styles.savingsText}>{reel.stats.views} Views</Text>
             </LinearGradient>
             <Pressable
@@ -563,7 +563,7 @@ const ReelDetailPage = () => {
           estimatedItemSize={80}
           ListEmptyComponent={
             <View style={styles.emptyComments}>
-              <Ionicons name="chatbubble-outline" size={32} color={Colors.text.tertiary} />
+              <Ionicons name="chatbubble-outline" size={32} color={colors.text.tertiary} />
               <Text style={styles.emptyCommentsText}>No comments yet</Text>
               <Text style={styles.emptyCommentsSubtext}>Be the first to comment!</Text>
             </View>
@@ -573,14 +573,14 @@ const ReelDetailPage = () => {
 
         {/* Comment Input */}
         <View style={styles.commentInputContainer}>
-          <View style={[styles.myAvatar, { backgroundColor: Colors.border.default, justifyContent: 'center', alignItems: 'center' }]}>
-            <Ionicons name="person" size={14} color={Colors.text.tertiary} />
+          <View style={[styles.myAvatar, { backgroundColor: colors.border.default, justifyContent: 'center', alignItems: 'center' }]}>
+            <Ionicons name="person" size={14} color={colors.text.tertiary} />
           </View>
           <TextInput
             ref={commentInputRef}
             style={styles.commentInput}
             placeholder="Add a comment..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             value={comment}
             onChangeText={setComment}
             editable={!submittingComment}
@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -652,7 +652,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   backButtonAltText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.body,
   },
   emptyComments: {
@@ -665,12 +665,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   emptyCommentsSubtext: {
     marginTop: Spacing.xs,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   mediaContainer: {
     height: height * 0.6,
@@ -721,7 +721,7 @@ const styles = StyleSheet.create({
   },
   actionText: {
     ...Typography.caption,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginTop: 2,
   },
   bottomGradient: {
@@ -743,7 +743,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: BorderRadius.xl,
     borderWidth: 2,
-    borderColor: Colors.text.inverse,
+    borderColor: colors.text.inverse,
   },
   avatarPlaceholder: {
     backgroundColor: Colors.gold,
@@ -753,7 +753,7 @@ const styles = StyleSheet.create({
   avatarInitials: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   userText: {
     flex: 1,
@@ -762,7 +762,7 @@ const styles = StyleSheet.create({
   userName: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   timestamp: {
     fontSize: 11,
@@ -777,15 +777,15 @@ const styles = StyleSheet.create({
   followingButton: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: Colors.text.inverse,
+    borderColor: colors.text.inverse,
   },
   followText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   followingText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   productInfo: {
     marginBottom: Spacing.sm,
@@ -793,7 +793,7 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 6,
   },
   storeButton: {
@@ -803,7 +803,7 @@ const styles = StyleSheet.create({
   },
   storeName: {
     ...Typography.caption,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cashbackBadge: {
     backgroundColor: Colors.gold,
@@ -814,7 +814,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     fontSize: 10,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   description: {
     ...Typography.caption,
@@ -854,12 +854,12 @@ const styles = StyleSheet.create({
   savingsText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   visitStoreButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
@@ -872,7 +872,7 @@ const styles = StyleSheet.create({
   },
   commentsSection: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
     marginTop: -20,
@@ -881,7 +881,7 @@ const styles = StyleSheet.create({
   commentsTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     paddingHorizontal: Spacing.base,
     marginBottom: Spacing.md,
   },
@@ -910,15 +910,15 @@ const styles = StyleSheet.create({
   commentUser: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   commentTime: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   commentText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: 2,
   },
   commentActions: {
@@ -934,7 +934,7 @@ const styles = StyleSheet.create({
   },
   commentActionText: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   commentInputContainer: {
     flexDirection: 'row',
@@ -942,7 +942,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
     gap: 10,
   },
   myAvatar: {
@@ -952,12 +952,12 @@ const styles = StyleSheet.create({
   },
   commentInput: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
     ...Typography.caption,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     maxHeight: 80,
   },
   sendButton: {

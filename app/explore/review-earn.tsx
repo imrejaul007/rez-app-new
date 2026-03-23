@@ -103,7 +103,7 @@ function ReviewEarnPage() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Write & Earn</Text>
         <View style={{ width: 40 }} />
@@ -199,7 +199,7 @@ function ReviewEarnPage() {
         {/* Empty State */}
         {!loading && !error && filteredItems.length === 0 && (
           <View style={styles.emptyContainer}>
-            <Ionicons name="document-text-outline" size={48} color={Colors.text.tertiary} />
+            <Ionicons name="document-text-outline" size={48} color={colors.text.tertiary} />
             <Text style={styles.emptyText}>No items to review</Text>
             <Text style={styles.emptySubtext}>Make purchases to unlock review opportunities</Text>
           </View>
@@ -220,7 +220,7 @@ function ReviewEarnPage() {
                 <CachedImage source={item.image} style={styles.itemImage} />
               ) : (
                 <View style={[styles.itemImage, styles.itemImagePlaceholder]}>
-                  <Ionicons name={item.type === 'store' ? 'storefront' : 'cube'} size={24} color={Colors.text.tertiary} />
+                  <Ionicons name={item.type === 'store' ? 'storefront' : 'cube'} size={24} color={colors.text.tertiary} />
                 </View>
               )}
               <View style={styles.itemContent}>
@@ -234,7 +234,7 @@ function ReviewEarnPage() {
                 <Text style={styles.itemCategory}>{item.category}</Text>
                 <View style={styles.itemFooter}>
                   <View style={styles.itemMeta}>
-                    <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+                    <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
                     <Text style={styles.itemMetaText}>
                       {item.type === 'store' ? item.visitDate : item.purchaseDate}
                     </Text>
@@ -247,7 +247,7 @@ function ReviewEarnPage() {
                   )}
                 </View>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
           ))}
         </View>
@@ -280,7 +280,7 @@ function ReviewEarnPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   loadingContainer: {
     flex: 1,
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -328,12 +328,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   emptySubtext: {
     marginTop: Spacing.xs,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingHorizontal: Spacing.lg,
   },
@@ -344,22 +344,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingTop: 50,
     paddingBottom: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   heroCard: {
     margin: Spacing.base,
@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   tipsGrid: {
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   filterTabActive: {
     backgroundColor: Colors.warning,
@@ -466,10 +466,10 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterTabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   itemsList: {
     paddingHorizontal: Spacing.base,
@@ -477,17 +477,17 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   itemCard: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
     marginBottom: Spacing.md,
     ...Shadows.subtle,
   },
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md,
   },
   itemImagePlaceholder: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   coinBadge: {
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
   itemCategory: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   itemFooter: {
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
   },
   itemMetaText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   receiptBadge: {
     flexDirection: 'row',

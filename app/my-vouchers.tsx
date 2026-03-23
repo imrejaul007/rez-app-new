@@ -446,7 +446,7 @@ const MyVouchersPage = () => {
         disabled={!isActive}
       >
         <LinearGradient
-          colors={isActive ? [Colors.warning, colors.brand.orange] : [Colors.border.default, Colors.text.tertiary]}
+          colors={isActive ? [Colors.warning, colors.brand.orange] : [colors.border.default, colors.text.tertiary]}
           style={styles.voucherGradient}
         >
           {/* Brand Section */}
@@ -455,7 +455,7 @@ const MyVouchersPage = () => {
               <CachedImage source={item.brandLogo} style={styles.brandLogo} />
             ) : (
               <View style={styles.brandLogoPlaceholder}>
-                <Ionicons name="ticket" size={24} color={Colors.text.inverse} />
+                <Ionicons name="ticket" size={24} color={colors.text.inverse} />
               </View>
             )}
             <View style={styles.brandInfo}>
@@ -491,7 +491,7 @@ const MyVouchersPage = () => {
               style={styles.copyButton}
               onPress={() => handleCopyCode(item.code)}
             >
-              <Ionicons name="copy-outline" size={18} color={Colors.text.inverse} />
+              <Ionicons name="copy-outline" size={18} color={colors.text.inverse} />
             </Pressable>
           </View>
 
@@ -582,7 +582,7 @@ const MyVouchersPage = () => {
                     style={[styles.useVoucherButton, styles.useOnlineButton, { flex: 1 }]}
                     onPress={() => handleApplyVoucher(item)}
                   >
-                    <Ionicons name="cart-outline" size={18} color={Colors.text.inverse} />
+                    <Ionicons name="cart-outline" size={18} color={colors.text.inverse} />
                     <Text style={styles.useVoucherButtonText}>Use at Checkout</Text>
                   </Pressable>
                 ) : (
@@ -591,7 +591,7 @@ const MyVouchersPage = () => {
                     style={[styles.useVoucherButton, styles.useOnlineButton]}
                     onPress={() => handleUseOnline(item)}
                   >
-                    <Ionicons name="globe-outline" size={18} color={Colors.text.inverse} />
+                    <Ionicons name="globe-outline" size={18} color={colors.text.inverse} />
                     <Text style={styles.useVoucherButtonText}>Use Online</Text>
                   </Pressable>
                 )}
@@ -600,7 +600,7 @@ const MyVouchersPage = () => {
                   style={styles.useVoucherButton}
                   onPress={() => handleUseVoucher(item)}
                 >
-                  <Ionicons name="qr-code-outline" size={18} color={Colors.text.inverse} />
+                  <Ionicons name="qr-code-outline" size={18} color={colors.text.inverse} />
                   <Text style={styles.useVoucherButtonText}>Use at Store</Text>
                 </Pressable>
               </View>
@@ -613,7 +613,7 @@ const MyVouchersPage = () => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="ticket-outline" size={64} color={Colors.border.default} />
+      <Ionicons name="ticket-outline" size={64} color={colors.border.default} />
       <Text style={styles.emptyTitle}>No Vouchers Yet</Text>
       <Text style={styles.emptyText}>
         You don't have any vouchers right now. Explore stores and grab great deals to earn vouchers!
@@ -625,7 +625,7 @@ const MyVouchersPage = () => {
         accessibilityRole="button"
         accessibilityHint="Browse stores to find vouchers"
       >
-        <Ionicons name="storefront-outline" size={20} color={Colors.text.inverse} />
+        <Ionicons name="storefront-outline" size={20} color={colors.text.inverse} />
         <Text style={styles.buyButtonText}>Explore Stores</Text>
       </Pressable>
     </View>
@@ -646,7 +646,7 @@ const MyVouchersPage = () => {
           <View style={styles.headerContent}>
             <HeaderBackButton
               onPress={handleBackPress}
-              iconColor={Colors.background.primary}
+              iconColor={colors.background.primary}
               style={styles.backButton}
             />
             <Text style={styles.headerTitle}>My Vouchers</Text>
@@ -667,7 +667,7 @@ const MyVouchersPage = () => {
         <View style={styles.headerContent}>
           <HeaderBackButton
             onPress={handleBackPress}
-            iconColor={Colors.background.primary}
+            iconColor={colors.background.primary}
             style={styles.backButton}
           />
           <Text style={styles.headerTitle}>My Vouchers</Text>
@@ -675,7 +675,7 @@ const MyVouchersPage = () => {
             style={styles.addButton}
             onPress={() => router.push('/online-voucher' as any)}
           >
-            <Ionicons name="add" size={24} color={Colors.text.inverse} />
+            <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
@@ -774,7 +774,7 @@ const MyVouchersPage = () => {
                 brand: {
                   name: selectedVoucher.brandName,
                   logo: selectedVoucher.brandLogo || '',
-                  backgroundColor: Colors.background.secondary,
+                  backgroundColor: colors.background.secondary,
                   logoColor: '#000000',
                   websiteUrl: selectedVoucher.brandWebsiteUrl || undefined,
                 },
@@ -794,7 +794,7 @@ const MyVouchersPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -818,7 +818,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerRight: {
     width: 40,
@@ -842,7 +842,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   activeTab: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   tabText: {
     ...Typography.body,
@@ -881,7 +881,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     resizeMode: 'contain',
   },
   brandLogoPlaceholder: {
@@ -899,7 +899,7 @@ const styles = StyleSheet.create({
   brandName: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   category: {
     ...Typography.bodySmall,
@@ -914,7 +914,7 @@ const styles = StyleSheet.create({
   valueAmount: {
     fontSize: 32,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   expiredBadge: {
     backgroundColor: Colors.error,
@@ -925,10 +925,10 @@ const styles = StyleSheet.create({
   expiredText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   usedBadge: {
-    backgroundColor: Colors.text.tertiary,
+    backgroundColor: colors.text.tertiary,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.md,
@@ -936,7 +936,7 @@ const styles = StyleSheet.create({
   usedText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   codeSection: {
     flexDirection: 'row',
@@ -959,7 +959,7 @@ const styles = StyleSheet.create({
   codeText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 1,
   },
   copyButton: {
@@ -1070,7 +1070,7 @@ const styles = StyleSheet.create({
   useVoucherButtonText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   loadingContainer: {
     flex: 1,
@@ -1080,7 +1080,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     flex: 1,
@@ -1091,13 +1091,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -1113,7 +1113,7 @@ const styles = StyleSheet.create({
   buyButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

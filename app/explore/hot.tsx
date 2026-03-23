@@ -163,7 +163,7 @@ const ExploreHotPage = () => {
         )}
         {item.buyers && item.buyers > 0 && (
           <View style={styles.hotBadge}>
-            <Ionicons name="flame" size={12} color={Colors.text.inverse} />
+            <Ionicons name="flame" size={12} color={colors.text.inverse} />
             <Text style={styles.hotText}>{item.buyers} bought</Text>
           </View>
         )}
@@ -177,7 +177,7 @@ const ExploreHotPage = () => {
           <Ionicons
             name={wishlistedIds.has(item.id) ? 'heart' : 'heart-outline'}
             size={20}
-            color={wishlistedIds.has(item.id) ? Colors.error : Colors.text.inverse}
+            color={wishlistedIds.has(item.id) ? Colors.error : colors.text.inverse}
           />
         </Pressable>
       </View>
@@ -185,7 +185,7 @@ const ExploreHotPage = () => {
         <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
         {item.store && (
           <View style={styles.storeRow}>
-            <Ionicons name="storefront" size={12} color={Colors.text.tertiary} />
+            <Ionicons name="storefront" size={12} color={colors.text.tertiary} />
             <Text style={styles.storeName}>{item.store}</Text>
           </View>
         )}
@@ -205,7 +205,7 @@ const ExploreHotPage = () => {
           )}
           {item.distance && (
             <View style={styles.distanceBadge}>
-              <Ionicons name="location" size={12} color={Colors.text.tertiary} />
+              <Ionicons name="location" size={12} color={colors.text.tertiary} />
               <Text style={styles.distanceText}>{item.distance}</Text>
             </View>
           )}
@@ -218,7 +218,7 @@ const ExploreHotPage = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top']}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -226,17 +226,17 @@ const ExploreHotPage = () => {
           style={styles.backButton}
           onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>What's Hot</Text>
           <Text style={styles.headerSubtitle}>{hotItems.length} items trending</Text>
         </View>
         <Pressable
-          style={[styles.filterButton, selectedSort !== 'trending' && { backgroundColor: Colors.nileBlue }]}
+          style={[styles.filterButton, selectedSort !== 'trending' && { backgroundColor: colors.nileBlue }]}
           onPress={() => setSelectedSort('trending')}
         >
-          <Ionicons name="options" size={22} color={selectedSort !== 'trending' ? Colors.text.inverse : Colors.nileBlue} />
+          <Ionicons name="options" size={22} color={selectedSort !== 'trending' ? colors.text.inverse : colors.nileBlue} />
         </Pressable>
       </View>
 
@@ -293,7 +293,7 @@ const ExploreHotPage = () => {
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="flame-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="flame-outline" size={48} color={colors.text.tertiary} />
               <Text style={styles.emptyText}>No hot deals available</Text>
               <Text style={styles.emptySubtext}>Check back later for trending items</Text>
             </View>
@@ -309,7 +309,7 @@ const ExploreHotPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -318,13 +318,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },

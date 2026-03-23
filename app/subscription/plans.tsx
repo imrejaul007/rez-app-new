@@ -301,7 +301,7 @@ function SubscriptionPlansPage() {
         <Ionicons
           name={included ? 'checkmark' : 'close'}
           size={14}
-          color={included ? Colors.background.primary : Colors.text.tertiary}
+          color={included ? colors.background.primary : colors.text.tertiary}
         />
       </View>
       <ThemedText style={[styles.featureText, !included && styles.featureTextDisabled]}>
@@ -341,7 +341,7 @@ function SubscriptionPlansPage() {
             end={{ x: 1, y: 0 }}
             style={styles.popularBadge}
           >
-            <Ionicons name="star" size={12} color={Colors.nileBlue} />
+            <Ionicons name="star" size={12} color={colors.nileBlue} />
             <ThemedText style={styles.popularText}>MOST POPULAR</ThemedText>
           </LinearGradient>
         )}
@@ -358,12 +358,12 @@ function SubscriptionPlansPage() {
             style={styles.planHeader}
           >
             <View style={styles.planIconContainer}>
-              <Ionicons name={icon as any} size={28} color={Colors.background.primary} />
+              <Ionicons name={icon as any} size={28} color={colors.background.primary} />
             </View>
             <ThemedText style={styles.planName}>{name}</ThemedText>
             {isCurrentTier && (
               <View style={styles.currentBadge}>
-                <Ionicons name="checkmark-circle" size={14} color={Colors.background.primary} />
+                <Ionicons name="checkmark-circle" size={14} color={colors.background.primary} />
                 <ThemedText style={styles.currentBadgeText}>Current</ThemedText>
               </View>
             )}
@@ -409,13 +409,13 @@ function SubscriptionPlansPage() {
                
               >
                 <LinearGradient
-                  colors={isVIP ? [Colors.gold, Colors.goldDark] : [Colors.gold, Colors.nileBlue]}
+                  colors={isVIP ? [Colors.gold, Colors.goldDark] : [Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.upgradeButton}
                 >
                   {isSubscribing && selectedTier === tier ? (
-                    <ActivityIndicator color={isVIP ? Colors.nileBlue : Colors.background.primary} />
+                    <ActivityIndicator color={isVIP ? colors.nileBlue : colors.background.primary} />
                   ) : (
                     <>
                       <ThemedText style={[styles.upgradeButtonText, isVIP && styles.vipButtonText]}>
@@ -424,7 +424,7 @@ function SubscriptionPlansPage() {
                       <Ionicons
                         name="arrow-forward"
                         size={18}
-                        color={isVIP ? Colors.nileBlue : Colors.background.primary}
+                        color={isVIP ? colors.nileBlue : colors.background.primary}
                       />
                     </>
                   )}
@@ -443,7 +443,7 @@ function SubscriptionPlansPage() {
 
       {/* Premium Glassmorphism Background */}
       <LinearGradient
-        colors={[Colors.background.secondary, colors.greenMist, Colors.background.secondary]}
+        colors={[colors.background.secondary, colors.greenMist, colors.background.secondary]}
         style={styles.backgroundGradient}
       />
 
@@ -452,7 +452,7 @@ function SubscriptionPlansPage() {
 
       {/* Header */}
       <LinearGradient
-        colors={[Colors.gold, Colors.nileBlue]}
+        colors={[Colors.gold, colors.nileBlue]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
@@ -460,7 +460,7 @@ function SubscriptionPlansPage() {
         <View style={styles.headerContainer}>
           <Pressable onPress={handleGoBack} style={styles.backButton}>
             <View style={styles.backButtonInner}>
-              <Ionicons name="arrow-back" size={22} color={Colors.background.primary} />
+              <Ionicons name="arrow-back" size={22} color={colors.background.primary} />
             </View>
           </Pressable>
           <ThemedText style={styles.headerTitle}>Choose Your Plan</ThemedText>
@@ -490,7 +490,7 @@ function SubscriptionPlansPage() {
             >
               {selectedBilling === 'monthly' && (
                 <LinearGradient
-                  colors={[Colors.gold, Colors.nileBlue]}
+                  colors={[Colors.gold, colors.nileBlue]}
                   style={StyleSheet.absoluteFill}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -515,7 +515,7 @@ function SubscriptionPlansPage() {
             >
               {selectedBilling === 'yearly' && (
                 <LinearGradient
-                  colors={[Colors.gold, Colors.nileBlue]}
+                  colors={[Colors.gold, colors.nileBlue]}
                   style={StyleSheet.absoluteFill}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -562,7 +562,7 @@ function SubscriptionPlansPage() {
                 value={promoCode}
                 onChangeText={setPromoCode}
                 placeholder="Enter promo code"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 autoCapitalize="characters"
               />
               <Pressable
@@ -570,11 +570,11 @@ function SubscriptionPlansPage() {
                 disabled={validatingPromo}
               >
                 <LinearGradient
-                  colors={[Colors.gold, Colors.nileBlue]}
+                  colors={[Colors.gold, colors.nileBlue]}
                   style={styles.promoApplyButton}
                 >
                   {validatingPromo ? (
-                    <ActivityIndicator color={Colors.background.primary} size="small" />
+                    <ActivityIndicator color={colors.background.primary} size="small" />
                   ) : (
                     <ThemedText style={styles.promoApplyText}>Apply</ThemedText>
                   )}
@@ -625,7 +625,7 @@ function SubscriptionPlansPage() {
               'Unlimited wishlists',
               'Birthday & anniversary offers',
             ]),
-            [Colors.gold, Colors.nileBlue],
+            [Colors.gold, colors.nileBlue],
             'star',
             true
           )}
@@ -683,7 +683,7 @@ function SubscriptionPlansPage() {
                       <ThemedText style={styles.comparisonValue}>{value}</ThemedText>
                     ) : value ? (
                       <View style={styles.checkIcon}>
-                        <Ionicons name="checkmark" size={14} color={Colors.background.primary} />
+                        <Ionicons name="checkmark" size={14} color={colors.background.primary} />
                       </View>
                     ) : (
                       <Ionicons name="close" size={18} color={Colors.error} />
@@ -730,7 +730,7 @@ function SubscriptionPlansPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     overflow: 'hidden' },
   backgroundGradient: {
     ...StyleSheet.absoluteFillObject },
@@ -764,7 +764,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center' },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 20,
     fontWeight: '700',
     fontFamily: 'Poppins-Bold',
@@ -795,7 +795,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.5)',
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 12 },
@@ -816,10 +816,10 @@ const styles = StyleSheet.create({
   billingOptionText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontFamily: 'Inter-SemiBold' },
   billingOptionTextActive: {
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   saveBadge: {
     position: 'absolute',
     top: 2,
@@ -829,7 +829,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: BorderRadius.sm },
   saveText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontSize: 10,
     fontWeight: '800',
     fontFamily: 'Inter-SemiBold' },
@@ -843,7 +843,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.5)',
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 12 },
@@ -880,8 +880,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     fontSize: 14,
-    color: Colors.nileBlue,
-    backgroundColor: Colors.background.primary,
+    color: colors.nileBlue,
+    backgroundColor: colors.background.primary,
     fontFamily: 'Inter-Regular' },
   promoApplyButton: {
     paddingHorizontal: Spacing.xl,
@@ -889,7 +889,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     justifyContent: 'center' },
   promoApplyText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 14,
     fontWeight: '600',
     fontFamily: 'Inter-SemiBold' },
@@ -920,7 +920,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.5)',
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.12,
         shadowRadius: 20 },
@@ -949,7 +949,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20 },
   popularText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontSize: 12,
     fontWeight: '800',
     letterSpacing: 1,
@@ -966,7 +966,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: Spacing.md },
   planName: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 24,
     fontWeight: '700',
     fontFamily: 'Poppins-Bold' },
@@ -980,7 +980,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
     gap: Spacing.xs },
   currentBadgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 12,
     fontWeight: '600',
     fontFamily: 'Inter-SemiBold' },
@@ -994,17 +994,17 @@ const styles = StyleSheet.create({
   currency: {
     fontSize: 24,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: Spacing.sm,
     fontFamily: 'Poppins-Bold' },
   price: {
     fontSize: 48,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontFamily: 'Poppins-Bold' },
   period: {
     fontSize: 16,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xl,
     fontFamily: 'Inter-Regular' },
   savingsContainer: {
@@ -1033,7 +1033,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.text.tertiary,
+    backgroundColor: colors.text.tertiary,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12 },
@@ -1041,11 +1041,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gold },
   featureText: {
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
     fontFamily: 'Inter-Regular' },
   featureTextDisabled: {
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   upgradeButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1054,12 +1054,12 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     gap: Spacing.sm },
   upgradeButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '700',
     fontFamily: 'Inter-SemiBold' },
   vipButtonText: {
-    color: Colors.nileBlue },
+    color: colors.nileBlue },
   activeButton: {
     flexDirection: 'row',
     backgroundColor: Colors.goldLight,
@@ -1083,7 +1083,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(156, 163, 175, 0.2)' },
   freeButtonText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontSize: 16,
     fontWeight: '600',
     fontFamily: 'Inter-SemiBold' },
@@ -1096,7 +1096,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255, 255, 255, 0.5)',
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
         shadowRadius: 12 },
@@ -1112,7 +1112,7 @@ const styles = StyleSheet.create({
   comparisonTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontFamily: 'Poppins-Bold' },
   comparisonTable: {
     borderRadius: BorderRadius.md,
@@ -1126,7 +1126,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 12,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
     fontFamily: 'Inter-SemiBold' },
   comparisonRow: {
@@ -1141,7 +1141,7 @@ const styles = StyleSheet.create({
   comparisonFeature: {
     flex: 1,
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontFamily: 'Inter-Regular' },
   comparisonCell: {
     flex: 1,
@@ -1150,7 +1150,7 @@ const styles = StyleSheet.create({
   comparisonValue: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontFamily: 'Inter-SemiBold' },
   checkIcon: {
     width: 22,

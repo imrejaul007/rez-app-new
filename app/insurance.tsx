@@ -295,7 +295,7 @@ function InsurancePage() {
 
                   <View style={styles.planButton}>
                     <Text style={styles.planButtonText}>View Details</Text>
-                    <Ionicons name="arrow-forward" size={18} color={Colors.background.primary} />
+                    <Ionicons name="arrow-forward" size={18} color={colors.background.primary} />
                   </View>
                 </Pressable>
               ))}
@@ -431,12 +431,12 @@ function InsurancePage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Insurance</Text>
         <View style={{ width: 32 }} />
@@ -468,7 +468,7 @@ function InsurancePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -477,9 +477,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.xs,
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   listContent: {
     flexGrow: 1,
@@ -510,12 +510,12 @@ const styles = StyleSheet.create({
   bannerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   bannerSubtitle: {
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   section: {
     marginBottom: Spacing.xl,
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   loadingContainer: {
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
   },
   emptySmallText: {
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 
   // Types grid
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
     width: '31%',
     padding: Spacing.md,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
     borderWidth: 2,
     borderColor: 'transparent',
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
   typeName: {
     fontSize: 12,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.xs,
   },
@@ -605,7 +605,7 @@ const styles = StyleSheet.create({
     gap: Spacing.base,
   },
   featuredCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Platform.select({
@@ -633,13 +633,13 @@ const styles = StyleSheet.create({
   },
   planProvider: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: 2,
   },
   planName: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   planCashback: {
     alignItems: 'center',
@@ -663,18 +663,18 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   planDetail: {},
   planDetailLabel: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.xs,
   },
   planDetailValue: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   ratingRow: {
     flexDirection: 'row',
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
   },
   planFeatureText: {
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   planButton: {
     flexDirection: 'row',
@@ -705,12 +705,12 @@ const styles = StyleSheet.create({
   planButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Plan list cards
   planListCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.md,
     borderRadius: BorderRadius.lg,
@@ -747,18 +747,18 @@ const styles = StyleSheet.create({
   },
   planListProvider: {
     fontSize: 11,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: 1,
   },
   planListName: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   planListCoverage: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   planListRight: {
     alignItems: 'flex-end',
@@ -766,7 +766,7 @@ const styles = StyleSheet.create({
   planListPremium: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 4,
   },
   cashbackChip: {
@@ -787,7 +787,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
     paddingTop: 8,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   claimRatioText: {
     fontSize: 12,
@@ -812,13 +812,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.xs,
   },
   emptySubtitle: {
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -845,7 +845,7 @@ const styles = StyleSheet.create({
   whySection: {
     margin: Spacing.base,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
   },
   whyGrid: {
@@ -861,13 +861,13 @@ const styles = StyleSheet.create({
   whyTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
     marginBottom: Spacing.xs,
   },
   whyDesc: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 });
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
@@ -21,7 +21,7 @@ const LeaderboardPreviewSection = React.memo(function LeaderboardPreviewSection(
         colors={[colors.tint.blue, '#FAF5FF']}
         style={styles.leaderboardCard}
       >
-        <Ionicons name="trophy" size={48} color={Colors.warning} />
+        <Ionicons name="trophy" size={48} color={colors.warning} />
         <Text style={styles.leaderboardTitle}>Weekly Leaderboard</Text>
         <Text style={styles.leaderboardText}>
           {myRank

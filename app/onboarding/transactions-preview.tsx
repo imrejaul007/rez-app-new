@@ -31,7 +31,7 @@ const brands: BrandItem[] = [
     originalPrice: 100,
     discountedPrice: 90,
     isEnabled: true,
-    gradientColors: [Colors.gold, Colors.nileBlue]
+    gradientColors: [Colors.gold, colors.nileBlue]
   },
   {
     id: 'nike',
@@ -49,7 +49,7 @@ const brands: BrandItem[] = [
     originalPrice: 50,
     discountedPrice: 45,
     isEnabled: true,
-    gradientColors: [Colors.gold, Colors.nileBlue]
+    gradientColors: [Colors.gold, colors.nileBlue]
   },
   {
     id: 'dominos',
@@ -120,7 +120,7 @@ function TransactionsPreviewScreen() {
             <Ionicons
               name={brand.icon as any}
               size={22}
-              color={Colors.text.inverse}
+              color={colors.text.inverse}
             />
           </LinearGradient>
           <View style={styles.brandDetails}>
@@ -173,7 +173,7 @@ function TransactionsPreviewScreen() {
     <View style={styles.container}>
       {/* Background */}
       <LinearGradient
-        colors={[Colors.background.secondary, '#EDF2F7', Colors.background.secondary]}
+        colors={[colors.background.secondary, '#EDF2F7', colors.background.secondary]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -232,10 +232,10 @@ function TransactionsPreviewScreen() {
               </View>
               <View style={[styles.coin, styles.coin3]}>
                 <LinearGradient
-                  colors={[Colors.gold, Colors.nileBlue]}
+                  colors={[Colors.gold, colors.nileBlue]}
                   style={styles.coinGradient}
                 >
-                  <Ionicons name="gift" size={12} color={Colors.text.inverse} />
+                  <Ionicons name="gift" size={12} color={colors.text.inverse} />
                 </LinearGradient>
               </View>
             </View>
@@ -247,7 +247,7 @@ function TransactionsPreviewScreen() {
               <Text style={styles.transactionsTitle}>Sample Transactions</Text>
               <View style={styles.discountBadge}>
                 <LinearGradient
-                  colors={[Colors.gold, Colors.nileBlue]}
+                  colors={[Colors.gold, colors.nileBlue]}
                   style={styles.discountBadgeGradient}
                 >
                   <Text style={styles.discountBadgeText}>10% OFF</Text>
@@ -270,13 +270,13 @@ function TransactionsPreviewScreen() {
             accessibilityHint="Double tap to finish setup and explore the app"
           >
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[Colors.gold, colors.nileBlue]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.primaryButton}
             >
               <Text style={styles.primaryButtonText}>Start Shopping</Text>
-              <Ionicons name="rocket" size={20} color={Colors.text.inverse} />
+              <Ionicons name="rocket" size={20} color={colors.text.inverse} />
             </LinearGradient>
           </Pressable>
         </View>
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     lineHeight: 32,
     marginBottom: Spacing.md,
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
   },
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   coinText: {
     ...Typography.bodySmall,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   coin1: {
     top: 0,
@@ -436,7 +436,7 @@ const styles = StyleSheet.create({
   transactionsTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   discountBadge: {
     borderRadius: BorderRadius.md,
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
   discountBadgeText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   brandsList: {
     gap: Spacing.md,
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: 14,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
   },
   brandItemDisabled: {
     opacity: 0.6,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   brandInfo: {
     flexDirection: 'row',
@@ -494,11 +494,11 @@ const styles = StyleSheet.create({
   brandName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   brandNameDisabled: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   savingsBadge: {
     backgroundColor: 'rgba(255, 205, 87, 0.1)',
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
   originalPrice: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   arrowContainer: {
@@ -531,13 +531,13 @@ const styles = StyleSheet.create({
     color: Colors.gold,
   },
   priceDisabled: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   comingSoonOverlay: {
     position: 'absolute',
     top: 8,
     right: 8,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 6,
@@ -545,7 +545,7 @@ const styles = StyleSheet.create({
   comingSoonText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Primary Button
@@ -567,7 +567,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '700',
   },

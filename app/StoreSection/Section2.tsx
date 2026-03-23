@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState } from "react";
 import { View, Pressable, StyleSheet, ViewStyle, TextStyle, Linking, Platform} from "react-native";
@@ -266,7 +267,7 @@ const styles = StyleSheet.create<Styles>({
   container: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary },
+    backgroundColor: colors.background.primary },
 
   // Modern Button Row
   buttonRow: {
@@ -286,7 +287,7 @@ const styles = StyleSheet.create<Styles>({
     paddingHorizontal: Spacing.sm,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     ...Shadows.purpleSubtle,
     flexDirection: "column",
     gap: Spacing.xs },

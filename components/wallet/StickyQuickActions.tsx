@@ -9,7 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface QuickAction {
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
       default: 'rgba(255,255,255,0.97)',
     }),
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
     borderRadius: 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

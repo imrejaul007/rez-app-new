@@ -307,16 +307,16 @@ function PaymentSuccessPage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Fixed Header - Nuqta Colors */}
       <LinearGradient
-        colors={[Colors.nileBlue, '#0f2a3d']}
+        colors={[colors.nileBlue, '#0f2a3d']}
         style={styles.headerGradient}
       >
         {/* Success Icon */}
         <View style={styles.iconCircle}>
-          <Ionicons name="checkmark" size={32} color={Colors.nileBlue} />
+          <Ionicons name="checkmark" size={32} color={colors.nileBlue} />
         </View>
 
         <ThemedText style={styles.successTitle}>Payment Successful!</ThemedText>
@@ -381,7 +381,7 @@ function PaymentSuccessPage() {
                 <View style={styles.detailRow}>
                   <ThemedText style={styles.detailLabel}>Payment Method</ThemedText>
                   <View style={styles.methodBadge}>
-                    <Ionicons name={getPaymentMethodIcon(method)} size={13} color={Colors.nileBlue} />
+                    <Ionicons name={getPaymentMethodIcon(method)} size={13} color={colors.nileBlue} />
                     <ThemedText style={styles.methodText}>
                       {getPaymentMethodLabel(method)}
                     </ThemedText>
@@ -429,7 +429,7 @@ function PaymentSuccessPage() {
                       <ThemedText style={styles.detailLabel}>Delivery Fee</ThemedText>
                       {deliveryTotal === 0 && subtotal >= FREE_DELIVERY_THRESHOLD ? (
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                          <ThemedText style={[styles.detailValue, { textDecorationLine: 'line-through', color: Colors.text.tertiary, fontSize: 12 }]}>
+                          <ThemedText style={[styles.detailValue, { textDecorationLine: 'line-through', color: colors.text.tertiary, fontSize: 12 }]}>
                             {currencySymbol}{wouldBeDeliveryFee}
                           </ThemedText>
                           <ThemedText style={[styles.detailValue, { color: Colors.success, fontWeight: '600' }]}>FREE</ThemedText>
@@ -489,10 +489,10 @@ function PaymentSuccessPage() {
                   if (lockFeeTotal > 0) {
                     return (
                       <View style={styles.detailRow}>
-                        <ThemedText style={[styles.detailLabel, { color: Colors.nileBlue }]}>
+                        <ThemedText style={[styles.detailLabel, { color: colors.nileBlue }]}>
                           Lock Fee Already Paid
                         </ThemedText>
-                        <ThemedText style={[styles.detailValue, { color: Colors.nileBlue }]}>
+                        <ThemedText style={[styles.detailValue, { color: colors.nileBlue }]}>
                           -{currencySymbol}{lockFeeTotal.toLocaleString()}
                         </ThemedText>
                       </View>
@@ -574,7 +574,7 @@ function PaymentSuccessPage() {
                       'bicycle-outline'
                     }
                     size={18}
-                    color={Colors.nileBlue}
+                    color={colors.nileBlue}
                   />
                 </View>
                 <View style={styles.deliveryInfo}>
@@ -596,7 +596,7 @@ function PaymentSuccessPage() {
 
               {/* Email Notice */}
               <View style={styles.emailNotice}>
-                <Ionicons name="mail-outline" size={14} color={Colors.text.tertiary} />
+                <Ionicons name="mail-outline" size={14} color={colors.text.tertiary} />
                 <ThemedText style={styles.emailText}>
                   Confirmation sent to your registered email
                 </ThemedText>
@@ -613,7 +613,7 @@ function PaymentSuccessPage() {
               accessibilityLabel={isMultiStoreOrder ? "View all orders" : "Track your order"}
               accessibilityRole="button"
             >
-              <Ionicons name={isMultiStoreOrder ? "list-outline" : "location-outline"} size={18} color={Colors.nileBlue} />
+              <Ionicons name={isMultiStoreOrder ? "list-outline" : "location-outline"} size={18} color={colors.nileBlue} />
               <ThemedText style={styles.trackButtonText}>
                 {isMultiStoreOrder ? 'View All Orders' : 'Track Order'}
               </ThemedText>
@@ -631,7 +631,7 @@ function PaymentSuccessPage() {
                 accessibilityLabel="Rate your experience"
                 accessibilityRole="button"
               >
-                <Ionicons name="star-outline" size={18} color={Colors.nileBlue} />
+                <Ionicons name="star-outline" size={18} color={colors.nileBlue} />
                 <ThemedText style={styles.reviewButtonText}>Rate Your Experience</ThemedText>
               </Pressable>
             ) : null}
@@ -643,7 +643,7 @@ function PaymentSuccessPage() {
               accessibilityLabel="Back to home"
               accessibilityRole="button"
             >
-              <Ionicons name="home-outline" size={18} color={Colors.nileBlue} />
+              <Ionicons name="home-outline" size={18} color={colors.nileBlue} />
               <ThemedText style={styles.homeButtonText}>Back to Home</ThemedText>
             </Pressable>
           </View>
@@ -655,9 +655,9 @@ function PaymentSuccessPage() {
 
 // Nuqta Color Palette - using DesignSystem tokens
 const NUQTA_COLORS = {
-  nileBlue: Colors.nileBlue,
+  nileBlue: colors.nileBlue,
   lightMustard: Colors.gold,
-  linen: Colors.background.secondary,
+  linen: colors.background.secondary,
   lightPeach: Colors.lightPeach,
   lavenderMist: Colors.lavenderMist,
 };
@@ -701,7 +701,7 @@ const styles = StyleSheet.create({
   successTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
     marginBottom: 6,
   },
@@ -726,13 +726,13 @@ const styles = StyleSheet.create({
   loadingText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 10,
   },
 
   // --- Order Number ---
   orderNumberCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     paddingVertical: 14,
     paddingHorizontal: 16,
@@ -747,7 +747,7 @@ const styles = StyleSheet.create({
   orderNumberLabel: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textTransform: 'uppercase',
     letterSpacing: 0.8,
     marginBottom: 4,
@@ -756,7 +756,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: 0.3,
   },
   multiOrderRow: {
@@ -768,14 +768,14 @@ const styles = StyleSheet.create({
   },
   multiOrderDivider: {
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   multiOrderInfo: {
     flex: 1,
   },
   multiOrderStore: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   multiOrderAmount: {
@@ -786,7 +786,7 @@ const styles = StyleSheet.create({
 
   // --- Details Card ---
   detailsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     paddingVertical: 6,
     paddingHorizontal: 16,

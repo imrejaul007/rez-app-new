@@ -3,7 +3,7 @@ import { View, Pressable, TextInput, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { showToast } from '@/components/common/ToastManager';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface AppliedPromoCode {
@@ -113,9 +113,9 @@ function PromoCodeSection({
                   : 'Browse coupons'}
               </ThemedText>
             </View>
-            <Ionicons name="pricetag" size={20} color={Colors.gold} />
+            <Ionicons name="pricetag" size={20} color={colors.gold} />
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.neutral[400]} />
+          <Ionicons name="chevron-forward" size={20} color={colors.neutral[400]} />
         </Pressable>
       )}
 
@@ -125,7 +125,7 @@ function PromoCodeSection({
           <View style={styles.promoCodeContent}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <View style={{ backgroundColor: colors.warningScale[400], borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 }}>
-                <ThemedText style={{ fontSize: 11, fontWeight: '600', color: Colors.text.inverse }}>{appliedRedemption.code}</ThemedText>
+                <ThemedText style={{ fontSize: 11, fontWeight: '600', color: colors.text.inverse }}>{appliedRedemption.code}</ThemedText>
               </View>
               <ThemedText style={styles.promoCodeTitle}>{appliedRedemption.dealTitle || 'Deal Applied'}</ThemedText>
             </View>
@@ -149,7 +149,7 @@ function PromoCodeSection({
             </View>
             <Ionicons name="gift" size={20} color={colors.warningScale[400]} />
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.neutral[400]} />
+          <Ionicons name="chevron-forward" size={20} color={colors.neutral[400]} />
         </Pressable>
       )}
 
@@ -159,7 +159,7 @@ function PromoCodeSection({
           <View style={styles.promoCodeContent}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <View style={{ backgroundColor: colors.successScale[400], borderRadius: 4, paddingHorizontal: 6, paddingVertical: 2 }}>
-                <ThemedText style={{ fontSize: 11, fontWeight: '600', color: Colors.text.inverse }}>{appliedOfferRedemption.code}</ThemedText>
+                <ThemedText style={{ fontSize: 11, fontWeight: '600', color: colors.text.inverse }}>{appliedOfferRedemption.code}</ThemedText>
               </View>
               <ThemedText style={styles.promoCodeTitle}>{appliedOfferRedemption.offerTitle || 'Cashback Voucher'}</ThemedText>
             </View>
@@ -183,12 +183,12 @@ function PromoCodeSection({
             <TextInput
               style={{
                 fontSize: 14,
-                color: Colors.text.primary,
+                color: colors.text.primary,
                 paddingVertical: 8,
                 paddingHorizontal: 0,
               }}
               placeholder="Enter cashback voucher code (RED-xxx)"
-              placeholderTextColor={Colors.neutral[400]}
+              placeholderTextColor={colors.neutral[400]}
               autoCapitalize="characters"
               value={voucherCodeInput}
               onChangeText={onVoucherCodeChange}
@@ -218,7 +218,7 @@ function PromoCodeSection({
               }
             }}
           >
-            <ThemedText style={{ color: Colors.text.inverse, fontWeight: '600', fontSize: 12 }}>
+            <ThemedText style={{ color: colors.text.inverse, fontWeight: '600', fontSize: 12 }}>
               {validatingRedemption ? 'Validating...' : 'Apply'}
             </ThemedText>
           </Pressable>
@@ -230,7 +230,7 @@ function PromoCodeSection({
 
 const styles = StyleSheet.create({
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
     marginBottom: Spacing.sm,
@@ -238,11 +238,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   promoCodeCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
@@ -257,15 +257,15 @@ const styles = StyleSheet.create({
   promoCodeTitle: {
     ...Typography.bodyLarge,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   promoCodeSubtitle: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   appliedPromoCard: {
-    backgroundColor: Colors.successScale[50],
+    backgroundColor: colors.successScale[50],
     borderWidth: 1,
     borderColor: colors.success,
     borderRadius: BorderRadius.md,
@@ -301,7 +301,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   changePromoButton: {
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   changePromoText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   removePromoButton: {
     padding: Spacing.xs,

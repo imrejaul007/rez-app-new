@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 15,
     fontWeight: "500",
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   labelActive: {
     color: colors.lightMustard,

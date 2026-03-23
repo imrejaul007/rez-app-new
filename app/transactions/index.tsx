@@ -146,7 +146,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress,
         </Text>
       </View>
       
-      <Ionicons name={isExpanded ? "chevron-down" : "chevron-forward"} size={20} color={Colors.border.default} />
+      <Ionicons name={isExpanded ? "chevron-down" : "chevron-forward"} size={20} color={colors.border.default} />
     </Pressable>
     {isExpanded && (() => {
       const steps = buildTimelineSteps(transaction);
@@ -259,7 +259,7 @@ function TransactionsPage() {
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Ionicons name="receipt-outline" size={64} color={Colors.border.default} />
+      <Ionicons name="receipt-outline" size={64} color={colors.border.default} />
       <Text style={styles.emptyStateTitle}>No Transactions Yet</Text>
       <Text style={styles.emptyStateText}>
         Your transaction history will appear here once you start using your wallet.
@@ -288,14 +288,14 @@ function TransactionsPage() {
       <LinearGradient colors={[Colors.brand.purple, Colors.brand.purpleLight] as const} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={handleBackPress}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>Transaction History</Text>
           <Pressable 
             style={styles.filterButton} 
             onPress={() => setShowFilters(true)}
           >
-            <Ionicons name="filter" size={24} color={Colors.text.inverse} />
+            <Ionicons name="filter" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
       </LinearGradient>
@@ -346,7 +346,7 @@ function TransactionsPage() {
                 <View style={styles.modalHeader}>
                   <Text style={styles.modalTitle}>Transaction Details</Text>
                   <Pressable onPress={() => setSelectedTransaction(null)}>
-                    <Ionicons name="close" size={24} color={Colors.text.tertiary} />
+                    <Ionicons name="close" size={24} color={colors.text.tertiary} />
                   </Pressable>
                 </View>
                 
@@ -377,7 +377,7 @@ function TransactionsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: '700',
   },
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   transactionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
@@ -442,12 +442,12 @@ const styles = StyleSheet.create({
   transactionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   transactionDate: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   transactionStatus: {
@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
   },
   balanceText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyState: {
     alignItems: 'center',
@@ -483,13 +483,13 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyStateText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingHorizontal: 40,
   },
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
   },
   errorStateText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.base,
   },
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -527,12 +527,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   loadingMore: {
     flexDirection: 'row',
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
   loadingMoreText: {
     marginLeft: Spacing.sm,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   modalOverlay: {
     flex: 1,
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.xl,
     width: '100%',
@@ -568,14 +568,14 @@ const styles = StyleSheet.create({
   modalTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalBody: {
     alignItems: 'center',
   },
   modalDescription: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.base,
     textAlign: 'center',
   },
@@ -587,12 +587,12 @@ const styles = StyleSheet.create({
   },
   modalDate: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   modalStatus: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 export default withErrorBoundary(TransactionsPage, 'TransactionsIndex');

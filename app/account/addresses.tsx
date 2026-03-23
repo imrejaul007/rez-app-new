@@ -413,7 +413,7 @@ function SavedAddressesPage() {
     switch (type) {
       case 'HOME': return Colors.primary[500];
       case 'OFFICE': return colors.infoScale?.[400] ?? '#3B82F6';
-      default: return Colors.text.secondary;
+      default: return colors.text.secondary;
     }
   };
 
@@ -431,7 +431,7 @@ function SavedAddressesPage() {
         <View style={styles.addressHeader}>
           <View style={styles.addressTitleContainer}>
             <View style={[styles.typeIcon, { backgroundColor: getAddressTypeColor(address.type) }]}>
-              <Ionicons name={getAddressTypeIcon(address.type)} size={16} color={Colors.text.inverse} />
+              <Ionicons name={getAddressTypeIcon(address.type)} size={16} color={colors.text.inverse} />
             </View>
             <View style={styles.addressTitleInfo}>
               <ThemedText style={styles.addressTitle}>{address.title}</ThemedText>
@@ -450,7 +450,7 @@ function SavedAddressesPage() {
               accessibilityLabel={`Edit ${address.title}`}
               accessibilityHint="Double tap to edit this address"
             >
-              <Ionicons name="pencil-outline" size={18} color={Colors.nileBlue} />
+              <Ionicons name="pencil-outline" size={18} color={colors.nileBlue} />
             </Pressable>
             <Pressable
               style={styles.actionButton}
@@ -467,7 +467,7 @@ function SavedAddressesPage() {
         <View style={styles.addressDetails}>
           {address.phone && (
             <View style={styles.phoneContainer}>
-              <Ionicons name="call-outline" size={14} color={Colors.text.secondary} />
+              <Ionicons name="call-outline" size={14} color={colors.text.secondary} />
               <ThemedText style={styles.phoneText}>{address.phone}</ThemedText>
             </View>
           )}
@@ -482,7 +482,7 @@ function SavedAddressesPage() {
 
           {address.instructions && (
             <View style={styles.instructionsContainer}>
-              <Ionicons name="information-circle-outline" size={16} color={Colors.text.secondary} />
+              <Ionicons name="information-circle-outline" size={16} color={colors.text.secondary} />
               <ThemedText style={styles.instructions}>{address.instructions}</ThemedText>
             </View>
           )}
@@ -509,8 +509,8 @@ function SavedAddressesPage() {
     return (
       <View style={styles.historyCard}>
         <View style={styles.historyCardLeft}>
-          <View style={[styles.typeIcon, { backgroundColor: Colors.text.secondary }]}>
-            <Ionicons name="time-outline" size={16} color={Colors.text.inverse} />
+          <View style={[styles.typeIcon, { backgroundColor: colors.text.secondary }]}>
+            <Ionicons name="time-outline" size={16} color={colors.text.inverse} />
           </View>
           <View style={styles.historyInfo}>
             {item.name && (
@@ -534,7 +534,7 @@ function SavedAddressesPage() {
           accessibilityLabel={`Save address ${label} to my addresses`}
           accessibilityHint="Double tap to add this address to your saved addresses"
         >
-          <Ionicons name="bookmark-outline" size={16} color={Colors.nileBlue} />
+          <Ionicons name="bookmark-outline" size={16} color={colors.nileBlue} />
           <ThemedText style={styles.saveHistoryText}>Save</ThemedText>
         </Pressable>
       </View>
@@ -544,15 +544,15 @@ function SavedAddressesPage() {
   // ─── Header element (for skeleton / error screens) ────────────────────────
   const headerElement = (
     <>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
-      <LinearGradient colors={[Colors.nileBlue, Colors.secondary[500]]} style={styles.headerBg}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+      <LinearGradient colors={[colors.nileBlue, Colors.secondary[500]]} style={styles.headerBg}>
         <View style={styles.headerContainer}>
           <Pressable style={styles.backButton} onPress={handleBackPress}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>My Addresses</ThemedText>
           <Pressable style={styles.addButton} onPress={handleAddAddress}>
-            <Ionicons name="add" size={24} color={Colors.text.inverse} />
+            <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
       </LinearGradient>
@@ -576,8 +576,8 @@ function SavedAddressesPage() {
 
   return (
     <ThemedView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
-      <LinearGradient colors={[Colors.nileBlue, Colors.secondary[500]]} style={styles.headerBg}>
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+      <LinearGradient colors={[colors.nileBlue, Colors.secondary[500]]} style={styles.headerBg}>
         <View style={styles.headerContainer}>
           <Pressable
             style={styles.backButton}
@@ -586,7 +586,7 @@ function SavedAddressesPage() {
             accessibilityLabel="Go back"
             accessibilityHint="Double tap to return to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText
             style={styles.headerTitle}
@@ -601,7 +601,7 @@ function SavedAddressesPage() {
             accessibilityLabel="Add new address"
             accessibilityHint="Double tap to add a new delivery address"
           >
-            <Ionicons name="add" size={24} color={Colors.text.inverse} />
+            <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
@@ -637,7 +637,7 @@ function SavedAddressesPage() {
         {activeTab === 'saved' && (
           addresses.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="location-outline" size={80} color={Colors.border.medium} />
+              <Ionicons name="location-outline" size={80} color={colors.border.medium} />
               <ThemedText style={styles.emptyTitle}>No Addresses Saved</ThemedText>
               <ThemedText style={styles.emptyDescription}>
                 Add your addresses to make checkout faster
@@ -658,7 +658,7 @@ function SavedAddressesPage() {
               renderItem={renderAddress}
               keyExtractor={(item) => item.id}
               refreshControl={
-                <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={Colors.nileBlue} />
+                <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={colors.nileBlue} />
               }
               contentContainerStyle={styles.addressesContainer}
               showsVerticalScrollIndicator={false}
@@ -671,7 +671,7 @@ function SavedAddressesPage() {
         {activeTab === 'history' && (
           isHistoryLoading ? (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color={Colors.nileBlue} />
+              <ActivityIndicator size="large" color={colors.nileBlue} />
               <ThemedText style={styles.loadingText}>Loading address history...</ThemedText>
             </View>
           ) : historyError ? (
@@ -693,7 +693,7 @@ function SavedAddressesPage() {
             </View>
           ) : historyAddresses.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="time-outline" size={80} color={Colors.border.medium} />
+              <Ionicons name="time-outline" size={80} color={colors.border.medium} />
               <ThemedText style={styles.emptyTitle}>No Address History</ThemedText>
               <ThemedText style={styles.emptyDescription}>
                 Delivery addresses from your past orders will appear here
@@ -750,7 +750,7 @@ function SavedAddressesPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   headerBg: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 50,
@@ -759,7 +759,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: BorderRadius['2xl'],
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 5,
@@ -782,7 +782,7 @@ const styles = StyleSheet.create({
     padding: Spacing.xs,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
   },
@@ -814,7 +814,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   tabTextActive: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 
   content: {
@@ -828,13 +828,13 @@ const styles = StyleSheet.create({
 
   // ── Saved Address Cards ────────────────────────────────────────────────────
   addressCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.08,
         shadowRadius: 8,
@@ -872,7 +872,7 @@ const styles = StyleSheet.create({
   addressTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   defaultBadge: {
@@ -885,7 +885,7 @@ const styles = StyleSheet.create({
   defaultText: {
     ...Typography.overline,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: undefined,
     letterSpacing: undefined,
   },
@@ -922,30 +922,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: Spacing.sm,
     padding: Spacing.sm,
-    backgroundColor: Colors.background.accent,
+    backgroundColor: colors.background.accent,
     borderRadius: BorderRadius.sm,
   },
   instructions: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginLeft: Spacing.sm,
     flex: 1,
   },
   setDefaultButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.sm,
     alignSelf: 'flex-start',
   },
   setDefaultText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.label,
   },
 
   // ── History Cards ──────────────────────────────────────────────────────────
   historyCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -975,7 +975,7 @@ const styles = StyleSheet.create({
   historyName: {
     ...Typography.label,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   historyAddress: {
@@ -985,11 +985,11 @@ const styles = StyleSheet.create({
   },
   historyPhone: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   historyDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary ?? Colors.text.secondary,
+    color: colors.text.tertiary ?? colors.text.secondary,
     marginTop: 2,
   },
   saveHistoryButton: {
@@ -999,13 +999,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.nileBlue + '15',
+    backgroundColor: colors.nileBlue + '15',
     borderWidth: 1,
-    borderColor: Colors.nileBlue + '30',
+    borderColor: colors.nileBlue + '30',
   },
   saveHistoryText: {
     ...Typography.label,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '600',
   },
   clearHistoryButton: {
@@ -1033,14 +1033,14 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   emptyDescription: {
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -1053,13 +1053,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   addAddressButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
   },
   addAddressButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -1071,7 +1071,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 });
 

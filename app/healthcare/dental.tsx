@@ -291,7 +291,7 @@ function DentalCarePage() {
           <Ionicons
             name={service.icon as any}
             size={24}
-            color={isSelected ? Colors.text.inverse : colors.brand.cyan}
+            color={isSelected ? colors.text.inverse : colors.brand.cyan}
           />
         </View>
         <Text style={[styles.serviceName, isSelected && styles.serviceNameSelected]}>
@@ -338,14 +338,14 @@ function DentalCarePage() {
 
       <View style={styles.dentistDetails}>
         <View style={styles.detailRow}>
-          <Ionicons name="location-outline" size={16} color={Colors.text.tertiary} />
+          <Ionicons name="location-outline" size={16} color={colors.text.tertiary} />
           <Text style={styles.detailText}>
             {dentist.address.city}, {dentist.address.state}
           </Text>
         </View>
         {dentist.metadata?.consultationFee && (
           <View style={styles.detailRow}>
-            <Ionicons name="cash-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="cash-outline" size={16} color={colors.text.tertiary} />
             <Text style={styles.detailText}>
               Consultation: Rs {dentist.metadata.consultationFee}
             </Text>
@@ -353,7 +353,7 @@ function DentalCarePage() {
         )}
         {dentist.metadata?.languages && dentist.metadata.languages.length > 0 && (
           <View style={styles.detailRow}>
-            <Ionicons name="chatbubbles-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="chatbubbles-outline" size={16} color={colors.text.tertiary} />
             <Text style={styles.detailText}>
               {dentist.metadata.languages.join(', ')}
             </Text>
@@ -388,7 +388,7 @@ function DentalCarePage() {
           style={styles.bookButton}
           onPress={() => openBookingModal(dentist)}
         >
-          <Ionicons name="calendar-outline" size={18} color={Colors.text.inverse} />
+          <Ionicons name="calendar-outline" size={18} color={colors.text.inverse} />
           <Text style={styles.bookButtonText}>Book Appointment</Text>
         </Pressable>
       </View>
@@ -401,30 +401,30 @@ function DentalCarePage() {
       <LinearGradient colors={[colors.brand.cyan, colors.cyanDark]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Dental Care</Text>
             <Text style={styles.headerSubtitle}>Find dentists near you</Text>
           </View>
           <Pressable style={styles.filterButton}>
-            <Ionicons name="options-outline" size={24} color={Colors.text.inverse} />
+            <Ionicons name="options-outline" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
         {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <Ionicons name="search-outline" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="search-outline" size={20} color={colors.text.tertiary} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search dentists, services..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
             <Pressable onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
             </Pressable>
           )}
         </View>
@@ -462,7 +462,7 @@ function DentalCarePage() {
             <CardGridSkeleton />
           ) : filteredDentists.length === 0 ? (
             <View style={styles.emptyContainer}>
-              <Ionicons name="medical-outline" size={64} color={Colors.border.default} />
+              <Ionicons name="medical-outline" size={64} color={colors.border.default} />
               <Text style={styles.emptyText}>No dentists found</Text>
               <Text style={styles.emptySubtext}>
                 {searchQuery || selectedService
@@ -638,7 +638,7 @@ function DentalCarePage() {
               <TextInput
                 style={styles.notesInput}
                 placeholder="Describe your dental issue or concern..."
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 multiline
                 numberOfLines={3}
                 value={bookingNotes}
@@ -660,10 +660,10 @@ function DentalCarePage() {
                 disabled={isBooking}
               >
                 {isBooking ? (
-                  <ActivityIndicator color={Colors.text.inverse} />
+                  <ActivityIndicator color={colors.text.inverse} />
                 ) : (
                   <>
-                    <Ionicons name="checkmark-circle" size={20} color={Colors.text.inverse} />
+                    <Ionicons name="checkmark-circle" size={20} color={colors.text.inverse} />
                     <Text style={styles.confirmButtonText}>Confirm Appointment</Text>
                   </>
                 )}
@@ -679,7 +679,7 @@ function DentalCarePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingHorizontal: Spacing.base,
@@ -706,7 +706,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
@@ -724,7 +724,7 @@ const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
@@ -734,7 +734,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: Spacing.sm,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   content: {
     flex: 1,
@@ -752,19 +752,19 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingHorizontal: Spacing.base,
   },
   sectionSubtitle: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     paddingHorizontal: Spacing.base,
     marginTop: Spacing.xs,
     marginBottom: Spacing.md,
   },
   resultCount: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   servicesScroll: {
     paddingHorizontal: Spacing.base,
@@ -772,7 +772,7 @@ const styles = StyleSheet.create({
   },
   serviceCard: {
     width: 110,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     alignItems: 'center',
@@ -808,7 +808,7 @@ const styles = StyleSheet.create({
   },
   servicePrice: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   loadingContainer: {
@@ -818,7 +818,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     padding: Spacing['3xl'],
@@ -832,12 +832,12 @@ const styles = StyleSheet.create({
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
     textAlign: 'center',
   },
   dentistCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.md,
@@ -871,7 +871,7 @@ const styles = StyleSheet.create({
   dentistName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   dentistSpecialty: {
     fontSize: 13,
@@ -880,7 +880,7 @@ const styles = StyleSheet.create({
   },
   dentistExperience: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   ratingContainer: {
@@ -890,13 +890,13 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.xs,
   },
   dentistDetails: {
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
   },
   detailRow: {
     flexDirection: 'row',
@@ -905,7 +905,7 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.sm,
   },
   servicesContainer: {
@@ -958,11 +958,11 @@ const styles = StyleSheet.create({
   bookButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginLeft: 6,
   },
   tipsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
@@ -972,7 +972,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   tipIcon: {
     width: 40,
@@ -989,11 +989,11 @@ const styles = StyleSheet.create({
   tipTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   tipText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   bottomPadding: {
@@ -1006,7 +1006,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     maxHeight: '90%',
@@ -1018,18 +1018,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   selectedDentistInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginHorizontal: Spacing.base,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.base,
@@ -1051,11 +1051,11 @@ const styles = StyleSheet.create({
   selectedDentistName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   selectedDentistSpec: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   modalSectionTitle: {
     fontSize: 15,
@@ -1069,7 +1069,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginLeft: Spacing.base,
     borderWidth: 1,
     borderColor: 'transparent',
@@ -1080,7 +1080,7 @@ const styles = StyleSheet.create({
   },
   serviceChipText: {
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
   },
   serviceChipTextSelected: {
@@ -1090,7 +1090,7 @@ const styles = StyleSheet.create({
     width: 60,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     marginLeft: Spacing.base,
   },
@@ -1099,20 +1099,20 @@ const styles = StyleSheet.create({
   },
   dateDay: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   dateNumber: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginVertical: 2,
   },
   dateMonth: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   dateTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   slotsGrid: {
     flexDirection: 'row',
@@ -1124,11 +1124,11 @@ const styles = StyleSheet.create({
     width: (width - 48 - 24) / 4,
     paddingVertical: 10,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
   },
   slotUnavailable: {
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   slotSelected: {
     backgroundColor: colors.brand.cyan,
@@ -1139,18 +1139,18 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   slotTextUnavailable: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   slotTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   notesInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: 14,
     marginHorizontal: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlignVertical: 'top',
     minHeight: 80,
   },
@@ -1185,12 +1185,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   confirmButtonDisabled: {
-    backgroundColor: Colors.text.tertiary,
+    backgroundColor: colors.text.tertiary,
   },
   confirmButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginLeft: Spacing.sm,
   },
 });

@@ -134,7 +134,7 @@ const createStyles = (screenWidth: number) => {
   return StyleSheet.create({
     root: {
       flex: 1,
-      backgroundColor: Colors.background.secondary,
+      backgroundColor: colors.background.secondary,
     },
     headerBg: {
       paddingTop: Platform.OS === 'ios' ? 50 : 40,
@@ -160,7 +160,7 @@ const createStyles = (screenWidth: number) => {
     headerTitle: {
       fontSize: 18,
       fontWeight: '700',
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
     },
     totalSection: {
       alignItems: 'center',
@@ -174,7 +174,7 @@ const createStyles = (screenWidth: number) => {
     totalAmount: {
       fontSize: 36,
       fontWeight: '800',
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
       letterSpacing: 0.5,
     },
     totalSubtext: {
@@ -194,18 +194,18 @@ const createStyles = (screenWidth: number) => {
     emptyTitle: {
       fontSize: 18,
       fontWeight: '700',
-      color: Colors.text.primary,
+      color: colors.text.primary,
       marginTop: Spacing.base,
     },
     emptySubtext: {
       fontSize: 14,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       marginTop: Spacing.sm,
       textAlign: 'center',
       paddingHorizontal: 40,
     },
     storeCard: {
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderRadius: BorderRadius.lg,
       padding: isTablet ? 20 : 16,
       marginBottom: Spacing.md,
@@ -238,12 +238,12 @@ const createStyles = (screenWidth: number) => {
     storeName: {
       fontSize: isTablet ? 17 : 16,
       fontWeight: '700',
-      color: Colors.text.primary,
+      color: colors.text.primary,
       marginBottom: 3,
     },
     storeDesc: {
       fontSize: 13,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       fontWeight: '500',
     },
     storeAmountWrap: {
@@ -275,7 +275,7 @@ const createStyles = (screenWidth: number) => {
     },
     infoText: {
       fontSize: 13,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       lineHeight: 18,
     },
   });

@@ -80,10 +80,10 @@ function SurveyCompletePage() {
             ]}
           >
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[Colors.gold, colors.nileBlue]}
               style={styles.successIconGradient}
             >
-              <Ionicons name="checkmark" size={64} color={Colors.text.inverse} />
+              <Ionicons name="checkmark" size={64} color={colors.text.inverse} />
             </LinearGradient>
           </Animated.View>
 
@@ -110,7 +110,7 @@ function SurveyCompletePage() {
               colors={[colors.brand.goldBright, '#FFA500']}
               style={styles.coinsGradient}
             >
-              <Ionicons name="wallet" size={32} color={Colors.text.inverse} />
+              <Ionicons name="wallet" size={32} color={colors.text.inverse} />
             </LinearGradient>
           </Animated.View>
 
@@ -182,7 +182,7 @@ function SurveyCompletePage() {
               style={styles.primaryButtonGradient}
             >
               <Text style={styles.primaryButtonText}>Browse More Surveys</Text>
-              <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+              <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
             </LinearGradient>
           </Pressable>
 
@@ -201,7 +201,7 @@ function SurveyCompletePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   content: {
     flex: 1,
     alignItems: 'center',
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm },
   subtitle: {
     fontSize: Typography.bodyLarge.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing['2xl'] },
   coinsContainer: {
@@ -255,7 +255,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing['2xl'] },
   coinsLabel: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs },
   coinsValue: {
     fontSize: 48,
@@ -264,10 +264,10 @@ const styles = StyleSheet.create({
   coinsUnit: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '600',
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   statsContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     paddingVertical: Spacing.lg,
     paddingHorizontal: Spacing['2xl'],
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm },
   statLabel: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs },
   messageContainer: {
     width: '100%' },
@@ -329,13 +329,13 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   secondaryButton: {
     alignItems: 'center',
     paddingVertical: Spacing.base },
   secondaryButtonText: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '600',
-    color: Colors.text.tertiary } });
+    color: colors.text.tertiary } });
 
 export default withErrorBoundary(SurveyCompletePage, 'SurveyIdComplete');

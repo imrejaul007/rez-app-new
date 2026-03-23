@@ -35,13 +35,13 @@ const C = {
   primary: colors.brand.green,
   primaryDark: colors.brand.teal,
   gold: Colors.warning,
-  navy: Colors.nileBlue,
-  text: Colors.text.primary,
-  textSecondary: Colors.text.secondary,
-  textTertiary: Colors.text.tertiary,
-  bg: Colors.background.secondary,
-  white: Colors.background.primary,
-  border: Colors.border.default,
+  navy: colors.nileBlue,
+  text: colors.text.primary,
+  textSecondary: colors.text.secondary,
+  textTertiary: colors.text.tertiary,
+  bg: colors.background.secondary,
+  white: colors.background.primary,
+  border: colors.border.default,
   error: Colors.error,
   warning: Colors.warning,
   success: Colors.success,
@@ -488,7 +488,7 @@ function BookingsPage() {
         <StatusBar barStyle="light-content" />
         <LinearGradient colors={[C.primary, C.primaryDark]} style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>My Bookings</Text>
           <View style={{ width: 40 }} />
@@ -762,7 +762,7 @@ function BookingsPage() {
         style={styles.header}
       >
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
         </Pressable>
         <Text style={styles.headerTitle}>My Bookings</Text>
         <View style={{ width: 40 }} />
@@ -924,7 +924,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.3,
   },
 
@@ -938,7 +938,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingVertical: 10,
     alignItems: 'center',
@@ -1034,7 +1034,7 @@ const styles = StyleSheet.create({
     padding: 14,
     gap: 12,
     borderWidth: 1,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
     ...Platform.select({
       ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.06, shadowRadius: 8 },
       android: { elevation: 2 },
@@ -1142,7 +1142,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
   },
   detailPill: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 6,
@@ -1165,7 +1165,7 @@ const styles = StyleSheet.create({
 
   // Expanded details
   expandedSection: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: 8,
     padding: 12,
     gap: 10,
@@ -1196,7 +1196,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
     paddingTop: 10,
   },
   refRow: {
@@ -1299,7 +1299,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   ctaButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 15,
     fontWeight: '600',
   },

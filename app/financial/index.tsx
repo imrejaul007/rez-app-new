@@ -190,14 +190,14 @@ const FinancialPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Financial Services</Text>
             <Text style={styles.headerSubtitle}>Pay bills, earn rewards</Text>
           </View>
           <Pressable style={styles.searchButton} onPress={() => router.push('/search' as any)}>
-            <Ionicons name="search" size={24} color={Colors.text.inverse} />
+            <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
         <View style={styles.statsRow}>
@@ -305,7 +305,7 @@ const FinancialPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   loadingContainer: {
     justifyContent: 'center',
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
@@ -358,7 +358,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statLabel: {
     fontSize: Typography.caption.fontSize,
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.md,
   },
   viewAllText: {
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - 56) / 3,
     alignItems: 'center',
     padding: Spacing.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
   },
   categoryIcon: {
@@ -415,22 +415,22 @@ const styles = StyleSheet.create({
   categoryTitle: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2,
     textAlign: 'center',
   },
   categoryCount: {
     fontSize: Typography.overline.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   serviceCard: {
     width: 160,
     marginRight: Spacing.md,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   serviceImage: {
     width: '100%',
@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     fontSize: Typography.caption.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   serviceInfo: {
     padding: Spacing.md,
@@ -456,12 +456,12 @@ const styles = StyleSheet.create({
   serviceName: {
     fontSize: Typography.body.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2,
   },
   serviceType: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   promoBanner: {
     marginHorizontal: Spacing.base,
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
   promoTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   promoSubtitle: {
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
   },
   promoButton: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius['2xl'],

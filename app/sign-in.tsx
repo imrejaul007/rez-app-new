@@ -270,7 +270,7 @@ function SignInScreen() {
                 <TextInput
                   style={styles.phoneTextInput}
                   placeholder="Mobile number"
-                  placeholderTextColor={Colors.text.tertiary}
+                  placeholderTextColor={colors.text.tertiary}
                   value={formData.phoneNumber}
                   onChangeText={(value) => handleInputChange('phoneNumber', value)}
                   keyboardType="phone-pad"
@@ -293,11 +293,11 @@ function SignInScreen() {
           >
             <View style={[styles.primaryButton, { backgroundColor: authLoading ? colors.neutral[300] : colors.brand.purple }]}>
               {authLoading ? (
-                <LoadingSpinner size="small" color={Colors.text.inverse} />
+                <LoadingSpinner size="small" color={colors.text.inverse} />
               ) : (
                 <>
                   <Text style={styles.primaryButtonText}>Send OTP</Text>
-                  <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
                 </>
               )}
             </View>
@@ -338,7 +338,7 @@ function SignInScreen() {
               colors={[colors.brand.purple, colors.brand.purpleDeep]}
               style={styles.shieldIcon}
             >
-              <Ionicons name="shield-checkmark" size={28} color={Colors.text.inverse} />
+              <Ionicons name="shield-checkmark" size={28} color={colors.text.inverse} />
             </LinearGradient>
           </View>
 
@@ -377,7 +377,7 @@ function SignInScreen() {
           <View style={styles.otpActions}>
             {otpTimer > 0 ? (
               <View style={styles.timerContainer}>
-                <Ionicons name="time-outline" size={16} color={Colors.text.tertiary} />
+                <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
                 <Text style={styles.timerText}>Resend OTP in {otpTimer}s</Text>
               </View>
             ) : (
@@ -407,11 +407,11 @@ function SignInScreen() {
           >
             <View style={[styles.primaryButton, { backgroundColor: authLoading ? colors.neutral[300] : colors.brand.purple }]}>
               {authLoading ? (
-                <LoadingSpinner size="small" color={Colors.text.inverse} />
+                <LoadingSpinner size="small" color={colors.text.inverse} />
               ) : (
                 <>
                   <Text style={styles.primaryButtonText}>Verify & Sign In</Text>
-                  <Ionicons name="checkmark-circle" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="checkmark-circle" size={20} color={colors.text.inverse} />
                 </>
               )}
             </View>
@@ -635,14 +635,14 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.h1,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
     letterSpacing: -0.5,
   },
   subtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.base,
@@ -676,10 +676,10 @@ const styles = StyleSheet.create({
   unifiedPhoneInput: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     overflow: 'hidden',
   },
   countryPickerInline: {
@@ -709,7 +709,7 @@ const styles = StyleSheet.create({
   phoneTextInput: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingVertical: 14,
   },
   errorText: {
@@ -735,7 +735,7 @@ const styles = StyleSheet.create({
   },
   timerText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   resendButton: {
@@ -771,7 +771,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontSize: 17,
     fontWeight: '700',
@@ -811,7 +811,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   recoveryText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     textDecorationLine: 'underline',
   },

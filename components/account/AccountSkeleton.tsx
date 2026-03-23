@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withRepeat, withTiming, interpolate } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 const SHIMMER_DURATION = 1500;
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
   },
   rowBorder: {
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   textBlock: {
     flex: 1,

@@ -190,7 +190,7 @@ const QuickDeliveryPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.background.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <View style={styles.titleRow}>
@@ -341,7 +341,7 @@ const QuickDeliveryPage: React.FC = () => {
           </Text>
           {filteredProducts.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons name="flash-outline" size={48} color={Colors.neutral[400]} />
+              <Ionicons name="flash-outline" size={48} color={colors.neutral[400]} />
               <Text style={styles.emptyText}>No quick delivery products available</Text>
             </View>
           ) : (
@@ -377,7 +377,7 @@ function getFallbackProducts(): any[] {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     fontSize: 13,
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statLabel: {
     fontSize: 11,
@@ -438,22 +438,22 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.xs,
   },
   storesPillsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   storesLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginBottom: Spacing.sm,
   },
   storePill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     borderRadius: BorderRadius.xl,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
@@ -471,10 +471,10 @@ const styles = StyleSheet.create({
   storePillText: {
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   storePillTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storePillDelivery: {
     backgroundColor: 'rgba(0,0,0,0.1)',
@@ -485,14 +485,14 @@ const styles = StyleSheet.create({
   storePillDeliveryText: {
     fontSize: 10,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   categoriesContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   categoryChip: {
     flexDirection: 'row',
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     marginRight: 8,
     gap: 6,
   },
@@ -513,10 +513,10 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   categoryTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   section: {
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   seeAllText: {
     fontSize: 14,
@@ -564,21 +564,21 @@ const styles = StyleSheet.create({
   quickStoreBadgeText: {
     fontSize: 9,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   quickStoreLogo: {
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginBottom: 6,
   },
   quickStoreName: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
   },
   quickStoreMeta: {
@@ -590,7 +590,7 @@ const styles = StyleSheet.create({
   quickStoreRating: {
     fontSize: 11,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   quickStoreCashback: {
     fontSize: 10,
@@ -610,7 +610,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     marginTop: Spacing.md,
   },
 });

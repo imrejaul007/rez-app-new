@@ -804,7 +804,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                     <Ionicons
                       name={isFavorited ? "heart" : "heart-outline"}
                       size={20}
-                      color={isFavorited ? Colors.error : Colors.text.inverse}
+                      color={isFavorited ? Colors.error : colors.text.inverse}
                     />
                   )}
                 </Pressable>
@@ -954,7 +954,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             <View style={styles.rewardCard}>
               <View style={styles.rewardCardHeader}>
                 <View style={styles.rewardIconCircle}>
-                  <Ionicons name="gift-outline" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="gift-outline" size={20} color={colors.text.inverse} />
                 </View>
                 <View style={styles.rewardHeaderText}>
                   <Text style={styles.rewardTitle}>
@@ -1092,7 +1092,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                           styles.capacityFill,
                           {
                             width: `${(slot.bookedCount / slot.maxCapacity) * 100}%`,
-                            backgroundColor: slot.available ? Colors.brand.purpleLight : Colors.text.tertiary,
+                            backgroundColor: slot.available ? Colors.brand.purpleLight : colors.text.tertiary,
                           },
                         ]}
                       />
@@ -1288,7 +1288,7 @@ function EventActionButton({
 
   // Use theme colors for the button gradient
   const buttonColors: [string, string] = disabled || !hasSelectedSlot
-    ? [Colors.text.tertiary, Colors.text.tertiary]
+    ? [colors.text.tertiary, colors.text.tertiary]
     : theme.buttonGradient;
 
   return (
@@ -1322,7 +1322,7 @@ const createStyles = (
   StyleSheet.create({
     page: {
       flex: 1,
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
     },
 
     // HERO
@@ -1385,7 +1385,7 @@ const createStyles = (
       marginBottom: Spacing.md,
     },
     categoryText: {
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
       ...Typography.bodySmall,
       fontWeight: "600",
       textTransform: "uppercase",
@@ -1394,7 +1394,7 @@ const createStyles = (
     heroTitle: {
       ...Typography.h1,
       fontWeight: "800",
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
       marginBottom: Spacing.sm,
       lineHeight: 34,
     },
@@ -1415,7 +1415,7 @@ const createStyles = (
       gap: 6,
     },
     heroMetaText: {
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
       ...Typography.body,
       fontWeight: "500",
     },
@@ -1432,7 +1432,7 @@ const createStyles = (
     priceCard: {
       marginHorizontal: HORIZONTAL_PADDING,
       marginTop: Spacing.base,
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderRadius: BorderRadius.xl,
       padding: Spacing.lg,
       flexDirection: "row",
@@ -1450,14 +1450,14 @@ const createStyles = (
     },
     priceLabel: {
       ...Typography.body,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       marginBottom: Spacing.xs,
       fontWeight: "500",
     },
     priceValue: {
       ...Typography.h2,
       fontWeight: "800",
-      color: Colors.text.primary,
+      color: colors.text.primary,
     },
     priceCardRight: {
       alignItems: "flex-end",
@@ -1481,7 +1481,7 @@ const createStyles = (
       flexDirection: "row",
       alignItems: "center",
       gap: 6,
-      backgroundColor: Colors.background.secondary,
+      backgroundColor: colors.background.secondary,
       paddingHorizontal: Spacing.md,
       paddingVertical: Spacing.sm,
       borderRadius: BorderRadius.md,
@@ -1498,12 +1498,12 @@ const createStyles = (
     sectionTitle: {
       ...Typography.h3,
       fontWeight: "800",
-      color: Colors.text.primary,
+      color: colors.text.primary,
       marginBottom: Spacing.sm,
     },
     sectionSubtitle: {
       ...Typography.body,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       marginBottom: Spacing.base,
       lineHeight: 20,
     },
@@ -1519,19 +1519,19 @@ const createStyles = (
       gap: Spacing.md,
     },
     slotCard: {
-      backgroundColor: Colors.background.primary,
+      backgroundColor: colors.background.primary,
       borderRadius: BorderRadius.lg,
       padding: Spacing.base,
       borderWidth: 2,
-      borderColor: Colors.border.default,
+      borderColor: colors.border.default,
     },
     slotCardSelected: {
       borderColor: Colors.brand.purpleLight,
       backgroundColor: colors.tint.coolGray,
     },
     slotCardDisabled: {
-      backgroundColor: Colors.background.secondary,
-      borderColor: Colors.border.default,
+      backgroundColor: colors.background.secondary,
+      borderColor: colors.border.default,
     },
     slotHeader: {
       flexDirection: "row",
@@ -1542,26 +1542,26 @@ const createStyles = (
     slotTime: {
       ...Typography.bodyLarge,
       fontWeight: "700",
-      color: Colors.text.primary,
+      color: colors.text.primary,
     },
     slotTimeSelected: {
       color: Colors.brand.purpleLight,
     },
     slotTimeDisabled: {
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
     },
     slotCapacity: {
       ...Typography.body,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       marginBottom: Spacing.sm,
       fontWeight: "500",
     },
     slotCapacityDisabled: {
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
     },
     capacityBar: {
       height: 4,
-      backgroundColor: Colors.border.default,
+      backgroundColor: colors.border.default,
       borderRadius: 2,
       overflow: "hidden",
     },
@@ -1578,13 +1578,13 @@ const createStyles = (
     emptySlotsText: {
       ...Typography.bodyLarge,
       fontWeight: "600",
-      color: Colors.text.primary,
+      color: colors.text.primary,
       marginTop: Spacing.base,
       marginBottom: Spacing.sm,
     },
     emptySlotsSubtext: {
       ...Typography.body,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       textAlign: "center",
       lineHeight: 20,
     },
@@ -1601,7 +1601,7 @@ const createStyles = (
       width: 40,
       height: 40,
       borderRadius: BorderRadius.xl,
-      backgroundColor: Colors.background.secondary,
+      backgroundColor: colors.background.secondary,
       alignItems: "center",
       justifyContent: "center",
     },
@@ -1610,13 +1610,13 @@ const createStyles = (
     },
     detailLabel: {
       ...Typography.body,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       marginBottom: Spacing.xs,
       fontWeight: "500",
     },
     detailValue: {
       ...Typography.bodyLarge,
-      color: Colors.text.primary,
+      color: colors.text.primary,
       fontWeight: "600",
     },
 
@@ -1665,7 +1665,7 @@ const createStyles = (
     loadingText: {
       marginTop: Spacing.base,
       ...Typography.bodyLarge,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       fontWeight: "500",
     },
     errorContainer: {
@@ -1677,13 +1677,13 @@ const createStyles = (
     errorTitle: {
       ...Typography.h3,
       fontWeight: "700",
-      color: Colors.text.primary,
+      color: colors.text.primary,
       marginTop: Spacing.base,
       marginBottom: Spacing.sm,
     },
     errorMessage: {
       ...Typography.bodyLarge,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       textAlign: "center",
       marginBottom: Spacing.xl,
     },
@@ -1697,14 +1697,14 @@ const createStyles = (
       justifyContent: 'center',
     },
     retryButtonText: {
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
       ...Typography.bodyLarge,
       fontWeight: "600",
     },
     loadingSkeleton: {
       width: '80%',
       height: 200,
-      backgroundColor: Colors.border.default,
+      backgroundColor: colors.border.default,
       borderRadius: BorderRadius.md,
       marginTop: Spacing.lg,
     },
@@ -1712,12 +1712,12 @@ const createStyles = (
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: Colors.background.secondary,
+      backgroundColor: colors.background.secondary,
     },
     imagePlaceholderText: {
       marginTop: Spacing.md,
       ...Typography.body,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       fontWeight: '500',
     },
     errorCloseButton: {
@@ -1728,7 +1728,7 @@ const createStyles = (
     // Event Not Found styles
     notFoundContainer: {
       flex: 1,
-      backgroundColor: Colors.text.primary,
+      backgroundColor: colors.text.primary,
     },
     notFoundGradient: {
       flex: 1,
@@ -1747,7 +1747,7 @@ const createStyles = (
       position: 'absolute',
       bottom: -4,
       right: -4,
-      backgroundColor: Colors.text.primary,
+      backgroundColor: colors.text.primary,
       borderRadius: 14,
       width: 28,
       height: 28,
@@ -1757,13 +1757,13 @@ const createStyles = (
     notFoundTitle: {
       ...Typography.h1,
       fontWeight: '800',
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
       marginBottom: Spacing.md,
       textAlign: 'center',
     },
     notFoundMessage: {
       ...Typography.bodyLarge,
-      color: Colors.text.tertiary,
+      color: colors.text.tertiary,
       textAlign: 'center',
       lineHeight: 24,
       marginBottom: Spacing['2xl'],
@@ -1782,7 +1782,7 @@ const createStyles = (
       gap: Spacing.sm,
     },
     notFoundBackText: {
-      color: Colors.text.inverse,
+      color: colors.text.inverse,
       ...Typography.bodyLarge,
       fontWeight: '600',
     },
@@ -1808,24 +1808,24 @@ const createStyles = (
     rewardCardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md },
     rewardIconCircle: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: Colors.brand.purpleLight, justifyContent: 'center', alignItems: 'center' },
     rewardHeaderText: { marginLeft: Spacing.md, flex: 1 },
-    rewardTitle: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.primary },
-    rewardSubtitle: { ...Typography.bodySmall, color: Colors.text.tertiary },
+    rewardTitle: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.primary },
+    rewardSubtitle: { ...Typography.bodySmall, color: colors.text.tertiary },
     rewardRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: Spacing.sm },
     rewardRowBorder: { borderTopWidth: 1, borderTopColor: '#E0D4FC' },
     rewardDescription: { flex: 1, marginLeft: 10, ...Typography.body, color: colors.neutral[700] },
     rewardCoinBadge: { backgroundColor: Colors.brand.purpleLight, paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: 10 },
-    rewardCoinText: { ...Typography.bodySmall, fontWeight: '700', color: Colors.text.inverse },
+    rewardCoinText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
     scheduleRow: { flexDirection: 'row', paddingVertical: Spacing.md },
-    scheduleRowBorder: { borderBottomWidth: 1, borderBottomColor: Colors.border.default },
+    scheduleRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.border.default },
     scheduleTimeCol: { width: 44, alignItems: 'center' },
-    scheduleTimeText: { fontSize: 11, color: Colors.text.tertiary, marginTop: 2, textAlign: 'center' },
+    scheduleTimeText: { fontSize: 11, color: colors.text.tertiary, marginTop: 2, textAlign: 'center' },
     scheduleContent: { flex: 1, marginLeft: Spacing.md },
-    scheduleItemTitle: { fontSize: 15, fontWeight: '600', color: Colors.text.primary },
-    scheduleItemDesc: { fontSize: 13, color: Colors.text.tertiary, marginTop: 2 },
+    scheduleItemTitle: { fontSize: 15, fontWeight: '600', color: colors.text.primary },
+    scheduleItemDesc: { fontSize: 13, color: colors.text.tertiary, marginTop: 2 },
     sponsorsScroll: { marginTop: 8 },
-    sponsorCard: { alignItems: 'center', marginRight: Spacing.base, padding: Spacing.md, backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.md, minWidth: 80 },
+    sponsorCard: { alignItems: 'center', marginRight: Spacing.base, padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.md, minWidth: 80 },
     sponsorLogo: { width: 40, height: 40, borderRadius: 20, marginBottom: 8 },
-    sponsorLogoPlaceholder: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: Colors.border.default, justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
+    sponsorLogoPlaceholder: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: colors.border.default, justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
     sponsorName: { ...Typography.bodySmall, fontWeight: '600', color: colors.neutral[700], textAlign: 'center' },
   });
 
@@ -1854,7 +1854,7 @@ const actionStyles = StyleSheet.create({
   buttonText: {
     ...Typography.bodyLarge,
     fontWeight: "700",
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

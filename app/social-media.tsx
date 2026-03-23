@@ -222,7 +222,7 @@ function SocialMediaPage() {
       case 'pending': return Colors.warning;
       case 'rejected': return Colors.error;
       case 'credited': return colors.brand.green;
-      default: return Colors.text.tertiary;
+      default: return colors.text.tertiary;
     }
   };
 
@@ -451,7 +451,7 @@ function SocialMediaPage() {
                   </View>
                 ) : (
                   <View style={styles.noOrdersContainer}>
-                    <Ionicons name="receipt-outline" size={40} color={Colors.text.tertiary} />
+                    <Ionicons name="receipt-outline" size={40} color={colors.text.tertiary} />
                     <Text style={styles.noOrdersText}>No completed orders yet</Text>
                     <Text style={styles.noOrdersSubtext}>Complete an order first to earn cashback!</Text>
                   </View>
@@ -497,7 +497,7 @@ function SocialMediaPage() {
               <View style={styles.section}>
                 <Text style={styles.sectionTitle}>Submit Your Post</Text>
                 <View style={styles.inputContainer}>
-                  <Ionicons name="link" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+                  <Ionicons name="link" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
                   <TextInput
                     style={styles.input}
                     placeholder={`Paste your ${selectedPlatform} post URL here`}
@@ -514,7 +514,7 @@ function SocialMediaPage() {
                       accessibilityRole="button"
                       accessibilityHint="Clears the entered post URL"
                     >
-                      <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+                      <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
                     </Pressable>
                   )}
                 </View>
@@ -566,7 +566,7 @@ function SocialMediaPage() {
                   <CardGridSkeleton />
                 ) : posts.length === 0 ? (
                   <View style={styles.emptyContainer}>
-                    <Ionicons name="document-text-outline" size={64} color={Colors.border.default} />
+                    <Ionicons name="document-text-outline" size={64} color={colors.border.default} />
                     <Text style={styles.emptyTitle}>No Submissions Yet</Text>
                     <Text style={styles.emptyText}>
                       Start earning by sharing your purchases on social media!
@@ -655,7 +655,7 @@ function SocialMediaPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -681,17 +681,17 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   infoButton: {
     padding: Spacing.sm,
   },
   tabsContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   tab: {
     flex: 1,
@@ -706,7 +706,7 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   activeTabText: {
     color: colors.brand.green,
@@ -746,7 +746,7 @@ const styles = StyleSheet.create({
   summaryAmount: {
     fontSize: 36,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.lg,
   },
   summaryStats: {
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statDivider: {
     width: 1,
@@ -780,7 +780,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   sectionHeader: {
@@ -791,7 +791,7 @@ const styles = StyleSheet.create({
   },
   cashbackBadge: {
     backgroundColor: Colors.success,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '700',
     paddingHorizontal: Spacing.md,
@@ -800,7 +800,7 @@ const styles = StyleSheet.create({
   },
   sectionDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.base,
     lineHeight: 20,
   },
@@ -809,24 +809,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: Spacing.lg,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
   },
   loadingText: {
     marginLeft: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   orderDropdown: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     overflow: 'hidden',
   },
   orderSelectButton: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   orderOption: {
     flexDirection: 'row',
@@ -854,7 +854,7 @@ const styles = StyleSheet.create({
   noOrdersContainer: {
     alignItems: 'center',
     padding: 40,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
   },
   noOrdersText: {
@@ -865,12 +865,12 @@ const styles = StyleSheet.create({
   },
   noOrdersSubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
     textAlign: 'center',
   },
   stepsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
   },
@@ -890,7 +890,7 @@ const styles = StyleSheet.create({
   stepNumberText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   stepContent: {
     flex: 1,
@@ -898,12 +898,12 @@ const styles = StyleSheet.create({
   stepTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   stepDescription: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18,
   },
   platformsContainer: {
@@ -914,13 +914,13 @@ const styles = StyleSheet.create({
   platformButton: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
     gap: Spacing.sm,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   platformButtonActive: {
     borderColor: colors.brand.green,
@@ -929,17 +929,17 @@ const styles = StyleSheet.create({
   platformName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginBottom: Spacing.base,
   },
   inputIcon: {
@@ -948,7 +948,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   submitButton: {
     flexDirection: 'row',
@@ -966,7 +966,7 @@ const styles = StyleSheet.create({
   submitButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   infoBox: {
     flexDirection: 'row',
@@ -978,7 +978,7 @@ const styles = StyleSheet.create({
   infoText: {
     flex: 1,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18,
   },
   statsGrid: {
@@ -990,7 +990,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
@@ -1003,7 +1003,7 @@ const styles = StyleSheet.create({
   },
   statCardLabel: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   historyLoadingContainer: {
@@ -1017,13 +1017,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
     paddingHorizontal: 40,
@@ -1037,13 +1037,13 @@ const styles = StyleSheet.create({
   emptyButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   postsContainer: {
     gap: Spacing.md,
   },
   postCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
   },
@@ -1061,7 +1061,7 @@ const styles = StyleSheet.create({
   postPlatformName: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   postStatus: {
     paddingHorizontal: 10,
@@ -1074,12 +1074,12 @@ const styles = StyleSheet.create({
   },
   postDate: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   postOrderNumber: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
   },
   postFooter: {
@@ -1088,7 +1088,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
   },
   postCashback: {
     flexDirection: 'row',

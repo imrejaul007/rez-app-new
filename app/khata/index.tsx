@@ -51,7 +51,7 @@ export default function ConsumerKhataScreen() {
 
   const renderItem = ({ item }: { item: KhataEntry }) => (
     <TouchableOpacity
-      style={[styles.card, { backgroundColor: Colors.background.primary, borderColor: Colors.border.default }]}
+      style={[styles.card, { backgroundColor: colors.background.primary, borderColor: colors.border.default }]}
       onPress={() => router.push(`/khata/${item.merchantId._id}`)}
     >
       <View style={styles.cardRow}>
@@ -59,10 +59,10 @@ export default function ConsumerKhataScreen() {
           <Ionicons name="storefront-outline" size={20} color={colors.brand.purpleLight} />
         </View>
         <View style={{ flex: 1, marginLeft: Spacing.md }}>
-          <Text style={[styles.merchantName, { color: Colors.text.primary }]}>
+          <Text style={[styles.merchantName, { color: colors.text.primary }]}>
             {item.merchantId.businessName}
           </Text>
-          <Text style={[styles.lastTx, { color: Colors.text.tertiary }]}>
+          <Text style={[styles.lastTx, { color: colors.text.tertiary }]}>
             Last updated {new Date(item.updatedAt).toLocaleDateString('en-IN')}
           </Text>
         </View>
@@ -70,7 +70,7 @@ export default function ConsumerKhataScreen() {
           <Text style={[styles.balance, { color: item.balance > 0 ? Colors.error : colors.successScale[500] }]}>
             {item.balance > 0 ? `₹${item.balance} owed` : item.balance < 0 ? `₹${Math.abs(item.balance)} credit` : '₹0 settled'}
           </Text>
-          <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
         </View>
       </View>
     </TouchableOpacity>
@@ -78,7 +78,7 @@ export default function ConsumerKhataScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: Colors.background.secondary }]}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background.secondary }]}>
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={colors.brand.purpleLight} />
         </View>
@@ -87,12 +87,12 @@ export default function ConsumerKhataScreen() {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: Colors.background.secondary }]}>
-      <View style={[styles.header, { backgroundColor: Colors.background.primary }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background.secondary }]}>
+      <View style={[styles.header, { backgroundColor: colors.background.primary }]}>
         <TouchableOpacity onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: Colors.text.primary }]}>My Credit (Khata)</Text>
+        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>My Credit (Khata)</Text>
         <View style={{ width: 24 }} />
       </View>
 
@@ -113,9 +113,9 @@ export default function ConsumerKhataScreen() {
         ListEmptyComponent={
           !loading ? (
             <View style={styles.empty}>
-              <Ionicons name="receipt-outline" size={48} color={Colors.text.tertiary} />
-              <Text style={[styles.emptyText, { color: Colors.text.secondary }]}>No credit records yet</Text>
-              <Text style={[styles.emptySub, { color: Colors.text.tertiary }]}>Your outstanding balances at stores will appear here</Text>
+              <Ionicons name="receipt-outline" size={48} color={colors.text.tertiary} />
+              <Text style={[styles.emptyText, { color: colors.text.secondary }]}>No credit records yet</Text>
+              <Text style={[styles.emptySub, { color: colors.text.tertiary }]}>Your outstanding balances at stores will appear here</Text>
             </View>
           ) : null
         }

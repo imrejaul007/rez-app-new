@@ -267,7 +267,7 @@ function UGCUploadScreen() {
                   colors={[colors.brand.purpleLight, colors.brand.purpleMedium]}
                   style={styles.mediaButtonGradient}
                 >
-                  <Ionicons name="images" size={32} color={Colors.text.inverse} />
+                  <Ionicons name="images" size={32} color={colors.text.inverse} />
                   <ThemedText style={styles.mediaButtonText}>Gallery</ThemedText>
                 </LinearGradient>
               </Pressable>
@@ -283,7 +283,7 @@ function UGCUploadScreen() {
                   colors={[colors.brand.purpleLight, colors.brand.purpleMedium]}
                   style={styles.mediaButtonGradient}
                 >
-                  <Ionicons name="camera" size={32} color={Colors.text.inverse} />
+                  <Ionicons name="camera" size={32} color={colors.text.inverse} />
                   <ThemedText style={styles.mediaButtonText}>Camera</ThemedText>
                 </LinearGradient>
               </Pressable>
@@ -382,7 +382,7 @@ function UGCUploadScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -390,9 +390,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     width: 40,
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   postButton: {
     paddingHorizontal: Spacing.base,
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.neutral[300],
   },
   postButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -424,14 +424,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginVertical: Spacing.sm,
     padding: Spacing.base,
   },
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   mediaButtons: {
@@ -449,7 +449,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   mediaButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -461,28 +461,28 @@ const styles = StyleSheet.create({
   previewImage: {
     width: '100%',
     height: 300,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   removeMediaButton: {
     position: 'absolute',
     top: 12,
     right: 12,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
   },
   captionInput: {
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 100,
     textAlignVertical: 'top',
   },
   charCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'right',
     marginTop: Spacing.sm,
   },
@@ -494,11 +494,11 @@ const styles = StyleSheet.create({
   tagInput: {
     flex: 1,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   addTagButton: {
     padding: Spacing.xs,
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
@@ -527,16 +527,16 @@ const styles = StyleSheet.create({
   },
   locationInput: {
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   userInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginVertical: Spacing.sm,
     padding: Spacing.base,
     gap: Spacing.md,
@@ -550,14 +550,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   userAvatarText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
   userName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 });
 

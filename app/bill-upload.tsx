@@ -950,7 +950,7 @@ function BillUploadPage() {
               style={styles.cameraCloseButton}
               onPress={() => setShowCamera(false)}
             >
-              <Ionicons name="close" size={32} color={Colors.text.inverse} />
+              <Ionicons name="close" size={32} color={colors.text.inverse} />
             </Pressable>
             <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
               <Ionicons name="cloud-upload-outline" size={40} color="#fff" />
@@ -993,7 +993,7 @@ function BillUploadPage() {
               style={styles.cameraCloseButton}
               onPress={() => setShowCamera(false)}
             >
-              <Ionicons name="close" size={32} color={Colors.text.inverse} />
+              <Ionicons name="close" size={32} color={colors.text.inverse} />
             </Pressable>
 
             {/* Guidelines */}
@@ -1018,7 +1018,7 @@ function BillUploadPage() {
                   );
                 }}
               >
-                <Ionicons name="camera-reverse" size={32} color={Colors.text.inverse} />
+                <Ionicons name="camera-reverse" size={32} color={colors.text.inverse} />
               </Pressable>
 
               {/* Capture button */}
@@ -1358,7 +1358,7 @@ function BillUploadPage() {
                         : 'warning'
                     }
                     size={16}
-                    color={Colors.text.inverse}
+                    color={colors.text.inverse}
                   />
                   <Text style={styles.qualityBadgeText}>
                     Quality: {qualityResult.score}/100
@@ -1373,7 +1373,7 @@ function BillUploadPage() {
                 <Ionicons name="close-circle" size={32} color="#FF4444" />
               </Pressable>
               <Pressable style={styles.retakeButton} onPress={openCamera}>
-                <Ionicons name="camera" size={16} color={Colors.text.inverse} />
+                <Ionicons name="camera" size={16} color={colors.text.inverse} />
                 <Text style={styles.retakeButtonText}>Retake</Text>
               </Pressable>
             </View>
@@ -1482,8 +1482,8 @@ function BillUploadPage() {
           )}
           {isAnalyzingBill && (
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, gap: 4 }}>
-              <ActivityIndicator size="small" color={Colors.nileBlue} />
-              <Text style={{ fontSize: 12, color: Colors.nileBlue }}>Detecting amount...</Text>
+              <ActivityIndicator size="small" color={colors.nileBlue} />
+              <Text style={{ fontSize: 12, color: colors.nileBlue }}>Detecting amount...</Text>
             </View>
           )}
           <View
@@ -1640,10 +1640,10 @@ function BillUploadPage() {
           disabled={!isFormValid() || billUploadHook.isUploading}
         >
           {billUploadHook.isUploading ? (
-            <ActivityIndicator color={Colors.text.inverse} />
+            <ActivityIndicator color={colors.text.inverse} />
           ) : (
             <>
-              <Ionicons name="cloud-upload" size={20} color={Colors.text.inverse} />
+              <Ionicons name="cloud-upload" size={20} color={colors.text.inverse} />
               <Text style={styles.submitButtonText}>Upload Bill</Text>
             </>
           )}
@@ -1682,7 +1682,7 @@ function BillUploadPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   scrollView: {
     flex: 1,
@@ -1692,9 +1692,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -1712,7 +1712,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   infoBanner: {
     flexDirection: 'row',
@@ -1738,7 +1738,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   required: {
@@ -1761,7 +1761,7 @@ const styles = StyleSheet.create({
   uploadOptionText: {
     marginTop: Spacing.sm,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   imagePreviewContainer: {
@@ -1780,7 +1780,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: Spacing.sm,
     right: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
   },
   retakeButton: {
@@ -1796,13 +1796,13 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   retakeButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
   helperText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
   },
   errorText: {
@@ -1814,11 +1814,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   selectedMerchantContainer: {
     flexDirection: 'row',
@@ -1828,20 +1828,20 @@ const styles = StyleSheet.create({
   },
   selectedMerchant: {
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   placeholderText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     paddingHorizontal: Spacing.md,
     gap: Spacing.sm,
   },
@@ -1852,26 +1852,26 @@ const styles = StyleSheet.create({
   currencyPrefix: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   input: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingVertical: 14,
   },
   textArea: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     padding: Spacing.md,
     minHeight: 100,
     textAlignVertical: 'top',
   },
   characterCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'right',
     marginTop: Spacing.xs,
   },
@@ -1908,7 +1908,7 @@ const styles = StyleSheet.create({
   },
   cashbackDisclaimer: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontStyle: 'italic',
     marginTop: Spacing.sm,
     paddingHorizontal: Spacing.base,
@@ -1952,7 +1952,7 @@ const styles = StyleSheet.create({
     }),
   },
   submitButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -1984,7 +1984,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
   },
   cameraGuidelinesText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
     marginBottom: Spacing.lg,
@@ -2009,11 +2009,11 @@ const styles = StyleSheet.create({
     width: 300,
     height: 200,
     borderWidth: 3,
-    borderColor: Colors.text.inverse,
+    borderColor: colors.text.inverse,
     borderRadius: BorderRadius.md,
   },
   cameraHelperText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     marginTop: Spacing.md,
     textAlign: 'center',
@@ -2051,7 +2051,7 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -2069,7 +2069,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
     maxHeight: '80%',
@@ -2080,16 +2080,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     margin: Spacing.base,
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -2098,7 +2098,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   merchantList: {
     flex: 1,
@@ -2108,7 +2108,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     gap: Spacing.md,
   },
   merchantItemSelected: {
@@ -2120,7 +2120,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   merchantLogoPlaceholder: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -2130,12 +2130,12 @@ const styles = StyleSheet.create({
   merchantName: {
     ...Typography.bodyLarge,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   merchantCategory: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   merchantCashback: {
@@ -2150,7 +2150,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     padding: 40,
@@ -2160,12 +2160,12 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptySubtext: {
     marginTop: Spacing.xs,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Progress modal
@@ -2176,7 +2176,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressModalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -2184,23 +2184,23 @@ const styles = StyleSheet.create({
   },
   progressModalTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
   },
   progressModalSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
   },
   progressModalSpeed: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   progressBar: {
     width: '100%',
     height: 4,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 2,
     marginTop: Spacing.base,
     overflow: 'hidden',
@@ -2229,7 +2229,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   infoModalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     maxWidth: 400,
@@ -2242,7 +2242,7 @@ const styles = StyleSheet.create({
   infoModalTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.md,
   },
   infoModalBody: {
@@ -2250,7 +2250,7 @@ const styles = StyleSheet.create({
   },
   infoModalText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 22,
     marginBottom: Spacing.md,
   },
@@ -2259,7 +2259,7 @@ const styles = StyleSheet.create({
   },
   infoModalBullet: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 24,
     paddingLeft: Spacing.sm,
   },
@@ -2273,7 +2273,7 @@ const styles = StyleSheet.create({
   infoModalCloseButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Offline banner
@@ -2354,7 +2354,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     marginTop: Spacing.sm,
     marginHorizontal: Spacing.base,
@@ -2362,11 +2362,11 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
     gap: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   cantFindMerchantText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
 
@@ -2394,7 +2394,7 @@ const styles = StyleSheet.create({
   qualityBadgeText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Quality warning container

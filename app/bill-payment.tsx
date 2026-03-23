@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 /**
  * Bill Payment Page
  * Pay utility bills with cashback - fully wired to backend APIs
@@ -572,7 +573,7 @@ function BillPaymentPage() {
           ) : billTypes.length === 0 ? (
             <View style={styles.emptyState}>
               <View style={styles.emptyIcon}>
-                <Ionicons name="receipt-outline" size={32} color={Colors.text.secondary} />
+                <Ionicons name="receipt-outline" size={32} color={colors.text.secondary} />
               </View>
               <Text style={styles.emptyTitle}>No Bill Types Available</Text>
               <Text style={styles.emptySubtitle}>Please check back later</Text>
@@ -598,7 +599,7 @@ function BillPaymentPage() {
                   <Ionicons
                     name={typeMeta?.icon as any || 'business-outline'}
                     size={28}
-                    color={Colors.text.secondary}
+                    color={colors.text.secondary}
                   />
                 </View>
                 <Text style={styles.emptyTitle}>No Providers Found</Text>
@@ -627,7 +628,7 @@ function BillPaymentPage() {
                   selectedProvider.requiredFields?.[0]?.placeholder ||
                   'Enter your consumer number'
                 }
-                placeholderTextColor={Colors.text.secondary}
+                placeholderTextColor={colors.text.secondary}
                 value={consumerNumber}
                 onChangeText={setConsumerNumber}
                 keyboardType={
@@ -645,7 +646,7 @@ function BillPaymentPage() {
                 disabled={!consumerNumber.trim() || loadingBill}
               >
                 {loadingBill ? (
-                  <ActivityIndicator size="small" color={Colors.background.primary} />
+                  <ActivityIndicator size="small" color={colors.background.primary} />
                 ) : (
                   <Text style={styles.fetchButtonText}>Fetch Bill</Text>
                 )}
@@ -712,7 +713,7 @@ function BillPaymentPage() {
               {/* CONS-016: Show pending promo coins in wallet */}
               {(walletData?.pendingRewards ?? 0) > 0 && (
                 <View style={styles.pendingCoinsRow}>
-                  <Ionicons name="time-outline" size={14} color={Colors.text.secondary} />
+                  <Ionicons name="time-outline" size={14} color={colors.text.secondary} />
                   <Text style={styles.pendingCoinsText}>
                     {walletData!.pendingRewards} coins arriving soon
                   </Text>
@@ -734,7 +735,7 @@ function BillPaymentPage() {
                       style={styles.coinAdjBtn}
                       onPress={() => setCoinsToRedeem(c => Math.max(0, c - 5))}
                     >
-                      <Ionicons name="remove" size={16} color={Colors.text.primary} />
+                      <Ionicons name="remove" size={16} color={colors.text.primary} />
                     </Pressable>
                     <TextInput
                       style={styles.coinInput}
@@ -757,7 +758,7 @@ function BillPaymentPage() {
                         setCoinsToRedeem(c => Math.min(c + 5, Math.min(promoCoinsAvailable, maxRedeemable)));
                       }}
                     >
-                      <Ionicons name="add" size={16} color={Colors.text.primary} />
+                      <Ionicons name="add" size={16} color={colors.text.primary} />
                     </Pressable>
                     <Pressable
                       style={styles.coinMaxBtn}
@@ -805,7 +806,7 @@ function BillPaymentPage() {
           {!loadingHistory && recentPayments.length === 0 && (
             <View style={styles.emptyState}>
               <View style={styles.emptyIcon}>
-                <Ionicons name="time-outline" size={32} color={Colors.text.secondary} />
+                <Ionicons name="time-outline" size={32} color={colors.text.secondary} />
               </View>
               <Text style={styles.emptyTitle}>No Payments Yet</Text>
               <Text style={styles.emptySubtitle}>
@@ -842,10 +843,10 @@ function BillPaymentPage() {
   if (error && !loadingTypes) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Bill Payments</Text>
           <View style={{ width: 32 }} />
@@ -857,12 +858,12 @@ function BillPaymentPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Bill Payments</Text>
         <View style={{ width: 32 }} />
@@ -898,13 +899,13 @@ function BillPaymentPage() {
             disabled={loadingPay}
           >
             {loadingPay ? (
-              <ActivityIndicator size="small" color={Colors.background.primary} />
+              <ActivityIndicator size="small" color={colors.background.primary} />
             ) : (
               <>
                 <Text style={styles.payButtonText}>
                   Pay {currencySymbol}{Math.max(0, (fetchedBill.amount ?? 0) - coinsToRedeem).toLocaleString()}
                 </Text>
-                <Ionicons name="arrow-forward" size={20} color={Colors.background.primary} />
+                <Ionicons name="arrow-forward" size={20} color={colors.background.primary} />
               </>
             )}
           </Pressable>
@@ -921,7 +922,7 @@ function BillPaymentPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -930,9 +931,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.xs,
@@ -940,7 +941,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   listContent: {
     paddingBottom: 120,
@@ -962,12 +963,12 @@ const styles = StyleSheet.create({
   bannerTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   bannerSubtitle: {
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   section: {
     marginBottom: Spacing.xl,
@@ -976,7 +977,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   billTypesGrid: {
@@ -989,7 +990,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 2,
     borderColor: 'transparent',
   },
@@ -1007,12 +1008,12 @@ const styles = StyleSheet.create({
   billTypeName: {
     fontSize: 11,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
   billTypeCount: {
     fontSize: 10,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: 2,
   },
   providersList: {
@@ -1021,7 +1022,7 @@ const styles = StyleSheet.create({
   providerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     gap: Spacing.md,
@@ -1047,7 +1048,7 @@ const styles = StyleSheet.create({
   providerName: {
     fontSize: 15,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   providerCashback: {
     fontSize: 12,
@@ -1060,14 +1061,14 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: 14,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   fetchButton: {
     backgroundColor: Colors.gold,
@@ -1078,17 +1079,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   fetchButtonDisabled: {
-    backgroundColor: Colors.text.secondary,
+    backgroundColor: colors.text.secondary,
   },
   fetchButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   billCard: {
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
   },
@@ -1101,7 +1102,7 @@ const styles = StyleSheet.create({
   billTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   billDetails: {
     gap: Spacing.md,
@@ -1113,17 +1114,17 @@ const styles = StyleSheet.create({
   },
   billLabel: {
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   billValue: {
     fontSize: 14,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   billAmount: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   billCashback: {
     fontSize: 14,
@@ -1132,13 +1133,13 @@ const styles = StyleSheet.create({
   },
   billDivider: {
     height: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     marginVertical: Spacing.sm,
   },
   billTotalLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   billTotal: {
     fontSize: 24,
@@ -1148,7 +1149,7 @@ const styles = StyleSheet.create({
   recentCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.sm,
@@ -1169,12 +1170,12 @@ const styles = StyleSheet.create({
   recentType: {
     fontSize: 15,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   recentProvider: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   recentAmount: {
     alignItems: 'flex-end',
@@ -1182,7 +1183,7 @@ const styles = StyleSheet.create({
   recentAmountText: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   recentStatus: {
@@ -1204,9 +1205,9 @@ const styles = StyleSheet.create({
   },
   bottomCta: {
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   payButton: {
     flexDirection: 'row',
@@ -1223,7 +1224,7 @@ const styles = StyleSheet.create({
   payButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   centeredLoader: {
     paddingVertical: Spacing.xl,
@@ -1237,7 +1238,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.md,
@@ -1245,12 +1246,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 4,
   },
   emptySubtitle: {
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   footerLoader: {
@@ -1260,7 +1261,7 @@ const styles = StyleSheet.create({
   // CONS-005: Provider coin cap label
   providerCoinCap: {
     fontSize: 11,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: 1,
   },
   // CONS-003: Promo coin earn row with expiry
@@ -1298,7 +1299,7 @@ const styles = StyleSheet.create({
   },
   pendingCoinsText: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontStyle: 'italic',
   },
   // CONS-005 + CONS-017: Coin redemption section
@@ -1312,7 +1313,7 @@ const styles = StyleSheet.create({
   },
   coinCapText: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   coinInputRow: {
     flexDirection: 'row',
@@ -1323,23 +1324,23 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   coinInput: {
     flex: 1,
     textAlign: 'center',
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
-    backgroundColor: Colors.background.primary,
+    color: colors.text.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.sm,
     paddingVertical: Spacing.xs,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   coinMaxBtn: {
     backgroundColor: Colors.gold,
@@ -1350,11 +1351,11 @@ const styles = StyleSheet.create({
   coinMaxBtnText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
   coinBalanceText: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   // CONS-018: Payment polling banner
   pollingBanner: {
@@ -1365,11 +1366,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 205, 87, 0.1)',
     padding: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   pollingText: {
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontStyle: 'italic',
   },
 });

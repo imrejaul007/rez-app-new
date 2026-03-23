@@ -484,7 +484,7 @@ const ExploreMapPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -493,26 +493,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   searchButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
     gap: 6,
   },
@@ -539,11 +539,11 @@ const styles = StyleSheet.create({
   },
   categoryLabel: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   categoryLabelActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Map Container
@@ -568,7 +568,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: '35%',
     height: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     opacity: 0.8,
   },
   roadHorizontal2: {
@@ -577,7 +577,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: '70%',
     height: 6,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     opacity: 0.6,
   },
   roadVertical1: {
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: '30%',
     width: 6,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     opacity: 0.7,
   },
   roadVertical2: {
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: '65%',
     width: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     opacity: 0.8,
   },
   roadDiagonal: {
@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
     left: '50%',
     width: 100,
     height: 5,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     opacity: 0.5,
     transform: [{ rotate: '45deg' }],
   },
@@ -707,13 +707,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: Colors.background.primary,
+    borderColor: colors.background.primary,
     ...Shadows.medium,
   },
   markerInitial: {
     ...Typography.body,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   markerTail: {
     width: 0,

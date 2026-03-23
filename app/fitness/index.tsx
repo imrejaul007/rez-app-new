@@ -177,14 +177,14 @@ const FitnessPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Fitness & Sports</Text>
             <Text style={styles.headerSubtitle}>Stay fit, earn rewards</Text>
           </View>
           <Pressable style={styles.searchButton}>
-            <Ionicons name="search" size={24} color={Colors.text.inverse} />
+            <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
@@ -276,7 +276,7 @@ const FitnessPage: React.FC = () => {
             </ScrollView>
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="fitness-outline" size={48} color={Colors.border.default} />
+              <Ionicons name="fitness-outline" size={48} color={colors.border.default} />
               <Text style={styles.emptyStateText}>No featured gyms yet</Text>
             </View>
           )}
@@ -308,49 +308,49 @@ const FitnessPage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.primary },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background.primary },
-  loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: Colors.text.tertiary },
+  container: { flex: 1, backgroundColor: colors.background.primary },
+  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.primary },
+  loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: colors.text.tertiary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: Spacing.lg },
   headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: Spacing.base },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
-  headerTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.8)' },
   searchButton: { padding: Spacing.sm },
   statsRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: Spacing.base },
   statItem: { alignItems: 'center', paddingHorizontal: Spacing.lg },
-  statValue: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  statValue: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.inverse },
   statLabel: { fontSize: Typography.caption.fontSize, color: 'rgba(255,255,255,0.8)' },
   statDivider: { width: 1, height: 30, backgroundColor: 'rgba(255,255,255,0.3)' },
   section: { padding: Spacing.base },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md },
-  sectionTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.nileBlue, marginBottom: Spacing.md },
+  sectionTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.md },
   viewAllText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.brand.orange },
   categoriesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
-  categoryCard: { flexBasis: '30%', flexGrow: 1, flexShrink: 1, alignItems: 'center', padding: Spacing.md, backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.lg },
+  categoryCard: { flexBasis: '30%', flexGrow: 1, flexShrink: 1, alignItems: 'center', padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.lg },
   categoryIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
   categoryEmoji: { fontSize: Typography.h2.fontSize },
-  categoryTitle: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: Colors.nileBlue, marginBottom: 2, textAlign: 'center' },
-  categoryCount: { fontSize: Typography.overline.fontSize, color: Colors.text.tertiary },
-  gymCard: { width: 200, marginRight: Spacing.md, borderRadius: BorderRadius.lg, overflow: 'hidden', backgroundColor: Colors.background.primary, borderWidth: 1, borderColor: Colors.border.default },
+  categoryTitle: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textAlign: 'center' },
+  categoryCount: { fontSize: Typography.overline.fontSize, color: colors.text.tertiary },
+  gymCard: { width: 200, marginRight: Spacing.md, borderRadius: BorderRadius.lg, overflow: 'hidden', backgroundColor: colors.background.primary, borderWidth: 1, borderColor: colors.border.default },
   gymImage: { width: '100%', height: 120 },
   cashbackBadge: { position: 'absolute', top: 8, right: 8, backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
-  cashbackText: { fontSize: Typography.caption.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  cashbackText: { fontSize: Typography.caption.fontSize, fontWeight: '700', color: colors.text.inverse },
   gymInfo: { padding: Spacing.md },
-  gymName: { fontSize: Typography.body.fontSize, fontWeight: '700', color: Colors.nileBlue, marginBottom: Spacing.xs },
+  gymName: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.xs },
   gymMeta: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   ratingContainer: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  ratingText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: Colors.nileBlue },
-  distanceText: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary, maxWidth: 80 },
+  ratingText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: colors.nileBlue },
+  distanceText: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, maxWidth: 80 },
   emptyState: { alignItems: 'center', justifyContent: 'center', padding: Spacing['2xl'] },
-  emptyStateText: { marginTop: Spacing.sm, fontSize: Typography.body.fontSize, color: Colors.text.tertiary },
+  emptyStateText: { marginTop: Spacing.sm, fontSize: Typography.body.fontSize, color: colors.text.tertiary },
   promoBanner: { marginHorizontal: Spacing.base },
   promoGradient: { padding: Spacing.xl, borderRadius: BorderRadius.lg, alignItems: 'center' },
   promoEmoji: { fontSize: 40, marginBottom: Spacing.md },
-  promoTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.text.inverse, marginBottom: Spacing.xs },
+  promoTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.text.inverse, marginBottom: Spacing.xs },
   promoSubtitle: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: Spacing.base },
-  promoButton: { backgroundColor: Colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius['2xl'] },
+  promoButton: { backgroundColor: colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius['2xl'] },
   promoButtonText: { fontSize: Typography.body.fontSize, fontWeight: '700', color: Colors.success },
 });
 

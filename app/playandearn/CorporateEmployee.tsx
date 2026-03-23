@@ -210,12 +210,12 @@ const CorporateEmployee = () => {
       case 'Hard':
         return { color: Colors.error, bg: 'rgba(239, 68, 68, 0.1)', border: 'rgba(239, 68, 68, 0.3)' };
       default:
-        return { color: Colors.text.tertiary, bg: 'rgba(107, 114, 128, 0.1)', border: 'rgba(107, 114, 128, 0.3)' };
+        return { color: colors.text.tertiary, bg: 'rgba(107, 114, 128, 0.1)', border: 'rgba(107, 114, 128, 0.3)' };
     }
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? colors.text.primary : Colors.background.primary }]}>
+    <View style={[styles.container, { backgroundColor: isDark ? colors.text.primary : colors.background.primary }]}>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -225,11 +225,11 @@ const CorporateEmployee = () => {
         <View style={[styles.header, { backgroundColor: isDark ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)' }]}>
           <View style={styles.headerContent}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={isDark ? Colors.text.inverse : Colors.text.primary} />
+              <Ionicons name="arrow-back" size={24} color={isDark ? colors.text.inverse : colors.text.primary} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
-              <Text style={[styles.headerTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Corporate Hub</Text>
-              <Text style={[styles.headerSubtitle, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Employee challenges & rewards</Text>
+              <Text style={[styles.headerTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Corporate Hub</Text>
+              <Text style={[styles.headerSubtitle, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Employee challenges & rewards</Text>
             </View>
             <View style={styles.coinBadge}>
               <Ionicons name="cash" size={16} color={Colors.success} />
@@ -245,37 +245,37 @@ const CorporateEmployee = () => {
             style={[styles.heroCard, { borderColor: isDark ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.3)' }]}
           >
             <View style={styles.statsGrid}>
-              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.primary }]}>
+              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.primary }]}>
                 <View style={styles.statHeader}>
                   <Ionicons name="checkmark-circle" size={16} color={Colors.info} />
-                  <Text style={[styles.statLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Completed</Text>
+                  <Text style={[styles.statLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Completed</Text>
                 </View>
-                <Text style={[styles.statValue, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{myStats.challengesCompleted}</Text>
+                <Text style={[styles.statValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{myStats.challengesCompleted}</Text>
               </View>
-              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.primary }]}>
+              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.primary }]}>
                 <View style={styles.statHeader}>
                   <Ionicons name="trophy" size={16} color={Colors.warning} />
-                  <Text style={[styles.statLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Rank</Text>
+                  <Text style={[styles.statLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Rank</Text>
                 </View>
-                <Text style={[styles.statValue, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>#{myStats.individualRank}</Text>
+                <Text style={[styles.statValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>#{myStats.individualRank}</Text>
               </View>
-              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.primary }]}>
+              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.primary }]}>
                 <View style={styles.statHeader}>
                   <Ionicons name="people" size={16} color={colors.brand.purpleMedium} />
-                  <Text style={[styles.statLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Referrals</Text>
+                  <Text style={[styles.statLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Referrals</Text>
                 </View>
-                <Text style={[styles.statValue, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{myStats.referrals}</Text>
+                <Text style={[styles.statValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{myStats.referrals}</Text>
               </View>
-              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.primary }]}>
+              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.primary }]}>
                 <View style={styles.statHeader}>
                   <Ionicons name="cash" size={16} color={Colors.success} />
-                  <Text style={[styles.statLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>This Month</Text>
+                  <Text style={[styles.statLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>This Month</Text>
                 </View>
-                <Text style={[styles.statValue, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>+{myStats.thisMonthEarned}</Text>
+                <Text style={[styles.statValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>+{myStats.thisMonthEarned}</Text>
               </View>
             </View>
             <View style={[styles.teamRankCard, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.2)', borderColor: isDark ? 'rgba(59, 130, 246, 0.3)' : 'rgba(59, 130, 246, 0.3)' }]}>
-              <Text style={[styles.teamRankLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Your Team Rank</Text>
+              <Text style={[styles.teamRankLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Your Team Rank</Text>
               <Text style={[styles.teamRankValue, { color: Colors.info }]}>#{myStats.teamRank} - HR Team</Text>
             </View>
           </LinearGradient>
@@ -289,11 +289,11 @@ const CorporateEmployee = () => {
               onPress={() => setActiveTab(tab.id)}
               style={[
                 styles.tab,
-                { backgroundColor: activeTab === tab.id ? Colors.info : isDark ? 'rgba(255,255,255,0.1)' : Colors.background.secondary }
+                { backgroundColor: activeTab === tab.id ? Colors.info : isDark ? 'rgba(255,255,255,0.1)' : colors.background.secondary }
               ]}
             >
-              {tab.icon && <Ionicons name={tab.icon as any} size={16} color={activeTab === tab.id ? Colors.text.inverse : (isDark ? Colors.text.tertiary : Colors.text.tertiary)} />}
-              <Text style={[styles.tabText, { color: activeTab === tab.id ? Colors.text.inverse : (isDark ? Colors.text.tertiary : Colors.text.tertiary) }]}>
+              {tab.icon && <Ionicons name={tab.icon as any} size={16} color={activeTab === tab.id ? colors.text.inverse : (isDark ? colors.text.tertiary : colors.text.tertiary)} />}
+              <Text style={[styles.tabText, { color: activeTab === tab.id ? colors.text.inverse : (isDark ? colors.text.tertiary : colors.text.tertiary) }]}>
                 {tab.label} {tab.count !== undefined && `(${tab.count})`}
               </Text>
             </Pressable>
@@ -306,7 +306,7 @@ const CorporateEmployee = () => {
             {employeeChallenges.map((challenge) => {
               const difficultyStyle = getDifficultyStyle(challenge.difficulty);
               return (
-                <View key={challenge.id} style={[styles.challengeCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+                <View key={challenge.id} style={[styles.challengeCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
                   <View style={styles.challengeHeader}>
                     <View style={[styles.challengeIconContainer, { backgroundColor: 'rgba(59, 130, 246, 0.2)' }]}>
                       <Ionicons name={challenge.icon as any} size={28} color={Colors.info} />
@@ -316,9 +316,9 @@ const CorporateEmployee = () => {
                         <View style={[styles.badge, { backgroundColor: difficultyStyle.bg, borderColor: difficultyStyle.border }]}>
                           <Text style={[styles.badgeText, { color: difficultyStyle.color }]}>{challenge.difficulty}</Text>
                         </View>
-                        <View style={[styles.badge, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.background.secondary }]}>
-                          <Ionicons name="time" size={12} color={isDark ? Colors.text.tertiary : Colors.text.tertiary} />
-                          <Text style={[styles.badgeText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{challenge.deadline}</Text>
+                        <View style={[styles.badge, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.background.secondary }]}>
+                          <Ionicons name="time" size={12} color={isDark ? colors.text.tertiary : colors.text.tertiary} />
+                          <Text style={[styles.badgeText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{challenge.deadline}</Text>
                         </View>
                         {challenge.featured && (
                           <View style={[styles.badge, { backgroundColor: 'rgba(245, 158, 11, 0.2)' }]}>
@@ -327,8 +327,8 @@ const CorporateEmployee = () => {
                           </View>
                         )}
                       </View>
-                      <Text style={[styles.challengeTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{challenge.title}</Text>
-                      <Text style={[styles.challengeDescription, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{challenge.description}</Text>
+                      <Text style={[styles.challengeTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{challenge.title}</Text>
+                      <Text style={[styles.challengeDescription, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{challenge.description}</Text>
                     </View>
                   </View>
 
@@ -340,7 +340,7 @@ const CorporateEmployee = () => {
                           {challenge.progress}/{challenge.total}
                         </Text>
                       </View>
-                      <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+                      <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
                         <LinearGradient
                           colors={[Colors.info, colors.brand.purpleMedium]}
                           start={{ x: 0, y: 0 }}
@@ -352,12 +352,12 @@ const CorporateEmployee = () => {
                   )}
 
                   {challenge.requirements && (
-                    <View style={[styles.requirementsContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.secondary }]}>
-                      <Text style={[styles.requirementsTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Requirements:</Text>
+                    <View style={[styles.requirementsContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.secondary }]}>
+                      <Text style={[styles.requirementsTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Requirements:</Text>
                       {challenge.requirements.map((req, idx) => (
                         <View key={idx} style={styles.requirementItem}>
                           <View style={[styles.requirementDot, { backgroundColor: Colors.info }]} />
-                          <Text style={[styles.requirementText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{req}</Text>
+                          <Text style={[styles.requirementText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{req}</Text>
                         </View>
                       ))}
                     </View>
@@ -372,8 +372,8 @@ const CorporateEmployee = () => {
 
                   {challenge.participants && (
                     <View style={styles.participantsContainer}>
-                      <Ionicons name="people" size={16} color={isDark ? Colors.text.tertiary : Colors.text.tertiary} />
-                      <Text style={[styles.participantsText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>
+                      <Ionicons name="people" size={16} color={isDark ? colors.text.tertiary : colors.text.tertiary} />
+                      <Text style={[styles.participantsText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
                         {challenge.participants} team members participating
                       </Text>
                     </View>
@@ -410,17 +410,17 @@ const CorporateEmployee = () => {
         {activeTab === 'company-perks' && (
           <View style={styles.content}>
             {companyPerks.map((company, idx) => (
-              <View key={idx} style={[styles.companyCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+              <View key={idx} style={[styles.companyCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
                 <LinearGradient
                   colors={company.bgColor}
                   style={[styles.companyHeader, { borderColor: company.borderColor }]}
                 >
                   <View style={styles.companyHeaderContent}>
-                    <View style={[styles.companyLogoContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.9)' : Colors.background.primary }]}>
+                    <View style={[styles.companyLogoContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.9)' : colors.background.primary }]}>
                       <Text style={styles.companyLogo}>{company.logo}</Text>
                     </View>
                     <View style={styles.companyInfo}>
-                      <Text style={[styles.companyName, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{company.company}</Text>
+                      <Text style={[styles.companyName, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{company.company}</Text>
                       {company.enrolled && (
                         <View style={styles.enrolledBadge}>
                           <Ionicons name="checkmark-circle" size={12} color={Colors.success} />
@@ -438,13 +438,13 @@ const CorporateEmployee = () => {
 
                 <View style={styles.perksList}>
                   {company.perks.map((perk, perkIdx) => (
-                    <View key={perkIdx} style={[styles.perkItem, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.secondary }]}>
+                    <View key={perkIdx} style={[styles.perkItem, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.secondary }]}>
                       <View style={[styles.perkIconContainer, { backgroundColor: 'rgba(59, 130, 246, 0.2)' }]}>
                         <Ionicons name={perk.icon as any} size={20} color={Colors.info} />
                       </View>
                       <View style={styles.perkInfo}>
-                        <Text style={[styles.perkType, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{perk.type}</Text>
-                        <Text style={[styles.perkValue, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{perk.value}</Text>
+                        <Text style={[styles.perkType, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{perk.type}</Text>
+                        <Text style={[styles.perkValue, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{perk.value}</Text>
                       </View>
                     </View>
                   ))}
@@ -454,8 +454,8 @@ const CorporateEmployee = () => {
 
             <View style={[styles.ctaCard, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.1)' : Colors.infoScale[50], borderColor: isDark ? 'rgba(59, 130, 246, 0.3)' : colors.infoScale[200] }]}>
               <Ionicons name="business" size={48} color={Colors.info} style={styles.ctaIcon} />
-              <Text style={[styles.ctaTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Don't see your company?</Text>
-              <Text style={[styles.ctaText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>
+              <Text style={[styles.ctaTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Don't see your company?</Text>
+              <Text style={[styles.ctaText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>
                 Request your HR to partner with ${BRAND.APP_NAME} for exclusive employee perks
               </Text>
               <Pressable style={styles.ctaButton}>
@@ -476,20 +476,20 @@ const CorporateEmployee = () => {
                 style={[
                   styles.leaderboardCard,
                   team.highlight && { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : Colors.successScale[50], borderColor: Colors.success, borderWidth: 2 },
-                  !team.highlight && { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }
+                  !team.highlight && { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }
                 ]}
               >
-                <Text style={[styles.rankText, { color: Colors.text.tertiary }]}>#{team.rank}</Text>
+                <Text style={[styles.rankText, { color: colors.text.tertiary }]}>#{team.rank}</Text>
                 <View style={styles.leaderboardInfo}>
-                  <Text style={[styles.teamName, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{team.name}</Text>
+                  <Text style={[styles.teamName, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{team.name}</Text>
                   <View style={styles.teamStats}>
                     <View style={styles.teamStat}>
-                      <Ionicons name="people" size={14} color={isDark ? Colors.text.tertiary : Colors.text.tertiary} />
-                      <Text style={[styles.teamStatText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{team.members} members</Text>
+                      <Ionicons name="people" size={14} color={isDark ? colors.text.tertiary : colors.text.tertiary} />
+                      <Text style={[styles.teamStatText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{team.members} members</Text>
                     </View>
                     <View style={styles.teamStat}>
-                      <Ionicons name="trending-up" size={14} color={isDark ? Colors.text.tertiary : Colors.text.tertiary} />
-                      <Text style={[styles.teamStatText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{team.avgPerPerson} avg/person</Text>
+                      <Ionicons name="trending-up" size={14} color={isDark ? colors.text.tertiary : colors.text.tertiary} />
+                      <Text style={[styles.teamStatText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{team.avgPerPerson} avg/person</Text>
                     </View>
                   </View>
                   <View style={styles.teamCoins}>
@@ -511,13 +511,13 @@ const CorporateEmployee = () => {
                 style={[
                   styles.leaderboardCard,
                   person.highlight && { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : Colors.successScale[50], borderColor: Colors.success, borderWidth: 2 },
-                  !person.highlight && { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }
+                  !person.highlight && { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }
                 ]}
               >
-                <Text style={[styles.rankText, { color: Colors.text.tertiary }]}>#{person.rank}</Text>
+                <Text style={[styles.rankText, { color: colors.text.tertiary }]}>#{person.rank}</Text>
                 <View style={styles.leaderboardInfo}>
-                  <Text style={[styles.personName, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{person.name}</Text>
-                  <Text style={[styles.personTeam, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{person.team}</Text>
+                  <Text style={[styles.personName, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{person.name}</Text>
+                  <Text style={[styles.personTeam, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{person.team}</Text>
                 </View>
                 <View style={styles.personCoins}>
                   <Ionicons name="cash" size={16} color={Colors.success} />
@@ -802,7 +802,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   startButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -859,7 +859,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.info,
   },
   enrollButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
   },
@@ -919,7 +919,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   ctaButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },

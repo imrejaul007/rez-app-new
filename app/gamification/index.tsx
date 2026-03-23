@@ -420,7 +420,7 @@ function AchievementCard({ achievement }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   contentContainer: {
     paddingBottom: 100,
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.h1,
     fontWeight: 'bold',
-    color: Colors.background.primary,
+    color: colors.background.primary,
     marginBottom: Spacing.xs,
     letterSpacing: 0.5,
   },
@@ -471,11 +471,11 @@ const styles = StyleSheet.create({
   coinsText: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
   streakContainer: {
     padding: Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginTop: Spacing.sm,
   },
   sectionHeader: {
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   streakRow: {
     flexDirection: 'row',
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   streakCount: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: Colors.background.primary,
+    color: colors.background.primary,
     marginBottom: Spacing.xs,
   },
   streakLabel: {
@@ -539,12 +539,12 @@ const styles = StyleSheet.create({
   },
   streakBadgeText: {
     fontSize: 11,
-    color: Colors.background.primary,
+    color: colors.background.primary,
     fontWeight: 'bold',
   },
   tabs: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.xs,
     ...Shadows.subtle,
@@ -561,7 +561,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   activeTabText: {
@@ -572,7 +572,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   challengeCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base,
@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
   },
   challengeDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   progressContainer: {
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
   progressBar: {
     flex: 1,
     height: 8,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -617,7 +617,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: Spacing.sm,
     minWidth: 50,
     textAlign: 'right',
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
   },
   rewardText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   claimButton: {
     backgroundColor: colors.brand.purpleLight,
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   claimButtonText: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
     fontWeight: 'bold',
   },
   claimedText: {
@@ -651,7 +651,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   achievementCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.lg,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base,
@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
   },
   achievementDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   unlockedBadge: {
@@ -688,14 +688,14 @@ const styles = StyleSheet.create({
   tierBadge: {
     fontSize: 11,
     fontWeight: 'bold',
-    color: Colors.background.primary,
+    color: colors.background.primary,
     backgroundColor: colors.brand.purpleLight,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.sm,
   },
   leaderboardCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.xl,
     borderRadius: BorderRadius.lg,
     flexDirection: 'row',
@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
   },
   quickAccess: {
     padding: Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginTop: Spacing.sm,
     marginBottom: Spacing.base,
   },
@@ -748,11 +748,11 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontWeight: 'bold',
     textAlign: 'center',
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
   emptyText: {
     textAlign: 'center',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     padding: Spacing['2xl'],
   },
   viewAllButton: {
@@ -768,7 +768,7 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   viewAllText: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
     fontWeight: 'bold',
     ...Typography.bodyLarge,
   },

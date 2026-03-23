@@ -254,7 +254,7 @@ function PillarsScreen() {
       case 'down':
         return { icon: '↓', color: Colors.error, label: 'Declining' };
       default:
-        return { icon: '→', color: Colors.text.tertiary, label: 'Stable' };
+        return { icon: '→', color: colors.text.tertiary, label: 'Stable' };
     }
   };
 

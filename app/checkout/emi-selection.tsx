@@ -313,7 +313,7 @@ function EMISelectionPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   banksGrid: {
     flexDirection: 'row',
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   },
   bankCard: {
     width: '31%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
   },
   bankName: {
     ...Typography.caption,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
   noCostIndicator: {
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
   },
   tenureCard: {
     width: '31%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   },
   tenureMonths: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   tenureMonthsSelected: {
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   },
   tenureEMI: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   tenureEMISelected: {
     color: Colors.primary[600],
@@ -471,11 +471,11 @@ const styles = StyleSheet.create({
   },
   tenureInterest: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   summaryCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.lg,
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   },
   summaryTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.lg,
   },
   summaryRow: {
@@ -492,15 +492,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   summaryLabel: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   summaryValue: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   summaryValueHighlight: {
     ...Typography.h4,
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
   },
   summaryTotalLabel: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   summaryTotalValue: {
     ...Typography.h3,
@@ -530,7 +530,7 @@ const styles = StyleSheet.create({
   },
   termsText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
     lineHeight: 18,
   },
@@ -538,26 +538,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     paddingBottom: Platform.OS === 'ios' ? Spacing.xl : Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
   },
   footerInfo: {
     flex: 1,
   },
   footerLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   footerValue: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   footerHint: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   continueButton: {
     flexDirection: 'row',

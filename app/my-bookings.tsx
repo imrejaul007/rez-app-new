@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // My Bookings Page
 // Shows user's service bookings with travel-specific enhancements
@@ -168,14 +169,14 @@ const MyBookingsPage = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return Colors.nileBlue;
+      case 'confirmed': return colors.nileBlue;
       case 'pending': return Colors.warning;
       case 'completed': return Colors.info;
       case 'cancelled':
       case 'no_show': return Colors.error;
       case 'assigned':
       case 'in_progress': return Colors.brand.purple;
-      default: return Colors.text.tertiary;
+      default: return colors.text.tertiary;
     }
   };
 
@@ -229,7 +230,7 @@ const MyBookingsPage = () => {
         <View style={styles.cardHeader}>
           <View style={styles.travelHeaderLeft}>
             <View style={[styles.categoryIcon, { backgroundColor: '#F0F9FF' }]}>
-              <Ionicons name={categoryIcon as any} size={20} color={Colors.nileBlue} />
+              <Ionicons name={categoryIcon as any} size={20} color={colors.nileBlue} />
             </View>
             <View style={styles.serviceInfo}>
               <Text style={styles.serviceName} numberOfLines={1}>
@@ -259,18 +260,18 @@ const MyBookingsPage = () => {
         {/* Booking Details */}
         <View style={styles.bookingDetails}>
           <View style={styles.detailRow}>
-            <Ionicons name="calendar-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
             <Text style={styles.detailText}>{formatDate(item.bookingDate)}</Text>
           </View>
           {item.travelDetails?.class && (
             <View style={styles.detailRow}>
-              <Ionicons name="star-outline" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="star-outline" size={16} color={colors.text.tertiary} />
               <Text style={styles.detailText}>{item.travelDetails.class}</Text>
             </View>
           )}
           {item.travelDetails?.passengers && (
             <View style={styles.detailRow}>
-              <Ionicons name="people-outline" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="people-outline" size={16} color={colors.text.tertiary} />
               <Text style={styles.detailText}>
                 {item.travelDetails.passengers.adults} Adult{item.travelDetails.passengers.adults !== 1 ? 's' : ''}
                 {(item.travelDetails.passengers.children || 0) > 0 ? `, ${item.travelDetails.passengers.children} Child` : ''}
@@ -279,7 +280,7 @@ const MyBookingsPage = () => {
           )}
           {item.pnr && (
             <View style={styles.detailRow}>
-              <Ionicons name="document-text-outline" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="document-text-outline" size={16} color={colors.text.tertiary} />
               <Text style={styles.detailText}>PNR: {item.pnr}</Text>
             </View>
           )}
@@ -361,18 +362,18 @@ const MyBookingsPage = () => {
         {/* Booking Details */}
         <View style={styles.bookingDetails}>
           <View style={styles.detailRow}>
-            <Ionicons name="calendar-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
             <Text style={styles.detailText}>{formatDate(item.bookingDate)}</Text>
           </View>
           <View style={styles.detailRow}>
-            <Ionicons name="time-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
             <Text style={styles.detailText}>
               {formatTime(item.timeSlot?.start)} - {formatTime(item.timeSlot?.end)}
             </Text>
           </View>
           {item.duration > 0 && (
             <View style={styles.detailRow}>
-              <Ionicons name="hourglass-outline" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="hourglass-outline" size={16} color={colors.text.tertiary} />
               <Text style={styles.detailText}>{item.duration} minutes</Text>
             </View>
           )}
@@ -395,7 +396,7 @@ const MyBookingsPage = () => {
                   router.push(`/booking/reschedule/${item._id}` as any);
                 }}
               >
-                <Ionicons name="calendar-outline" size={14} color={Colors.nileBlue} />
+                <Ionicons name="calendar-outline" size={14} color={colors.nileBlue} />
                 <Text style={styles.rescheduleButtonText}>Reschedule</Text>
               </Pressable>
             )}
@@ -433,7 +434,7 @@ const MyBookingsPage = () => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="calendar-outline" size={80} color={Colors.border.default} />
+      <Ionicons name="calendar-outline" size={80} color={colors.border.default} />
       <Text style={styles.emptyTitle}>
         {activeTab === 'upcoming' ? 'No Upcoming Bookings' : activeTab === 'courses' ? 'No Courses' : 'No Past Bookings'}
       </Text>
@@ -449,7 +450,7 @@ const MyBookingsPage = () => {
           style={styles.browseButton}
           onPress={() => router.push('/(tabs)' as any)}
         >
-          <Ionicons name={activeTab === 'courses' ? 'book-outline' : 'search'} size={20} color={Colors.text.inverse} />
+          <Ionicons name={activeTab === 'courses' ? 'book-outline' : 'search'} size={20} color={colors.text.inverse} />
           <Text style={styles.browseButtonText}>{activeTab === 'courses' ? 'Explore Courses' : 'Browse Services'}</Text>
         </Pressable>
       )}
@@ -466,13 +467,13 @@ const MyBookingsPage = () => {
 
   return (
     <Animated.View style={[styles.container, fadeAnimStyle]}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.nileBlue, '#0f2a3d']} style={styles.header}>
+      <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>My Bookings</Text>
           <View style={styles.headerRight} />
@@ -525,8 +526,8 @@ const MyBookingsPage = () => {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor={Colors.nileBlue}
-            colors={[Colors.nileBlue]}
+            tintColor={colors.nileBlue}
+            colors={[colors.nileBlue]}
           />
         }
         ListEmptyComponent={renderEmptyState}
@@ -540,7 +541,7 @@ const MyBookingsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -564,7 +565,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerRight: {
     width: 40,
@@ -582,7 +583,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   activeTab: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   tabText: {
     ...Typography.body,
@@ -590,14 +591,14 @@ const styles = StyleSheet.create({
     color: 'rgba(255, 255, 255, 0.8)',
   },
   activeTabText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   listContainer: {
     padding: Spacing.base,
     paddingBottom: 100,
   },
   bookingCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -630,12 +631,12 @@ const styles = StyleSheet.create({
   serviceName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   storeName: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   routeBadge: {
     flexDirection: 'row',
@@ -650,7 +651,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   statusBadge: {
     flexDirection: 'row',
@@ -670,7 +671,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   bookingDetails: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginBottom: Spacing.md,
@@ -684,7 +685,7 @@ const styles = StyleSheet.create({
   detailText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
   },
   cardFooter: {
@@ -693,7 +694,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   footerLeft: {
     flexDirection: 'row',
@@ -707,12 +708,12 @@ const styles = StyleSheet.create({
   },
   priceLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   priceValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   footerActions: {
     flexDirection: 'row',
@@ -728,12 +729,12 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
-    borderColor: Colors.nileBlue,
+    borderColor: colors.nileBlue,
   },
   rescheduleButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   cancelButton: {
     backgroundColor: Colors.errorScale[50],
@@ -752,17 +753,17 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     gap: Spacing.xs,
   },
   bookingNumberLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   bookingNumber: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -772,7 +773,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     flex: 1,
@@ -784,14 +785,14 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
     lineHeight: 20,
@@ -800,7 +801,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -808,7 +809,7 @@ const styles = StyleSheet.create({
   browseButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   errorBanner: {
     flexDirection: 'row',

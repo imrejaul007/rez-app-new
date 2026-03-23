@@ -146,7 +146,7 @@ const HomeServicesCategoryPage: React.FC = () => {
     <View style={styles.container}>
       <LinearGradient colors={gradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}><Ionicons name="arrow-back" size={24} color={Colors.text.inverse} /></Pressable>
+          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}><Ionicons name="arrow-back" size={24} color={colors.text.inverse} /></Pressable>
           <View style={styles.headerTitleContainer}>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               {isIconUrl ? (
@@ -158,7 +158,7 @@ const HomeServicesCategoryPage: React.FC = () => {
             </View>
             <Text style={styles.headerSubtitle}>{services.length} services</Text>
           </View>
-          <Pressable style={styles.searchButton}><Ionicons name="search" size={24} color={Colors.text.inverse} /></Pressable>
+          <Pressable style={styles.searchButton}><Ionicons name="search" size={24} color={colors.text.inverse} /></Pressable>
         </View>
       </LinearGradient>
 
@@ -195,14 +195,14 @@ const HomeServicesCategoryPage: React.FC = () => {
                 setServices([]);
               }}
             >
-              <Text style={{ color: Colors.text.inverse }}>Retry</Text>
+              <Text style={{ color: colors.text.inverse }}>Retry</Text>
             </Pressable>
           </View>
         )}
         <View style={styles.itemsList}>
           {services.length === 0 && !isLoading ? (
             <View style={{ padding: 20, alignItems: 'center' }}>
-              <Text style={{ color: Colors.text.tertiary }}>No services found in this category</Text>
+              <Text style={{ color: colors.text.tertiary }}>No services found in this category</Text>
             </View>
           ) : (
             services.map((service) => {
@@ -255,7 +255,7 @@ const HomeServicesCategoryPage: React.FC = () => {
         {hasMore && (
           <View style={{ padding: 20, alignItems: 'center' }}>
             <ActivityIndicator size="small" color={Colors.info} />
-            <Text style={{ color: Colors.text.tertiary, marginTop: 10 }}>Loading more services...</Text>
+            <Text style={{ color: colors.text.tertiary, marginTop: 10 }}>Loading more services...</Text>
           </View>
         )}
         <View style={{ height: 100 }} />
@@ -265,35 +265,35 @@ const HomeServicesCategoryPage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.primary },
+  container: { flex: 1, backgroundColor: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : Spacing.base, paddingBottom: Spacing.lg },
   headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
-  headerTitle: { ...Typography.h3, color: Colors.text.inverse },
+  headerTitle: { ...Typography.h3, color: colors.text.inverse },
   headerSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
   searchButton: { padding: Spacing.sm },
-  filtersContainer: { paddingVertical: Spacing.md, paddingHorizontal: Spacing.base, backgroundColor: Colors.background.primary, borderBottomWidth: 1, borderBottomColor: Colors.border.default },
-  filterChip: { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.xl, backgroundColor: Colors.background.secondary, marginRight: Spacing.sm },
+  filtersContainer: { paddingVertical: Spacing.md, paddingHorizontal: Spacing.base, backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.border.default },
+  filterChip: { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.xl, backgroundColor: colors.background.secondary, marginRight: Spacing.sm },
   filterChipActive: { backgroundColor: Colors.info },
-  filterChipText: { ...Typography.body, color: Colors.text.tertiary },
-  filterChipTextActive: { color: Colors.text.inverse, fontWeight: '600' },
+  filterChipText: { ...Typography.body, color: colors.text.tertiary },
+  filterChipTextActive: { color: colors.text.inverse, fontWeight: '600' },
   itemsList: { padding: Spacing.base, gap: Spacing.base },
-  itemCard: { backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border.default },
+  itemCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.border.default },
   itemImage: { width: '100%', height: 140 },
   cashbackBadge: { position: 'absolute', top: Spacing.md, right: Spacing.md, backgroundColor: Colors.success, paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
-  cashbackText: { ...Typography.bodySmall, fontWeight: '700', color: Colors.text.inverse },
+  cashbackText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
   itemInfo: { padding: Spacing.base },
-  itemName: { ...Typography.h4, color: Colors.nileBlue, marginBottom: Spacing.sm },
-  typeBadge: { alignSelf: 'flex-start', backgroundColor: Colors.background.secondary, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm, marginBottom: Spacing.sm },
-  typeText: { ...Typography.caption, fontWeight: '600', color: Colors.text.tertiary },
+  itemName: { ...Typography.h4, color: colors.nileBlue, marginBottom: Spacing.sm },
+  typeBadge: { alignSelf: 'flex-start', backgroundColor: colors.background.secondary, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm, marginBottom: Spacing.sm },
+  typeText: { ...Typography.caption, fontWeight: '600', color: colors.text.tertiary },
   itemMeta: { flexDirection: 'row', gap: Spacing.base, marginBottom: Spacing.md },
   ratingContainer: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  ratingText: { ...Typography.body, fontWeight: '600', color: Colors.nileBlue },
+  ratingText: { ...Typography.body, fontWeight: '600', color: colors.nileBlue },
   itemFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   priceText: { ...Typography.body, fontWeight: '600', color: Colors.success },
   bookButton: { backgroundColor: Colors.info, paddingHorizontal: Spacing.lg, paddingVertical: 10, borderRadius: BorderRadius.xl },
-  bookButtonText: { ...Typography.body, fontWeight: '700', color: Colors.text.inverse },
+  bookButtonText: { ...Typography.body, fontWeight: '700', color: colors.text.inverse },
 });
 
 export default withErrorBoundary(HomeServicesCategoryPage, 'HomeServicesCategory');

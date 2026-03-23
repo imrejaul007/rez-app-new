@@ -394,7 +394,7 @@ const LabTestsPage: React.FC = () => {
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Book Test</Text>
             <Pressable onPress={() => setShowBookingModal(false)}>
-              <Ionicons name="close" size={24} color={Colors.text.tertiary} />
+              <Ionicons name="close" size={24} color={colors.text.tertiary} />
             </Pressable>
           </View>
 
@@ -495,7 +495,7 @@ const LabTestsPage: React.FC = () => {
                 <Ionicons
                   name="home"
                   size={20}
-                  color={bookingForm.homeCollection ? Colors.background.primary : Colors.text.tertiary}
+                  color={bookingForm.homeCollection ? colors.background.primary : colors.text.tertiary}
                 />
                 <Text
                   style={[
@@ -516,7 +516,7 @@ const LabTestsPage: React.FC = () => {
                 <Ionicons
                   name="business"
                   size={20}
-                  color={!bookingForm.homeCollection ? Colors.background.primary : Colors.text.tertiary}
+                  color={!bookingForm.homeCollection ? colors.background.primary : colors.text.tertiary}
                 />
                 <Text
                   style={[
@@ -562,23 +562,23 @@ const LabTestsPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Lab Tests</Text>
             <Text style={styles.headerSubtitle}>Book diagnostic tests with cashback</Text>
           </View>
           <Pressable style={styles.cartButton}>
-            <Ionicons name="cart-outline" size={24} color={Colors.text.inverse} />
+            <Ionicons name="cart-outline" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="search" size={20} color={colors.text.tertiary} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search tests, packages..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
             onSubmitEditing={handleSearch}
@@ -619,86 +619,86 @@ const LabTestsPage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.primary },
+  container: { flex: 1, backgroundColor: colors.background.primary },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: Colors.text.tertiary },
+  loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: colors.text.tertiary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: Spacing.base },
   headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: Spacing.base },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
-  headerTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.8)' },
   cartButton: { padding: Spacing.sm },
-  searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background.primary, marginHorizontal: Spacing.base, borderRadius: BorderRadius.md, paddingHorizontal: Spacing.md },
-  searchInput: { flex: 1, paddingVertical: 10, paddingHorizontal: Spacing.sm, fontSize: Typography.body.fontSize, color: Colors.nileBlue },
+  searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.primary, marginHorizontal: Spacing.base, borderRadius: BorderRadius.md, paddingHorizontal: Spacing.md },
+  searchInput: { flex: 1, paddingVertical: 10, paddingHorizontal: Spacing.sm, fontSize: Typography.body.fontSize, color: colors.nileBlue },
 
-  categoryScroll: { backgroundColor: Colors.background.secondary },
+  categoryScroll: { backgroundColor: colors.background.secondary },
   categoryContainer: { paddingHorizontal: Spacing.base, paddingVertical: Spacing.md},
-  categoryChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: Spacing.sm, marginRight: Spacing.sm, borderRadius: BorderRadius.xl, backgroundColor: Colors.background.primary, borderWidth: 1, borderColor: Colors.border.default },
+  categoryChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: Spacing.sm, marginRight: Spacing.sm, borderRadius: BorderRadius.xl, backgroundColor: colors.background.primary, borderWidth: 1, borderColor: colors.border.default },
   categoryIcon: { fontSize: Typography.bodyLarge.fontSize, marginRight: 6 },
-  categoryText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '500', color: Colors.text.tertiary },
-  categoryTextActive: { color: Colors.text.inverse },
+  categoryText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '500', color: colors.text.tertiary },
+  categoryTextActive: { color: colors.text.inverse },
 
   section: { padding: Spacing.base },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md },
-  sectionTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.nileBlue, marginBottom: Spacing.md },
+  sectionTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.md },
   viewAllText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: Colors.brand.purple },
 
   packageCard: { width: 220, marginRight: Spacing.md, borderRadius: BorderRadius.lg, overflow: 'hidden' },
   packageGradient: { padding: Spacing.base, minHeight: 160 },
   packageBadge: { alignSelf: 'flex-start', backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md, marginBottom: Spacing.md },
-  packageBadgeText: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: Colors.text.inverse },
-  packageName: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: Colors.text.inverse, marginBottom: Spacing.xs },
+  packageBadgeText: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: colors.text.inverse },
+  packageName: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.text.inverse, marginBottom: Spacing.xs },
   packageDescription: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.8)', marginBottom: Spacing.md },
   packagePricing: { flexDirection: 'row', alignItems: 'center' },
-  packagePrice: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  packagePrice: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.inverse },
   packageOriginalPrice: { fontSize: Typography.body.fontSize, color: 'rgba(255,255,255,0.6)', marginLeft: Spacing.sm, textDecorationLine: 'line-through' },
   packageCashback: { marginTop: Spacing.sm },
   packageCashbackText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: Colors.warning },
 
-  providerCard: { width: 140, padding: Spacing.md, marginRight: Spacing.md, backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md, borderWidth: 1, borderColor: Colors.border.default, alignItems: 'center' },
-  providerLogo: { width: 60, height: 60, borderRadius: 30, marginBottom: Spacing.sm, backgroundColor: Colors.background.secondary },
-  providerName: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: Colors.nileBlue, textAlign: 'center', marginBottom: Spacing.xs },
+  providerCard: { width: 140, padding: Spacing.md, marginRight: Spacing.md, backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, borderWidth: 1, borderColor: colors.border.default, alignItems: 'center' },
+  providerLogo: { width: 60, height: 60, borderRadius: 30, marginBottom: Spacing.sm, backgroundColor: colors.background.secondary },
+  providerName: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: colors.nileBlue, textAlign: 'center', marginBottom: Spacing.xs },
   providerMeta: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.xs },
   providerRating: { flexDirection: 'row', alignItems: 'center' },
-  providerRatingText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '500', color: Colors.text.tertiary, marginLeft: 2 },
+  providerRatingText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '500', color: colors.text.tertiary, marginLeft: 2 },
   nablBadge: { backgroundColor: Colors.success, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, marginLeft: 6 },
-  nablText: { fontSize: 9, fontWeight: '700', color: Colors.text.inverse },
-  homeCollectionText: { fontSize: Typography.overline.fontSize, color: Colors.text.tertiary, marginBottom: Spacing.xs },
+  nablText: { fontSize: 9, fontWeight: '700', color: colors.text.inverse },
+  homeCollectionText: { fontSize: Typography.overline.fontSize, color: colors.text.tertiary, marginBottom: Spacing.xs },
   providerDiscount: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: Colors.success },
 
   testsSection: { padding: Spacing.base },
-  testCard: { backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md, marginBottom: Spacing.md, borderWidth: 1, borderColor: Colors.border.default, overflow: 'hidden' },
+  testCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, marginBottom: Spacing.md, borderWidth: 1, borderColor: colors.border.default, overflow: 'hidden' },
   testCardContent: { flexDirection: 'row', padding: Spacing.md },
   testInfo: { flex: 1 },
   testHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  testName: { fontSize: Typography.body.fontSize, fontWeight: '600', color: Colors.nileBlue, flex: 1 },
+  testName: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.nileBlue, flex: 1 },
   cashbackBadge: { backgroundColor: Colors.success, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, marginLeft: Spacing.sm },
-  cashbackText: { fontSize: Typography.overline.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  cashbackText: { fontSize: Typography.overline.fontSize, fontWeight: '700', color: colors.text.inverse },
   testCategory: { fontSize: Typography.caption.fontSize, color: Colors.brand.purple, marginTop: 2 },
-  testDescription: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary, marginTop: Spacing.xs },
+  testDescription: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, marginTop: Spacing.xs },
   testMeta: { flexDirection: 'row', marginTop: Spacing.sm, gap: Spacing.sm },
-  metaTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background.secondary, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
-  metaTagText: { fontSize: Typography.overline.fontSize, color: Colors.text.tertiary, marginLeft: Spacing.xs },
+  metaTag: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.secondary, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
+  metaTagText: { fontSize: Typography.overline.fontSize, color: colors.text.tertiary, marginLeft: Spacing.xs },
   testPricing: { alignItems: 'flex-end', justifyContent: 'space-between' },
-  testPrice: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.nileBlue },
-  testOriginalPrice: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary, textDecorationLine: 'line-through' },
+  testPrice: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue },
+  testOriginalPrice: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, textDecorationLine: 'line-through' },
   bookButton: { backgroundColor: Colors.brand.purple, paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.sm, marginTop: Spacing.sm },
-  bookButtonText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: Colors.text.inverse },
+  bookButtonText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: colors.text.inverse },
 
   emptyState: { alignItems: 'center', padding: Spacing['2xl'] },
   emptyIcon: { fontSize: 48, marginBottom: Spacing.md },
-  emptyText: { fontSize: Typography.body.fontSize, color: Colors.text.tertiary },
+  emptyText: { fontSize: Typography.body.fontSize, color: colors.text.tertiary },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: Colors.background.primary, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '90%' },
-  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Spacing.base, borderBottomWidth: 1, borderBottomColor: Colors.border.default },
-  modalTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.nileBlue },
+  modalContent: { backgroundColor: colors.background.primary, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '90%' },
+  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Spacing.base, borderBottomWidth: 1, borderBottomColor: colors.border.default },
+  modalTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue },
   modalBody: { padding: Spacing.base },
-  modalFooter: { padding: Spacing.base, borderTopWidth: 1, borderTopColor: Colors.border.default },
+  modalFooter: { padding: Spacing.base, borderTopWidth: 1, borderTopColor: colors.border.default },
 
   selectedTestInfo: { backgroundColor: Colors.brand.purple + '10', padding: Spacing.base, borderRadius: BorderRadius.md, marginBottom: Spacing.base },
-  selectedTestName: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '600', color: Colors.nileBlue },
+  selectedTestName: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '600', color: colors.nileBlue },
   selectedTestPricing: { flexDirection: 'row', alignItems: 'center', marginTop: Spacing.xs },
   selectedTestPrice: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: Colors.brand.purple },
   selectedTestCashback: { fontSize: Typography.bodySmall.fontSize, color: Colors.success, marginLeft: Spacing.sm },
@@ -706,28 +706,28 @@ const styles = StyleSheet.create({
   prepWarningText: { fontSize: Typography.bodySmall.fontSize, color: Colors.warning, marginLeft: 6 },
 
   formGroup: { marginBottom: Spacing.base },
-  formLabel: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: Colors.nileBlue, marginBottom: Spacing.sm },
-  formInput: { borderWidth: 1, borderColor: Colors.border.default, borderRadius: BorderRadius.md, padding: Spacing.md, fontSize: Typography.body.fontSize, color: Colors.nileBlue },
+  formLabel: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: colors.nileBlue, marginBottom: Spacing.sm },
+  formInput: { borderWidth: 1, borderColor: colors.border.default, borderRadius: BorderRadius.md, padding: Spacing.md, fontSize: Typography.body.fontSize, color: colors.nileBlue },
   formTextArea: { height: 80, textAlignVertical: 'top' },
 
   timeSlots: { flexDirection: 'row', justifyContent: 'space-between' },
-  timeSlot: { flex: 1, alignItems: 'center', padding: Spacing.md, marginHorizontal: Spacing.xs, backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.md },
+  timeSlot: { flex: 1, alignItems: 'center', padding: Spacing.md, marginHorizontal: Spacing.xs, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.md },
   timeSlotActive: { backgroundColor: Colors.brand.purple },
   timeSlotIcon: { fontSize: Typography.h3.fontSize, marginBottom: Spacing.xs },
-  timeSlotText: { fontSize: Typography.caption.fontSize, color: Colors.text.tertiary },
-  timeSlotTextActive: { color: Colors.text.inverse },
+  timeSlotText: { fontSize: Typography.caption.fontSize, color: colors.text.tertiary },
+  timeSlotTextActive: { color: colors.text.inverse },
 
   collectionToggle: { flexDirection: 'row', marginTop: Spacing.sm },
-  collectionOption: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: Spacing.md, backgroundColor: Colors.background.secondary, marginHorizontal: Spacing.xs, borderRadius: BorderRadius.md },
+  collectionOption: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: Spacing.md, backgroundColor: colors.background.secondary, marginHorizontal: Spacing.xs, borderRadius: BorderRadius.md },
   collectionOptionActive: { backgroundColor: Colors.brand.purple },
-  collectionOptionText: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary, marginLeft: Spacing.sm },
-  collectionOptionTextActive: { color: Colors.text.inverse },
+  collectionOptionText: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, marginLeft: Spacing.sm },
+  collectionOptionTextActive: { color: colors.text.inverse },
 
   totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.base },
-  totalLabel: { fontSize: Typography.body.fontSize, color: Colors.text.tertiary },
-  totalValue: { fontSize: Typography.h2.fontSize, fontWeight: '700', color: Colors.nileBlue },
+  totalLabel: { fontSize: Typography.body.fontSize, color: colors.text.tertiary },
+  totalValue: { fontSize: Typography.h2.fontSize, fontWeight: '700', color: colors.nileBlue },
   confirmButton: { backgroundColor: Colors.brand.purple, padding: Spacing.base, borderRadius: BorderRadius.md, alignItems: 'center' },
-  confirmButtonText: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  confirmButtonText: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.text.inverse },
 });
 
 export default withErrorBoundary(LabTestsPage, 'HealthcareLab');

@@ -523,14 +523,14 @@ function BookingPage() {
       >
         {/* Header with Glassmorphism */}
         <LinearGradient
-          colors={[Colors.gold, Colors.nileBlue]}
+          colors={[Colors.gold, colors.nileBlue]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[styles.header, { paddingTop: Platform.OS === 'ios' ? insets.top + 10 : 40 }]}
         >
           <View style={styles.headerTop}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>
               {isServiceBooking ? 'Book Service' : 'Book a Table'}
@@ -598,7 +598,7 @@ function BookingPage() {
               style={styles.activeDealGradient}
             >
               <View style={styles.activeDealIcon}>
-                <Ionicons name="gift" size={20} color={Colors.text.inverse} />
+                <Ionicons name="gift" size={20} color={colors.text.inverse} />
               </View>
               <View style={styles.activeDealContent}>
                 <ThemedText style={styles.activeDealTitle}>Deal Applied!</ThemedText>
@@ -752,22 +752,22 @@ function BookingPage() {
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="person" size={18} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="person" size={18} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: textColor }]}
                 placeholder="Full Name *"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={customerName}
                 onChangeText={setCustomerName}
               />
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="call" size={18} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="call" size={18} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: textColor }]}
                 placeholder="Phone Number *"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={customerPhone}
                 onChangeText={setCustomerPhone}
                 keyboardType="phone-pad"
@@ -775,11 +775,11 @@ function BookingPage() {
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="mail" size={18} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="mail" size={18} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: textColor }]}
                 placeholder="Email (Optional)"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={customerEmail}
                 onChangeText={setCustomerEmail}
                 keyboardType="email-address"
@@ -788,11 +788,11 @@ function BookingPage() {
             </View>
 
             <View style={[styles.inputContainer, styles.textAreaContainer]}>
-              <Ionicons name="chatbubble" size={18} color={Colors.text.tertiary} style={[styles.inputIcon, { marginTop: 14 }]} />
+              <Ionicons name="chatbubble" size={18} color={colors.text.tertiary} style={[styles.inputIcon, { marginTop: 14 }]} />
               <TextInput
                 style={[styles.input, styles.textArea, { color: textColor }]}
                 placeholder="Special Requests (Optional)"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={notes}
                 onChangeText={setNotes}
                 multiline
@@ -883,16 +883,16 @@ function BookingPage() {
               disabled={addingToCart}
             >
               <LinearGradient
-                colors={[Colors.gold, Colors.nileBlue]}
+                colors={[Colors.gold, colors.nileBlue]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.bookButtonGradient}
               >
                 {addingToCart ? (
-                  <ActivityIndicator size="small" color={Colors.text.inverse} />
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
                   <>
-                    <Ionicons name="cart" size={20} color={Colors.text.inverse} />
+                    <Ionicons name="cart" size={20} color={colors.text.inverse} />
                     <ThemedText style={styles.bookButtonText}>
                       Add to Cart{service ? ` - ${currencySymbol}${service.price.toLocaleString()}` : ''}
                     </ThemedText>
@@ -909,13 +909,13 @@ function BookingPage() {
               disabled={submitting}
             >
               <LinearGradient
-                colors={[Colors.gold, Colors.nileBlue]}
+                colors={[Colors.gold, colors.nileBlue]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.bookButtonGradient}
               >
                 {submitting ? (
-                  <ActivityIndicator size="small" color={Colors.text.inverse} />
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
                   <>
                     <ThemedText style={styles.bookButtonText}>Confirm Booking</ThemedText>
@@ -949,15 +949,15 @@ function BookingPage() {
 
             <View style={styles.modalDetails}>
               <View style={styles.modalDetailRow}>
-                <Ionicons name="restaurant" size={16} color={Colors.text.tertiary} />
+                <Ionicons name="restaurant" size={16} color={colors.text.tertiary} />
                 <ThemedText style={styles.modalDetailText}>{store?.name}</ThemedText>
               </View>
               <View style={styles.modalDetailRow}>
-                <Ionicons name="person" size={16} color={Colors.text.tertiary} />
+                <Ionicons name="person" size={16} color={colors.text.tertiary} />
                 <ThemedText style={styles.modalDetailText}>{customerName}</ThemedText>
               </View>
               <View style={styles.modalDetailRow}>
-                <Ionicons name="call" size={16} color={Colors.text.tertiary} />
+                <Ionicons name="call" size={16} color={colors.text.tertiary} />
                 <ThemedText style={styles.modalDetailText}>{customerPhone}</ThemedText>
               </View>
             </View>
@@ -974,7 +974,7 @@ function BookingPage() {
                 onPress={confirmBooking}
               >
                 <LinearGradient
-                  colors={[Colors.gold, Colors.nileBlue]}
+                  colors={[Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.modalConfirmGradient}
@@ -1024,7 +1024,7 @@ function BookingPage() {
               onPress={handleSuccessClose}
             >
               <LinearGradient
-                colors={[Colors.gold, Colors.nileBlue]}
+                colors={[Colors.gold, colors.nileBlue]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.successButtonGradient}
@@ -1090,7 +1090,7 @@ function BookingPage() {
                 onPress={handleViewCart}
               >
                 <LinearGradient
-                  colors={[Colors.gold, Colors.nileBlue]}
+                  colors={[Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.modalConfirmGradient}
@@ -1109,7 +1109,7 @@ function BookingPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -1119,7 +1119,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -1129,7 +1129,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
     marginBottom: Spacing.lg,
   },
@@ -1140,7 +1140,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   retryText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -1165,7 +1165,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontFamily: 'Poppins',
   },
   storeCard: {
@@ -1195,12 +1195,12 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2,
   },
   storeCategory: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   servicePriceRow: {
     flexDirection: 'row',
@@ -1214,7 +1214,7 @@ const styles = StyleSheet.create({
   },
   serviceDuration: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginLeft: 6,
   },
   content: {
@@ -1232,7 +1232,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginLeft: Spacing.sm,
     fontFamily: 'Poppins',
   },
@@ -1243,12 +1243,12 @@ const styles = StyleSheet.create({
     width: 68,
     height: 88,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 10,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.04,
@@ -1264,22 +1264,22 @@ const styles = StyleSheet.create({
   dateDay: {
     ...Typography.caption,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
     textTransform: 'uppercase',
   },
   dateNumber: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   dateMonth: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   dateTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   todayDot: {
     position: 'absolute',
@@ -1290,7 +1290,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gold,
   },
   todayDotSelected: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   timeGrid: {
     flexDirection: 'row',
@@ -1301,31 +1301,31 @@ const styles = StyleSheet.create({
     width: (SCREEN_WIDTH - 32 - 30) / 4,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   timeSlotSelected: {
     borderColor: Colors.gold,
     backgroundColor: `${Colors.gold}10`,
   },
   timeSlotDisabled: {
-    backgroundColor: Colors.background.secondary,
-    borderColor: Colors.border.default,
+    backgroundColor: colors.background.secondary,
+    borderColor: colors.border.default,
     opacity: 0.5,
   },
   timeText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   timeTextSelected: {
     color: Colors.gold,
     fontWeight: '600',
   },
   timeTextDisabled: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   peopleSelector: {
     flexDirection: 'row',
@@ -1336,11 +1336,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   peopleButtonSelected: {
     borderColor: Colors.gold,
@@ -1354,18 +1354,18 @@ const styles = StyleSheet.create({
   peopleText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   peopleTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginBottom: Spacing.md,
     paddingHorizontal: 14,
   },
@@ -1387,7 +1387,7 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
   summaryCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderWidth: 1,
@@ -1412,28 +1412,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   summaryLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   summaryValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   summaryRowTotal: {
     borderBottomWidth: 0,
     marginTop: Spacing.sm,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   summaryLabelTotal: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   summaryValueTotal: {
     ...Typography.h4,
@@ -1447,9 +1447,9 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -4 },
     shadowOpacity: 0.06,
@@ -1475,14 +1475,14 @@ const styles = StyleSheet.create({
   bookButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontFamily: 'Inter',
   },
   bookButtonIcon: {
     width: 24,
     height: 24,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -1515,7 +1515,7 @@ const styles = StyleSheet.create({
     padding: Spacing.xl,
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius['2xl'],
     padding: Spacing.xl,
     width: '100%',
@@ -1544,20 +1544,20 @@ const styles = StyleSheet.create({
   modalTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   modalMessage: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.base,
   },
   modalDetails: {
     width: '100%',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginBottom: Spacing.lg,
@@ -1570,7 +1570,7 @@ const styles = StyleSheet.create({
   },
   modalDetailText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   modalActions: {
     flexDirection: 'row',
@@ -1581,13 +1581,13 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
   },
   modalCancelText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   modalConfirmButton: {
     flex: 1,
@@ -1601,11 +1601,11 @@ const styles = StyleSheet.create({
   modalConfirmText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   successDetails: {
     width: '100%',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -1616,16 +1616,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   successLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   successValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   successButton: {
     width: '100%',
@@ -1639,7 +1639,7 @@ const styles = StyleSheet.create({
   successButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Deal Error Banner
@@ -1696,7 +1696,7 @@ const styles = StyleSheet.create({
   activeDealTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   activeDealCode: {
     ...Typography.bodySmall,
@@ -1713,7 +1713,7 @@ const styles = StyleSheet.create({
   activeDealValueText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

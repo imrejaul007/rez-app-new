@@ -116,7 +116,7 @@ function OrderDetailsScreen() {
       case 'placed':
       case 'pending':
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 

@@ -119,8 +119,8 @@ function AllProjectsPage() {
     { label: 'Review', value: 'review', icon: 'star', gradient: [colors.warningScale[400], colors.brand.orange] },
     { label: 'Social Share', value: 'social_share', icon: 'share-social', gradient: [colors.infoScale[400], colors.brand.indigo] },
     { label: 'UGC Content', value: 'ugc_content', icon: 'videocam', gradient: [colors.brand.pink, '#F472B6'] },
-    { label: 'Store Visit', value: 'store_visit', icon: 'storefront', gradient: [Colors.gold, Colors.nileBlue] },
-    { label: 'Survey', value: 'survey', icon: 'clipboard', gradient: [Colors.nileBlue, Colors.nileBlue] },
+    { label: 'Store Visit', value: 'store_visit', icon: 'storefront', gradient: [Colors.gold, colors.nileBlue] },
+    { label: 'Survey', value: 'survey', icon: 'clipboard', gradient: [colors.nileBlue, colors.nileBlue] },
     { label: 'Photo', value: 'photo', icon: 'camera', gradient: [Colors.warning, colors.brand.orangeDark] },
     { label: 'Video', value: 'video', icon: 'film', gradient: [Colors.error, Colors.error] },
   ];
@@ -297,7 +297,7 @@ function AllProjectsPage() {
       case 'hard':
         return Colors.error;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -385,7 +385,7 @@ function AllProjectsPage() {
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                 >
-                  <Ionicons name="star" size={12} color={Colors.text.inverse} />
+                  <Ionicons name="star" size={12} color={colors.text.inverse} />
                   <ThemedText style={styles.featuredText}>Featured</ThemedText>
                 </LinearGradient>
               </View>
@@ -403,7 +403,7 @@ function AllProjectsPage() {
                   <Ionicons
                     name={getCategoryIcon(project.category) as any}
                     size={22}
-                    color={Colors.text.inverse}
+                    color={colors.text.inverse}
                   />
                 </LinearGradient>
                 <View style={styles.cardTitleContainer}>
@@ -439,20 +439,20 @@ function AllProjectsPage() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               >
-                <Ionicons name="cash" size={18} color={Colors.text.inverse} />
+                <Ionicons name="cash" size={18} color={colors.text.inverse} />
                 <ThemedText style={styles.rewardAmount}>
                   {currencySymbol}{project.reward?.amount || 0}
                 </ThemedText>
               </LinearGradient>
               <View style={styles.timeContainer}>
-                <Ionicons name="time-outline" size={16} color={Colors.text.tertiary} />
+                <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
                 <ThemedText style={styles.timeText}>
                   {project.estimatedTime || 0} min
                 </ThemedText>
               </View>
               {project.analytics && (
                 <View style={styles.statsContainer}>
-                  <Ionicons name="eye-outline" size={16} color={Colors.text.tertiary} />
+                  <Ionicons name="eye-outline" size={16} color={colors.text.tertiary} />
                   <ThemedText style={styles.statsText}>
                     {project.analytics.totalViews || 0}
                   </ThemedText>
@@ -479,7 +479,7 @@ function AllProjectsPage() {
 
             {/* Arrow Indicator */}
             <View style={styles.arrowContainer}>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </View>
           </LinearGradient>
         </Pressable>
@@ -509,7 +509,7 @@ function AllProjectsPage() {
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
            
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerCenter}>
             <ThemedText style={styles.headerTitle}>All Projects</ThemedText>
@@ -536,7 +536,7 @@ function AllProjectsPage() {
               end={{ x: 1, y: 1 }}
             >
               <View style={styles.searchIconContainer}>
-                <Ionicons name="search" size={22} color={Colors.nileBlue} />
+                <Ionicons name="search" size={22} color={colors.nileBlue} />
               </View>
               <TextInput
                 style={styles.searchInput}
@@ -557,7 +557,7 @@ function AllProjectsPage() {
                   }}
                   style={styles.clearButton}
                 >
-                  <Ionicons name="close-circle" size={22} color={Colors.text.tertiary} />
+                  <Ionicons name="close-circle" size={22} color={colors.text.tertiary} />
                 </Pressable>
               )}
             </LinearGradient>
@@ -588,14 +588,14 @@ function AllProjectsPage() {
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
                     >
-                      <Ionicons name={cat.icon as any} size={16} color={Colors.text.inverse} />
+                      <Ionicons name={cat.icon as any} size={16} color={colors.text.inverse} />
                       <ThemedText style={styles.filterChipTextActive}>
                         {cat.label}
                       </ThemedText>
                     </LinearGradient>
                   ) : (
                     <View style={styles.filterChip}>
-                      <Ionicons name={cat.icon as any} size={16} color={Colors.text.tertiary} />
+                      <Ionicons name={cat.icon as any} size={16} color={colors.text.tertiary} />
                       <ThemedText style={styles.filterChipText}>
                         {cat.label}
                       </ThemedText>
@@ -664,7 +664,7 @@ function AllProjectsPage() {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
               >
-                <Ionicons name="swap-vertical" size={18} color={Colors.nileBlue} />
+                <Ionicons name="swap-vertical" size={18} color={colors.nileBlue} />
                 <ThemedText style={styles.sortText}>
                   {sortBy === 'newest' ? 'Newest' : sortBy === 'popular' ? 'Popular' : 'Trending'}
                 </ThemedText>
@@ -709,7 +709,7 @@ function AllProjectsPage() {
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
             >
-              <Ionicons name="briefcase-outline" size={64} color={Colors.nileBlue} />
+              <Ionicons name="briefcase-outline" size={64} color={colors.nileBlue} />
             </LinearGradient>
             <ThemedText style={styles.emptyText}>No projects found</ThemedText>
             <ThemedText style={styles.emptySubtext}>
@@ -755,7 +755,7 @@ function AllProjectsPage() {
 
             {hasMore && (
               <View style={styles.loadMoreContainer}>
-                <ActivityIndicator size="small" color={Colors.nileBlue} />
+                <ActivityIndicator size="small" color={colors.nileBlue} />
                 <ThemedText style={styles.loadMoreText}>Loading more projects...</ThemedText>
               </View>
             )}
@@ -769,7 +769,7 @@ function AllProjectsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary},
+    backgroundColor: colors.background.secondary},
   content: {
     flex: 1},
   header: {
@@ -796,7 +796,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: -0.5,
     marginBottom: 2},
   headerSubtitle: {
@@ -809,9 +809,9 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default},
+    borderBottomColor: colors.border.default},
   searchBarWrapper: {
     ...Shadows.medium,
     borderRadius: BorderRadius.lg},
@@ -822,22 +822,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     height: 56,
     borderWidth: 2,
-    borderColor: Colors.border.default},
+    borderColor: colors.border.default},
   searchIconContainer: {
     marginRight: Spacing.md},
   searchInput: {
     flex: 1,
     ...Typography.bodyLarge,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingVertical: 0},
   clearButton: {
     marginLeft: Spacing.sm,
     padding: Spacing.xs},
   filtersSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     paddingVertical: Spacing.base},
   filterScrollView: {
     marginBottom: Spacing.md},
@@ -850,7 +850,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
     paddingVertical: 10,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: 10,
     gap: Spacing.sm,
     borderWidth: 1.5,
@@ -867,12 +867,12 @@ const styles = StyleSheet.create({
   filterChipText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     letterSpacing: 0.2},
   filterChipTextActive: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.2},
   filterRow: {
     flexDirection: 'row',
@@ -887,7 +887,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
     borderWidth: 1.5,
     borderColor: 'transparent'},
@@ -900,7 +900,7 @@ const styles = StyleSheet.create({
   difficultyChipText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.tertiary},
+    color: colors.text.tertiary},
   difficultyChipTextActive: {
     fontSize: 13,
     fontWeight: '700'},
@@ -918,7 +918,7 @@ const styles = StyleSheet.create({
   sortText: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: 0.2},
   projectsList: {
     flex: 1},
@@ -972,7 +972,7 @@ const styles = StyleSheet.create({
   featuredText: {
     fontSize: 11,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.3},
   cardHeader: {
     flexDirection: 'row',
@@ -998,7 +998,7 @@ const styles = StyleSheet.create({
   cardTitle: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.5,
     lineHeight: 26},
   difficultyBadge: {
@@ -1013,7 +1013,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3},
   cardDescription: {
     fontSize: 15,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 22,
     marginBottom: Spacing.base,
     zIndex: 5,
@@ -1039,7 +1039,7 @@ const styles = StyleSheet.create({
   rewardAmount: {
     fontSize: 16,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.2},
   timeContainer: {
     flexDirection: 'row',
@@ -1047,24 +1047,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     gap: 6},
   timeText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.tertiary},
+    color: colors.text.tertiary},
   statsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     gap: 6},
   statsText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.tertiary},
+    color: colors.text.tertiary},
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -1080,7 +1080,7 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: 0.2},
   arrowContainer: {
     position: 'absolute',
@@ -1089,7 +1089,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     zIndex: 5},
@@ -1102,7 +1102,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.tertiary},
+    color: colors.text.tertiary},
   errorIconContainer: {
     width: 96,
     height: 96,
@@ -1121,7 +1121,7 @@ const styles = StyleSheet.create({
     marginTop: 28,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
-    shadowColor: Colors.nileBlue,
+    shadowColor: colors.nileBlue,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -1133,7 +1133,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.3},
   emptyIconContainer: {
     width: 120,
@@ -1147,13 +1147,13 @@ const styles = StyleSheet.create({
     marginTop: Spacing.base,
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.5},
   emptySubtext: {
     marginTop: Spacing.md,
     fontSize: 15,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22},
   loadMoreContainer: {
@@ -1165,6 +1165,6 @@ const styles = StyleSheet.create({
   loadMoreText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary}});
+    color: colors.text.tertiary}});
 
 export default withErrorBoundary(AllProjectsPage, 'Projects');

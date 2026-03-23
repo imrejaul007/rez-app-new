@@ -201,10 +201,10 @@ function PollsPage() {
                       isSelected ? (
                         <Ionicons name="checkmark-circle" size={20} color={Colors.primary[600]} />
                       ) : (
-                        <Ionicons name="ellipse-outline" size={20} color={Colors.text.tertiary} />
+                        <Ionicons name="ellipse-outline" size={20} color={colors.text.tertiary} />
                       )
                     ) : (
-                      <Ionicons name="radio-button-off" size={20} color={Colors.text.tertiary} />
+                      <Ionicons name="radio-button-off" size={20} color={colors.text.tertiary} />
                     )}
                     <ThemedText style={[
                       styles.optionText,
@@ -320,7 +320,7 @@ function PollsPage() {
           {/* Empty State */}
           {polls.length === 0 && !dailyPoll && (
             <View style={styles.emptyContainer}>
-              <Ionicons name="bar-chart-outline" size={64} color={Colors.text.tertiary} />
+              <Ionicons name="bar-chart-outline" size={64} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyTitle}>No Active Polls</ThemedText>
               <ThemedText style={styles.emptyText}>
                 Check back later for new polls to vote on and earn coins!
@@ -337,7 +337,7 @@ function PollsPage() {
           estimatedItemSize={80}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="hand-left-outline" size={64} color={Colors.text.tertiary} />
+              <Ionicons name="hand-left-outline" size={64} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyTitle}>No Votes Yet</ThemedText>
               <ThemedText style={styles.emptyText}>
                 Vote on active polls to see your history here.
@@ -353,7 +353,7 @@ function PollsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
   tabs: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     ...Shadows.subtle,
   },
   tab: {
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
   },
   tabText: {
     ...Typography.label,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabTextActive: {
     color: Colors.primary[600],
@@ -416,7 +416,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   pollCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -456,11 +456,11 @@ const styles = StyleSheet.create({
   },
   pollTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   pollDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.xs,
   },
   coinBadge: {
@@ -519,7 +519,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   optionTextSelected: {
@@ -528,7 +528,7 @@ const styles = StyleSheet.create({
   },
   optionPct: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginLeft: Spacing.sm,
   },
   pollFooter: {
@@ -538,11 +538,11 @@ const styles = StyleSheet.create({
   },
   pollVotes: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   pollTime: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   votingOverlay: {
     position: 'absolute',
@@ -562,7 +562,7 @@ const styles = StyleSheet.create({
     color: Colors.primary[600],
   },
   historyCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
@@ -576,16 +576,16 @@ const styles = StyleSheet.create({
   },
   historyTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   historyVote: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   historyDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   emptyContainer: {
@@ -595,12 +595,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.md,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingHorizontal: Spacing.xl,
   },

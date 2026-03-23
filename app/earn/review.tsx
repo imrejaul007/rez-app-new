@@ -202,7 +202,7 @@ function ReviewToEarnPage() {
           <Ionicons
             name={item.type === 'store' ? 'storefront' : item.type === 'product' ? 'cube' : 'construct'}
             size={28}
-            color={Colors.text.tertiary}
+            color={colors.text.tertiary}
           />
         )}
       </View>
@@ -252,7 +252,7 @@ function ReviewToEarnPage() {
                 <Ionicons
                   name={selectedItem.type === 'store' ? 'storefront' : 'cube'}
                   size={32}
-                  color={Colors.text.tertiary}
+                  color={colors.text.tertiary}
                 />
               )}
             </View>
@@ -286,7 +286,7 @@ function ReviewToEarnPage() {
               value={review}
               onChangeText={setReview}
               placeholder="Share your experience..."
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               multiline
               maxLength={500}
             />
@@ -324,7 +324,7 @@ function ReviewToEarnPage() {
               ))}
               {photos.length < 5 && (
                 <Pressable style={styles.addPhoto} onPress={handlePickPhoto}>
-                  <Ionicons name="camera-outline" size={28} color={Colors.text.tertiary} />
+                  <Ionicons name="camera-outline" size={28} color={colors.text.tertiary} />
                   <ThemedText style={styles.addPhotoText}>Add</ThemedText>
                 </Pressable>
               )}
@@ -430,7 +430,7 @@ function ReviewToEarnPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -504,12 +504,12 @@ const styles = StyleSheet.create({
   },
   tipsText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   reviewCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
@@ -543,12 +543,12 @@ const styles = StyleSheet.create({
   },
   reviewName: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   reviewDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   coinsBadge: {
     flexDirection: 'row',
@@ -569,13 +569,13 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.md,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   content: {
@@ -588,7 +588,7 @@ const styles = StyleSheet.create({
   itemCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -609,12 +609,12 @@ const styles = StyleSheet.create({
   },
   itemName: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   itemOrder: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   section: {
     marginBottom: Spacing.lg,
@@ -627,7 +627,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   ratingContainer: {
@@ -636,11 +636,11 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   reviewInput: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 120,
     textAlignVertical: 'top',
     ...Shadows.subtle,
@@ -653,7 +653,7 @@ const styles = StyleSheet.create({
   },
   charCount: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   bonusBadge: {
     backgroundColor: Colors.success + '20',
@@ -697,7 +697,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -8,
     right: -8,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.full,
   },
   addPhoto: {
@@ -714,7 +714,7 @@ const styles = StyleSheet.create({
   },
   addPhotoText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   coinPreview: {
     backgroundColor: Colors.gold + '15',
@@ -727,7 +727,7 @@ const styles = StyleSheet.create({
   },
   coinPreviewLabel: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   coinPreviewValue: {

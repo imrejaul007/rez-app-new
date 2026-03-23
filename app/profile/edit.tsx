@@ -413,7 +413,7 @@ function ProfileEditPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to return to profile page"
           >
-            <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
 
           <ThemedText style={styles.headerTitle}>Edit Profile</ThemedText>
@@ -428,7 +428,7 @@ function ProfileEditPage() {
             accessibilityState={{ disabled: isSaving || !hasChanges, busy: isSaving }}
           >
             {isSaving ? (
-              <ActivityIndicator size="small" color={Colors.text.inverse} />
+              <ActivityIndicator size="small" color={colors.text.inverse} />
             ) : (
               <ThemedText style={[
                 styles.saveButtonText,
@@ -473,14 +473,14 @@ function ProfileEditPage() {
                 )}
                 {uploadingImage && (
                   <View style={styles.uploadingOverlay}>
-                    <ActivityIndicator size="large" color={Colors.text.inverse} />
+                    <ActivityIndicator size="large" color={colors.text.inverse} />
                   </View>
                 )}
               </View>
             </LinearGradient>
             {/* Camera badge */}
             <View style={styles.cameraBadge}>
-              <Ionicons name="camera" size={14} color={Colors.text.inverse} />
+              <Ionicons name="camera" size={14} color={colors.text.inverse} />
             </View>
           </Pressable>
 
@@ -537,7 +537,7 @@ function ProfileEditPage() {
               ]}>
                 {formData.gender ? genderOptions.find(opt => opt.value === formData.gender)?.label : 'Select gender'}
               </ThemedText>
-              <Ionicons name="chevron-down" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-down" size={20} color={colors.text.tertiary} />
             </Pressable>
           </View>
         </View>
@@ -733,7 +733,7 @@ function ProfileEditPage() {
                 accessibilityRole="button"
                 accessibilityHint="Double tap to close the gender selection modal"
               >
-                <Ionicons name="close" size={20} color={Colors.text.tertiary} />
+                <Ionicons name="close" size={20} color={colors.text.tertiary} />
               </Pressable>
             </View>
 
@@ -786,7 +786,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.4,
     flex: 1,
     textAlign: 'center',
@@ -857,7 +857,7 @@ const styles = StyleSheet.create({
   avatarInitials: {
     fontSize: 30,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   uploadingOverlay: {
     ...StyleSheet.absoluteFillObject,
@@ -889,7 +889,7 @@ const styles = StyleSheet.create({
   headerUserName: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 4,
     letterSpacing: 0.3,
   },

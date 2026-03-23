@@ -19,7 +19,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { EventItem } from '@/types/homepage.types';
 import { CategoryTheme } from '@/constants/categoryThemes';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface EventHeaderProps {
@@ -92,7 +92,7 @@ const EventHeader = React.memo(function EventHeader({
                     <Ionicons
                       name={isFavorited ? 'heart' : 'heart-outline'}
                       size={20}
-                      color={isFavorited ? Colors.error : Colors.text.inverse}
+                      color={isFavorited ? colors.error : colors.text.inverse}
                     />
                   )}
                 </Pressable>
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   categoryText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
     textTransform: 'uppercase',
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   heroTitle: {
     ...Typography.h1,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.sm,
     lineHeight: 34,
   },
@@ -243,7 +243,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   heroMetaText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '500',
   },
@@ -251,7 +251,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
 });
 

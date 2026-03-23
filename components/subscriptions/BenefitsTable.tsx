@@ -6,7 +6,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import type { SubscriptionTier } from '@/services/subscriptionApi';
 import type { TierBenefits } from '@/types/subscription.types';
 
@@ -79,7 +80,7 @@ function BenefitsTable({ tiers }: BenefitsTableProps) {
                 return (
                   <View key={tier.tier} style={styles.tierCell}>
                     {hasFeature ? (
-                      <Ionicons name="checkmark-circle" size={18} color={Colors.success} />
+                      <Ionicons name="checkmark-circle" size={18} color={colors.success} />
                     ) : (
                       <Text style={styles.dashText}>--</Text>
                     )}

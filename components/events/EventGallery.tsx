@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { EventItem } from '@/types/homepage.types';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface RewardInfo {
@@ -55,7 +55,7 @@ const EventGallery = React.memo(function EventGallery({
           <View style={styles.rewardCard}>
             <View style={styles.rewardCardHeader}>
               <View style={styles.rewardIconCircle}>
-                <Ionicons name="gift-outline" size={20} color={Colors.text.inverse} />
+                <Ionicons name="gift-outline" size={20} color={colors.text.inverse} />
               </View>
               <View style={styles.rewardHeaderText}>
                 <Text style={styles.rewardTitle}>
@@ -74,7 +74,7 @@ const EventGallery = React.memo(function EventGallery({
                 <Ionicons
                   name={getRewardIcon(reward.action) as any}
                   size={18}
-                  color={Colors.brand.purpleLight}
+                  color={colors.brand.purpleLight}
                 />
                 <Text style={styles.rewardDescription}>
                   {reward.description || reward.action.replace(/_/g, ' ')}
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   description: {
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.brand.purpleLight,
+    backgroundColor: colors.brand.purpleLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -178,11 +178,11 @@ const styles = StyleSheet.create({
   rewardTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   rewardSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   rewardRow: {
     flexDirection: 'row',
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[700],
   },
   rewardCoinBadge: {
-    backgroundColor: Colors.brand.purpleLight,
+    backgroundColor: colors.brand.purpleLight,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 3,
     borderRadius: 10,
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
   rewardCoinText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Details
@@ -224,7 +224,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -233,13 +233,13 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
     fontWeight: '500',
   },
   detailValue: {
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
   },
 });

@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Report Fraud Page
 // Report fraudulent activity
@@ -156,7 +157,7 @@ function ReportFraudPage() {
         >
           <View style={styles.headerContent}>
             <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.white} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.white} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Report Fraud</ThemedText>
             <View style={styles.placeholder} />
@@ -214,7 +215,7 @@ function ReportFraudPage() {
       >
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.white} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.white} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Report Fraud</ThemedText>
           <View style={styles.placeholder} />
@@ -250,7 +251,7 @@ function ReportFraudPage() {
                 <Ionicons
                   name={type.icon as any}
                   size={24}
-                  color={selectedType === type.id ? Colors.error : Colors.text.tertiary}
+                  color={selectedType === type.id ? Colors.error : colors.text.tertiary}
                 />
                 <ThemedText style={[
                   styles.typeLabel,
@@ -271,7 +272,7 @@ function ReportFraudPage() {
             value={transactionId}
             onChangeText={setTransactionId}
             placeholder="e.g., ORD-2024-001234"
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
           />
         </View>
 
@@ -283,7 +284,7 @@ function ReportFraudPage() {
             value={description}
             onChangeText={setDescription}
             placeholder="Please provide details about the fraudulent activity..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             multiline
             maxLength={1000}
           />
@@ -310,7 +311,7 @@ function ReportFraudPage() {
             ))}
             {evidence.length < 5 && (
               <Pressable style={styles.addButton} onPress={handlePickImage}>
-                <Ionicons name="add" size={32} color={Colors.text.tertiary} />
+                <Ionicons name="add" size={32} color={colors.text.tertiary} />
                 <ThemedText style={styles.addButtonText}>Add</ThemedText>
               </Pressable>
             )}
@@ -325,7 +326,7 @@ function ReportFraudPage() {
             value={contactEmail}
             onChangeText={setContactEmail}
             placeholder="your@email.com"
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             keyboardType="email-address"
             autoCapitalize="none"
           />
@@ -342,14 +343,14 @@ function ReportFraudPage() {
         >
           {loading ? (
             <>
-              <ActivityIndicator color={Colors.text.white} />
+              <ActivityIndicator color={colors.text.white} />
               {uploadingImages && (
                 <ThemedText style={styles.submitButtonText}>Uploading evidence...</ThemedText>
               )}
             </>
           ) : (
             <>
-              <Ionicons name="shield-checkmark" size={20} color={Colors.text.white} />
+              <Ionicons name="shield-checkmark" size={20} color={colors.text.white} />
               <ThemedText style={styles.submitButtonText}>Submit Report</ThemedText>
             </>
           )}
@@ -370,7 +371,7 @@ function ReportFraudPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -388,7 +389,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     flex: 1,
     ...Typography.h3,
-    color: Colors.text.white,
+    color: colors.text.white,
     textAlign: 'center',
     marginRight: 40,
   },
@@ -423,12 +424,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   sectionSubtitle: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
   },
   typesGrid: {
@@ -438,7 +439,7 @@ const styles = StyleSheet.create({
   },
   typeCard: {
     width: '48%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -453,7 +454,7 @@ const styles = StyleSheet.create({
   },
   typeLabel: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   typeLabelSelected: {
@@ -461,26 +462,26 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   textInput: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     ...Shadows.subtle,
   },
   textArea: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 120,
     textAlignVertical: 'top',
     ...Shadows.subtle,
   },
   charCount: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'right',
     marginTop: Spacing.xs,
   },
@@ -504,7 +505,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -8,
     right: -8,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.full,
   },
   addButton: {
@@ -520,7 +521,7 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   submitButton: {
     flexDirection: 'row',
@@ -537,14 +538,14 @@ const styles = StyleSheet.create({
   },
   submitButtonText: {
     ...Typography.button,
-    color: Colors.text.white,
+    color: colors.text.white,
   },
   disclaimer: {
     padding: Spacing.md,
   },
   disclaimerText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 18,
   },
@@ -559,12 +560,12 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   successText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.xl,
@@ -584,16 +585,16 @@ const styles = StyleSheet.create({
   },
   reportIdValue: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   reportIdNote: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   nextSteps: {
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.xl,
@@ -601,7 +602,7 @@ const styles = StyleSheet.create({
   },
   nextStepsTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   nextStep: {
@@ -624,7 +625,7 @@ const styles = StyleSheet.create({
   },
   stepText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   doneButton: {
@@ -636,7 +637,7 @@ const styles = StyleSheet.create({
   },
   doneButtonText: {
     ...Typography.button,
-    color: Colors.text.white,
+    color: colors.text.white,
   },
 });
 

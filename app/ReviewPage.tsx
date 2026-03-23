@@ -177,7 +177,7 @@ function ReviewPage() {
             <Ionicons
               name={star <= rating ? 'star' : 'star-outline'}
               size={28}
-              color={star <= rating ? colors.brand.goldBright : Colors.border.default}
+              color={star <= rating ? colors.brand.goldBright : colors.border.default}
             />
           </Pressable>
         ))}
@@ -208,7 +208,7 @@ function ReviewPage() {
           ))
         ) : (
           <View style={styles.noCashback}>
-            <Ionicons name="gift-outline" size={32} color={Colors.text.tertiary} />
+            <Ionicons name="gift-outline" size={32} color={colors.text.tertiary} />
             <Text style={styles.noCashbackText}>No recent cashback yet</Text>
             <Text style={styles.noCashbackSubtext}>Be the first to earn rewards!</Text>
           </View>
@@ -309,7 +309,7 @@ function ReviewPage() {
   style={{
     flex: 1,
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 20,
     outlineStyle: 'none', // Web only
   } as any}
@@ -346,7 +346,7 @@ function ReviewPage() {
               </Text>
             </Pressable>
             {(isStoreReview || fromPrive === 'true') && (
-              <Text style={{ ...Typography.bodySmall, color: Colors.text.tertiary, textAlign: 'center', marginTop: Spacing.sm }}>
+              <Text style={{ ...Typography.bodySmall, color: colors.text.tertiary, textAlign: 'center', marginTop: Spacing.sm }}>
                 Coins awarded after merchant approval
               </Text>
             )}
@@ -370,7 +370,7 @@ function ReviewPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -379,17 +379,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingTop: 60,
     paddingBottom: Spacing.lg,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   backButton: {
     padding: Spacing.sm,
     borderRadius: 50,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerSpacer: {
     width: 40,
@@ -414,7 +414,7 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginBottom: Spacing.md,
     borderWidth: 3,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   storeIconContainer: {
     width: 100,
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
   productTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginTop: Spacing.md,
     paddingHorizontal: Spacing.lg,
@@ -442,7 +442,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     ...Typography.bodyLarge,
     fontWeight: '500',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.xl,
     lineHeight: 22,
   },
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
   reviewCardTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   starContainer: {
@@ -472,13 +472,13 @@ const styles = StyleSheet.create({
   reviewInputContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
     minHeight: 90,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   writeIcon: {
     marginRight: Spacing.md,
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
   reviewInput: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 20,
     ...(Platform.OS === 'web' ? { outlineStyle: 'none' } : {}), // Web: removes focus outline
   },
@@ -502,12 +502,12 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   submitButtonDisabled: {
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     shadowOpacity: 0,
     elevation: 0,
   },
   submitButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
   recentCashbackTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.lg,
   },
   cashbackItem: {
@@ -534,12 +534,12 @@ const styles = StyleSheet.create({
   },
   userName: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
   },
   amountText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   cashbackLoading: {
     flexDirection: 'row',
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginLeft: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   noCashback: {
     alignItems: 'center',
@@ -559,12 +559,12 @@ const styles = StyleSheet.create({
   noCashbackText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   noCashbackSubtext: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
 });

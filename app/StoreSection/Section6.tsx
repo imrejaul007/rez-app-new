@@ -382,11 +382,11 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: Spacing['2xl'] - 4,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary },
+    backgroundColor: colors.background.primary },
 
   // Modern Card
   card: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius['2xl'],
     padding: Spacing.lg + 2,
     ...Shadows.subtle },
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
   mainTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     paddingRight: Spacing.md - 2 },
 
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
     maxHeight: 500 },
   voucherItemCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius['2xl'],
     padding: Spacing['2xl'] - 4,
     marginBottom: Spacing.base,
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full },
   saveBadgeText: {
     ...Typography.caption,
-    color: Colors.text.white,
+    color: colors.text.white,
     fontWeight: '700' },
 
   voucherIconContainer: {
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
     marginLeft: Spacing.xs },
 
   restrictionsContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.lg },
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
     opacity: 0.6 },
   addButtonText: {
     ...Typography.h4,
-    color: Colors.text.white,
+    color: colors.text.white,
     fontWeight: '700' },
 
   loadingContainer: {
@@ -579,5 +579,5 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base },
   claimedText: {
     ...Typography.body,
-    color: Colors.text.white,
+    color: colors.text.white,
     fontWeight: '600' } });

@@ -301,16 +301,16 @@ function OrderConfirmationPage() {
           {/* Fulfillment type badge */}
           {(order as any).fulfillmentType && (order as any).fulfillmentType !== 'delivery' && (
             <View style={{ flexDirection: 'row', marginBottom: 12 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background.secondary, paddingHorizontal: 10, paddingVertical: 5, borderRadius: BorderRadius.sm, gap: 5 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.secondary, paddingHorizontal: 10, paddingVertical: 5, borderRadius: BorderRadius.sm, gap: 5 }}>
                 <Ionicons
                   name={
                     (order as any).fulfillmentType === 'pickup' ? 'bag-handle-outline' :
                     (order as any).fulfillmentType === 'drive_thru' ? 'car-outline' :
                     (order as any).fulfillmentType === 'dine_in' ? 'restaurant-outline' : 'bicycle-outline'
                   }
-                  size={14} color={Colors.nileBlue}
+                  size={14} color={colors.nileBlue}
                 />
-                <ThemedText style={{ ...Typography.bodySmall, fontWeight: '600', color: Colors.nileBlue }}>
+                <ThemedText style={{ ...Typography.bodySmall, fontWeight: '600', color: colors.nileBlue }}>
                   {(order as any).fulfillmentType === 'pickup' ? 'Store Pickup' :
                    (order as any).fulfillmentType === 'drive_thru' ? 'Drive-Thru' :
                    (order as any).fulfillmentType === 'dine_in' ? 'Dine-In' : 'Delivery'}
@@ -330,7 +330,7 @@ function OrderConfirmationPage() {
           {(order as any).fulfillmentType === 'dine_in' && (order as any).fulfillmentDetails?.tableNumber && (
             <View style={styles.deliveryInfo}>
               <View style={styles.deliveryIconContainer}>
-                <Ionicons name="restaurant" size={24} color={Colors.nileBlue} />
+                <Ionicons name="restaurant" size={24} color={colors.nileBlue} />
               </View>
               <View style={styles.deliveryDetails}>
                 <ThemedText style={styles.deliveryAddress}>Table {(order as any).fulfillmentDetails.tableNumber}</ThemedText>
@@ -343,7 +343,7 @@ function OrderConfirmationPage() {
           {((order as any).fulfillmentType === 'pickup' || (order as any).fulfillmentType === 'drive_thru') && (
             <View style={styles.deliveryInfo}>
               <View style={styles.deliveryIconContainer}>
-                <Ionicons name="storefront-outline" size={24} color={Colors.nileBlue} />
+                <Ionicons name="storefront-outline" size={24} color={colors.nileBlue} />
               </View>
               <View style={styles.deliveryDetails}>
                 <ThemedText style={styles.deliveryAddress}>
@@ -544,7 +544,7 @@ function OrderConfirmationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   headerGradient: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
     paddingBottom: 20,
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '600',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   content: {
     flex: 1,
     padding: 16 },
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -574,18 +574,18 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h2,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm },
   errorMessage: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl },
   successSection: {
     alignItems: 'center',
     paddingVertical: Spacing['2xl'],
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base },
   successIconContainer: {
@@ -593,22 +593,22 @@ const styles = StyleSheet.create({
   successTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center' },
   successSubtitle: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center' },
   card: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base },
   cardTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base },
   orderInfo: {
     gap: 12 },
@@ -618,17 +618,17 @@ const styles = StyleSheet.create({
     alignItems: 'center' },
   infoLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   infoValue: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   statusBadge: {
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12 },
   paidBadge: {
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   statusText: {
     ...Typography.bodySmall,
     fontWeight: '600',
@@ -641,7 +641,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center' },
   deliveryDetails: {
@@ -649,15 +649,15 @@ const styles = StyleSheet.create({
   deliveryAddress: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs },
   deliveryAddressText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20 },
   deliveryPhone: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs },
   estimatedDelivery: {
     flexDirection: 'row',
@@ -675,25 +675,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary },
+    borderBottomColor: colors.background.secondary },
   itemInfo: {
     flex: 1 },
   itemName: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs },
   itemVariant: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2 },
   itemQuantity: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   itemPrice: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   summaryRows: {
     gap: 12 },
   summaryRow: {
@@ -702,19 +702,19 @@ const styles = StyleSheet.create({
     alignItems: 'center' },
   summaryLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   summaryValue: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   divider: {
     height: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     marginVertical: Spacing.sm },
   totalLabel: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   totalValue: {
     ...Typography.h4,
     fontWeight: '700',
@@ -725,12 +725,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: Spacing.md,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default },
+    borderTopColor: colors.border.default },
   secondaryButton: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1.5,
     borderColor: Colors.brand.purpleLight,
     borderRadius: BorderRadius.md,
@@ -753,7 +753,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   // Cross-platform modal styles
   modalOverlay: {
     flex: 1,
@@ -762,7 +762,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20 },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -782,12 +782,12 @@ const styles = StyleSheet.create({
   modalTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.sm },
   modalMessage: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.lg },
@@ -801,6 +801,6 @@ const styles = StyleSheet.create({
   modalButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse } });
+    color: colors.text.inverse } });
 
 export default withErrorBoundary(OrderConfirmationPage, 'OrderConfirmation');

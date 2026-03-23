@@ -331,7 +331,7 @@ function PhotoUploadPage() {
               <View style={styles.selectedStore}>
                 <ThemedText style={styles.selectedStoreName}>{selectedStore.name}</ThemedText>
                 <Pressable onPress={() => { setSelectedStore(null); setStoreSearch(''); }}>
-                  <Ionicons name="close" size={20} color={Colors.text.tertiary} />
+                  <Ionicons name="close" size={20} color={colors.text.tertiary} />
                 </Pressable>
               </View>
             ) : (
@@ -341,7 +341,7 @@ function PhotoUploadPage() {
                   placeholder="Search for a store..."
                   value={storeSearch}
                   onChangeText={setStoreSearch}
-                  placeholderTextColor={Colors.text.tertiary}
+                  placeholderTextColor={colors.text.tertiary}
                 />
                 {searchingStores && <ActivityIndicator size="small" style={styles.searchSpinner} />}
                 {storeResults.map(store => (
@@ -372,7 +372,7 @@ function PhotoUploadPage() {
               onChangeText={setCaption}
               multiline
               maxLength={500}
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
             />
             <ThemedText style={styles.charCount}>{caption.length}/500</ThemedText>
           </View>
@@ -412,7 +412,7 @@ function PhotoUploadPage() {
           onRefresh={fetchHistory}
           ListEmptyComponent={
             <View style={styles.emptyState}>
-              <Ionicons name="images-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="images-outline" size={48} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyText}>No uploads yet</ThemedText>
               <ThemedText style={styles.emptySubtext}>Upload your first photos to start earning!</ThemedText>
             </View>
@@ -426,7 +426,7 @@ function PhotoUploadPage() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   header: { paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40, paddingBottom: 0 },
   headerContent: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.lg, marginBottom: Spacing.sm },
   backButton: { padding: Spacing.sm, marginRight: Spacing.sm },
@@ -440,44 +440,44 @@ const styles = StyleSheet.create({
   activeTabText: { color: Colors.primary[600] },
   content: { flex: 1, padding: Spacing.lg },
   section: { marginBottom: Spacing.lg },
-  sectionTitle: { ...Typography.label, color: Colors.text.primary, marginBottom: Spacing.sm },
+  sectionTitle: { ...Typography.label, color: colors.text.primary, marginBottom: Spacing.sm },
   photoGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   photoItem: { width: 100, height: 100, borderRadius: BorderRadius.md, overflow: 'hidden' },
   photoImage: { width: '100%', height: '100%' },
   removePhotoButton: { position: 'absolute', top: -4, right: -4, backgroundColor: colors.background.primary, borderRadius: 12 },
   addPhotoButton: { width: 100, height: 100, borderRadius: BorderRadius.md, borderWidth: 2, borderColor: Colors.primary[200], borderStyle: 'dashed', justifyContent: 'center', alignItems: 'center' },
   addPhotoText: { ...Typography.caption, color: Colors.primary[600], marginTop: 4 },
-  addPhotoSubtext: { ...Typography.caption, color: Colors.text.tertiary, fontSize: 10 },
-  searchInput: { borderWidth: 1, borderColor: Colors.gray[300], borderRadius: BorderRadius.md, padding: Spacing.md, ...Typography.body, color: Colors.text.primary },
+  addPhotoSubtext: { ...Typography.caption, color: colors.text.tertiary, fontSize: 10 },
+  searchInput: { borderWidth: 1, borderColor: Colors.gray[300], borderRadius: BorderRadius.md, padding: Spacing.md, ...Typography.body, color: colors.text.primary },
   searchSpinner: { marginTop: Spacing.sm },
   storeResult: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, padding: Spacing.md, borderBottomWidth: 1, borderBottomColor: Colors.gray[100] },
-  storeResultText: { ...Typography.body, color: Colors.text.primary },
+  storeResultText: { ...Typography.body, color: colors.text.primary },
   selectedStore: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.primary[50], padding: Spacing.md, borderRadius: BorderRadius.md },
   selectedStoreName: { ...Typography.label, color: Colors.primary[600] },
-  captionInput: { borderWidth: 1, borderColor: Colors.gray[300], borderRadius: BorderRadius.md, padding: Spacing.md, ...Typography.body, color: Colors.text.primary, minHeight: 80, textAlignVertical: 'top' },
-  charCount: { ...Typography.caption, color: Colors.text.tertiary, textAlign: 'right', marginTop: 4 },
+  captionInput: { borderWidth: 1, borderColor: Colors.gray[300], borderRadius: BorderRadius.md, padding: Spacing.md, ...Typography.body, color: colors.text.primary, minHeight: 80, textAlignVertical: 'top' },
+  charCount: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'right', marginTop: 4 },
   coinPreview: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, backgroundColor: '#FFF9E6', padding: Spacing.md, borderRadius: BorderRadius.md, marginBottom: Spacing.lg },
   coinPreviewText: { ...Typography.label, color: colors.brand.amberDeep },
   uploadButton: { backgroundColor: Colors.primary[600], flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.sm, padding: Spacing.md, borderRadius: BorderRadius.md },
   uploadButtonDisabled: { opacity: 0.5 },
   uploadButtonText: { ...Typography.label, color: colors.background.primary },
   historyList: { padding: Spacing.lg, paddingBottom: 120 },
-  historyCard: { flexDirection: 'row', backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.md, marginBottom: Spacing.sm, gap: Spacing.md, ...Shadows.subtle },
+  historyCard: { flexDirection: 'row', backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.md, marginBottom: Spacing.sm, gap: Spacing.md, ...Shadows.subtle },
   historyPhotos: { flexDirection: 'row', alignItems: 'center' },
   historyPhoto: { width: 48, height: 48, borderRadius: BorderRadius.md, borderWidth: 2, borderColor: colors.background.primary },
   morePhotos: { backgroundColor: Colors.gray[200], justifyContent: 'center', alignItems: 'center' },
-  morePhotosText: { ...Typography.caption, color: Colors.text.secondary, fontWeight: '600' },
+  morePhotosText: { ...Typography.caption, color: colors.text.secondary, fontWeight: '600' },
   historyInfo: { flex: 1 },
-  historyCaption: { ...Typography.label, color: Colors.text.primary, marginBottom: 2 },
-  historyStore: { ...Typography.caption, color: Colors.text.tertiary, marginBottom: Spacing.sm },
+  historyCaption: { ...Typography.label, color: colors.text.primary, marginBottom: 2 },
+  historyStore: { ...Typography.caption, color: colors.text.tertiary, marginBottom: Spacing.sm },
   historyMeta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
   statusBadge: { paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.sm },
   statusText: { ...Typography.caption, fontWeight: '600' },
   coinsBadge: { flexDirection: 'row', alignItems: 'center', gap: 2 },
   coinsText: { ...Typography.caption, color: Colors.gold, fontWeight: '600' },
   emptyState: { alignItems: 'center', padding: Spacing['3xl'] },
-  emptyText: { ...Typography.h4, color: Colors.text.secondary, marginTop: Spacing.md },
-  emptySubtext: { ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: Spacing.sm, textAlign: 'center' },
+  emptyText: { ...Typography.h4, color: colors.text.secondary, marginTop: Spacing.md },
+  emptySubtext: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.sm, textAlign: 'center' },
 });
 
 export default withErrorBoundary(PhotoUploadPage, 'EarnPhotoUpload');

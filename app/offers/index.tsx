@@ -122,7 +122,7 @@ function OffersScreen() {
                 onPress={handleBack}
                
               >
-                <Ionicons name="arrow-back" size={22} color={Colors.text.primary} />
+                <Ionicons name="arrow-back" size={22} color={colors.text.primary} />
               </Pressable>
 
               {/* Center - Title & Coins on same line */}
@@ -148,7 +148,7 @@ function OffersScreen() {
                   onPress={handleShare}
                  
                 >
-                  <Ionicons name="share-outline" size={20} color={Colors.text.primary} />
+                  <Ionicons name="share-outline" size={20} color={colors.text.primary} />
                 </Pressable>
               </View>
             </View>

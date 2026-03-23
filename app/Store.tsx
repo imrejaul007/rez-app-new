@@ -675,7 +675,7 @@ const styles = StyleSheet.create({
     flex: 1 },
 
   locationText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     fontSize: 12.5,
     lineHeight: 16 },
@@ -697,7 +697,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.15)' },
 
   coinsText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '700' },
 
@@ -712,7 +712,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.3)' },
 
   profileText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '700',
     ...Typography.body,
     fontSize: 15 },
@@ -749,7 +749,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     minWidth: 0,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     ...Typography.body,
     paddingVertical: 0 },
 
@@ -760,14 +760,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.5 },
 
   sectionSubtitle: {
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2 },
 
   // Grid & cards
@@ -783,12 +783,12 @@ const styles = StyleSheet.create({
 
   card: {
     width: CARD_WIDTH,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 22,
     paddingHorizontal: Spacing.sm,
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.sm,
-    shadowColor: Colors.nileBlue,
+    shadowColor: colors.nileBlue,
     shadowOpacity: 0.08,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 4 },
@@ -805,7 +805,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2 },
 
   cardTitle: {
-    color: Colors.text.primary,
+    color: colors.text.primary,
     ...Typography.body,
     fontWeight: '700',
     fontSize: isSmallDevice ? 13 : 14,
@@ -813,7 +813,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs },
 
   cardDescription: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.caption,
     fontWeight: '500',
     fontSize: isSmallDevice ? 11 : 12,
@@ -826,7 +826,7 @@ const styles = StyleSheet.create({
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center' },
 
@@ -856,7 +856,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.2)' },
 
   badgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.overline,
     fontWeight: '800',
     letterSpacing: 0.3 },
@@ -924,7 +924,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500' },
   errorContainer: {
     paddingVertical: Spacing.base,
@@ -953,7 +953,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   errorSubtext: {
     ...Typography.bodySmall,
     color: '#78350F',

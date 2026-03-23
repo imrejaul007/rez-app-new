@@ -107,7 +107,7 @@ function BenefitsPage() {
       <LinearGradient colors={tierGradient as any} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Your Benefits</ThemedText>
           <View style={styles.headerRight} />
@@ -121,7 +121,7 @@ function BenefitsPage() {
             <Ionicons
               name={currentTier === 'vip' ? 'diamond' : currentTier === 'premium' ? 'star' : 'person-outline'}
               size={32}
-              color={Colors.text.inverse}
+              color={colors.text.inverse}
             />
             <ThemedText style={styles.tierBadgeText}>{TIER_NAMES[currentTier]} Member</ThemedText>
           </LinearGradient>
@@ -186,7 +186,7 @@ function BenefitsPage() {
                 <ThemedText style={styles.upgradeButtonText}>
                   {currentTier === 'free' ? 'Upgrade to Premium' : 'Upgrade to VIP'}
                 </ThemedText>
-                <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+                <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
               </LinearGradient>
             </Pressable>
           </View>
@@ -199,7 +199,7 @@ function BenefitsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
@@ -245,12 +245,12 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   tierBadgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h2,
     fontWeight: 'bold',
   },
   savingsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.xl,
     borderRadius: BorderRadius.lg,
@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   },
   savingsTitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   savingsAmount: {
@@ -285,12 +285,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   benefitCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -314,12 +314,12 @@ const styles = StyleSheet.create({
   benefitTitle: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   benefitDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   benefitTip: {
@@ -339,7 +339,7 @@ const styles = StyleSheet.create({
   },
   tipCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.md,
   },
   tipNumberText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold',
   },
@@ -369,12 +369,12 @@ const styles = StyleSheet.create({
   tipTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   tipDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   upgradeSection: {
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   upgradeSectionTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   upgradeButton: {
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   upgradeButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold',
   },

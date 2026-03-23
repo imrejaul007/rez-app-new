@@ -287,7 +287,7 @@ function TableBookingPage() {
           style={styles.loadingHeader}
         >
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
         </LinearGradient>
         <View style={styles.loadingContainer}>
@@ -306,11 +306,11 @@ function TableBookingPage() {
           style={styles.loadingHeader}
         >
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
         </LinearGradient>
         <View style={styles.errorContainer}>
-          <Ionicons name="restaurant-outline" size={64} color={Colors.border.default} />
+          <Ionicons name="restaurant-outline" size={64} color={colors.border.default} />
           <ThemedText style={styles.errorText}>Restaurant not found</ThemedText>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.errorButton}>
             <ThemedText style={styles.errorButtonText}>Go Back</ThemedText>
@@ -337,7 +337,7 @@ function TableBookingPage() {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Book a Table</ThemedText>
           <View style={{ width: 40 }} />
@@ -348,12 +348,12 @@ function TableBookingPage() {
           <ThemedText style={styles.storeCategory}>{store.category}</ThemedText>
           {store.bookingConfig && (
             <View style={styles.bookingInfoBadge}>
-              <Ionicons name="time-outline" size={14} color={Colors.text.inverse} />
+              <Ionicons name="time-outline" size={14} color={colors.text.inverse} />
               <ThemedText style={styles.bookingInfoText}>
                 {store.bookingConfig.slotDuration || 90} min slots
               </ThemedText>
               <ThemedText style={styles.bookingInfoDivider}>•</ThemedText>
-              <Ionicons name="people-outline" size={14} color={Colors.text.inverse} />
+              <Ionicons name="people-outline" size={14} color={colors.text.inverse} />
               <ThemedText style={styles.bookingInfoText}>
                 Up to {store.bookingConfig.maxPartySize || 10} guests
               </ThemedText>
@@ -455,7 +455,7 @@ function TableBookingPage() {
             </View>
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="calendar-outline" size={48} color={Colors.border.default} />
+              <Ionicons name="calendar-outline" size={48} color={colors.border.default} />
               <ThemedText style={styles.emptyStateText}>
                 No time slots available for this date
               </ThemedText>
@@ -479,7 +479,7 @@ function TableBookingPage() {
               <Ionicons
                 name="remove-circle"
                 size={40}
-                color={partySize <= (store?.bookingConfig?.minPartySize || 1) ? Colors.border.default : Colors.brand.purple}
+                color={partySize <= (store?.bookingConfig?.minPartySize || 1) ? colors.border.default : Colors.brand.purple}
               />
             </Pressable>
 
@@ -498,7 +498,7 @@ function TableBookingPage() {
               <Ionicons
                 name="add-circle"
                 size={40}
-                color={partySize >= maxPartySize ? Colors.border.default : Colors.brand.purple}
+                color={partySize >= maxPartySize ? colors.border.default : Colors.brand.purple}
               />
             </Pressable>
           </View>
@@ -517,7 +517,7 @@ function TableBookingPage() {
                   <Ionicons
                     name="people"
                     size={16}
-                    color={partySize === size ? Colors.text.inverse : Colors.brand.purple}
+                    color={partySize === size ? colors.text.inverse : Colors.brand.purple}
                   />
                   <ThemedText
                     style={[
@@ -542,7 +542,7 @@ function TableBookingPage() {
 
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: textColor }]}
                 placeholder="Full Name *"
@@ -553,7 +553,7 @@ function TableBookingPage() {
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="call-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="call-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
               <CountryCodePicker
                 selectedCountry={selectedCountry}
                 onSelect={setSelectedCountry}
@@ -571,7 +571,7 @@ function TableBookingPage() {
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={Colors.text.tertiary} style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
               <TextInput
                 style={[styles.input, { color: textColor }]}
                 placeholder="Email (Optional)"
@@ -584,7 +584,7 @@ function TableBookingPage() {
             </View>
 
             <View style={[styles.inputContainer, styles.textAreaContainer]}>
-              <Ionicons name="create-outline" size={20} color={Colors.text.tertiary} style={[styles.inputIcon, styles.textAreaIcon]} />
+              <Ionicons name="create-outline" size={20} color={colors.text.tertiary} style={[styles.inputIcon, styles.textAreaIcon]} />
               <TextInput
                 style={[styles.input, styles.textArea, { color: textColor }]}
                 placeholder="Special Requests (Optional)"
@@ -611,21 +611,21 @@ function TableBookingPage() {
           disabled={submitting}
         >
           <LinearGradient
-            colors={submitting ? [Colors.text.tertiary, Colors.text.tertiary] : [Colors.brand.purple, Colors.brand.purple]}
+            colors={submitting ? [colors.text.tertiary, colors.text.tertiary] : [Colors.brand.purple, Colors.brand.purple]}
             style={styles.bookButtonGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
           >
             {submitting ? (
               <>
-                <ActivityIndicator size="small" color={Colors.text.inverse} />
+                <ActivityIndicator size="small" color={colors.text.inverse} />
                 <ThemedText style={styles.bookButtonText}>Confirming...</ThemedText>
               </>
             ) : (
               <>
-                <Ionicons name="checkmark-circle" size={24} color={Colors.text.inverse} />
+                <Ionicons name="checkmark-circle" size={24} color={colors.text.inverse} />
                 <ThemedText style={styles.bookButtonText}>Confirm Booking</ThemedText>
-                <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+                <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
               </>
             )}
           </LinearGradient>
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeInfo: {
     alignItems: 'center',
@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
     textAlign: 'center',
   },
@@ -694,12 +694,12 @@ const styles = StyleSheet.create({
   },
   bookingInfoText: {
     ...Typography.caption,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginLeft: Spacing.xs,
   },
   bookingInfoDivider: {
     ...Typography.caption,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginHorizontal: Spacing.sm,
   },
   loadingContainer: {
@@ -711,7 +711,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -725,7 +725,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: Spacing.base,
     marginBottom: Spacing.xl,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorButton: {
     backgroundColor: Colors.brand.purple,
@@ -734,7 +734,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   errorButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -767,11 +767,11 @@ const styles = StyleSheet.create({
     height: 100,
     borderRadius: BorderRadius.lg,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: Spacing.md,
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     position: 'relative',
   },
   dateCardSelected: {
@@ -789,21 +789,21 @@ const styles = StyleSheet.create({
   todayBadgeText: {
     fontSize: 10,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   dateDay: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   dateNumber: {
     ...Typography.h1,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   dateMonth: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   dateTextSelected: {
@@ -819,30 +819,30 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
   },
   timeSlotSelected: {
     borderColor: Colors.brand.purple,
     backgroundColor: colors.tint.pink,
   },
   timeSlotDisabled: {
-    backgroundColor: Colors.background.secondary,
-    borderColor: Colors.border.default,
+    backgroundColor: colors.background.secondary,
+    borderColor: colors.border.default,
     opacity: 0.6,
   },
   timeText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   timeTextSelected: {
     color: Colors.brand.purple,
     fontWeight: '700',
   },
   timeTextDisabled: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tablesLeftText: {
     fontSize: 11,
@@ -860,14 +860,14 @@ const styles = StyleSheet.create({
   },
   emptyStateText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   partySizeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     padding: Spacing.xl,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base,
@@ -885,7 +885,7 @@ const styles = StyleSheet.create({
   },
   partySizeLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   quickSizeContainer: {
@@ -901,7 +901,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     borderWidth: 2,
     borderColor: Colors.brand.purple,
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     gap: 6,
   },
   quickSizeButtonSelected: {
@@ -914,7 +914,7 @@ const styles = StyleSheet.create({
     color: Colors.brand.purple,
   },
   quickSizeTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   formContainer: {
     gap: Spacing.base,
@@ -922,10 +922,10 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderRadius: BorderRadius.md,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     paddingHorizontal: Spacing.base,
   },
   textAreaContainer: {
@@ -943,7 +943,7 @@ const styles = StyleSheet.create({
   phoneDivider: {
     width: 1,
     height: 24,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     marginHorizontal: Spacing.sm,
   },
   textAreaIcon: {
@@ -966,7 +966,7 @@ const styles = StyleSheet.create({
     right: 0,
     padding: Spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -993,7 +993,7 @@ const styles = StyleSheet.create({
   bookButtonText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

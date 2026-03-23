@@ -179,7 +179,7 @@ function StoreBottomActionBar({
               accessibilityRole="button"
               accessibilityLabel="Book Table"
             >
-              <Ionicons name="calendar-outline" size={20} color={Colors.text.primary} />
+              <Ionicons name="calendar-outline" size={20} color={colors.text.primary} />
               <ThemedText style={styles.iconButtonFoodLabel}>Table</ThemedText>
             </Pressable>
           </Animated.View>
@@ -194,7 +194,7 @@ function StoreBottomActionBar({
               accessibilityRole="button"
               accessibilityLabel="Call Store"
             >
-              <Ionicons name="call-outline" size={20} color={Colors.text.primary} />
+              <Ionicons name="call-outline" size={20} color={colors.text.primary} />
               <ThemedText style={styles.iconButtonFoodLabel}>Call</ThemedText>
             </Pressable>
           </Animated.View>
@@ -209,7 +209,7 @@ function StoreBottomActionBar({
               accessibilityRole="button"
               accessibilityLabel="Pay Bill"
             >
-              <Ionicons name="qr-code-outline" size={20} color={Colors.text.primary} />
+              <Ionicons name="qr-code-outline" size={20} color={colors.text.primary} />
               <ThemedText style={styles.iconButtonFoodLabel}>Pay Bill</ThemedText>
             </Pressable>
           </Animated.View>
@@ -250,7 +250,7 @@ function StoreBottomActionBar({
             accessibilityRole="button"
             accessibilityLabel="Wallet"
           >
-            <Ionicons name="wallet-outline" size={24} color={Colors.text.primary} />
+            <Ionicons name="wallet-outline" size={24} color={colors.text.primary} />
           </Pressable>
         </Animated.View>
 
@@ -265,7 +265,7 @@ function StoreBottomActionBar({
             accessibilityRole="button"
             accessibilityLabel="Offers"
           >
-            <Ionicons name="pricetag" size={22} color={Colors.text.primary} />
+            <Ionicons name="pricetag" size={22} color={colors.text.primary} />
           </Pressable>
         </Animated.View>
       </View>
@@ -353,6 +353,6 @@ const styles = StyleSheet.create({
   iconButtonFoodLabel: {
     fontSize: 10,
     fontWeight: "600",
-    color: Colors.text.secondary } });
+    color: colors.text.secondary } });
 
 export default withErrorBoundary(StoreBottomActionBar, 'MainStoreSectionStoreBottomActionBar');

@@ -165,10 +165,10 @@ function CreatorEditProfilePage() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <LinearGradient colors={[Colors.nileBlue, '#2d5a7b']} style={styles.header}>
+        <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Edit Profile</Text>
             <View style={{ width: 40 }} />
@@ -186,10 +186,10 @@ function CreatorEditProfilePage() {
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.nileBlue, '#2d5a7b']} style={styles.header}>
+      <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>Edit Profile</Text>
           <Pressable
@@ -198,7 +198,7 @@ function CreatorEditProfilePage() {
             disabled={saving}
           >
             {saving ? (
-              <ActivityIndicator size="small" color={Colors.text.inverse} />
+              <ActivityIndicator size="small" color={colors.text.inverse} />
             ) : (
               <Text style={styles.saveHeaderButtonText}>Save</Text>
             )}
@@ -296,7 +296,7 @@ function CreatorEditProfilePage() {
                     <Text style={[styles.tagChipText, isSelected && styles.tagChipTextSelected]}>
                       {tag}
                     </Text>
-                    {isSelected && <Ionicons name="checkmark" size={14} color={Colors.text.inverse} />}
+                    {isSelected && <Ionicons name="checkmark" size={14} color={colors.text.inverse} />}
                   </Pressable>
                 );
               })}
@@ -327,7 +327,7 @@ function CreatorEditProfilePage() {
                       'globe-outline' as any
                     }
                     size={16}
-                    color={Colors.text.tertiary}
+                    color={colors.text.tertiary}
                   />
                   <Text style={styles.platformText}>
                     {link.platform.charAt(0).toUpperCase() + link.platform.slice(1)}
@@ -366,7 +366,7 @@ function CreatorEditProfilePage() {
            
           >
             {saving ? (
-              <ActivityIndicator size="small" color={Colors.text.inverse} />
+              <ActivityIndicator size="small" color={colors.text.inverse} />
             ) : (
               <Text style={styles.saveButtonText}>Save Changes</Text>
             )}
@@ -386,7 +386,7 @@ function CreatorEditProfilePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   saveHeaderButton: {
     backgroundColor: 'rgba(255,255,255,0.2)',
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
   saveHeaderButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   scrollView: {
     flex: 1,
@@ -434,7 +434,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Fields
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
   fieldLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   fieldFooter: {
@@ -454,13 +454,13 @@ const styles = StyleSheet.create({
     marginTop: Spacing.xs,
   },
   textInput: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     padding: 14,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   textArea: {
     minHeight: 100,
@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
   },
   charCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
     marginLeft: 'auto',
   },
@@ -494,9 +494,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   tagChipSelected: {
     backgroundColor: colors.primary[300],
@@ -505,10 +505,10 @@ const styles = StyleSheet.create({
   tagChipText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   tagChipTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Social Links
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 10,
     paddingVertical: 10,
     borderRadius: 10,
@@ -547,30 +547,30 @@ const styles = StyleSheet.create({
   platformText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   socialUrlInput: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: 10,
     padding: 10,
     ...Typography.bodySmall,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   removeLinkButton: {
     padding: Spacing.xs,
   },
   noLinksText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontStyle: 'italic',
   },
 
   // Save
   saveButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingVertical: Spacing.base,
     borderRadius: 14,
     alignItems: 'center',
@@ -579,7 +579,7 @@ const styles = StyleSheet.create({
   saveButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

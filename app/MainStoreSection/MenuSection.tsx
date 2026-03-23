@@ -153,18 +153,18 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 16,
     fontWeight: "600",
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   itemVariant: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 4,
   },
   itemPrice: {
     fontSize: 16,
     fontWeight: "700",
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   coinsContainer: {
     flexDirection: "row",

@@ -123,7 +123,7 @@ function StoreEMIInfoPage() {
               onChangeText={setAmount}
               keyboardType="number-pad"
               placeholder="Enter amount"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
             />
           </View>
         </View>
@@ -266,7 +266,7 @@ function StoreEMIInfoPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -318,26 +318,26 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.md,
   },
   amountInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Shadows.subtle,
   },
   currencySymbol: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginRight: Spacing.sm,
   },
   amountInput: {
     flex: 1,
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   emiPlansGrid: {
     flexDirection: 'row',
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
   },
   emiPlanCard: {
     width: '31%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -376,7 +376,7 @@ const styles = StyleSheet.create({
   },
   emiTenure: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   emiTenureSelected: {
@@ -384,7 +384,7 @@ const styles = StyleSheet.create({
   },
   emiAmount: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   emiAmountSelected: {
     color: Colors.primary[600],
@@ -392,11 +392,11 @@ const styles = StyleSheet.create({
   },
   emiInterest: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   breakdownCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Shadows.subtle,
@@ -407,15 +407,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   breakdownLabel: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   breakdownValue: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   emiHighlight: {
     color: Colors.primary[600],
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   },
   breakdownTotalLabel: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   breakdownTotalValue: {
     ...Typography.h3,
@@ -441,7 +441,7 @@ const styles = StyleSheet.create({
   },
   bankCard: {
     width: '31%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     alignItems: 'center',
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
   },
   bankName: {
     ...Typography.caption,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
   bankNoCost: {
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
   },
   termsTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   termsList: {
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
   },
   termText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   footer: {
@@ -490,11 +490,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     paddingBottom: Platform.OS === 'ios' ? Spacing.xl : Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
   },
   proceedButton: {
     backgroundColor: Colors.primary[600],

@@ -46,7 +46,7 @@ const FILTER_CONFIG: Record<FilterType, {
   'all': {
     title: 'All Stores',
     icon: 'storefront',
-    colors: [Colors.warning, Colors.nileBlue],
+    colors: [Colors.warning, colors.nileBlue],
     description: `Browse all ${BRAND.APP_NAME} Mall stores`
   },
   'featured': {
@@ -277,7 +277,7 @@ function BrandsListingPage() {
     item.id || item._id, []);
 
   const isLuxuryTheme = filterConfig.isLuxury;
-  const accentColor = filterConfig.accentColor || Colors.background.primary;
+  const accentColor = filterConfig.accentColor || colors.background.primary;
 
   const ListHeader = useMemo(() => (
     <View style={styles.listHeaderContainer}>
@@ -317,7 +317,7 @@ function BrandsListingPage() {
           onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
          
         >
-          <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
         </Pressable>
 
         {/* Header Content */}
@@ -331,7 +331,7 @@ function BrandsListingPage() {
             </LinearGradient>
           ) : (
             <View style={styles.headerIconWrapper}>
-              <Ionicons name={filterConfig.icon as any} size={28} color={Colors.text.inverse} />
+              <Ionicons name={filterConfig.icon as any} size={28} color={colors.text.inverse} />
             </View>
           )}
           <Text style={styles.headerTitle}>{filterConfig.title}</Text>
@@ -436,7 +436,7 @@ function BrandsListingPage() {
       <View style={styles.container}>
         {/* Background Gradient */}
         <LinearGradient
-          colors={[colors.linen, colors.linen, Colors.background.secondary]}
+          colors={[colors.linen, colors.linen, colors.background.secondary]}
           style={StyleSheet.absoluteFillObject}
         />
 
@@ -454,11 +454,11 @@ function BrandsListingPage() {
                 onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
                
               >
-                <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+                <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
               </Pressable>
               <View style={styles.headerContent}>
                 <View style={styles.headerIconWrapper}>
-                  <Ionicons name={filterConfig.icon as any} size={28} color={Colors.text.inverse} />
+                  <Ionicons name={filterConfig.icon as any} size={28} color={colors.text.inverse} />
                 </View>
                 <Text style={styles.headerTitle}>{filterConfig.title}</Text>
               </View>
@@ -478,7 +478,7 @@ function BrandsListingPage() {
                 onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
                
               >
-                <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+                <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
               </Pressable>
             </LinearGradient>
             <MallEmptyState
@@ -520,7 +520,7 @@ function BrandsListingPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingWrapper: {
     flex: 1,
@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 26,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 6,
     textShadowColor: 'rgba(0, 0, 0, 0.2)',
     textShadowOffset: { width: 0, height: 2 },
@@ -616,7 +616,7 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statLabel: {
     ...Typography.bodySmall,
@@ -646,7 +646,7 @@ const styles = StyleSheet.create({
   resultsTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   resultsCountBadge: {
     backgroundColor: colors.linen,
@@ -657,7 +657,7 @@ const styles = StyleSheet.create({
   resultsCount: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   listContent: {
     paddingBottom: 120,
@@ -671,7 +671,7 @@ const styles = StyleSheet.create({
   },
   loadingMoreText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   // Luxury Theme Styles
   luxuryDecorLine1: {

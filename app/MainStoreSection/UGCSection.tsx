@@ -858,7 +858,7 @@ function UGCSection({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingTop: Spacing.base,
     paddingBottom: Spacing.lg,
   },
@@ -870,7 +870,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   viewAllText: {
     ...Typography.bodyLarge,
@@ -887,7 +887,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     position: 'relative',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     ...Shadows.strong,
     borderWidth: 0.5,
     borderColor: 'rgba(0,0,0,0.04)',
@@ -926,7 +926,7 @@ const styles = StyleSheet.create({
   viewCountText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.white,
+    color: colors.text.white,
   },
 
   // Modern Product Plate
@@ -951,7 +951,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#222',
   },
   productTitle: {
-    color: Colors.text.white,
+    color: colors.text.white,
     ...Typography.bodySmall,
     fontWeight: '700',
   },
@@ -974,7 +974,7 @@ const styles = StyleSheet.create({
   descriptionText: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.white,
+    color: colors.text.white,
     lineHeight: 21,
     textShadowColor: 'rgba(0,0,0,0.8)',
     textShadowOffset: { width: 0, height: 1 },
@@ -998,7 +998,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
   },
@@ -1019,7 +1019,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: BorderRadius.lg,
@@ -1064,7 +1064,7 @@ const styles = StyleSheet.create({
     ...Shadows.medium,
   },
   retryButtonText: {
-    color: Colors.text.white,
+    color: colors.text.white,
     ...Typography.bodyLarge,
     fontWeight: '700',
   },
@@ -1108,7 +1108,7 @@ const styles = StyleSheet.create({
   likeCountText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.white,
+    color: colors.text.white,
     textShadowColor: 'rgba(0,0,0,0.5)',
     textShadowOffset: { width: 0, height: 1 },
     textShadowRadius: 2,

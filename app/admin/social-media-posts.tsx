@@ -236,7 +236,7 @@ function AdminSocialMediaPosts() {
       case 'pending': return Colors.warning;
       case 'rejected': return Colors.error;
       case 'credited': return Colors.brand.purple;
-      default: return Colors.text.tertiary;
+      default: return colors.text.tertiary;
     }
   };
 
@@ -476,7 +476,7 @@ function AdminSocialMediaPosts() {
                 accessibilityRole="text"
                 accessibilityLabel={`User: ${post.user.name}, Email: ${post.user.email}`}
               >
-                <Ionicons name="person-circle" size={20} color={Colors.text.tertiary} />
+                <Ionicons name="person-circle" size={20} color={colors.text.tertiary} />
                 <View style={styles.userDetails}>
                   <Text style={styles.userName}>{post.user.name}</Text>
                   <Text style={styles.userEmail}>{post.user.email}</Text>
@@ -505,7 +505,7 @@ function AdminSocialMediaPosts() {
                 accessibilityLabel={`Open post URL: ${post.postUrl}`}
                 accessibilityHint="Double tap to open in browser"
               >
-                <Ionicons name="link" size={16} color={Colors.text.tertiary} />
+                <Ionicons name="link" size={16} color={colors.text.tertiary} />
                 <Text style={styles.postUrl} numberOfLines={1}>
                   {post.postUrl}
                 </Text>
@@ -656,7 +656,7 @@ function AdminSocialMediaPosts() {
                 accessibilityLabel="Close rejection modal"
                 accessibilityHint="Double tap to cancel and close this dialog"
               >
-                <Ionicons name="close" size={24} color={Colors.text.tertiary} />
+                <Ionicons name="close" size={24} color={colors.text.tertiary} />
               </Pressable>
             </View>
 
@@ -705,7 +705,7 @@ function AdminSocialMediaPosts() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -719,7 +719,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h4,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   refreshButton: {
     padding: Spacing.sm,
@@ -727,12 +727,12 @@ const styles = StyleSheet.create({
   statsContainer: {
     paddingVertical: Spacing.base,
     paddingLeft: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   statCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
@@ -745,19 +745,19 @@ const styles = StyleSheet.create({
   },
   statValue: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   statValueActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   statLabelActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   content: {
     flex: 1,
@@ -770,7 +770,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     paddingVertical: 60,
@@ -778,17 +778,17 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   postCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -818,7 +818,7 @@ const styles = StyleSheet.create({
   postPlatformName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   postStatus: {
     paddingHorizontal: 10,
@@ -837,7 +837,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   userDetails: {
     flex: 1,
@@ -845,12 +845,12 @@ const styles = StyleSheet.create({
   userName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   userEmail: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   orderInfo: {
     flexDirection: 'row',
@@ -871,7 +871,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
     borderRadius: BorderRadius.sm,
@@ -880,7 +880,7 @@ const styles = StyleSheet.create({
   postUrl: {
     flex: 1,
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   metadata: {
     gap: 6,
@@ -892,12 +892,12 @@ const styles = StyleSheet.create({
   },
   metaLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   metaValue: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '600',
   },
   rejectionBox: {
@@ -943,7 +943,7 @@ const styles = StyleSheet.create({
   actionButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   modalOverlay: {
     flex: 1,
@@ -951,7 +951,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius.xl,
     borderTopRightRadius: BorderRadius.xl,
     padding: Spacing.lg,
@@ -965,24 +965,24 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   modalInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 100,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginBottom: Spacing.lg,
   },
   modalButton: {
@@ -997,7 +997,7 @@ const styles = StyleSheet.create({
   modalButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

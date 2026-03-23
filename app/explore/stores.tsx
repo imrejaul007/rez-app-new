@@ -542,7 +542,7 @@ const ExploreStoresPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -550,15 +550,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -569,7 +569,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   headerLocation: {
     flexDirection: 'row',
@@ -579,13 +579,13 @@ const styles = StyleSheet.create({
   },
   headerLocationText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   mapIconButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -594,14 +594,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     gap: 10,
   },
   searchBar: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 14,
     paddingVertical: Spacing.md,
     borderRadius: 14,
@@ -610,19 +610,19 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: 15,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   filterButton: {
     width: 48,
     height: 48,
     borderRadius: 14,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   categoryScroll: {
     maxHeight: 56,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   categoryContainer: {
     paddingHorizontal: Spacing.base,
@@ -635,7 +635,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
     gap: 6,
   },
@@ -654,12 +654,12 @@ const styles = StyleSheet.create({
   categoryLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   categoryLabelActive: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statsBar: {
     flexDirection: 'row',
@@ -667,17 +667,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   statsText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statsCount: {
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   statsRight: {
     flexDirection: 'row',
@@ -686,7 +686,7 @@ const styles = StyleSheet.create({
   },
   viewToggle: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm,
     padding: 2,
   },
@@ -698,7 +698,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
   },
   viewToggleBtnActive: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     ...Shadows.subtle,
   },
   sortButton: {
@@ -707,13 +707,13 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
     paddingHorizontal: 10,
     paddingVertical: 6,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm,
   },
   sortText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   storesList: {
     flex: 1,
@@ -741,7 +741,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -762,12 +762,12 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   retryButton: {
@@ -778,7 +778,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -792,7 +792,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.base,
@@ -800,32 +800,32 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   clearSearchBtn: {
     marginTop: Spacing.base,
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: 10,
   },
   clearSearchText: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 
   // List Card Styles
   listCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     marginBottom: Spacing.md,
@@ -849,7 +849,7 @@ const styles = StyleSheet.create({
   listCardInitial: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statusDot: {
     position: 'absolute',
@@ -859,7 +859,7 @@ const styles = StyleSheet.create({
     height: 14,
     borderRadius: 7,
     borderWidth: 2,
-    borderColor: Colors.background.primary,
+    borderColor: colors.background.primary,
   },
   listCardContent: {
     flex: 1,
@@ -873,7 +873,7 @@ const styles = StyleSheet.create({
   listCardName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     flex: 1,
     marginRight: Spacing.sm,
   },
@@ -893,7 +893,7 @@ const styles = StyleSheet.create({
   },
   listCardCategory: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   listCardMeta: {
@@ -923,7 +923,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   distanceBadge: {
     flexDirection: 'row',
@@ -943,7 +943,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: Spacing.sm,
@@ -952,7 +952,7 @@ const styles = StyleSheet.create({
   // Grid Card Styles
   gridCard: {
     width: CARD_WIDTH,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base,
     overflow: 'hidden',
@@ -975,7 +975,7 @@ const styles = StyleSheet.create({
   gridInitial: {
     fontSize: 32,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   gridStatusBadge: {
     position: 'absolute',
@@ -988,7 +988,7 @@ const styles = StyleSheet.create({
   gridStatusText: {
     ...Typography.overline,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: 'none',
     letterSpacing: 0,
   },
@@ -1014,7 +1014,7 @@ const styles = StyleSheet.create({
   gridName: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   gridMeta: {
     flexDirection: 'row',
@@ -1034,7 +1034,7 @@ const styles = StyleSheet.create({
   },
   gridCategory: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
   },
 
@@ -1058,7 +1058,7 @@ const styles = StyleSheet.create({
   floatingMapText: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Maintenance Screen
 // Display when backend is under maintenance
@@ -85,7 +86,7 @@ function MaintenancePage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background.secondary} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
       <View style={styles.content}>
         {/* Illustration */}
@@ -162,10 +163,10 @@ function MaintenancePage() {
           accessibilityRole="button"
         >
           {isRetrying ? (
-            <ActivityIndicator size="small" color={Colors.text.tertiary} />
+            <ActivityIndicator size="small" color={colors.text.tertiary} />
           ) : (
             <>
-              <Ionicons name="refresh" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="refresh" size={20} color={colors.text.tertiary} />
               <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
             </>
           )}
@@ -184,7 +185,7 @@ function MaintenancePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   content: {
     flex: 1,
@@ -221,20 +222,20 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.md,
   },
   description: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing['2xl'],
     lineHeight: 22,
   },
   timerCard: {
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     alignItems: 'center',
@@ -243,7 +244,7 @@ const styles = StyleSheet.create({
   },
   timerLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
   },
   timerDisplay: {
@@ -255,7 +256,7 @@ const styles = StyleSheet.create({
   },
   timerText: {
     ...Typography.priceLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontVariant: ['tabular-nums'],
   },
   progressBar: {
@@ -289,9 +290,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     padding: Spacing.lg,
     paddingBottom: Platform.OS === 'ios' ? Spacing['3xl'] : Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
     alignItems: 'center',
   },
   notifyButton: {
@@ -320,11 +321,11 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   retryCountText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
 });

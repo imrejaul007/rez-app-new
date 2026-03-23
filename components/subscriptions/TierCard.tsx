@@ -6,7 +6,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import type { SubscriptionTier } from '@/services/subscriptionApi';
 
 interface TierCardProps {
@@ -59,7 +60,7 @@ function TierCard({ tier, selectedCycle, isSelected, isCurrent, currencySymbol, 
       {/* Cashback multiplier badge */}
       {cashbackMultiplier > 1 && (
         <View style={styles.cashbackBadge}>
-          <Ionicons name="flash" size={12} color={Colors.gold} />
+          <Ionicons name="flash" size={12} color={colors.gold} />
           <Text style={styles.cashbackText}>{cashbackMultiplier}x Cashback</Text>
         </View>
       )}
@@ -69,7 +70,7 @@ function TierCard({ tier, selectedCycle, isSelected, isCurrent, currencySymbol, 
         <View style={styles.featuresList}>
           {tier.features.slice(0, 3).map((feature, idx) => (
             <View key={idx} style={styles.featureRow}>
-              <Ionicons name="checkmark-circle" size={16} color={Colors.success} />
+              <Ionicons name="checkmark-circle" size={16} color={colors.success} />
               <Text style={styles.featureText}>{feature}</Text>
             </View>
           ))}
@@ -84,7 +85,7 @@ function TierCard({ tier, selectedCycle, isSelected, isCurrent, currencySymbol, 
       {/* Selected checkmark */}
       {isSelected && (
         <View style={styles.selectedIcon}>
-          <Ionicons name="checkmark-circle" size={24} color={Colors.gold} />
+          <Ionicons name="checkmark-circle" size={24} color={colors.gold} />
         </View>
       )}
     </Pressable>
@@ -117,7 +118,7 @@ const styles = StyleSheet.create({
     }),
   },
   cardSelected: {
-    borderColor: Colors.gold,
+    borderColor: colors.gold,
   },
   header: {
     flexDirection: 'row',
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
     color: '#111827',
   },
   discountBadge: {
-    backgroundColor: Colors.success + '15',
+    backgroundColor: colors.success + '15',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: BorderRadius.sm,
@@ -161,10 +162,10 @@ const styles = StyleSheet.create({
   discountBadgeText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.success,
+    color: colors.success,
   },
   currentBadge: {
-    backgroundColor: Colors.gold + '20',
+    backgroundColor: colors.gold + '20',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: BorderRadius.sm,
@@ -172,13 +173,13 @@ const styles = StyleSheet.create({
   currentBadgeText: {
     fontSize: 10,
     fontWeight: '600',
-    color: Colors.gold,
+    color: colors.gold,
   },
   cashbackBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    backgroundColor: Colors.gold + '15',
+    backgroundColor: colors.gold + '15',
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
     borderRadius: BorderRadius.sm,
@@ -188,7 +189,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.gold,
+    color: colors.gold,
   },
   featuresList: {
     gap: 6,
@@ -205,7 +206,7 @@ const styles = StyleSheet.create({
   },
   moreFeatures: {
     fontSize: 13,
-    color: Colors.gold,
+    color: colors.gold,
     fontWeight: '500',
     marginTop: 2,
   },

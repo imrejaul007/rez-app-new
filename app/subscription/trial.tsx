@@ -312,10 +312,10 @@ function TrialPage() {
           accessibilityHint="Double tap to subscribe to Premium plan and continue after trial"
         >
           {isSubscribing ? (
-            <ActivityIndicator color={Colors.text.inverse} />
+            <ActivityIndicator color={colors.text.inverse} />
           ) : (
             <>
-              <Ionicons name="checkmark-circle-outline" size={20} color={Colors.text.inverse} />
+              <Ionicons name="checkmark-circle-outline" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.primaryButtonText}>Subscribe Now</ThemedText>
             </>
           )}
@@ -424,7 +424,7 @@ function TrialPage() {
               accessibilityRole="button"
               accessibilityHint="Double tap to return to previous screen"
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Trial Period</ThemedText>
             <View style={styles.headerRight} />
@@ -467,7 +467,7 @@ function TrialPage() {
           style={styles.urgentBanner}
         >
           <View style={styles.urgentBannerContent}>
-            <Ionicons name="warning-outline" size={20} color={Colors.text.inverse} />
+            <Ionicons name="warning-outline" size={20} color={colors.text.inverse} />
             <View style={styles.urgentBannerText}>
               <ThemedText style={styles.urgentTitle}>
                 Your trial ends in {daysRemaining} day{daysRemaining !== 1 ? 's' : ''}!
@@ -499,7 +499,7 @@ function TrialPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Your Trial Period</ThemedText>
           <View style={styles.headerRight}>
@@ -547,7 +547,7 @@ function TrialPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
     paddingBottom: Spacing.base,
@@ -559,7 +559,7 @@ const styles = StyleSheet.create({
   backButton: {
     padding: Spacing.sm },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
   urgentBannerText: {
     flex: 1 },
   urgentTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: 'bold' },
   urgentSubtitle: {
@@ -601,7 +601,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.4)' },
   urgentButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600' },
   countdownSection: {
@@ -611,7 +611,7 @@ const styles = StyleSheet.create({
   detailsCard: {
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     ...Shadows.medium },
@@ -622,15 +622,15 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default },
+    borderBottomColor: colors.border.default },
   detailsTitle: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   autoRenewBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: BorderRadius.sm,
@@ -649,7 +649,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center' },
   detailInfo: {
@@ -657,21 +657,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center' },
   detailLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
     marginBottom: 3 },
   detailValue: {
     ...Typography.body,
     fontSize: 15,
     fontWeight: 'bold',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   section: {
     marginHorizontal: Spacing.lg,
     marginBottom: 28 },
   sectionTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base },
   statsGrid: {
     flexDirection: 'row',
@@ -691,11 +691,11 @@ const styles = StyleSheet.create({
     gap: 10,
     ...Shadows.purpleMedium },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold' },
   secondaryButton: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.lg,
     borderRadius: BorderRadius.md,
@@ -704,7 +704,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 10,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     ...Shadows.subtle },
   secondaryButtonText: {
     color: Colors.brand.purpleLight,
@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
   buttonDisabled: {
     opacity: 0.6 },
   termsHeader: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     flexDirection: 'row',
@@ -723,9 +723,9 @@ const styles = StyleSheet.create({
   termsTitle: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   termsContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginTop: Spacing.sm,
@@ -743,18 +743,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     minWidth: 28 },
   termBulletText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: 'bold' },
   termTitle: {
     ...Typography.body,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs },
   termDescription: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18 },
   footerSpacing: {
     height: Spacing.lg },
@@ -766,10 +766,10 @@ const styles = StyleSheet.create({
   loadingText: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   loadingSubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center' } });
 
 export default withErrorBoundary(TrialPage, 'SubscriptionTrial');

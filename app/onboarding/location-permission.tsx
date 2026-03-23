@@ -86,7 +86,7 @@ function LocationPermissionScreen() {
     <View style={styles.container}>
       {/* Background */}
       <LinearGradient
-        colors={[Colors.background.secondary, '#EDF2F7', Colors.background.secondary]}
+        colors={[colors.background.secondary, '#EDF2F7', colors.background.secondary]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -139,7 +139,7 @@ function LocationPermissionScreen() {
                   {/* Store Icons */}
                   <View style={[styles.storeIcon, styles.store1]}>
                     <LinearGradient
-                      colors={[Colors.gold, Colors.nileBlue]}
+                      colors={[Colors.gold, colors.nileBlue]}
                       style={styles.storeIconInner}
                     >
                       <Ionicons name="restaurant" size={12} color={colors.background.primary} />
@@ -155,7 +155,7 @@ function LocationPermissionScreen() {
                   </View>
                   <View style={[styles.storeIcon, styles.store3]}>
                     <LinearGradient
-                      colors={[Colors.gold, Colors.nileBlue]}
+                      colors={[Colors.gold, colors.nileBlue]}
                       style={styles.storeIconInner}
                     >
                       <Ionicons name="cafe" size={12} color={colors.background.primary} />
@@ -217,7 +217,7 @@ function LocationPermissionScreen() {
               colors={
                 (state.isLoading || isRequesting)
                   ? [colors.neutral[300], colors.neutral[300]]
-                  : [Colors.gold, Colors.nileBlue]
+                  : [Colors.gold, colors.nileBlue]
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
@@ -324,14 +324,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.base,
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   phone: {
     width: 120,
     height: 180,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     borderWidth: 3,
     borderColor: Colors.gold,
@@ -504,7 +504,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 14,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
 
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '700',
   },
@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   skipButtonText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontSize: 14,
     fontWeight: '600',
   },

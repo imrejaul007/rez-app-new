@@ -91,11 +91,11 @@ function DealsIndexPage() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background.primary }}>
       <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
       <LinearGradient
-        colors={[Colors.nileBlue, '#2a5080']}
+        colors={[colors.nileBlue, '#2a5080']}
         style={{
           paddingTop: insets.top + (Platform.OS === 'android' ? 8 : 4),
           paddingBottom: 16,
@@ -149,7 +149,7 @@ function DealsIndexPage() {
                   paddingHorizontal: 12,
                   paddingVertical: 6,
                   borderRadius: 20,
-                  backgroundColor: isActive ? Colors.nileBlue : '#F1F5F9',
+                  backgroundColor: isActive ? colors.nileBlue : '#F1F5F9',
                 }}
               >
                 <Ionicons
@@ -178,7 +178,7 @@ function DealsIndexPage() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={() => loadDeals(true)}
-            tintColor={Colors.nileBlue}
+            tintColor={colors.nileBlue}
           />
         }
       >
@@ -192,7 +192,7 @@ function DealsIndexPage() {
             <Text style={{ color: '#94a3b8', marginTop: 12, textAlign: 'center' }}>{error}</Text>
             <Pressable
               onPress={() => loadDeals()}
-              style={{ marginTop: 12, backgroundColor: Colors.nileBlue, borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8 }}
+              style={{ marginTop: 12, backgroundColor: colors.nileBlue, borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8 }}
             >
               <Text style={{ color: '#fff', fontWeight: '700' }}>Try Again</Text>
             </Pressable>
@@ -246,11 +246,11 @@ function DealsIndexPage() {
                     width: 44,
                     height: 44,
                     borderRadius: 22,
-                    backgroundColor: Colors.nileBlue + '15',
+                    backgroundColor: colors.nileBlue + '15',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}>
-                    <Ionicons name="pricetag-outline" size={20} color={Colors.nileBlue} />
+                    <Ionicons name="pricetag-outline" size={20} color={colors.nileBlue} />
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={{ fontSize: 14, fontWeight: '700', color: colors.text.primary }} numberOfLines={1}>
@@ -281,7 +281,7 @@ function DealsIndexPage() {
             </Text>
             <Pressable
               onPress={() => loadDeals()}
-              style={{ marginTop: 16, backgroundColor: Colors.nileBlue, borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8 }}
+              style={{ marginTop: 16, backgroundColor: colors.nileBlue, borderRadius: 20, paddingHorizontal: 20, paddingVertical: 8 }}
             >
               <Text style={{ color: '#fff', fontWeight: '700' }}>Refresh</Text>
             </Pressable>

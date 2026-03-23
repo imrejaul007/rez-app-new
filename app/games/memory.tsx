@@ -329,10 +329,10 @@ function MemoryPage() {
           style={styles.startButtonGradient}
         >
           {loading ? (
-            <ActivityIndicator color={Colors.text.inverse} />
+            <ActivityIndicator color={colors.text.inverse} />
           ) : (
             <>
-              <Ionicons name="play" size={22} color={Colors.text.inverse} />
+              <Ionicons name="play" size={22} color={colors.text.inverse} />
               <ThemedText style={styles.startButtonText}>Start Game</ThemedText>
             </>
           )}
@@ -384,12 +384,12 @@ function MemoryPage() {
             colors={[colors.brand.indigo, '#4F46E5']}
             style={styles.startButtonGradient}
           >
-            <Ionicons name="refresh" size={20} color={Colors.text.inverse} />
+            <Ionicons name="refresh" size={20} color={colors.text.inverse} />
             <ThemedText style={styles.startButtonText}>Play Again</ThemedText>
           </LinearGradient>
         </Pressable>
         <Pressable style={styles.backToGamesBtn} onPress={() => router.push('/games' as any)}>
-          <Ionicons name="game-controller" size={18} color={Colors.text.primary} />
+          <Ionicons name="game-controller" size={18} color={colors.text.primary} />
           <ThemedText style={styles.backToGamesText}>More Games</ThemedText>
         </Pressable>
       </View>
@@ -402,14 +402,14 @@ function MemoryPage() {
         options={{
           title: 'Memory Match',
           headerStyle: { backgroundColor: '#A8E6CF' },
-          headerTintColor: Colors.text.primary,
+          headerTintColor: colors.text.primary,
           headerTitleStyle: { fontWeight: 'bold' },
           headerLeft: () => (
             <Pressable
               onPress={handleBackPress}
               style={styles.headerBackButton}
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
           ),
         }}
@@ -427,11 +427,11 @@ function MemoryPage() {
                 {/* Game Stats Bar */}
                 <View style={styles.gameStatsBar}>
                   <View style={styles.gameStat}>
-                    <Ionicons name="timer" size={16} color={Colors.text.primary} />
+                    <Ionicons name="timer" size={16} color={colors.text.primary} />
                     <Text style={styles.gameStatText}>{formatTime(timer)}</Text>
                   </View>
                   <View style={styles.gameStat}>
-                    <Ionicons name="swap-horizontal" size={16} color={Colors.text.primary} />
+                    <Ionicons name="swap-horizontal" size={16} color={colors.text.primary} />
                     <Text style={styles.gameStatText}>Moves: {attempts}</Text>
                   </View>
                   <View style={styles.gameStat}>
@@ -495,20 +495,20 @@ const styles = StyleSheet.create({
   gameTitle: {
     ...Typography.h1,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   gameSubtitle: {
     ...Typography.body,
     fontSize: 15,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.xl,
     textAlign: 'center',
   },
   rulesCard: {
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.xl,
@@ -518,7 +518,7 @@ const styles = StyleSheet.create({
     ...Typography.h4,
     fontWeight: '700',
     fontSize: 17,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 14,
   },
   ruleItem: {
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
   },
   ruleText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   startButton: {
@@ -553,14 +553,14 @@ const styles = StyleSheet.create({
     ...Typography.h4,
     fontWeight: '700',
     fontSize: 17,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Game playing
   gameStatsBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 14,
     marginBottom: Spacing.base,
@@ -574,7 +574,7 @@ const styles = StyleSheet.create({
   gameStatText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   grid: {
     flexDirection: 'row',
@@ -602,7 +602,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.brand.indigo,
   },
   cardFront: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   cardMatched: {
     backgroundColor: Colors.successScale[50],
@@ -612,7 +612,7 @@ const styles = StyleSheet.create({
   cardBackText: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cardEmoji: {
     fontSize: 28,
@@ -630,13 +630,13 @@ const styles = StyleSheet.create({
   completedTitle: {
     ...Typography.h1,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   completedSubtitle: {
     ...Typography.body,
     fontSize: 15,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xl,
   },
   statsGrid: {
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
   },
   statItem: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
@@ -656,18 +656,18 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: 6,
   },
   statLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   coinsEarnedCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingVertical: 14,
     paddingHorizontal: Spacing.lg,
@@ -683,7 +683,7 @@ const styles = StyleSheet.create({
   coinsEarnedText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   actionButtons: {
     width: '100%',
@@ -703,7 +703,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingVertical: 14,
     gap: Spacing.sm,
@@ -713,7 +713,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 });
 

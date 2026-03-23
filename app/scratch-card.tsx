@@ -216,7 +216,7 @@ function ScratchCardPage() {
       <View style={styles.headerContainer}>
         <Pressable style={styles.backButton} onPress={handleBackPress}
           accessibilityLabel="Go back" accessibilityRole="button">
-          <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
         <ThemedText style={styles.headerTitle} accessibilityRole="header">Scratch & Win</ThemedText>
         <View style={styles.headerRight} />
@@ -254,7 +254,7 @@ function ScratchCardPage() {
               </>
             ) : (
               <>
-                <Ionicons name="close-circle-outline" size={80} color={Colors.border.default} />
+                <Ionicons name="close-circle-outline" size={80} color={colors.border.default} />
                 <ThemedText style={styles.lockedTitle}>No Plays Remaining</ThemedText>
                 <ThemedText style={styles.lockedDescription}>
                   {eligibility
@@ -270,7 +270,7 @@ function ScratchCardPage() {
               </ThemedText>
             )}
 
-            <Pressable style={[styles.actionButton, { backgroundColor: Colors.text.tertiary }]}
+            <Pressable style={[styles.actionButton, { backgroundColor: colors.text.tertiary }]}
               onPress={() => checkEligibility()}
               accessibilityLabel="Refresh status" accessibilityRole="button">
               <ThemedText style={styles.actionButtonText}>Refresh</ThemedText>
@@ -341,7 +341,7 @@ function ScratchCardPage() {
               {cardState !== 'revealed' && (
                 <Animated.View style={[styles.scratchSurface, { opacity: scratchAnim }]}>
                   <LinearGradient colors={['#C0C0C0', '#A0A0A0']} style={styles.scratchGradient}>
-                    <Ionicons name="finger-print" size={60} color={Colors.text.inverse} />
+                    <Ionicons name="finger-print" size={60} color={colors.text.inverse} />
                     <ThemedText style={styles.scratchText}>
                       {cardState === 'available' ? 'TAP TO START' : 'SCRATCH HERE'}
                     </ThemedText>
@@ -358,7 +358,7 @@ function ScratchCardPage() {
               {cardState === 'revealed' && prize && (
                 <Animated.View style={[styles.prizeContent, { transform: [{ scale: prizeScaleAnim }] }]}>
                   <View style={[styles.prizeIcon, { backgroundColor: getPrizeColor(prize.type) }]}>
-                    <Ionicons name={getPrizeIcon(prize.type) as any} size={40} color={Colors.text.inverse} />
+                    <Ionicons name={getPrizeIcon(prize.type) as any} size={40} color={colors.text.inverse} />
                   </View>
                   <ThemedText style={styles.prizeTitle}>
                     {prize.type === 'coins' ? `${prize.value} ${BRAND.COIN_NAME}!` : prize.description}
@@ -382,7 +382,7 @@ function ScratchCardPage() {
             {cardState === 'available' && (
               <Pressable style={styles.actionButton} onPress={handleCreateCard}
                 accessibilityLabel="Get scratch card" accessibilityRole="button">
-                <Ionicons name="ticket" size={20} color={Colors.text.inverse} style={{ marginRight: 8 }} />
+                <Ionicons name="ticket" size={20} color={colors.text.inverse} style={{ marginRight: 8 }} />
                 <ThemedText style={styles.actionButtonText}>Get Scratch Card</ThemedText>
               </Pressable>
             )}
@@ -390,14 +390,14 @@ function ScratchCardPage() {
             {cardState === 'scratching' && !isAnimating && (
               <Pressable style={styles.actionButton} onPress={handleScratch}
                 accessibilityLabel="Scratch the card" accessibilityRole="button">
-                <Ionicons name="hand-left" size={20} color={Colors.text.inverse} style={{ marginRight: 8 }} />
+                <Ionicons name="hand-left" size={20} color={colors.text.inverse} style={{ marginRight: 8 }} />
                 <ThemedText style={styles.actionButtonText}>Scratch Card</ThemedText>
               </Pressable>
             )}
 
             {cardState === 'scratching' && isAnimating && (
               <View style={[styles.actionButton, styles.disabledButton]}>
-                <ActivityIndicator size="small" color={Colors.text.inverse} style={{ marginRight: 8 }} />
+                <ActivityIndicator size="small" color={colors.text.inverse} style={{ marginRight: 8 }} />
                 <ThemedText style={styles.actionButtonText}>Revealing...</ThemedText>
               </View>
             )}
@@ -420,7 +420,7 @@ function ScratchCardPage() {
                     style={[styles.actionButton, { backgroundColor: Colors.success, marginTop: Spacing.md }]}
                     onPress={() => router.push('/wallet-screen')}
                     accessibilityLabel="View wallet" accessibilityRole="button">
-                    <Ionicons name="wallet" size={20} color={Colors.text.inverse} style={{ marginRight: 8 }} />
+                    <Ionicons name="wallet" size={20} color={colors.text.inverse} style={{ marginRight: 8 }} />
                     <ThemedText style={styles.actionButtonText}>View Wallet</ThemedText>
                   </Pressable>
                 )}
@@ -455,7 +455,7 @@ function ScratchCardPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary},
+    backgroundColor: colors.background.secondary},
   headerBg: {
     paddingTop: StatusBar.currentHeight || 50,
     paddingBottom: Spacing.lg,
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
   backButton: {
     padding: Spacing.sm},
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40},
   loadingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base},
   remainingBadge: {
     flexDirection: 'row',
@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
     height: width * 0.8,
     borderRadius: BorderRadius.xl,
     overflow: 'hidden',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     ...Shadows.strong},
   scratchSurface: {
     position: 'absolute',
@@ -527,20 +527,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.lg},
   scratchText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h4,
     fontWeight: 'bold',
     marginTop: Spacing.base,
     textAlign: 'center'},
   scratchSubtext: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     marginTop: Spacing.sm,
     textAlign: 'center',
     opacity: 0.9},
   prizeContent: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.lg},
@@ -554,12 +554,12 @@ const styles = StyleSheet.create({
   prizeTitle: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center'},
   prizeDescription: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center'},
   buttonArea: {
     width: '100%',
@@ -583,13 +583,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.brand.purpleSoft,
     shadowOpacity: 0.1},
   actionButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '700'},
   revealedButtons: {
     alignItems: 'center'},
   instructionsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     width: '100%',
@@ -597,24 +597,24 @@ const styles = StyleSheet.create({
   instructionsTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
     textAlign: 'center'},
   instructionsText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 22,
     textAlign: 'center'},
   lockedTitle: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.lg,
     marginBottom: Spacing.md,
     textAlign: 'center'},
   lockedDescription: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: Spacing.lg},
@@ -625,7 +625,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl},
   statsText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.lg},
   errorContainer: {
     backgroundColor: Colors.errorScale[50],

@@ -377,7 +377,7 @@ function DetailedOrderTrackingPage() {
           </View>
         </LinearGradient>
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={64} color={Colors.text.tertiary} />
+          <Ionicons name="alert-circle-outline" size={64} color={colors.text.tertiary} />
           <ThemedText style={styles.errorTitle}>
             {error ? 'Error Loading Order' : 'Order Not Found'}
           </ThemedText>
@@ -564,7 +564,7 @@ function DetailedOrderTrackingPage() {
               )
             ) : (
               <View style={styles.noTimelineContainer}>
-                <Ionicons name="time-outline" size={32} color={Colors.text.tertiary} />
+                <Ionicons name="time-outline" size={32} color={colors.text.tertiary} />
                 <ThemedText style={styles.noTimelineText}>No tracking updates yet</ThemedText>
               </View>
             )}
@@ -806,7 +806,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: Typography.bodyLarge.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
   },
   liveIndicator: {
@@ -823,13 +823,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.xl,
@@ -841,7 +841,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   backButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   header: {
@@ -870,7 +870,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     fontSize: Typography.bodySmall.fontSize,
@@ -895,7 +895,7 @@ const styles = StyleSheet.create({
   },
   liveText: {
     fontSize: Typography.overline.fontSize,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   content: {
@@ -904,7 +904,7 @@ const styles = StyleSheet.create({
   
   // Cards
   statusCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.lg,
     marginBottom: Spacing.md,
@@ -957,7 +957,7 @@ const styles = StyleSheet.create({
   locationUpdateCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: 10,
     borderRadius: BorderRadius.sm,
     marginBottom: Spacing.md,
@@ -987,7 +987,7 @@ const styles = StyleSheet.create({
   
   // Delivery Partner Card
   deliveryPartnerCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.md,
     padding: Spacing.lg,
@@ -1041,14 +1041,14 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   callButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     marginLeft: Spacing.xs,
   },
   
   // Tracking Card
   trackingCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.md,
     padding: Spacing.lg,
@@ -1092,7 +1092,7 @@ const styles = StyleSheet.create({
     backgroundColor: PROFILE_COLORS.textSecondary,
   },
   updateActiveDot: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   updateLine: {
     width: 2,
@@ -1141,13 +1141,13 @@ const styles = StyleSheet.create({
   },
   noTimelineText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
 
   // Items Card
   itemsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.md,
     padding: Spacing.lg,
@@ -1163,7 +1163,7 @@ const styles = StyleSheet.create({
   },
   noItemsText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     padding: Spacing.lg,
   },
@@ -1232,7 +1232,7 @@ const styles = StyleSheet.create({
   
   // Details Card
   detailsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.md,
     padding: Spacing.lg,

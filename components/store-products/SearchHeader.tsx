@@ -15,7 +15,8 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import analyticsService from '@/services/analyticsService';
 
 // ─── Props ───────────────────────────────────────────────────────────────────
@@ -99,11 +100,11 @@ function SearchHeader({
     <View style={styles.searchFilterBar}>
       <View style={styles.searchWrapper}>
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.text.tertiary} style={styles.searchIcon} />
+          <Ionicons name="search" size={20} color={colors.text.tertiary} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search products..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             value={searchQuery}
             onChangeText={handleTextChange}
             onFocus={handleFocus}
@@ -124,7 +125,7 @@ function SearchHeader({
               accessibilityLabel="Clear search"
               accessibilityRole="button"
             >
-              <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
             </Pressable>
           )}
         </View>
@@ -149,7 +150,7 @@ function SearchHeader({
                       accessibilityLabel={`Recent search: ${item}`}
                       accessibilityRole="button"
                     >
-                      <Ionicons name="time-outline" size={18} color={Colors.text.tertiary} />
+                      <Ionicons name="time-outline" size={18} color={colors.text.tertiary} />
                       <ThemedText style={styles.suggestionItemText}>{item}</ThemedText>
                     </Pressable>
                   ))}
@@ -169,7 +170,7 @@ function SearchHeader({
                       accessibilityLabel={`Search suggestion: ${suggestion}`}
                       accessibilityRole="button"
                     >
-                      <Ionicons name="search-outline" size={18} color={Colors.text.tertiary} />
+                      <Ionicons name="search-outline" size={18} color={colors.text.tertiary} />
                       <ThemedText style={styles.suggestionItemText}>{suggestion}</ThemedText>
                     </Pressable>
                   ))}
@@ -188,7 +189,7 @@ function SearchHeader({
         accessibilityRole="button"
         accessibilityHint="Double tap to open filter options"
       >
-        <Ionicons name="filter" size={20} color={Colors.text.inverse} />
+        <Ionicons name="filter" size={20} color={colors.text.inverse} />
         {hasActiveFilters && <View style={styles.filterBadge} />}
       </Pressable>
     </View>
@@ -202,9 +203,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     gap: Spacing.md,
     position: 'relative',
     zIndex: 10,
@@ -217,7 +218,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.md,
     height: 44,
@@ -228,7 +229,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     paddingVertical: 0,
   },
   clearButton: {
@@ -239,10 +240,10 @@ const styles = StyleSheet.create({
     top: 48,
     left: 0,
     right: 0,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     ...Shadows.medium,
     maxHeight: 300,
     zIndex: 1000,
@@ -253,7 +254,7 @@ const styles = StyleSheet.create({
   suggestionsHeader: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     paddingHorizontal: Spacing.base,
@@ -267,18 +268,18 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     gap: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   suggestionItemText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   filterButton: {
     width: 44,
     height: 44,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
@@ -290,7 +291,7 @@ const styles = StyleSheet.create({
     width: Spacing.sm,
     height: Spacing.sm,
     borderRadius: Spacing.xs,
-    backgroundColor: Colors.error,
+    backgroundColor: colors.error,
   },
 });
 

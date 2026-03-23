@@ -13,7 +13,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { useRouter } from 'expo-router';
 import { showToast } from '@/components/common/ToastManager';
 import { TIER_HIERARCHY } from '@/constants/loyalty';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface PromoCode {
@@ -75,7 +75,7 @@ function PromoCodeModal({
           <View style={styles.modalHeader}>
             <ThemedText style={styles.modalTitle}>Apply Promo Code</ThemedText>
             <Pressable onPress={onClose}>
-              <Ionicons name="close" size={24} color={Colors.neutral[700]} />
+              <Ionicons name="close" size={24} color={colors.neutral[700]} />
             </Pressable>
           </View>
 
@@ -99,7 +99,7 @@ function PromoCodeModal({
 
               {availablePromoCodes.length === 0 ? (
                 <View style={styles.noCouponsContainer}>
-                  <Ionicons name="pricetag-outline" size={48} color={Colors.neutral[400]} />
+                  <Ionicons name="pricetag-outline" size={48} color={colors.neutral[400]} />
                   <ThemedText style={styles.noCouponsText}>No coupons available</ThemedText>
                   <Pressable
                     style={styles.browseCouponsButton}
@@ -237,7 +237,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     paddingTop: Spacing.lg,
@@ -250,26 +250,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalBody: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
   },
   promoInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.lg,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   availablePromos: {
     marginTop: 10,
@@ -283,12 +283,12 @@ const styles = StyleSheet.create({
   availablePromosTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   viewAllLink: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.gold,
+    color: colors.gold,
   },
   promoScrollView: {
     maxHeight: 400,
@@ -300,31 +300,31 @@ const styles = StyleSheet.create({
   },
   noCouponsText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
     marginBottom: Spacing.base,
   },
   browseCouponsButton: {
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
     paddingHorizontal: Spacing.xl,
     paddingVertical: 10,
     borderRadius: BorderRadius.sm,
   },
   browseCouponsText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
   promoOption: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   currentPromoOption: {
-    backgroundColor: Colors.successScale[50],
+    backgroundColor: colors.successScale[50],
     borderColor: colors.success,
     borderWidth: 2,
   },
@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   promoDiscountBadge: {
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: 6,
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
   promoDiscountText: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   promoOptionText: {
     flex: 1,
@@ -359,22 +359,22 @@ const styles = StyleSheet.create({
   promoOptionCode: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.gold,
+    color: colors.gold,
     marginBottom: 2,
   },
   currentPromoCode: {
     color: colors.success,
   },
   ineligibleText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   promoOptionDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   minOrderText: {
     fontSize: 11,
-    color: Colors.error,
+    color: colors.error,
     fontWeight: '500',
     marginTop: 2,
   },
@@ -394,7 +394,7 @@ const styles = StyleSheet.create({
   },
   tierBadgeText: {
     ...Typography.caption,
-    color: Colors.warning,
+    color: colors.warning,
     fontWeight: '700',
     letterSpacing: 0.5,
   },
@@ -410,10 +410,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   applyPromoButton: {
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.base,
     alignItems: 'center',
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   applyPromoText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

@@ -418,11 +418,11 @@ function GiftPage() {
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Recipient Phone Number</ThemedText>
             <View style={[styles.inputContainer, recipientError ? styles.inputContainerError : undefined]}>
-              <Ionicons name="call" size={20} color={recipientError ? colors.error : Colors.text.tertiary} />
+              <Ionicons name="call" size={20} color={recipientError ? colors.error : colors.text.tertiary} />
               <TextInput
                 style={styles.input}
                 placeholder="Enter phone number"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={recipient}
                 onChangeText={(text) => {
                   const cleaned = text.replace(/[^0-9+\- ]/g, '');
@@ -457,7 +457,7 @@ function GiftPage() {
                 onChangeText={(text) => setAmount(text.replace(/[^0-9]/g, ''))}
                 keyboardType="number-pad"
                 placeholder="0"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
               />
             </View>
             <View style={styles.quickAmounts}>
@@ -489,7 +489,7 @@ function GiftPage() {
               value={message}
               onChangeText={setMessage}
               placeholder="Happy Birthday! 🎉"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               multiline
               maxLength={features.messageMaxLength}
             />
@@ -510,7 +510,7 @@ function GiftPage() {
                 <Ionicons
                   name={deliveryType === 'now' ? 'radio-button-on' : 'radio-button-off'}
                   size={24}
-                  color={deliveryType === 'now' ? Colors.primary[600] : Colors.text.tertiary}
+                  color={deliveryType === 'now' ? Colors.primary[600] : colors.text.tertiary}
                 />
                 <ThemedText style={styles.deliveryOptionText}>Send Now</ThemedText>
               </Pressable>
@@ -531,10 +531,10 @@ function GiftPage() {
                 <Ionicons
                   name={deliveryType === 'scheduled' ? 'radio-button-on' : 'radio-button-off'}
                   size={24}
-                  color={deliveryType === 'scheduled' ? Colors.primary[600] : Colors.text.tertiary}
+                  color={deliveryType === 'scheduled' ? Colors.primary[600] : colors.text.tertiary}
                 />
                 <ThemedText style={[styles.deliveryOptionText, !features.scheduledDelivery && styles.deliveryOptionTextDisabled]}>Schedule</ThemedText>
-                <Ionicons name="calendar" size={20} color={Colors.text.tertiary} />
+                <Ionicons name="calendar" size={20} color={colors.text.tertiary} />
               </Pressable>
             </View>
           </View>
@@ -603,7 +603,7 @@ function GiftPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -656,7 +656,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.md,
   },
   themesGrid: {
@@ -669,7 +669,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.sm,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 2,
     borderColor: 'transparent',
     ...Shadows.subtle,
@@ -690,12 +690,12 @@ const styles = StyleSheet.create({
   },
   themeLabel: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
@@ -719,13 +719,13 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   amountContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.md,
@@ -739,7 +739,7 @@ const styles = StyleSheet.create({
   },
   amountInput: {
     ...Typography.priceLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minWidth: 100,
     textAlign: 'center',
   },
@@ -751,7 +751,7 @@ const styles = StyleSheet.create({
   quickAmountButton: {
     minWidth: '22%',
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.md,
     alignItems: 'center',
@@ -762,24 +762,24 @@ const styles = StyleSheet.create({
   },
   quickAmountText: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   quickAmountTextSelected: {
     color: colors.background.primary,
   },
   messageInput: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 100,
     textAlignVertical: 'top',
     ...Shadows.subtle,
   },
   charCount: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'right',
     marginTop: Spacing.xs,
   },
@@ -791,7 +791,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     gap: Spacing.sm,
@@ -807,11 +807,11 @@ const styles = StyleSheet.create({
   },
   deliveryOptionText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   deliveryOptionTextDisabled: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   previewButton: {
     flexDirection: 'row',
@@ -860,9 +860,9 @@ const styles = StyleSheet.create({
     right: 0,
     padding: Spacing.base,
     paddingBottom: Platform.OS === 'ios' ? Spacing['2xl'] : Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
   },
   balanceWarning: {
     flexDirection: 'row',
@@ -948,17 +948,17 @@ const styles = StyleSheet.create({
   },
   successTitle: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   successSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.xl,
   },
   transactionCard: {
     width: '100%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.xl,
@@ -972,11 +972,11 @@ const styles = StyleSheet.create({
   },
   transactionLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   transactionValue: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   transactionAmountRow: {
     flexDirection: 'row',
@@ -990,7 +990,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.border.light,
+    backgroundColor: colors.border.light,
   },
   shareButton: {
     flexDirection: 'row',

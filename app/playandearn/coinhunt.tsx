@@ -373,7 +373,7 @@ const CoinHunt = () => {
                 </View>
                 <View style={styles.heroStatDivider} />
                 <View style={styles.heroStatBox}>
-                  <Ionicons name="game-controller" size={24} color={Colors.text.inverse} />
+                  <Ionicons name="game-controller" size={24} color={colors.text.inverse} />
                   <Text style={styles.heroStatValue}>{maxPlays - todayPlays}/{maxPlays}</Text>
                   <Text style={styles.heroStatLabel}>Plays Left</Text>
                 </View>
@@ -420,12 +420,12 @@ const CoinHunt = () => {
               style={styles.startButtonWrapper}
             >
               <LinearGradient
-                colors={todayPlays >= maxPlays ? [Colors.text.tertiary, Colors.neutral[500]] : [COLORS.amber, COLORS.amberDark]}
+                colors={todayPlays >= maxPlays ? [colors.text.tertiary, colors.neutral[500]] : [COLORS.amber, COLORS.amberDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.startButton}
               >
-                <Ionicons name={todayPlays >= maxPlays ? "time-outline" : "play"} size={22} color={Colors.text.inverse} />
+                <Ionicons name={todayPlays >= maxPlays ? "time-outline" : "play"} size={22} color={colors.text.inverse} />
                 <Text style={styles.startButtonText}>
                   {todayPlays >= maxPlays ? 'Come Back Tomorrow' : 'Start Game'}
                 </Text>
@@ -523,11 +523,11 @@ const CoinHunt = () => {
                   <Ionicons
                     name={getPerformanceRating().icon}
                     size={48}
-                    color={score >= 100 ? Colors.text.inverse : getPerformanceRating().color}
+                    color={score >= 100 ? colors.text.inverse : getPerformanceRating().color}
                   />
                 </View>
 
-                <Text style={[styles.resultTitle, { color: score >= 100 ? Colors.text.inverse : COLORS.navy }]}>
+                <Text style={[styles.resultTitle, { color: score >= 100 ? colors.text.inverse : COLORS.navy }]}>
                   {getPerformanceRating().text}
                 </Text>
                 <Text style={[styles.resultSubtitle, { color: score >= 100 ? 'rgba(255,255,255,0.9)' : COLORS.textMuted }]}>
@@ -537,7 +537,7 @@ const CoinHunt = () => {
                 <View style={[styles.earnedBox, { backgroundColor: score >= 100 ? 'rgba(255,255,255,0.15)' : COLORS.goldBg }]}>
                   <View style={styles.earnedRow}>
                     <CachedImage source={BRAND.COIN_IMAGE} style={styles.earnedCoin} contentFit="contain" />
-                    <Text style={[styles.earnedValue, { color: score >= 100 ? Colors.text.inverse : COLORS.gold }]}>+{score}</Text>
+                    <Text style={[styles.earnedValue, { color: score >= 100 ? colors.text.inverse : COLORS.gold }]}>+{score}</Text>
                   </View>
                   <Text style={[styles.earnedLabel, { color: score >= 100 ? 'rgba(255,255,255,0.8)' : COLORS.textMuted }]}>
                     Coins Earned
@@ -581,12 +581,12 @@ const CoinHunt = () => {
                
               >
                 <LinearGradient
-                  colors={todayPlays >= maxPlays ? [Colors.text.tertiary, Colors.neutral[500]] : [COLORS.amber, COLORS.amberDark]}
+                  colors={todayPlays >= maxPlays ? [colors.text.tertiary, colors.neutral[500]] : [COLORS.amber, COLORS.amberDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.primaryAction}
                 >
-                  <Ionicons name={todayPlays >= maxPlays ? "time-outline" : "refresh"} size={20} color={Colors.text.inverse} />
+                  <Ionicons name={todayPlays >= maxPlays ? "time-outline" : "refresh"} size={20} color={colors.text.inverse} />
                   <Text style={styles.primaryActionText}>
                     {todayPlays >= maxPlays
                       ? `No Plays Left (${todayPlays}/${maxPlays})`
@@ -649,7 +649,7 @@ const styles = StyleSheet.create({
   errorText: { color: '#991B1B', ...Typography.body, textAlign: 'center' },
   retryBtn: {
     marginTop: Spacing.xs, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, backgroundColor: COLORS.error, borderRadius: BorderRadius.sm},
-  retryBtnText: { color: Colors.text.inverse, fontWeight: '600' },
+  retryBtnText: { color: colors.text.inverse, fontWeight: '600' },
 
   // Hero Card
   heroCard: {
@@ -659,12 +659,12 @@ const styles = StyleSheet.create({
     width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.base},
   heroIconText: { fontSize: 40 },
-  heroTitle: { ...Typography.h1, fontWeight: '800', color: Colors.text.inverse, marginBottom: Spacing.sm },
+  heroTitle: { ...Typography.h1, fontWeight: '800', color: colors.text.inverse, marginBottom: Spacing.sm },
   heroSubtitle: { ...Typography.body, fontSize: 15, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: Spacing.xl },
   heroStatsRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing['2xl'] },
   heroStatBox: { alignItems: 'center' },
   heroStatIcon: { width: 28, height: 28, marginBottom: Spacing.sm },
-  heroStatValue: { ...Typography.h2, fontWeight: '800', color: Colors.text.inverse },
+  heroStatValue: { ...Typography.h2, fontWeight: '800', color: colors.text.inverse },
   heroStatLabel: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)', marginTop: Spacing.xs },
   heroStatDivider: { width: 1, height: 50, backgroundColor: 'rgba(255,255,255,0.3)' },
   decorCircle: { position: 'absolute', borderRadius: 100, backgroundColor: 'rgba(255,255,255,0.1)' },
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
   startButton: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 10, paddingVertical: 18, borderRadius: BorderRadius.lg},
-  startButtonText: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: Colors.text.inverse },
+  startButtonText: { ...Typography.h4, fontSize: 17, fontWeight: '700', color: colors.text.inverse },
 
   // Game Stats Bar
   gameStatsBar: {
@@ -716,7 +716,7 @@ const styles = StyleSheet.create({
   coinGradient: {
     width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center',
     shadowColor: COLORS.amber, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.4, shadowRadius: 8, elevation: 8},
-  coinValue: { ...Typography.bodySmall, fontSize: 13, fontWeight: '800', color: Colors.text.inverse },
+  coinValue: { ...Typography.bodySmall, fontSize: 13, fontWeight: '800', color: colors.text.inverse },
   waitingLabel: {
     position: 'absolute', top: '45%', left: 0, right: 0, alignItems: 'center', gap: Spacing.sm},
   waitingText: { ...Typography.body, color: COLORS.textLight, fontWeight: '500' },
@@ -763,7 +763,7 @@ const styles = StyleSheet.create({
   actionsContainer: { gap: Spacing.md },
   primaryAction: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10, paddingVertical: 18, borderRadius: BorderRadius.lg},
-  primaryActionText: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.inverse },
+  primaryActionText: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse },
   secondaryAction: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: Spacing.sm,
     paddingVertical: Spacing.base, borderRadius: BorderRadius.lg, backgroundColor: COLORS.surface, borderWidth: 1, borderColor: COLORS.border},

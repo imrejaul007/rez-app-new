@@ -22,7 +22,8 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Video, ResizeMode } from 'expo-av';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 
 const { width } = Dimensions.get('window');
 
@@ -132,13 +133,13 @@ export const TrendingReelsSection = React.memo(function TrendingReelsSection({
       </View>
       {isLoading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={Colors.gold} />
+          <ActivityIndicator size="large" color={colors.gold} />
           <Text style={styles.loadingText}>Loading trending content...</Text>
         </View>
       )}
       {!isLoading && ugcReels.length === 0 && (
         <View style={styles.emptyContainer}>
-          <Ionicons name="videocam-outline" size={48} color={Colors.text.tertiary} />
+          <Ionicons name="videocam-outline" size={48} color={colors.text.tertiary} />
           <Text style={styles.emptyText}>No trending videos available</Text>
         </View>
       )}
@@ -182,7 +183,7 @@ export const TrendingReelsSection = React.memo(function TrendingReelsSection({
               {!reel.videoUrl && (
                 <View style={styles.playButtonOverlay}>
                   <View style={styles.playButton}>
-                    <Ionicons name="play" size={24} color={Colors.text.inverse} />
+                    <Ionicons name="play" size={24} color={colors.text.inverse} />
                   </View>
                 </View>
               )}
@@ -194,7 +195,7 @@ export const TrendingReelsSection = React.memo(function TrendingReelsSection({
                   {reel.product}
                 </Text>
                 <View style={styles.savedBadge}>
-                  <Ionicons name="checkmark-circle" size={12} color={Colors.text.inverse} />
+                  <Ionicons name="checkmark-circle" size={12} color={colors.text.inverse} />
                   <Text style={styles.savedText}>
                     Saved {currencySymbol}
                     {reel.saved}
@@ -202,11 +203,11 @@ export const TrendingReelsSection = React.memo(function TrendingReelsSection({
                 </View>
                 <View style={styles.reelStats}>
                   <View style={styles.statItem}>
-                    <Ionicons name="heart-outline" size={18} color={Colors.text.inverse} />
+                    <Ionicons name="heart-outline" size={18} color={colors.text.inverse} />
                     <Text style={styles.statText}>{reel.likes}</Text>
                   </View>
                   <View style={styles.statItem}>
-                    <Ionicons name="chatbubble-outline" size={18} color={Colors.text.inverse} />
+                    <Ionicons name="chatbubble-outline" size={18} color={colors.text.inverse} />
                     <Text style={styles.statText}>{reel.comments}</Text>
                   </View>
                   <Pressable
@@ -215,7 +216,7 @@ export const TrendingReelsSection = React.memo(function TrendingReelsSection({
                     accessibilityLabel="Bookmark reel"
                     accessibilityRole="button"
                   >
-                    <Ionicons name="bookmark-outline" size={18} color={Colors.text.inverse} />
+                    <Ionicons name="bookmark-outline" size={18} color={colors.text.inverse} />
                   </Pressable>
                 </View>
               </LinearGradient>
@@ -337,7 +338,7 @@ export const TrendingStoresSection = React.memo(function TrendingStoresSection({
             <View style={styles.storeFooter}>
               {store.distance && (
                 <View style={styles.storeDistance}>
-                  <Ionicons name="location" size={12} color={Colors.text.tertiary} />
+                  <Ionicons name="location" size={12} color={colors.text.tertiary} />
                   <Text style={styles.storeDistanceText}>{store.distance}</Text>
                 </View>
               )}
@@ -383,19 +384,19 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   fireEmoji: {
     ...Typography.h4,
   },
   sectionSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   viewAllText: {
     fontSize: 13,
-    color: Colors.gold,
+    color: colors.gold,
     fontWeight: '600',
   },
 
@@ -436,7 +437,7 @@ const styles = StyleSheet.create({
   reelUserName: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   playButtonOverlay: {
     position: 'absolute',
@@ -466,13 +467,13 @@ const styles = StyleSheet.create({
   reelProduct: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   savedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.md,
@@ -483,7 +484,7 @@ const styles = StyleSheet.create({
   savedText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   reelStats: {
     flexDirection: 'row',
@@ -498,7 +499,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 13,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '500',
   },
   bookmarkButton: {
@@ -514,7 +515,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     paddingVertical: 40,
@@ -524,7 +525,7 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Categories
@@ -536,7 +537,7 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: (width - 52) / 3,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     alignItems: 'center',
@@ -548,18 +549,18 @@ const styles = StyleSheet.create({
   categoryCardName: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
   },
   categoryCardCashback: {
     ...Typography.caption,
-    color: Colors.gold,
+    color: colors.gold,
     fontWeight: '600',
     marginTop: Spacing.xs,
   },
   categoryCardStores: {
     fontSize: 9,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
 
@@ -570,11 +571,11 @@ const styles = StyleSheet.create({
   },
   storeCard: {
     width: 200,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   storeHeader: {
     flexDirection: 'row',
@@ -586,7 +587,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 10,
-    backgroundColor: Colors.successScale[50],
+    backgroundColor: colors.successScale[50],
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -598,7 +599,7 @@ const styles = StyleSheet.create({
   storeLogoText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.gold,
+    color: colors.gold,
   },
   storeBadge: {
     paddingHorizontal: Spacing.sm,
@@ -608,16 +609,16 @@ const styles = StyleSheet.create({
   storeBadgeText: {
     fontSize: 9,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   storeOffer: {
     ...Typography.bodySmall,
-    color: Colors.gold,
+    color: colors.gold,
     fontWeight: '600',
     marginTop: Spacing.xs,
   },
@@ -631,7 +632,7 @@ const styles = StyleSheet.create({
   },
   storeDistanceText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   storeActivity: {
     flexDirection: 'row',
@@ -643,14 +644,14 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
   },
   activityText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   payNowButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingVertical: 10,
     borderRadius: 10,
     alignItems: 'center',
@@ -659,6 +660,6 @@ const styles = StyleSheet.create({
   payNowText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });

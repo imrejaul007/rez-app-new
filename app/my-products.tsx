@@ -212,9 +212,9 @@ const MyProductsPage = () => {
       case 'cancelled':
         return Colors.error;
       case 'pending':
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -423,7 +423,7 @@ const MyProductsPage = () => {
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
-      <Ionicons name="cube-outline" size={80} color={Colors.border.default} />
+      <Ionicons name="cube-outline" size={80} color={colors.border.default} />
       <Text style={styles.emptyTitle}>No Products Yet</Text>
       <Text style={styles.emptyText}>
         Products you purchase will appear here
@@ -600,7 +600,7 @@ const MyProductsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -624,7 +624,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerRight: {
     width: 40,
@@ -640,7 +640,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   activeTab: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   tabText: {
     ...Typography.body,
@@ -655,7 +655,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   productCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginBottom: Spacing.md,
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   productInfo: {
     flex: 1,
@@ -675,12 +675,12 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   productVariant: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   productDetails: {
@@ -696,11 +696,11 @@ const styles = StyleSheet.create({
   },
   productQuantity: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   orderInfo: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   statusBadge: {
@@ -728,7 +728,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.sm,
     paddingVertical: 6,
     borderRadius: 6,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     minWidth: 70,
     justifyContent: 'center',
   },
@@ -738,7 +738,7 @@ const styles = StyleSheet.create({
   actionText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   loadingContainer: {
     flex: 1,
@@ -748,7 +748,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     flex: 1,
@@ -759,13 +759,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -778,7 +778,7 @@ const styles = StyleSheet.create({
   shopButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   modalOverlay: {
     flex: 1,
@@ -788,7 +788,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     width: '100%',
@@ -802,7 +802,7 @@ const styles = StyleSheet.create({
   modalTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.md,
     textAlign: 'center',
   },
@@ -831,7 +831,7 @@ const styles = StyleSheet.create({
   },
   skippedItemText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   modalActions: {
@@ -848,19 +848,19 @@ const styles = StyleSheet.create({
     backgroundColor: colors.brand.green,
   },
   modalButtonSecondary: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   modalButtonTextPrimary: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   modalButtonTextSecondary: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

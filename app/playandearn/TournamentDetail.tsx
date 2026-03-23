@@ -49,7 +49,7 @@ const GAME_TYPE_ICONS: Record<string, string> = {
 const STATUS_CONFIG: Record<string, { colors: [string, string]; label: string; icon: string }> = {
   'active': { colors: [Colors.success, Colors.success], label: 'LIVE', icon: 'radio' },
   'upcoming': { colors: [Colors.info, Colors.info], label: 'UPCOMING', icon: 'time' },
-  'completed': { colors: [Colors.text.tertiary, Colors.text.tertiary], label: 'ENDED', icon: 'checkmark-circle' },
+  'completed': { colors: [colors.text.tertiary, colors.text.tertiary], label: 'ENDED', icon: 'checkmark-circle' },
   'cancelled': { colors: [Colors.error, Colors.error], label: 'CANCELLED', icon: 'close-circle' },
 };
 
@@ -220,7 +220,7 @@ const TournamentDetail = () => {
         >
           {/* Back button */}
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
 
           {/* Status badge */}
@@ -431,14 +431,14 @@ const TournamentDetail = () => {
             <Pressable onPress={handleJoin} disabled={joining}>
               <LinearGradient colors={[colors.successScale[700], colors.successScale[400]]} style={styles.ctaGradient}>
                 {joining ? (
-                  <ActivityIndicator size="small" color={Colors.text.inverse} />
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
                   <>
-                    <Ionicons name="enter" size={18} color={Colors.text.inverse} />
+                    <Ionicons name="enter" size={18} color={colors.text.inverse} />
                     <Text style={[styles.ctaText, { color: colors.background.primary }]}>
                       {tournament.entryFee > 0 ? `Join Tournament (${tournament.entryFee} coins)` : 'Join Tournament'}
                     </Text>
-                    <Ionicons name="arrow-forward" size={16} color={Colors.text.inverse} />
+                    <Ionicons name="arrow-forward" size={16} color={colors.text.inverse} />
                   </>
                 )}
               </LinearGradient>
@@ -472,7 +472,7 @@ const TournamentDetail = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   centered: {
     justifyContent: 'center',
@@ -480,13 +480,13 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: Spacing.md,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.body,
   },
   errorCard: {
     alignItems: 'center',
     padding: Spacing['2xl'],
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     margin: Spacing.lg,
     ...Platform.select({
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   errorBtn: {
     marginTop: Spacing.base,
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
   statusText: {
     ...Typography.caption,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.5,
   },
   heroIcon: {
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
   heroTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 6,
   },
   heroDescription: {
@@ -592,7 +592,7 @@ const styles = StyleSheet.create({
   heroStatValue: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: 'capitalize',
   },
   heroStatLabel: {
@@ -632,19 +632,19 @@ const styles = StyleSheet.create({
   },
   myRankLabel: {
     ...Typography.caption,
-    color: Colors.nileBlue + '99',
+    color: colors.nileBlue + '99',
     fontWeight: '500',
     marginBottom: 2,
   },
   myRankValue: {
     fontSize: 32,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   myRankScore: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   prizeEligible: {
     flexDirection: 'row',
@@ -653,17 +653,17 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.nileBlue + '1A',
+    borderTopColor: colors.nileBlue + '1A',
   },
   prizeEligibleText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 
   // Section Card
   sectionCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 18,
     padding: 18,
     ...Platform.select({
@@ -688,7 +688,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     flex: 1,
   },
   sectionBadge: {
@@ -725,7 +725,7 @@ const styles = StyleSheet.create({
   prizeRank: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   prizeRight: {
     flexDirection: 'row',
@@ -760,7 +760,7 @@ const styles = StyleSheet.create({
   },
   ruleText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
     lineHeight: 19,
   },
@@ -793,7 +793,7 @@ const styles = StyleSheet.create({
   lbRankBadgeText: {
     ...Typography.bodySmall,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   lbRank: {
     width: 26,
@@ -812,7 +812,7 @@ const styles = StyleSheet.create({
   lbAvatarText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   lbInfo: {
     flex: 1,
@@ -820,7 +820,7 @@ const styles = StyleSheet.create({
   lbName: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 1,
   },
   lbMeta: {
@@ -833,7 +833,7 @@ const styles = StyleSheet.create({
   lbScore: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   lbScoreLabel: {
     ...Typography.caption,

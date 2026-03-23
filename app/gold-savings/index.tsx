@@ -323,10 +323,10 @@ function GoldSavingsPage() {
   if (isPageLoading) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Digital Gold</Text>
           <View style={{ width: 24 }} />
@@ -345,10 +345,10 @@ function GoldSavingsPage() {
   if (error && !goldPrice && !loadingPrice) {
     return (
       <SafeAreaView style={styles.container}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Digital Gold</Text>
           <View style={{ width: 24 }} />
@@ -360,16 +360,16 @@ function GoldSavingsPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Digital Gold</Text>
         <Pressable onPress={() => router.push('/gold-savings/history' as any)}>
-          <Ionicons name="time-outline" size={24} color={Colors.text.primary} />
+          <Ionicons name="time-outline" size={24} color={colors.text.primary} />
         </Pressable>
       </View>
 
@@ -400,7 +400,7 @@ function GoldSavingsPage() {
           >
             <View style={styles.balanceHeader}>
               <Text style={styles.balanceLabel}>Your Gold Balance</Text>
-              <Ionicons name="diamond" size={24} color={Colors.background.primary} />
+              <Ionicons name="diamond" size={24} color={colors.background.primary} />
             </View>
             {loadingHolding ? (
               <ActivityIndicator color={colors.background.primary} size="small" style={{ marginVertical: Spacing.lg }} />
@@ -434,7 +434,7 @@ function GoldSavingsPage() {
             <Ionicons
               name="add-circle-outline"
               size={20}
-              color={activeTab === 'buy' ? Colors.background.primary : Colors.text.secondary}
+              color={activeTab === 'buy' ? colors.background.primary : colors.text.secondary}
             />
             <Text style={[styles.tabText, activeTab === 'buy' && styles.tabTextActive]}>
               Buy Gold
@@ -447,7 +447,7 @@ function GoldSavingsPage() {
             <Ionicons
               name="remove-circle-outline"
               size={20}
-              color={activeTab === 'sell' ? Colors.background.primary : Colors.text.secondary}
+              color={activeTab === 'sell' ? colors.background.primary : colors.text.secondary}
             />
             <Text style={[styles.tabText, activeTab === 'sell' && styles.tabTextActive]}>
               Sell Gold
@@ -465,7 +465,7 @@ function GoldSavingsPage() {
             <TextInput
               style={styles.amountInput}
               placeholder={inputPlaceholder}
-              placeholderTextColor={Colors.text.secondary}
+              placeholderTextColor={colors.text.secondary}
               keyboardType="decimal-pad"
               value={amount}
               onChangeText={setAmount}
@@ -477,7 +477,7 @@ function GoldSavingsPage() {
           </View>
           {parsedAmount > 0 && pricePerGram > 0 && (
             <View style={styles.goldConversion}>
-              <Ionicons name="swap-vertical" size={20} color={Colors.text.secondary} />
+              <Ionicons name="swap-vertical" size={20} color={colors.text.secondary} />
               <Text style={styles.goldConversionText}>{conversionText}</Text>
             </View>
           )}
@@ -634,13 +634,13 @@ function GoldSavingsPage() {
             disabled={processing}
           >
             {processing ? (
-              <ActivityIndicator color={Colors.background.primary} size="small" />
+              <ActivityIndicator color={colors.background.primary} size="small" />
             ) : (
               <>
                 <Text style={styles.proceedButtonText}>
                   {activeTab === 'buy' ? 'Buy Gold' : 'Sell Gold'}
                 </Text>
-                <Ionicons name="arrow-forward" size={20} color={Colors.background.primary} />
+                <Ionicons name="arrow-forward" size={20} color={colors.background.primary} />
               </>
             )}
           </Pressable>
@@ -653,7 +653,7 @@ function GoldSavingsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   header: {
@@ -662,9 +662,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.xs,
@@ -672,7 +672,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   content: {
     flex: 1,
@@ -694,7 +694,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   // Error banner
   errorBanner: {
@@ -736,7 +736,7 @@ const styles = StyleSheet.create({
   balanceAmount: {
     fontSize: 36,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   balanceValue: {
@@ -759,13 +759,13 @@ const styles = StyleSheet.create({
   priceValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Tabs
   tabsContainer: {
     flexDirection: 'row',
     marginHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.xs,
   },
@@ -784,10 +784,10 @@ const styles = StyleSheet.create({
   tabText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   tabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Sections
   section: {
@@ -797,14 +797,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   // Input
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
@@ -812,20 +812,20 @@ const styles = StyleSheet.create({
   rupeeSymbol: {
     fontSize: 32,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginRight: 8,
   },
   unitLabel: {
     fontSize: 24,
     fontWeight: '500',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginLeft: 8,
   },
   amountInput: {
     flex: 1,
     fontSize: 32,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   goldConversion: {
     flexDirection: 'row',
@@ -836,7 +836,7 @@ const styles = StyleSheet.create({
   },
   goldConversionText: {
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   // Quick amounts
   quickAmountsGrid: {
@@ -848,7 +848,7 @@ const styles = StyleSheet.create({
     width: '31%',
     padding: 14,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
     borderWidth: 2,
     borderColor: 'transparent',
@@ -860,7 +860,7 @@ const styles = StyleSheet.create({
   quickAmountText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   quickAmountTextActive: {
     color: GOLD_COLOR,
@@ -869,7 +869,7 @@ const styles = StyleSheet.create({
   txCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.sm,
@@ -888,11 +888,11 @@ const styles = StyleSheet.create({
   txTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   txDate: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: 2,
   },
   txAmounts: {
@@ -904,7 +904,7 @@ const styles = StyleSheet.create({
   },
   txValue: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: 2,
   },
   viewAllButton: {
@@ -926,7 +926,7 @@ const styles = StyleSheet.create({
   benefitCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     gap: Spacing.md,
@@ -945,12 +945,12 @@ const styles = StyleSheet.create({
   benefitTitle: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   benefitDesc: {
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   // SIP
   sipCard: {
@@ -981,12 +981,12 @@ const styles = StyleSheet.create({
   sipTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   sipDesc: {
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   sipButton: {
     backgroundColor: GOLD_COLOR,
@@ -997,7 +997,7 @@ const styles = StyleSheet.create({
   sipButtonText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Trust
   trustSection: {
@@ -1014,7 +1014,7 @@ const styles = StyleSheet.create({
   },
   trustText: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   // Bottom CTA
   bottomCta: {
@@ -1022,14 +1022,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   summary: {},
   summaryLabel: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   summaryValue: {
     fontSize: 18,
@@ -1053,7 +1053,7 @@ const styles = StyleSheet.create({
   proceedButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

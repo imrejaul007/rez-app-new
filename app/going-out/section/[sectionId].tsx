@@ -167,7 +167,7 @@ function GoingOutSectionPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   loadingContainer: {
@@ -182,8 +182,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
-    backgroundColor: Colors.background.primary,
+    borderBottomColor: colors.border.default,
+    backgroundColor: colors.background.primary,
   },
   backButton: {
     width: 40,
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   listContent: {
     padding: Spacing.md,
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
   },
   productCard: {
     width: '48%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
     overflow: 'hidden',
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   productImage: {
     width: '100%',
     height: 140,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   cashbackBadge: {
     position: 'absolute',
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
   cashbackText: {
     fontSize: 10,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   productInfo: {
     padding: 10,
@@ -240,18 +240,18 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   storeName: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   productPrice: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   ratingRow: {
     flexDirection: 'row',
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     flex: 1,
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 15,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

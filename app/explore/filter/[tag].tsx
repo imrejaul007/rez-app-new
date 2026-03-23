@@ -45,7 +45,7 @@ const TagFilterPage = () => {
   const router = useRouter();
   const { tag } = useLocalSearchParams();
   const tagId = tag as string;
-  const meta = tagMeta[tagId] || { label: tagId, emoji: '🏷️', description: 'Browse stores', color: Colors.nileBlue, gradient: [Colors.nileBlue, '#2d5a7b'] as [string, string] };
+  const meta = tagMeta[tagId] || { label: tagId, emoji: '🏷️', description: 'Browse stores', color: colors.nileBlue, gradient: [colors.nileBlue, '#2d5a7b'] as [string, string] };
 
   const [selectedFilter, setSelectedFilter] = useState('all');
   const [loading, setLoading] = useState(true);
@@ -124,7 +124,7 @@ const TagFilterPage = () => {
             style={styles.backButton}
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+            <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <View style={styles.headerCenter}>
             <Text style={styles.headerEmoji}>{meta.emoji}</Text>
@@ -134,7 +134,7 @@ const TagFilterPage = () => {
             style={styles.searchButton}
             onPress={() => navigateTo('/explore/search')}
           >
-            <Ionicons name="search" size={22} color={Colors.nileBlue} />
+            <Ionicons name="search" size={22} color={colors.nileBlue} />
           </Pressable>
         </View>
 
@@ -282,7 +282,7 @@ const TagFilterPage = () => {
                 <View style={styles.storeFooter}>
                   {store.distance && (
                     <View style={styles.infoItem}>
-                      <Ionicons name="location" size={13} color={Colors.text.tertiary} />
+                      <Ionicons name="location" size={13} color={colors.text.tertiary} />
                       <Text style={styles.infoText}>{store.distance}</Text>
                     </View>
                   )}
@@ -315,10 +315,10 @@ const TagFilterPage = () => {
           onPress={() => navigateTo('/explore/map')}
         >
           <LinearGradient
-            colors={[meta.color, Colors.nileBlue]}
+            colors={[meta.color, colors.nileBlue]}
             style={styles.mapButtonGradient}
           >
-            <Ionicons name="map" size={20} color={Colors.text.inverse} />
+            <Ionicons name="map" size={20} color={colors.text.inverse} />
             <Text style={styles.mapButtonText}>Map View</Text>
           </LinearGradient>
         </Pressable>
@@ -330,7 +330,7 @@ const TagFilterPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -338,13 +338,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -359,13 +359,13 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   searchButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -381,7 +381,7 @@ const styles = StyleSheet.create({
   heroTitle: {
     ...Typography.h2,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   heroDescription: {
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   heroStatValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   heroStatLabel: {
     ...Typography.caption,
@@ -428,26 +428,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.xs,
   },
   filterChipActive: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   filterLabel: {
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterLabelActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   resultsCount: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.xs,
   },
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     justifyContent: 'center',
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -506,13 +506,13 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   emptySubtext: {
     marginTop: Spacing.sm,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -523,25 +523,25 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   emptyButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
   storeCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   storeImage: {
     width: 72,
     height: 72,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   storeImagePlaceholder: {
     justifyContent: 'center',
@@ -550,7 +550,7 @@ const styles = StyleSheet.create({
   storeInitial: {
     ...Typography.h1,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeContent: {
     flex: 1,
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     flex: 1,
   },
   ratingRow: {
@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
   },
   reviewsText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   offerBadge: {
     flexDirection: 'row',
@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statusDot: {
     width: 6,
@@ -629,7 +629,7 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   mapButton: {
     position: 'absolute',
@@ -649,7 +649,7 @@ const styles = StyleSheet.create({
   mapButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

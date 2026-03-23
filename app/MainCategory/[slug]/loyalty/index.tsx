@@ -224,7 +224,7 @@ function LoyaltyHubPage() {
                 <View key={brand.brandId || i} style={styles.brandCard}>
                   <View style={styles.brandInfo}>
                     <Text style={styles.brandName}>{brand.brandName}</Text>
-                    <View style={[styles.tierBadge, { backgroundColor: tierColors.bg, borderColor: tierColors.border }]}>
+                    <View style={[styles.tierBadge, { backgroundColor: tierColors.bg, borderColor: tiercolors.border }]}>
                       <Text style={[styles.tierText, { color: tierColors.text }]}>{brand.tier}</Text>
                     </View>
                   </View>
@@ -327,7 +327,7 @@ const styles = StyleSheet.create({
   streakCount: { fontSize: 14, fontWeight: '600' },
   streakDots: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
   streakDot: {
-    width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.border.default,
+    width: 36, height: 36, borderRadius: 18, backgroundColor: colors.border.default,
     justifyContent: 'center', alignItems: 'center',
   },
   streakDotActive: {},
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8,
     borderRadius: 12, paddingVertical: 12,
   },
-  checkInBtnDisabled: { backgroundColor: Colors.text.tertiary },
+  checkInBtnDisabled: { backgroundColor: colors.text.tertiary },
   checkInBtnText: { fontSize: 14, fontWeight: '600', color: SHARED_COLORS.white },
   // Coins
   coinCard: {
@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   tierBadge: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: 12, borderWidth: 1 },
   tierText: { fontSize: 11, fontWeight: '600' },
   brandProgress: {},
-  progressBar: { height: 6, backgroundColor: Colors.border.default, borderRadius: 3, overflow: 'hidden', marginBottom: Spacing.xs },
+  progressBar: { height: 6, backgroundColor: colors.border.default, borderRadius: 3, overflow: 'hidden', marginBottom: Spacing.xs },
   progressFill: { height: '100%', borderRadius: 3 },
   progressText: { fontSize: 11, color: SHARED_COLORS.textSecondary },
   // Mission

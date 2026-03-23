@@ -204,7 +204,7 @@ function TwoFactorAuthPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to close the backup codes screen"
           >
-            <Ionicons name="close" size={24} color={Colors.text.tertiary} />
+            <Ionicons name="close" size={24} color={colors.text.tertiary} />
           </Pressable>
         </View>
 
@@ -286,7 +286,7 @@ function TwoFactorAuthPage() {
               <Ionicons 
                 name={is2FAEnabled ? "shield-checkmark" : "shield-outline"} 
                 size={24} 
-                color={is2FAEnabled ? Colors.success : Colors.text.tertiary} 
+                color={is2FAEnabled ? Colors.success : colors.text.tertiary} 
               />
               <ThemedText style={styles.statusTitle}>
                 {is2FAEnabled ? 'Enabled' : 'Disabled'}
@@ -395,7 +395,7 @@ function TwoFactorAuthPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   placeholder: {
     width: 40,
@@ -437,13 +437,13 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   statusSection: {
     marginBottom: Spacing.xl,
   },
   statusCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     shadowColor: '#000',
@@ -460,12 +460,12 @@ const styles = StyleSheet.create({
   statusTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginLeft: Spacing.md,
   },
   statusDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   methodSection: {
@@ -474,11 +474,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   optionCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     marginBottom: Spacing.md,
     shadowColor: '#000',
@@ -513,12 +513,12 @@ const styles = StyleSheet.create({
   optionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   optionDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   selectedIndicator: {
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   enableButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -543,7 +543,7 @@ const styles = StyleSheet.create({
   codeInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     shadowColor: '#000',
@@ -555,7 +555,7 @@ const styles = StyleSheet.create({
   codeInput: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginRight: Spacing.md,
   },
   verifyButton: {
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   verifyButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   disableButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   infoCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     shadowColor: '#000',
@@ -603,12 +603,12 @@ const styles = StyleSheet.create({
   infoTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginLeft: Spacing.sm,
   },
   infoText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   footer: {
@@ -617,21 +617,21 @@ const styles = StyleSheet.create({
   // Modal styles
   modalContainer: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h3,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalContent: {
     flex: 1,
@@ -658,7 +658,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   codeItem: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
     marginBottom: Spacing.sm,
@@ -673,7 +673,7 @@ const styles = StyleSheet.create({
   codeText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontFamily: 'monospace',
   },
   continueButton: {
@@ -684,7 +684,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   continueButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },

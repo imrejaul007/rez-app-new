@@ -23,12 +23,12 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 // Rez Design System Colors
 const COLORS = {
   primary: Colors.gold,
-  primaryDark: Colors.nileBlue,
-  deepTeal: Colors.nileBlue,
+  primaryDark: colors.nileBlue,
+  deepTeal: colors.nileBlue,
   gold: Colors.gold,
   goldDark: colors.lightPeach, // Brand-specific peach — keep unique
-  textPrimary: Colors.nileBlue,
-  white: Colors.background.primary };
+  textPrimary: colors.nileBlue,
+  white: colors.background.primary };
 
 function SplashScreen() {
   const router = useRouter();

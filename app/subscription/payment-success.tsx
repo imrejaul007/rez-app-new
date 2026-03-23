@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Payment Success Page
 import React, { useEffect, useState, useLayoutEffect } from 'react';
@@ -138,10 +139,10 @@ function PaymentSuccessPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
 
       {/* Success Header */}
-      <LinearGradient colors={[Colors.gold, Colors.nileBlue] as const} style={styles.header}>
+      <LinearGradient colors={[Colors.gold, colors.nileBlue] as const} style={styles.header}>
         <View style={styles.headerContent}>
           <View style={styles.successIconContainer}>
-            <Ionicons name="checkmark-circle" size={80} color={Colors.text.inverse} />
+            <Ionicons name="checkmark-circle" size={80} color={colors.text.inverse} />
           </View>
           <ThemedText style={styles.headerTitle}>Payment Successful!</ThemedText>
           <ThemedText style={styles.headerSubtitle}>
@@ -333,7 +334,7 @@ function PaymentSuccessPage() {
       <View style={styles.actionButtons}>
         <Pressable style={styles.primaryButton} onPress={handleContinue}>
           <ThemedText style={styles.primaryButtonText}>Continue Shopping</ThemedText>
-          <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+          <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
         </Pressable>
 
         <Pressable style={styles.secondaryButton} onPress={handleViewSubscription}>
@@ -349,7 +350,7 @@ function PaymentSuccessPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
@@ -364,14 +365,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h1,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   headerSubtitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     textAlign: 'center',
     opacity: 0.9,
@@ -386,10 +387,10 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   detailsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     margin: Spacing.lg,
     marginBottom: Spacing.base,
     borderRadius: BorderRadius.lg,
@@ -402,12 +403,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     paddingBottom: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   detailsTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginLeft: Spacing.md,
   },
   detailRow: {
@@ -416,16 +417,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   detailLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   detailValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   detailValueHighlight: {
     ...Typography.h4,
@@ -439,12 +440,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   statusText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     ...Typography.bodySmall,
     fontWeight: '600',
   },
   benefitsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.base,
     borderRadius: BorderRadius.lg,
@@ -457,12 +458,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     paddingBottom: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   benefitsTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginLeft: Spacing.md,
   },
   benefitsList: {
@@ -475,7 +476,7 @@ const styles = StyleSheet.create({
   benefitText: {
     marginLeft: Spacing.md,
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
   },
   trialInfoCard: {
@@ -503,7 +504,7 @@ const styles = StyleSheet.create({
     lineHeight: 18,
   },
   nextStepsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.lg,
     marginBottom: 100,
     borderRadius: BorderRadius.lg,
@@ -513,7 +514,7 @@ const styles = StyleSheet.create({
   nextStepsTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.lg,
   },
   nextStepItem: {
@@ -525,7 +526,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -536,23 +537,23 @@ const styles = StyleSheet.create({
   nextStepTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   nextStepText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   actionButtons: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.lg,
     paddingBottom: 30,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     ...Shadows.medium,
   },
   primaryButton: {
@@ -566,18 +567,18 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold',
   },
   secondaryButton: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
   },
   secondaryButtonText: {
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     ...Typography.body,
     fontWeight: '600',
   },

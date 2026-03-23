@@ -39,10 +39,10 @@ const COLORS = {
   primaryDark: colors.brand.goldRich,   // Brand-specific
   gold: colors.brand.goldWarm,          // Brand-specific
   goldDark: '#E5A500',      // Brand-specific
-  navy: Colors.nileBlue,
-  textPrimary: Colors.text.primary,
-  textSecondary: Colors.text.tertiary,
-  white: Colors.background.primary,
+  navy: colors.nileBlue,
+  textPrimary: colors.text.primary,
+  textSecondary: colors.text.tertiary,
+  white: colors.background.primary,
   surface: colors.linen,       // Brand linen
 };
 

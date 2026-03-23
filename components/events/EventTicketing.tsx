@@ -14,7 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { EventItem } from '@/types/homepage.types';
 import { CategoryTheme } from '@/constants/categoryThemes';
 import StarRating from '@/components/events/StarRating';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface EventTicketingProps {
@@ -69,7 +69,7 @@ const EventTicketing = React.memo(function EventTicketing({
   const isDisabled = !!error || !hasSelectedSlot;
 
   const buttonColors: [string, string] = isDisabled
-    ? [Colors.text.tertiary, Colors.text.tertiary]
+    ? [colors.text.tertiary, colors.text.tertiary]
     : categoryTheme.buttonGradient;
 
   return (
@@ -97,9 +97,9 @@ const EventTicketing = React.memo(function EventTicketing({
             <Ionicons
               name={eventDetails.isOnline ? 'globe' : 'location'}
               size={14}
-              color={eventDetails.isOnline ? Colors.gold : Colors.warning}
+              color={eventDetails.isOnline ? colors.gold : colors.warning}
             />
-            <Text style={[styles.eventTypeText, { color: eventDetails.isOnline ? Colors.gold : Colors.warning }]}>
+            <Text style={[styles.eventTypeText, { color: eventDetails.isOnline ? colors.gold : colors.warning }]}>
               {eventDetails.isOnline ? 'Online Event' : 'Venue Event'}
             </Text>
           </View>
@@ -135,7 +135,7 @@ const EventTicketing = React.memo(function EventTicketing({
                       {slot.time}
                     </Text>
                     {selectedSlot === slot.id && (
-                      <Ionicons name="checkmark-circle" size={20} color={Colors.brand.purpleLight} />
+                      <Ionicons name="checkmark-circle" size={20} color={colors.brand.purpleLight} />
                     )}
                   </View>
                   <Text style={[styles.slotCapacity, !slot.available && styles.slotCapacityDisabled]}>
@@ -147,7 +147,7 @@ const EventTicketing = React.memo(function EventTicketing({
                         styles.capacityFill,
                         {
                           width: `${(slot.bookedCount / slot.maxCapacity) * 100}%`,
-                          backgroundColor: slot.available ? Colors.brand.purpleLight : Colors.text.tertiary,
+                          backgroundColor: slot.available ? colors.brand.purpleLight : colors.text.tertiary,
                         },
                       ]}
                     />
@@ -194,7 +194,7 @@ const EventTicketing = React.memo(function EventTicketing({
 const styles = StyleSheet.create({
   priceCard: {
     marginTop: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     flexDirection: 'row',
@@ -208,8 +208,8 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   priceInfo: { flex: 1 },
-  priceLabel: { ...Typography.body, color: Colors.text.tertiary, marginBottom: Spacing.xs, fontWeight: '500' },
-  priceValue: { ...Typography.h2, fontWeight: '800', color: Colors.text.primary },
+  priceLabel: { ...Typography.body, color: colors.text.tertiary, marginBottom: Spacing.xs, fontWeight: '500' },
+  priceValue: { ...Typography.h2, fontWeight: '800', color: colors.text.primary },
   priceCardRight: { alignItems: 'flex-end', gap: Spacing.sm },
   ratingBadge: {
     flexDirection: 'row',
@@ -225,41 +225,41 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
   },
   eventTypeText: { ...Typography.bodySmall, fontWeight: '600' },
   section: { marginTop: Spacing['2xl'] },
-  sectionTitle: { ...Typography.h3, fontWeight: '800', color: Colors.text.primary, marginBottom: Spacing.sm },
-  sectionSubtitle: { ...Typography.body, color: Colors.text.tertiary, marginBottom: Spacing.base, lineHeight: 20 },
+  sectionTitle: { ...Typography.h3, fontWeight: '800', color: colors.text.primary, marginBottom: Spacing.sm },
+  sectionSubtitle: { ...Typography.body, color: colors.text.tertiary, marginBottom: Spacing.base, lineHeight: 20 },
   slotsGrid: { gap: Spacing.md },
   slotCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
-  slotCardSelected: { borderColor: Colors.brand.purpleLight, backgroundColor: colors.tint.coolGray },
-  slotCardDisabled: { backgroundColor: Colors.background.secondary, borderColor: Colors.border.default },
+  slotCardSelected: { borderColor: colors.brand.purpleLight, backgroundColor: colors.tint.coolGray },
+  slotCardDisabled: { backgroundColor: colors.background.secondary, borderColor: colors.border.default },
   slotHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.sm },
-  slotTime: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.primary },
-  slotTimeSelected: { color: Colors.brand.purpleLight },
-  slotTimeDisabled: { color: Colors.text.tertiary },
-  slotCapacity: { ...Typography.body, color: Colors.text.tertiary, marginBottom: Spacing.sm, fontWeight: '500' },
-  slotCapacityDisabled: { color: Colors.text.tertiary },
-  capacityBar: { height: 4, backgroundColor: Colors.border.default, borderRadius: 2, overflow: 'hidden' },
+  slotTime: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.primary },
+  slotTimeSelected: { color: colors.brand.purpleLight },
+  slotTimeDisabled: { color: colors.text.tertiary },
+  slotCapacity: { ...Typography.body, color: colors.text.tertiary, marginBottom: Spacing.sm, fontWeight: '500' },
+  slotCapacityDisabled: { color: colors.text.tertiary },
+  capacityBar: { height: 4, backgroundColor: colors.border.default, borderRadius: 2, overflow: 'hidden' },
   capacityFill: { height: '100%', borderRadius: 2 },
   emptySlotsContainer: { alignItems: 'center', justifyContent: 'center', paddingVertical: 40, paddingHorizontal: 20 },
-  emptySlotsText: { ...Typography.bodyLarge, fontWeight: '600', color: Colors.text.primary, marginTop: Spacing.base, marginBottom: Spacing.sm },
-  emptySlotsSubtext: { ...Typography.body, color: Colors.text.tertiary, textAlign: 'center', lineHeight: 20 },
+  emptySlotsText: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.primary, marginTop: Spacing.base, marginBottom: Spacing.sm },
+  emptySlotsSubtext: { ...Typography.body, color: colors.text.tertiary, textAlign: 'center', lineHeight: 20 },
   fixedBottom: { position: 'absolute', bottom: 70 },
   actionButtonContainer: {
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
-    shadowColor: Colors.brand.purpleLight,
+    shadowColor: colors.brand.purpleLight,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -274,7 +274,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
     gap: 10,
   },
-  actionButtonText: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.inverse },
+  actionButtonText: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse },
 });
 
 export default EventTicketing;

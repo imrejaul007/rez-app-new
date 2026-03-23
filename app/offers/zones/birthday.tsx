@@ -308,7 +308,7 @@ function BirthdayZonePage() {
               ) : (
                 <View style={styles.notEligibleStatus}>
                   <View style={styles.notEligibleLeft}>
-                    <Ionicons name="calendar-outline" size={20} color={Colors.text.tertiary} />
+                    <Ionicons name="calendar-outline" size={20} color={colors.text.tertiary} />
                     <ThemedText style={styles.notEligibleText}>
                       {user?.profile?.dateOfBirth
                         ? 'Available during your birthday month'
@@ -382,9 +382,9 @@ function BirthdayZonePage() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   centerContent: { justifyContent: 'center', alignItems: 'center', padding: Spacing.xl },
-  errorText: { ...Typography.body, color: Colors.text.secondary, textAlign: 'center', marginTop: Spacing.md, marginBottom: Spacing.lg },
+  errorText: { ...Typography.body, color: colors.text.secondary, textAlign: 'center', marginTop: Spacing.md, marginBottom: Spacing.lg },
   retryButton: { backgroundColor: colors.warningScale[400], paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md, borderRadius: BorderRadius.md },
   retryButtonText: { ...Typography.button, color: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0 },
@@ -409,8 +409,8 @@ const styles = StyleSheet.create({
   heroIconContainer: { width: 64, height: 64, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(245, 158, 11, 0.3)', alignItems: 'center', justifyContent: 'center', marginRight: Spacing.base },
   heroEmoji: { fontSize: 32 },
   heroTextContainer: { flex: 1 },
-  heroTitle: { ...Typography.h4, color: Colors.text.primary, fontWeight: '600', marginBottom: 4 },
-  heroSubtitle: { ...Typography.bodySmall, color: Colors.text.secondary },
+  heroTitle: { ...Typography.h4, color: colors.text.primary, fontWeight: '600', marginBottom: 4 },
+  heroSubtitle: { ...Typography.bodySmall, color: colors.text.secondary },
   eligibilityCard: { marginTop: Spacing.base, padding: Spacing.md, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(255, 255, 255, 0.5)' },
   eligibleStatus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   eligibleLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
@@ -419,37 +419,37 @@ const styles = StyleSheet.create({
   activeBadgeText: { ...Typography.caption, color: colors.background.primary, fontWeight: '600' },
   notEligibleStatus: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   notEligibleLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flex: 1 },
-  notEligibleText: { ...Typography.body, color: Colors.text.secondary, flex: 1 },
+  notEligibleText: { ...Typography.body, color: colors.text.secondary, flex: 1 },
   updateButton: { backgroundColor: colors.warningScale[400], paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.md },
   updateButtonText: { ...Typography.labelSmall, color: colors.background.primary, fontWeight: '600' },
   perksSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.lg },
-  sectionTitle: { ...Typography.h4, color: Colors.text.primary, fontWeight: '600', marginBottom: Spacing.md },
+  sectionTitle: { ...Typography.h4, color: colors.text.primary, fontWeight: '600', marginBottom: Spacing.md },
   perksGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  perkCard: { width: (SCREEN_WIDTH - Spacing.base * 2 - Spacing.sm) / 2, backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, alignItems: 'center', ...Shadows.subtle },
+  perkCard: { width: (SCREEN_WIDTH - Spacing.base * 2 - Spacing.sm) / 2, backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, alignItems: 'center', ...Shadows.subtle },
   perkIcon: { fontSize: 28, marginBottom: Spacing.xs },
-  perkTitle: { ...Typography.label, color: Colors.text.primary, fontWeight: '600', marginBottom: 2 },
-  perkDesc: { ...Typography.caption, color: Colors.text.tertiary, textAlign: 'center' },
+  perkTitle: { ...Typography.label, color: colors.text.primary, fontWeight: '600', marginBottom: 2 },
+  perkDesc: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'center' },
   dealsSection: { paddingHorizontal: Spacing.base },
-  dealCard: { flexDirection: 'row', backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', marginBottom: Spacing.md, ...Shadows.subtle },
+  dealCard: { flexDirection: 'row', backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', marginBottom: Spacing.md, ...Shadows.subtle },
   dealImage: { width: 96, height: 96 },
   dealContent: { flex: 1, padding: Spacing.base },
   dealHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: Spacing.xs },
   dealInfo: { flex: 1, marginRight: Spacing.sm },
-  dealStore: { ...Typography.bodySmall, color: Colors.text.tertiary, marginBottom: 2 },
-  dealTitle: { ...Typography.label, color: Colors.text.primary, fontWeight: '600' },
+  dealStore: { ...Typography.bodySmall, color: colors.text.tertiary, marginBottom: 2 },
+  dealTitle: { ...Typography.label, color: colors.text.primary, fontWeight: '600' },
   discountBadge: { backgroundColor: 'rgba(245, 158, 11, 0.15)', paddingHorizontal: Spacing.sm, paddingVertical: 4, borderRadius: BorderRadius.sm },
   discountText: { ...Typography.labelSmall, color: colors.brand.amberDeep, fontWeight: '700' },
-  dealDescription: { ...Typography.bodySmall, color: Colors.text.secondary, marginBottom: Spacing.sm },
+  dealDescription: { ...Typography.bodySmall, color: colors.text.secondary, marginBottom: Spacing.sm },
   dealTags: { flexDirection: 'row', gap: Spacing.xs, flexWrap: 'wrap' },
   tag: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.gray[100], paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.sm, gap: 4 },
-  tagText: { ...Typography.caption, color: Colors.text.secondary },
+  tagText: { ...Typography.caption, color: colors.text.secondary },
   skeletonImage: { width: 96, height: 96, backgroundColor: Colors.gray[200] },
   skeletonText: { height: 12, borderRadius: 6, backgroundColor: Colors.gray[200] },
   emptyState: { alignItems: 'center', padding: Spacing.xl },
   emptyEmoji: { fontSize: 48, marginBottom: Spacing.md },
-  emptyStateText: { ...Typography.body, color: Colors.text.tertiary },
-  emptyStateSubtext: { ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: Spacing.xs },
-  fixedCTA: { position: 'absolute', bottom: 70, left: 0, right: 0, padding: Spacing.base, backgroundColor: Colors.background.primary, borderTopWidth: 1, borderTopColor: Colors.border.light, ...Shadows.medium },
+  emptyStateText: { ...Typography.body, color: colors.text.tertiary },
+  emptyStateSubtext: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.xs },
+  fixedCTA: { position: 'absolute', bottom: 70, left: 0, right: 0, padding: Spacing.base, backgroundColor: colors.background.primary, borderTopWidth: 1, borderTopColor: colors.border.light, ...Shadows.medium },
   ctaButton: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
   ctaGradient: { flexDirection: 'row', paddingVertical: Spacing.base, alignItems: 'center', justifyContent: 'center', gap: Spacing.sm },
   ctaButtonText: { ...Typography.button, color: colors.background.primary, fontWeight: '600' } });

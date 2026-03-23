@@ -212,7 +212,7 @@ function LeaderboardPage() {
             </View>
           ) : (
             <View style={styles.avatarPlaceholder}>
-              <Ionicons name="person" size={24} color={Colors.text.tertiary} />
+              <Ionicons name="person" size={24} color={colors.text.tertiary} />
             </View>
           )}
         </View>
@@ -283,7 +283,7 @@ function LeaderboardPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <ThemedText style={styles.headerTitle}>Leaderboard</ThemedText>
@@ -296,7 +296,7 @@ function LeaderboardPage() {
           </View>
           <View style={styles.headerRight}>
             {isUpdating && (
-              <ActivityIndicator size="small" color={Colors.text.inverse} />
+              <ActivityIndicator size="small" color={colors.text.inverse} />
             )}
           </View>
         </View>
@@ -341,7 +341,7 @@ function LeaderboardPage() {
 
             {leaderboardData?.entries.length === 0 && (
               <View style={styles.emptyState}>
-                <Ionicons name="trophy-outline" size={64} color={Colors.border.default} />
+                <Ionicons name="trophy-outline" size={64} color={colors.border.default} />
                 <ThemedText style={styles.emptyText}>No leaderboard data yet</ThemedText>
                 <ThemedText style={styles.emptySubtext}>
                   Start earning coins to appear on the leaderboard!
@@ -373,7 +373,7 @@ function LeaderboardPage() {
             colors={[colors.brand.goldBright, '#FFA500']}
             style={styles.celebrationCard}
           >
-            <Ionicons name="trophy" size={48} color={Colors.text.inverse} />
+            <Ionicons name="trophy" size={48} color={colors.text.inverse} />
             <ThemedText style={styles.celebrationText}>{celebrationMessage}</ThemedText>
           </LinearGradient>
         </Animated.View>
@@ -385,7 +385,7 @@ function LeaderboardPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
   },
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4CD964',
   },
   liveText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.overline,
     fontWeight: 'bold',
   },
@@ -453,10 +453,10 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
   },
   periodButtonActive: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   periodButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   scrollView: {
     flex: 1,
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   leaderboardSection: {
@@ -492,7 +492,7 @@ const styles = StyleSheet.create({
   entryCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
@@ -515,7 +515,7 @@ const styles = StyleSheet.create({
   rankText: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   medalContainer: {
     width: 36,
@@ -537,14 +537,14 @@ const styles = StyleSheet.create({
   },
   avatarPlaceholder: {
     flex: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   userInfo: {
     flex: 1,
@@ -552,7 +552,7 @@ const styles = StyleSheet.create({
   userName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   userStats: {
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   rupeeSymbol: {
     ...Typography.bodySmall,
@@ -580,12 +580,12 @@ const styles = StyleSheet.create({
   emptyText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
     textAlign: 'center',
   },
@@ -624,7 +624,7 @@ const styles = StyleSheet.create({
   rankUpText: {
     ...Typography.overline,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   celebrationOverlay: {
     position: 'absolute',
@@ -638,7 +638,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   celebrationCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing['2xl'],
     alignItems: 'center',
@@ -654,7 +654,7 @@ const styles = StyleSheet.create({
   celebrationText: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
   },
 });

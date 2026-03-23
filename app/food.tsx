@@ -345,7 +345,7 @@ const FoodPage: React.FC = () => {
         <LinearGradient colors={[colors.brand.orange, colors.brand.orangeDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
           <View style={styles.headerTop}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitle}>Food</Text>
@@ -371,14 +371,14 @@ const FoodPage: React.FC = () => {
       <LinearGradient colors={[colors.brand.orange, colors.brand.orangeDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Food</Text>
             <Text style={styles.headerSubtitle}>Order & earn cashback</Text>
           </View>
           <Pressable style={styles.cartButton}>
-            <Ionicons name="cart-outline" size={24} color={Colors.text.inverse} />
+            <Ionicons name="cart-outline" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
         <View style={styles.statsRow}>
@@ -560,7 +560,7 @@ const FoodPage: React.FC = () => {
                       />
                     ) : (
                       <View style={[styles.restaurantImage, styles.restaurantImagePlaceholder]}>
-                        <Ionicons name="restaurant-outline" size={40} color={Colors.text.tertiary} />
+                        <Ionicons name="restaurant-outline" size={40} color={colors.text.tertiary} />
                       </View>
                     )}
                     {cashback > 0 && (
@@ -573,7 +573,7 @@ const FoodPage: React.FC = () => {
                         <Text style={styles.restaurantName} numberOfLines={1}>{store.name}</Text>
                         {rating > 0 && (
                           <View style={styles.ratingBadge}>
-                            <Ionicons name="star" size={12} color={Colors.text.inverse} />
+                            <Ionicons name="star" size={12} color={colors.text.inverse} />
                             <Text style={styles.ratingText}>{rating.toFixed(1)}</Text>
                           </View>
                         )}
@@ -582,7 +582,7 @@ const FoodPage: React.FC = () => {
                       <View style={styles.restaurantMeta}>
                         {deliveryTime ? (
                           <View style={styles.metaItem}>
-                            <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+                            <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
                             <Text style={styles.metaText}>{deliveryTime}</Text>
                           </View>
                         ) : null}
@@ -609,7 +609,7 @@ const FoodPage: React.FC = () => {
         {/* Promo Banner */}
         <View style={styles.promoBanner}>
           <LinearGradient colors={[Colors.success, Colors.success]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.promoGradient}>
-            <Ionicons name="restaurant" size={40} color={Colors.text.inverse} style={{ marginBottom: Spacing.md }} />
+            <Ionicons name="restaurant" size={40} color={colors.text.inverse} style={{ marginBottom: Spacing.md }} />
             <Text style={styles.promoTitle}>Explore All Restaurants</Text>
             <Text style={styles.promoSubtitle}>Discover new places near you and earn cashback on every order</Text>
             <Pressable
@@ -628,75 +628,75 @@ const FoodPage: React.FC = () => {
 
 // ---------- Styles ----------
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.primary },
+  container: { flex: 1, backgroundColor: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: Spacing.lg },
   headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: Spacing.base },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
-  headerTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.8)' },
   cartButton: { padding: Spacing.sm },
   statsRow: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingHorizontal: Spacing.base },
   statItem: { alignItems: 'center', paddingHorizontal: Spacing.lg },
-  statValue: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  statValue: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.inverse },
   statLabel: { fontSize: Typography.caption.fontSize, color: 'rgba(255,255,255,0.8)' },
   statDivider: { width: 1, height: 30, backgroundColor: 'rgba(255,255,255,0.3)' },
-  filtersContainer: { height: 52, paddingVertical: Spacing.sm, paddingHorizontal: Spacing.base, backgroundColor: Colors.background.primary, borderBottomWidth: 1, borderBottomColor: Colors.border.default },
-  filterChip: { paddingHorizontal: Spacing.base, paddingVertical: 7, borderRadius: BorderRadius.xl, backgroundColor: Colors.background.secondary, marginRight: Spacing.sm },
+  filtersContainer: { height: 52, paddingVertical: Spacing.sm, paddingHorizontal: Spacing.base, backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.border.default },
+  filterChip: { paddingHorizontal: Spacing.base, paddingVertical: 7, borderRadius: BorderRadius.xl, backgroundColor: colors.background.secondary, marginRight: Spacing.sm },
   filterChipActive: { backgroundColor: colors.brand.orange },
-  filterChipText: { fontSize: Typography.body.fontSize, color: Colors.text.tertiary },
-  filterChipTextActive: { color: Colors.text.inverse, fontWeight: '600' },
+  filterChipText: { fontSize: Typography.body.fontSize, color: colors.text.tertiary },
+  filterChipTextActive: { color: colors.text.inverse, fontWeight: '600' },
   section: { padding: Spacing.base },
   sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md },
-  sectionTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.nileBlue, marginBottom: Spacing.md },
+  sectionTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.md },
   viewAllText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.brand.orange },
   offerCard: { width: 180, padding: Spacing.base, borderRadius: BorderRadius.lg, marginRight: Spacing.md },
-  offerTitle: { fontSize: Typography.h2.fontSize, fontWeight: '700', color: Colors.text.inverse, marginBottom: Spacing.xs },
+  offerTitle: { fontSize: Typography.h2.fontSize, fontWeight: '700', color: colors.text.inverse, marginBottom: Spacing.xs },
   offerSubtitle: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.9)', marginBottom: Spacing.md },
   codeContainer: { backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: Spacing.md, paddingVertical: 6, borderRadius: BorderRadius.sm, alignSelf: 'flex-start' },
-  codeText: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: Colors.text.inverse },
+  codeText: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: colors.text.inverse },
   categoriesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
-  categoryCard: { width: (SCREEN_WIDTH - 56) / 3, alignItems: 'center', padding: Spacing.md, backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.lg },
+  categoryCard: { width: (SCREEN_WIDTH - 56) / 3, alignItems: 'center', padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.lg },
   categoryIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], backgroundColor: '#F9731620', justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
   categoryImageIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], marginBottom: Spacing.sm },
   categoryEmoji: { fontSize: Typography.h2.fontSize },
-  categoryTitle: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: Colors.nileBlue, marginBottom: 2, textAlign: 'center' },
-  categoryCount: { fontSize: Typography.overline.fontSize, color: Colors.text.tertiary, textAlign: 'center' },
+  categoryTitle: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textAlign: 'center' },
+  categoryCount: { fontSize: Typography.overline.fontSize, color: colors.text.tertiary, textAlign: 'center' },
   cuisineCard: { width: 80, alignItems: 'center', marginRight: Spacing.md },
   cuisineEmoji: { fontSize: 36, marginBottom: Spacing.sm },
-  cuisineName: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: Colors.nileBlue, marginBottom: 2, textTransform: 'capitalize' },
-  cuisineCount: { fontSize: Typography.overline.fontSize, color: Colors.text.tertiary },
-  restaurantCard: { backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border.default, marginBottom: Spacing.md },
+  cuisineName: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textTransform: 'capitalize' },
+  cuisineCount: { fontSize: Typography.overline.fontSize, color: colors.text.tertiary },
+  restaurantCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.border.default, marginBottom: Spacing.md },
   restaurantImage: { width: '100%', height: 150 },
-  restaurantImagePlaceholder: { justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.background.secondary },
+  restaurantImagePlaceholder: { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.secondary },
   cashbackBadge: { position: 'absolute', top: 12, right: 12, backgroundColor: Colors.success, paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
-  cashbackText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '700', color: Colors.text.inverse },
+  cashbackText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '700', color: colors.text.inverse },
   restaurantInfo: { padding: Spacing.base },
   restaurantHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.xs },
-  restaurantName: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.nileBlue, flex: 1, marginRight: Spacing.sm },
+  restaurantName: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue, flex: 1, marginRight: Spacing.sm },
   ratingBadge: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
-  ratingText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '700', color: Colors.text.inverse },
-  cuisineText: { fontSize: Typography.body.fontSize, color: Colors.text.tertiary, marginBottom: Spacing.sm },
+  ratingText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '700', color: colors.text.inverse },
+  cuisineText: { fontSize: Typography.body.fontSize, color: colors.text.tertiary, marginBottom: Spacing.sm },
   restaurantMeta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base },
   metaItem: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  metaText: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary },
+  metaText: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary },
   promoBanner: { marginHorizontal: Spacing.base },
   promoGradient: { padding: Spacing.xl, borderRadius: BorderRadius.lg, alignItems: 'center' },
-  promoTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: Colors.text.inverse, marginBottom: Spacing.xs },
+  promoTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.text.inverse, marginBottom: Spacing.xs },
   promoSubtitle: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: Spacing.base },
-  promoButton: { backgroundColor: Colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius['2xl'] },
+  promoButton: { backgroundColor: colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius['2xl'] },
   promoButtonText: { fontSize: Typography.body.fontSize, fontWeight: '700', color: Colors.success },
 
   // Loading & empty states
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   loadingIconWrap: { width: 72, height: 72, borderRadius: 36, backgroundColor: '#F9731615', justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: Colors.text.tertiary },
+  loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: colors.text.tertiary },
   emptyState: { alignItems: 'center', paddingVertical: Spacing.xl },
   emptyIconWrap: { width: 72, height: 72, borderRadius: 36, backgroundColor: '#F9731615', justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.md },
   emptyTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.neutral[900], marginBottom: Spacing.xs },
   emptySubtitle: { fontSize: Typography.bodySmall.fontSize, color: colors.neutral[500], textAlign: 'center', paddingHorizontal: Spacing.xl },
   emptySmall: { paddingVertical: Spacing.md, alignItems: 'center' },
-  emptySmallText: { fontSize: Typography.bodySmall.fontSize, color: Colors.text.tertiary },
+  emptySmallText: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary },
   loadMoreButton: { alignItems: 'center', paddingVertical: Spacing.md, marginTop: Spacing.sm, borderWidth: 1, borderColor: colors.brand.orange, borderRadius: BorderRadius.lg },
   loadMoreText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.brand.orange },
 });

@@ -251,13 +251,13 @@ function PlayScreen() {
         <View style={styles.quickActionsRow}>
           <Pressable style={styles.quickActionButton} onPress={() => router.push('/social/reels')}>
             <LinearGradient colors={[colors.brand.pink, colors.deepPink]} style={styles.quickActionGradient}>
-              <Ionicons name="videocam" size={20} color={Colors.text.inverse} />
+              <Ionicons name="videocam" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.quickActionText}>Reels</ThemedText>
             </LinearGradient>
           </Pressable>
           <Pressable style={styles.quickActionButton} onPress={() => router.push('/social/upload')}>
             <LinearGradient colors={[colors.brand.purpleLight, colors.brand.purple]} style={styles.quickActionGradient}>
-              <Ionicons name="add-circle" size={20} color={Colors.text.inverse} />
+              <Ionicons name="add-circle" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.quickActionText}>Create</ThemedText>
             </LinearGradient>
           </Pressable>
@@ -365,12 +365,12 @@ function PlayScreen() {
               accessibilityHint="Double tap to upload the first video to this section"
             >
               <LinearGradient
-                colors={[Colors.primary[500], '#00A85C', Colors.nileBlue]}
+                colors={[Colors.primary[500], '#00A85C', colors.nileBlue]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.emptyButtonGradient}
               >
-                <Ionicons name="add-circle-outline" size={20} color={Colors.text.inverse} />
+                <Ionicons name="add-circle-outline" size={20} color={colors.text.inverse} />
                 <ThemedText style={styles.emptyButtonText}>
                   Be the First to Upload
                 </ThemedText>
@@ -398,12 +398,12 @@ function PlayScreen() {
             accessibilityHint="Double tap to upload a video and share your content"
           >
             <LinearGradient
-              colors={[Colors.primary[500], '#00A85C', Colors.nileBlue]}
+              colors={[Colors.primary[500], '#00A85C', colors.nileBlue]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.fabGradient}
             >
-              <Ionicons name="add" size={32} color={Colors.text.inverse} />
+              <Ionicons name="add" size={32} color={colors.text.inverse} />
             </LinearGradient>
           </Pressable>
         </Animated.View>
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md + 2,
     gap: Spacing.sm },
   quickActionText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.body.fontSize + 1,
     fontWeight: '700' },
   errorBanner: {
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md + 2,
     gap: Spacing.sm },
   emptyButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '600' } });
 

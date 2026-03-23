@@ -50,9 +50,9 @@ const COLORS = {
   goldDark: Colors.warning,
   navy: colors.brand.navyDark,
   slate: '#1F2D3D',
-  muted: Colors.text.tertiary,
-  surface: Colors.background.secondary,
-  white: Colors.text.inverse,
+  muted: colors.text.tertiary,
+  surface: colors.background.secondary,
+  white: colors.text.inverse,
   glassWhite: 'rgba(255, 255, 255, 0.7)',
   glassBorder: 'rgba(255, 255, 255, 0.4)',
   glassHighlight: 'rgba(255, 255, 255, 0.6)',
@@ -1116,7 +1116,7 @@ const styles = StyleSheet.create({
   heroFloatingCard: {
     flex: 1,
     borderRadius: BorderRadius['2xl'] - 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: 5,
     // Strong native shadow for 3D pop
     shadowColor: '#000',
@@ -1378,8 +1378,8 @@ const styles = StyleSheet.create({
   heroSparkle: {
     position: 'absolute',
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.background.primary,
-    shadowColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
+    shadowColor: colors.background.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 6,

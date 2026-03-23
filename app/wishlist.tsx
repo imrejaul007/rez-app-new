@@ -514,7 +514,7 @@ function WishlistPage() {
 
         {snapshot?.storeName && (
           <View style={styles.storeRow}>
-            <Ionicons name="storefront-outline" size={12} color={Colors.text.secondary} />
+            <Ionicons name="storefront-outline" size={12} color={colors.text.secondary} />
             <ThemedText style={styles.dealStoreName}>{snapshot.storeName}</ThemedText>
           </View>
         )}
@@ -598,7 +598,7 @@ function WishlistPage() {
         <CachedImage source={item.image} style={styles.productImage} />
       ) : (
         <View style={styles.productImagePlaceholder}>
-          <Ionicons name="image-outline" size={32} color={Colors.text.disabled} />
+          <Ionicons name="image-outline" size={32} color={colors.text.disabled} />
         </View>
       )}
       <View style={styles.productInfo}>
@@ -637,12 +637,12 @@ function WishlistPage() {
         <View style={styles.videoThumbnailContainer}>
           <CachedImage source={item.image} style={styles.videoThumbnail} />
           <View style={styles.playIconOverlay}>
-            <Ionicons name="play-circle" size={40} color={Colors.background.primary} />
+            <Ionicons name="play-circle" size={40} color={colors.background.primary} />
           </View>
         </View>
       ) : (
         <View style={styles.videoPlaceholder}>
-          <Ionicons name="videocam-outline" size={32} color={Colors.text.disabled} />
+          <Ionicons name="videocam-outline" size={32} color={colors.text.disabled} />
         </View>
       )}
       <View style={styles.videoInfo}>
@@ -800,7 +800,7 @@ function WishlistPage() {
         {/* Empty State */}
         {wishlist.items.length === 0 && (
           <View style={styles.emptyWishlist}>
-            <Ionicons name="heart-outline" size={40} color={Colors.border.medium} />
+            <Ionicons name="heart-outline" size={40} color={colors.border.medium} />
             <ThemedText style={styles.emptyText}>No items yet</ThemedText>
           </View>
         )}
@@ -823,11 +823,11 @@ function WishlistPage() {
         <StatusBar barStyle="light-content" backgroundColor={Colors.primary[500]} />
         <LinearGradient colors={[Colors.primary[500], colors.brand.teal]} style={styles.header}>
           <Pressable style={styles.backBtn} onPress={handleBackPress}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>My Wishlists</ThemedText>
           <Pressable style={styles.addBtn} onPress={handleCreateWishlist}>
-            <Ionicons name="add" size={24} color={Colors.text.inverse} />
+            <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </LinearGradient>
         <View style={styles.loadingContainer}>
@@ -849,7 +849,7 @@ function WishlistPage() {
         <StatusBar barStyle="light-content" backgroundColor={Colors.primary[500]} />
         <LinearGradient colors={[Colors.primary[500], colors.brand.teal]} style={styles.header}>
           <Pressable style={styles.backBtn} onPress={handleBackPress}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>My Wishlists</ThemedText>
           <View style={styles.addBtn} />
@@ -872,18 +872,18 @@ function WishlistPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[500]} />
       <LinearGradient colors={[Colors.primary[500], colors.brand.teal]} style={styles.header}>
         <Pressable style={styles.backBtn} onPress={handleBackPress}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>My Wishlists</ThemedText>
         <Pressable style={styles.addBtn} onPress={handleCreateWishlist}>
-          <Ionicons name="add" size={24} color={Colors.text.inverse} />
+          <Ionicons name="add" size={24} color={colors.text.inverse} />
         </Pressable>
       </LinearGradient>
 
       <View style={styles.content}>
         {wishlists.length === 0 ? (
           <View style={styles.emptyContainer}>
-            <Ionicons name="heart-outline" size={80} color={Colors.border.medium} />
+            <Ionicons name="heart-outline" size={80} color={colors.border.medium} />
             <ThemedText style={styles.emptyTitle}>No Wishlists Yet</ThemedText>
             <ThemedText style={styles.emptyDesc}>
               Save your favorite products and deals here
@@ -914,13 +914,13 @@ function WishlistPage() {
             <View style={styles.modalHeader}>
               <ThemedText style={styles.modalTitle}>Create New Wishlist</ThemedText>
               <Pressable onPress={() => setShowCreateModal(false)}>
-                <Ionicons name="close" size={24} color={Colors.text.secondary} />
+                <Ionicons name="close" size={24} color={colors.text.secondary} />
               </Pressable>
             </View>
             <TextInput
               style={styles.input}
               placeholder="Wishlist Name"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               value={newWishlistName}
               onChangeText={setNewWishlistName}
               autoFocus
@@ -928,7 +928,7 @@ function WishlistPage() {
             <TextInput
               style={[styles.input, styles.textArea]}
               placeholder="Description (optional)"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               value={newWishlistDescription}
               onChangeText={setNewWishlistDescription}
               multiline
@@ -948,7 +948,7 @@ function WishlistPage() {
                 disabled={isCreating || !newWishlistName.trim()}
               >
                 {isCreating ? (
-                  <ActivityIndicator size="small" color={Colors.text.inverse} />
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
                   <ThemedText style={styles.submitBtnText}>Create</ThemedText>
                 )}
@@ -979,7 +979,7 @@ function WishlistPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -995,7 +995,7 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
   },
@@ -1014,7 +1014,7 @@ const styles = StyleSheet.create({
 
   // Wishlist Card
   wishlistCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -1032,12 +1032,12 @@ const styles = StyleSheet.create({
   wishlistName: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   wishlistMeta: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   wishlistActions: {
     flexDirection: 'row',
@@ -1062,7 +1062,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
   },
   itemsRow: {
     paddingVertical: 4,
@@ -1109,11 +1109,11 @@ const styles = StyleSheet.create({
   dealName: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6,
   },
   dealNameExpired: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   storeRow: {
@@ -1124,11 +1124,11 @@ const styles = StyleSheet.create({
   },
   dealStoreName: {
     fontSize: Typography.caption.fontSize,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   minOrder: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   expiryRow: {
@@ -1150,7 +1150,7 @@ const styles = StyleSheet.create({
   },
   expiryText: {
     fontSize: 10,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '500',
   },
   expiryTextUrgent: {
@@ -1177,19 +1177,19 @@ const styles = StyleSheet.create({
   },
   activeText: {
     fontSize: 10,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '500',
   },
 
   // Product Card
   productCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 10,
     marginRight: Spacing.md,
     width: 140,
     borderWidth: 1,
-    borderColor: Colors.border.medium,
+    borderColor: colors.border.medium,
   },
   productImage: {
     width: '100%',
@@ -1211,7 +1211,7 @@ const styles = StyleSheet.create({
   productName: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 4,
   },
   productPrice: {
@@ -1233,7 +1233,7 @@ const styles = StyleSheet.create({
   stockText: {
     fontSize: 9,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   removeBtn: {
     padding: 4,
@@ -1241,13 +1241,13 @@ const styles = StyleSheet.create({
 
   // Store Card
   storeCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 10,
     marginRight: Spacing.md,
     width: 140,
     borderWidth: 1,
-    borderColor: Colors.border.medium,
+    borderColor: colors.border.medium,
     alignItems: 'center',
   },
   storeLogo: {
@@ -1272,7 +1272,7 @@ const styles = StyleSheet.create({
   storeName: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6,
     textAlign: 'center',
   },
@@ -1299,13 +1299,13 @@ const styles = StyleSheet.create({
 
   // Video Card
   videoCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 10,
     marginRight: Spacing.md,
     width: 160,
     borderWidth: 1,
-    borderColor: Colors.border.medium,
+    borderColor: colors.border.medium,
   },
   videoThumbnailContainer: {
     position: 'relative',
@@ -1346,7 +1346,7 @@ const styles = StyleSheet.create({
   videoName: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
 
@@ -1357,7 +1357,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
   },
   emptyContainer: {
@@ -1369,13 +1369,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.h2.fontSize,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyDesc: {
     fontSize: 15,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -1386,7 +1386,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   createBtnText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -1415,7 +1415,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     fontSize: 15,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   errorContainer: {
     flex: 1,
@@ -1432,7 +1432,7 @@ const styles = StyleSheet.create({
   },
   errorDetails: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },
@@ -1443,7 +1443,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   retryBtnText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 15,
     fontWeight: '600',
   },
@@ -1457,7 +1457,7 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.xl,
     width: '100%',
@@ -1472,17 +1472,17 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   input: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: 14,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.border.medium,
+    borderColor: colors.border.medium,
   },
   textArea: {
     height: 80,
@@ -1501,7 +1501,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   cancelBtnText: {
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontSize: 15,
     fontWeight: '600',
   },
@@ -1516,7 +1516,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   submitBtnText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 15,
     fontWeight: '600',
   },

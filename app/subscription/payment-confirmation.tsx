@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Payment Confirmation Page
 // Success/failure screen after subscription payment
@@ -105,7 +106,7 @@ function PaymentConfirmationPage() {
               accessibilityRole="button"
               accessibilityHint="Double tap to return to previous screen"
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Payment Failed</ThemedText>
             <View style={styles.headerRight} />
@@ -135,7 +136,7 @@ function PaymentConfirmationPage() {
                 accessibilityRole="button"
                 accessibilityHint="Double tap to retry subscription payment"
               >
-                <Ionicons name="refresh" size={20} color={Colors.text.inverse} />
+                <Ionicons name="refresh" size={20} color={colors.text.inverse} />
                 <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
               </Pressable>
 
@@ -190,7 +191,7 @@ function PaymentConfirmationPage() {
         >
           <Animated.View style={scaleStyle}>
             <View style={styles.successCircle}>
-              <Ionicons name="checkmark" size={80} color={Colors.text.inverse} />
+              <Ionicons name="checkmark" size={80} color={colors.text.inverse} />
             </View>
           </Animated.View>
 
@@ -211,7 +212,7 @@ function PaymentConfirmationPage() {
         <View style={styles.detailsCard}>
           <View style={styles.tierBadge}>
             <LinearGradient colors={tierGradient as any} style={styles.tierBadgeGradient}>
-              <Ionicons name={tier === 'vip' ? 'diamond' : 'star'} size={24} color={Colors.text.inverse} />
+              <Ionicons name={tier === 'vip' ? 'diamond' : 'star'} size={24} color={colors.text.inverse} />
               <ThemedText style={styles.tierBadgeText}>{TIER_NAMES[tier]} Member</ThemedText>
             </LinearGradient>
           </View>
@@ -286,7 +287,7 @@ function PaymentConfirmationPage() {
             accessibilityHint="Double tap to manage your subscription details"
           >
             <ThemedText style={styles.primaryButtonText}>View My Subscription</ThemedText>
-            <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+            <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
           </Pressable>
 
           <Pressable
@@ -307,7 +308,7 @@ function PaymentConfirmationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
     paddingBottom: Spacing.lg,
@@ -320,7 +321,7 @@ const styles = StyleSheet.create({
     width: 40,
     padding: Spacing.sm },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
@@ -345,16 +346,16 @@ const styles = StyleSheet.create({
   successTitle: {
     ...Typography.h1,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.sm },
   successMessage: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center' },
   detailsCard: {
     margin: Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     ...Shadows.medium },
@@ -369,7 +370,7 @@ const styles = StyleSheet.create({
     padding: Spacing.base,
     gap: Spacing.sm },
   tierBadgeText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h4,
     fontWeight: 'bold' },
   detailRow: {
@@ -378,23 +379,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default },
+    borderBottomColor: colors.border.default },
   detailLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   detailValue: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   transactionId: {
     ...Typography.bodySmall,
     fontFamily: 'monospace',
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   receiptButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.sm,
     marginTop: Spacing.base,
@@ -409,10 +410,10 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base },
   benefitsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     ...Shadows.subtle },
@@ -421,7 +422,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary },
+    borderBottomColor: colors.background.secondary },
   benefitIcon: {
     width: 40,
     height: 40,
@@ -433,7 +434,7 @@ const styles = StyleSheet.create({
   benefitText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
   actionsContainer: {
     padding: Spacing.lg,
     gap: Spacing.md,
@@ -447,16 +448,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.sm },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold' },
   secondaryButton: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingVertical: Spacing.base,
     borderRadius: BorderRadius.md,
     alignItems: 'center' },
   secondaryButtonText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.bodyLarge,
     fontWeight: '600' },
   // Failure styles
@@ -472,7 +473,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm },
   failureMessage: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: Spacing['2xl'] },
@@ -503,23 +504,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.sm },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold' },
   supportButton: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingVertical: Spacing.base,
     borderRadius: BorderRadius.md,
     alignItems: 'center' },
   supportButtonText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.bodyLarge,
     fontWeight: '600' },
   homeButton: {
     paddingVertical: Spacing.base,
     alignItems: 'center' },
   homeButtonText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.body,
     fontWeight: '600' } });
 

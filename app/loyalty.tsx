@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 /**
  * Loyalty Rewards & Redemption Page
  * Complete loyalty system with redemption, tier benefits, and gamification
@@ -149,7 +150,7 @@ const LoyaltyPage = () => {
             accessibilityState={{ disabled: !canCheckIn }}
             accessibilityHint="Double tap to check in and earn points"
           >
-            <Ionicons name="calendar" size={28} color={canCheckIn ? Colors.brand.purple : Colors.text.tertiary} />
+            <Ionicons name="calendar" size={28} color={canCheckIn ? Colors.brand.purple : colors.text.tertiary} />
             <ThemedText style={styles.actionTitle}>Daily Check-in</ThemedText>
             {checkInStatus && (
               <ThemedText style={styles.actionSubtitle}>
@@ -456,7 +457,7 @@ const LoyaltyPage = () => {
           <Ionicons
             name="gift"
             size={20}
-            color={activeTab === 'rewards' ? Colors.brand.purple : Colors.text.tertiary}
+            color={activeTab === 'rewards' ? Colors.brand.purple : colors.text.tertiary}
           />
           <ThemedText
             style={[styles.tabText, activeTab === 'rewards' && styles.tabTextActive]}
@@ -472,7 +473,7 @@ const LoyaltyPage = () => {
           <Ionicons
             name="time"
             size={20}
-            color={activeTab === 'history' ? Colors.brand.purple : Colors.text.tertiary}
+            color={activeTab === 'history' ? Colors.brand.purple : colors.text.tertiary}
           />
           <ThemedText
             style={[styles.tabText, activeTab === 'history' && styles.tabTextActive]}
@@ -488,7 +489,7 @@ const LoyaltyPage = () => {
           <Ionicons
             name="trophy"
             size={20}
-            color={activeTab === 'challenges' ? Colors.brand.purple : Colors.text.tertiary}
+            color={activeTab === 'challenges' ? Colors.brand.purple : colors.text.tertiary}
           />
           <ThemedText
             style={[styles.tabText, activeTab === 'challenges' && styles.tabTextActive]}
@@ -541,7 +542,7 @@ const LoyaltyPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -552,7 +553,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorText: {
     marginTop: Spacing.base,
@@ -568,7 +569,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -588,7 +589,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h3,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
     textAlign: 'center',
   },
@@ -596,7 +597,7 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   pointsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     ...Shadows.medium,
@@ -608,18 +609,18 @@ const styles = StyleSheet.create({
   pointsValue: {
     fontSize: 48,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   pointsLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   tierProgress: {
     paddingTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
   },
   tierProgressInfo: {
     flexDirection: 'row',
@@ -638,11 +639,11 @@ const styles = StyleSheet.create({
   },
   tierProgressText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   progressBar: {
     height: 8,
-    backgroundColor: Colors.border.light,
+    backgroundColor: colors.border.light,
     borderRadius: 4,
     overflow: 'hidden',
   },
@@ -653,9 +654,9 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   tab: {
     flex: 1,
@@ -673,7 +674,7 @@ const styles = StyleSheet.create({
   tabText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabTextActive: {
     color: Colors.brand.purple,
@@ -704,7 +705,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   seeAllText: {
     ...Typography.body,
@@ -719,7 +720,7 @@ const styles = StyleSheet.create({
   actionCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
@@ -731,18 +732,18 @@ const styles = StyleSheet.create({
   actionTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
     textAlign: 'center',
   },
   actionSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   challengeCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -763,12 +764,12 @@ const styles = StyleSheet.create({
   challengeTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   challengeDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
   },
   challengeProgress: {
@@ -776,7 +777,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   challengeFooter: {
@@ -803,11 +804,11 @@ const styles = StyleSheet.create({
   claimButtonText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   expiryText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

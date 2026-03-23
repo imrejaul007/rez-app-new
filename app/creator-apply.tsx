@@ -277,7 +277,7 @@ function CreatorApplyPage() {
                   end={{ x: 1, y: 0 }}
                   style={styles.uploadCtaGradient}
                 >
-                  <Ionicons name="cloud-upload-outline" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="cloud-upload-outline" size={20} color={colors.text.inverse} />
                   <Text style={styles.uploadCtaText}>Upload Your First Video</Text>
                 </LinearGradient>
               </Pressable>
@@ -320,7 +320,7 @@ function CreatorApplyPage() {
         <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} title="Application Submitted" />
         <View style={styles.centerContainer}>
           <LinearGradient colors={[Colors.brand.purple, colors.brand.pink]} style={styles.successIcon}>
-            <Ionicons name="checkmark" size={48} color={Colors.text.inverse} />
+            <Ionicons name="checkmark" size={48} color={colors.text.inverse} />
           </LinearGradient>
           <Text style={styles.statusTitle}>Application Submitted!</Text>
           <Text style={styles.statusSubtitle}>
@@ -385,7 +385,7 @@ function CreatorApplyPage() {
                     <Ionicons
                       name={cat.icon as any}
                       size={28}
-                      color={selectedCategory === cat.id ? Colors.brand.purple : Colors.text.tertiary}
+                      color={selectedCategory === cat.id ? Colors.brand.purple : colors.text.tertiary}
                     />
                     <Text style={[
                       styles.categoryName,
@@ -454,7 +454,7 @@ function CreatorApplyPage() {
                     maxLength={20}
                   />
                   <Pressable style={styles.addTagButton} onPress={addTag}>
-                    <Ionicons name="add" size={20} color={Colors.text.inverse} />
+                    <Ionicons name="add" size={20} color={colors.text.inverse} />
                   </Pressable>
                 </View>
                 {tags.length > 0 && (
@@ -486,7 +486,7 @@ function CreatorApplyPage() {
               {socialPlatforms.map(platform => (
                 <View key={platform.id} style={styles.socialInputGroup}>
                   <View style={styles.socialInputLabel}>
-                    <Ionicons name={platform.icon as any} size={20} color={Colors.text.tertiary} />
+                    <Ionicons name={platform.icon as any} size={20} color={colors.text.tertiary} />
                     <Text style={styles.socialPlatformName}>{platform.name}</Text>
                   </View>
                   <TextInput
@@ -572,10 +572,10 @@ function CreatorApplyPage() {
                 style={styles.submitGradient}
               >
                 {submitting ? (
-                  <ActivityIndicator size="small" color={Colors.text.inverse} />
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
                   <>
-                    <Ionicons name="rocket" size={18} color={Colors.text.inverse} />
+                    <Ionicons name="rocket" size={18} color={colors.text.inverse} />
                     <Text style={styles.submitText}>Submit Application</Text>
                   </>
                 )}
@@ -588,7 +588,7 @@ function CreatorApplyPage() {
               disabled={!canProceed()}
             >
               <Text style={styles.nextButtonText}>Continue</Text>
-              <Ionicons name="arrow-forward" size={18} color={Colors.text.inverse} />
+              <Ionicons name="arrow-forward" size={18} color={colors.text.inverse} />
             </Pressable>
           )}
         </View>
@@ -603,10 +603,10 @@ function CreatorApplyPage() {
 
 function Header({ onBack, title }: { onBack: () => void; title: string }) {
   return (
-    <LinearGradient colors={[Colors.nileBlue, '#2d5a7b']} style={headerStyles.header}>
+    <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={headerStyles.header}>
       <View style={headerStyles.content}>
         <Pressable style={headerStyles.backButton} onPress={onBack}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
         <Text style={headerStyles.title}>{title}</Text>
         <View style={{ width: 40 }} />
@@ -637,7 +637,7 @@ const headerStyles = StyleSheet.create({
   title: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 
@@ -648,7 +648,7 @@ const headerStyles = StyleSheet.create({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   centerContainer: {
     flex: 1,
@@ -659,7 +659,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   content: {
     flex: 1,
@@ -672,15 +672,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.sm,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   progressDot: {
     width: 40,
     height: 4,
     borderRadius: 2,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   progressDotActive: {
     backgroundColor: Colors.brand.purple,
@@ -704,33 +704,33 @@ const styles = StyleSheet.create({
   statusTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
     textAlign: 'center',
   },
   statusSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.xl,
     paddingHorizontal: Spacing.md,
   },
   primaryButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
   },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
 
   // Eligibility
   eligibilityCard: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -754,12 +754,12 @@ const styles = StyleSheet.create({
   },
   requirementLabel: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
   },
   requirementProgress: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
   },
   rejectionBox: {
@@ -777,7 +777,7 @@ const styles = StyleSheet.create({
   },
   rejectionReason: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   uploadCta: {
     width: '100%',
@@ -796,7 +796,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   recheckBtn: {
     flexDirection: 'row',
@@ -816,12 +816,12 @@ const styles = StyleSheet.create({
   stepTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   stepSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xl,
     lineHeight: 20,
   },
@@ -834,13 +834,13 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: '47%',
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
     gap: Spacing.sm,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   categoryCardActive: {
     borderColor: Colors.brand.purple,
@@ -849,7 +849,7 @@ const styles = StyleSheet.create({
   categoryName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   categoryNameActive: {
     color: Colors.brand.purple,
@@ -867,18 +867,18 @@ const styles = StyleSheet.create({
   inputLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   textInput: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   textArea: {
     minHeight: 100,
@@ -886,7 +886,7 @@ const styles = StyleSheet.create({
   },
   charCount: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'right',
     marginTop: Spacing.xs,
   },
@@ -938,12 +938,12 @@ const styles = StyleSheet.create({
   socialPlatformName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 
   // Review
   reviewCard: {
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     gap: Spacing.base,
@@ -954,13 +954,13 @@ const styles = StyleSheet.create({
   reviewLabel: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   reviewValue: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 22,
   },
   reviewTags: {
@@ -986,23 +986,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     paddingBottom: 80,
-    backgroundColor: Colors.text.inverse,
+    backgroundColor: colors.text.inverse,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   nextButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
   },
   nextButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   submitButton: {
     borderRadius: BorderRadius.md,
@@ -1018,7 +1018,7 @@ const styles = StyleSheet.create({
   submitText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

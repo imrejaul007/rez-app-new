@@ -268,7 +268,7 @@ function ConsultationBookingScreen() {
           style={styles.header}
         >
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
         </LinearGradient>
@@ -288,7 +288,7 @@ function ConsultationBookingScreen() {
           style={styles.header}
         >
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
         </LinearGradient>
@@ -313,7 +313,7 @@ function ConsultationBookingScreen() {
         style={styles.header}
       >
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
         <View style={styles.headerContent}>
           <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
@@ -465,7 +465,7 @@ function ConsultationBookingScreen() {
             <TextInput
               style={styles.input}
               placeholder="Enter patient's full name"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               value={patientName}
               onChangeText={setPatientName}
             />
@@ -477,7 +477,7 @@ function ConsultationBookingScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Age"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={age}
                 onChangeText={setAge}
                 keyboardType="numeric"
@@ -489,7 +489,7 @@ function ConsultationBookingScreen() {
               <TextInput
                 style={styles.input}
                 placeholder="Enter phone number"
-                placeholderTextColor={Colors.text.tertiary}
+                placeholderTextColor={colors.text.tertiary}
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
                 keyboardType="phone-pad"
@@ -502,7 +502,7 @@ function ConsultationBookingScreen() {
             <TextInput
               style={styles.input}
               placeholder="Enter email address"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
@@ -515,7 +515,7 @@ function ConsultationBookingScreen() {
             <TextInput
               style={[styles.input, styles.textArea]}
               placeholder="Describe your symptoms or reason for visit"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               value={reason}
               onChangeText={setReason}
               multiline
@@ -528,7 +528,7 @@ function ConsultationBookingScreen() {
             <TextInput
               style={[styles.input, styles.textArea]}
               placeholder="Any relevant medical history, allergies, or current medications"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               value={medicalHistory}
               onChangeText={setMedicalHistory}
               multiline
@@ -587,16 +587,16 @@ function ConsultationBookingScreen() {
           <LinearGradient
             colors={
               isSubmitting || !selectedConsultation || !selectedDate || !selectedTime
-                ? [Colors.border.default, Colors.text.tertiary]
+                ? [colors.border.default, colors.text.tertiary]
                 : [Colors.brand.purpleLight, Colors.brand.purple]
             }
             style={styles.confirmButton}
           >
             {isSubmitting ? (
-              <ActivityIndicator color={Colors.text.inverse} />
+              <ActivityIndicator color={colors.text.inverse} />
             ) : (
               <>
-                <Ionicons name="checkmark-circle" size={24} color={Colors.text.inverse} />
+                <Ionicons name="checkmark-circle" size={24} color={colors.text.inverse} />
                 <Text style={styles.confirmButtonText}>Confirm Consultation</Text>
               </>
             )}
@@ -610,7 +610,7 @@ function ConsultationBookingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -626,7 +626,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -658,7 +658,7 @@ const styles = StyleSheet.create({
   errorText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   errorButton: {
@@ -669,7 +669,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   errorButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -686,7 +686,7 @@ const styles = StyleSheet.create({
     ...Typography.h4,
     fontWeight: '600',
     marginLeft: Spacing.sm,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   consultationGrid: {
     flexDirection: 'row',
@@ -697,10 +697,10 @@ const styles = StyleSheet.create({
     width: (width - 64) / 2,
     margin: 6,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     position: 'relative',
   },
@@ -719,7 +719,7 @@ const styles = StyleSheet.create({
   consultationName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     minHeight: 36,
   },
@@ -739,10 +739,10 @@ const styles = StyleSheet.create({
     width: 70,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     marginRight: Spacing.md,
   },
@@ -752,7 +752,7 @@ const styles = StyleSheet.create({
   },
   dateDay: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   dateDaySelected: {
@@ -762,7 +762,7 @@ const styles = StyleSheet.create({
   dateNumber: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   dateNumberSelected: {
@@ -770,7 +770,7 @@ const styles = StyleSheet.create({
   },
   dateMonth: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   dateMonthSelected: {
     color: Colors.brand.purple,
@@ -783,10 +783,10 @@ const styles = StyleSheet.create({
   timeSlot: {
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.sm,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     margin: Spacing.xs,
     minWidth: 80,
     alignItems: 'center',
@@ -796,8 +796,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.tint.pink,
   },
   timeSlotDisabled: {
-    backgroundColor: Colors.background.secondary,
-    borderColor: Colors.border.default,
+    backgroundColor: colors.background.secondary,
+    borderColor: colors.border.default,
     opacity: 0.5,
   },
   timeSlotText: {
@@ -809,7 +809,7 @@ const styles = StyleSheet.create({
     color: Colors.brand.purple,
   },
   timeSlotTextDisabled: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   noSlotsContainer: {
     padding: Spacing.lg,
@@ -818,7 +818,7 @@ const styles = StyleSheet.create({
   noSlotsText: {
     marginTop: Spacing.sm,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   formGroup: {
     marginBottom: Spacing.base,
@@ -833,14 +833,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   input: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.sm,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   textArea: {
     minHeight: 100,
@@ -851,10 +851,10 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.lg,
     marginTop: Spacing.lg,
     padding: Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     ...Shadows.medium,
   },
   summaryHeader: {
@@ -863,13 +863,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   summaryTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
     marginLeft: Spacing.sm,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   summaryRow: {
     flexDirection: 'row',
@@ -879,12 +879,12 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   summaryValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     textAlign: 'right',
   },
@@ -896,11 +896,11 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     ...Shadows.medium,
   },
   confirmButton: {
@@ -913,7 +913,7 @@ const styles = StyleSheet.create({
   confirmButtonText: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginLeft: Spacing.sm,
   },
 });

@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
  * Pay In Store - Entry Screen (Find Store)
@@ -183,7 +184,7 @@ function PayInStoreScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerTitle}>Find Store</Text>
@@ -236,18 +237,18 @@ function PayInStoreScreen() {
 
           {/* Search Bar */}
           <View style={styles.searchContainer}>
-            <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="search" size={20} color={colors.text.tertiary} />
             <TextInput
               ref={searchInputRef}
               style={styles.searchInput}
               placeholder="Search store name, brand, or area"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               value={searchQuery}
               onChangeText={setSearchQuery}
             />
             {searchQuery.length > 0 && (
               <Pressable onPress={() => setSearchQuery('')}>
-                <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+                <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
               </Pressable>
             )}
           </View>
@@ -303,7 +304,7 @@ function PayInStoreScreen() {
             </View>
           ) : (
             <View style={styles.emptyCard}>
-              <Ionicons name="storefront-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="storefront-outline" size={48} color={colors.text.tertiary} />
               <Text style={styles.emptyText}>No stores found</Text>
               <Text style={styles.emptySubtext}>
                 {searchQuery
@@ -324,7 +325,7 @@ function PayInStoreScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   centerContent: {
     flex: 1,
@@ -334,7 +335,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md,
   },
   authIconContainer: {
@@ -349,12 +350,12 @@ const styles = StyleSheet.create({
   authTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   authSubtitle: {
     fontSize: 15,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
     lineHeight: 22,
@@ -368,7 +369,7 @@ const styles = StyleSheet.create({
   signInButtonText: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.nileBlue,  // Nile Blue for contrast on Mustard
+    color: colors.nileBlue,  // Nile Blue for contrast on Mustard
   },
   header: {
     flexDirection: 'row',
@@ -376,9 +377,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     width: 40,
@@ -394,11 +395,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: 2,
     textAlign: 'center',
   },
@@ -422,7 +423,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     borderWidth: 2,
     borderColor: Colors.gold,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     gap: Spacing.sm,
   },
   manualSearchText: {
@@ -439,12 +440,12 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   dividerText: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginHorizontal: Spacing.md,
   },
   errorContainer: {
@@ -468,37 +469,37 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.base,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: 10,
   },
   searchInput: {
     flex: 1,
     fontSize: 15,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   loadingCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
     padding: Spacing['2xl'],
     alignItems: 'center',
     marginHorizontal: Spacing.base,
   },
   emptyCard: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
     padding: Spacing['2xl'],
     alignItems: 'center',
@@ -507,12 +508,12 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md,
   },
   emptySubtext: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
     textAlign: 'center',
   },
@@ -532,12 +533,12 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     borderWidth: 1.5,
     borderColor: Colors.gold,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadMoreText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 });
 

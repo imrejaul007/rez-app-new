@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing } from '@/constants/DesignSystem';
+import { Spacing } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
@@ -35,7 +35,7 @@ const EventsSection = React.memo(function EventsSection({
               <Text style={styles.eventsTitle}>Earn at Events</Text>
               <Text style={styles.eventsSubtitle}>College fests, markets, concerts & more</Text>
             </View>
-            <Ionicons name="chevron-forward" size={24} color={Colors.text.tertiary} />
+            <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
           </View>
 
           <View style={styles.eventsTypes}>

@@ -183,7 +183,7 @@ function AllCategoriesPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   listContent: {
     padding: Spacing.base,
@@ -197,12 +197,12 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   categoryCard: {
     width: CARD_WIDTH,
@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
   categoryName: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
     marginBottom: Spacing.sm,
     textShadowColor: 'rgba(0, 0, 0, 0.2)',

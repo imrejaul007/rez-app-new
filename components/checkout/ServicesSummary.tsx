@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface ServiceItem {
@@ -52,7 +52,7 @@ function ServicesSummary({ serviceItems, currencySymbol }: ServicesSummaryProps)
         return (
           <View key={item.id || item._id} style={styles.serviceCard}>
             <View style={styles.serviceCardHeader}>
-              <Ionicons name="cut" size={20} color={Colors.gold} />
+              <Ionicons name="cut" size={20} color={colors.gold} />
               <ThemedText style={styles.serviceName}>{item.name}</ThemedText>
             </View>
             <View style={styles.serviceDetails}>
@@ -91,7 +91,7 @@ function ServicesSummary({ serviceItems, currencySymbol }: ServicesSummaryProps)
 
 const styles = StyleSheet.create({
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
     marginBottom: Spacing.sm,
@@ -99,16 +99,16 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   serviceCard: {
-    backgroundColor: Colors.successScale[50],
+    backgroundColor: colors.successScale[50],
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: Colors.successScale[200],
+    borderColor: colors.successScale[200],
   },
   serviceCardHeader: {
     flexDirection: 'row',
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   serviceName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   serviceDetails: {
@@ -137,19 +137,19 @@ const styles = StyleSheet.create({
   },
   serviceDetailText: {
     ...Typography.body,
-    color: Colors.neutral[700],
+    color: colors.neutral[700],
     fontWeight: '500',
   },
   servicePrice: {
     borderTopWidth: 1,
-    borderTopColor: Colors.successScale[200],
+    borderTopColor: colors.successScale[200],
     paddingTop: Spacing.md,
     alignItems: 'flex-end',
   },
   servicePriceText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.gold,
+    color: colors.gold,
   },
   serviceNotice: {
     flexDirection: 'row',

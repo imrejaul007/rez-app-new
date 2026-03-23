@@ -317,9 +317,9 @@ function SharedCategoryPage() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: Spacing.md, ...Typography.body, color: Colors.text.tertiary },
+  loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
 
   // Header
   headerGradient: {
@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   },
   backButton: { padding: Spacing.xs },
   headerTitleContainer: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
-  headerTitle: { ...Typography.h4, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.85)' },
 
   // Sort Bar
@@ -340,12 +340,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: 10,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     gap: Spacing.sm,
   },
-  sortLabel: { ...Typography.bodySmall, fontWeight: '600', color: Colors.text.tertiary },
+  sortLabel: { ...Typography.bodySmall, fontWeight: '600', color: colors.text.tertiary },
   sortOptions: { flex: 1, flexDirection: 'row', gap: 6, flexWrap: 'wrap' },
   sortChip: {
     flexDirection: 'row',
@@ -359,15 +359,15 @@ const styles = StyleSheet.create({
   sortChipActive: {
     backgroundColor: Colors.info,
   },
-  sortChipText: { ...Typography.caption, fontWeight: '500', color: Colors.text.tertiary },
-  sortChipTextActive: { color: Colors.text.inverse },
+  sortChipText: { ...Typography.caption, fontWeight: '500', color: colors.text.tertiary },
+  sortChipTextActive: { color: colors.text.inverse },
 
   // Store List
   storeList: { paddingHorizontal: Spacing.base, paddingTop: Spacing.md, paddingBottom: 120 },
 
   // Store Card
   storeCard: {
-    borderRadius: BorderRadius.lg, backgroundColor: Colors.background.primary, overflow: 'hidden', marginBottom: Spacing.base,
+    borderRadius: BorderRadius.lg, backgroundColor: colors.background.primary, overflow: 'hidden', marginBottom: Spacing.base,
     elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 4,
   },
   storeImageContainer: { height: 160, position: 'relative' },
@@ -378,20 +378,20 @@ const styles = StyleSheet.create({
     position: 'absolute', top: 8, left: 8, flexDirection: 'row', gap: Spacing.xs, flexWrap: 'wrap',
   },
   badgeTag: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md },
-  badgeTagText: { ...Typography.overline, fontWeight: '600', color: Colors.text.inverse },
+  badgeTagText: { ...Typography.overline, fontWeight: '600', color: colors.text.inverse },
   ratingBadge: {
     position: 'absolute', bottom: 8, left: 8, flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 10, paddingVertical: 6, borderRadius: BorderRadius.md, backgroundColor: 'rgba(255,255,255,0.95)', gap: Spacing.xs,
   },
-  ratingValue: { ...Typography.body, fontWeight: '700', color: Colors.text.primary },
-  ratingCount: { ...Typography.caption, color: Colors.text.tertiary },
+  ratingValue: { ...Typography.body, fontWeight: '700', color: colors.text.primary },
+  ratingCount: { ...Typography.caption, color: colors.text.tertiary },
   storeContent: { padding: Spacing.md },
-  storeName: { ...Typography.bodyLarge, fontWeight: '600', color: Colors.text.primary, marginBottom: 2 },
-  storeServices: { ...Typography.bodySmall, color: Colors.text.tertiary, marginBottom: Spacing.sm },
+  storeName: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.primary, marginBottom: 2 },
+  storeServices: { ...Typography.bodySmall, color: colors.text.tertiary, marginBottom: Spacing.sm },
   storeMeta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, marginBottom: 10 },
   storeMetaItem: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  storeMetaText: { ...Typography.caption, color: Colors.text.tertiary },
-  storePriceForTwo: { ...Typography.caption, color: Colors.text.tertiary },
+  storeMetaText: { ...Typography.caption, color: colors.text.tertiary },
+  storePriceForTwo: { ...Typography.caption, color: colors.text.tertiary },
 
   // Visit Now Button
   visitNowButton: { borderRadius: 10, overflow: 'hidden' },
@@ -403,12 +403,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     gap: 6,
   },
-  visitNowText: { ...Typography.bodySmall, fontWeight: '700', color: Colors.text.inverse },
+  visitNowText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
 
   // Empty State
   emptyContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40, marginTop: 60 },
-  emptyTitle: { ...Typography.bodyLarge, fontWeight: '600', color: Colors.text.primary, marginTop: Spacing.base },
-  emptySubtitle: { ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: Spacing.xs, textAlign: 'center' },
+  emptyTitle: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.primary, marginTop: Spacing.base },
+  emptySubtitle: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.xs, textAlign: 'center' },
 });
 
 export default withErrorBoundary(SharedCategoryPage, 'MainCategorySlugTopRated');

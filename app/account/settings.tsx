@@ -148,7 +148,7 @@ function SettingsPage() {
             <Ionicons
               name={expandedSection === 'general' ? 'chevron-up' : 'chevron-down'}
               size={20}
-              color={Colors.text.tertiary}
+              color={colors.text.tertiary}
             />
           </Pressable>
 
@@ -168,7 +168,7 @@ function SettingsPage() {
                     {settings.general.language.toUpperCase()} • {settings.general.currency}
                   </ThemedText>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+                <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
               </Pressable>
 
               <View style={styles.settingRow}>
@@ -247,7 +247,7 @@ function SettingsPage() {
             <Ionicons
               name={expandedSection === 'notifications' ? 'chevron-up' : 'chevron-down'}
               size={20}
-              color={Colors.text.tertiary}
+              color={colors.text.tertiary}
             />
           </Pressable>
 
@@ -405,7 +405,7 @@ function SettingsPage() {
             <Ionicons
               name={expandedSection === 'privacy' ? 'chevron-up' : 'chevron-down'}
               size={20}
-              color={Colors.text.tertiary}
+              color={colors.text.tertiary}
             />
           </Pressable>
 
@@ -501,7 +501,7 @@ function SettingsPage() {
             <Ionicons
               name={expandedSection === 'security' ? 'chevron-up' : 'chevron-down'}
               size={20}
-              color={Colors.text.tertiary}
+              color={colors.text.tertiary}
             />
           </Pressable>
 
@@ -578,7 +578,7 @@ function SettingsPage() {
             <Ionicons
               name={expandedSection === 'preferences' ? 'chevron-up' : 'chevron-down'}
               size={20}
-              color={Colors.text.tertiary}
+              color={colors.text.tertiary}
             />
           </Pressable>
 
@@ -672,7 +672,7 @@ function SettingsPage() {
                 <ThemedText style={styles.settingLabel}>{`About ${BRAND.APP_NAME}`}</ThemedText>
                 <ThemedText style={styles.settingValue}>Learn about us</ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
 
             <Pressable
@@ -685,7 +685,7 @@ function SettingsPage() {
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingLabel}>Terms & Conditions</ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
 
             <Pressable
@@ -698,7 +698,7 @@ function SettingsPage() {
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingLabel}>Privacy Policy</ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
 
             <Pressable
@@ -711,7 +711,7 @@ function SettingsPage() {
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingLabel}>Refund Policy</ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
           </View>
         </View>
@@ -736,7 +736,7 @@ function SettingsPage() {
                 <ThemedText style={styles.settingLabel}>Test All Pages</ThemedText>
                 <ThemedText style={styles.settingValue}>Navigate to all 38 new pages</ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
           </View>
         </View>
@@ -762,7 +762,7 @@ function SettingsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
@@ -785,7 +785,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
   resetButton: {
     width: 40,
@@ -806,7 +806,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base,
     overflow: 'hidden',
@@ -817,7 +817,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   sectionTitleRow: {
     flexDirection: 'row',
@@ -827,7 +827,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   sectionContent: {
     paddingHorizontal: Spacing.base,
@@ -840,7 +840,7 @@ const styles = StyleSheet.create({
   subsectionText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
@@ -850,14 +850,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   settingInfo: {
     flex: 1,
   },
   settingLabel: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
   },
   settingValue: {
@@ -874,7 +874,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: 6,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   toggleButtonActive: {
     backgroundColor: colors.brand.purpleLight,
@@ -882,16 +882,16 @@ const styles = StyleSheet.create({
   toggleButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   toggleButtonTextActive: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
   },
   resetAllButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base,
@@ -910,7 +910,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   footer: {
     height: Spacing.lg,

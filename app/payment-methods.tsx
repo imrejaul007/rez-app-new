@@ -235,7 +235,7 @@ function PaymentMethodsPage() {
               </View>
               <ThemedText style={styles.paymentOptionTitle}>Select Net working</ThemedText>
             </View>
-            <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
           </Pressable>
         </View>
 
@@ -251,7 +251,7 @@ function PaymentMethodsPage() {
                 </View>
                 <ThemedText style={styles.paymentOptionTitle}>{option.name}</ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
           ))}
           
@@ -265,7 +265,7 @@ function PaymentMethodsPage() {
                 </View>
                 <ThemedText style={styles.paymentOptionTitle}>{option.name}</ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
           ))}
         </View>
@@ -279,7 +279,7 @@ function PaymentMethodsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   
   // Header Styles
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     flex: 1,
     textAlign: 'center',
     marginLeft: -40,
@@ -325,18 +325,18 @@ const styles = StyleSheet.create({
   amountValue: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   
   // Content
   content: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   
   // Sections
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
     marginBottom: Spacing.sm,
@@ -344,13 +344,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   sectionSubtitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.lg,
     marginBottom: Spacing.base,
   },
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   quickPayTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   quickPaySubtitle: {
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
   quickPayAmount: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Payment Methods Grid
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   methodCard: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   methodLabel: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 
   // Info Box
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   },
   recentMethodName: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: Spacing.base,
     borderBottomWidth: 0.5,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   paymentOptionLeft: {
     flexDirection: 'row',
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
   },
   paymentOptionTitle: {
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginLeft: Spacing.md,
   },
   
@@ -490,28 +490,28 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   upiIconText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   upiInputContainer: {
     marginTop: Spacing.base,
     paddingTop: Spacing.base,
     borderTopWidth: 0.5,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   upiInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   
   // Card Styles
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.base,
     borderBottomWidth: 0.5,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   cardLeft: {
     flexDirection: 'row',
@@ -539,23 +539,23 @@ const styles = StyleSheet.create({
   visaText: {
     ...Typography.overline,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cardTitle: {
     ...Typography.bodyLarge,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   cardSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   addCardIcon: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -565,7 +565,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -588,14 +588,14 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   emiIconText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   
   // Bottom Space

@@ -34,7 +34,7 @@ import specialProgramApi, {
   SpecialProgramSlug,
 } from '@/services/specialProgramApi';
 import { platformAlert } from '@/utils/platformAlert';
-import { Colors, Spacing, BorderRadius, Typography, Shadows } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography, Shadows } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
@@ -144,7 +144,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
     if (error) {
       return (
         <View style={styles.centerContent}>
-          <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.error} />
           <Text style={styles.errorText}>{error}</Text>
           <Pressable style={styles.retryButton} onPress={fetchEligibility}>
             <Text style={styles.retryButtonText}>Retry</Text>
@@ -187,7 +187,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
             colors={[iconConfig.color + '20', iconConfig.color + '10']}
             style={styles.statusGradient}
           >
-            <Ionicons name="checkmark-circle" size={24} color={Colors.success} />
+            <Ionicons name="checkmark-circle" size={24} color={colors.success} />
             <Text style={styles.statusText}>Active Member</Text>
           </LinearGradient>
         </View>
@@ -354,7 +354,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
       {eligibility!.verificationRejected && (
         <View style={[styles.card, styles.rejectionCard]}>
           <View style={styles.rejectionHeader}>
-            <Ionicons name="close-circle" size={20} color={Colors.error} />
+            <Ionicons name="close-circle" size={20} color={colors.error} />
             <Text style={styles.rejectionTitle}>Verification Rejected</Text>
           </View>
           <Text style={styles.rejectionReason}>
@@ -371,7 +371,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
             <Ionicons
               name={req.met ? 'checkmark-circle' : 'ellipse-outline'}
               size={20}
-              color={req.met ? Colors.success : Colors.text.tertiary}
+              color={req.met ? colors.success : colors.text.tertiary}
             />
             <Text style={[styles.requirementText, req.met && styles.requirementMet]}>
               {req.label}
@@ -432,7 +432,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
         <View style={styles.timelineLine} />
         <View style={styles.timelineStep}>
           <View style={styles.timelineDot} />
-          <Text style={[styles.timelineText, { color: Colors.text.tertiary }]}>Approved</Text>
+          <Text style={[styles.timelineText, { color: colors.text.tertiary }]}>Approved</Text>
         </View>
       </View>
     </View>
@@ -443,7 +443,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
       <Ionicons
         name={eligibility!.state === 'suspended' ? 'pause-circle' : 'close-circle'}
         size={48}
-        color={eligibility!.state === 'suspended' ? colors.warningScale[400] : Colors.error}
+        color={eligibility!.state === 'suspended' ? colors.warningScale[400] : colors.error}
       />
       <Text style={styles.inactiveTitle}>
         {eligibility!.state === 'suspended' ? 'Membership Suspended' :
@@ -476,7 +476,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
         {/* Header */}
         <View style={styles.header}>
           <Pressable onPress={onClose} style={styles.closeButton} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-            <Ionicons name="close" size={24} color={isPrive ? colors.background.primary : Colors.text.primary} />
+            <Ionicons name="close" size={24} color={isPrive ? colors.background.primary : colors.text.primary} />
           </Pressable>
           <Text style={[styles.headerTitle, isPrive && styles.headerTitleDark]}>
             {eligibility?.program.name || 'Loading...'}
@@ -493,7 +493,7 @@ export const ProgramDetailModal: React.FC<ProgramDetailModalProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   containerDark: {
     backgroundColor: colors.midGrayAlt,
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   closeButton: {
     width: 40,
@@ -516,7 +516,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerTitleDark: {
     color: colors.background.primary,
@@ -534,18 +534,18 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md,
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginTop: Spacing.md,
     marginBottom: Spacing.lg,
   },
   retryButton: {
-    backgroundColor: Colors.primary[600],
+    backgroundColor: colors.primary[600],
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -569,13 +569,13 @@ const styles = StyleSheet.create({
   },
   statusText: {
     ...Typography.label,
-    color: Colors.success,
+    color: colors.success,
     fontWeight: '700',
   },
 
   // Cards
   card: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -583,13 +583,13 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: Spacing.md,
   },
   cardSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 
   // Meter
@@ -598,7 +598,7 @@ const styles = StyleSheet.create({
   },
   meterBg: {
     height: 10,
-    backgroundColor: Colors.gray[100],
+    backgroundColor: colors.gray[100],
     borderRadius: 5,
     overflow: 'hidden',
   },
@@ -613,12 +613,12 @@ const styles = StyleSheet.create({
   },
   meterValue: {
     ...Typography.labelSmall,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
   },
   meterCap: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Multiplier
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.md,
     alignItems: 'center',
@@ -656,12 +656,12 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   statLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 
@@ -672,14 +672,14 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     gap: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   campaignBadge: {
     fontSize: 20,
   },
   campaignTitle: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
 
@@ -699,13 +699,13 @@ const styles = StyleSheet.create({
   },
   benefitTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 2,
   },
   benefitDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 
   // Hero
@@ -721,13 +721,13 @@ const styles = StyleSheet.create({
   heroTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   heroSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     paddingHorizontal: Spacing.base,
   },
@@ -767,11 +767,11 @@ const styles = StyleSheet.create({
   },
   requirementText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   requirementMet: {
-    color: Colors.success,
+    color: colors.success,
   },
 
   // Pending verification
@@ -787,13 +787,13 @@ const styles = StyleSheet.create({
   pendingTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
   pendingSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -810,13 +810,13 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: Colors.gray[200],
+    backgroundColor: colors.gray[200],
     borderWidth: 2,
-    borderColor: Colors.gray[300],
+    borderColor: colors.gray[300],
   },
   timelineDotComplete: {
-    backgroundColor: Colors.success,
-    borderColor: Colors.success,
+    backgroundColor: colors.success,
+    borderColor: colors.success,
   },
   timelineDotActive: {
     backgroundColor: colors.warningScale[400],
@@ -825,18 +825,18 @@ const styles = StyleSheet.create({
   timelineLine: {
     width: 2,
     height: 20,
-    backgroundColor: Colors.gray[200],
+    backgroundColor: colors.gray[200],
     marginLeft: 7,
   },
   timelineText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 
   // Rejection notice
   rejectionCard: {
     borderLeftWidth: 4,
-    borderLeftColor: Colors.error,
+    borderLeftColor: colors.error,
   },
   rejectionHeader: {
     flexDirection: 'row',
@@ -846,12 +846,12 @@ const styles = StyleSheet.create({
   },
   rejectionTitle: {
     ...Typography.label,
-    color: Colors.error,
+    color: colors.error,
     fontWeight: '600',
   },
   rejectionReason: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 
   // Earning activities
@@ -871,27 +871,27 @@ const styles = StyleSheet.create({
   },
   earningActivityTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 2,
   },
   earningActivityDesc: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 
   // Inactive states
   inactiveTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginTop: Spacing.lg,
     marginBottom: Spacing.sm,
   },
   inactiveSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
 });

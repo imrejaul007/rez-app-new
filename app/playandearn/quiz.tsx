@@ -36,30 +36,30 @@ const COLORS = {
   primary: Colors.gold,
   primaryLight: Colors.primary[200],
   primaryDark: Colors.primary[700],
-  primaryBg: Colors.background.tertiary,
-  primaryBgLight: Colors.background.secondary,
+  primaryBg: colors.background.tertiary,
+  primaryBgLight: colors.background.secondary,
 
   gold: Colors.gold,
   goldLight: Colors.primary[200],
   goldDark: Colors.primary[900],
-  goldBg: Colors.background.accent,
+  goldBg: colors.background.accent,
 
   purple: colors.brand.purpleMedium,
   purpleLight: '#C084FC',
   purpleDark: Colors.brand.purple,
   purpleBg: colors.tint.purpleLight,
 
-  background: Colors.background.secondary,
-  surface: Colors.background.primary,
+  background: colors.background.secondary,
+  surface: colors.background.primary,
   surfaceSecondary: Colors.secondary[50],
 
-  navy: Colors.nileBlue,
-  text: Colors.text.primary,
+  navy: colors.nileBlue,
+  text: colors.text.primary,
   textSecondary: Colors.gray[800],
   textMuted: Colors.gray[600],
-  textLight: Colors.text.tertiary,
+  textLight: colors.text.tertiary,
 
-  border: Colors.border.default,
+  border: colors.border.default,
   borderLight: Colors.secondary[50],
 
   success: Colors.success,
@@ -402,7 +402,7 @@ const Quiz = () => {
                 <View style={styles.heroStatDivider} />
 
                 <View style={styles.heroStatBox}>
-                  <Ionicons name="game-controller" size={24} color={Colors.text.inverse} />
+                  <Ionicons name="game-controller" size={24} color={colors.text.inverse} />
                   <Text style={styles.heroStatValue}>{maxPlays - todayPlays}/{maxPlays}</Text>
                   <Text style={styles.heroStatLabel}>Plays Left</Text>
                 </View>
@@ -450,19 +450,19 @@ const Quiz = () => {
               style={styles.startButtonWrapper}
             >
               <LinearGradient
-                colors={todayPlays >= maxPlays ? [Colors.text.tertiary, Colors.gray[600]] : [COLORS.purple, COLORS.purpleDark]}
+                colors={todayPlays >= maxPlays ? [colors.text.tertiary, Colors.gray[600]] : [COLORS.purple, COLORS.purpleDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.startButton}
               >
                 {fetchingQuestions ? (
-                  <ActivityIndicator size="small" color={Colors.text.inverse} />
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
                   <>
                     <Ionicons
                       name={todayPlays >= maxPlays ? "time-outline" : "play"}
                       size={22}
-                      color={Colors.text.inverse}
+                      color={colors.text.inverse}
                     />
                     <Text style={styles.startButtonText}>
                       {todayPlays >= maxPlays ? 'Come Back Tomorrow' : 'Start Quiz'}
@@ -613,11 +613,11 @@ const Quiz = () => {
                   <Ionicons
                     name={getPerformanceRating().icon}
                     size={48}
-                    color={correctCount >= 3 ? Colors.text.inverse :getPerformanceRating().color}
+                    color={correctCount >= 3 ? colors.text.inverse :getPerformanceRating().color}
                   />
                 </View>
 
-                <Text style={[styles.resultTitle, { color: correctCount >= 3 ? Colors.text.inverse :COLORS.navy }]}>
+                <Text style={[styles.resultTitle, { color: correctCount >= 3 ? colors.text.inverse :COLORS.navy }]}>
                   {getPerformanceRating().text}
                 </Text>
                 <Text style={[styles.resultSubtitle, { color: correctCount >= 3 ? 'rgba(255,255,255,0.9)' : COLORS.textMuted }]}>
@@ -627,7 +627,7 @@ const Quiz = () => {
                 <View style={[styles.earnedBox, { backgroundColor: correctCount >= 3 ? 'rgba(255,255,255,0.15)' : COLORS.goldBg }]}>
                   <View style={styles.earnedRow}>
                     <CachedImage source={BRAND.COIN_IMAGE} style={styles.earnedCoin} contentFit="contain" />
-                    <Text style={[styles.earnedValue, { color: correctCount >= 3 ? Colors.text.inverse :COLORS.gold }]}>+{Math.round(totalEarned)}</Text>
+                    <Text style={[styles.earnedValue, { color: correctCount >= 3 ? colors.text.inverse :COLORS.gold }]}>+{Math.round(totalEarned)}</Text>
                   </View>
                   <Text style={[styles.earnedLabel, { color: correctCount >= 3 ? 'rgba(255,255,255,0.8)' : COLORS.textMuted }]}>
                     Coins Earned
@@ -637,7 +637,7 @@ const Quiz = () => {
                 {getStreakBonus() > 0 && (
                   <View style={[styles.streakBonusCard, { backgroundColor: correctCount >= 3 ? 'rgba(245,158,11,0.25)' : COLORS.warningBg }]}>
                     <Ionicons name="flash" size={16} color={COLORS.warning} />
-                    <Text style={[styles.streakBonusText, { color: correctCount >= 3 ? Colors.text.inverse :COLORS.warning }]}>
+                    <Text style={[styles.streakBonusText, { color: correctCount >= 3 ? colors.text.inverse :COLORS.warning }]}>
                       +{Math.round(getStreakBonus())} Streak Bonus!
                     </Text>
                   </View>
@@ -680,19 +680,19 @@ const Quiz = () => {
                
               >
                 <LinearGradient
-                  colors={todayPlays >= maxPlays ? [Colors.text.tertiary, Colors.gray[600]] : [COLORS.purple, COLORS.purpleDark]}
+                  colors={todayPlays >= maxPlays ? [colors.text.tertiary, Colors.gray[600]] : [COLORS.purple, COLORS.purpleDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.primaryAction}
                 >
                   {fetchingQuestions ? (
-                    <ActivityIndicator size="small" color={Colors.text.inverse} />
+                    <ActivityIndicator size="small" color={colors.text.inverse} />
                   ) : (
                     <>
                       <Ionicons
                         name={todayPlays >= maxPlays ? "time-outline" : "refresh"}
                         size={20}
-                        color={Colors.text.inverse}
+                        color={colors.text.inverse}
                       />
                       <Text style={styles.primaryActionText}>
                         {todayPlays >= maxPlays
@@ -819,7 +819,7 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 8},
   heroSubtitle: {
     fontSize: 15,
@@ -839,7 +839,7 @@ const styles = StyleSheet.create({
   heroStatValue: {
     fontSize: 24,
     fontWeight: '800',
-    color: Colors.text.inverse},
+    color: colors.text.inverse},
   heroStatLabel: {
     fontSize: 12,
     color: 'rgba(255,255,255,0.8)',
@@ -929,7 +929,7 @@ const styles = StyleSheet.create({
   startButtonText: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.inverse},
+    color: colors.text.inverse},
 
   // Game Stats Bar
   gameStatsBar: {
@@ -1191,7 +1191,7 @@ const styles = StyleSheet.create({
   primaryActionText: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.inverse},
+    color: colors.text.inverse},
   secondaryAction: {
     flexDirection: 'row',
     alignItems: 'center',

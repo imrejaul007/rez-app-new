@@ -35,15 +35,15 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_WIDTH = (SCREEN_WIDTH - 48) / 2;
 
 const COLORS = {
-  white: Colors.background.primary,
+  white: colors.background.primary,
   navy: colors.brand.navyDark,
-  gray50: Colors.background.secondary,
-  gray100: Colors.background.secondary,
-  gray200: Colors.border.default,
-  gray600: Colors.text.tertiary,
+  gray50: colors.background.secondary,
+  gray100: colors.background.secondary,
+  gray200: colors.border.default,
+  gray600: colors.text.tertiary,
   green500: Colors.success,
   primaryGreen: Colors.gold,
-  background: Colors.background.secondary,
+  background: colors.background.secondary,
 };
 
 interface Product {

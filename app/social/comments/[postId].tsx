@@ -282,7 +282,7 @@ function CommentsPage() {
             <Ionicons
               name={comment.isLiked ? 'heart' : 'heart-outline'}
               size={16}
-              color={comment.isLiked ? Colors.error : Colors.text.tertiary}
+              color={comment.isLiked ? Colors.error : colors.text.tertiary}
             />
             <ThemedText style={[
               styles.actionText,
@@ -300,7 +300,7 @@ function CommentsPage() {
             </Pressable>
           )}
           <Pressable style={styles.actionButton}>
-            <Ionicons name="ellipsis-horizontal" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="ellipsis-horizontal" size={16} color={colors.text.tertiary} />
           </Pressable>
         </View>
       </View>
@@ -323,16 +323,16 @@ function CommentsPage() {
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="close" size={24} color={Colors.text.primary} />
+          <Ionicons name="close" size={24} color={colors.text.primary} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Comments</ThemedText>
         <Pressable style={styles.sortButton}>
-          <Ionicons name="swap-vertical" size={20} color={Colors.text.secondary} />
+          <Ionicons name="swap-vertical" size={20} color={colors.text.secondary} />
         </Pressable>
       </View>
 
@@ -362,7 +362,7 @@ function CommentsPage() {
             </View>
           ) : error ? (
             <View style={styles.centered}>
-              <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyTitle}>{error}</ThemedText>
               <Pressable style={styles.retryButton} onPress={() => fetchComments(1)}>
                 <ThemedText style={styles.retryText}>Retry</ThemedText>
@@ -371,7 +371,7 @@ function CommentsPage() {
           ) : (
             <View style={styles.centered}>
               <View style={styles.emptyIcon}>
-                <Ionicons name="chatbubble-outline" size={36} color={Colors.text.tertiary} />
+                <Ionicons name="chatbubble-outline" size={36} color={colors.text.tertiary} />
               </View>
               <ThemedText style={styles.emptyTitle}>No comments yet</ThemedText>
               <ThemedText style={styles.emptySubtitle}>Be the first to comment!</ThemedText>
@@ -390,7 +390,7 @@ function CommentsPage() {
             setReplyingTo(null);
             setNewComment('');
           }}>
-            <Ionicons name="close" size={18} color={Colors.text.tertiary} />
+            <Ionicons name="close" size={18} color={colors.text.tertiary} />
           </Pressable>
         </View>
       )}
@@ -406,7 +406,7 @@ function CommentsPage() {
           value={newComment}
           onChangeText={setNewComment}
           placeholder="Add a comment..."
-          placeholderTextColor={Colors.text.tertiary}
+          placeholderTextColor={colors.text.tertiary}
           multiline
         />
         <Pressable
@@ -420,7 +420,7 @@ function CommentsPage() {
             <Ionicons
               name="send"
               size={20}
-              color={newComment.trim() ? Colors.primary[600] : Colors.text.tertiary}
+              color={newComment.trim() ? Colors.primary[600] : colors.text.tertiary}
             />
           )}
         </Pressable>
@@ -432,7 +432,7 @@ function CommentsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -442,14 +442,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   backButton: {
     padding: Spacing.sm,
   },
   headerTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   sortButton: {
     padding: Spacing.sm,
@@ -490,15 +490,15 @@ const styles = StyleSheet.create({
   },
   userName: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   commentTime: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   commentText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   commentActions: {
@@ -513,11 +513,11 @@ const styles = StyleSheet.create({
   },
   actionText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   replyText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '600',
   },
   repliesContainer: {
@@ -532,11 +532,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
   },
   replyIndicatorText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   inputContainer: {
     flexDirection: 'row',
@@ -545,8 +545,8 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingBottom: Platform.OS === 'ios' ? Spacing.lg : Spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
-    backgroundColor: Colors.background.primary,
+    borderTopColor: colors.border.light,
+    backgroundColor: colors.background.primary,
   },
   inputAvatar: {
     width: 36,
@@ -567,7 +567,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     maxHeight: 100,
   },
   sendButton: {
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   emptyIcon: {
@@ -598,12 +598,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   emptySubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   retryButton: {

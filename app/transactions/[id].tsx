@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, StatusBar, Share } from 'react-native';
@@ -148,8 +149,8 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
       case 'completed': return Colors.gold;
       case 'pending': return Colors.warning;
       case 'failed': return Colors.error;
-      case 'cancelled': return Colors.text.tertiary;
-      default: return Colors.text.tertiary;
+      case 'cancelled': return colors.text.tertiary;
+      default: return colors.text.tertiary;
     }
   };
 
@@ -165,10 +166,10 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
-        <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.header}>
+        <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Transaction Details</Text>
             <View style={styles.headerRight} />
@@ -186,10 +187,10 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
-        <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.header}>
+        <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Transaction Details</Text>
             <View style={styles.headerRight} />
@@ -216,14 +217,14 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
         <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
 
         {/* Header */}
-        <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.header}>
+        <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Payment Receipt</Text>
             <Pressable style={styles.shareButton} onPress={handleShare}>
-              <Ionicons name="share-social" size={24} color={Colors.text.inverse} />
+              <Ionicons name="share-social" size={24} color={colors.text.inverse} />
             </Pressable>
           </View>
 
@@ -232,7 +233,7 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
             <View style={[styles.typeIconContainer, { backgroundColor: 'rgba(255, 205, 87, 0.2)' }]}>
               <Ionicons name="storefront" size={32} color={Colors.gold} />
             </View>
-            <Text style={[styles.amountText, { color: Colors.text.inverse }]}>
+            <Text style={[styles.amountText, { color: colors.text.inverse }]}>
               {currencySymbol}{storePayment.billAmount}
             </Text>
             <Text style={styles.storeNameText}>{storePayment.storeName}</Text>
@@ -344,14 +345,14 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
       <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.header}>
+      <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>Transaction Details</Text>
           <Pressable style={styles.shareButton} onPress={handleShare}>
-            <Ionicons name="share-social" size={24} color={Colors.text.inverse} />
+            <Ionicons name="share-social" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
@@ -469,7 +470,7 @@ const InfoRow = ({ label, value }: { label: string; value: string }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: 50,
@@ -493,7 +494,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerRight: {
     width: 40,
@@ -543,13 +544,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   infoCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     ...Shadows.subtle,
@@ -560,36 +561,36 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   infoLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
   },
   infoValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     textAlign: 'right',
   },
   description: {
     ...Typography.body,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 22,
   },
   notes: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   historyItem: {
     flexDirection: 'row',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   historyDot: {
     width: 8,
@@ -605,19 +606,19 @@ const styles = StyleSheet.create({
   historyStatus: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textTransform: 'capitalize',
     marginBottom: Spacing.xs,
   },
   historyDate: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   historyReason: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   loadingContainer: {
     flex: 1,
@@ -627,7 +628,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -638,13 +639,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -657,7 +658,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Store payment specific styles
   storeNameText: {
@@ -679,11 +680,11 @@ const styles = StyleSheet.create({
   rewardValueSmall: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   rewardLabelSmall: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

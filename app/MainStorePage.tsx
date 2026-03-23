@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 // MainStorePage.tsx - Orchestrator component for store page
 // All data fetching & state management lives in useMainStorePageData hook.
 // All section rendering is delegated to extracted components.
@@ -193,7 +194,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
 
   return (
     <ThemedView style={styles.page}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       <MainStoreHeader
         storeName={d.currentStoreName || ""}
@@ -219,10 +220,10 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
           <RefreshControl
             refreshing={d.refreshing}
             onRefresh={d.onRefresh}
-            colors={[Colors.gold, Colors.nileBlue]}
+            colors={[Colors.gold, colors.nileBlue]}
             tintColor={Colors.gold}
             title="Pull to refresh"
-            titleColor={Colors.text.tertiary}
+            titleColor={colors.text.tertiary}
           />
         }
       >

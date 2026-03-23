@@ -282,7 +282,7 @@ function MenuPage() {
               ) : null}
               {item.preparationTime ? (
                 <View style={styles.prepTimeBadge}>
-                  <Ionicons name="time-outline" size={11} color={Colors.text.tertiary} />
+                  <Ionicons name="time-outline" size={11} color={colors.text.tertiary} />
                   <ThemedText style={styles.prepTimeText}>{item.preparationTime}</ThemedText>
                 </View>
               ) : null}
@@ -310,7 +310,7 @@ function MenuPage() {
               />
             ) : (
               <View style={styles.menuItemImagePlaceholder}>
-                <Ionicons name="fast-food-outline" size={28} color={Colors.border.default} />
+                <Ionicons name="fast-food-outline" size={28} color={colors.border.default} />
               </View>
             )}
 
@@ -331,14 +331,14 @@ function MenuPage() {
                       style={styles.qtyBtn}
                       onPress={() => handleRemoveFromCart(item.id)}
                     >
-                      <Ionicons name="remove" size={16} color={Colors.text.inverse} />
+                      <Ionicons name="remove" size={16} color={colors.text.inverse} />
                     </Pressable>
                     <ThemedText style={styles.qtyText}>{quantity}</ThemedText>
                     <Pressable
                       style={styles.qtyBtn}
                       onPress={() => handleAddToCart(item)}
                     >
-                      <Ionicons name="add" size={16} color={Colors.text.inverse} />
+                      <Ionicons name="add" size={16} color={colors.text.inverse} />
                     </Pressable>
                   </View>
                 )}
@@ -363,7 +363,7 @@ function MenuPage() {
   const ListEmptyContent = useMemo(() => (
     <View style={styles.emptyContainer}>
       <View style={styles.emptyIconWrap}>
-        <Ionicons name="restaurant-outline" size={40} color={Colors.border.default} />
+        <Ionicons name="restaurant-outline" size={40} color={colors.border.default} />
       </View>
       <ThemedText style={styles.emptyTitle}>
         {categories.length === 0 ? 'Menu not available' : 'No items here'}
@@ -395,7 +395,7 @@ function MenuPage() {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Menu</ThemedText>
           <View style={{ width: 40 }} />
@@ -407,7 +407,7 @@ function MenuPage() {
           <ThemedText style={styles.errorTitle}>Couldn't load menu</ThemedText>
           <ThemedText style={styles.errorText}>{error}</ThemedText>
           <Pressable style={styles.retryButton} onPress={() => fetchMenu()}>
-            <Ionicons name="refresh" size={18} color={Colors.text.inverse} />
+            <Ionicons name="refresh" size={18} color={colors.text.inverse} />
             <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
           </Pressable>
         </View>
@@ -420,7 +420,7 @@ function MenuPage() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerCenter}>
           <ThemedText style={styles.headerTitle} numberOfLines={1}>{storeName}</ThemedText>
@@ -453,7 +453,7 @@ function MenuPage() {
             <TextInput
               style={styles.tableInput}
               placeholder="Enter your table number"
-              placeholderTextColor={Colors.text.tertiary}
+              placeholderTextColor={colors.text.tertiary}
               value={dineInTable}
               onChangeText={setDineInTable}
               keyboardType="default"
@@ -482,7 +482,7 @@ function MenuPage() {
             <Ionicons
               name="grid-outline"
               size={14}
-              color={selectedCategory === 'all' ? Colors.text.inverse : Colors.text.tertiary}
+              color={selectedCategory === 'all' ? colors.text.inverse : colors.text.tertiary}
               style={{ marginRight: 4 }}
             />
             <ThemedText style={[styles.categoryText, selectedCategory === 'all' && styles.categoryTextActive]}>
@@ -567,7 +567,7 @@ function MenuPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
 
   // Error
@@ -589,12 +589,12 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6,
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -609,7 +609,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 15,
     fontWeight: '600',
   },
@@ -621,9 +621,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.md,
     paddingVertical: 10,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   headerCenter: {
     flex: 1,
@@ -639,7 +639,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   tableBadge: {
     flexDirection: 'row',
@@ -677,7 +677,7 @@ const styles = StyleSheet.create({
   cartCountText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Table input
@@ -685,7 +685,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.md,
     paddingBottom: Spacing.xs,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   tableInputContainer: {
     flexDirection: 'row',
@@ -710,7 +710,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     padding: 0,
   },
   tableCheckmark: {
@@ -719,9 +719,9 @@ const styles = StyleSheet.create({
 
   // Categories
   categoriesWrapper: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   categoriesContent: {
     paddingHorizontal: Spacing.base,
@@ -733,7 +733,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 14,
     paddingVertical: 7,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.xl,
     marginRight: Spacing.sm,
   },
@@ -743,14 +743,14 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   categoryTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   categoryCount: {
     marginLeft: 6,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: BorderRadius.sm,
     minWidth: 20,
     height: 18,
@@ -764,21 +764,21 @@ const styles = StyleSheet.create({
   categoryCountText: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   categoryCountTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Items count bar
   itemsCountBar: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   itemsCountText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
 
@@ -792,7 +792,7 @@ const styles = StyleSheet.create({
 
   // Menu card (Swiggy/Zomato style - horizontal layout)
   menuCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     marginBottom: Spacing.md,
     padding: 14,
@@ -863,13 +863,13 @@ const styles = StyleSheet.create({
   menuItemName: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 3,
     lineHeight: 20,
   },
   menuItemDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 17,
     marginBottom: 6,
   },
@@ -882,11 +882,11 @@ const styles = StyleSheet.create({
   menuItemPrice: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   menuItemOriginalPrice: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   prepTimeBadge: {
@@ -897,7 +897,7 @@ const styles = StyleSheet.create({
   },
   prepTimeText: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   allergenRow: {
     flexDirection: 'row',
@@ -924,17 +924,17 @@ const styles = StyleSheet.create({
     width: 110,
     height: 90,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   menuItemImagePlaceholder: {
     width: 110,
     height: 90,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
   },
   addControlWrap: {
     marginTop: -14,
@@ -944,7 +944,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1.5,
     borderColor: Colors.brand.purple,
     borderRadius: BorderRadius.sm,
@@ -982,7 +982,7 @@ const styles = StyleSheet.create({
   qtyText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     minWidth: 20,
     textAlign: 'center',
   },
@@ -996,7 +996,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.base,
@@ -1009,7 +1009,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
 
@@ -1041,13 +1041,13 @@ const styles = StyleSheet.create({
   cartTotal: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginTop: 2,
   },
   placeOrderBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: 10,
     borderRadius: 10,

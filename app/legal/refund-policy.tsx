@@ -202,7 +202,7 @@ function RefundPolicyPage() {
       >
         {/* Last Updated */}
         <View style={styles.updateBadge}>
-          <Ionicons name="time-outline" size={16} color={Colors.text.tertiary} />
+          <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
           <ThemedText style={styles.updateText}>
             Last updated: {REFUND_CONTENT.lastUpdated}
           </ThemedText>
@@ -241,7 +241,7 @@ function RefundPolicyPage() {
               <Ionicons
                 name={expandedSection === index ? 'chevron-up' : 'chevron-down'}
                 size={24}
-                color={Colors.text.tertiary}
+                color={colors.text.tertiary}
               />
             </Pressable>
             {expandedSection === index && (
@@ -271,7 +271,7 @@ function RefundPolicyPage() {
               <Ionicons
                 name={expandedFaq === index ? 'chevron-up' : 'chevron-down'}
                 size={20}
-                color={Colors.text.tertiary}
+                color={colors.text.tertiary}
               />
             </Pressable>
             {expandedFaq === index && (
@@ -309,7 +309,7 @@ function RefundPolicyPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   updateBadge: {
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   },
   updateText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   overviewCard: {
     backgroundColor: Colors.primary[50],
@@ -375,18 +375,18 @@ const styles = StyleSheet.create({
   },
   overviewText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     lineHeight: 22,
   },
   sectionHeader: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
     marginTop: Spacing.md,
   },
   sectionCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.md,
     overflow: 'hidden',
@@ -414,23 +414,23 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   sectionContent: {
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
     paddingTop: Spacing.md,
   },
   sectionText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 22,
   },
   faqCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.sm,
     overflow: 'hidden',
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
   },
   faqQuestionText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     fontWeight: '500',
   },
@@ -460,12 +460,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
     paddingTop: Spacing.md,
   },
   faqAnswerText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 22,
   },
   supportCard: {

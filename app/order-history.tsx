@@ -222,7 +222,7 @@ function OrderHistoryPage() {
           <View style={styles.headerContainer}>
             <Pressable style={styles.backButton} onPress={handleBackPress}
               accessibilityLabel="Go back" accessibilityRole="button">
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Order History</ThemedText>
             <View style={styles.headerRight} />
@@ -250,13 +250,13 @@ function OrderHistoryPage() {
         <View style={styles.headerContainer}>
           <Pressable style={styles.backButton} onPress={handleBackPress}
             accessibilityLabel="Go back" accessibilityRole="button">
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Order History</ThemedText>
           <Pressable style={styles.filterButton}
             onPress={() => setShowFilterModal(true)}
             accessibilityLabel="Open filter options" accessibilityRole="button">
-            <Ionicons name="filter-outline" size={24} color={Colors.text.inverse} />
+            <Ionicons name="filter-outline" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
       </LinearGradient>
@@ -264,7 +264,7 @@ function OrderHistoryPage() {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
-          <Ionicons name="search-outline" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="search-outline" size={20} color={colors.text.tertiary} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search orders..."
@@ -277,7 +277,7 @@ function OrderHistoryPage() {
           {searchQuery.length > 0 && (
             <Pressable onPress={() => handleSearchChange('')}
               accessibilityLabel="Clear search" accessibilityRole="button">
-              <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
             </Pressable>
           )}
         </View>
@@ -323,7 +323,7 @@ function OrderHistoryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   headerBg: {
     paddingTop: StatusBar.currentHeight || 50,
@@ -346,7 +346,7 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
@@ -361,12 +361,12 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   listContainer: {
     paddingHorizontal: Spacing.lg,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   },
   // Skeleton styles
   skeletonCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -422,13 +422,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyDescription: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
     paddingHorizontal: 40,
@@ -440,7 +440,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   shopButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginLeft: Spacing.sm,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.body,
   },
   errorContainer: {
@@ -464,13 +464,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorDetails: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },

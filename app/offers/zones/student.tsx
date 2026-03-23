@@ -490,7 +490,7 @@ function StudentZonePage() {
             filteredOffers.map((offer) => renderDealCard(offer))
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="search-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="search-outline" size={48} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyStateText}>
                 No offers found in this category
               </ThemedText>
@@ -559,14 +559,14 @@ function StudentZonePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   centerContent: {
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl },
   errorText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginTop: Spacing.md,
     marginBottom: Spacing.lg },
@@ -636,12 +636,12 @@ const styles = StyleSheet.create({
     flex: 1 },
   heroTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 4 },
   heroSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
   verificationCard: {
     marginTop: Spacing.base,
     padding: Spacing.md,
@@ -694,7 +694,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     alignItems: 'center',
@@ -705,12 +705,12 @@ const styles = StyleSheet.create({
     marginBottom: 4 },
   statLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   categorySection: {
     marginBottom: Spacing.lg },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     paddingHorizontal: Spacing.base,
     marginBottom: Spacing.md },
@@ -731,14 +731,14 @@ const styles = StyleSheet.create({
     fontSize: 16 },
   categoryLabel: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
   categoryLabelActive: {
     color: colors.background.primary },
   dealsSection: {
     paddingHorizontal: Spacing.base },
   dealCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -770,11 +770,11 @@ const styles = StyleSheet.create({
     marginRight: Spacing.sm },
   dealStore: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2 },
   dealTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600' },
   discountBadge: {
     backgroundColor: 'rgba(59, 130, 246, 0.15)',
@@ -787,7 +787,7 @@ const styles = StyleSheet.create({
     fontWeight: '700' },
   dealDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm },
   dealTags: {
     flexDirection: 'row',
@@ -800,7 +800,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm },
   tagText: {
     ...Typography.caption,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
   skeletonImage: {
     width: 80,
     height: 80,
@@ -816,18 +816,18 @@ const styles = StyleSheet.create({
     padding: Spacing.xl },
   emptyStateText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md },
   howToVerify: {
     margin: Spacing.base,
     marginTop: Spacing.lg,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     ...Shadows.subtle },
   howToVerifyTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: Spacing.md },
   stepsContainer: {
@@ -849,7 +849,7 @@ const styles = StyleSheet.create({
     fontWeight: '700' },
   stepText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
     paddingTop: 2 },
   fixedCTA: {
@@ -858,9 +858,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
     ...Shadows.medium },
   ctaButton: {
     borderRadius: BorderRadius.lg,

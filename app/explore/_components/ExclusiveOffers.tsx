@@ -95,7 +95,7 @@ const ExclusiveOffers = () => {
           onPress={() => navigateTo('/offers')}
         >
           <LinearGradient
-            colors={[Colors.gold, Colors.gold, Colors.nileBlue]}
+            colors={[Colors.gold, Colors.gold, colors.nileBlue]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.gradient}
@@ -143,7 +143,7 @@ const ExclusiveOffers = () => {
            
           >
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[Colors.gold, colors.nileBlue]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.offerGradient}
@@ -153,7 +153,7 @@ const ExclusiveOffers = () => {
                 <CachedImage source={offer.image} style={styles.offerImage} />
               ) : (
                 <View style={styles.offerIconContainer}>
-                  <Ionicons name="pricetag" size={32} color={Colors.background.primary} />
+                  <Ionicons name="pricetag" size={32} color={colors.background.primary} />
                 </View>
               )}
 
@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   viewAllText: {
     fontSize: Typography.body.fontSize,
@@ -218,7 +218,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   scrollContent: {
     paddingHorizontal: Spacing.base,
@@ -265,12 +265,12 @@ const styles = StyleSheet.create({
   offerBadgeText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   offerTitle: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   offerStore: {
@@ -292,7 +292,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
   bannerTitle: {
     fontSize: Typography.h2.fontSize,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 6,
   },
   bannerSubtitle: {
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
   },
   bannerButton: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius['2xl'],

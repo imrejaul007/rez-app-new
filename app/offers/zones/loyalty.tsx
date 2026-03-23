@@ -319,13 +319,13 @@ function LoyaltyRewardsPage() {
                 <Ionicons
                   name={isAlmostDone ? 'flash' : 'flag'}
                   size={12}
-                  color={isAlmostDone ? colors.warningScale[400] : Colors.text.secondary}
+                  color={isAlmostDone ? colors.warningScale[400] : colors.text.secondary}
                 />
                 <ThemedText style={[styles.milestoneText, isAlmostDone && styles.almostDoneText]}>
                   {getRemainingLabel(milestone, currencySymbol)}
                 </ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
             </View>
 
             {/* Description */}
@@ -368,7 +368,7 @@ function LoyaltyRewardsPage() {
           </SafeAreaView>
         </LinearGradient>
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={64} color={Colors.text.tertiary} />
+          <Ionicons name="alert-circle-outline" size={64} color={colors.text.tertiary} />
           <ThemedText style={styles.errorText}>{error}</ThemedText>
           <Pressable style={styles.retryButton} onPress={fetchMilestones}>
             <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
@@ -501,7 +501,7 @@ function LoyaltyRewardsPage() {
             </>
           ) : milestones.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons name="trophy-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="trophy-outline" size={48} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyText}>No active milestones</ThemedText>
               <ThemedText style={styles.emptySubtext}>
                 Start shopping to unlock loyalty rewards!
@@ -605,7 +605,7 @@ function LoyaltyRewardsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   header: {
     paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0 },
   safeHeader: {
@@ -664,12 +664,12 @@ const styles = StyleSheet.create({
     flex: 1 },
   progressTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 2 },
   progressSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
   overallProgressContainer: {
     marginBottom: Spacing.base },
   overallProgressHeader: {
@@ -678,7 +678,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs },
   overallProgressLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   overallProgressValue: {
     ...Typography.label,
     color: colors.lightMustard,
@@ -708,7 +708,7 @@ const styles = StyleSheet.create({
     marginBottom: 2 },
   statLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   almostThereSection: {
     paddingHorizontal: Spacing.base,
     marginBottom: Spacing.lg },
@@ -721,13 +721,13 @@ const styles = StyleSheet.create({
     marginBottom: 4 },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600' },
   sectionSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   loyaltyCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -753,7 +753,7 @@ const styles = StyleSheet.create({
     marginRight: Spacing.sm },
   loyaltyStore: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 2 },
   loyaltyReward: {
@@ -763,7 +763,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end' },
   rewardValueLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2 },
   rewardValue: {
     ...Typography.label,
@@ -777,7 +777,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs },
   progressLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   progressPercentage: {
     ...Typography.labelSmall,
     color: colors.lightMustard,
@@ -807,13 +807,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(245, 158, 11, 0.15)' },
   milestoneText: {
     ...Typography.caption,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
   almostDoneText: {
     color: colors.warningScale[400],
     fontWeight: '600' },
   milestoneDescription: {
     ...Typography.caption,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   completedSection: {
     marginBottom: Spacing.lg },
   completedScroll: {
@@ -848,21 +848,21 @@ const styles = StyleSheet.create({
     fontWeight: '600' },
   completedReward: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 2 },
   completedStore: {
     ...Typography.caption,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   howItWorks: {
     margin: Spacing.base,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     ...Shadows.subtle },
   howItWorksTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: Spacing.md },
   stepsContainer: {
@@ -884,7 +884,7 @@ const styles = StyleSheet.create({
     fontWeight: '700' },
   stepText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     flex: 1,
     paddingTop: 2 },
   fixedCTA: {
@@ -893,9 +893,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
     ...Shadows.medium },
   ctaButton: {
     borderRadius: BorderRadius.lg,
@@ -950,7 +950,7 @@ const styles = StyleSheet.create({
     padding: Spacing.xl },
   errorText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md,
     marginBottom: Spacing.lg,
     textAlign: 'center' },
@@ -968,11 +968,11 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xl },
   emptyText: {
     ...Typography.h4,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.md },
   emptySubtext: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs } });
 
 export default withErrorBoundary(LoyaltyRewardsPage, 'OffersZonesLoyalty');

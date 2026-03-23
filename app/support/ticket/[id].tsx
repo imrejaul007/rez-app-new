@@ -540,7 +540,7 @@ function TicketDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background?.secondary || Colors.gray[50],
+    backgroundColor: colors.background?.secondary || Colors.gray[50],
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,

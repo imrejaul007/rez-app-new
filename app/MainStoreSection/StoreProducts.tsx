@@ -53,10 +53,10 @@ const COLORS = {
   primaryDark: colors.brand.goldRich,   // Mustard Dark — brand-specific
   gold: colors.brand.goldWarm,          // Sun Gold — brand-specific
   goldDark: '#E5A500',      // Darker Gold — brand-specific
-  navy: Colors.nileBlue,
-  textPrimary: Colors.text.primary,
-  textSecondary: Colors.text.tertiary,
-  white: Colors.background.primary,
+  navy: colors.nileBlue,
+  textPrimary: colors.text.primary,
+  textSecondary: colors.text.tertiary,
+  white: colors.background.primary,
   surface: colors.linen,       // Brand linen — keep unique
   discount: colors.lightPeach,      // Light Peach for discount badges — brand-specific
 };

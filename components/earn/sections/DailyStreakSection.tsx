@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
@@ -38,7 +38,7 @@ const DailyStreakSection = React.memo(function DailyStreakSection({
           </View>
           {hasCheckedInToday && (
             <View style={{ backgroundColor: colors.tint.greenLight, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md }}>
-              <Text style={{ fontSize: 10, color: Colors.success, fontWeight: '600' }}>You're on fire!</Text>
+              <Text style={{ fontSize: 10, color: colors.success, fontWeight: '600' }}>You're on fire!</Text>
             </View>
           )}
         </View>
@@ -97,7 +97,7 @@ const DailyStreakSection = React.memo(function DailyStreakSection({
             end={{ x: 1, y: 0 }}
             style={styles.checkinGradient}
           >
-            <Ionicons name={hasCheckedInToday ? "checkmark-done-circle" : "checkmark-circle"} size={20} color={Colors.text.inverse} />
+            <Ionicons name={hasCheckedInToday ? "checkmark-done-circle" : "checkmark-circle"} size={20} color={colors.text.inverse} />
             <Text style={styles.checkinText}>
               {hasCheckedInToday ? 'Checked In Today \u2713' : 'Check in Today'}
             </Text>

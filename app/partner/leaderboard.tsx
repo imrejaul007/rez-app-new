@@ -73,7 +73,7 @@ function PartnerLeaderboard() {
       case 1: return Colors.gold;
       case 2: return '#C0C0C0';
       case 3: return '#CD7F32';
-      default: return Colors.text.secondary;
+      default: return colors.text.secondary;
     }
   };
 
@@ -120,7 +120,7 @@ function PartnerLeaderboard() {
             <CachedImage source={performer.avatar} style={styles.avatar} />
           ) : (
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[Colors.gold, colors.nileBlue]}
               style={styles.avatarPlaceholder}
             >
               <Text style={styles.avatarInitial}>
@@ -174,14 +174,14 @@ function PartnerLeaderboard() {
           style={styles.backButton}
           onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Leaderboard</Text>
         <Pressable
           style={styles.infoButton}
           onPress={() => {/* Show info modal */}}
         >
-          <Ionicons name="information-circle-outline" size={24} color={Colors.text.secondary} />
+          <Ionicons name="information-circle-outline" size={24} color={colors.text.secondary} />
         </Pressable>
       </View>
 
@@ -200,7 +200,7 @@ function PartnerLeaderboard() {
       >
         {error ? (
           <View style={styles.errorContainer}>
-            <Ionicons name="cloud-offline" size={48} color={Colors.text.secondary} />
+            <Ionicons name="cloud-offline" size={48} color={colors.text.secondary} />
             <Text style={styles.errorText}>{error}</Text>
             <Pressable style={styles.retryButton} onPress={fetchStats}>
               <Text style={styles.retryButtonText}>Try Again</Text>
@@ -210,7 +210,7 @@ function PartnerLeaderboard() {
           <>
             {/* Your Rank Card */}
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[Colors.gold, colors.nileBlue]}
               style={styles.yourRankCard}
             >
               <View style={styles.yourRankContent}>
@@ -259,7 +259,7 @@ function PartnerLeaderboard() {
                 )
               ) : (
                 <View style={styles.emptyState}>
-                  <Ionicons name="people-outline" size={48} color={Colors.text.secondary} />
+                  <Ionicons name="people-outline" size={48} color={colors.text.secondary} />
                   <Text style={styles.emptyStateText}>No performers yet</Text>
                   <Text style={styles.emptyStateSubtext}>Be the first to climb the ranks!</Text>
                 </View>
@@ -297,7 +297,7 @@ function PartnerLeaderboard() {
               onPress={() => router.push('/(tabs)')}
             >
               <LinearGradient
-                colors={[Colors.gold, Colors.nileBlue]}
+                colors={[Colors.gold, colors.nileBlue]}
                 style={styles.ctaButtonGradient}
               >
                 <Text style={styles.ctaButtonText}>Shop Now & Climb Ranks</Text>
@@ -314,7 +314,7 @@ function PartnerLeaderboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -332,9 +332,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.sm,
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   infoButton: {
     padding: Spacing.sm,
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   retryButton: {
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     fontSize: 14,
   },
@@ -401,7 +401,7 @@ const styles = StyleSheet.create({
   yourRankNumber: {
     fontSize: 36,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   yourRankTotal: {
     fontSize: 14,
@@ -428,7 +428,7 @@ const styles = StyleSheet.create({
   quickStatValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   quickStatLabel: {
     fontSize: 12,
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   trophyIcon: {
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
   performerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
   avatarInitial: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   crownBadge: {
     position: 'absolute',
@@ -526,7 +526,7 @@ const styles = StyleSheet.create({
   performerName: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   levelBadge: {
@@ -547,11 +547,11 @@ const styles = StyleSheet.create({
   ordersCount: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   ordersLabel: {
     fontSize: 11,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   emptyState: {
     alignItems: 'center',
@@ -561,23 +561,23 @@ const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   emptyStateSubtext: {
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   tipsSection: {
     margin: Spacing.base,
     marginTop: 0,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
   },
   tipsTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   tipsList: {
@@ -599,7 +599,7 @@ const styles = StyleSheet.create({
   tipText: {
     flex: 1,
     fontSize: 14,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 20,
   },
   ctaButton: {
@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
   ctaButtonText: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

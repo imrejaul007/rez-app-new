@@ -393,7 +393,7 @@ function OfferDetailPage() {
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <View style={styles.header}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="chevron-back" size={28} color={Colors.text.primary} />
+              <Ionicons name="chevron-back" size={28} color={colors.text.primary} />
             </Pressable>
           </View>
         </SafeAreaView>
@@ -410,7 +410,7 @@ function OfferDetailPage() {
         <SafeAreaView style={styles.safeArea} edges={['top']}>
           <View style={styles.header}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="chevron-back" size={28} color={Colors.text.primary} />
+              <Ionicons name="chevron-back" size={28} color={colors.text.primary} />
             </Pressable>
           </View>
         </SafeAreaView>
@@ -434,7 +434,7 @@ function OfferDetailPage() {
         {/* Minimal Header */}
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="chevron-back" size={28} color={Colors.text.primary} />
+            <Ionicons name="chevron-back" size={28} color={colors.text.primary} />
           </Pressable>
           <View style={styles.headerActions}>
             <Pressable
@@ -447,7 +447,7 @@ function OfferDetailPage() {
               <Ionicons
                 name={isLiked ? "heart" : "heart-outline"}
                 size={26}
-                color={isLiked ? Colors.error : Colors.text.primary}
+                color={isLiked ? Colors.error : colors.text.primary}
               />
             </Pressable>
             <Pressable
@@ -457,7 +457,7 @@ function OfferDetailPage() {
               accessibilityRole="button"
               accessibilityHint="Double tap to share this offer"
             >
-              <Ionicons name="share-social-outline" size={26} color={Colors.text.primary} />
+              <Ionicons name="share-social-outline" size={26} color={colors.text.primary} />
             </Pressable>
           </View>
         </View>
@@ -525,7 +525,7 @@ function OfferDetailPage() {
                 <Ionicons
                   name={verificationStatus?.verified ? 'shield-checkmark' : 'shield'}
                   size={14}
-                  color={verificationStatus?.verified ? Colors.success : Colors.nileBlue}
+                  color={verificationStatus?.verified ? Colors.success : colors.nileBlue}
                 />
                 <ThemedText style={[
                   styles.exclusiveBadgeText,
@@ -547,7 +547,7 @@ function OfferDetailPage() {
 
           {/* Cashback Banner */}
           <LinearGradient
-            colors={[Colors.nileBlue, '#2d5a7b']}
+            colors={[colors.nileBlue, '#2d5a7b']}
             style={styles.cashbackBanner}
           >
             <Ionicons name="gift-outline" size={32} color="white" />
@@ -631,7 +631,7 @@ function OfferDetailPage() {
                 <CachedImage source={{ uri: offer.store.logo }} style={styles.storeLogo} cachePolicy="memory-disk" />
               ) : (
                 <View style={[styles.storeLogo, styles.storeLogoPlaceholder]}>
-                  <Ionicons name="storefront-outline" size={24} color={Colors.nileBlue} />
+                  <Ionicons name="storefront-outline" size={24} color={colors.nileBlue} />
                 </View>
               )}
             </View>
@@ -647,13 +647,13 @@ function OfferDetailPage() {
             {offer.store.verified && (
               <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
             )}
-            <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
           </Pressable>
 
           {/* Distance */}
           {offer.distance !== undefined && (
             <View style={styles.distanceCard}>
-              <Ionicons name="location" size={20} color={Colors.nileBlue} />
+              <Ionicons name="location" size={20} color={colors.nileBlue} />
               <ThemedText style={styles.distanceText}>
                 {offer.distance.toFixed(1)} km away from you
               </ThemedText>
@@ -711,7 +711,7 @@ function OfferDetailPage() {
               <ThemedText style={styles.sectionTitle}>Terms & Conditions</ThemedText>
               {offer.restrictions.minOrderValue && (
                 <View style={styles.restrictionItem}>
-                  <Ionicons name="checkmark-circle-outline" size={18} color={Colors.nileBlue} />
+                  <Ionicons name="checkmark-circle-outline" size={18} color={colors.nileBlue} />
                   <ThemedText style={styles.restrictionText}>
                     Minimum order value: {currencySymbol}{offer.restrictions.minOrderValue}
                   </ThemedText>
@@ -719,7 +719,7 @@ function OfferDetailPage() {
               )}
               {offer.restrictions.maxDiscountAmount && (
                 <View style={styles.restrictionItem}>
-                  <Ionicons name="checkmark-circle-outline" size={18} color={Colors.nileBlue} />
+                  <Ionicons name="checkmark-circle-outline" size={18} color={colors.nileBlue} />
                   <ThemedText style={styles.restrictionText}>
                     Maximum discount: {currencySymbol}{offer.restrictions.maxDiscountAmount}
                   </ThemedText>
@@ -727,7 +727,7 @@ function OfferDetailPage() {
               )}
               {(offer.restrictions as any).usageLimitPerUser && (
                 <View style={styles.restrictionItem}>
-                  <Ionicons name="checkmark-circle-outline" size={18} color={Colors.nileBlue} />
+                  <Ionicons name="checkmark-circle-outline" size={18} color={colors.nileBlue} />
                   <ThemedText style={styles.restrictionText}>
                     Can be used {(offer.restrictions as any).usageLimitPerUser} time{(offer.restrictions as any).usageLimitPerUser > 1 ? 's' : ''} per user
                   </ThemedText>
@@ -735,7 +735,7 @@ function OfferDetailPage() {
               )}
               {offer.restrictions.userTypeRestriction && offer.restrictions.userTypeRestriction !== 'all' && (
                 <View style={styles.restrictionItem}>
-                  <Ionicons name="checkmark-circle-outline" size={18} color={Colors.nileBlue} />
+                  <Ionicons name="checkmark-circle-outline" size={18} color={colors.nileBlue} />
                   <ThemedText style={styles.restrictionText}>
                     Only for {offer.restrictions.userTypeRestriction} users
                   </ThemedText>
@@ -755,11 +755,11 @@ function OfferDetailPage() {
               <ThemedText style={styles.engagementText}>{offer.engagement.likesCount} likes</ThemedText>
             </View>
             <View style={styles.engagementItem}>
-              <Ionicons name="share-social" size={20} color={Colors.nileBlue} />
+              <Ionicons name="share-social" size={20} color={colors.nileBlue} />
               <ThemedText style={styles.engagementText}>{offer.engagement.sharesCount} shares</ThemedText>
             </View>
             <View style={styles.engagementItem}>
-              <Ionicons name="eye" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="eye" size={20} color={colors.text.tertiary} />
               <ThemedText style={styles.engagementText}>{offer.engagement.viewsCount} views</ThemedText>
             </View>
           </View>
@@ -858,7 +858,7 @@ function OfferDetailPage() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Ionicons name="ticket" size={48} color={Colors.nileBlue} />
+            <Ionicons name="ticket" size={48} color={colors.nileBlue} />
             <ThemedText style={styles.modalTitle}>Redeem Offer</ThemedText>
             <ThemedText style={styles.modalMessage}>
               Do you want to redeem this offer?{'\n\n'}
@@ -914,7 +914,7 @@ function OfferDetailPage() {
                 accessibilityHint="Double tap to copy voucher code to clipboard"
               >
                 <ThemedText style={styles.voucherCode}>{voucherCode}</ThemedText>
-                <Ionicons name="copy-outline" size={20} color={Colors.nileBlue} style={{ marginLeft: 8 }} />
+                <Ionicons name="copy-outline" size={20} color={colors.nileBlue} style={{ marginLeft: 8 }} />
               </Pressable>
             </View>
             <ThemedText style={styles.voucherHint}>
@@ -947,11 +947,11 @@ function OfferDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'flex-start',
   },
   safeArea: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -959,7 +959,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   backButton: {
     width: 44,
@@ -993,7 +993,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     width: '100%',
     height: 250,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     position: 'relative',
   },
   offerImage: {
@@ -1003,13 +1003,13 @@ const styles = StyleSheet.create({
   imagePlaceholder: {
     width: '100%',
     height: '100%',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   placeholderText: {
     marginTop: Spacing.sm,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.body,
   },
   flashSaleBadge: {
@@ -1025,7 +1025,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   flashSaleText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '700',
   },
@@ -1042,12 +1042,12 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   featuredText: {
-    color: Colors.text.primary,
+    color: colors.text.primary,
     ...Typography.bodySmall,
     fontWeight: '700',
   },
   infoSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.lg,
     gap: Spacing.base,
   },
@@ -1063,7 +1063,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   categoryText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     ...Typography.bodySmall,
     fontWeight: '600',
   },
@@ -1080,7 +1080,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.successScale[100],
   },
   exclusiveBadgeText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     ...Typography.caption,
     fontWeight: '700',
   },
@@ -1090,11 +1090,11 @@ const styles = StyleSheet.create({
   title: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   subtitle: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: -Spacing.sm,
   },
   cashbackBanner: {
@@ -1108,13 +1108,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   cashbackLabel: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '500',
     opacity: 0.9,
   },
   cashbackPercentage: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 32,
     fontWeight: '700',
   },
@@ -1122,7 +1122,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     gap: Spacing.md,
   },
@@ -1148,7 +1148,7 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   storeRating: {
     flexDirection: 'row',
@@ -1157,7 +1157,7 @@ const styles = StyleSheet.create({
   },
   ratingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   distanceCard: {
@@ -1170,12 +1170,12 @@ const styles = StyleSheet.create({
   },
   distanceText: {
     ...Typography.body,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '500',
   },
   validitySection: {
     padding: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     gap: Spacing.md,
   },
@@ -1187,14 +1187,14 @@ const styles = StyleSheet.create({
   validityTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   validityInfo: {
     gap: Spacing.sm,
   },
   validityDate: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   daysRemainingBadge: {
     backgroundColor: Colors.success,
@@ -1207,7 +1207,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.warning,
   },
   daysRemainingText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
   },
@@ -1219,7 +1219,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   expiredText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
   },
@@ -1228,16 +1228,16 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   description: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 22,
   },
   restrictionsSection: {
     padding: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     gap: Spacing.md,
   },
@@ -1249,7 +1249,7 @@ const styles = StyleSheet.create({
   restrictionText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   engagementSection: {
@@ -1257,7 +1257,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     paddingVertical: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   engagementItem: {
     flexDirection: 'row',
@@ -1266,7 +1266,7 @@ const styles = StyleSheet.create({
   },
   engagementText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   bottomBar: {
@@ -1274,15 +1274,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     paddingBottom: 90, // Extra padding to account for bottom navigation tab bar (60px tab + 30px safe area)
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     ...Shadows.strong,
   },
   redeemButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1291,7 +1291,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   redeemButtonDisabled: {
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   redeemButtonLocked: {
     backgroundColor: Colors.error,
@@ -1300,7 +1300,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.warning,
   },
   redeemButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h4,
   },
   redeemedContainer: {
@@ -1324,11 +1324,11 @@ const styles = StyleSheet.create({
   },
   voucherCodeSmall: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   viewVouchersButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -1336,7 +1336,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   viewVouchersButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -1348,7 +1348,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -1363,13 +1363,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   retryButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -1382,7 +1382,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: 30,
     alignItems: 'center',
@@ -1393,20 +1393,20 @@ const styles = StyleSheet.create({
   modalTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.md,
   },
   modalMessage: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: Spacing.xl,
   },
   modalOfferTitle: {
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalButtons: {
     flexDirection: 'row',
@@ -1420,18 +1420,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalButtonCancel: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   modalButtonConfirm: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   modalButtonTextCancel: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
   modalButtonTextConfirm: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -1445,7 +1445,7 @@ const styles = StyleSheet.create({
   },
   voucherCodeLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
@@ -1454,7 +1454,7 @@ const styles = StyleSheet.create({
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     borderWidth: 2,
-    borderColor: Colors.nileBlue,
+    borderColor: colors.nileBlue,
     borderStyle: 'dashed',
     flexDirection: 'row',
     alignItems: 'center',
@@ -1463,13 +1463,13 @@ const styles = StyleSheet.create({
   voucherCode: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
     letterSpacing: 2,
   },
   voucherHint: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -1513,16 +1513,16 @@ const styles = StyleSheet.create({
   },
   verificationBannerSubtitle: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   verifyNowButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.sm,
   },
   verifyNowButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },

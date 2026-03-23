@@ -133,7 +133,7 @@ function PriveOffersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: DarkColors.background,
+    backgroundColor: Darkcolors.background,
   },
   header: {
     flexDirection: 'row',
@@ -141,9 +141,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: DarkColors.background,
+    backgroundColor: Darkcolors.background,
     borderBottomWidth: 1,
-    borderBottomColor: DarkColors.border,
+    borderBottomColor: Darkcolors.border,
   },
   backButton: {
     width: 40,
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,
-    backgroundColor: DarkColors.backgroundSecondary,
+    backgroundColor: Darkcolors.backgroundSecondary,
   },
   headerCenter: {
     flex: 1,
@@ -191,7 +191,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,
-    backgroundColor: DarkColors.backgroundSecondary,
+    backgroundColor: Darkcolors.backgroundSecondary,
   },
 });
 

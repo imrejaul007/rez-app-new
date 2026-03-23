@@ -19,7 +19,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { EventItem } from '@/types/homepage.types';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
-import { Colors, BorderRadius, Spacing, Typography } from '@/constants/DesignSystem';
+import { BorderRadius, Spacing, Typography } from '@/constants/DesignSystem';
 
 const { width: screenWidth } = Dimensions.get('window');
 const CARD_WIDTH = (screenWidth - 48) / 2; // 16px padding each side + 16px gap
@@ -140,7 +140,7 @@ const EventGridCard: React.FC<EventGridCardProps> = ({ event, onPress }) => {
         {/* Cashback / coins row */}
         {(event.cashback ?? 0) > 0 && (
           <View style={styles.coinsRow}>
-            <Ionicons name="gift" size={11} color={Colors.gold} />
+            <Ionicons name="gift" size={11} color={colors.gold} />
             <ThemedText style={styles.coinsText}>
               {event.cashback}% Cashback
             </ThemedText>
@@ -155,7 +155,7 @@ const EventGridCard: React.FC<EventGridCardProps> = ({ event, onPress }) => {
           accessibilityLabel={`Book ${event.title}`}
         >
           <ThemedText style={styles.bookButtonText}>Book Now</ThemedText>
-          <Ionicons name="arrow-forward" size={12} color={Colors.text.inverse} />
+          <Ionicons name="arrow-forward" size={12} color={colors.text.inverse} />
         </Pressable>
       </View>
     </Pressable>
@@ -229,8 +229,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,255,255,0.35)',
   },
   priceBadgeFree: {
-    backgroundColor: Colors.gold,
-    borderColor: Colors.gold,
+    backgroundColor: colors.gold,
+    borderColor: colors.gold,
   },
   priceText: {
     fontSize: 10,

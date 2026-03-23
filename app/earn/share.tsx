@@ -313,7 +313,7 @@ function ShareToEarnPage() {
             <View style={styles.modalHeader}>
               <ThemedText style={styles.modalTitle}>Share & Earn {selectedContent.coins} RC</ThemedText>
               <Pressable onPress={() => setSelectedContent(null)}>
-                <Ionicons name="close" size={24} color={Colors.text.primary} />
+                <Ionicons name="close" size={24} color={colors.text.primary} />
               </Pressable>
             </View>
 
@@ -357,7 +357,7 @@ function ShareToEarnPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   howItWorks: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   stepsContainer: {
@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
   },
   stepText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   stepLine: {
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
   contentCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
@@ -498,16 +498,16 @@ const styles = StyleSheet.create({
   },
   sharesText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   contentTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   contentDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   coinsBadge: {
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     padding: Spacing.lg,
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   sharePreview: {
     alignItems: 'center',
@@ -579,12 +579,12 @@ const styles = StyleSheet.create({
   },
   previewTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   previewDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   platformsGrid: {
@@ -607,7 +607,7 @@ const styles = StyleSheet.create({
   },
   platformName: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 });
 

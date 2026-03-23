@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
  * Shared Coins Balance & History Page
@@ -261,21 +262,21 @@ function ElectronicsCoinsPage() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: Spacing.md, ...Typography.body, color: Colors.text.tertiary },
+  loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   header: {
     flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary, borderBottomWidth: 1, borderBottomColor: Colors.border.default, gap: Spacing.md,
+    backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.border.default, gap: Spacing.md,
   },
   backBtn: { padding: Spacing.xs },
-  headerTitle: { ...Typography.h4, fontWeight: '700', color: Colors.text.primary },
-  headerSubtitle: { ...Typography.bodySmall, color: Colors.text.tertiary },
+  headerTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.primary },
+  headerSubtitle: { ...Typography.bodySmall, color: colors.text.tertiary },
   listContent: { paddingHorizontal: Spacing.base, paddingTop: Spacing.base, paddingBottom: 120 },
   // Balance
   balanceCard: { borderRadius: BorderRadius.xl, padding: Spacing.xl, alignItems: 'center', marginBottom: Spacing.base },
   balanceLabel: { ...Typography.body, color: 'rgba(255,255,255,0.8)', marginBottom: Spacing.xs },
-  balanceValue: { fontSize: 42, fontWeight: '800', color: Colors.text.inverse },
+  balanceValue: { fontSize: 42, fontWeight: '800', color: colors.text.inverse },
   balanceSubtext: { ...Typography.body, color: 'rgba(255,255,255,0.7)', marginTop: 2 },
   // Expiring
   expiringCard: {
@@ -285,38 +286,38 @@ const styles = StyleSheet.create({
   expiringTitle: { ...Typography.body, fontWeight: '600', color: Colors.error },
   expiringDate: { ...Typography.caption, color: '#991B1B', marginTop: 2 },
   useNowBtn: { paddingHorizontal: 14, paddingVertical: 6, borderRadius: BorderRadius.sm, backgroundColor: Colors.error },
-  useNowText: { ...Typography.bodySmall, fontWeight: '600', color: Colors.text.inverse },
+  useNowText: { ...Typography.bodySmall, fontWeight: '600', color: colors.text.inverse },
   // Stats
   statsRow: {
-    flexDirection: 'row', backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.lg, marginBottom: Spacing.base,
+    flexDirection: 'row', backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.lg, marginBottom: Spacing.base,
   },
   statItem: { flex: 1, alignItems: 'center' },
   statValue: { ...Typography.h3, fontWeight: '700' },
-  statLabel: { ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: Spacing.xs },
-  statDivider: { width: 1, backgroundColor: Colors.border.default, marginHorizontal: Spacing.base },
+  statLabel: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.xs },
+  statDivider: { width: 1, backgroundColor: colors.border.default, marginHorizontal: Spacing.base },
   // Filters
   filterRow: { marginBottom: Spacing.md },
-  historyTitle: { ...Typography.h4, fontWeight: '600', color: Colors.text.primary, marginBottom: Spacing.md },
+  historyTitle: { ...Typography.h4, fontWeight: '600', color: colors.text.primary, marginBottom: Spacing.md },
   filters: { flexDirection: 'row', gap: Spacing.sm },
   filterChip: {
     paddingHorizontal: 14, paddingVertical: 6, borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.primary, borderWidth: 1, borderColor: Colors.border.default,
+    backgroundColor: colors.background.primary, borderWidth: 1, borderColor: colors.border.default,
   },
   filterChipActive: { backgroundColor: Colors.info, borderColor: Colors.info },
-  filterText: { ...Typography.bodySmall, fontWeight: '500', color: Colors.text.tertiary },
-  filterTextActive: { color: Colors.text.inverse },
+  filterText: { ...Typography.bodySmall, fontWeight: '500', color: colors.text.tertiary },
+  filterTextActive: { color: colors.text.inverse },
   // Transactions
   txCard: {
     flexDirection: 'row', alignItems: 'center', gap: Spacing.md,
-    padding: 14, backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md, marginBottom: Spacing.sm,
+    padding: 14, backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, marginBottom: Spacing.sm,
   },
   txInfo: { flex: 1 },
-  txDesc: { ...Typography.body, fontWeight: '500', color: Colors.text.primary },
-  txDate: { ...Typography.caption, color: Colors.text.tertiary, marginTop: 2 },
+  txDesc: { ...Typography.body, fontWeight: '500', color: colors.text.primary },
+  txDate: { ...Typography.caption, color: colors.text.tertiary, marginTop: 2 },
   txAmount: { ...Typography.bodyLarge, fontWeight: '700' },
   emptyContainer: { alignItems: 'center', padding: 40, marginTop: Spacing.lg },
-  emptyTitle: { ...Typography.bodyLarge, fontWeight: '600', color: Colors.text.primary, marginTop: Spacing.base },
-  emptySubtitle: { ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: Spacing.xs, textAlign: 'center' },
+  emptyTitle: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.primary, marginTop: Spacing.base },
+  emptySubtitle: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.xs, textAlign: 'center' },
 });
 
 export default withErrorBoundary(ElectronicsCoinsPage, 'MainCategorySlugLoyaltyCoins');

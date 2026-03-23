@@ -3,7 +3,6 @@ import { View, Text, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { BRAND } from '@/constants/brand';
-import { Colors } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
@@ -50,7 +49,7 @@ const ShoppingEarnSection = React.memo(function ShoppingEarnSection({
               <Text style={styles.shoppingExtra}>{method.extraReward}</Text>
             </View>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
         </Pressable>
       ))}
 

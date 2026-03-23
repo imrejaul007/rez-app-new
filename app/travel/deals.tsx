@@ -26,12 +26,12 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { useIsMounted } from '@/hooks/useIsMounted';
 
 const COLORS = {
-  white: Colors.background.primary,
-  navy: Colors.nileBlue,
-  gray50: Colors.background.secondary,
-  gray100: Colors.background.secondary,
-  gray200: Colors.border.default,
-  gray600: Colors.text.tertiary,
+  white: colors.background.primary,
+  navy: colors.nileBlue,
+  gray50: colors.background.secondary,
+  gray100: colors.background.secondary,
+  gray200: colors.border.default,
+  gray600: colors.text.tertiary,
   green500: Colors.success,
   cyan500: colors.brand.cyan,
   amber500: Colors.warning,

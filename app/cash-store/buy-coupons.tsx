@@ -330,7 +330,7 @@ function BuyCouponsPage() {
             onPress={() => handleCategorySelect('all')}
             style={[styles.chip, selectedCategory === 'all' && styles.chipActive]}
           >
-            <Ionicons name="apps" size={12} color={selectedCategory === 'all' ? Colors.text.inverse : '#7C8A97'} />
+            <Ionicons name="apps" size={12} color={selectedCategory === 'all' ? colors.text.inverse : '#7C8A97'} />
             <Text style={[styles.chipText, selectedCategory === 'all' && styles.chipTextActive]}>All</Text>
           </Pressable>
           {giftCardCategories.map((cat) => {
@@ -492,7 +492,7 @@ function BuyCouponsPage() {
           {/* Tab Switcher */}
           <View style={styles.tabRow}>
             <Pressable style={[styles.tab, styles.tabActive]}>
-              <Ionicons name="gift-outline" size={14} color={Colors.text.inverse} />
+              <Ionicons name="gift-outline" size={14} color={colors.text.inverse} />
               <Text style={[styles.tabText, styles.tabTextActive]}>Gift Cards</Text>
             </Pressable>
             <Pressable style={styles.tab}>
@@ -570,7 +570,7 @@ function BuyCouponsPage() {
             <Ionicons
               name="gift-outline"
               size={14}
-              color={activeTab === 'gift-cards' ? Colors.text.inverse : '#7C8A97'}
+              color={activeTab === 'gift-cards' ? colors.text.inverse : '#7C8A97'}
             />
             <Text style={[styles.tabText, activeTab === 'gift-cards' && styles.tabTextActive]}>
               Gift Cards
@@ -583,7 +583,7 @@ function BuyCouponsPage() {
             <Ionicons
               name="pricetag-outline"
               size={14}
-              color={activeTab === 'coupons' ? Colors.text.inverse : '#7C8A97'}
+              color={activeTab === 'coupons' ? colors.text.inverse : '#7C8A97'}
             />
             <Text style={[styles.tabText, activeTab === 'coupons' && styles.tabTextActive]}>
               Coupons
@@ -700,7 +700,7 @@ const GiftCardCard = React.memo(({
         {/* Featured Badge */}
         {brand.isFeatured && (
           <View style={styles.featuredBadge}>
-            <Ionicons name="star" size={9} color={Colors.text.inverse} />
+            <Ionicons name="star" size={9} color={colors.text.inverse} />
             <Text style={styles.featuredText}>Featured</Text>
           </View>
         )}
@@ -708,7 +708,7 @@ const GiftCardCard = React.memo(({
         {/* New Badge */}
         {brand.isNewlyAdded && !brand.isFeatured && (
           <View style={[styles.featuredBadge, { backgroundColor: Colors.success }]}>
-            <Ionicons name="sparkles" size={9} color={Colors.text.inverse} />
+            <Ionicons name="sparkles" size={9} color={colors.text.inverse} />
             <Text style={styles.featuredText}>New</Text>
           </View>
         )}
@@ -761,7 +761,7 @@ const GiftCardCard = React.memo(({
         {/* Buy CTA */}
         <View style={styles.shopCta}>
           <Text style={styles.shopCtaText}>Buy Gift Card</Text>
-          <Ionicons name="arrow-forward" size={12} color={Colors.text.inverse} />
+          <Ionicons name="arrow-forward" size={12} color={colors.text.inverse} />
         </View>
       </Pressable>
     </Animated.View>
@@ -872,13 +872,13 @@ const CouponCard = React.memo(({
               disabled={isClaiming || isClaimed}
             >
               {isClaiming ? (
-                <ActivityIndicator size="small" color={Colors.text.inverse} />
+                <ActivityIndicator size="small" color={colors.text.inverse} />
               ) : (
                 <>
                   <Ionicons
                     name={isClaimed ? 'checkmark-circle' : 'download-outline'}
                     size={14}
-                    color={Colors.text.inverse}
+                    color={colors.text.inverse}
                   />
                   <Text style={styles.claimBtnText}>
                     {isClaimed ? 'Claimed' : 'Claim'}
@@ -953,7 +953,7 @@ const styles = StyleSheet.create({
 
   // ── Sticky Header ──
   stickyHeader: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingBottom: 10,
     borderBottomWidth: 1,
@@ -979,7 +979,7 @@ const styles = StyleSheet.create({
     ...Typography.h4,
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.3,
   },
 
@@ -1000,7 +1000,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F4F1ED',
   },
   tabActive: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   tabText: {
     fontSize: 13,
@@ -1008,7 +1008,7 @@ const styles = StyleSheet.create({
     color: '#7C8A97',
   },
   tabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // ── Search ──
@@ -1030,7 +1030,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.body,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     paddingVertical: 0,
   },
 
@@ -1050,13 +1050,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
     borderColor: '#E8E2DB',
   },
   chipActive: {
-    backgroundColor: Colors.nileBlue,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue,
   },
   chipText: {
     fontSize: 13,
@@ -1064,7 +1064,7 @@ const styles = StyleSheet.create({
     color: '#7C8A97',
   },
   chipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // ── Results Row ──
@@ -1092,7 +1092,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   card: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     alignItems: 'center',
@@ -1123,7 +1123,7 @@ const styles = StyleSheet.create({
   featuredText: {
     fontSize: 9,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.2,
   },
   logoArea: {
@@ -1144,26 +1144,26 @@ const styles = StyleSheet.create({
   logoPlaceholder: {
     width: '100%',
     height: '100%',
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     justifyContent: 'center',
     alignItems: 'center',
   },
   logoInitial: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   brandName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
     marginBottom: 2,
   },
   categoryLabel: {
     ...Typography.caption,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     textTransform: 'capitalize',
     marginBottom: Spacing.xs,
@@ -1171,7 +1171,7 @@ const styles = StyleSheet.create({
   denomRange: {
     ...Typography.caption,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xs,
   },
@@ -1196,7 +1196,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 10,
@@ -1205,7 +1205,7 @@ const styles = StyleSheet.create({
   shopCtaText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // ── Coupon Card ──
@@ -1214,7 +1214,7 @@ const styles = StyleSheet.create({
   },
   couponCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     overflow: 'hidden',
     ...Platform.select({
@@ -1243,7 +1243,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   discountBadge: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: 10,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
@@ -1251,7 +1251,7 @@ const styles = StyleSheet.create({
   discountText: {
     fontSize: 13,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: -0.3,
   },
   couponFeaturedBadge: {
@@ -1267,7 +1267,7 @@ const styles = StyleSheet.create({
   couponTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2,
   },
   couponDescription: {
@@ -1285,7 +1285,7 @@ const styles = StyleSheet.create({
   couponDetail: {
     ...Typography.caption,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   couponBottomRow: {
     flexDirection: 'row',
@@ -1308,14 +1308,14 @@ const styles = StyleSheet.create({
   couponCodeText: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: 0.5,
   },
   claimBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: 10,
@@ -1326,7 +1326,7 @@ const styles = StyleSheet.create({
   claimBtnText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   claimedGuide: {
     flexDirection: 'row',
@@ -1398,7 +1398,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
   },
   emptySubtitle: {
@@ -1412,12 +1412,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: 9,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   emptyResetText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // ── Skeleton ──
@@ -1432,7 +1432,7 @@ const styles = StyleSheet.create({
   },
   skeletonCard: {
     width: '48.5%' as any,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     alignItems: 'center',

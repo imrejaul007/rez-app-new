@@ -173,7 +173,7 @@ const LockDealsPage: React.FC = () => {
           {/* Featured Badge */}
           {deal.isFeatured && (
             <View style={styles.featuredBadge}>
-              <Ionicons name="star" size={10} color={Colors.text.inverse} />
+              <Ionicons name="star" size={10} color={colors.text.inverse} />
             </View>
           )}
           {/* Sold Out Overlay */}
@@ -263,10 +263,10 @@ const LockDealsPage: React.FC = () => {
       {/* My Locks CTA */}
       <Pressable style={styles.myLocksCta} onPress={handleMyLocksPress}>
         <View style={styles.myLocksLeft}>
-          <Ionicons name="lock-open" size={20} color={Colors.nileBlue} />
+          <Ionicons name="lock-open" size={20} color={colors.nileBlue} />
           <Text style={styles.myLocksText}>My Locked Deals</Text>
         </View>
-        <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+        <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
       </Pressable>
 
       {/* Filter Tabs */}
@@ -302,7 +302,7 @@ const LockDealsPage: React.FC = () => {
       <View style={styles.container}>
         <View style={styles.header}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+            <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Lock Price Deals</Text>
           <View style={{ width: 40 }} />
@@ -317,11 +317,11 @@ const LockDealsPage: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <Text style={styles.headerTitle}>Lock Price Deals</Text>
         <Pressable onPress={handleMyLocksPress} style={styles.backButton}>
-          <Ionicons name="lock-open-outline" size={22} color={Colors.nileBlue} />
+          <Ionicons name="lock-open-outline" size={22} color={colors.nileBlue} />
         </Pressable>
       </View>
 
@@ -334,7 +334,7 @@ const LockDealsPage: React.FC = () => {
         ListHeaderComponent={renderHeader}
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Ionicons name="pricetag-outline" size={48} color={Colors.text.tertiary} />
+            <Ionicons name="pricetag-outline" size={48} color={colors.text.tertiary} />
             <Text style={styles.emptyTitle}>No deals available</Text>
             <Text style={styles.emptySubtitle}>Check back soon for exciting lock price deals!</Text>
           </View>
@@ -361,7 +361,7 @@ const LockDealsPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -370,9 +370,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     width: 40,
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   loadingContainer: {
     flex: 1,
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   listContent: {
     paddingBottom: 120,
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
   heroTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   heroSubtitle: {
@@ -451,10 +451,10 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.base,
     marginTop: Spacing.md,
     padding: 14,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   myLocksLeft: {
     flexDirection: 'row',
@@ -464,7 +464,7 @@ const styles = StyleSheet.create({
   myLocksText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 
   // Tabs
@@ -478,27 +478,27 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   tabActive: {
-    backgroundColor: Colors.nileBlue,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue,
   },
   tabText: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Results
   resultCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     paddingHorizontal: Spacing.base,
     marginTop: Spacing.md,
     marginBottom: Spacing.xs,
@@ -514,11 +514,11 @@ const styles = StyleSheet.create({
   // Deal Card
   dealCard: {
     width: CARD_WIDTH,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   imageContainer: {
     width: '100%',
@@ -541,7 +541,7 @@ const styles = StyleSheet.create({
   discountText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   featuredBadge: {
     position: 'absolute',
@@ -563,7 +563,7 @@ const styles = StyleSheet.create({
   soldOutText: {
     ...Typography.body,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 1,
   },
 
@@ -574,13 +574,13 @@ const styles = StyleSheet.create({
   dealTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 18,
     marginBottom: 2,
   },
   storeName: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 6,
   },
   priceRow: {
@@ -592,11 +592,11 @@ const styles = StyleSheet.create({
   lockedPrice: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   originalPrice: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   depositRow: {
@@ -662,11 +662,11 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   emptySubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingHorizontal: 40,
   },

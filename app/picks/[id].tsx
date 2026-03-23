@@ -191,11 +191,11 @@ const CreatorPickDetail = () => {
   const renderHeader = () => (
     <View style={s.headerRow}>
       <Pressable style={s.headerBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-        <Ionicons name="arrow-back" size={20} color={Colors.text.inverse} />
+        <Ionicons name="arrow-back" size={20} color={colors.text.inverse} />
       </Pressable>
       <View style={s.flex1} />
       <Pressable style={s.headerBtn} onPress={handleShare}>
-        <Ionicons name="share-social-outline" size={18} color={Colors.text.inverse} />
+        <Ionicons name="share-social-outline" size={18} color={colors.text.inverse} />
       </Pressable>
     </View>
   );
@@ -207,8 +207,8 @@ const CreatorPickDetail = () => {
   if (loading) {
     return (
       <View style={s.container}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
-        <LinearGradient colors={[Colors.nileBlue, '#2d5a7b'] as const} style={s.header}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+        <LinearGradient colors={[colors.nileBlue, '#2d5a7b'] as const} style={s.header}>
           {renderHeader()}
         </LinearGradient>
         <DetailPageSkeleton />
@@ -219,8 +219,8 @@ const CreatorPickDetail = () => {
   if (error || !pick) {
     return (
       <View style={s.container}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
-        <LinearGradient colors={[Colors.nileBlue, '#2d5a7b'] as const} style={s.header}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+        <LinearGradient colors={[colors.nileBlue, '#2d5a7b'] as const} style={s.header}>
           {renderHeader()}
         </LinearGradient>
         <View style={s.center}>
@@ -276,10 +276,10 @@ const CreatorPickDetail = () => {
 
   return (
     <View style={s.container}>
-      <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient colors={[Colors.nileBlue, '#2d5a7b'] as const} style={s.header}>
+      <LinearGradient colors={[colors.nileBlue, '#2d5a7b'] as const} style={s.header}>
         {renderHeader()}
       </LinearGradient>
 
@@ -297,7 +297,7 @@ const CreatorPickDetail = () => {
           <View style={s.productImageContainer}>
             <CachedImage
               source={pick.productImage}
-              style={{ width, height: pick.videoUrl ? width * 0.5 : width * 0.8, backgroundColor: Colors.background.secondary }}
+              style={{ width, height: pick.videoUrl ? width * 0.5 : width * 0.8, backgroundColor: colors.background.secondary }}
               contentFit="cover"
               onError={() => setImageError(true)}
             />
@@ -342,15 +342,15 @@ const CreatorPickDetail = () => {
           {/* Action row */}
           <View style={s.actionRow}>
             <Pressable style={s.actionBtn} onPress={handleLike}>
-              <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={18} color={isLiked ? Colors.error : Colors.text.tertiary} />
+              <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={18} color={isLiked ? Colors.error : colors.text.tertiary} />
               <Text style={[s.actionLabel, isLiked && { color: Colors.error }]}>{likeCount > 0 ? fmt(likeCount) : 'Like'}</Text>
             </Pressable>
             <Pressable style={s.actionBtn} onPress={handleBookmark}>
-              <Ionicons name={isBookmarked ? 'bookmark' : 'bookmark-outline'} size={18} color={isBookmarked ? Colors.warning : Colors.text.tertiary} />
+              <Ionicons name={isBookmarked ? 'bookmark' : 'bookmark-outline'} size={18} color={isBookmarked ? Colors.warning : colors.text.tertiary} />
               <Text style={[s.actionLabel, isBookmarked && { color: Colors.warning }]}>Save</Text>
             </Pressable>
             <Pressable style={s.actionBtn} onPress={handleShare}>
-              <Ionicons name="share-social-outline" size={18} color={Colors.text.tertiary} />
+              <Ionicons name="share-social-outline" size={18} color={colors.text.tertiary} />
               <Text style={s.actionLabel}>Share</Text>
             </Pressable>
           </View>
@@ -368,8 +368,8 @@ const CreatorPickDetail = () => {
                 pick.status === 'rejected' && { backgroundColor: colors.errorScale[100] },
                 pick.status === 'pending_review' && { backgroundColor: colors.tint.amberLight },
                 pick.status === 'pending_merchant' && { backgroundColor: colors.tint.blueLight },
-                pick.status === 'draft' && { backgroundColor: Colors.background.secondary },
-                pick.status === 'archived' && { backgroundColor: Colors.border.default },
+                pick.status === 'draft' && { backgroundColor: colors.background.secondary },
+                pick.status === 'archived' && { backgroundColor: colors.border.default },
               ]}>
                 <Text style={[
                   s.statusText,
@@ -377,8 +377,8 @@ const CreatorPickDetail = () => {
                   pick.status === 'rejected' && { color: Colors.error },
                   pick.status === 'pending_review' && { color: colors.warningScale[700] },
                   pick.status === 'pending_merchant' && { color: colors.brand.blue },
-                  pick.status === 'draft' && { color: Colors.text.tertiary },
-                  pick.status === 'archived' && { color: Colors.text.tertiary },
+                  pick.status === 'draft' && { color: colors.text.tertiary },
+                  pick.status === 'archived' && { color: colors.text.tertiary },
                 ]}>
                   {pick.status === 'approved' ? 'Published' :
                    pick.status === 'rejected' ? 'Rejected' :
@@ -407,7 +407,7 @@ const CreatorPickDetail = () => {
                   onPress={() => router.push(`/picks/edit/${id}` as any)}
                  
                 >
-                  <Ionicons name="create-outline" size={16} color={Colors.nileBlue} />
+                  <Ionicons name="create-outline" size={16} color={colors.nileBlue} />
                   <Text style={s.editPickText}>Edit Pick</Text>
                 </Pressable>
               )}
@@ -447,7 +447,7 @@ const CreatorPickDetail = () => {
             {pick.creator.avatar ? (
               <CachedImage source={pick.creator.avatar} style={s.avatar} />
             ) : (
-              <LinearGradient colors={[Colors.nileBlue, colors.brand.purpleMedium] as const} style={s.avatar}>
+              <LinearGradient colors={[colors.nileBlue, colors.brand.purpleMedium] as const} style={s.avatar}>
                 <Text style={s.avatarInitial}>{pick.creator.name?.charAt(0)?.toUpperCase() || '?'}</Text>
               </LinearGradient>
             )}
@@ -475,7 +475,7 @@ const CreatorPickDetail = () => {
             {/* Follow / Profile arrow */}
             <View style={s.profileBtn}>
               <Text style={s.profileBtnText}>View</Text>
-              <Ionicons name="chevron-forward" size={13} color={Colors.nileBlue} />
+              <Ionicons name="chevron-forward" size={13} color={colors.nileBlue} />
             </View>
           </Pressable>
         )}
@@ -499,14 +499,14 @@ const CreatorPickDetail = () => {
               <CachedImage source={pick.store.logo} style={s.storeLogo} />
             ) : (
               <View style={[s.storeLogo, s.storeLogoPlaceholder]}>
-                <Ionicons name="storefront" size={16} color={Colors.nileBlue} />
+                <Ionicons name="storefront" size={16} color={colors.nileBlue} />
               </View>
             )}
             <View style={s.flex1}>
               <Text style={s.storeLabel}>Available at</Text>
               <Text style={s.storeName}>{pick.store.name}</Text>
             </View>
-            <Ionicons name="chevron-forward" size={18} color={Colors.text.tertiary} />
+            <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
           </Pressable>
         )}
 
@@ -555,19 +555,19 @@ const CreatorPickDetail = () => {
           <View style={s.socialRow}>
             {pick.views > 0 && (
               <View style={s.socialItem}>
-                <Ionicons name="eye-outline" size={14} color={Colors.text.tertiary} />
+                <Ionicons name="eye-outline" size={14} color={colors.text.tertiary} />
                 <Text style={s.socialText}>{fmt(pick.views)} viewed</Text>
               </View>
             )}
             {pick.likes !== undefined && pick.likes > 0 && (
               <View style={s.socialItem}>
-                <Ionicons name="heart-outline" size={14} color={Colors.text.tertiary} />
+                <Ionicons name="heart-outline" size={14} color={colors.text.tertiary} />
                 <Text style={s.socialText}>{fmt(pick.likes)} liked</Text>
               </View>
             )}
             {pick.shares !== undefined && pick.shares > 0 && (
               <View style={s.socialItem}>
-                <Ionicons name="share-social-outline" size={14} color={Colors.text.tertiary} />
+                <Ionicons name="share-social-outline" size={14} color={colors.text.tertiary} />
                 <Text style={s.socialText}>{fmt(pick.shares)} shared</Text>
               </View>
             )}
@@ -640,23 +640,23 @@ const s = StyleSheet.create({
     position: 'absolute', top: Spacing.md, left: Spacing.md,
     backgroundColor: 'rgba(26,58,82,0.85)', paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.lg,
   },
-  imgTagText: { ...Typography.caption, fontWeight: '600', color: Colors.text.inverse },
+  imgTagText: { ...Typography.caption, fontWeight: '600', color: colors.text.inverse },
   imgCoinOverlay: {
     position: 'absolute', bottom: Spacing.md, right: Spacing.md,
     flexDirection: 'row', alignItems: 'center', gap: 5,
     backgroundColor: 'rgba(22,163,74,0.92)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 18,
   },
-  imgCoinText: { ...Typography.bodySmall, fontWeight: '700', color: Colors.text.inverse },
+  imgCoinText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
 
   // Product info
   infoCard: {
-    backgroundColor: Colors.background.primary, paddingHorizontal: Spacing.lg, paddingTop: Spacing.base, paddingBottom: 14,
+    backgroundColor: colors.background.primary, paddingHorizontal: Spacing.lg, paddingTop: Spacing.base, paddingBottom: 14,
   },
-  brand: { ...Typography.caption, fontWeight: '600', color: Colors.text.tertiary, textTransform: 'uppercase', letterSpacing: 0.8 },
-  timeText: { ...Typography.caption, color: Colors.text.tertiary },
-  title: { ...Typography.h4, fontWeight: '700', color: Colors.text.primary, marginBottom: 10 },
+  brand: { ...Typography.caption, fontWeight: '600', color: colors.text.tertiary, textTransform: 'uppercase', letterSpacing: 0.8 },
+  timeText: { ...Typography.caption, color: colors.text.tertiary },
+  title: { ...Typography.h4, fontWeight: '700', color: colors.text.primary, marginBottom: 10 },
   priceRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  price: { ...Typography.h2, fontWeight: '800', color: Colors.nileBlue },
+  price: { ...Typography.h2, fontWeight: '800', color: colors.nileBlue },
   coinPill: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     backgroundColor: colors.successScale[50], paddingHorizontal: 10, paddingVertical: 6, borderRadius: BorderRadius.xl,
@@ -668,51 +668,51 @@ const s = StyleSheet.create({
   // Actions
   actionRow: {
     flexDirection: 'row', marginTop: 14, paddingTop: Spacing.md,
-    borderTopWidth: 1, borderTopColor: Colors.background.secondary, gap: 6,
+    borderTopWidth: 1, borderTopColor: colors.background.secondary, gap: 6,
   },
   actionBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     paddingHorizontal: 14, paddingVertical: Spacing.sm, borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary, borderWidth: 1, borderColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary, borderWidth: 1, borderColor: colors.background.secondary,
   },
-  actionLabel: { fontSize: 13, fontWeight: '500', color: Colors.text.tertiary },
+  actionLabel: { fontSize: 13, fontWeight: '500', color: colors.text.tertiary },
 
   // Creator card
   creatorCard: {
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: Colors.background.primary, marginTop: Spacing.sm,
+    backgroundColor: colors.background.primary, marginTop: Spacing.sm,
     paddingHorizontal: Spacing.lg, paddingVertical: 14, gap: Spacing.md,
   },
   avatar: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  avatarInitial: { ...Typography.h4, fontWeight: '700', color: Colors.text.inverse },
-  creatorName: { ...Typography.body, fontWeight: '700', color: Colors.text.primary },
-  creatorMeta: { ...Typography.caption, color: Colors.text.tertiary },
+  avatarInitial: { ...Typography.h4, fontWeight: '700', color: colors.text.inverse },
+  creatorName: { ...Typography.body, fontWeight: '700', color: colors.text.primary },
+  creatorMeta: { ...Typography.caption, color: colors.text.tertiary },
   tierBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 3,
     backgroundColor: colors.tint.purpleLight, paddingHorizontal: 6, paddingVertical: 2, borderRadius: BorderRadius.sm,
   },
-  tierText: { ...Typography.overline, fontWeight: '600', color: Colors.nileBlue, textTransform: 'capitalize', letterSpacing: 0 },
+  tierText: { ...Typography.overline, fontWeight: '600', color: colors.nileBlue, textTransform: 'capitalize', letterSpacing: 0 },
   profileBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 2,
     backgroundColor: colors.tint.purpleLight, paddingHorizontal: Spacing.md, paddingVertical: 7, borderRadius: 10,
   },
-  profileBtnText: { ...Typography.bodySmall, fontWeight: '600', color: Colors.nileBlue },
+  profileBtnText: { ...Typography.bodySmall, fontWeight: '600', color: colors.nileBlue },
 
   // Section (description, how it works, tags)
   section: {
-    backgroundColor: Colors.background.primary, marginTop: Spacing.sm, paddingHorizontal: Spacing.lg, paddingTop: Spacing.base, paddingBottom: 18,
+    backgroundColor: colors.background.primary, marginTop: Spacing.sm, paddingHorizontal: Spacing.lg, paddingTop: Spacing.base, paddingBottom: 18,
   },
-  sectionTitle: { ...Typography.body, fontWeight: '700', color: Colors.text.primary, marginBottom: 10 },
-  noteText: { ...Typography.body, color: Colors.text.tertiary, lineHeight: 21 },
+  sectionTitle: { ...Typography.body, fontWeight: '700', color: colors.text.primary, marginBottom: 10 },
+  noteText: { ...Typography.body, color: colors.text.tertiary, lineHeight: 21 },
 
   // Store
   storeRow: {
     flexDirection: 'row', alignItems: 'center', gap: Spacing.md,
-    backgroundColor: Colors.background.primary, marginTop: Spacing.sm, paddingHorizontal: Spacing.lg, paddingVertical: 14,
+    backgroundColor: colors.background.primary, marginTop: Spacing.sm, paddingHorizontal: Spacing.lg, paddingVertical: 14,
   },
-  storeLogo: { width: 36, height: 36, borderRadius: 10, backgroundColor: Colors.background.secondary },
-  storeLabel: { ...Typography.overline, color: Colors.text.tertiary, letterSpacing: 0.5 },
-  storeName: { ...Typography.body, fontWeight: '600', color: Colors.text.primary, marginTop: 1 },
+  storeLogo: { width: 36, height: 36, borderRadius: 10, backgroundColor: colors.background.secondary },
+  storeLabel: { ...Typography.overline, color: colors.text.tertiary, letterSpacing: 0.5 },
+  storeName: { ...Typography.body, fontWeight: '600', color: colors.text.primary, marginTop: 1 },
 
   // How it works steps
   stepsRow: {
@@ -723,44 +723,44 @@ const s = StyleSheet.create({
     width: 40, height: 40, borderRadius: BorderRadius.xl,
     alignItems: 'center', justifyContent: 'center', marginBottom: 6,
   },
-  stepLabel: { ...Typography.caption, color: Colors.text.tertiary, textAlign: 'center', lineHeight: 15 },
+  stepLabel: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'center', lineHeight: 15 },
 
   // Tags
   tagsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  tagChip: { backgroundColor: Colors.background.secondary, paddingHorizontal: Spacing.md, paddingVertical: 5, borderRadius: 14 },
-  tagText: { ...Typography.bodySmall, fontWeight: '500', color: Colors.text.tertiary },
+  tagChip: { backgroundColor: colors.background.secondary, paddingHorizontal: Spacing.md, paddingVertical: 5, borderRadius: 14 },
+  tagText: { ...Typography.bodySmall, fontWeight: '500', color: colors.text.tertiary },
 
   // Social proof
   socialRow: {
-    flexDirection: 'row', backgroundColor: Colors.background.primary, marginTop: Spacing.sm,
+    flexDirection: 'row', backgroundColor: colors.background.primary, marginTop: Spacing.sm,
     paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md, gap: Spacing.base,
   },
   socialItem: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs },
-  socialText: { ...Typography.bodySmall, color: Colors.text.tertiary },
+  socialText: { ...Typography.bodySmall, color: colors.text.tertiary },
 
   // Related picks
   relCard: {
-    width: 140, backgroundColor: Colors.background.primary, borderRadius: BorderRadius.md,
-    borderWidth: 1, borderColor: Colors.background.secondary, overflow: 'hidden',
+    width: 140, backgroundColor: colors.background.primary, borderRadius: BorderRadius.md,
+    borderWidth: 1, borderColor: colors.background.secondary, overflow: 'hidden',
   },
-  relImg: { width: 140, height: 100, backgroundColor: Colors.background.secondary },
+  relImg: { width: 140, height: 100, backgroundColor: colors.background.secondary },
   relCoinBadge: {
     position: 'absolute', top: 6, right: 6,
     flexDirection: 'row', alignItems: 'center', gap: 3,
     backgroundColor: 'rgba(0,0,0,0.6)', borderRadius: 10, paddingHorizontal: 6, paddingVertical: 3,
   },
-  relCoinText: { ...Typography.overline, fontWeight: '700', color: Colors.text.inverse, textTransform: 'none', letterSpacing: 0 },
+  relCoinText: { ...Typography.overline, fontWeight: '700', color: colors.text.inverse, textTransform: 'none', letterSpacing: 0 },
 
   // Own pick management
   ownPickSection: {
-    backgroundColor: Colors.background.primary, marginTop: Spacing.sm,
+    backgroundColor: colors.background.primary, marginTop: Spacing.sm,
     paddingHorizontal: Spacing.lg, paddingVertical: 14,
-    borderWidth: 1, borderColor: Colors.border.default,
+    borderWidth: 1, borderColor: colors.border.default,
   },
   statusRow: {
     flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: 10,
   },
-  statusLabel: { fontSize: 13, fontWeight: '600', color: Colors.text.tertiary },
+  statusLabel: { fontSize: 13, fontWeight: '600', color: colors.text.tertiary },
   statusBadge: {
     paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md,
   },
@@ -776,9 +776,9 @@ const s = StyleSheet.create({
   editPickBtn: {
     flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 6, paddingVertical: 10, borderRadius: 10,
-    backgroundColor: Colors.background.secondary, borderWidth: 1, borderColor: Colors.border.default,
+    backgroundColor: colors.background.secondary, borderWidth: 1, borderColor: colors.border.default,
   },
-  editPickText: { fontSize: 13, fontWeight: '600', color: Colors.nileBlue },
+  editPickText: { fontSize: 13, fontWeight: '600', color: colors.nileBlue },
   deletePickBtn: {
     flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: 6, paddingVertical: 10, borderRadius: 10,
@@ -790,8 +790,8 @@ const s = StyleSheet.create({
   bottomBar: {
     paddingHorizontal: Spacing.base, paddingTop: 10,
     paddingBottom: Platform.OS === 'ios' ? 28 : 14,
-    backgroundColor: Colors.background.primary,
-    borderTopWidth: 1, borderTopColor: Colors.border.default,
+    backgroundColor: colors.background.primary,
+    borderTopWidth: 1, borderTopColor: colors.border.default,
     ...Shadows.subtle,
     shadowOffset: { width: 0, height: -3 }, shadowRadius: 8, elevation: 10,
   },
@@ -799,35 +799,35 @@ const s = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center',
     paddingVertical: 14, paddingHorizontal: 18,
   },
-  ctaTitle: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.inverse },
+  ctaTitle: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse },
   ctaSub: { ...Typography.caption, color: 'rgba(255,255,255,0.8)', marginTop: 1 },
   ctaCoinBadge: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
     backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: BorderRadius.lg,
   },
-  ctaCoinNum: { ...Typography.bodyLarge, fontWeight: '800', color: Colors.text.inverse },
+  ctaCoinNum: { ...Typography.bodyLarge, fontWeight: '800', color: colors.text.inverse },
 
   // Extracted inline styles
   flex1: { flex: 1 },
   centeredContent: { justifyContent: 'center', alignItems: 'center' },
   scrollContentPadding: { paddingBottom: 110 },
-  errorTitle: { fontSize: 17, fontWeight: '700', color: Colors.text.primary, marginTop: 14 },
-  errorBody: { ...Typography.body, color: Colors.text.tertiary, textAlign: 'center', marginTop: 6, marginBottom: Spacing.lg, lineHeight: 20 },
-  retryBtn: { backgroundColor: Colors.nileBlue, borderRadius: BorderRadius.md, paddingHorizontal: 28, paddingVertical: Spacing.md },
-  retryBtnText: { color: Colors.text.inverse, fontWeight: '600', fontSize: 15 },
+  errorTitle: { fontSize: 17, fontWeight: '700', color: colors.text.primary, marginTop: 14 },
+  errorBody: { ...Typography.body, color: colors.text.tertiary, textAlign: 'center', marginTop: 6, marginBottom: Spacing.lg, lineHeight: 20 },
+  retryBtn: { backgroundColor: colors.nileBlue, borderRadius: BorderRadius.md, paddingHorizontal: 28, paddingVertical: Spacing.md },
+  retryBtnText: { color: colors.text.inverse, fontWeight: '600', fontSize: 15 },
   videoBg: { backgroundColor: colors.text.primary },
   videoNoBorderRadius: { borderRadius: 0 },
-  productImageContainer: { position: 'relative', backgroundColor: Colors.background.primary },
-  imageFallback: { backgroundColor: Colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
+  productImageContainer: { position: 'relative', backgroundColor: colors.background.primary },
+  imageFallback: { backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
   brandTimeRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 },
   creatorNameRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   creatorMetaRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 2 },
   storeLogoPlaceholder: { backgroundColor: '#E0E7FF', alignItems: 'center', justifyContent: 'center' },
-  relatedSection: { marginTop: Spacing.sm, paddingTop: 18, paddingBottom: Spacing.md, backgroundColor: Colors.background.primary },
-  relatedSectionTitle: { fontSize: 15, fontWeight: '700', color: Colors.text.primary, paddingHorizontal: Spacing.lg, marginBottom: 14 },
+  relatedSection: { marginTop: Spacing.sm, paddingTop: 18, paddingBottom: Spacing.md, backgroundColor: colors.background.primary },
+  relatedSectionTitle: { fontSize: 15, fontWeight: '700', color: colors.text.primary, paddingHorizontal: Spacing.lg, marginBottom: 14 },
   relCardContent: { padding: 10 },
-  relCardTitle: { ...Typography.bodySmall, fontWeight: '600', color: Colors.text.primary },
-  relCardPrice: { fontSize: 13, fontWeight: '700', color: Colors.nileBlue, marginTop: Spacing.xs },
+  relCardTitle: { ...Typography.bodySmall, fontWeight: '600', color: colors.text.primary },
+  relCardPrice: { fontSize: 13, fontWeight: '700', color: colors.nileBlue, marginTop: Spacing.xs },
   ctaPressable: { flex: 1, borderRadius: BorderRadius.md, overflow: 'hidden' },
   coinIcon10: { width: 10, height: 10, borderRadius: 5 },
   coinIcon12: { width: 12, height: 12, borderRadius: 6 },

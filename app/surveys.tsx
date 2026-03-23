@@ -160,7 +160,7 @@ function SurveysPage() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top']}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.secondary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
         {/* Header */}
         <View style={styles.header}>
@@ -168,7 +168,7 @@ function SurveysPage() {
             style={styles.backButton}
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
           >
-            <Ionicons name="arrow-back" size={22} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={22} color={colors.text.primary} />
           </Pressable>
           <View style={styles.headerTextContainer}>
             <Text style={styles.headerTitle}>Surveys</Text>
@@ -278,7 +278,7 @@ function SurveysPage() {
           <View style={styles.surveysContainer}>
             {surveys.length === 0 ? (
               <View style={styles.emptyState}>
-                <Ionicons name="document-text-outline" size={48} color={Colors.text.tertiary} />
+                <Ionicons name="document-text-outline" size={48} color={colors.text.tertiary} />
                 <Text style={styles.emptyStateText}>No surveys available</Text>
                 <Text style={styles.emptyStateSubtext}>Check back later for new surveys</Text>
               </View>
@@ -315,7 +315,7 @@ function SurveysPage() {
                               styles.difficultyBadge,
                               {
                                 backgroundColor: diffColors.bg,
-                                borderColor: diffColors.border,
+                                borderColor: diffcolors.border,
                               },
                             ]}
                           >
@@ -337,7 +337,7 @@ function SurveysPage() {
                         </View>
                         <Text style={styles.surveyTitle}>{survey.title}</Text>
                         <View style={styles.sponsorRow}>
-                          <Ionicons name="pricetag" size={12} color={Colors.text.tertiary} />
+                          <Ionicons name="pricetag" size={12} color={colors.text.tertiary} />
                           <Text style={styles.sponsorText}>{survey.subcategory || 'General'}</Text>
                         </View>
                       </View>
@@ -346,15 +346,15 @@ function SurveysPage() {
                     {/* Details Grid */}
                     <View style={styles.detailsGrid}>
                       <View style={styles.detailItem}>
-                        <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+                        <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
                         <Text style={styles.detailText}>{formatTime(survey.estimatedTime)}</Text>
                       </View>
                       <View style={styles.detailItem}>
-                        <Ionicons name="document-text-outline" size={14} color={Colors.text.tertiary} />
+                        <Ionicons name="document-text-outline" size={14} color={colors.text.tertiary} />
                         <Text style={styles.detailText}>{survey.questionsCount} questions</Text>
                       </View>
                       <View style={styles.detailItem}>
-                        <Ionicons name="people-outline" size={14} color={Colors.text.tertiary} />
+                        <Ionicons name="people-outline" size={14} color={colors.text.tertiary} />
                         <Text style={styles.detailText}>{survey.completedCount.toLocaleString()}</Text>
                       </View>
                     </View>
@@ -422,15 +422,15 @@ function SurveysPage() {
               </Text>
               <View style={styles.bottomCTAFeatures}>
                 <View style={styles.featureItem}>
-                  <Ionicons name="trophy" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="trophy" size={14} color={colors.text.tertiary} />
                   <Text style={styles.featureText}>High Rewards</Text>
                 </View>
                 <View style={styles.featureItem}>
-                  <Ionicons name="time" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="time" size={14} color={colors.text.tertiary} />
                   <Text style={styles.featureText}>Quick Surveys</Text>
                 </View>
                 <View style={styles.featureItem}>
-                  <Ionicons name="checkmark-circle" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="checkmark-circle" size={14} color={colors.text.tertiary} />
                   <Text style={styles.featureText}>Easy Tasks</Text>
                 </View>
               </View>
@@ -447,7 +447,7 @@ function SurveysPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -457,16 +457,16 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.sm,
@@ -478,11 +478,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   coinBadge: {
@@ -530,11 +530,11 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   statLabel: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   categoryContainer: {
@@ -546,9 +546,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginRight: 8,
   },
   categoryButtonActive: {
@@ -558,10 +558,10 @@ const styles = StyleSheet.create({
   categoryText: {
     fontSize: 13,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   categoryTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   infoBanner: {
     paddingHorizontal: Spacing.base,
@@ -582,12 +582,12 @@ const styles = StyleSheet.create({
   infoBannerTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   infoBannerDesc: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18,
   },
   surveysContainer: {
@@ -601,20 +601,20 @@ const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
   },
   emptyStateSubtext: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   surveyCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginBottom: Spacing.md,
     ...Platform.select({
       ios: {
@@ -681,7 +681,7 @@ const styles = StyleSheet.create({
   surveyTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   sponsorRow: {
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
   },
   sponsorText: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   detailsGrid: {
     flexDirection: 'row',
@@ -705,7 +705,7 @@ const styles = StyleSheet.create({
   },
   detailText: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   completionSection: {
     marginBottom: Spacing.md,
@@ -717,7 +717,7 @@ const styles = StyleSheet.create({
   },
   completionLabel: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   completionValue: {
     fontSize: 11,
@@ -752,7 +752,7 @@ const styles = StyleSheet.create({
   },
   rewardLabel: {
     fontSize: 10,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   startButton: {
     borderRadius: BorderRadius.md,
@@ -768,7 +768,7 @@ const styles = StyleSheet.create({
   startButtonText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   bottomCTA: {
     paddingHorizontal: Spacing.base,
@@ -793,12 +793,12 @@ const styles = StyleSheet.create({
   bottomCTATitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   bottomCTADesc: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.base,
   },
@@ -813,7 +813,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

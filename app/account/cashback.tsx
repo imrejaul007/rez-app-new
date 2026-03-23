@@ -270,8 +270,8 @@ function CashbackPage() {
       case 'pending': return Colors.warning;
       case 'credited': return Colors.success;
       case 'expired': return Colors.error;
-      case 'cancelled': return Colors.text.secondary;
-      default: return Colors.text.secondary;
+      case 'cancelled': return colors.text.secondary;
+      default: return colors.text.secondary;
     }
   };
 
@@ -281,7 +281,7 @@ function CashbackPage() {
       case 'confirmed': return '#3B82F6';
       case 'credited': return Colors.success;
       case 'rejected': case 'refunded': return Colors.error;
-      default: return Colors.text.secondary;
+      default: return colors.text.secondary;
     }
   };
 
@@ -295,7 +295,7 @@ function CashbackPage() {
         <View style={[styles.header, { paddingTop: headerTop }]}>
           <View style={styles.headerContent}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="chevron-back" size={20} color={Colors.nileBlue} />
+              <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
             </Pressable>
             <Text style={styles.headerTitle}>Track Cashback</Text>
             <View style={{ width: Spacing['2xl'] }} />
@@ -320,11 +320,11 @@ function CashbackPage() {
       <View style={[styles.header, { paddingTop: headerTop }]}>
         <View style={styles.headerContent}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="chevron-back" size={20} color={Colors.nileBlue} />
+            <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Track Cashback</Text>
           <Pressable onPress={() => router.push('/wallet' as any)} style={styles.walletButton}>
-            <Ionicons name="wallet-outline" size={18} color={Colors.nileBlue} />
+            <Ionicons name="wallet-outline" size={18} color={colors.nileBlue} />
           </Pressable>
         </View>
       </View>
@@ -335,14 +335,14 @@ function CashbackPage() {
           style={[styles.sourceToggle, activeSource === 'store' && styles.sourceToggleActive]}
           onPress={() => setActiveSource('store')}
         >
-          <Ionicons name="storefront-outline" size={14} color={activeSource === 'store' ? Colors.text.inverse : '#7C8A97'} />
+          <Ionicons name="storefront-outline" size={14} color={activeSource === 'store' ? colors.text.inverse : '#7C8A97'} />
           <Text style={[styles.sourceToggleText, activeSource === 'store' && styles.sourceToggleTextActive]}>Store Cashback</Text>
         </Pressable>
         <Pressable
           style={[styles.sourceToggle, activeSource === 'cashstore' && styles.sourceToggleActive]}
           onPress={() => setActiveSource('cashstore')}
         >
-          <Ionicons name="globe-outline" size={14} color={activeSource === 'cashstore' ? Colors.text.inverse : '#7C8A97'} />
+          <Ionicons name="globe-outline" size={14} color={activeSource === 'cashstore' ? colors.text.inverse : '#7C8A97'} />
           <Text style={[styles.sourceToggleText, activeSource === 'cashstore' && styles.sourceToggleTextActive]}>Cash Store</Text>
         </Pressable>
       </View>
@@ -563,7 +563,7 @@ function CashbackPage() {
               title="Cancelled"
               amount={summary.cancelled}
               count={summary.cancelledCount}
-              color={Colors.text.secondary}
+              color={colors.text.secondary}
               icon="close-circle-outline"
               currencySymbol={currencySymbol}
             />
@@ -586,7 +586,7 @@ function CashbackPage() {
             >
               <View style={styles.redeemLeft}>
                 <View style={styles.redeemIconWrap}>
-                  <Ionicons name="flash" size={18} color={Colors.text.inverse} />
+                  <Ionicons name="flash" size={18} color={colors.text.inverse} />
                 </View>
                 <View>
                   <Text style={styles.redeemLabel}>Ready to Redeem</Text>
@@ -919,7 +919,7 @@ const styles = StyleSheet.create({
 
   // ── Header ──
   header: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: '#EDEAE6' },
@@ -940,7 +940,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.3 },
   walletButton: {
     width: Spacing['2xl'],
@@ -955,7 +955,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     gap: 8,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: '#EDEAE6' },
   sourceToggle: {
@@ -968,13 +968,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: '#F4F1ED' },
   sourceToggleActive: {
-    backgroundColor: Colors.nileBlue },
+    backgroundColor: colors.nileBlue },
   sourceToggleText: {
     fontSize: 13,
     fontWeight: '600',
     color: '#7C8A97' },
   sourceToggleTextActive: {
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   content: {
     flex: 1 },
@@ -985,7 +985,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     overflow: 'hidden',
     ...Platform.select({
-      ios: { shadowColor: Colors.nileBlue, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12 },
+      ios: { shadowColor: colors.nileBlue, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.15, shadowRadius: 12 },
       android: { elevation: 6 },
       web: { boxShadow: '0 4px 12px rgba(26,58,82,0.15)' } }) },
   heroGradient: {
@@ -1010,7 +1010,7 @@ const styles = StyleSheet.create({
   heroAmount: {
     fontSize: 30,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: -0.5 },
   heroIconWrap: {
     width: Spacing['4xl'],
@@ -1040,7 +1040,7 @@ const styles = StyleSheet.create({
     fontWeight: '500' },
   heroStatValue: {
     fontSize: 12,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '700' },
   heroStatDivider: {
     width: 1,
@@ -1057,7 +1057,7 @@ const styles = StyleSheet.create({
     marginBottom: 10 },
   summaryCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: Spacing.md,
     ...Platform.select({
@@ -1122,13 +1122,13 @@ const styles = StyleSheet.create({
   redeemAmount: {
     fontSize: 20,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: -0.3 },
   redeemBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.xs,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: 10 },
@@ -1174,7 +1174,7 @@ const styles = StyleSheet.create({
   expiringActionText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   // ── Campaigns ──
   section: {
@@ -1188,7 +1188,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: -0.2 },
   seeAllText: {
     fontSize: 12,
@@ -1199,7 +1199,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     ...Platform.select({
-      ios: { shadowColor: Colors.nileBlue, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
+      ios: { shadowColor: colors.nileBlue, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 4 },
       android: { elevation: 3 },
       web: { boxShadow: '0 2px 4px rgba(26,58,82,0.1)' } }) },
   campaignGradient: {
@@ -1215,7 +1215,7 @@ const styles = StyleSheet.create({
   campaignName: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 3 },
   campaignDesc: {
     fontSize: 12,
@@ -1259,7 +1259,7 @@ const styles = StyleSheet.create({
   quickAction: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.md,
     gap: 6,
@@ -1287,20 +1287,20 @@ const styles = StyleSheet.create({
   tab: {
     flex: 1,
     paddingVertical: Spacing.sm,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 10,
     alignItems: 'center',
     borderWidth: 1,
     borderColor: '#EDEAE6' },
   activeTab: {
-    backgroundColor: Colors.nileBlue,
-    borderColor: Colors.nileBlue },
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue },
   tabText: {
     fontSize: 12,
     color: '#7C8A97',
     fontWeight: '600' },
   activeTabText: {
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
 
   // ── History ──
   historySection: {
@@ -1308,15 +1308,15 @@ const styles = StyleSheet.create({
   historyTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.md },
   historyCount: {
     fontWeight: '500',
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   historyCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
@@ -1336,7 +1336,7 @@ const styles = StyleSheet.create({
   historyDesc: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs },
   historyMeta: {
     flexDirection: 'row',
@@ -1344,7 +1344,7 @@ const styles = StyleSheet.create({
     gap: 6 },
   historyDate: {
     fontSize: 11,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   historyDot: {
     width: 3,
     height: 3,
@@ -1395,12 +1395,12 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.error },
   retryButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: 14,
     paddingVertical: 6,
     borderRadius: BorderRadius.sm },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 12,
     fontWeight: '600' },
 
@@ -1418,7 +1418,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md },
   emptyText: {
     fontSize: 15,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '700',
     marginBottom: Spacing.xs },
   emptySubtext: {

@@ -31,13 +31,13 @@ const CARD_WIDTH = (SCREEN_WIDTH - 48) / 2;
 const COLORS = {
   white: colors.background.primary,
   navy: colors.brand.navyDark,
-  gray50: Colors.background.secondary,
-  gray100: Colors.background.secondary,
-  gray200: Colors.border.default,
-  gray600: Colors.text.tertiary,
+  gray50: colors.background.secondary,
+  gray100: colors.background.secondary,
+  gray200: colors.border.default,
+  gray600: colors.text.tertiary,
   green500: Colors.success,
   primaryGreen: Colors.gold,
-  background: Colors.background.secondary,
+  background: colors.background.secondary,
 };
 
 const getTagColor = (tag: string | null) => {
@@ -51,7 +51,7 @@ const getTagColor = (tag: string | null) => {
     case 'Premium':
       return { bg: Colors.brand.purpleLight + '20', text: Colors.brand.purple };
     case 'Special':
-      return { bg: colors.linen, text: Colors.nileBlue };
+      return { bg: colors.linen, text: colors.nileBlue };
     case 'Student':
       return { bg: '#CFFAFE', text: colors.cyanDark };
     case 'Popular':
@@ -59,7 +59,7 @@ const getTagColor = (tag: string | null) => {
     case 'Festive':
       return { bg: '#FFEDD5', text: colors.brand.orangeDark };
     default:
-      return { bg: Colors.background.secondary, text: Colors.text.tertiary };
+      return { bg: colors.background.secondary, text: colors.text.tertiary };
   }
 };
 

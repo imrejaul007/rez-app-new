@@ -167,10 +167,10 @@ function RegistrationScreen() {
             <View style={styles.existingUserContainer}>
               <View style={styles.iconContainer}>
                 <LinearGradient
-                  colors={[Colors.gold, Colors.nileBlue]}
+                  colors={[Colors.gold, colors.nileBlue]}
                   style={styles.iconGradient}
                 >
-                  <Ionicons name="person-circle" size={48} color={Colors.background.primary} />
+                  <Ionicons name="person-circle" size={48} color={colors.background.primary} />
                 </LinearGradient>
               </View>
 
@@ -185,12 +185,12 @@ function RegistrationScreen() {
                
               >
                 <LinearGradient
-                  colors={[Colors.gold, Colors.nileBlue]}
+                  colors={[Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.primaryButton}
                 >
-                  <Ionicons name="log-in-outline" size={20} color={Colors.background.primary} />
+                  <Ionicons name="log-in-outline" size={20} color={colors.background.primary} />
                   <Text style={styles.primaryButtonText}>Go to Sign In</Text>
                 </LinearGradient>
               </Pressable>
@@ -286,7 +286,7 @@ function RegistrationScreen() {
              
             >
               <LinearGradient
-                colors={authLoading ? [Colors.border.default, Colors.border.default] : [Colors.gold, Colors.nileBlue]}
+                colors={authLoading ? [colors.border.default, colors.border.default] : [Colors.gold, colors.nileBlue]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.primaryButton}
@@ -294,7 +294,7 @@ function RegistrationScreen() {
                 <Text style={styles.primaryButtonText}>
                   {authLoading ? 'Submitting...' : 'Continue'}
                 </Text>
-                {!authLoading && <Ionicons name="arrow-forward" size={20} color={Colors.background.primary} />}
+                {!authLoading && <Ionicons name="arrow-forward" size={20} color={colors.background.primary} />}
               </LinearGradient>
             </Pressable>
 
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: Colors.nileBlue,    // Nile Blue,
+    color: colors.nileBlue,    // Nile Blue,
     marginBottom: Spacing.sm,
     textAlign: 'center',
     letterSpacing: -0.5,
@@ -435,10 +435,10 @@ const styles = StyleSheet.create({
   unifiedPhoneInput: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     borderWidth: 1.5,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     overflow: 'hidden',
   },
   countryPickerInline: {
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
   phoneDivider: {
     width: 1,
     height: 28,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   phoneNumberInput: {
     flex: 1,
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
   phoneTextInput: {
     flex: 1,
     fontSize: Typography.body.fontSize,
-    color: Colors.nileBlue,    // Nile Blue,
+    color: colors.nileBlue,    // Nile Blue,
     paddingVertical: 14,
   },
   errorText: {
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
   },
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
   existingUserTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.nileBlue,    // Nile Blue,
+    color: colors.nileBlue,    // Nile Blue,
     textAlign: 'center',
     marginBottom: Spacing.md,
   },

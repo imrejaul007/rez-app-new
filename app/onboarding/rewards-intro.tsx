@@ -25,7 +25,7 @@ function RewardsIntroScreen() {
     <View style={styles.container}>
       {/* Background */}
       <LinearGradient
-        colors={[Colors.background.secondary, '#EDF2F7', Colors.background.secondary]}
+        colors={[colors.background.secondary, '#EDF2F7', colors.background.secondary]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -70,7 +70,7 @@ function RewardsIntroScreen() {
               <View style={styles.postCard}>
                 <View style={styles.postHeader}>
                   <LinearGradient
-                    colors={[Colors.gold, Colors.nileBlue]}
+                    colors={[Colors.gold, colors.nileBlue]}
                     style={styles.profilePic}
                   >
                     <Text style={styles.profileInitial}>S</Text>
@@ -103,11 +103,11 @@ function RewardsIntroScreen() {
                       <Text style={styles.actionCount}>24</Text>
                     </Pressable>
                     <Pressable style={styles.actionButton}>
-                      <Ionicons name="chatbubble-outline" size={18} color={Colors.text.tertiary} />
+                      <Ionicons name="chatbubble-outline" size={18} color={colors.text.tertiary} />
                       <Text style={styles.actionCount}>5</Text>
                     </Pressable>
                     <Pressable style={styles.actionButton}>
-                      <Ionicons name="share-social-outline" size={18} color={Colors.text.tertiary} />
+                      <Ionicons name="share-social-outline" size={18} color={colors.text.tertiary} />
                     </Pressable>
                   </View>
                 </View>
@@ -142,7 +142,7 @@ function RewardsIntroScreen() {
               {/* Reward Badge */}
               <View style={styles.rewardBadge}>
                 <LinearGradient
-                  colors={[Colors.gold, Colors.nileBlue]}
+                  colors={[Colors.gold, colors.nileBlue]}
                   style={styles.rewardBadgeInner}
                 >
                   <Text style={styles.rewardText}>+50</Text>
@@ -168,7 +168,7 @@ function RewardsIntroScreen() {
 
             <View style={styles.step}>
               <View style={[styles.stepNumber, { backgroundColor: Colors.gold }]}>
-                <Text style={[styles.stepNumberText, { color: Colors.text.primary }]}>2</Text>
+                <Text style={[styles.stepNumberText, { color: colors.text.primary }]}>2</Text>
               </View>
               <View style={styles.stepContent}>
                 <Text style={styles.stepTitle}>Share on social</Text>
@@ -194,13 +194,13 @@ function RewardsIntroScreen() {
            
           >
             <LinearGradient
-              colors={[Colors.gold, Colors.nileBlue]}
+              colors={[Colors.gold, colors.nileBlue]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.primaryButton}
             >
               <Text style={styles.primaryButtonText}>Get Started</Text>
-              <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+              <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
             </LinearGradient>
           </Pressable>
         </View>
@@ -282,14 +282,14 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
     letterSpacing: -0.5,
   },
   subtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.base,
@@ -314,7 +314,7 @@ const styles = StyleSheet.create({
     height: 220,
   },
   postCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.base,
     shadowColor: '#000',
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   profileInitial: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   postInfo: {
     flex: 1,
@@ -350,11 +350,11 @@ const styles = StyleSheet.create({
   username: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   timestamp: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   verifiedBadge: {
     marginLeft: Spacing.xs,
@@ -363,7 +363,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   foodImage: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: 14,
     padding: Spacing.lg,
     position: 'relative',
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     shadowColor: '#000',
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
   },
   actionCount: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
 
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
   coinText: {
     ...Typography.body,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   coin1: {
     top: 20,
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   rewardText: {
     ...Typography.bodyLarge,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   rewardLabel: {
     ...Typography.caption,
@@ -478,7 +478,7 @@ const styles = StyleSheet.create({
   howItWorksTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   step: {
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
   stepNumberText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   stepContent: {
     flex: 1,
@@ -506,11 +506,11 @@ const styles = StyleSheet.create({
   stepTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   stepDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
 
@@ -533,7 +533,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '700',
   },

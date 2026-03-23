@@ -230,7 +230,7 @@ const EventsPage: React.FC = () => {
     return (
       <View style={styles.container}>
         <LinearGradient
-          colors={[Colors.nileBlue, Colors.secondary[500]]}
+          colors={[colors.nileBlue, Colors.secondary[500]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.header}
@@ -254,14 +254,14 @@ const EventsPage: React.FC = () => {
     return (
       <View style={styles.container}>
         <LinearGradient
-          colors={[Colors.nileBlue, Colors.secondary[500]]}
+          colors={[colors.nileBlue, Colors.secondary[500]]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.header}
         >
           <View style={styles.headerTop}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
               <Text style={styles.headerTitle}>Events & Experiences</Text>
@@ -284,7 +284,7 @@ const EventsPage: React.FC = () => {
             }}
            
           >
-            <Ionicons name="refresh-outline" size={20} color={Colors.text.inverse} />
+            <Ionicons name="refresh-outline" size={20} color={colors.text.inverse} />
             <Text style={styles.retryButtonText}>Try Again</Text>
           </Pressable>
         </View>
@@ -298,14 +298,14 @@ const EventsPage: React.FC = () => {
     <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
       {/* Header */}
       <LinearGradient
-        colors={[Colors.nileBlue, Colors.secondary[500]]}
+        colors={[colors.nileBlue, Colors.secondary[500]]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={styles.header}
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Events & Experiences</Text>
@@ -317,7 +317,7 @@ const EventsPage: React.FC = () => {
               onPress={() => router.push('/my-events' as any)}
               accessibilityLabel="My Events"
             >
-              <Ionicons name="ticket-outline" size={16} color={Colors.text.inverse} />
+              <Ionicons name="ticket-outline" size={16} color={colors.text.inverse} />
               <Text style={styles.myEventsBtnText}>My Events</Text>
             </Pressable>
           </View>
@@ -330,7 +330,7 @@ const EventsPage: React.FC = () => {
             onPress={() => router.push('/events-list' as any)}
            
           >
-            <Ionicons name="search" size={18} color={Colors.text.tertiary} />
+            <Ionicons name="search" size={18} color={colors.text.tertiary} />
             <TextInput
               style={styles.searchInput}
               placeholder="Search events, concerts, movies..."
@@ -342,7 +342,7 @@ const EventsPage: React.FC = () => {
             />
             {searchQuery.length > 0 && (
               <Pressable onPress={() => setSearchQuery('')}>
-                <Ionicons name="close-circle" size={18} color={Colors.text.tertiary} />
+                <Ionicons name="close-circle" size={18} color={colors.text.tertiary} />
               </Pressable>
             )}
           </Pressable>
@@ -353,7 +353,7 @@ const EventsPage: React.FC = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
         refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[Colors.nileBlue]} />
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[colors.nileBlue]} />
         }
       >
         {/* Categories - Horizontal scroll, compact */}
@@ -385,7 +385,7 @@ const EventsPage: React.FC = () => {
                     {cat.eventCount} {cat.eventCount === 1 ? 'event' : 'events'}
                   </Text>
                 ) : (
-                  <Text style={[styles.categoryCount, { color: Colors.border.dark }]}>Browse</Text>
+                  <Text style={[styles.categoryCount, { color: colors.border.dark }]}>Browse</Text>
                 )}
               </Pressable>
             ))}
@@ -396,7 +396,7 @@ const EventsPage: React.FC = () => {
         {rewardConfig && rewardConfig.totalPotential > 0 && (
           <View style={styles.promoBanner}>
             <LinearGradient
-              colors={[Colors.nileBlue, Colors.secondary[500]]}
+              colors={[colors.nileBlue, Colors.secondary[500]]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.promoGradient}
@@ -447,7 +447,7 @@ const EventsPage: React.FC = () => {
                   >
                     {event.cashback && (
                       <View style={styles.cashbackBadge}>
-                        <Ionicons name="gift" size={10} color={Colors.text.inverse} />
+                        <Ionicons name="gift" size={10} color={colors.text.inverse} />
                         <Text style={styles.cashbackText}>{event.cashback} Cashback</Text>
                       </View>
                     )}
@@ -468,7 +468,7 @@ const EventsPage: React.FC = () => {
                     {/* Book Now CTA */}
                     <View style={styles.featuredBookBtn}>
                       <Text style={styles.featuredBookBtnText}>Book Now</Text>
-                      <Ionicons name="arrow-forward" size={13} color={Colors.text.inverse} />
+                      <Ionicons name="arrow-forward" size={13} color={colors.text.inverse} />
                     </View>
                   </LinearGradient>
                 </Pressable>
@@ -506,14 +506,14 @@ const EventsPage: React.FC = () => {
                     </View>
                     {event.isOnline && (
                       <View style={styles.eventOnlineBadge}>
-                        <Ionicons name="globe" size={10} color={Colors.text.inverse} />
+                        <Ionicons name="globe" size={10} color={colors.text.inverse} />
                         <Text style={styles.eventOnlineText}>Online</Text>
                       </View>
                     )}
                   </View>
                   <Text style={styles.eventTitle} numberOfLines={2}>{event.title}</Text>
                   <View style={styles.eventDateRow}>
-                    <Ionicons name="calendar-outline" size={12} color={Colors.text.tertiary} />
+                    <Ionicons name="calendar-outline" size={12} color={colors.text.tertiary} />
                     <Text style={styles.eventDate}>{event.date}</Text>
                   </View>
                 </View>
@@ -551,7 +551,7 @@ const EventsPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingHorizontal: Spacing.md,
@@ -579,7 +579,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
@@ -606,7 +606,7 @@ const styles = StyleSheet.create({
   myEventsBtnText: {
     fontSize: 12,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   searchBarContainer: {
     marginTop: Spacing.base,
@@ -623,7 +623,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     padding: 0,
   },
 
@@ -643,7 +643,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xs,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     ...Shadows.subtle,
   },
@@ -661,12 +661,12 @@ const styles = StyleSheet.create({
   categoryTitle: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
   categoryCount: {
     fontSize: 9,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
     fontWeight: '500',
   },
@@ -685,13 +685,13 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   viewAllText: {
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
 
   // Featured Cards
@@ -701,7 +701,7 @@ const styles = StyleSheet.create({
     marginRight: 12,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   featuredImage: {
     width: '100%',
@@ -735,14 +735,14 @@ const styles = StyleSheet.create({
   featuredPriceAbsText: {
     fontSize: 11,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   // Category pill — top-left
   featuredCategoryPill: {
     position: 'absolute',
     top: 10,
     left: 10,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: 8,
@@ -752,7 +752,7 @@ const styles = StyleSheet.create({
   featuredCategoryText: {
     fontSize: 9,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: 'uppercase',
     letterSpacing: 0.4,
   },
@@ -770,12 +770,12 @@ const styles = StyleSheet.create({
   cashbackText: {
     ...Typography.overline,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   featuredTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 6,
     lineHeight: 20,
   },
@@ -806,7 +806,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 10,
@@ -821,7 +821,7 @@ const styles = StyleSheet.create({
   featuredBookBtnText: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Upcoming Event Cards
@@ -831,7 +831,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
     marginBottom: 10,
     padding: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     ...Shadows.subtle,
   },
@@ -839,7 +839,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   eventInfo: {
     flex: 1,
@@ -852,7 +852,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   eventTypeBadge: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
     borderRadius: 6,
@@ -860,7 +860,7 @@ const styles = StyleSheet.create({
   eventTypeText: {
     ...Typography.overline,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textTransform: 'capitalize',
   },
   eventOnlineBadge: {
@@ -875,12 +875,12 @@ const styles = StyleSheet.create({
   eventOnlineText: {
     fontSize: 9,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   eventTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 4,
     lineHeight: 18,
   },
@@ -891,7 +891,7 @@ const styles = StyleSheet.create({
   },
   eventDate: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   eventPriceContainer: {
@@ -902,7 +902,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6,
   },
   eventPriceFree: {
@@ -912,12 +912,12 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   eventBookNowBtn: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 8,
@@ -929,7 +929,7 @@ const styles = StyleSheet.create({
   eventBookNowText: {
     fontSize: 12,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Promo Banner
@@ -959,7 +959,7 @@ const styles = StyleSheet.create({
   promoTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 2,
   },
   promoActions: {
@@ -987,7 +987,7 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -1001,7 +1001,7 @@ const styles = StyleSheet.create({
   retryButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: 14,
     borderRadius: BorderRadius['2xl'],
@@ -1011,7 +1011,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 
   // Empty

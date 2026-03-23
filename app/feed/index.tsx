@@ -318,7 +318,7 @@ const ActivityFeedPage = () => {
             accessibilityRole="button"
             accessibilityHint="Loads new posts to the feed"
           >
-            <Ionicons name="arrow-up" size={16} color={Colors.text.inverse} />
+            <Ionicons name="arrow-up" size={16} color={colors.text.inverse} />
             <Text style={styles.newPostsText}>
               {newPostsCount} new {newPostsCount === 1 ? 'post' : 'posts'}
             </Text>
@@ -353,7 +353,7 @@ const ActivityFeedPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary
+    backgroundColor: colors.background.secondary
   },
   header: {
     flexDirection: 'row',
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0'
   },
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     padding: Spacing.sm
   },
   filterMenu: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
     paddingHorizontal: Spacing.base,
@@ -402,15 +402,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   filterOptionActive: {
     backgroundColor: colors.brand.ios },
   filterText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   filterTextActive: {
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   newPostsBanner: {
     position: 'absolute',
     top: 60,
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius['2xl'],
     ...Shadows.medium },
   newPostsText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600' },
   listContent: {
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 120 },
   suggestedSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
   suggestedAvatarText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h2,
     fontWeight: '600'
   },
@@ -535,13 +535,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
     lineHeight: 20
@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius['2xl']
   },
   discoverButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600'
   }

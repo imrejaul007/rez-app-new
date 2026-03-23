@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
 import {
@@ -76,7 +77,7 @@ function ProductsScreen() {
       case 'replaced':
         return Colors.info;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -89,9 +90,9 @@ function ProductsScreen() {
       case 'expired':
         return Colors.error;
       case 'no_warranty':
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -227,7 +228,7 @@ function ProductsScreen() {
         </View>
 
         {/* Arrow Icon */}
-        <Ionicons name="chevron-forward" size={24} color={Colors.text.tertiary} />
+        <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
       </Pressable>
     );
   }, [router]);
@@ -238,7 +239,7 @@ function ProductsScreen() {
       accessibilityLabel={`No products found. ${selectedFilter === 'all' ? 'You haven\'t purchased any products yet' : `No ${selectedFilter.replace('_', ' ')} products found`}`}
       accessibilityRole="text"
     >
-      <Ionicons name="cube-outline" size={64} color={Colors.border.default} />
+      <Ionicons name="cube-outline" size={64} color={colors.border.default} />
       <Text style={styles.emptyStateTitle}>No Products Found</Text>
       <Text style={styles.emptyStateText}>
         {selectedFilter === 'all'
@@ -295,7 +296,7 @@ function ProductsScreen() {
           accessibilityRole="button"
           accessibilityHint="Navigate to previous screen"
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text
           style={styles.headerTitle}
@@ -338,7 +339,7 @@ function ProductsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -346,9 +347,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.sm,
@@ -356,20 +357,20 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   filterContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   filterButton: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: Spacing.sm,
   },
   filterButtonActive: {
@@ -378,10 +379,10 @@ const styles = StyleSheet.create({
   filterButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterButtonTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   listContainer: {
     padding: Spacing.base,
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
   },
   productCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -399,7 +400,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   productInfo: {
     flex: 1,
@@ -409,12 +410,12 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   productDate: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 6,
   },
   warrantyInfo: {
@@ -447,7 +448,7 @@ const styles = StyleSheet.create({
   statusText: {
     ...Typography.overline,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   emptyState: {
     alignItems: 'center',
@@ -457,13 +458,13 @@ const styles = StyleSheet.create({
   emptyStateTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   emptyStateText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingHorizontal: 40,
   },
@@ -471,12 +472,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   shopButton: {
     backgroundColor: Colors.info,
@@ -486,7 +487,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.base,
   },
   shopButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -505,7 +506,7 @@ const styles = StyleSheet.create({
   },
   errorStateText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.base,
   },
@@ -516,7 +517,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },

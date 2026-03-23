@@ -32,13 +32,13 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const COLORS = {
-  white: Colors.background.primary,
+  white: colors.background.primary,
   navy: colors.brand.navyDark,
-  gray50: Colors.background.secondary,
-  gray100: Colors.background.secondary,
-  gray200: Colors.border.default,
-  gray400: Colors.text.tertiary,
-  gray600: Colors.text.tertiary,
+  gray50: colors.background.secondary,
+  gray100: colors.background.secondary,
+  gray200: colors.border.default,
+  gray400: colors.text.tertiary,
+  gray600: colors.text.tertiary,
   green500: Colors.success,
   green600: colors.brand.greenDark,
   amber500: Colors.warning,

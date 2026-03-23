@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Create Article Page - Coming Soon Placeholder
 
@@ -22,12 +23,12 @@ function CreateArticlePage() {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Create Article</ThemedText>
         <View style={{ width: 40 }} />
@@ -36,7 +37,7 @@ function CreateArticlePage() {
       {/* Body */}
       <View style={styles.body}>
         <View style={styles.iconContainer}>
-          <Ionicons name="document-text-outline" size={64} color={Colors.nileBlue} />
+          <Ionicons name="document-text-outline" size={64} color={colors.nileBlue} />
         </View>
         <ThemedText style={styles.title}>Coming Soon</ThemedText>
         <ThemedText style={styles.description}>
@@ -54,7 +55,7 @@ function CreateArticlePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -62,21 +63,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   headerTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   body: {
     flex: 1,
@@ -95,19 +96,19 @@ const styles = StyleSheet.create({
   },
   title: {
     ...Typography.h1,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.md,
     textAlign: 'center',
   },
   description: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing['2xl'],
   },
   backBtn: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingVertical: 14,
     paddingHorizontal: Spacing['2xl'],
     borderRadius: BorderRadius.md,
@@ -115,7 +116,7 @@ const styles = StyleSheet.create({
   backBtnText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

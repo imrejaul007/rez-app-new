@@ -158,14 +158,14 @@ const FinancialCategoryPage: React.FC = () => {
       <LinearGradient colors={gradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>{categoryIcon} {categoryTitle}</Text>
             <Text style={styles.headerSubtitle}>{services.length} {services.length === 1 ? 'service' : 'services'}</Text>
           </View>
           <Pressable style={styles.searchButton}>
-            <Ionicons name="search" size={24} color={Colors.text.inverse} />
+            <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
       </LinearGradient>
@@ -223,7 +223,7 @@ const FinancialCategoryPage: React.FC = () => {
             })
           ) : (
             <View style={{ padding: Spacing.lg, alignItems: 'center' }}>
-              <Text style={{ color: Colors.text.tertiary }}>No services found</Text>
+              <Text style={{ color: colors.text.tertiary }}>No services found</Text>
             </View>
           )}
         </View>
@@ -234,25 +234,25 @@ const FinancialCategoryPage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.primary },
+  container: { flex: 1, backgroundColor: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: Spacing.lg },
   headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
-  headerTitle: { ...Typography.h3, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { ...Typography.h3, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
   searchButton: { padding: Spacing.sm },
   itemsList: { padding: Spacing.base, gap: Spacing.base },
-  itemCard: { backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: Colors.border.default },
+  itemCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.border.default },
   itemImage: { width: '100%', height: 140 },
   cashbackBadge: { position: 'absolute', top: 12, right: 12, backgroundColor: Colors.success, paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
-  cashbackText: { ...Typography.bodySmall, fontWeight: '700', color: Colors.text.inverse },
+  cashbackText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
   itemInfo: { padding: Spacing.base },
-  itemName: { ...Typography.h4, fontWeight: '700', color: Colors.nileBlue, marginBottom: Spacing.sm },
-  typeBadge: { alignSelf: 'flex-start', backgroundColor: Colors.background.secondary, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm, marginBottom: Spacing.md },
-  typeText: { ...Typography.caption, fontWeight: '600', color: Colors.text.tertiary },
+  itemName: { ...Typography.h4, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.sm },
+  typeBadge: { alignSelf: 'flex-start', backgroundColor: colors.background.secondary, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm, marginBottom: Spacing.md },
+  typeText: { ...Typography.caption, fontWeight: '600', color: colors.text.tertiary },
   payButton: { backgroundColor: Colors.brand.purple, paddingVertical: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center' },
-  payButtonText: { ...Typography.body, fontWeight: '700', color: Colors.text.inverse },
+  payButtonText: { ...Typography.body, fontWeight: '700', color: colors.text.inverse },
 });
 
 // Wrap with Error Boundary for production
@@ -262,7 +262,7 @@ const FinancialCategoryPageWithErrorBoundary: React.FC = () => {
       fallback={
         <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
           <Ionicons name="alert-circle" size={48} color={Colors.brand.purple} />
-          <Text style={{ marginTop: Spacing.md, color: Colors.text.tertiary }}>Something went wrong. Please try again.</Text>
+          <Text style={{ marginTop: Spacing.md, color: colors.text.tertiary }}>Something went wrong. Please try again.</Text>
         </View>
       }
     >

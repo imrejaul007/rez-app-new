@@ -348,7 +348,7 @@ function BirthdayRewardsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0,
@@ -425,13 +425,13 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     ...Typography.h1,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '700',
     marginBottom: Spacing.sm,
   },
   heroSubtitle: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.lg,
   },
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
   },
   heroStatLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   birthdayCountdown: {
     flexDirection: 'row',
@@ -473,13 +473,13 @@ const styles = StyleSheet.create({
   },
   countdownTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 2,
   },
   countdownSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   updateButton: {
     backgroundColor: Colors.primary[600],
@@ -506,15 +506,15 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
   },
   sectionSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   giftCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.md,
     overflow: 'hidden',
@@ -558,17 +558,17 @@ const styles = StyleSheet.create({
   },
   giftStore: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   giftTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
   },
   giftDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   giftTags: {
@@ -584,7 +584,7 @@ const styles = StyleSheet.create({
   },
   tagText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   claimButton: {
     borderRadius: BorderRadius.md,
@@ -637,7 +637,7 @@ const styles = StyleSheet.create({
   },
   bonusCoinsSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.xs,
   },
   creditedBadge: {
@@ -655,7 +655,7 @@ const styles = StyleSheet.create({
   partyCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     margin: Spacing.base,
@@ -667,13 +667,13 @@ const styles = StyleSheet.create({
   },
   partyTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 2,
   },
   partySubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   shareButton: {
     backgroundColor: Colors.primary[600],
@@ -692,9 +692,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.light,
+    borderTopColor: colors.border.light,
     ...Shadows.medium,
   },
   ctaButton: {

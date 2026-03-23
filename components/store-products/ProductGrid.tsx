@@ -35,7 +35,7 @@ import { triggerImpact } from '@/utils/haptics';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { showToast } from '@/components/common/ToastManager';
 import analyticsService from '@/services/analyticsService';
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import type { ErrorInfo } from '@/hooks/useStoreProductsPage';
 
@@ -106,7 +106,7 @@ const QuickViewModal = React.memo(function QuickViewModal({
               {product.name}
             </ThemedText>
             <Pressable onPress={onClose} accessible accessibilityLabel="Close quick view" accessibilityRole="button">
-              <Ionicons name="close" size={24} color={Colors.text.primary} />
+              <Ionicons name="close" size={24} color={colors.text.primary} />
             </Pressable>
           </View>
           <ScrollView style={styles.quickViewContent} showsVerticalScrollIndicator={false}>
@@ -129,7 +129,7 @@ const QuickViewModal = React.memo(function QuickViewModal({
               </View>
               {product.rating && (
                 <View style={styles.quickViewRating}>
-                  <Ionicons name="star" size={16} color={Colors.warning} />
+                  <Ionicons name="star" size={16} color={colors.warning} />
                   <ThemedText style={styles.quickViewRatingText}>
                     {product.rating.value} ({product.rating.count} reviews)
                   </ThemedText>
@@ -144,7 +144,7 @@ const QuickViewModal = React.memo(function QuickViewModal({
                   onPress={() => { onClose(); onAddToCart(product); }}
                   accessible accessibilityLabel="Add to cart" accessibilityRole="button"
                 >
-                  <Ionicons name="bag-outline" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="bag-outline" size={20} color={colors.text.inverse} />
                   <ThemedText style={styles.quickViewButtonText}>Add to Cart</ThemedText>
                 </Pressable>
                 <Pressable
@@ -191,7 +191,7 @@ const ProductDetailsModal = React.memo(function ProductDetailsModal({
           <View style={styles.productDetailsHeader}>
             <ThemedText style={styles.productDetailsTitle}>Product Details</ThemedText>
             <Pressable onPress={onClose} accessible accessibilityLabel="Close product details" accessibilityRole="button">
-              <Ionicons name="close" size={24} color={Colors.text.primary} />
+              <Ionicons name="close" size={24} color={colors.text.primary} />
             </Pressable>
           </View>
           <ScrollView style={styles.productDetailsContent} showsVerticalScrollIndicator={false}>
@@ -215,7 +215,7 @@ const ProductDetailsModal = React.memo(function ProductDetailsModal({
               </View>
               {product.rating && (
                 <View style={styles.productDetailsRating}>
-                  <Ionicons name="star" size={18} color={Colors.warning} />
+                  <Ionicons name="star" size={18} color={colors.warning} />
                   <ThemedText style={styles.productDetailsRatingText}>
                     {product.rating.value} ({product.rating.count} reviews)
                   </ThemedText>
@@ -259,7 +259,7 @@ const ProductDetailsModal = React.memo(function ProductDetailsModal({
                   onPress={() => { onClose(); onAddToCart(product); }}
                   accessible accessibilityLabel="Add to cart" accessibilityRole="button"
                 >
-                  <Ionicons name="bag-outline" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="bag-outline" size={20} color={colors.text.inverse} />
                   <ThemedText style={styles.productDetailsButtonText}>Add to Cart</ThemedText>
                 </Pressable>
                 <Pressable
@@ -502,13 +502,13 @@ function ProductGrid({
         />
         <View style={styles.quickActionsOverlay}>
           <Pressable style={styles.quickActionButton} onPress={() => handleQuickView(item)} accessible accessibilityLabel="Quick view product" accessibilityRole="button">
-            <Ionicons name="eye-outline" size={18} color={Colors.text.inverse} />
+            <Ionicons name="eye-outline" size={18} color={colors.text.inverse} />
           </Pressable>
           <Pressable style={styles.quickActionButton} onPress={() => handleWishlistToggle(item)} accessible accessibilityLabel={isInWishlist(productId) ? "Remove from wishlist" : "Add to wishlist"} accessibilityRole="button">
-            <Ionicons name={isInWishlist(productId) ? "heart" : "heart-outline"} size={18} color={isInWishlist(productId) ? Colors.error : Colors.text.inverse} />
+            <Ionicons name={isInWishlist(productId) ? "heart" : "heart-outline"} size={18} color={isInWishlist(productId) ? colors.error : colors.text.inverse} />
           </Pressable>
           <Pressable style={styles.quickActionButton} onPress={() => handleShareProduct(item)} accessible accessibilityLabel="Share product" accessibilityRole="button">
-            <Ionicons name="share-outline" size={18} color={Colors.text.inverse} />
+            <Ionicons name="share-outline" size={18} color={colors.text.inverse} />
           </Pressable>
         </View>
       </View>
@@ -529,7 +529,7 @@ function ProductGrid({
     if (error && errorInfo) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name={isOffline ? "cloud-offline-outline" : "alert-circle-outline"} size={64} color={Colors.error} />
+          <Ionicons name={isOffline ? "cloud-offline-outline" : "alert-circle-outline"} size={64} color={colors.error} />
           <ThemedText style={styles.emptyTitle}>
             {isOffline ? 'No Internet Connection' : 'Unable to load products'}
           </ThemedText>
@@ -562,7 +562,7 @@ function ProductGrid({
                 }
               }}
             >
-              <Ionicons name="refresh" size={20} color={Colors.nileBlue} />
+              <Ionicons name="refresh" size={20} color={colors.nileBlue} />
               <ThemedText style={styles.waitForNetworkText}>Wait for Network</ThemedText>
             </Pressable>
           )}
@@ -573,7 +573,7 @@ function ProductGrid({
     if (error) {
       return (
         <View style={styles.emptyContainer}>
-          <Ionicons name="alert-circle-outline" size={64} color={Colors.text.tertiary} />
+          <Ionicons name="alert-circle-outline" size={64} color={colors.text.tertiary} />
           <ThemedText style={styles.emptyTitle}>Unable to load products</ThemedText>
           <ThemedText style={styles.emptyText}>{error}</ThemedText>
           <RetryButton onRetry={onRetry} label="Try Again" variant="primary" />
@@ -585,7 +585,7 @@ function ProductGrid({
 
     return (
       <View style={styles.emptyContainer}>
-        <Ionicons name="cube-outline" size={64} color={Colors.text.tertiary} />
+        <Ionicons name="cube-outline" size={64} color={colors.text.tertiary} />
         <ThemedText style={styles.emptyTitle}>No products found</ThemedText>
         <ThemedText style={styles.emptyText}>
           {hasFilters
@@ -611,7 +611,7 @@ function ProductGrid({
     if (!loadingMore) return null;
     return (
       <View style={styles.footer}>
-        <ActivityIndicator size="small" color={Colors.nileBlue} />
+        <ActivityIndicator size="small" color={colors.nileBlue} />
         <ThemedText style={styles.footerText}>Loading more products...</ThemedText>
       </View>
     );
@@ -639,8 +639,8 @@ function ProductGrid({
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              colors={[Colors.nileBlue]}
-              tintColor={Colors.nileBlue}
+              colors={[colors.nileBlue]}
+              tintColor={colors.nileBlue}
               enabled={isOnline}
             />
           }
@@ -691,7 +691,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     ...Shadows.medium,
   },
   quickActionsOverlay: {
@@ -723,20 +723,20 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   emptyText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   suggestionsContainer: {
     marginTop: Spacing.base,
     padding: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     width: '100%',
     maxWidth: 400,
@@ -744,12 +744,12 @@ const styles = StyleSheet.create({
   suggestionsTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   suggestionText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
     lineHeight: 20,
   },
@@ -769,19 +769,19 @@ const styles = StyleSheet.create({
   waitForNetworkText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   clearFiltersButton: {
     marginTop: Spacing.base,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xl,
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     borderRadius: BorderRadius.sm,
   },
   clearFiltersText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   footer: {
     paddingVertical: Spacing.lg,
@@ -790,7 +790,7 @@ const styles = StyleSheet.create({
   },
   footerText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Quick View Modal
@@ -801,7 +801,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   quickViewContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     width: '90%',
     maxWidth: 500,
@@ -814,12 +814,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   quickViewTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
     marginRight: Spacing.md,
   },
@@ -829,7 +829,7 @@ const styles = StyleSheet.create({
   quickViewImage: {
     width: '100%',
     height: 300,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   quickViewInfo: {
     padding: Spacing.base,
@@ -843,17 +843,17 @@ const styles = StyleSheet.create({
   quickViewPrice: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   quickViewOriginalPrice: {
     ...Typography.h4,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   quickViewDiscount: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.error,
+    color: colors.error,
     backgroundColor: colors.errorScale[100],
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
@@ -867,11 +867,11 @@ const styles = StyleSheet.create({
   },
   quickViewRatingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   quickViewDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.base,
   },
   quickViewActions: {
@@ -884,30 +884,30 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
   },
   quickViewButtonPrimary: {
-    backgroundColor: Colors.nileBlue,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue,
     flexDirection: 'row',
     gap: Spacing.sm,
   },
   quickViewButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   quickViewButtonTextSecondary: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 
   // Product Details Modal
   productDetailsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     width: '90%',
     maxWidth: 600,
@@ -920,12 +920,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   productDetailsTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   productDetailsContent: {
     maxHeight: '80%',
@@ -933,7 +933,7 @@ const styles = StyleSheet.create({
   productDetailsImage: {
     width: '100%',
     height: 350,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   productDetailsInfo: {
     padding: Spacing.base,
@@ -941,7 +941,7 @@ const styles = StyleSheet.create({
   productDetailsName: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   productDetailsPriceRow: {
@@ -953,17 +953,17 @@ const styles = StyleSheet.create({
   productDetailsPrice: {
     fontSize: 28,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   productDetailsOriginalPrice: {
     ...Typography.h3,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   productDetailsDiscount: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.error,
+    color: colors.error,
     backgroundColor: colors.errorScale[100],
     paddingHorizontal: 10,
     paddingVertical: Spacing.xs,
@@ -977,7 +977,7 @@ const styles = StyleSheet.create({
   },
   productDetailsRatingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   productDetailsSection: {
     marginBottom: Spacing.lg,
@@ -985,12 +985,12 @@ const styles = StyleSheet.create({
   productDetailsSectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   productDetailsSectionText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   productDetailsActions: {
     flexDirection: 'row',
@@ -1003,25 +1003,25 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
   },
   productDetailsButtonPrimary: {
-    backgroundColor: Colors.nileBlue,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue,
     flexDirection: 'row',
     gap: Spacing.sm,
   },
   productDetailsButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   productDetailsButtonTextSecondary: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
 });
 

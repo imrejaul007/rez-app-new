@@ -458,7 +458,7 @@ function PartnerProfilePage() {
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
         <LinearGradient
-          colors={[Colors.gold, Colors.nileBlue]}
+          colors={[Colors.gold, colors.nileBlue]}
           style={styles.loadingContainer}
         >
           <View style={styles.loadingContent}>
@@ -488,7 +488,7 @@ function PartnerProfilePage() {
             onPress={loadPartnerData}
 
           >
-            <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.retryButtonGradient}>
+            <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.retryButtonGradient}>
               <Ionicons name="refresh" size={18} color="white" />
               <Text style={styles.retryButtonText}>Try Again</Text>
             </LinearGradient>
@@ -504,7 +504,7 @@ function PartnerProfilePage() {
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
         <LinearGradient
-          colors={[Colors.gold, Colors.nileBlue]}
+          colors={[Colors.gold, colors.nileBlue]}
           style={styles.header}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -525,7 +525,7 @@ function PartnerProfilePage() {
 
         <View style={styles.enrollContainer}>
           <View style={styles.enrollIconWrapper}>
-            <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.enrollIconGradient}>
+            <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.enrollIconGradient}>
               <Ionicons name="people" size={40} color="white" />
             </LinearGradient>
           </View>
@@ -554,7 +554,7 @@ function PartnerProfilePage() {
             onPress={handleEnroll}
             disabled={enrolling}
           >
-            <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.enrollButtonGradient}>
+            <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.enrollButtonGradient}>
               {enrolling ? (
                 <ActivityIndicator size="small" color="white" />
               ) : (
@@ -576,7 +576,7 @@ function PartnerProfilePage() {
 
       {/* Premium Header with Green/Gold Gradient */}
       <LinearGradient
-        colors={[Colors.gold, Colors.nileBlue]}
+        colors={[Colors.gold, colors.nileBlue]}
         style={styles.header}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -631,7 +631,7 @@ function PartnerProfilePage() {
         {/* Partner Card with Premium Glass Effect */}
         <View style={styles.partnerCard}>
           <LinearGradient
-            colors={[Colors.gold, Colors.nileBlue]}
+            colors={[Colors.gold, colors.nileBlue]}
             style={styles.partnerCardGradient}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -736,7 +736,7 @@ function PartnerProfilePage() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <View style={styles.sectionIconWrapper}>
-              <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.sectionIcon}>
+              <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.sectionIcon}>
                 <Ionicons name="trophy" size={16} color="white" />
               </LinearGradient>
             </View>
@@ -762,7 +762,7 @@ function PartnerProfilePage() {
                 );
               }}
             >
-              <LinearGradient colors={[Colors.gold, Colors.nileBlue]} style={styles.upgradeButtonGradient}>
+              <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.upgradeButtonGradient}>
                 <Ionicons name="trending-up" size={16} color="white" />
                 <Text style={styles.upgradeButtonText}>Upgrade Level</Text>
               </LinearGradient>
@@ -942,7 +942,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
   },
   loadingText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.h4.fontSize,
     fontWeight: '600',
     marginBottom: Spacing.xs,
@@ -972,7 +972,7 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: Typography.h2.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   errorText: {
@@ -994,7 +994,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
     fontSize: Typography.body.fontSize,
   },
@@ -1062,7 +1062,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 22,
     fontWeight: '700',
     letterSpacing: -0.3,
@@ -1140,7 +1140,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 33,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   avatarPlaceholder: {
     width: '100%',
@@ -1167,7 +1167,7 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
   },
   levelBadgeText: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontSize: 9,
     fontWeight: '700',
     textTransform: 'uppercase',
@@ -1176,7 +1176,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   partnerName: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: 22,
     fontWeight: '700',
     marginBottom: Spacing.xs,
@@ -1202,7 +1202,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statValue: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
     marginBottom: 2,
@@ -1236,7 +1236,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   benefitsButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
     flex: 1,
@@ -1244,7 +1244,7 @@ const styles = StyleSheet.create({
 
   // Section
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.base,
@@ -1282,7 +1282,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2,
   },
   sectionSubtitle: {
@@ -1309,7 +1309,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   upgradeButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
   },
@@ -1387,11 +1387,11 @@ const styles = StyleSheet.create({
   levelCardName: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.sm,
   },
   currentLevelText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   currentLevelSubtext: {
     color: 'rgba(255, 255, 255, 0.7)',
@@ -1402,7 +1402,7 @@ const styles = StyleSheet.create({
   levelOrderCount: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   levelDays: {
     fontSize: Typography.caption.fontSize,
@@ -1445,7 +1445,7 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: 2,
   },
   infoSubtitle: {
@@ -1500,7 +1500,7 @@ const styles = StyleSheet.create({
   enrollTitle: {
     fontSize: 24,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.md,
     textAlign: 'center',
   },
@@ -1520,7 +1520,7 @@ const styles = StyleSheet.create({
   enrollBenefitRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     ...Platform.select({
@@ -1548,7 +1548,7 @@ const styles = StyleSheet.create({
   enrollBenefitText: {
     flex: 1,
     fontSize: Typography.body.fontSize,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '500',
   },
   enrollButton: {
@@ -1567,7 +1567,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   enrollButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
   },

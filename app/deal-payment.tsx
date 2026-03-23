@@ -194,7 +194,7 @@ const DealPaymentPage: React.FC = () => {
               );
             }}
           >
-            <Ionicons name="close" size={24} color={Colors.nileBlue} />
+            <Ionicons name="close" size={24} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.webViewTitle}>Secure Payment</Text>
           <View style={styles.closeBtn} />
@@ -229,7 +229,7 @@ const DealPaymentPage: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <Text style={styles.headerTitle}>Complete Purchase</Text>
         <View style={styles.backBtn} />
@@ -241,7 +241,7 @@ const DealPaymentPage: React.FC = () => {
           <CachedImage source={dealImage} style={styles.dealImage} contentFit="cover" />
         ) : (
           <View style={[styles.dealImage, styles.placeholderImage]}>
-            <Ionicons name="pricetag" size={40} color={Colors.neutral[400]} />
+            <Ionicons name="pricetag" size={40} color={colors.neutral[400]} />
           </View>
         )}
         <View style={styles.dealInfo}>
@@ -269,13 +269,13 @@ const DealPaymentPage: React.FC = () => {
         <Text style={styles.methodsTitle}>Secure Payment via Stripe</Text>
         <View style={styles.methodsRow}>
           <View style={styles.methodIcon}>
-            <Ionicons name="card" size={20} color={Colors.nileBlue} />
+            <Ionicons name="card" size={20} color={colors.nileBlue} />
           </View>
           <View style={styles.methodIcon}>
-            <Ionicons name="logo-apple" size={20} color={Colors.nileBlue} />
+            <Ionicons name="logo-apple" size={20} color={colors.nileBlue} />
           </View>
           <View style={styles.methodIcon}>
-            <Ionicons name="logo-google" size={20} color={Colors.nileBlue} />
+            <Ionicons name="logo-google" size={20} color={colors.nileBlue} />
           </View>
         </View>
         <Text style={styles.methodsSubtext}>Cards, Apple Pay, Google Pay & more</Text>
@@ -301,7 +301,7 @@ const DealPaymentPage: React.FC = () => {
                 end={{ x: 1, y: 0 }}
                 style={styles.payButtonGradient}
               >
-                <Ionicons name="lock-closed" size={20} color={Colors.background.primary} />
+                <Ionicons name="lock-closed" size={20} color={colors.background.primary} />
                 <Text style={styles.payButtonText}>
                   Pay {getCurrencySymbol(currency)}{amount}
                 </Text>
@@ -321,7 +321,7 @@ const DealPaymentPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -330,9 +330,9 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 60 : 20,
     paddingHorizontal: Spacing.base,
     paddingBottom: 16,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[100],
+    borderBottomColor: colors.neutral[100],
   },
   backBtn: {
     width: 40,
@@ -343,11 +343,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   dealCard: {
     margin: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     shadowColor: '#000',
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
     height: 160,
   },
   placeholderImage: {
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -371,17 +371,17 @@ const styles = StyleSheet.create({
   dealStore: {
     fontSize: 18,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.xs,
   },
   dealLabel: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   summaryCard: {
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     shadowColor: '#000',
@@ -393,7 +393,7 @@ const styles = StyleSheet.create({
   summaryTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.base,
   },
   summaryRow: {
@@ -404,22 +404,22 @@ const styles = StyleSheet.create({
   },
   summaryLabel: {
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   summaryValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.neutral[100],
+    backgroundColor: colors.neutral[100],
     marginVertical: Spacing.sm,
   },
   totalLabel: {
     fontSize: 16,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   totalValue: {
     fontSize: 20,
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   paymentMethods: {
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     alignItems: 'center',
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
   methodsTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.md,
   },
   methodsRow: {
@@ -449,13 +449,13 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   methodsSubtext: {
     fontSize: 12,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   ctaContainer: {
     position: 'absolute',
@@ -483,11 +483,11 @@ const styles = StyleSheet.create({
   payButtonText: {
     fontSize: 17,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   secureText: {
     fontSize: 12,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
     textAlign: 'center',
   },
   processingContainer: {
@@ -497,7 +497,7 @@ const styles = StyleSheet.create({
   processingText: {
     marginTop: Spacing.md,
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
   // WebView styles
   webViewHeader: {
@@ -507,9 +507,9 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 60 : 20,
     paddingHorizontal: Spacing.base,
     paddingBottom: 12,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.neutral[100],
+    borderBottomColor: colors.neutral[100],
   },
   closeBtn: {
     width: 40,
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
   webViewTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   webView: {
     flex: 1,
@@ -533,12 +533,12 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   loadingText: {
     marginTop: Spacing.md,
     fontSize: 14,
-    color: Colors.neutral[500],
+    color: colors.neutral[500],
   },
 });
 

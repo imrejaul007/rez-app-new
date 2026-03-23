@@ -400,7 +400,7 @@ function AccountProfilePage() {
                   {settings?.general.language.toUpperCase()} • {settings?.general.currency}
                 </ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
 
           </View>
@@ -428,8 +428,8 @@ function AccountProfilePage() {
                 accessibilityRole="switch"
                 accessibilityState={{ checked: notificationSettings?.push.enabled || false }}
                 accessibilityHint={`Toggle to ${notificationSettings?.push.enabled ? 'disable' : 'enable'} push notifications`}
-                trackColor={{ false: Colors.border.default, true: colors.brand.purpleSoft }}
-                thumbColor={notificationSettings?.push.enabled ? Colors.brand.purple : Colors.background.secondary}
+                trackColor={{ false: colors.border.default, true: colors.brand.purpleSoft }}
+                thumbColor={notificationSettings?.push.enabled ? Colors.brand.purple : colors.background.secondary}
               />
             </View>
 
@@ -452,8 +452,8 @@ function AccountProfilePage() {
                 accessibilityRole="switch"
                 accessibilityState={{ checked: notificationSettings?.email.enabled || false }}
                 accessibilityHint={`Toggle to ${notificationSettings?.email.enabled ? 'disable' : 'enable'} email notifications`}
-                trackColor={{ false: Colors.border.default, true: colors.brand.purpleSoft }}
-                thumbColor={notificationSettings?.email.enabled ? Colors.brand.purple : Colors.background.secondary}
+                trackColor={{ false: colors.border.default, true: colors.brand.purpleSoft }}
+                thumbColor={notificationSettings?.email.enabled ? Colors.brand.purple : colors.background.secondary}
               />
             </View>
 
@@ -476,8 +476,8 @@ function AccountProfilePage() {
                 accessibilityRole="switch"
                 accessibilityState={{ checked: notificationSettings?.sms.enabled || false }}
                 accessibilityHint={`Toggle to ${notificationSettings?.sms.enabled ? 'disable' : 'enable'} SMS notifications`}
-                trackColor={{ false: Colors.border.default, true: colors.brand.purpleSoft }}
-                thumbColor={notificationSettings?.sms.enabled ? Colors.brand.purple : Colors.background.secondary}
+                trackColor={{ false: colors.border.default, true: colors.brand.purpleSoft }}
+                thumbColor={notificationSettings?.sms.enabled ? Colors.brand.purple : colors.background.secondary}
               />
             </View>
           </View>
@@ -504,7 +504,7 @@ function AccountProfilePage() {
                   {privacySettings?.profileVisibility || 'FRIENDS'}
                 </ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
 
             <View style={styles.divider} />
@@ -529,7 +529,7 @@ function AccountProfilePage() {
                 <ThemedText style={styles.settingValue}>
                   {securitySettings?.twoFactorAuth.enabled ? 'Enabled' : 'Disabled'}
                 </ThemedText>
-                <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+                <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
               </View>
             </Pressable>
 
@@ -564,8 +564,8 @@ function AccountProfilePage() {
                 accessibilityRole="switch"
                 accessibilityState={{ checked: securitySettings?.biometric.fingerprintEnabled || securitySettings?.biometric.faceIdEnabled || false }}
                 accessibilityHint={`Toggle to ${securitySettings?.biometric.fingerprintEnabled ? 'disable' : 'enable'} fingerprint or face ID login`}
-                trackColor={{ false: Colors.border.default, true: colors.brand.purpleSoft }}
-                thumbColor={securitySettings?.biometric.fingerprintEnabled ? Colors.brand.purple : Colors.background.secondary}
+                trackColor={{ false: colors.border.default, true: colors.brand.purpleSoft }}
+                thumbColor={securitySettings?.biometric.fingerprintEnabled ? Colors.brand.purple : colors.background.secondary}
               />
             </View>
           </View>
@@ -598,8 +598,8 @@ function AccountProfilePage() {
                 accessibilityRole="switch"
                 accessibilityState={{ checked: appPreferences?.animations || false }}
                 accessibilityHint={`Toggle to ${appPreferences?.animations ? 'disable' : 'enable'} app animations`}
-                trackColor={{ false: Colors.border.default, true: colors.brand.purpleSoft }}
-                thumbColor={appPreferences?.animations ? Colors.brand.purple : Colors.background.secondary}
+                trackColor={{ false: colors.border.default, true: colors.brand.purpleSoft }}
+                thumbColor={appPreferences?.animations ? Colors.brand.purple : colors.background.secondary}
               />
             </View>
 
@@ -627,8 +627,8 @@ function AccountProfilePage() {
                 accessibilityRole="switch"
                 accessibilityState={{ checked: appPreferences?.sounds || false }}
                 accessibilityHint={`Toggle to ${appPreferences?.sounds ? 'disable' : 'enable'} app sounds`}
-                trackColor={{ false: Colors.border.default, true: colors.brand.purpleSoft }}
-                thumbColor={appPreferences?.sounds ? Colors.brand.purple : Colors.background.secondary}
+                trackColor={{ false: colors.border.default, true: colors.brand.purpleSoft }}
+                thumbColor={appPreferences?.sounds ? Colors.brand.purple : colors.background.secondary}
               />
             </View>
 
@@ -656,8 +656,8 @@ function AccountProfilePage() {
                 accessibilityRole="switch"
                 accessibilityState={{ checked: appPreferences?.hapticFeedback || false }}
                 accessibilityHint={`Toggle to ${appPreferences?.hapticFeedback ? 'disable' : 'enable'} haptic feedback`}
-                trackColor={{ false: Colors.border.default, true: colors.brand.purpleSoft }}
-                thumbColor={appPreferences?.hapticFeedback ? Colors.brand.purple : Colors.background.secondary}
+                trackColor={{ false: colors.border.default, true: colors.brand.purpleSoft }}
+                thumbColor={appPreferences?.hapticFeedback ? Colors.brand.purple : colors.background.secondary}
               />
             </View>
           </View>
@@ -684,7 +684,7 @@ function AccountProfilePage() {
                   Update your information
                 </ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
 
             <View style={styles.divider} />
@@ -705,7 +705,7 @@ function AccountProfilePage() {
                   Update your password
                 </ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
 
             <View style={styles.divider} />
@@ -742,7 +742,7 @@ function AccountProfilePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -775,7 +775,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
@@ -811,7 +811,7 @@ const styles = StyleSheet.create({
   avatarText: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   userInfo: {
     flex: 1,
@@ -819,28 +819,28 @@ const styles = StyleSheet.create({
   userName: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   userEmail: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   userPhone: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   editInput: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     backgroundColor: 'rgba(0,0,0,0.04)',
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: Colors.border?.light || '#E5E7EB',
+    borderColor: colors.border?.light || '#E5E7EB',
   },
   content: {
     flex: 1,
@@ -852,11 +852,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   settingsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
   },
@@ -881,13 +881,13 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   settingSubtitle: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   settingValue: {
     ...Typography.bodySmall,
@@ -902,7 +902,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginLeft: 68,
   },
 });

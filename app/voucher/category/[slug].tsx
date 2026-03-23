@@ -35,7 +35,7 @@ const { width, height } = Dimensions.get('window');
 const COLORS = {
   // Primary
   primary: Colors.gold,
-  primaryDark: Colors.nileBlue,
+  primaryDark: colors.nileBlue,
   primaryLight: 'rgba(255, 205, 87, 0.1)',
   primaryGlow: 'rgba(255, 205, 87, 0.3)',
 
@@ -46,13 +46,13 @@ const COLORS = {
   goldGlow: 'rgba(255, 200, 87, 0.3)',
 
   // Navy (text)
-  navy: Colors.nileBlue,
+  navy: colors.nileBlue,
   slate: '#1F2D3D',
-  muted: Colors.text.tertiary,
+  muted: colors.text.tertiary,
 
   // Surface
-  surface: Colors.background.secondary,
-  white: Colors.background.primary,
+  surface: colors.background.secondary,
+  white: colors.background.primary,
 
   // Glass
   glassWhite: 'rgba(255, 255, 255, 0.7)',

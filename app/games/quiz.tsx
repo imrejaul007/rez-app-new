@@ -205,7 +205,7 @@ function QuizPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   backButton: {
     marginLeft: Platform.OS === 'ios' ? 8 : 16,
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
   completeContainer: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.lg,
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   tournamentBannerValue: {
     fontSize: 18,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   tournamentBannerLabel: {
     fontSize: 10,

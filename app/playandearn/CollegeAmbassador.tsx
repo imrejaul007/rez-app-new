@@ -247,12 +247,12 @@ const CollegeAmbassador = () => {
       case 'Hard':
         return { color: Colors.error, bg: 'rgba(239, 68, 68, 0.1)', border: 'rgba(239, 68, 68, 0.3)' };
       default:
-        return { color: Colors.text.tertiary, bg: 'rgba(107, 114, 128, 0.1)', border: 'rgba(107, 114, 128, 0.3)' };
+        return { color: colors.text.tertiary, bg: 'rgba(107, 114, 128, 0.1)', border: 'rgba(107, 114, 128, 0.3)' };
     }
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: isDark ? colors.text.primary : Colors.background.primary }]}>
+    <View style={[styles.container, { backgroundColor: isDark ? colors.text.primary : colors.background.primary }]}>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
@@ -262,11 +262,11 @@ const CollegeAmbassador = () => {
         <View style={[styles.header, { backgroundColor: isDark ? 'rgba(0,0,0,0.95)' : 'rgba(255,255,255,0.95)' }]}>
           <View style={styles.headerContent}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-              <Ionicons name="arrow-back" size={24} color={isDark ? Colors.text.inverse : Colors.text.primary} />
+              <Ionicons name="arrow-back" size={24} color={isDark ? colors.text.inverse : colors.text.primary} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
-              <Text style={[styles.headerTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>College Ambassador</Text>
-              <Text style={[styles.headerSubtitle, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{myStats.level}</Text>
+              <Text style={[styles.headerTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>College Ambassador</Text>
+              <Text style={[styles.headerSubtitle, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{myStats.level}</Text>
             </View>
             <View style={styles.coinBadge}>
               <Ionicons name="cash" size={16} color={Colors.success} />
@@ -282,38 +282,38 @@ const CollegeAmbassador = () => {
             style={styles.heroCard}
           >
             <View style={styles.statsGrid}>
-              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.primary }]}>
+              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.primary }]}>
                 <View style={styles.statHeader}>
                   <Ionicons name="people" size={16} color={Colors.info} />
-                  <Text style={[styles.statLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Referrals</Text>
+                  <Text style={[styles.statLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Referrals</Text>
                 </View>
-                <Text style={[styles.statValue, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{myStats.totalReferrals}</Text>
+                <Text style={[styles.statValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{myStats.totalReferrals}</Text>
               </View>
-              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.primary }]}>
+              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.primary }]}>
                 <View style={styles.statHeader}>
                   <Ionicons name="trophy" size={16} color={Colors.warning} />
-                  <Text style={[styles.statLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Rank</Text>
+                  <Text style={[styles.statLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Rank</Text>
                 </View>
-                <Text style={[styles.statValue, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>#{myStats.currentRank}</Text>
+                <Text style={[styles.statValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>#{myStats.currentRank}</Text>
               </View>
-              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.primary }]}>
+              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.primary }]}>
                 <View style={styles.statHeader}>
                   <Ionicons name="calendar" size={16} color={colors.brand.purpleMedium} />
-                  <Text style={[styles.statLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Events</Text>
+                  <Text style={[styles.statLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Events</Text>
                 </View>
-                <Text style={[styles.statValue, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{myStats.eventsAttended}</Text>
+                <Text style={[styles.statValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{myStats.eventsAttended}</Text>
               </View>
-              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.primary }]}>
+              <View style={[styles.statCard, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.primary }]}>
                 <View style={styles.statHeader}>
                   <Ionicons name="cash" size={16} color={Colors.success} />
-                  <Text style={[styles.statLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>This Month</Text>
+                  <Text style={[styles.statLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>This Month</Text>
                 </View>
-                <Text style={[styles.statValue, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>+{myStats.thisMonthEarned}</Text>
+                <Text style={[styles.statValue, { color: isDark ? colors.text.inverse : colors.text.primary }]}>+{myStats.thisMonthEarned}</Text>
               </View>
             </View>
             <View style={[styles.progressCard, { backgroundColor: isDark ? 'rgba(59, 130, 246, 0.2)' : 'rgba(59, 130, 246, 0.2)' }]}>
-              <Text style={[styles.progressLabel, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Progress to Gold Ambassador</Text>
-              <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+              <Text style={[styles.progressLabel, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Progress to Gold Ambassador</Text>
+              <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
                 <LinearGradient
                   colors={[Colors.info, colors.brand.purpleMedium]}
                   start={{ x: 0, y: 0 }}
@@ -335,11 +335,11 @@ const CollegeAmbassador = () => {
               style={[
                 styles.tab,
                 activeTab === tab.id ? styles.tabActive : styles.tabInactive,
-                { backgroundColor: activeTab === tab.id ? Colors.info : isDark ? 'rgba(255,255,255,0.1)' : Colors.background.secondary }
+                { backgroundColor: activeTab === tab.id ? Colors.info : isDark ? 'rgba(255,255,255,0.1)' : colors.background.secondary }
               ]}
             >
-              {tab.icon && <Ionicons name={tab.icon as any} size={16} color={activeTab === tab.id ? Colors.text.inverse : (isDark ? Colors.text.tertiary : Colors.text.tertiary)} />}
-              <Text style={[styles.tabText, { color: activeTab === tab.id ? Colors.text.inverse : (isDark ? Colors.text.tertiary : Colors.text.tertiary) }]}>
+              {tab.icon && <Ionicons name={tab.icon as any} size={16} color={activeTab === tab.id ? colors.text.inverse : (isDark ? colors.text.tertiary : colors.text.tertiary)} />}
+              <Text style={[styles.tabText, { color: activeTab === tab.id ? colors.text.inverse : (isDark ? colors.text.tertiary : colors.text.tertiary) }]}>
                 {tab.label} {tab.count !== undefined && `(${tab.count})`}
               </Text>
             </Pressable>
@@ -352,7 +352,7 @@ const CollegeAmbassador = () => {
             {ambassadorTasks.map((task) => {
               const difficultyStyle = getDifficultyStyle(task.difficulty);
               return (
-                <View key={task.id} style={[styles.taskCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+                <View key={task.id} style={[styles.taskCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
                   <View style={styles.taskHeader}>
                     <View style={[styles.taskIconContainer, { backgroundColor: 'rgba(59, 130, 246, 0.2)' }]}>
                       <Ionicons name={task.icon as any} size={28} color={Colors.info} />
@@ -362,9 +362,9 @@ const CollegeAmbassador = () => {
                         <View style={[styles.badge, { backgroundColor: difficultyStyle.bg, borderColor: difficultyStyle.border }]}>
                           <Text style={[styles.badgeText, { color: difficultyStyle.color }]}>{task.difficulty}</Text>
                         </View>
-                        <View style={[styles.badge, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.background.secondary }]}>
-                          <Ionicons name="time" size={12} color={isDark ? Colors.text.tertiary : Colors.text.tertiary} />
-                          <Text style={[styles.badgeText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{task.deadline}</Text>
+                        <View style={[styles.badge, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.background.secondary }]}>
+                          <Ionicons name="time" size={12} color={isDark ? colors.text.tertiary : colors.text.tertiary} />
+                          <Text style={[styles.badgeText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{task.deadline}</Text>
                         </View>
                         {task.featured && (
                           <View style={[styles.badge, { backgroundColor: 'rgba(245, 158, 11, 0.2)' }]}>
@@ -373,8 +373,8 @@ const CollegeAmbassador = () => {
                           </View>
                         )}
                       </View>
-                      <Text style={[styles.taskTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{task.title}</Text>
-                      <Text style={[styles.taskDescription, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{task.description}</Text>
+                      <Text style={[styles.taskTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{task.title}</Text>
+                      <Text style={[styles.taskDescription, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{task.description}</Text>
                     </View>
                   </View>
 
@@ -385,7 +385,7 @@ const CollegeAmbassador = () => {
                         {task.progress}/{task.total}
                       </Text>
                     </View>
-                    <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+                    <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
                       <LinearGradient
                         colors={[Colors.info, colors.brand.purpleMedium]}
                         start={{ x: 0, y: 0 }}
@@ -396,12 +396,12 @@ const CollegeAmbassador = () => {
                   </View>
 
                   {task.requirements && (
-                    <View style={[styles.requirementsContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : Colors.background.secondary }]}>
-                      <Text style={[styles.requirementsTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Requirements:</Text>
+                    <View style={[styles.requirementsContainer, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : colors.background.secondary }]}>
+                      <Text style={[styles.requirementsTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Requirements:</Text>
                       {task.requirements.map((req, idx) => (
                         <View key={idx} style={styles.requirementItem}>
                           <View style={[styles.requirementDot, { backgroundColor: Colors.info }]} />
-                          <Text style={[styles.requirementText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{req}</Text>
+                          <Text style={[styles.requirementText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{req}</Text>
                         </View>
                       ))}
                     </View>
@@ -443,7 +443,7 @@ const CollegeAmbassador = () => {
         {activeTab === 'events' && (
           <View style={styles.content}>
             {upcomingEvents.map((event) => (
-              <View key={event.id} style={[styles.eventCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+              <View key={event.id} style={[styles.eventCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
                 <View style={styles.eventHeader}>
                   <View style={[styles.eventIconContainer, { backgroundColor: 'rgba(168, 85, 247, 0.2)' }]}>
                     <Text style={styles.eventEmoji}>🎉</Text>
@@ -459,15 +459,15 @@ const CollegeAmbassador = () => {
                         </View>
                       )}
                     </View>
-                    <Text style={[styles.eventTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{event.title}</Text>
+                    <Text style={[styles.eventTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{event.title}</Text>
                     <View style={styles.eventDetails}>
                       <View style={styles.eventDetailItem}>
-                        <Ionicons name="calendar" size={14} color={isDark ? Colors.text.tertiary : Colors.text.tertiary} />
-                        <Text style={[styles.eventDetailText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{event.date}</Text>
+                        <Ionicons name="calendar" size={14} color={isDark ? colors.text.tertiary : colors.text.tertiary} />
+                        <Text style={[styles.eventDetailText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{event.date}</Text>
                       </View>
                       <View style={styles.eventDetailItem}>
-                        <Ionicons name="location" size={14} color={isDark ? Colors.text.tertiary : Colors.text.tertiary} />
-                        <Text style={[styles.eventDetailText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{event.location}</Text>
+                        <Ionicons name="location" size={14} color={isDark ? colors.text.tertiary : colors.text.tertiary} />
+                        <Text style={[styles.eventDetailText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{event.location}</Text>
                       </View>
                     </View>
                   </View>
@@ -480,7 +480,7 @@ const CollegeAmbassador = () => {
                       {event.participants}/{event.maxParticipants}
                     </Text>
                   </View>
-                  <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+                  <View style={[styles.progressBar, { backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
                     <LinearGradient
                       colors={[colors.brand.purpleMedium, colors.brand.pink]}
                       start={{ x: 0, y: 0 }}
@@ -509,7 +509,7 @@ const CollegeAmbassador = () => {
                         <Text style={styles.registerButtonText}>Register</Text>
                       </LinearGradient>
                     ) : (
-                      <Text style={[styles.registerButtonText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>Waitlist</Text>
+                      <Text style={[styles.registerButtonText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>Waitlist</Text>
                     )}
                   </Pressable>
                 </View>
@@ -527,13 +527,13 @@ const CollegeAmbassador = () => {
                 style={[
                   styles.leaderboardCard,
                   ambassador.highlight && { backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : Colors.successScale[50], borderColor: Colors.success, borderWidth: 2 },
-                  !ambassador.highlight && { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }
+                  !ambassador.highlight && { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }
                 ]}
               >
-                <Text style={[styles.rankText, { color: Colors.text.tertiary }]}>#{ambassador.rank}</Text>
+                <Text style={[styles.rankText, { color: colors.text.tertiary }]}>#{ambassador.rank}</Text>
                 <View style={styles.leaderboardInfo}>
-                  <Text style={[styles.leaderboardName, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{ambassador.name}</Text>
-                  <Text style={[styles.leaderboardCollege, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{ambassador.college}</Text>
+                  <Text style={[styles.leaderboardName, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{ambassador.name}</Text>
+                  <Text style={[styles.leaderboardCollege, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{ambassador.college}</Text>
                   <Text style={[styles.leaderboardReferrals, { color: Colors.info }]}>{ambassador.referrals} referrals</Text>
                 </View>
                 <View style={styles.leaderboardCoins}>
@@ -550,12 +550,12 @@ const CollegeAmbassador = () => {
           <View style={styles.content}>
             <View style={styles.perksGrid}>
               {ambassadorPerks.map((perk, idx) => (
-                <View key={idx} style={[styles.perkCard, { backgroundColor: isDark ? Colors.text.primary : Colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : Colors.border.default }]}>
+                <View key={idx} style={[styles.perkCard, { backgroundColor: isDark ? colors.text.primary : colors.background.primary, borderColor: isDark ? 'rgba(255,255,255,0.1)' : colors.border.default }]}>
                   <View style={[styles.perkIconContainer, { backgroundColor: perk.bg }]}>
                     <Ionicons name={perk.icon as any} size={28} color={perk.color} />
                   </View>
-                  <Text style={[styles.perkTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>{perk.title}</Text>
-                  <Text style={[styles.perkDescription, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{perk.description}</Text>
+                  <Text style={[styles.perkTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>{perk.title}</Text>
+                  <Text style={[styles.perkDescription, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{perk.description}</Text>
                 </View>
               ))}
             </View>
@@ -563,7 +563,7 @@ const CollegeAmbassador = () => {
             <View style={[styles.exclusiveCard, { backgroundColor: isDark ? 'rgba(245, 158, 11, 0.1)' : 'rgba(245, 158, 11, 0.1)', borderColor: isDark ? 'rgba(245, 158, 11, 0.3)' : 'rgba(245, 158, 11, 0.3)' }]}>
               <View style={styles.exclusiveHeader}>
                 <Ionicons name="flash" size={20} color={Colors.warning} />
-                <Text style={[styles.exclusiveTitle, { color: isDark ? Colors.text.inverse : Colors.text.primary }]}>Exclusive Benefits</Text>
+                <Text style={[styles.exclusiveTitle, { color: isDark ? colors.text.inverse : colors.text.primary }]}>Exclusive Benefits</Text>
               </View>
               {[
                 `Direct mentorship from ${BRAND.APP_NAME} team`,
@@ -574,7 +574,7 @@ const CollegeAmbassador = () => {
               ].map((benefit, idx) => (
                 <View key={idx} style={styles.benefitItem}>
                   <Ionicons name="checkmark-circle" size={16} color={Colors.success} />
-                  <Text style={[styles.benefitText, { color: isDark ? Colors.text.tertiary : Colors.text.tertiary }]}>{benefit}</Text>
+                  <Text style={[styles.benefitText, { color: isDark ? colors.text.tertiary : colors.text.tertiary }]}>{benefit}</Text>
                 </View>
               ))}
             </View>
@@ -836,7 +836,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   startButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -904,7 +904,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   registerButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },

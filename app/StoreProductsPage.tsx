@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 // StoreProductsPage.tsx
 // Displays all products for a specific store in an Amazon-style grid layout.
 // Orchestrates SearchHeader, FilterPanel, ActiveFiltersBar, and ProductGrid components.
@@ -202,12 +203,12 @@ function StoreProductsPage() {
       <Stack.Screen options={{ headerShown: false }} />
       <ErrorBoundary onError={handleErrorBoundaryError}>
         <ThemedView style={styles.container}>
-          <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+          <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
           {/* Network Status Indicator */}
           {data.isOffline && (
             <View style={styles.networkBanner}>
-              <Ionicons name="cloud-offline-outline" size={16} color={Colors.text.inverse} />
+              <Ionicons name="cloud-offline-outline" size={16} color={colors.text.inverse} />
               <ThemedText style={styles.networkBannerText}>
                 No internet connection
               </ThemedText>
@@ -216,7 +217,7 @@ function StoreProductsPage() {
 
           {/* Gradient Header */}
           <LinearGradient
-            colors={[Colors.nileBlue, Colors.secondary[500]]}
+            colors={[colors.nileBlue, Colors.secondary[500]]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={[styles.headerGradient, { paddingTop: topPadding + 12 }]}
@@ -233,7 +234,7 @@ function StoreProductsPage() {
                   accessibilityRole="button"
                 >
                   <View style={styles.iconButtonBackground}>
-                    <Ionicons name="chevron-back" size={22} color={Colors.text.inverse} />
+                    <Ionicons name="chevron-back" size={22} color={colors.text.inverse} />
                   </View>
                 </Pressable>
               </Animated.View>
@@ -260,7 +261,7 @@ function StoreProductsPage() {
                     accessibilityRole="button"
                   >
                     <View style={styles.iconButtonBackground}>
-                      <Ionicons name="star" size={22} color={Colors.text.inverse} />
+                      <Ionicons name="star" size={22} color={colors.text.inverse} />
                     </View>
                   </Pressable>
                 </Animated.View>
@@ -275,7 +276,7 @@ function StoreProductsPage() {
                     accessibilityRole="button"
                   >
                     <View style={styles.iconButtonBackground}>
-                      <Ionicons name="heart" size={22} color={Colors.text.inverse} />
+                      <Ionicons name="heart" size={22} color={colors.text.inverse} />
                     </View>
                   </Pressable>
                 </Animated.View>
@@ -290,7 +291,7 @@ function StoreProductsPage() {
                     accessibilityRole="button"
                   >
                     <View style={styles.iconButtonBackground}>
-                      <Ionicons name="bag" size={22} color={Colors.text.inverse} />
+                      <Ionicons name="bag" size={22} color={colors.text.inverse} />
                       {cartItemCount > 0 && (
                         <View style={styles.badge}>
                           <Text style={styles.badgeText}>
@@ -395,7 +396,7 @@ function StoreProductsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   networkBanner: {
     backgroundColor: Colors.error,
     flexDirection: 'row',
@@ -405,7 +406,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     gap: Spacing.sm },
   networkBannerText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600' },
   headerGradient: {
@@ -438,7 +439,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 2 },
   headerSubtitle: {
     ...Typography.body,
@@ -460,11 +461,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: Spacing.xs,
     borderWidth: 2,
-    borderColor: Colors.nileBlue },
+    borderColor: colors.nileBlue },
   badgeText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse } });
+    color: colors.text.inverse } });
 
 const MemoizedStoreProductsPage = React.memo(StoreProductsPage);
 export default withErrorBoundary(MemoizedStoreProductsPage, 'Store Products');

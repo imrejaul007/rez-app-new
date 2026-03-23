@@ -135,17 +135,17 @@ function SubscriptionManagePage() {
         onPress={() => router.push('/subscription/plans')}
        
       >
-        <View style={[styles.benefitIcon, { backgroundColor: Colors.border.default }]}>
+        <View style={[styles.benefitIcon, { backgroundColor: colors.border.default }]}>
           <View style={styles.lockOverlay}>
-            <Ionicons name="lock-closed" size={12} color={Colors.text.tertiary} />
+            <Ionicons name="lock-closed" size={12} color={colors.text.tertiary} />
           </View>
-          <Ionicons name={icon as any} size={20} color={Colors.text.tertiary} />
+          <Ionicons name={icon as any} size={20} color={colors.text.tertiary} />
         </View>
         <View style={{ flex: 1 }}>
           <ThemedText style={styles.benefitTextInactive}>{title}</ThemedText>
           <ThemedText style={styles.upgradeHint}>Upgrade to unlock</ThemedText>
         </View>
-        <Ionicons name="chevron-forward" size={16} color={Colors.border.default} />
+        <Ionicons name="chevron-forward" size={16} color={colors.border.default} />
       </Pressable>
     );
   };
@@ -162,7 +162,7 @@ function SubscriptionManagePage() {
       <LinearGradient colors={tierGradient as any} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Manage Subscription</ThemedText>
           <View style={styles.headerRight} />
@@ -186,13 +186,13 @@ function SubscriptionManagePage() {
         {/* Current Plan Card */}
         <View style={styles.currentPlanCard}>
           <LinearGradient colors={tierGradient as any} style={styles.planHeaderGradient}>
-            <Ionicons name={tierIcon as any} size={48} color={Colors.text.inverse} />
+            <Ionicons name={tierIcon as any} size={48} color={colors.text.inverse} />
             <ThemedText style={styles.planTierName}>
               {currentTier.charAt(0).toUpperCase() + currentTier.slice(1)} Plan
             </ThemedText>
             {isActive && (
               <View style={styles.statusBadge}>
-                <Ionicons name="checkmark-circle" size={16} color={Colors.text.inverse} />
+                <Ionicons name="checkmark-circle" size={16} color={colors.text.inverse} />
                 <ThemedText style={styles.statusText}>Active</ThemedText>
               </View>
             )}
@@ -227,7 +227,7 @@ function SubscriptionManagePage() {
                 </ThemedText>
                 <Pressable style={styles.upgradePromptButton} onPress={handleUpgrade}>
                   <ThemedText style={styles.upgradePromptButtonText}>View Plans</ThemedText>
-                  <Ionicons name="arrow-forward" size={16} color={Colors.text.inverse} />
+                  <Ionicons name="arrow-forward" size={16} color={colors.text.inverse} />
                 </Pressable>
               </View>
             )}
@@ -366,7 +366,7 @@ function SubscriptionManagePage() {
                   See payments and download invoices
                 </ThemedText>
               </View>
-              <Ionicons name="chevron-forward" size={24} color={Colors.text.tertiary} />
+              <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
             </Pressable>
 
             {currentTier === 'premium' && (
@@ -378,7 +378,7 @@ function SubscriptionManagePage() {
                     Get 3x cashback and exclusive benefits
                   </ThemedText>
                 </View>
-                <Ionicons name="chevron-forward" size={24} color={Colors.text.tertiary} />
+                <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
               </Pressable>
             )}
 
@@ -400,7 +400,7 @@ function SubscriptionManagePage() {
                       You'll keep benefits until period ends
                     </ThemedText>
                   </View>
-                  <Ionicons name="chevron-forward" size={24} color={Colors.text.tertiary} />
+                  <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
                 </>
               )}
             </Pressable>
@@ -414,7 +414,7 @@ function SubscriptionManagePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
@@ -444,7 +444,7 @@ const styles = StyleSheet.create({
   },
   currentPlanCard: {
     margin: Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
     ...Shadows.strong,
@@ -454,7 +454,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   planTierName: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h1,
     fontWeight: 'bold',
     marginTop: Spacing.md,
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   statusText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
   },
@@ -483,16 +483,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   planDetailLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   planDetailValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   upgradePrompt: {
     alignItems: 'center',
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
   },
   upgradePromptText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.base,
   },
@@ -514,7 +514,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   upgradePromptButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   statsGrid: {
@@ -536,7 +536,7 @@ const styles = StyleSheet.create({
   statCard: {
     flex: 1,
     minWidth: '47%',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     flexDirection: 'row',
@@ -557,15 +557,15 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   statTitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   roiCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginTop: Spacing.md,
@@ -574,7 +574,7 @@ const styles = StyleSheet.create({
   roiTitle: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   roiContent: {
@@ -588,23 +588,23 @@ const styles = StyleSheet.create({
   },
   roiLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   roiValue: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   roiTotalRow: {
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     marginTop: Spacing.sm,
     paddingTop: Spacing.md,
   },
   roiTotalLabel: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   roiTotalValue: {
     ...Typography.h4,
@@ -624,7 +624,7 @@ const styles = StyleSheet.create({
     color: Colors.success,
   },
   benefitsContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     gap: Spacing.md,
@@ -645,24 +645,24 @@ const styles = StyleSheet.create({
   benefitText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   benefitTextInactive: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   upgradeHint: {
     ...Typography.caption,
-    color: Colors.border.default,
+    color: colors.border.default,
     marginTop: 1,
   },
   lockOverlay: {
     position: 'absolute',
     top: -2,
     right: -2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.sm,
     padding: 1,
     zIndex: 1,
@@ -676,11 +676,11 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   dividerText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   activeBadge: {
@@ -697,7 +697,7 @@ const styles = StyleSheet.create({
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -710,11 +710,11 @@ const styles = StyleSheet.create({
   actionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   actionSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   cancelButton: {

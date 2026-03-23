@@ -179,7 +179,7 @@ function AboutPage() {
             accessibilityLabel="Email support at rezapp dot com"
             accessibilityRole="link"
           >
-            <Ionicons name="mail-outline" size={20} color={Colors.text.secondary} />
+            <Ionicons name="mail-outline" size={20} color={colors.text.secondary} />
             <ThemedText style={styles.contactText}>support@nuqtaapp.com</ThemedText>
           </Pressable>
           <Pressable
@@ -189,7 +189,7 @@ function AboutPage() {
             accessibilityLabel="Visit our website"
             accessibilityRole="link"
           >
-            <Ionicons name="globe-outline" size={20} color={Colors.text.secondary} />
+            <Ionicons name="globe-outline" size={20} color={colors.text.secondary} />
             <ThemedText style={styles.contactText}>nuqtaapp.com</ThemedText>
           </Pressable>
         </View>
@@ -211,7 +211,7 @@ function AboutPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -252,7 +252,7 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.base,
@@ -264,11 +264,11 @@ const styles = StyleSheet.create({
   },
   tagline: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
   card: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -282,11 +282,11 @@ const styles = StyleSheet.create({
   },
   cardTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   cardDescription: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 22,
   },
   versionInfo: {
@@ -295,7 +295,7 @@ const styles = StyleSheet.create({
   },
   versionText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   socialLinks: {
     flexDirection: 'row',
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   },
   contactText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   footer: {
     alignItems: 'center',
@@ -327,12 +327,12 @@ const styles = StyleSheet.create({
   },
   copyright: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   madeWith: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

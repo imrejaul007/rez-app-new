@@ -107,7 +107,7 @@ const ComparePage = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top']}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
         {/* Header */}
         <View style={styles.header}>
@@ -115,7 +115,7 @@ const ComparePage = () => {
             style={styles.backButton}
             onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
           >
-            <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+            <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <View style={styles.headerContent}>
             <Text style={styles.headerTitle}>Compare & Decide</Text>
@@ -159,7 +159,7 @@ const ComparePage = () => {
           {/* Empty State */}
           {!loading && !error && comparisons.length === 0 && (
             <View style={styles.centerContainer}>
-              <Ionicons name="git-compare-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="git-compare-outline" size={48} color={colors.text.tertiary} />
               <Text style={styles.emptyTitle}>No Comparisons Available</Text>
               <Text style={styles.emptySubtext}>
                 Start shopping to see price comparisons across stores
@@ -208,7 +208,7 @@ const ComparePage = () => {
                         <CachedImage source={store.logo} style={styles.storeLogo} />
                       ) : (
                         <View style={[styles.storeLogo, styles.storeLogoPlaceholder]}>
-                          <Ionicons name="storefront" size={16} color={Colors.text.tertiary} />
+                          <Ionicons name="storefront" size={16} color={colors.text.tertiary} />
                         </View>
                       )}
                       <Text style={styles.storeName}>{store.name}</Text>
@@ -251,7 +251,7 @@ const ComparePage = () => {
                 onPress={() => comparison.stores[0] && navigateToStore(comparison.stores[0].id)}
               >
                 <Text style={styles.viewStoreText}>View Best Deal</Text>
-                <Ionicons name="arrow-forward" size={16} color={Colors.text.inverse} />
+                <Ionicons name="arrow-forward" size={16} color={colors.text.inverse} />
               </Pressable>
             </View>
           ))}
@@ -298,23 +298,23 @@ const ComparePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
     gap: Spacing.md,
   },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -324,12 +324,12 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   infoBanner: {
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
   },
   errorText: {
@@ -379,30 +379,30 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.xl,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '600',
   },
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.base,
   },
   emptySubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
     textAlign: 'center',
     paddingHorizontal: 40,
   },
   comparisonCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -413,12 +413,12 @@ const styles = StyleSheet.create({
   comparisonName: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   comparisonCategory: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   bestDealBadge: {
@@ -442,19 +442,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingBottom: 10,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   tableHeaderText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   storeRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.background.secondary,
+    borderBottomColor: colors.background.secondary,
   },
   storeRowBest: {
     backgroundColor: Colors.successScale[50],
@@ -471,7 +471,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   storeLogoPlaceholder: {
     justifyContent: 'center',
@@ -480,7 +480,7 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginLeft: 10,
     flex: 1,
   },
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   cashbackBadge: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 10,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.sm,
@@ -500,10 +500,10 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   cashbackTextBest: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -514,12 +514,12 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   naText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   viewStoreButton: {
     flexDirection: 'row',
@@ -534,20 +534,20 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   howItWorksCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginTop: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   howItWorksTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginBottom: Spacing.base,
   },
   howItWorksItem: {
@@ -575,11 +575,11 @@ const styles = StyleSheet.create({
   stepTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   stepDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
 });

@@ -29,9 +29,9 @@ const { width } = Dimensions.get('window');
 
 const COLORS = {
   primary: Colors.gold,
-  navy: Colors.nileBlue,
-  surface: Colors.background.secondary,
-  cardBg: Colors.background.primary,
+  navy: colors.nileBlue,
+  surface: colors.background.secondary,
+  cardBg: colors.background.primary,
 };
 
 const GAME_COLORS: [string, string][] = [
@@ -111,7 +111,7 @@ function GamesPage() {
         options={{
           title: 'Games',
           headerStyle: { backgroundColor: COLORS.navy },
-          headerTintColor: Colors.text.inverse,
+          headerTintColor: colors.text.inverse,
           headerTitleStyle: { fontWeight: 'bold' },
         }}
       />
@@ -251,7 +251,7 @@ function GamesPage() {
                       {!isExhausted && (
                         <View style={[styles.gamePlayBtn, { backgroundColor: colors[0] }]}>
                           <Text style={styles.gamePlayBtnText}>Play Now</Text>
-                          <Ionicons name="arrow-forward" size={14} color={Colors.text.inverse} />
+                          <Ionicons name="arrow-forward" size={14} color={colors.text.inverse} />
                         </View>
                       )}
                       {isExhausted && (
@@ -300,7 +300,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 2,
   },
   headerSubtitle: {
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
   coinsBadgeText: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statsRow: {
     flexDirection: 'row',
@@ -342,7 +342,7 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 2,
   },
   statLabel: {
@@ -368,14 +368,14 @@ const styles = StyleSheet.create({
     width: (width - 44) / 2,
   },
   gameCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 18,
     padding: 14,
     borderWidth: 1,
     borderColor: colors.tint.slate,
     ...Platform.select({
       ios: {
-        shadowColor: Colors.nileBlue,
+        shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.08,
         shadowRadius: 10,
@@ -469,13 +469,13 @@ const styles = StyleSheet.create({
   gamePlayBtnText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   skeletonCard: {
     width: (width - 44) / 2,
     gap: 10,
     padding: 14,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 18,
   },
   emptyState: {

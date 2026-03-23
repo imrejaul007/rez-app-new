@@ -340,7 +340,7 @@ function HeroesZonePage() {
                       <CachedImage source={deal.store.logo} style={styles.dealLogo} contentFit="contain" />
                     ) : (
                       <View style={styles.dealLogoPlaceholder}>
-                        <Ionicons name="storefront" size={20} color={Colors.text.tertiary} />
+                        <Ionicons name="storefront" size={20} color={colors.text.tertiary} />
                       </View>
                     )}
                     <View style={styles.dealItemContent}>
@@ -465,7 +465,7 @@ function HeroesZonePage() {
             profiles.map((profile) => renderProfileCard(profile))
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="people-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="people-outline" size={48} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyStateText}>No special profiles available</ThemedText>
             </View>
           )}
@@ -506,9 +506,9 @@ function HeroesZonePage() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   centerContent: { justifyContent: 'center', alignItems: 'center', padding: Spacing.xl },
-  errorText: { ...Typography.body, color: Colors.text.secondary, textAlign: 'center', marginTop: Spacing.md, marginBottom: Spacing.lg },
+  errorText: { ...Typography.body, color: colors.text.secondary, textAlign: 'center', marginTop: Spacing.md, marginBottom: Spacing.lg },
   retryButton: { backgroundColor: Colors.primary[600], paddingHorizontal: Spacing.lg, paddingVertical: Spacing.md, borderRadius: BorderRadius.md },
   retryButtonText: { ...Typography.button, color: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0 },
@@ -527,12 +527,12 @@ const styles = StyleSheet.create({
   heroContent: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.base },
   heroIconContainer: { width: 64, height: 64, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(129, 140, 248, 0.3)', alignItems: 'center', justifyContent: 'center', marginRight: Spacing.base },
   heroTextContainer: { flex: 1 },
-  heroTitle: { ...Typography.h4, color: Colors.text.primary, fontWeight: '600', marginBottom: 2 },
-  heroSubtitle: { ...Typography.bodySmall, color: Colors.text.secondary },
+  heroTitle: { ...Typography.h4, color: colors.text.primary, fontWeight: '600', marginBottom: 2 },
+  heroSubtitle: { ...Typography.bodySmall, color: colors.text.secondary },
   profileIconsGrid: { flexDirection: 'row', gap: Spacing.sm, marginTop: Spacing.base },
   profileIconCard: { flex: 1, padding: Spacing.sm, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(255, 255, 255, 0.05)', alignItems: 'center' },
   profileIconEmoji: { fontSize: 24, marginBottom: 4 },
-  profileIconLabel: { ...Typography.caption, color: Colors.text.tertiary, textAlign: 'center' },
+  profileIconLabel: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'center' },
   profilesSection: { paddingHorizontal: Spacing.base, gap: Spacing.md },
   profileCard: { borderRadius: BorderRadius.lg, overflow: 'hidden', ...Shadows.medium },
   profileHeader: { flexDirection: 'row', alignItems: 'center', padding: Spacing.base, gap: Spacing.base },
@@ -542,38 +542,38 @@ const styles = StyleSheet.create({
   profileTitleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginBottom: 2 },
   profileTitle: { ...Typography.h4, color: colors.background.primary, fontWeight: '600' },
   profileSubtitle: { ...Typography.bodySmall, color: 'rgba(255, 255, 255, 0.7)' },
-  profileContent: { backgroundColor: Colors.background.primary, padding: Spacing.base },
+  profileContent: { backgroundColor: colors.background.primary, padding: Spacing.base },
   verificationCard: { padding: Spacing.base, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(255, 255, 255, 0.05)', marginBottom: Spacing.base },
   verificationContent: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   verificationText: { flex: 1 },
-  verificationTitle: { ...Typography.body, color: Colors.text.primary, fontWeight: '600', marginBottom: 2 },
-  verificationSubtitle: { ...Typography.caption, color: Colors.text.tertiary },
+  verificationTitle: { ...Typography.body, color: colors.text.primary, fontWeight: '600', marginBottom: 2 },
+  verificationSubtitle: { ...Typography.caption, color: colors.text.tertiary },
   verifyButton: { backgroundColor: colors.warningScale[400], paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.md },
   verifyButtonText: { ...Typography.labelSmall, color: colors.background.primary, fontWeight: '600' },
   verifiedCard: { flexDirection: 'row', alignItems: 'center', padding: Spacing.md, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(46, 204, 113, 0.1)', borderWidth: 1, borderColor: 'rgba(46, 204, 113, 0.2)', marginBottom: Spacing.base, gap: Spacing.sm },
   verifiedText: { ...Typography.bodySmall, color: Colors.success },
-  dealsTitle: { ...Typography.label, color: Colors.text.tertiary, marginBottom: Spacing.md },
+  dealsTitle: { ...Typography.label, color: colors.text.tertiary, marginBottom: Spacing.md },
   dealsList: { gap: Spacing.sm },
   loadingDeals: { gap: Spacing.sm },
   skeletonDeal: { height: 60, borderRadius: BorderRadius.lg, backgroundColor: Colors.gray[200] },
   skeletonHeader: { height: 80, borderRadius: BorderRadius.lg, backgroundColor: Colors.gray[200] },
   dealItem: { flexDirection: 'row', alignItems: 'center', padding: Spacing.md, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(255, 255, 255, 0.05)', gap: Spacing.md },
   dealItemDisabled: { opacity: 0.5 },
-  dealLogo: { width: 40, height: 40, borderRadius: BorderRadius.md, backgroundColor: Colors.background.primary },
+  dealLogo: { width: 40, height: 40, borderRadius: BorderRadius.md, backgroundColor: colors.background.primary },
   dealLogoPlaceholder: { width: 40, height: 40, borderRadius: BorderRadius.md, backgroundColor: Colors.gray[100], alignItems: 'center', justifyContent: 'center' },
   dealItemContent: { flex: 1 },
-  dealItemStore: { ...Typography.label, color: Colors.text.primary, fontWeight: '600', marginBottom: 2 },
-  dealItemTitle: { ...Typography.caption, color: Colors.text.tertiary },
+  dealItemStore: { ...Typography.label, color: colors.text.primary, fontWeight: '600', marginBottom: 2 },
+  dealItemTitle: { ...Typography.caption, color: colors.text.tertiary },
   dealItemDiscount: { backgroundColor: 'rgba(99, 102, 241, 0.15)', paddingHorizontal: Spacing.sm, paddingVertical: 4, borderRadius: BorderRadius.sm },
   dealItemDiscountText: { ...Typography.labelSmall, color: colors.brand.indigo, fontWeight: '700' },
-  noDealsText: { ...Typography.body, color: Colors.text.tertiary, textAlign: 'center', padding: Spacing.md },
-  verificationHint: { ...Typography.caption, color: Colors.text.tertiary, textAlign: 'center', marginTop: Spacing.base },
+  noDealsText: { ...Typography.body, color: colors.text.tertiary, textAlign: 'center', padding: Spacing.md },
+  verificationHint: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'center', marginTop: Spacing.base },
   emptyState: { alignItems: 'center', padding: Spacing.xl },
-  emptyStateText: { ...Typography.body, color: Colors.text.tertiary, marginTop: Spacing.md },
+  emptyStateText: { ...Typography.body, color: colors.text.tertiary, marginTop: Spacing.md },
   supportCard: { margin: Spacing.base, padding: Spacing.base, backgroundColor: 'rgba(255, 255, 255, 0.05)', borderRadius: BorderRadius.lg, alignItems: 'center' },
-  supportText: { ...Typography.bodySmall, color: Colors.text.tertiary, textAlign: 'center' },
+  supportText: { ...Typography.bodySmall, color: colors.text.tertiary, textAlign: 'center' },
   supportLink: { color: colors.brand.indigo, fontWeight: '600' },
-  fixedCTA: { position: 'absolute', bottom: 70, left: 0, right: 0, padding: Spacing.base, backgroundColor: Colors.background.primary, borderTopWidth: 1, borderTopColor: Colors.border.light, ...Shadows.medium },
+  fixedCTA: { position: 'absolute', bottom: 70, left: 0, right: 0, padding: Spacing.base, backgroundColor: colors.background.primary, borderTopWidth: 1, borderTopColor: colors.border.light, ...Shadows.medium },
   ctaButton: { borderRadius: BorderRadius.lg, overflow: 'hidden' },
   ctaGradient: { paddingVertical: Spacing.base, alignItems: 'center', justifyContent: 'center' },
   ctaButtonText: { ...Typography.button, color: colors.background.primary, fontWeight: '600' } });

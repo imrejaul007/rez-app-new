@@ -577,7 +577,7 @@ function ExclusiveZonePage() {
             offers.map((offer) => renderOfferCard(offer))
           ) : (
             <View style={styles.emptyState}>
-              <Ionicons name="pricetags-outline" size={48} color={Colors.text.tertiary} />
+              <Ionicons name="pricetags-outline" size={48} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyStateTitle}>
                 No offers available
               </ThemedText>
@@ -599,14 +599,14 @@ function ExclusiveZonePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   centerContent: {
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl },
   errorText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginTop: Spacing.md,
     marginBottom: Spacing.lg },
@@ -676,12 +676,12 @@ const styles = StyleSheet.create({
     flex: 1 },
   bannerTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: 4 },
   bannerSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
 
   // Verification card
   verificationCard: {
@@ -726,7 +726,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     alignItems: 'center',
@@ -737,21 +737,21 @@ const styles = StyleSheet.create({
     marginBottom: 4 },
   statLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
 
   // Offers section
   offersSection: {
     paddingHorizontal: Spacing.base },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginBottom: Spacing.md },
 
   // Offer card
   offerCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -782,11 +782,11 @@ const styles = StyleSheet.create({
     marginRight: Spacing.sm },
   offerStore: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2 },
   offerTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600' },
   discountBadge: {
     paddingHorizontal: Spacing.sm,
@@ -797,7 +797,7 @@ const styles = StyleSheet.create({
     fontWeight: '700' },
   offerDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm },
   offerTags: {
     flexDirection: 'row',
@@ -810,7 +810,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm },
   tagText: {
     ...Typography.caption,
-    color: Colors.text.secondary },
+    color: colors.text.secondary },
 
   // Skeleton
   skeletonImage: {
@@ -830,12 +830,12 @@ const styles = StyleSheet.create({
     padding: Spacing.xl },
   emptyStateTitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '600',
     marginTop: Spacing.md },
   emptyStateSubtext: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.xs } });
 

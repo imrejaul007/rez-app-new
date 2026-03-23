@@ -19,7 +19,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import analyticsService from '@/services/analyticsService';
 import type { SortOption, AvailabilityFilter, CategoryItem } from '@/hooks/useStoreProductsPage';
@@ -103,7 +103,7 @@ export const ActiveFiltersBar = React.memo(function ActiveFiltersBar({
               {categories.find(c => c.id === selectedCategory)?.name || 'Category'}
             </ThemedText>
             <Pressable onPress={onClearCategory}>
-              <Ionicons name="close" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="close" size={16} color={colors.text.tertiary} />
             </Pressable>
           </View>
         )}
@@ -113,7 +113,7 @@ export const ActiveFiltersBar = React.memo(function ActiveFiltersBar({
               Sort: {sortBy.replace('_', ' ')}
             </ThemedText>
             <Pressable onPress={onClearSort}>
-              <Ionicons name="close" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="close" size={16} color={colors.text.tertiary} />
             </Pressable>
           </View>
         )}
@@ -123,7 +123,7 @@ export const ActiveFiltersBar = React.memo(function ActiveFiltersBar({
               {availabilityFilter === 'in_stock' ? 'In Stock' : 'Out of Stock'}
             </ThemedText>
             <Pressable onPress={onClearAvailability}>
-              <Ionicons name="close" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="close" size={16} color={colors.text.tertiary} />
             </Pressable>
           </View>
         )}
@@ -133,7 +133,7 @@ export const ActiveFiltersBar = React.memo(function ActiveFiltersBar({
               {currencySymbol}{minPrice || '0'} - {currencySymbol}{maxPrice || '\u221E'}
             </ThemedText>
             <Pressable onPress={onClearPrice}>
-              <Ionicons name="close" size={16} color={Colors.text.tertiary} />
+              <Ionicons name="close" size={16} color={colors.text.tertiary} />
             </Pressable>
           </View>
         )}
@@ -218,7 +218,7 @@ function FilterPanel({
               accessibilityLabel="Close filters"
               accessibilityRole="button"
             >
-              <Ionicons name="close" size={24} color={Colors.text.primary} />
+              <Ionicons name="close" size={24} color={colors.text.primary} />
             </Pressable>
           </View>
 
@@ -227,7 +227,7 @@ function FilterPanel({
             <View style={styles.filterSection}>
               <ThemedText style={styles.filterSectionTitle}>Category</ThemedText>
               {loadingCategories ? (
-                <ActivityIndicator size="small" color={Colors.nileBlue} />
+                <ActivityIndicator size="small" color={colors.nileBlue} />
               ) : (
                 <View style={styles.categoryGrid}>
                   <Pressable
@@ -266,7 +266,7 @@ function FilterPanel({
                     {SORT_LABELS[sort]}
                   </ThemedText>
                   {sortBy === sort && (
-                    <Ionicons name="checkmark" size={20} color={Colors.nileBlue} />
+                    <Ionicons name="checkmark" size={20} color={colors.nileBlue} />
                   )}
                 </Pressable>
               ))}
@@ -318,7 +318,7 @@ function FilterPanel({
                     {AVAILABILITY_LABELS[availability]}
                   </ThemedText>
                   {availabilityFilter === availability && (
-                    <Ionicons name="checkmark" size={20} color={Colors.nileBlue} />
+                    <Ionicons name="checkmark" size={20} color={colors.nileBlue} />
                   )}
                 </Pressable>
               ))}
@@ -348,9 +348,9 @@ function FilterPanel({
 const styles = StyleSheet.create({
   // Active filters bar
   activeFiltersContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     paddingVertical: Spacing.sm,
   },
   activeFilters: {
@@ -360,17 +360,17 @@ const styles = StyleSheet.create({
   activeFilterTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: 6,
   },
   activeFilterText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   clearAllButton: {
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   },
   clearAllText: {
     ...Typography.body,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '600',
   },
 
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     maxHeight: '90%',
@@ -404,12 +404,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalBody: {
     paddingHorizontal: Spacing.lg,
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   filterSectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   categoryGrid: {
@@ -433,21 +433,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   categoryChipActive: {
-    backgroundColor: Colors.nileBlue,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
+    borderColor: colors.nileBlue,
   },
   categoryChipText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   categoryChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   sortOption: {
     flexDirection: 'row',
@@ -456,22 +456,22 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginBottom: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   sortOptionActive: {
     backgroundColor: colors.tint.pink,
-    borderColor: Colors.nileBlue,
+    borderColor: colors.nileBlue,
   },
   sortOptionText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   sortOptionTextActive: {
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '600',
   },
   priceRangeContainer: {
@@ -483,28 +483,28 @@ const styles = StyleSheet.create({
   },
   priceLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
     fontWeight: '500',
   },
   priceInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalFooter: {
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   applyButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.base,
     alignItems: 'center',
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
   applyButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

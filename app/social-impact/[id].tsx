@@ -34,10 +34,10 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const COLORS = {
   primary: Colors.gold,
   primaryDark: '#e6b84e',
-  white: Colors.text.inverse,
-  textDark: Colors.text.primary,
-  textMuted: Colors.text.tertiary,
-  background: Colors.background.secondary,
+  white: colors.text.inverse,
+  textDark: colors.text.primary,
+  textMuted: colors.text.tertiary,
+  background: colors.background.secondary,
   border: 'rgba(0, 0, 0, 0.08)',
 };
 
@@ -1036,7 +1036,7 @@ function SocialImpactEventDetail() {
                   ) : (
                     <View style={styles.qrContainer}>
                       <View style={styles.qrPlaceholder}>
-                        <Ionicons name="qr-code-outline" size={64} color={Colors.border.default} />
+                        <Ionicons name="qr-code-outline" size={64} color={colors.border.default} />
                       </View>
                       <Text style={styles.checkInInstructions}>
                         Generate your unique QR code to show at the event venue
@@ -1807,7 +1807,7 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   checkInTabActive: {
     backgroundColor: COLORS.textDark,
@@ -1833,16 +1833,16 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     ...Shadows.medium,
   },
   qrPlaceholder: {
     width: 200,
     height: 200,
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderStyle: 'dashed',
     alignItems: 'center',
     justifyContent: 'center',
@@ -1915,11 +1915,11 @@ const styles = StyleSheet.create({
     letterSpacing: 12,
     color: COLORS.textDark,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderRadius: BorderRadius.md,
     paddingVertical: 14,
     paddingHorizontal: 20,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   geoContainer: {
     alignItems: 'center',

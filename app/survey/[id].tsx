@@ -210,12 +210,12 @@ function SurveyDetailPage() {
       <>
         <Stack.Screen options={{ headerShown: false }} />
         <SafeAreaView style={styles.container} edges={['top']}>
-          <StatusBar barStyle="dark-content" backgroundColor={Colors.background.secondary} />
+          <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
           {/* Header */}
           <View style={styles.header}>
             <Pressable style={styles.closeButton} onPress={handleAbandon}>
-              <Ionicons name="close" size={24} color={Colors.text.primary} />
+              <Ionicons name="close" size={24} color={colors.text.primary} />
             </Pressable>
             <View style={styles.progressInfo}>
               <Text style={styles.progressText}>
@@ -294,7 +294,7 @@ function SurveyDetailPage() {
                       styles.checkbox,
                       selected && styles.checkboxSelected,
                     ]}>
-                      {selected && <Ionicons name="checkmark" size={14} color={Colors.text.inverse} />}
+                      {selected && <Ionicons name="checkmark" size={14} color={colors.text.inverse} />}
                     </View>
                     <Text style={[
                       styles.optionText,
@@ -341,7 +341,7 @@ function SurveyDetailPage() {
                   <TextInput
                     style={styles.textInput}
                     placeholder="Type your answer here..."
-                    placeholderTextColor={Colors.text.tertiary}
+                    placeholderTextColor={colors.text.tertiary}
                     multiline
                     numberOfLines={5}
                     textAlignVertical="top"
@@ -365,7 +365,7 @@ function SurveyDetailPage() {
               onPress={handlePrevious}
               disabled={currentQuestion === 0}
             >
-              <Ionicons name="chevron-back" size={20} color={currentQuestion === 0 ? Colors.text.tertiary : Colors.text.primary} />
+              <Ionicons name="chevron-back" size={20} color={currentQuestion === 0 ? colors.text.tertiary : colors.text.primary} />
               <Text style={[styles.navButtonText, currentQuestion === 0 && styles.navButtonTextDisabled]}>
                 Previous
               </Text>
@@ -377,13 +377,13 @@ function SurveyDetailPage() {
               disabled={submitting}
             >
               {submitting ? (
-                <ActivityIndicator size="small" color={Colors.text.inverse} />
+                <ActivityIndicator size="small" color={colors.text.inverse} />
               ) : (
                 <>
                   <Text style={styles.navButtonTextPrimary}>
                     {currentQuestion === survey.questions.length - 1 ? 'Submit' : 'Next'}
                   </Text>
-                  <Ionicons name="chevron-forward" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="chevron-forward" size={20} color={colors.text.inverse} />
                 </>
               )}
             </Pressable>
@@ -403,12 +403,12 @@ function SurveyDetailPage() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top']}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.secondary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
         {/* Header */}
         <View style={styles.header}>
           <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={22} color={Colors.text.primary} />
+            <Ionicons name="arrow-back" size={22} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Survey Details</Text>
           <View style={{ width: 40 }} />
@@ -429,15 +429,15 @@ function SurveyDetailPage() {
 
               <View style={styles.heroBadges}>
                 <View style={styles.heroBadge}>
-                  <Ionicons name="time-outline" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
                   <Text style={styles.heroBadgeText}>{survey.estimatedTime} mins</Text>
                 </View>
                 <View style={styles.heroBadge}>
-                  <Ionicons name="document-text-outline" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="document-text-outline" size={14} color={colors.text.tertiary} />
                   <Text style={styles.heroBadgeText}>{survey.questionsCount} questions</Text>
                 </View>
                 <View style={styles.heroBadge}>
-                  <Ionicons name="people-outline" size={14} color={Colors.text.tertiary} />
+                  <Ionicons name="people-outline" size={14} color={colors.text.tertiary} />
                   <Text style={styles.heroBadgeText}>{survey.completedCount} completed</Text>
                 </View>
               </View>
@@ -512,7 +512,7 @@ function SurveyDetailPage() {
               style={styles.startButtonGradient}
             >
               {starting ? (
-                <ActivityIndicator size="small" color={Colors.text.inverse} />
+                <ActivityIndicator size="small" color={colors.text.inverse} />
               ) : (
                 <>
                   <Text style={styles.startButtonText}>
@@ -523,7 +523,7 @@ function SurveyDetailPage() {
                       : 'Start Survey'}
                   </Text>
                   {survey.userStatus !== 'completed' && (
-                    <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+                    <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
                   )}
                 </>
               )}
@@ -538,7 +538,7 @@ function SurveyDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.md,
     marginBottom: Spacing.lg,
   },
@@ -569,7 +569,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   backBtnText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   header: {
@@ -578,9 +578,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.sm,
@@ -591,7 +591,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   progressInfo: {
     flex: 1,
@@ -600,7 +600,7 @@ const styles = StyleSheet.create({
   progressText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   rewardBadge: {
     flexDirection: 'row',
@@ -638,7 +638,7 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 36,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.base,
@@ -649,13 +649,13 @@ const styles = StyleSheet.create({
   },
   heroTitle: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginBottom: Spacing.xs,
   },
   heroCategory: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.base,
   },
   heroBadges: {
@@ -669,7 +669,7 @@ const styles = StyleSheet.create({
   },
   heroBadgeText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   rewardCard: {
     marginHorizontal: Spacing.base,
@@ -688,7 +688,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -697,7 +697,7 @@ const styles = StyleSheet.create({
   },
   rewardLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 2,
   },
   rewardAmount: {
@@ -713,12 +713,12 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   description: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 22,
   },
   instructionItem: {
@@ -730,15 +730,15 @@ const styles = StyleSheet.create({
   instructionText: {
     flex: 1,
     fontSize: 14,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 20,
   },
   progressSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   progressHeader: {
     flexDirection: 'row',
@@ -747,7 +747,7 @@ const styles = StyleSheet.create({
   },
   progressLabel: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   progressPercent: {
     fontSize: 13,
@@ -771,9 +771,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   startButtonWrapper: {
     borderRadius: BorderRadius.md,
@@ -789,23 +789,23 @@ const styles = StyleSheet.create({
   startButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   questionContainer: {
     flex: 1,
     padding: Spacing.base,
   },
   questionCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   questionText: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 26,
   },
   requiredText: {
@@ -820,10 +820,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: Spacing.md,
   },
   optionButtonSelected: {
@@ -835,7 +835,7 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 11,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -853,7 +853,7 @@ const styles = StyleSheet.create({
     height: 22,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -864,7 +864,7 @@ const styles = StyleSheet.create({
   optionText: {
     flex: 1,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   optionTextSelected: {
     fontWeight: '600',
@@ -879,7 +879,7 @@ const styles = StyleSheet.create({
   },
   ratingLabelText: {
     fontSize: 12,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   ratingButtons: {
     flexDirection: 'row',
@@ -891,9 +891,9 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -909,31 +909,31 @@ const styles = StyleSheet.create({
   ratingText: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   scaleText: {
     fontSize: 13,
   },
   ratingTextSelected: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   textInputContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   textInput: {
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     minHeight: 120,
     paddingTop: 0,
     paddingBottom: 12,
   },
   textInputHint: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
     textAlign: 'right',
   },
@@ -941,9 +941,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     padding: Spacing.base,
     gap: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   navButton: {
     flex: 1,
@@ -963,15 +963,15 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   navButtonTextDisabled: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   navButtonTextPrimary: {
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

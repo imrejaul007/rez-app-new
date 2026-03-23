@@ -348,8 +348,8 @@ function CampaignDetailPage() {
         options={{
           headerShown: true,
           title: campaign?.title || 'Campaign Details',
-          headerStyle: { backgroundColor: Colors.background.primary },
-          headerTintColor: Colors.nileBlue,
+          headerStyle: { backgroundColor: colors.background.primary },
+          headerTintColor: colors.nileBlue,
         }}
       />
 

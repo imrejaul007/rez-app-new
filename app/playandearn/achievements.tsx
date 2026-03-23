@@ -131,7 +131,7 @@ const Achievements = () => {
           style={styles.backButton}
           onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
         <View>
           <Text style={styles.headerTitle}>🏅 Achievements</Text>
@@ -194,7 +194,7 @@ const Achievements = () => {
         {/* Error State */}
         {error && achievements.length === 0 && (
           <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
+            <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
             <Text style={styles.errorText}>{error}</Text>
             <Pressable style={styles.retryButton} onPress={fetchAchievements}>
               <Text style={styles.retryButtonText}>Retry</Text>
@@ -214,7 +214,7 @@ const Achievements = () => {
             >
               {!achievement.unlocked && (
                 <View style={styles.lockIcon}>
-                  <Ionicons name="lock-closed" size={16} color={Colors.text.tertiary} />
+                  <Ionicons name="lock-closed" size={16} color={colors.text.tertiary} />
                 </View>
               )}
 
@@ -352,11 +352,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   scrollView: {
     flex: 1,
@@ -376,11 +376,11 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statLabel: {
     ...Typography.overline,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   categoryScroll: {
@@ -402,10 +402,10 @@ const styles = StyleSheet.create({
   categoryText: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   categoryTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   achievementsGrid: {
     flexDirection: 'row',
@@ -446,12 +446,12 @@ const styles = StyleSheet.create({
   achievementTitle: {
     ...Typography.body,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   achievementDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   achievementCoins: {
@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
   },
   progressText: {
     ...Typography.overline,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   ctaSection: {
@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
   ctaTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.base,
   },
   ctaCard: {
@@ -515,12 +515,12 @@ const styles = StyleSheet.create({
   ctaCardTitle: {
     ...Typography.body,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 2,
   },
   ctaCardDesc: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   checkinCard: {
     borderRadius: BorderRadius.lg,
@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
   checkinButtonText: {
     ...Typography.bodySmall,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   errorContainer: {
     alignItems: 'center',
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
   },
   retryButton: {

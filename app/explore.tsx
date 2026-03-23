@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
@@ -479,7 +480,7 @@ const ExplorePage = () => {
             )}
             {!isLoading && ugcReels.length === 0 && (
               <View style={styles.emptyContainer}>
-                <Ionicons name="videocam-outline" size={48} color={Colors.text.tertiary} />
+                <Ionicons name="videocam-outline" size={48} color={colors.text.tertiary} />
                 <Text style={styles.emptyText}>No trending videos available</Text>
               </View>
             )}
@@ -499,27 +500,27 @@ const ExplorePage = () => {
                     {!reel.videoUrl && (
                       <View style={styles.playButtonOverlay}>
                         <View style={styles.playButton}>
-                          <Ionicons name="play" size={24} color={Colors.text.inverse} />
+                          <Ionicons name="play" size={24} color={colors.text.inverse} />
                         </View>
                       </View>
                     )}
                     <LinearGradient colors={['transparent', 'rgba(0,0,0,0.85)']} style={styles.reelGradient}>
                       <Text style={styles.reelProduct} numberOfLines={2}>{reel.product}</Text>
                       <View style={styles.savedBadge}>
-                        <Ionicons name="checkmark-circle" size={12} color={Colors.text.inverse} />
+                        <Ionicons name="checkmark-circle" size={12} color={colors.text.inverse} />
                         <Text style={styles.savedText}>Saved {currencySymbol}{reel.saved}</Text>
                       </View>
                       <View style={styles.reelStats}>
                         <View style={styles.statItem}>
-                          <Ionicons name="heart-outline" size={18} color={Colors.text.inverse} />
+                          <Ionicons name="heart-outline" size={18} color={colors.text.inverse} />
                           <Text style={styles.statText}>{reel.likes}</Text>
                         </View>
                         <View style={styles.statItem}>
-                          <Ionicons name="chatbubble-outline" size={18} color={Colors.text.inverse} />
+                          <Ionicons name="chatbubble-outline" size={18} color={colors.text.inverse} />
                           <Text style={styles.statText}>{reel.comments}</Text>
                         </View>
                         <Pressable style={styles.bookmarkButton} onPress={() => navigateTo(`/explore/reel/${reel.id}`)} accessibilityLabel="Bookmark reel" accessibilityRole="button">
-                          <Ionicons name="bookmark-outline" size={18} color={Colors.text.inverse} />
+                          <Ionicons name="bookmark-outline" size={18} color={colors.text.inverse} />
                         </Pressable>
                       </View>
                     </LinearGradient>
@@ -583,7 +584,7 @@ const ExplorePage = () => {
                   <View style={styles.storeFooter}>
                     {store.distance && (
                       <View style={styles.storeDistance}>
-                        <Ionicons name="location" size={12} color={Colors.text.tertiary} />
+                        <Ionicons name="location" size={12} color={colors.text.tertiary} />
                         <Text style={styles.storeDistanceText}>{store.distance}</Text>
                       </View>
                     )}
@@ -649,12 +650,12 @@ const ExplorePage = () => {
               </>
             )}
           </View>
-          <Ionicons name="chevron-down" size={16} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-down" size={16} color={colors.text.tertiary} />
         </Pressable>
 
         <View style={styles.headerActions}>
           <Pressable style={styles.mapButton} onPress={() => navigateTo('/explore/map')} accessibilityLabel="Open map view" accessibilityRole="button">
-            <Ionicons name="map" size={22} color={Colors.nileBlue} />
+            <Ionicons name="map" size={22} color={colors.nileBlue} />
           </Pressable>
           <Pressable style={styles.coinsButton} onPress={() => navigateTo('/wallet')} accessibilityLabel={`Wallet: ${rezCoins.toLocaleString()} coins`} accessibilityRole="button">
             <View style={styles.coinIcon}>
@@ -668,11 +669,11 @@ const ExplorePage = () => {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Pressable style={styles.searchBar} onPress={() => navigateTo('/explore/search')} accessibilityLabel="Search stores and products" accessibilityRole="search">
-          <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="search" size={20} color={colors.text.tertiary} />
           <Text style={styles.searchPlaceholder}>{searchSuggestions[currentPlaceholder]}</Text>
         </Pressable>
         <Pressable style={styles.filterButton} onPress={() => navigateTo('/explore/stores')} accessibilityLabel="Filter options" accessibilityRole="button">
-          <Ionicons name="options" size={22} color={Colors.nileBlue} />
+          <Ionicons name="options" size={22} color={colors.nileBlue} />
         </Pressable>
       </View>
 
@@ -702,7 +703,7 @@ const ExplorePage = () => {
           </Pressable>
         ))}
         <View style={styles.bestValueTag}>
-          <Ionicons name="trending-up" size={14} color={Colors.text.inverse} />
+          <Ionicons name="trending-up" size={14} color={colors.text.inverse} />
           <Text style={styles.bestValueText}>Best Value</Text>
         </View>
       </ScrollView>
@@ -722,8 +723,8 @@ const ExplorePage = () => {
             accessibilityRole="button"
             accessibilityState={{ selected: selectedChip === chip.id }}
           >
-            <Ionicons name={chip.icon as any} size={16} color={selectedChip === chip.id ? chip.color : Colors.text.tertiary} />
-            <Text style={[styles.quickChipText, selectedChip === chip.id && { color: Colors.nileBlue, fontWeight: '600' }]}>{chip.label}</Text>
+            <Ionicons name={chip.icon as any} size={16} color={selectedChip === chip.id ? chip.color : colors.text.tertiary} />
+            <Text style={[styles.quickChipText, selectedChip === chip.id && { color: colors.nileBlue, fontWeight: '600' }]}>{chip.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -736,7 +737,7 @@ const ExplorePage = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top']}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.primary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
         <FlashList
           data={sectionData}
@@ -764,12 +765,12 @@ const ExplorePage = () => {
           accessibilityRole="button"
         >
           <LinearGradient
-            colors={[Colors.gold, Colors.nileBlue]}
+            colors={[Colors.gold, colors.nileBlue]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.floatingMapGradient}
           >
-            <Ionicons name="map" size={16} color={Colors.text.inverse} />
+            <Ionicons name="map" size={16} color={colors.text.inverse} />
             <Text style={styles.floatingMapText}>Map View</Text>
           </LinearGradient>
         </Pressable>
@@ -781,16 +782,16 @@ const ExplorePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   scrollView: {
     flex: 1,
   },
   headerContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   headerRow: {
     flexDirection: 'row',
@@ -803,7 +804,7 @@ const styles = StyleSheet.create({
   locationButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
@@ -815,11 +816,11 @@ const styles = StyleSheet.create({
   locationTitle: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   locationSubtitle: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   locationSkeleton: {
     gap: Spacing.xs,
@@ -827,7 +828,7 @@ const styles = StyleSheet.create({
   skeletonLine: {
     height: Spacing.md,
     width: 100,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: Spacing.xs,
   },
   skeletonLineShort: {
@@ -843,7 +844,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -880,30 +881,30 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingHorizontal: 14,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   searchInput: {
     flex: 1,
     marginLeft: 10,
     ...Typography.body,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   searchPlaceholder: {
     flex: 1,
     marginLeft: 10,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterButton: {
     width: 44,
     height: 44,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -919,12 +920,12 @@ const styles = StyleSheet.create({
   categoryChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: 6,
   },
   categoryChipActive: {
@@ -936,7 +937,7 @@ const styles = StyleSheet.create({
   },
   categoryLabel: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   categoryLabelActive: {
@@ -955,7 +956,7 @@ const styles = StyleSheet.create({
   bestValueText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   quickChipsRow: {
     flexDirection: 'row',
@@ -969,18 +970,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: 6,
   },
   quickChipActive: {
-    backgroundColor: Colors.background.primary,
-    borderColor: Colors.nileBlue,
+    backgroundColor: colors.background.primary,
+    borderColor: colors.nileBlue,
   },
   quickChipText: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   section: {
     paddingTop: Spacing.lg,
@@ -1000,14 +1001,14 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   fireEmoji: {
     ...Typography.h4,
   },
   sectionSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   viewAllText: {
@@ -1051,7 +1052,7 @@ const styles = StyleSheet.create({
   reelUserName: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   playButtonOverlay: {
     position: 'absolute',
@@ -1081,7 +1082,7 @@ const styles = StyleSheet.create({
   reelProduct: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   savedBadge: {
@@ -1098,7 +1099,7 @@ const styles = StyleSheet.create({
   savedText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   reelStats: {
     flexDirection: 'row',
@@ -1113,7 +1114,7 @@ const styles = StyleSheet.create({
   },
   statText: {
     fontSize: 13,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '500',
   },
   bookmarkButton: {
@@ -1131,7 +1132,7 @@ const styles = StyleSheet.create({
   mapViewText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   hotGrid: {
     flexDirection: 'row',
@@ -1141,16 +1142,16 @@ const styles = StyleSheet.create({
   },
   hotCard: {
     width: (width - 44) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   hotImage: {
     width: '100%',
     height: 100,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   offerBadge: {
     position: 'absolute',
@@ -1164,7 +1165,7 @@ const styles = StyleSheet.create({
   offerText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   hotContent: {
     padding: 10,
@@ -1172,11 +1173,11 @@ const styles = StyleSheet.create({
   hotName: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   hotStore: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   hotFooter: {
@@ -1188,7 +1189,7 @@ const styles = StyleSheet.create({
   hotPrice: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   distanceBadge: {
     flexDirection: 'row',
@@ -1197,7 +1198,7 @@ const styles = StyleSheet.create({
   },
   distanceText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   categoryGrid: {
     flexDirection: 'row',
@@ -1207,7 +1208,7 @@ const styles = StyleSheet.create({
   },
   categoryCard: {
     width: (width - 52) / 3,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     alignItems: 'center',
@@ -1219,7 +1220,7 @@ const styles = StyleSheet.create({
   categoryCardName: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     textAlign: 'center',
   },
   categoryCardCashback: {
@@ -1230,7 +1231,7 @@ const styles = StyleSheet.create({
   },
   categoryCardStores: {
     fontSize: 9,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   storesContainer: {
@@ -1239,11 +1240,11 @@ const styles = StyleSheet.create({
   },
   storeCard: {
     width: 200,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: 14,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   storeHeader: {
     flexDirection: 'row',
@@ -1277,12 +1278,12 @@ const styles = StyleSheet.create({
   storeBadgeText: {
     fontSize: 9,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   storeOffer: {
     ...Typography.bodySmall,
@@ -1300,7 +1301,7 @@ const styles = StyleSheet.create({
   },
   storeDistanceText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   storeActivity: {
     flexDirection: 'row',
@@ -1316,10 +1317,10 @@ const styles = StyleSheet.create({
   },
   activityText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   payNowButton: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingVertical: 10,
     borderRadius: 10,
     alignItems: 'center',
@@ -1328,7 +1329,7 @@ const styles = StyleSheet.create({
   payNowText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   floatingMapButton: {
     position: 'absolute',
@@ -1348,7 +1349,7 @@ const styles = StyleSheet.create({
   floatingMapText: {
     fontSize: 13,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   loadingContainer: {
     paddingVertical: 40,
@@ -1358,7 +1359,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     paddingVertical: 40,
@@ -1368,7 +1369,7 @@ const styles = StyleSheet.create({
   emptyText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 });
 

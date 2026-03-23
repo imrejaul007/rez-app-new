@@ -679,7 +679,7 @@ function SharedCategoryPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
@@ -689,16 +689,16 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     gap: Spacing.md,
   },
   backButton: {
@@ -716,17 +716,17 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   sortBar: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   sortList: {
     paddingHorizontal: Spacing.base,
@@ -738,23 +738,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     gap: 6,
   },
   sortChipActive: {
-    backgroundColor: Colors.text.primary,
+    backgroundColor: colors.text.primary,
   },
   sortChipText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   sortChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   filterBar: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.sm,
     marginBottom: Spacing.xs,
   },
@@ -769,7 +769,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: Spacing.xs,
   },
   filterChipActive: {
@@ -782,11 +782,11 @@ const styles = StyleSheet.create({
   filterChipText: {
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   filterChipTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   storeList: {
@@ -796,7 +796,7 @@ const styles = StyleSheet.create({
   },
   storeCard: {
     borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     overflow: 'hidden',
     marginBottom: Spacing.base,
     ...Shadows.medium,
@@ -810,7 +810,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   storeImagePlaceholder: {
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -850,7 +850,7 @@ const styles = StyleSheet.create({
   badgeTagText: {
     ...Typography.overline,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeRating: {
     position: 'absolute',
@@ -867,11 +867,11 @@ const styles = StyleSheet.create({
   storeRatingText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   storeRatingCount: {
     ...Typography.overline,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   storeContent: {
     padding: Spacing.md,
@@ -879,12 +879,12 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
   },
   storeCuisine: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   storeMeta: {
@@ -899,11 +899,11 @@ const styles = StyleSheet.create({
   },
   storeMetaText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   storePriceForTwo: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   storeRewardsRow: {
     flexDirection: 'row',
@@ -911,7 +911,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
     paddingTop: Spacing.sm,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
     gap: Spacing.xs,
   },
   storeCoinsText: {
@@ -932,12 +932,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -950,7 +950,7 @@ const styles = StyleSheet.create({
   emptyButtonText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   loadMoreContainer: {
     paddingVertical: Spacing.lg,

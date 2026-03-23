@@ -169,7 +169,7 @@ export default memo(function RatingBreakdownSection({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     ...Shadows.subtle,
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
   ratingTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   ratingSubtitle: {
     ...Typography.caption,

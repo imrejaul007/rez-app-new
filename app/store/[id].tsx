@@ -37,16 +37,16 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const COLORS = {
-  white: Colors.background.primary,
-  navy: Colors.nileBlue,
-  gray50: Colors.background.tertiary,
-  gray100: Colors.background.secondary,
-  gray200: Colors.border.default,
-  gray300: Colors.border.dark,
-  gray400: Colors.text.tertiary,
-  gray500: Colors.text.tertiary,
+  white: colors.background.primary,
+  navy: colors.nileBlue,
+  gray50: colors.background.tertiary,
+  gray100: colors.background.secondary,
+  gray200: colors.border.default,
+  gray300: colors.border.dark,
+  gray400: colors.text.tertiary,
+  gray500: colors.text.tertiary,
   gray600: Colors.gray[600],
-  gray700: Colors.text.secondary,
+  gray700: colors.text.secondary,
   green500: Colors.success,
   green600: colors.brand.greenDark,
   orange500: colors.brand.orange,
@@ -342,9 +342,9 @@ const StoreDetailPage: React.FC = () => {
 
   const getPartnerLevelColor = (level: string) => {
     const levelColors: Record<string, { bg: string; text: string }> = {
-      platinum: { bg: '#E5E4E2', text: Colors.text.secondary },
+      platinum: { bg: '#E5E4E2', text: colors.text.secondary },
       gold: { bg: Colors.warningScale[100], text: '#92400E' },
-      silver: { bg: Colors.background.secondary, text: Colors.text.secondary },
+      silver: { bg: colors.background.secondary, text: colors.text.secondary },
       bronze: { bg: '#FED7AA', text: '#9A3412' },
     };
     return levelColors[level] || { bg: COLORS.gray100, text: COLORS.gray600 };

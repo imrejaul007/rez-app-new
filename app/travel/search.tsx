@@ -131,10 +131,10 @@ function TravelSearchPage() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={[Colors.nileBlue, '#0f2a3d']} style={styles.header}>
+      <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.header}>
         <View style={styles.headerRow}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View>
             <Text style={styles.headerTitle}>Search Travel</Text>
@@ -161,7 +161,7 @@ function TravelSearchPage() {
               <Ionicons
                 name={cat.icon as any}
                 size={16}
-                color={selectedCategory === cat.slug ? Colors.nileBlue : '#94A3B8'}
+                color={selectedCategory === cat.slug ? colors.nileBlue : '#94A3B8'}
               />
               <Text
                 style={[
@@ -235,7 +235,7 @@ function TravelSearchPage() {
 
           {/* Date */}
           <View style={styles.inputRow}>
-            <Ionicons name="calendar-outline" size={18} color={Colors.text.tertiary} />
+            <Ionicons name="calendar-outline" size={18} color={colors.text.tertiary} />
             <TextInput
               style={styles.input}
               placeholder="Date (YYYY-MM-DD)"
@@ -249,25 +249,25 @@ function TravelSearchPage() {
           {(selectedCategory === 'flights' || selectedCategory === 'trains') && (
             <View style={styles.rowFields}>
               <View style={[styles.inputRow, { flex: 1 }]}>
-                <Ionicons name="people-outline" size={18} color={Colors.text.tertiary} />
+                <Ionicons name="people-outline" size={18} color={colors.text.tertiary} />
                 <View style={styles.stepper}>
                   <Pressable
                     onPress={() => setPassengers(Math.max(1, passengers - 1))}
                     style={styles.stepBtn}
                   >
-                    <Ionicons name="remove" size={18} color={Colors.text.tertiary} />
+                    <Ionicons name="remove" size={18} color={colors.text.tertiary} />
                   </Pressable>
                   <Text style={styles.stepperValue}>{passengers}</Text>
                   <Pressable
                     onPress={() => setPassengers(Math.min(9, passengers + 1))}
                     style={styles.stepBtn}
                   >
-                    <Ionicons name="add" size={18} color={Colors.text.tertiary} />
+                    <Ionicons name="add" size={18} color={colors.text.tertiary} />
                   </Pressable>
                 </View>
               </View>
               <View style={[styles.inputRow, { flex: 1 }]}>
-                <Ionicons name="star-outline" size={18} color={Colors.text.tertiary} />
+                <Ionicons name="star-outline" size={18} color={colors.text.tertiary} />
                 <Pressable
                   onPress={() => {
                     const classes = ['Economy', 'Business', 'First'];
@@ -285,10 +285,10 @@ function TravelSearchPage() {
           {/* Search Button */}
           <Pressable onPress={handleSearch} style={styles.searchBtn}>
             <LinearGradient
-              colors={[Colors.nileBlue, '#0f2a3d']}
+              colors={[colors.nileBlue, '#0f2a3d']}
               style={styles.searchBtnGradient}
             >
-              <Ionicons name="search" size={20} color={Colors.text.inverse} />
+              <Ionicons name="search" size={20} color={colors.text.inverse} />
               <Text style={styles.searchBtnText}>Search</Text>
             </LinearGradient>
           </Pressable>
@@ -323,7 +323,7 @@ function TravelSearchPage() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 40,
     paddingBottom: Spacing.base,
@@ -340,21 +340,21 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     justifyContent: 'center', alignItems: 'center',
   },
-  headerTitle: { ...Typography.h4, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.inverse },
   categoryBar: { gap: Spacing.sm },
   categoryChip: {
     flexDirection: 'row', alignItems: 'center', gap: 6,
     paddingHorizontal: 14, paddingVertical: Spacing.sm, borderRadius: BorderRadius.xl,
     backgroundColor: 'rgba(255,255,255,0.15)',
   },
-  categoryChipActive: { backgroundColor: Colors.background.primary },
+  categoryChipActive: { backgroundColor: colors.background.primary },
   categoryChipText: { ...Typography.bodySmall, fontWeight: '600', color: '#94A3B8' },
-  categoryChipTextActive: { color: Colors.nileBlue },
+  categoryChipTextActive: { color: colors.nileBlue },
 
   content: { padding: Spacing.base, paddingBottom: 120 },
 
   searchForm: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     gap: Spacing.md,
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: 14,
     paddingVertical: Spacing.md,
@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
   stepper: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md, flex: 1 },
   stepBtn: {
     width: 28, height: 28, borderRadius: 14,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     justifyContent: 'center', alignItems: 'center',
   },
   stepperValue: { ...Typography.bodyLarge, fontWeight: '700', color: '#1E293B' },
@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     gap: Spacing.sm, paddingVertical: Spacing.base,
   },
-  searchBtnText: { ...Typography.bodyLarge, fontWeight: '600', color: Colors.text.inverse },
+  searchBtnText: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.inverse },
 
   loadingContainer: { alignItems: 'center', paddingTop: 40 },
   loadingText: { marginTop: Spacing.md, color: colors.slateGray, fontSize: 14 },
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
   resultsTitle: { ...Typography.bodyLarge, fontWeight: '700', color: '#1E293B', marginBottom: Spacing.md },
 
   resultCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: Spacing.base,
     marginBottom: 10,
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
   resultRatingText: { ...Typography.bodySmall, color: colors.slateGray },
   resultPriceSection: { alignItems: 'flex-end' },
   resultOriginalPrice: { ...Typography.bodySmall, color: '#94A3B8', textDecorationLine: 'line-through' },
-  resultPrice: { ...Typography.h4, fontWeight: '700', color: Colors.nileBlue },
+  resultPrice: { ...Typography.h4, fontWeight: '700', color: colors.nileBlue },
   cashbackBadge: {
     backgroundColor: colors.successScale[50],
     paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: 6,

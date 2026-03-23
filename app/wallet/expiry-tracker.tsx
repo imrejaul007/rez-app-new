@@ -334,7 +334,7 @@ function ExpiryTrackerPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   },
   alertSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   useNowButton: {
     backgroundColor: Colors.warning,
@@ -415,15 +415,15 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 1,
   },
   sectionCount: {
     ...Typography.label,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   coinCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
@@ -448,11 +448,11 @@ const styles = StyleSheet.create({
   },
   coinAmount: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   coinExpiry: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   daysLeftBadge: {
     backgroundColor: Colors.gray[100],
@@ -462,7 +462,7 @@ const styles = StyleSheet.create({
   },
   daysLeftText: {
     ...Typography.labelSmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   daysLeftUrgent: {
     color: Colors.error,
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
   },
   suggestionCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     alignItems: 'center',
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
   },
   suggestionText: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
   tipsCard: {
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.sm,
   },
   errorText: {
@@ -548,11 +548,11 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   emptySubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 });
 

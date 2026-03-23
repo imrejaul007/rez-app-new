@@ -398,7 +398,7 @@ function ChallengeDetailPage() {
           headerStyle: {
             backgroundColor: Colors.brand.purpleLight,
           },
-          headerTintColor: Colors.text.inverse,
+          headerTintColor: colors.text.inverse,
         }}
       />
 
@@ -410,7 +410,7 @@ function ChallengeDetailPage() {
         {/* Hero Section */}
         <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple, colors.brand.purpleDeep]} style={styles.heroSection}>
           <View style={styles.iconContainer}>
-            <Ionicons name={challenge.icon as any} size={60} color={Colors.text.inverse} />
+            <Ionicons name={challenge.icon as any} size={60} color={colors.text.inverse} />
           </View>
           <Text style={styles.heroTitle}>{challenge.title}</Text>
           <Text style={styles.heroDescription}>{challenge.description}</Text>
@@ -420,7 +420,7 @@ function ChallengeDetailPage() {
               <Text style={styles.difficultyText}>{challenge.difficulty.toUpperCase()}</Text>
             </View>
             <View style={styles.typeBadge}>
-              <Ionicons name="calendar" size={16} color={Colors.text.inverse} />
+              <Ionicons name="calendar" size={16} color={colors.text.inverse} />
               <Text style={styles.typeText}>{challenge.type.toUpperCase()}</Text>
             </View>
           </View>
@@ -448,7 +448,7 @@ function ChallengeDetailPage() {
                       ]}
                     >
                       <View style={[styles.milestoneDot, isPassed && styles.milestoneDotPassed]}>
-                        {isPassed && <Ionicons name="checkmark" size={12} color={Colors.text.inverse} />}
+                        {isPassed && <Ionicons name="checkmark" size={12} color={colors.text.inverse} />}
                       </View>
                       <Text style={[styles.milestoneLabel, isPassed && styles.milestoneLabelPassed]}>
                         {milestone}%
@@ -488,7 +488,7 @@ function ChallengeDetailPage() {
                       <Ionicons
                         name={isDone ? 'checkmark-circle' : 'ellipse-outline'}
                         size={20}
-                        color={isDone ? Colors.success : Colors.text.tertiary}
+                        color={isDone ? Colors.success : colors.text.tertiary}
                       />
                       <Text style={[styles.checklistText, isDone && styles.checklistTextDone]}>
                         {getActionLabel(challenge.requirements.action)} #{index + 1}
@@ -547,7 +547,7 @@ function ChallengeDetailPage() {
         {/* Time Remaining */}
         {isStarted && (
           <View style={styles.timeSection}>
-            <Ionicons name="time-outline" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="time-outline" size={20} color={colors.text.tertiary} />
             <Text style={styles.timeText}>{getTimeRemaining()}</Text>
           </View>
         )}
@@ -573,10 +573,10 @@ function ChallengeDetailPage() {
             >
               <LinearGradient colors={[Colors.success, colors.successScale[700]]} style={styles.claimButtonGradient}>
                 {claiming ? (
-                  <ActivityIndicator size="small" color={Colors.text.inverse} />
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
                   <>
-                    <Ionicons name="gift" size={24} color={Colors.text.inverse} />
+                    <Ionicons name="gift" size={24} color={colors.text.inverse} />
                     <Text style={styles.claimButtonText}>Claim Reward</Text>
                   </>
                 )}
@@ -593,7 +593,7 @@ function ChallengeDetailPage() {
               <Text style={styles.startButtonText}>
                 {isStarted ? `Continue: ${getActionLabel(challenge.requirements.action)}` : 'Start Challenge'}
               </Text>
-              <Ionicons name="arrow-forward" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-forward" size={24} color={colors.text.inverse} />
             </LinearGradient>
           </Pressable>
         )}
@@ -627,17 +627,17 @@ function ChallengeDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   errorText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   scrollView: {
     flex: 1,
@@ -659,7 +659,7 @@ const styles = StyleSheet.create({
   heroTitle: {
     ...Typography.h1,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
@@ -682,7 +682,7 @@ const styles = StyleSheet.create({
   difficultyText: {
     ...Typography.bodySmall,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   typeBadge: {
     flexDirection: 'row',
@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
   typeText: {
     ...Typography.bodySmall,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   section: {
     padding: Spacing.base,
@@ -704,11 +704,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   progressContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     ...Shadows.medium,
@@ -719,7 +719,7 @@ const styles = StyleSheet.create({
   },
   progressBarBackground: {
     height: 12,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 6,
     overflow: 'hidden',
   },
@@ -739,21 +739,21 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderWidth: 2,
-    borderColor: Colors.background.primary,
+    borderColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.xs,
   },
   milestoneDotPassed: {
     backgroundColor: Colors.success,
-    borderColor: Colors.background.primary,
+    borderColor: colors.background.primary,
   },
   milestoneLabel: {
     ...Typography.overline,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   milestoneLabelPassed: {
     color: Colors.success,
@@ -761,11 +761,11 @@ const styles = StyleSheet.create({
   progressText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
   requirementCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     ...Shadows.medium,
@@ -778,11 +778,11 @@ const styles = StyleSheet.create({
   },
   requirementTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   requirementDescription: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.base,
   },
   checklistContainer: {
@@ -796,11 +796,11 @@ const styles = StyleSheet.create({
   checklistText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   checklistTextDone: {
     textDecorationLine: 'line-through',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   checklistDone: {
     ...Typography.bodySmall,
@@ -808,7 +808,7 @@ const styles = StyleSheet.create({
     color: Colors.success,
   },
   rewardsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.xl,
     borderRadius: BorderRadius.md,
     flexDirection: 'row',
@@ -822,11 +822,11 @@ const styles = StyleSheet.create({
   rewardAmount: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   rewardLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   timeSection: {
     flexDirection: 'row',
@@ -838,7 +838,7 @@ const styles = StyleSheet.create({
   },
   timeText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   ctaContainer: {
@@ -847,9 +847,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   claimedButton: {
     flexDirection: 'row',
@@ -881,7 +881,7 @@ const styles = StyleSheet.create({
   claimButtonText: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   startButton: {
     borderRadius: BorderRadius.md,
@@ -897,7 +897,7 @@ const styles = StyleSheet.create({
   startButtonText: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

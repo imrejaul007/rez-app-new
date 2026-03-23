@@ -264,7 +264,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerSubtitle: {
     ...Typography.caption,
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   },
   payAmount: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: "800",
   },
   getRow: {
@@ -405,7 +405,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginLeft: -26,
   },
   dividerLine: {
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     marginRight: -26,
   },
 

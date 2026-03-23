@@ -164,7 +164,7 @@ function ReviewsPage() {
             key={star}
             name={star <= rating ? 'star' : 'star-outline'}
             size={size}
-            color={star <= rating ? Colors.warning : Colors.border.default}
+            color={star <= rating ? Colors.warning : colors.border.default}
           />
         ))}
       </View>
@@ -227,7 +227,7 @@ function ReviewsPage() {
 
         <View style={styles.reviewFooter}>
           <Pressable style={styles.helpfulButton}>
-            <Ionicons name="thumbs-up-outline" size={16} color={Colors.text.tertiary} />
+            <Ionicons name="thumbs-up-outline" size={16} color={colors.text.tertiary} />
             <ThemedText style={styles.helpfulText}>Helpful ({review.helpful})</ThemedText>
           </Pressable>
         </View>
@@ -253,7 +253,7 @@ function ReviewsPage() {
         <View style={styles.container}>
           <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.gradientHeader}>
             <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.headerBackButton}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.gradientHeaderTitle}>Reviews</ThemedText>
             <View style={{ width: 40 }} />
@@ -278,11 +278,11 @@ function ReviewsPage() {
         {/* Gradient Header */}
         <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.gradientHeader}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.headerBackButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.gradientHeaderTitle}>Reviews</ThemedText>
           <Pressable style={styles.headerRefresh} onPress={() => fetchReviews(true)}>
-            <Ionicons name="refresh" size={22} color={Colors.text.inverse} />
+            <Ionicons name="refresh" size={22} color={colors.text.inverse} />
           </Pressable>
         </LinearGradient>
 
@@ -345,7 +345,7 @@ function ReviewsPage() {
                     style={[styles.filterChip, filterRating === rating && styles.filterChipActive]}
                     onPress={() => setFilterRating(rating)}
                   >
-                    <Ionicons name="star" size={14} color={filterRating === rating ? Colors.text.inverse : Colors.warning} />
+                    <Ionicons name="star" size={14} color={filterRating === rating ? colors.text.inverse : Colors.warning} />
                     <ThemedText style={[styles.filterText, filterRating === rating && styles.filterTextActive]}>
                       {rating}
                     </ThemedText>
@@ -382,7 +382,7 @@ function ReviewsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   gradientHeader: {
     flexDirection: 'row',
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
   gradientHeaderTitle: {
     flex: 1,
     ...Typography.h2,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginLeft: Spacing.base,
   },
   headerRefresh: {
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.h4,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
@@ -434,12 +434,12 @@ const styles = StyleSheet.create({
   },
   errorTitle: {
     ...Typography.h1,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
   },
   errorText: {
     ...Typography.h4,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 24,
   },
@@ -452,7 +452,7 @@ const styles = StyleSheet.create({
     ...Shadows.medium,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h4,
     fontWeight: '600',
   },
@@ -461,25 +461,25 @@ const styles = StyleSheet.create({
   },
   summaryCard: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.xl,
     marginHorizontal: Spacing.base,
     marginTop: Spacing.base,
     borderRadius: BorderRadius.xl,
     ...Shadows.medium,
     borderWidth: 1,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
   },
   summaryLeft: {
     alignItems: 'center',
     paddingRight: Spacing.lg,
     borderRightWidth: 1,
-    borderRightColor: Colors.border.default,
+    borderRightColor: colors.border.default,
   },
   averageRating: {
     fontSize: 48,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   starsContainer: {
     flexDirection: 'row',
@@ -488,7 +488,7 @@ const styles = StyleSheet.create({
   },
   totalReviews: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   summaryRight: {
     flex: 1,
@@ -503,13 +503,13 @@ const styles = StyleSheet.create({
   ratingLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     width: 12,
   },
   ratingBar: {
     flex: 1,
     height: 8,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: 4,
     marginLeft: Spacing.sm,
     marginRight: Spacing.sm,
@@ -522,12 +522,12 @@ const styles = StyleSheet.create({
   },
   ratingCount: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     width: 24,
     textAlign: 'right',
   },
   filtersContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: Spacing.base,
     paddingHorizontal: Spacing.base,
     marginTop: Spacing.base,
@@ -538,7 +538,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 18,
     paddingVertical: 10,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius['2xl'],
     marginRight: 10,
     gap: 6,
@@ -553,23 +553,23 @@ const styles = StyleSheet.create({
   filterText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   filterTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   reviewsList: {
     paddingHorizontal: Spacing.base,
     marginTop: Spacing.base,
   },
   reviewCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.lg,
     marginBottom: Spacing.base,
     ...Shadows.subtle,
     borderWidth: 1,
-    borderColor: Colors.background.secondary,
+    borderColor: colors.background.secondary,
   },
   reviewHeader: {
     flexDirection: 'row',
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   userAvatarText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: '700',
   },
@@ -608,7 +608,7 @@ const styles = StyleSheet.create({
   userName: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   verifiedBadge: {
     flexDirection: 'row',
@@ -622,12 +622,12 @@ const styles = StyleSheet.create({
   },
   reviewDate: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   reviewComment: {
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 22,
   },
   reviewImages: {
@@ -644,7 +644,7 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
   },
   helpfulButton: {
     flexDirection: 'row',
@@ -653,7 +653,7 @@ const styles = StyleSheet.create({
   },
   helpfulText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   emptyContainer: {
     paddingVertical: 80,
@@ -672,12 +672,12 @@ const styles = StyleSheet.create({
   },
   emptyTitle: {
     ...Typography.h2,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   emptySubtitle: {
     ...Typography.h4,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 24,
   },

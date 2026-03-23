@@ -88,7 +88,7 @@ function SurveyCompletePage() {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background.secondary} />
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
         <View style={styles.content}>
           {/* Success Animation */}
@@ -102,7 +102,7 @@ function SurveyCompletePage() {
               colors={[colors.lightMustard, colors.lightMustard]}
               style={styles.successGradient}
             >
-              <Ionicons name="checkmark" size={56} color={Colors.text.inverse} />
+              <Ionicons name="checkmark" size={56} color={colors.text.inverse} />
             </LinearGradient>
           </Animated.View>
 
@@ -172,7 +172,7 @@ function SurveyCompletePage() {
               fadeSlideStyle,
             ]}
           >
-            <Ionicons name="information-circle-outline" size={20} color={Colors.text.tertiary} />
+            <Ionicons name="information-circle-outline" size={20} color={colors.text.tertiary} />
             <Text style={styles.infoText}>
               Coins have been added to your wallet and can be used for rewards
             </Text>
@@ -190,7 +190,7 @@ function SurveyCompletePage() {
             style={styles.secondaryButton}
             onPress={handleGoHome}
           >
-            <Ionicons name="home-outline" size={20} color={Colors.text.primary} />
+            <Ionicons name="home-outline" size={20} color={colors.text.primary} />
             <Text style={styles.secondaryButtonText}>Home</Text>
           </Pressable>
 
@@ -205,7 +205,7 @@ function SurveyCompletePage() {
               style={styles.primaryButtonGradient}
             >
               <Text style={styles.primaryButtonText}>More Surveys</Text>
-              <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+              <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
             </LinearGradient>
           </Pressable>
         </Animated.View>
@@ -217,7 +217,7 @@ function SurveyCompletePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   content: {
     flex: 1,
     alignItems: 'center',
@@ -244,12 +244,12 @@ const styles = StyleSheet.create({
     marginBottom: Spacing['2xl'] },
   title: {
     ...Typography.h1,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm },
   subtitle: {
     ...Typography.body,
     fontSize: 15,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center' },
   rewardCard: {
     width: '100%',
@@ -264,14 +264,14 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 32,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.base,
     ...Shadows.medium },
   rewardLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs },
   rewardValue: {
     fontSize: 48,
@@ -280,17 +280,17 @@ const styles = StyleSheet.create({
   rewardCurrency: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs },
   statsContainer: {
     flexDirection: 'row',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     width: '100%',
     marginBottom: Spacing.xl,
     borderWidth: 1,
-    borderColor: Colors.border.default },
+    borderColor: colors.border.default },
   statItem: {
     flex: 1,
     alignItems: 'center' },
@@ -305,15 +305,15 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 2,
     textAlign: 'center' },
   statLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   statDivider: {
     width: 1,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     marginHorizontal: Spacing.base },
   infoBanner: {
     flexDirection: 'row',
@@ -328,16 +328,16 @@ const styles = StyleSheet.create({
     flex: 1,
     ...Typography.bodySmall,
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     lineHeight: 18 },
   bottomButtons: {
     flexDirection: 'row',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
     gap: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default },
+    borderTopColor: colors.border.default },
   secondaryButton: {
     flex: 1,
     flexDirection: 'row',
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   primaryButton: {
     flex: 2,
     borderRadius: BorderRadius.md,
@@ -366,6 +366,6 @@ const styles = StyleSheet.create({
     ...Typography.body,
     fontSize: 15,
     fontWeight: '600',
-    color: Colors.text.inverse } });
+    color: colors.text.inverse } });
 
 export default withErrorBoundary(SurveyCompletePage, 'SurveyComplete');

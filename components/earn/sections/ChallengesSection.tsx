@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { DisplayChallenge } from '@/hooks/usePlayAndEarnData';
 import { earnStyles as styles } from './styles';
 
@@ -52,8 +53,8 @@ const ChallengesSection = React.memo(function ChallengesSection({
               {challenge.isJoined ? (
                 <Text style={styles.challengeProgress}>{challenge.progress}%</Text>
               ) : (
-                <View style={{ backgroundColor: Colors.info, paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.sm }}>
-                  <Text style={{ color: Colors.text.inverse, fontSize: 11, fontWeight: '600' }}>Join</Text>
+                <View style={{ backgroundColor: colors.info, paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: BorderRadius.sm }}>
+                  <Text style={{ color: colors.text.inverse, fontSize: 11, fontWeight: '600' }}>Join</Text>
                 </View>
               )}
             </View>

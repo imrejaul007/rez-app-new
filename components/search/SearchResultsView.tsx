@@ -13,7 +13,8 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { SearchResult, GroupedProductResult, SearchResultsSummary as SearchSummaryType } from '@/types/search.types';
 import { BRAND } from '@/constants/brand';
 import { apiClient } from '@/utils/apiClient';
@@ -337,10 +338,10 @@ const styles = StyleSheet.create({
   matchingStoresCount: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeResultCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: 18,
     marginBottom: Spacing.md,
     borderWidth: 1,
@@ -466,7 +467,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
@@ -495,7 +496,7 @@ const styles = StyleSheet.create({
   productGroupSectionHeader: {
     paddingHorizontal: Spacing.base,
     paddingVertical: 14,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -533,7 +534,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.xl,
     paddingBottom: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     marginTop: Spacing.base,
@@ -592,7 +593,7 @@ const styles = StyleSheet.create({
   },
   resultCard: {
     width: (width - 48) / 2,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginBottom: 14,
     marginHorizontal: 2,
     borderRadius: BorderRadius.xl,
@@ -666,7 +667,7 @@ const styles = StyleSheet.create({
   },
   resultCashbackText: {
     ...Typography.bodySmall,
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '700',
   },
   categoryTag: {

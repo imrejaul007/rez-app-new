@@ -219,7 +219,7 @@ function CancelFeedbackPage() {
             <Ionicons
               name={reason.icon as any}
               size={24}
-              color={selectedReason === reason.value ? Colors.error : Colors.text.tertiary}
+              color={selectedReason === reason.value ? Colors.error : colors.text.tertiary}
             />
             <ThemedText style={styles.reasonLabel}>{reason.label}</ThemedText>
           </Pressable>
@@ -233,7 +233,7 @@ function CancelFeedbackPage() {
             value={otherReasonText}
             onChangeText={setOtherReasonText}
             placeholder="Please tell us more..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             multiline
             numberOfLines={4}
             textAlignVertical="top"
@@ -251,7 +251,7 @@ function CancelFeedbackPage() {
         accessibilityHint="Double tap to proceed with cancellation"
       >
         <ThemedText style={styles.continueButtonText}>Continue</ThemedText>
-        <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+        <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
       </Pressable>
     </View>
   );
@@ -277,7 +277,7 @@ function CancelFeedbackPage() {
             value={featureRequest}
             onChangeText={setFeatureRequest}
             placeholder="What features would make you stay?"
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             multiline
             numberOfLines={6}
             textAlignVertical="top"
@@ -411,7 +411,7 @@ function CancelFeedbackPage() {
             value={finalFeedback}
             onChangeText={setFinalFeedback}
             placeholder="Share your feedback (optional)"
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             multiline
             numberOfLines={4}
             textAlignVertical="top"
@@ -529,7 +529,7 @@ function CancelFeedbackPage() {
             accessibilityRole="button"
             accessibilityHint="Double tap to cancel and return to previous screen"
           >
-            <Ionicons name="close" size={24} color={Colors.text.inverse} />
+            <Ionicons name="close" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Cancel Subscription</ThemedText>
           <View style={styles.headerRight} />
@@ -550,7 +550,7 @@ function CancelFeedbackPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
@@ -566,7 +566,7 @@ const styles = StyleSheet.create({
     padding: Spacing.sm,
   },
   headerTitle: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
@@ -588,13 +588,13 @@ const styles = StyleSheet.create({
   stepTitle: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginTop: Spacing.base,
   },
   stepSubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginTop: Spacing.sm,
     lineHeight: 20,
@@ -606,11 +606,11 @@ const styles = StyleSheet.create({
   reasonOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: Spacing.md,
   },
   reasonOptionSelected: {
@@ -622,7 +622,7 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -635,19 +635,19 @@ const styles = StyleSheet.create({
   reasonLabel: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   otherReasonContainer: {
     marginBottom: Spacing.xl,
   },
   textArea: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     minHeight: 100,
   },
   continueButton: {
@@ -660,7 +660,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   continueButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold',
   },
@@ -675,23 +675,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   primaryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold',
   },
   secondaryButton: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingVertical: Spacing.base,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
   },
   secondaryButtonText: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     ...Typography.body,
     fontWeight: '600',
   },
   pauseBenefitsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.lg,
     gap: Spacing.base,
@@ -705,7 +705,7 @@ const styles = StyleSheet.create({
   pauseBenefitText: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   warningBox: {
     backgroundColor: colors.errorScale[50],
@@ -729,7 +729,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   benefitsLossCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.lg,
     marginBottom: Spacing.xl,
@@ -737,7 +737,7 @@ const styles = StyleSheet.create({
   benefitsLossTitle: {
     ...Typography.bodyLarge,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.base,
   },
   benefitLossRow: {
@@ -749,7 +749,7 @@ const styles = StyleSheet.create({
   benefitLossText: {
     flex: 1,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   feedbackSection: {
     marginBottom: Spacing.xl,
@@ -757,7 +757,7 @@ const styles = StyleSheet.create({
   feedbackLabel: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.sm,
   },
   cancellationTypeContainer: {
@@ -767,11 +767,11 @@ const styles = StyleSheet.create({
   typeOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     gap: Spacing.md,
   },
   typeOptionSelected: {
@@ -783,7 +783,7 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 4,
     borderWidth: 2,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -793,11 +793,11 @@ const styles = StyleSheet.create({
   typeTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   typeSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   finalActions: {
@@ -812,7 +812,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   keepButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: 'bold',
   },

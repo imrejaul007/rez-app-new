@@ -77,7 +77,7 @@ function getGradient(bg?: string): [string, string] {
       return [bg, `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`];
     }
   }
-  return [Colors.nileBlue, '#0f2536'];
+  return [colors.nileBlue, '#0f2536'];
 }
 
 const CATEGORY_ICONS: Record<string, string> = {
@@ -156,7 +156,7 @@ function DoubleCashbackPage() {
         <StatusBar barStyle="light-content" />
         <LinearGradient colors={[colors.nileBlue, '#0f2536']} style={styles.loadingContainer}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
           <CardGridSkeleton />
         </LinearGradient>
@@ -171,7 +171,7 @@ function DoubleCashbackPage() {
         <StatusBar barStyle="light-content" />
         <LinearGradient colors={[colors.nileBlue, '#0f2536']} style={styles.loadingContainer}>
           <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.emptyState}>
             <View style={styles.emptyIconWrap}>
@@ -180,7 +180,7 @@ function DoubleCashbackPage() {
             <Text style={styles.emptyTitle}>No Active Double Cashback</Text>
             <Text style={styles.emptySubtext}>Check back soon for exciting double cashback offers!</Text>
             <Pressable style={styles.refreshBtn} onPress={fetchCampaigns}>
-              <Ionicons name="refresh" size={18} color={Colors.text.inverse} />
+              <Ionicons name="refresh" size={18} color={colors.text.inverse} />
               <Text style={styles.refreshBtnText}>Refresh</Text>
             </Pressable>
           </View>
@@ -207,11 +207,11 @@ function DoubleCashbackPage() {
         <LinearGradient colors={heroGradient} style={styles.hero}>
           <View style={styles.heroHeader}>
             <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Ionicons name="arrow-back" size={22} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.heroHeaderTitle}>Double Cashback</Text>
             <Pressable style={styles.backBtn} onPress={() => handleShare(heroCampaign)}>
-              <Ionicons name="share-social" size={20} color={Colors.text.inverse} />
+              <Ionicons name="share-social" size={20} color={colors.text.inverse} />
             </Pressable>
           </View>
 
@@ -275,7 +275,7 @@ function DoubleCashbackPage() {
             {heroCampaign.minOrderValue ? (
               <View style={styles.statCard}>
                 <View style={styles.statIconWrap}>
-                  <Ionicons name="cart-outline" size={18} color={Colors.nileBlue} />
+                  <Ionicons name="cart-outline" size={18} color={colors.nileBlue} />
                 </View>
                 <Text style={styles.statValue}>Min. Order</Text>
                 <Text style={styles.statLabel}>{currencySymbol}{heroCampaign.minOrderValue}</Text>
@@ -284,7 +284,7 @@ function DoubleCashbackPage() {
             {heroCampaign.maxCashback ? (
               <View style={styles.statCard}>
                 <View style={styles.statIconWrap}>
-                  <Ionicons name="wallet-outline" size={18} color={Colors.nileBlue} />
+                  <Ionicons name="wallet-outline" size={18} color={colors.nileBlue} />
                 </View>
                 <Text style={styles.statValue}>Max Cashback</Text>
                 <Text style={styles.statLabel}>{currencySymbol}{heroCampaign.maxCashback}</Text>
@@ -292,7 +292,7 @@ function DoubleCashbackPage() {
             ) : null}
             <View style={styles.statCard}>
               <View style={styles.statIconWrap}>
-                <Ionicons name="calendar-outline" size={18} color={Colors.nileBlue} />
+                <Ionicons name="calendar-outline" size={18} color={colors.nileBlue} />
               </View>
               <Text style={styles.statValue}>Valid Till</Text>
               <Text style={styles.statLabel}>{formatDate(heroCampaign.endTime)}</Text>
@@ -312,7 +312,7 @@ function DoubleCashbackPage() {
                 <Text style={styles.ctaSubtitle}>Browse participating stores & earn {heroCampaign.multiplier}X cashback</Text>
               </View>
               <View style={styles.ctaArrow}>
-                <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+                <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
               </View>
             </LinearGradient>
           </Pressable>
@@ -328,7 +328,7 @@ function DoubleCashbackPage() {
                 {heroCampaign.eligibleCategories.map((cat, idx) => (
                   <View key={idx} style={styles.categoryCard}>
                     <View style={styles.categoryIconWrap}>
-                      <Ionicons name={getCategoryIcon(cat) as any} size={22} color={Colors.nileBlue} />
+                      <Ionicons name={getCategoryIcon(cat) as any} size={22} color={colors.nileBlue} />
                     </View>
                     <Text style={styles.categoryName}>{cat}</Text>
                     <Text style={styles.categoryMultiplier}>{heroCampaign.multiplier}X</Text>
@@ -390,7 +390,7 @@ function DoubleCashbackPage() {
           {heroCampaign.terms && heroCampaign.terms.length > 0 && (
             <View style={styles.section}>
               <View style={styles.sectionHeader}>
-                <Ionicons name="document-text" size={18} color={Colors.text.tertiary} />
+                <Ionicons name="document-text" size={18} color={colors.text.tertiary} />
                 <Text style={styles.sectionTitle}>Terms & Conditions</Text>
               </View>
               <View style={styles.termsCard}>
@@ -446,99 +446,99 @@ function DoubleCashbackPage() {
 
 // ─── Styles ─────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
 
   // Loading / Empty
   loadingContainer: { flex: 1, paddingHorizontal: Spacing.lg },
   loadingText: { color: 'rgba(255,255,255,0.7)', ...Typography.body, textAlign: 'center', marginTop: Spacing.base },
   emptyState: { alignItems: 'center', marginTop: 80 },
   emptyIconWrap: { width: 80, height: 80, borderRadius: BorderRadius.full, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.base },
-  emptyTitle: { color: Colors.text.inverse, ...Typography.h4, fontWeight: '700', marginBottom: Spacing.sm },
+  emptyTitle: { color: colors.text.inverse, ...Typography.h4, fontWeight: '700', marginBottom: Spacing.sm },
   emptySubtext: { color: 'rgba(255,255,255,0.6)', ...Typography.body, textAlign: 'center', maxWidth: 260 },
   refreshBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: 'rgba(255,255,255,0.15)', paddingHorizontal: Spacing.lg, paddingVertical: 10, borderRadius: BorderRadius.xl, marginTop: Spacing.xl },
-  refreshBtnText: { color: Colors.text.inverse, fontWeight: '600', ...Typography.body },
+  refreshBtnText: { color: colors.text.inverse, fontWeight: '600', ...Typography.body },
 
   // Hero
   hero: { paddingBottom: 24 },
   heroHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingTop: Spacing.sm, paddingBottom: Spacing.md },
-  heroHeaderTitle: { color: Colors.text.inverse, fontSize: 16, fontWeight: '700' },
+  heroHeaderTitle: { color: colors.text.inverse, fontSize: 16, fontWeight: '700' },
   backBtn: { width: 36, height: 36, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.15)', justifyContent: 'center', alignItems: 'center' }, // circular
   heroCenter: { alignItems: 'center', paddingVertical: Spacing.md },
   multiplierGlow: { width: 100, height: 100, borderRadius: BorderRadius.full, backgroundColor: 'rgba(255,255,255,0.12)', justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
-  multiplierCircle: { width: 80, height: 80, borderRadius: BorderRadius.full, backgroundColor: Colors.background.primary, justifyContent: 'center', alignItems: 'center' },
-  multiplierValue: { fontSize: 28, fontWeight: '800', color: Colors.nileBlue },
-  heroLabel: { ...Typography.h4, fontWeight: '800', color: Colors.text.inverse, letterSpacing: 4, marginBottom: 6 },
-  heroTitle: { ...Typography.h4, fontWeight: '700', color: Colors.text.inverse, textAlign: 'center', marginBottom: Spacing.xs },
+  multiplierCircle: { width: 80, height: 80, borderRadius: BorderRadius.full, backgroundColor: colors.background.primary, justifyContent: 'center', alignItems: 'center' },
+  multiplierValue: { fontSize: 28, fontWeight: '800', color: colors.nileBlue },
+  heroLabel: { ...Typography.h4, fontWeight: '800', color: colors.text.inverse, letterSpacing: 4, marginBottom: 6 },
+  heroTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.inverse, textAlign: 'center', marginBottom: Spacing.xs },
   heroSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)', textAlign: 'center', paddingHorizontal: Spacing.lg },
 
   // Timer
   timerWrap: { alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.15)', marginHorizontal: Spacing.lg, borderRadius: 12, padding: 14 },
   timerLabel: { color: 'rgba(255,255,255,0.7)', ...Typography.bodySmall, fontWeight: '600', marginBottom: Spacing.sm },
   timerBoxes: { flexDirection: 'row', alignItems: 'center' },
-  timerBox: { alignItems: 'center', backgroundColor: Colors.background.primary, borderRadius: 8, paddingHorizontal: 14, paddingVertical: 6, minWidth: 54 },
-  timerValue: { ...Typography.h3, fontWeight: '800', color: Colors.nileBlue },
-  timerUnit: { ...Typography.overline, color: Colors.text.tertiary, fontWeight: '600', marginTop: 1 },
-  timerSep: { ...Typography.h3, fontWeight: '800', color: Colors.text.inverse, marginHorizontal: 6 },
+  timerBox: { alignItems: 'center', backgroundColor: colors.background.primary, borderRadius: 8, paddingHorizontal: 14, paddingVertical: 6, minWidth: 54 },
+  timerValue: { ...Typography.h3, fontWeight: '800', color: colors.nileBlue },
+  timerUnit: { ...Typography.overline, color: colors.text.tertiary, fontWeight: '600', marginTop: 1 },
+  timerSep: { ...Typography.h3, fontWeight: '800', color: colors.text.inverse, marginHorizontal: 6 },
 
   // Content
   content: { padding: Spacing.base },
   infoBanner: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, backgroundColor: Colors.infoScale[50], borderRadius: BorderRadius.md, padding: 14, marginBottom: Spacing.base },
-  infoText: { flex: 1, ...Typography.bodySmall, color: Colors.text.secondary, lineHeight: 20 },
+  infoText: { flex: 1, ...Typography.bodySmall, color: colors.text.secondary, lineHeight: 20 },
 
   // CTA
   ctaBanner: { flexDirection: 'row', alignItems: 'center', padding: 18, borderRadius: 12, marginBottom: Spacing.lg },
-  ctaTitle: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.inverse, marginBottom: 2 },
+  ctaTitle: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse, marginBottom: 2 },
   ctaSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
   ctaArrow: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
 
   // Stats
   statsRow: { flexDirection: 'row', gap: 10, marginBottom: Spacing.base },
-  statCard: { flex: 1, backgroundColor: Colors.background.primary, borderRadius: 12, padding: 14, alignItems: 'center', gap: 6, borderWidth: 1, borderColor: Colors.background.secondary },
+  statCard: { flex: 1, backgroundColor: colors.background.primary, borderRadius: 12, padding: 14, alignItems: 'center', gap: 6, borderWidth: 1, borderColor: colors.background.secondary },
   statIconWrap: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center' }, // circular
-  statValue: { ...Typography.caption, color: Colors.text.tertiary, fontWeight: '600' },
-  statLabel: { ...Typography.body, color: Colors.nileBlue, fontWeight: '700' },
+  statValue: { ...Typography.caption, color: colors.text.tertiary, fontWeight: '600' },
+  statLabel: { ...Typography.body, color: colors.nileBlue, fontWeight: '700' },
 
   // Sections
   section: { marginBottom: Spacing.lg },
   sectionHeader: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: Spacing.md },
-  sectionTitle: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.primary },
+  sectionTitle: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.primary },
 
   // Category Grid
   categoryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  categoryCard: { width: (width - 32 - 20) / 3, backgroundColor: Colors.background.primary, borderRadius: 12, padding: Spacing.md, alignItems: 'center', borderWidth: 1, borderColor: Colors.background.secondary },
+  categoryCard: { width: (width - 32 - 20) / 3, backgroundColor: colors.background.primary, borderRadius: 12, padding: Spacing.md, alignItems: 'center', borderWidth: 1, borderColor: colors.background.secondary },
   categoryIconWrap: { width: 44, height: 44, borderRadius: BorderRadius.full, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
-  categoryName: { ...Typography.caption, fontWeight: '600', color: Colors.text.secondary, textAlign: 'center', marginBottom: Spacing.xs },
+  categoryName: { ...Typography.caption, fontWeight: '600', color: colors.text.secondary, textAlign: 'center', marginBottom: Spacing.xs },
   categoryMultiplier: { ...Typography.body, fontWeight: '800', color: Colors.success },
 
   // Store Grid
   storeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  storeCard: { width: (width - 32 - 10) / 2, backgroundColor: Colors.background.primary, borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: Colors.background.secondary },
+  storeCard: { width: (width - 32 - 10) / 2, backgroundColor: colors.background.primary, borderRadius: 12, padding: 14, flexDirection: 'row', alignItems: 'center', gap: 10, borderWidth: 1, borderColor: colors.background.secondary },
   storeIconWrap: { width: 40, height: 40, borderRadius: BorderRadius.md, backgroundColor: Colors.infoScale[50], justifyContent: 'center', alignItems: 'center' },
-  storeName: { flex: 1, ...Typography.bodySmall, fontWeight: '600', color: Colors.text.primary },
+  storeName: { flex: 1, ...Typography.bodySmall, fontWeight: '600', color: colors.text.primary },
   storeMultiplierBadge: { backgroundColor: Colors.successScale[50], paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: BorderRadius.sm },
   storeMultiplierText: { ...Typography.caption, fontWeight: '800', color: Colors.success },
 
   // How It Works
-  howItWorksCard: { backgroundColor: Colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, borderWidth: 1, borderColor: Colors.background.secondary },
+  howItWorksCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, borderWidth: 1, borderColor: colors.background.secondary },
   stepRow: { flexDirection: 'row', alignItems: 'flex-start', gap: Spacing.md, paddingVertical: Spacing.md },
-  stepBorder: { borderBottomWidth: 1, borderBottomColor: Colors.background.secondary },
-  stepNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.nileBlue, justifyContent: 'center', alignItems: 'center' },
-  stepNumText: { ...Typography.bodySmall, fontWeight: '700', color: Colors.text.inverse },
-  stepTitle: { ...Typography.body, fontWeight: '600', color: Colors.text.primary, marginBottom: 2 },
-  stepDesc: { ...Typography.bodySmall, color: Colors.text.tertiary, lineHeight: 18 },
+  stepBorder: { borderBottomWidth: 1, borderBottomColor: colors.background.secondary },
+  stepNum: { width: 28, height: 28, borderRadius: 14, backgroundColor: colors.nileBlue, justifyContent: 'center', alignItems: 'center' },
+  stepNumText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
+  stepTitle: { ...Typography.body, fontWeight: '600', color: colors.text.primary, marginBottom: 2 },
+  stepDesc: { ...Typography.bodySmall, color: colors.text.tertiary, lineHeight: 18 },
 
   // Terms
-  termsCard: { backgroundColor: Colors.background.primary, borderRadius: 14, padding: Spacing.base, borderWidth: 1, borderColor: Colors.background.secondary },
+  termsCard: { backgroundColor: colors.background.primary, borderRadius: 14, padding: Spacing.base, borderWidth: 1, borderColor: colors.background.secondary },
   termRow: { flexDirection: 'row', gap: Spacing.sm, marginBottom: Spacing.sm },
-  termBullet: { ...Typography.bodySmall, color: Colors.text.tertiary, fontWeight: '600', width: 20 },
-  termText: { flex: 1, ...Typography.bodySmall, color: Colors.text.tertiary, lineHeight: 19 },
+  termBullet: { ...Typography.bodySmall, color: colors.text.tertiary, fontWeight: '600', width: 20 },
+  termText: { flex: 1, ...Typography.bodySmall, color: colors.text.tertiary, lineHeight: 19 },
 
   // Other Campaigns
   otherCard: { borderRadius: 14, overflow: 'hidden', marginBottom: 10 },
   otherGradient: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 14 },
   otherMultiplier: { width: 50, height: 50, borderRadius: 25, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
-  otherMultiplierText: { ...Typography.h4, fontWeight: '800', color: Colors.text.inverse },
-  otherTitle: { ...Typography.body, fontWeight: '700', color: Colors.text.inverse },
+  otherMultiplierText: { ...Typography.h4, fontWeight: '800', color: colors.text.inverse },
+  otherTitle: { ...Typography.body, fontWeight: '700', color: colors.text.inverse },
   otherSubtitle: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
   otherTimer: { fontSize: 11, color: 'rgba(255,255,255,0.6)', marginTop: 4, fontWeight: '600' },
 });

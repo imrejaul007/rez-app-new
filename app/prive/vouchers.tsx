@@ -436,7 +436,7 @@ function VouchersScreen() {
                           );
                         }}
                       >
-                        <Ionicons name="checkmark-circle-outline" size={18} color={Colors.text.inverse} />
+                        <Ionicons name="checkmark-circle-outline" size={18} color={colors.text.inverse} />
                         <Text style={styles.markUsedText}>Mark as Used</Text>
                       </Pressable>
                     )}
@@ -634,7 +634,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 10,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     textTransform: 'uppercase',
   },
   voucherValue: {

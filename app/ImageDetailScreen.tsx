@@ -192,7 +192,7 @@ function ImageDetailScreen() {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <StatusBar barStyle="dark-content" />
-        <Ionicons name="alert-circle-outline" size={64} color={Colors.text.tertiary} />
+        <Ionicons name="alert-circle-outline" size={64} color={colors.text.tertiary} />
         <Text style={styles.errorText}>{error || 'Image not found'}</Text>
         <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
           <Text style={styles.backButtonText}>Go Back</Text>
@@ -212,7 +212,7 @@ function ImageDetailScreen() {
           onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
          
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
 
         <Text style={styles.headerTitle}>Photo</Text>
@@ -222,7 +222,7 @@ function ImageDetailScreen() {
           onPress={handleShare}
          
         >
-          <Ionicons name="share-outline" size={24} color={Colors.text.primary} />
+          <Ionicons name="share-outline" size={24} color={colors.text.primary} />
         </Pressable>
       </View>
 
@@ -285,7 +285,7 @@ function ImageDetailScreen() {
           {/* Product count badge */}
           {hasProducts && (
             <View style={styles.productCountBadge}>
-              <Ionicons name="bag-handle" size={16} color={Colors.text.inverse} />
+              <Ionicons name="bag-handle" size={16} color={colors.text.inverse} />
               <Text style={styles.productCountText}>
                 {image.products.length} {image.products.length === 1 ? 'Product' : 'Products'}
               </Text>
@@ -304,18 +304,18 @@ function ImageDetailScreen() {
               <Ionicons
                 name={isLiked ? "heart" : "heart-outline"}
                 size={28}
-                color={isLiked ? colors.error : Colors.text.primary}
+                color={isLiked ? colors.error : colors.text.primary}
               />
             </Pressable>
             <Pressable style={styles.actionButton}>
-              <Ionicons name="chatbubble-outline" size={26} color={Colors.text.primary} />
+              <Ionicons name="chatbubble-outline" size={26} color={colors.text.primary} />
             </Pressable>
             <Pressable
               style={styles.actionButton}
               onPress={handleShare}
              
             >
-              <Ionicons name="paper-plane-outline" size={26} color={Colors.text.primary} />
+              <Ionicons name="paper-plane-outline" size={26} color={colors.text.primary} />
             </Pressable>
 
             <View style={styles.actionSpacer} />
@@ -328,7 +328,7 @@ function ImageDetailScreen() {
               <Ionicons
                 name={isBookmarked ? "bookmark" : "bookmark-outline"}
                 size={26}
-                color={isBookmarked ? Colors.gold : Colors.text.primary}
+                color={isBookmarked ? Colors.gold : colors.text.primary}
               />
             </Pressable>
           </View>
@@ -404,7 +404,7 @@ function ImageDetailScreen() {
                     onPress={() => handleAddToCart(product)}
                    
                   >
-                    <Ionicons name="add" size={20} color={Colors.text.inverse} />
+                    <Ionicons name="add" size={20} color={colors.text.inverse} />
                   </Pressable>
                 </Pressable>
               ))}
@@ -422,7 +422,7 @@ function ImageDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   centerContent: {
     justifyContent: 'center',
@@ -431,12 +431,12 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     paddingHorizontal: Spacing['2xl'],
   },
@@ -448,7 +448,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius['2xl'],
   },
   backButtonText: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -458,7 +458,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
     borderBottomColor: colors.neutral[100],
   },
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   scrollView: {
     flex: 1,
@@ -487,7 +487,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   creatorInfo: {
     flex: 1,
@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
   creatorName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   followButton: {
     paddingHorizontal: Spacing.lg,
@@ -505,21 +505,21 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   followButtonText: {
-    color: Colors.background.primary,
+    color: colors.background.primary,
     ...Typography.body,
     fontWeight: '600',
   },
   imageContainer: {
     width: SCREEN_WIDTH,
     aspectRatio: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     position: 'relative',
   },
   imagePlaceholder: {
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     zIndex: 10,
   },
   mainImage: {
@@ -534,12 +534,12 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   noImageText: {
     marginTop: Spacing.md,
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   productCountBadge: {
     position: 'absolute',
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   productCountText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
   },
@@ -576,7 +576,7 @@ const styles = StyleSheet.create({
   likesCount: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.sm,
   },
   captionSection: {
@@ -585,7 +585,7 @@ const styles = StyleSheet.create({
   },
   captionText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 20,
   },
   captionUsername: {
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
   },
   viewsText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.sm,
   },
@@ -613,7 +613,7 @@ const styles = StyleSheet.create({
   productsSectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   productsScrollContainer: {
     paddingHorizontal: Spacing.base,
@@ -621,11 +621,11 @@ const styles = StyleSheet.create({
   },
   productCard: {
     width: 160,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginRight: Spacing.md,
     ...Platform.select({
       ios: {
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
   productImage: {
     width: '100%',
     height: 160,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   productInfo: {
     padding: Spacing.md,
@@ -650,7 +650,7 @@ const styles = StyleSheet.create({
   productName: {
     ...Typography.bodySmall,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6,
     lineHeight: 18,
   },
@@ -666,7 +666,7 @@ const styles = StyleSheet.create({
   },
   productOriginalPrice: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   cashbackBadge: {

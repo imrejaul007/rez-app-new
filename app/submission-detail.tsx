@@ -492,7 +492,7 @@ function SubmissionDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   centerContainer: {
     flex: 1,
     alignItems: 'center',
@@ -501,7 +501,7 @@ const styles = StyleSheet.create({
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   errorText: {
     marginTop: Spacing.base,
     ...Typography.h4,
@@ -513,9 +513,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default },
+    borderBottomColor: colors.border.default },
   backButton: {
     width: 40,
     height: 40,
@@ -529,7 +529,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h4,
     fontWeight: '800',
-    color: Colors.text.primary },
+    color: colors.text.primary },
   headerSpacer: {
     width: 40 },
   scrollView: {
@@ -552,12 +552,12 @@ const styles = StyleSheet.create({
   statusBadgeText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse },
+    color: colors.text.inverse },
   submittedDate: {
     ...Typography.body,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   projectInfoContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -565,14 +565,14 @@ const styles = StyleSheet.create({
   projectInfoLabel: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
     textTransform: 'uppercase',
     letterSpacing: 0.5 },
   projectTitle: {
     ...Typography.h4,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm },
   rewardContainer: {
     flexDirection: 'row',
@@ -583,7 +583,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: Colors.success },
   contentContainer: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -591,23 +591,23 @@ const styles = StyleSheet.create({
   contentLabel: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
     textTransform: 'uppercase',
     letterSpacing: 0.5 },
   textContentContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     marginBottom: Spacing.sm },
   textContent: {
     ...Typography.body,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 24 },
   metadataText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm },
   imageScrollView: {
     marginVertical: Spacing.sm },
@@ -618,7 +618,7 @@ const styles = StyleSheet.create({
   submissionImage: {
     width: SCREEN_WIDTH * 0.7,
     height: 300,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   videoContainer: {
     position: 'relative',
     borderRadius: BorderRadius.md,
@@ -627,7 +627,7 @@ const styles = StyleSheet.create({
   videoThumbnail: {
     width: '100%',
     height: 300,
-    backgroundColor: Colors.background.secondary },
+    backgroundColor: colors.background.secondary },
   playButton: {
     position: 'absolute',
     top: '50%',
@@ -645,7 +645,7 @@ const styles = StyleSheet.create({
   ratingText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
     marginTop: Spacing.sm },
   locationContainer: {
@@ -663,7 +663,7 @@ const styles = StyleSheet.create({
   checkinImagesContainer: {
     marginTop: Spacing.base },
   reviewSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -671,19 +671,19 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md },
   reviewCommentsContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.base },
   reviewCommentsText: {
     ...Typography.body,
     fontSize: 15,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 24 },
   qualitySection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md },
   qualityScoreBar: {
     height: 8,
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     borderRadius: BorderRadius.xs,
     overflow: 'hidden' },
   qualityScoreFill: {
@@ -704,7 +704,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.brand.purple,
     borderRadius: BorderRadius.xs },
   paymentSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,
@@ -725,9 +725,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs },
   paymentDate: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary },
+    color: colors.text.tertiary },
   rejectionSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.lg,

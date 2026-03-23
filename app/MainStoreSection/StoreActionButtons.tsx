@@ -101,7 +101,7 @@ function StoreActionButtons({
             accessibilityRole="button"
             accessibilityLabel="Upload Bill"
           >
-            <Ionicons name="camera-outline" size={18} color={Colors.text.primary} />
+            <Ionicons name="camera-outline" size={18} color={colors.text.primary} />
             <ThemedText style={styles.secondaryButtonText}>Upload Bill</ThemedText>
           </Pressable>
         </Animated.View>
@@ -117,7 +117,7 @@ function StoreActionButtons({
             accessibilityRole="button"
             accessibilityLabel="View Offers"
           >
-            <Ionicons name="pricetag-outline" size={18} color={Colors.text.primary} />
+            <Ionicons name="pricetag-outline" size={18} color={colors.text.primary} />
             <ThemedText style={styles.secondaryButtonText}>View Offers</ThemedText>
           </Pressable>
         </Animated.View>
@@ -162,6 +162,6 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     fontSize: 14,
     fontWeight: "600",
-    color: Colors.text.primary } });
+    color: colors.text.primary } });
 
 export default withErrorBoundary(StoreActionButtons, 'MainStoreSectionStoreActionButtons');

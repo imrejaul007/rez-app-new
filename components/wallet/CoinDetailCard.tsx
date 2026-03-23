@@ -12,10 +12,10 @@ import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { CoinBalance, COIN_TYPES, CoinType } from '@/types/wallet';
-import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 
 import { BRAND } from '@/constants/brand';
-import { colors } from '@/constants/theme';
 const nuqtaCoinImage = BRAND.COIN_IMAGE;
 
 interface CoinDetailCardProps {
@@ -105,7 +105,7 @@ export const CoinDetailCard: React.FC<CoinDetailCardProps> = React.memo(({ coin,
           </ThemedText>
         </View>
 
-        <Ionicons name="chevron-forward" size={16} color={Colors.text.tertiary} />
+        <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
       </Pressable>
     </Animated.View>
   );
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: 12,
     marginBottom: 8,
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 13,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 1 },
   amountRow: {
     flexDirection: 'row',
@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2 },
   info: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
     marginTop: 1 },
   infoWarning: {

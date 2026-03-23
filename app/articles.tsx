@@ -133,7 +133,7 @@ function ArticlesPage() {
                 onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
                
               >
-                <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+                <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
               </Pressable>
 
               {/* Title */}
@@ -150,7 +150,7 @@ function ArticlesPage() {
                
                 onPress={handleCreateArticle}
               >
-                <Ionicons name="add" size={24} color={Colors.text.inverse} />
+                <Ionicons name="add" size={24} color={colors.text.inverse} />
               </Pressable>
             </View>
           </BlurView>
@@ -162,7 +162,7 @@ function ArticlesPage() {
               onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
              
             >
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
 
             {/* Title */}
@@ -179,7 +179,7 @@ function ArticlesPage() {
              
               onPress={handleCreateArticle}
             >
-              <Ionicons name="add" size={24} color={Colors.text.inverse} />
+              <Ionicons name="add" size={24} color={colors.text.inverse} />
             </Pressable>
           </View>
         )}
@@ -197,7 +197,7 @@ function ArticlesPage() {
           <TextInput
             style={styles.searchInput}
             placeholder="Search articles..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
           />
@@ -206,7 +206,7 @@ function ArticlesPage() {
               onPress={() => setSearchQuery('')}
               style={styles.clearButton}
             >
-              <Ionicons name="close-circle" size={20} color={Colors.text.tertiary} />
+              <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
             </Pressable>
           )}
         </View>
@@ -232,7 +232,7 @@ function ArticlesPage() {
             <Ionicons
               name={category.icon as any}
               size={18}
-              color={selectedCategory === category.id ? Colors.text.inverse : Colors.brand.purpleLight}
+              color={selectedCategory === category.id ? colors.text.inverse : Colors.brand.purpleLight}
             />
             <ThemedText
               style={[
@@ -332,7 +332,7 @@ function ArticlesPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   headerGradient: {
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     letterSpacing: 0.5,
   },
   headerSubtitle: {
@@ -389,12 +389,12 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   searchInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     paddingHorizontal: Spacing.base,
     height: 50,
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
   },
   clearButton: {
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
   },
   categoriesContainer: {
     maxHeight: 60,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   categoriesContent: {
     paddingHorizontal: Spacing.base,
@@ -433,7 +433,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     gap: 6,
     borderWidth: 1.5,
     borderColor: 'rgba(139, 92, 246, 0.2)',
@@ -456,7 +456,7 @@ const styles = StyleSheet.create({
     color: Colors.brand.purpleLight,
   },
   categoryPillTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   gridRow: {
     justifyContent: 'space-between',
@@ -482,12 +482,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.lg,
   },
   emptySubtitle: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.sm,
     textAlign: 'center',
   },
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.base,
     fontWeight: '500',
   },
@@ -513,13 +513,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.base,
     marginBottom: Spacing.sm,
   },
   errorMessage: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
   },
@@ -537,7 +537,7 @@ const styles = StyleSheet.create({
   retryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   fab: {
     position: 'absolute',

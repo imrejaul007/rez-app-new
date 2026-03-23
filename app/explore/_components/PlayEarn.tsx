@@ -85,7 +85,7 @@ const PlayEarn = () => {
       icon: 'star',
       reward: '50 coins',
       color: Colors.gold,
-      gradient: [Colors.gold, Colors.nileBlue],
+      gradient: [Colors.gold, colors.nileBlue],
       path: '/playandearn',
     },
   ];
@@ -239,7 +239,7 @@ const PlayEarn = () => {
             >
               {/* Icon */}
               <View style={styles.iconContainer}>
-                <Ionicons name={activity.icon as any} size={28} color={Colors.text.inverse} />
+                <Ionicons name={activity.icon as any} size={28} color={colors.text.inverse} />
               </View>
 
               {/* Content */}
@@ -248,7 +248,7 @@ const PlayEarn = () => {
 
               {/* Reward Badge */}
               <View style={styles.rewardBadge}>
-                <Ionicons name="gift-outline" size={12} color={Colors.text.inverse} />
+                <Ionicons name="gift-outline" size={12} color={colors.text.inverse} />
                 <Text style={styles.rewardText}>{activity.reward}</Text>
               </View>
 
@@ -261,7 +261,7 @@ const PlayEarn = () => {
               )}
               {activity.spinsLeft !== undefined && activity.spinsLeft > 0 && (
                 <View style={styles.statusBadge}>
-                  <Ionicons name="refresh" size={12} color={Colors.text.inverse} />
+                  <Ionicons name="refresh" size={12} color={colors.text.inverse} />
                   <Text style={styles.statusText}>{activity.spinsLeft} spins left</Text>
                 </View>
               )}
@@ -273,7 +273,7 @@ const PlayEarn = () => {
               )}
               {activity.pending !== undefined && activity.pending > 0 && (
                 <View style={styles.statusBadge}>
-                  <Ionicons name="time" size={12} color={Colors.text.inverse} />
+                  <Ionicons name="time" size={12} color={colors.text.inverse} />
                   <Text style={styles.statusText}>{activity.pending} pending</Text>
                 </View>
               )}
@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   retryButton: {
     marginTop: Spacing.sm,
@@ -361,11 +361,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   sectionSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   viewAllText: {
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
   activityTitle: {
     ...Typography.body,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.xs,
   },
   activityDescription: {
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
   rewardText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   statusBadge: {
     flexDirection: 'row',
@@ -441,14 +441,14 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   availableText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
   playButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingVertical: 10,
     borderRadius: 10,
     marginTop: 'auto',
@@ -457,7 +457,7 @@ const styles = StyleSheet.create({
   playButtonText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   coinsSummary: {
     marginHorizontal: Spacing.base,

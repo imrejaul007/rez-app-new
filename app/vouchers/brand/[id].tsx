@@ -59,16 +59,16 @@ interface VoucherBrand {
 type PaymentMethod = 'card' | 'wallet';
 
 const COLORS = {
-  white: Colors.background.primary,
-  navy: Colors.nileBlue,
+  white: colors.background.primary,
+  navy: colors.nileBlue,
   peach: colors.brand.sand,
   peachLight: colors.lightPeach,
   warmBg: '#F4F1ED',
-  gray50: Colors.background.secondary,
-  gray100: Colors.background.secondary,
-  gray200: Colors.border.default,
-  gray500: Colors.text.tertiary,
-  gray600: Colors.text.tertiary,
+  gray50: colors.background.secondary,
+  gray100: colors.background.secondary,
+  gray200: colors.border.default,
+  gray500: colors.text.tertiary,
+  gray600: colors.text.tertiary,
   gold: Colors.gold,
   green: Colors.success,
   purple: Colors.brand.purpleLight,
@@ -597,7 +597,7 @@ function VoucherBrandDetailPage() {
                     theme: 'stripe',
                     variables: {
                       colorPrimary: COLORS.purple,
-                      colorBackground: Colors.background.primary,
+                      colorBackground: colors.background.primary,
                       colorText: COLORS.navy,
                       colorDanger: Colors.error,
                       fontFamily: 'system-ui, -apple-system, sans-serif',

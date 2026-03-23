@@ -173,7 +173,7 @@ function EventsListPage() {
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <View style={styles.emptyIconContainer}>
-        <Ionicons name="calendar-outline" size={64} color={Colors.border.default} />
+        <Ionicons name="calendar-outline" size={64} color={colors.border.default} />
       </View>
       <ThemedText style={styles.emptyTitle}>No events found</ThemedText>
       <ThemedText style={styles.emptySubtitle}>
@@ -187,7 +187,7 @@ function EventsListPage() {
           onPress={handleResetFilters}
          
         >
-          <Ionicons name="refresh-outline" size={18} color={Colors.background.primary} />
+          <Ionicons name="refresh-outline" size={18} color={colors.background.primary} />
           <ThemedText style={styles.clearFiltersText}>
             Clear all filters
           </ThemedText>
@@ -209,7 +209,7 @@ function EventsListPage() {
         onPress={fetchEvents}
        
       >
-        <Ionicons name="refresh-outline" size={18} color={Colors.background.primary} />
+        <Ionicons name="refresh-outline" size={18} color={colors.background.primary} />
         <ThemedText style={styles.retryButtonText}>Try again</ThemedText>
       </Pressable>
     </View>
@@ -231,7 +231,7 @@ function EventsListPage() {
       <Stack.Screen options={{ headerShown: false }} />
 
       <SafeAreaView style={styles.safeArea} edges={['top']}>
-        <StatusBar barStyle="light-content" backgroundColor={Colors.nileBlue} />
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
         {/* Header */}
         <EventsHeader
@@ -273,8 +273,8 @@ function EventsListPage() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={refreshEvents}
-              tintColor={Colors.nileBlue}
-              colors={[Colors.nileBlue]}
+              tintColor={colors.nileBlue}
+              colors={[colors.nileBlue]}
             />
           }
           data={events}
@@ -308,7 +308,7 @@ function EventsListPage() {
                   <ThemedText style={styles.loadMoreText}>
                     Load More Events
                   </ThemedText>
-                  <Ionicons name="chevron-down" size={20} color={Colors.nileBlue} />
+                  <Ionicons name="chevron-down" size={20} color={colors.nileBlue} />
                 </Pressable>
               )}
 
@@ -372,11 +372,11 @@ const styles = StyleSheet.create({
   countContainer: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   countText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   eventsGrid: {
@@ -396,7 +396,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: Spacing.lg,
@@ -404,13 +404,13 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   emptySubtitle: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.xl,
@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
   clearFiltersButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius['2xl'],
@@ -427,7 +427,7 @@ const styles = StyleSheet.create({
   clearFiltersText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   errorState: {
     alignItems: 'center',
@@ -447,13 +447,13 @@ const styles = StyleSheet.create({
   errorTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
     textAlign: 'center',
   },
   errorSubtitle: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
     marginBottom: Spacing.xl,
@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   retryButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius['2xl'],
@@ -470,13 +470,13 @@ const styles = StyleSheet.create({
   retryButtonText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   loadMoreButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginHorizontal: Spacing.base,
     marginTop: Spacing.xl,
     paddingVertical: Spacing.base,
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
   loadMoreText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   loadingMore: {
     alignItems: 'center',
@@ -508,7 +508,7 @@ const styles = StyleSheet.create({
   },
   loadingMoreText: {
     fontSize: Typography.body.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   bottomSpacer: {
     height: 20,

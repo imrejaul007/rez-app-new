@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useCallback } from 'react';
 import {
@@ -69,7 +70,7 @@ function CategoriesScreen() {
         onPress={() => handleSubcategoryPress(item, parentSlug)}
        
       >
-        <View style={[styles.itemCard, { backgroundColor: Colors.background.secondary }]}>
+        <View style={[styles.itemCard, { backgroundColor: colors.background.secondary }]}>
           {customIcon ? (
             <CachedImage source={customIcon} style={styles.itemImage} contentFit="contain" cachePolicy="memory-disk" recyclingKey={item.slug} />
           ) : (
@@ -111,7 +112,7 @@ function CategoriesScreen() {
           </View>
           <View style={styles.headerRight}>
             <Pressable style={styles.headerIcon} onPress={handleWalletPress}>
-              <Ionicons name="wallet-outline" size={22} color={Colors.text.primary} />
+              <Ionicons name="wallet-outline" size={22} color={colors.text.primary} />
             </Pressable>
           </View>
         </View>
@@ -122,14 +123,14 @@ function CategoriesScreen() {
           onPress={() => router.push('/search' as any)}
          
         >
-          <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="search" size={20} color={colors.text.tertiary} />
           <TextInput
             style={styles.searchInput}
             placeholder='Search categories'
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             editable={false}
           />
-          <Ionicons name="mic-outline" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="mic-outline" size={20} color={colors.text.tertiary} />
         </Pressable>
       </View>
 
@@ -149,7 +150,7 @@ function CategoriesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   header: {
     backgroundColor: Colors.primary[500],
@@ -169,7 +170,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   headerRight: {
     flexDirection: 'row',
@@ -187,7 +188,7 @@ const styles = StyleSheet.create({
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
@@ -210,7 +211,7 @@ const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     fontSize: Typography.bodyLarge.fontSize - 1,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     padding: 0,
   },
   scrollView: {
@@ -227,7 +228,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
     marginTop: Spacing.sm,
   },
@@ -247,7 +248,7 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   itemImage: {
     width: '85%',
@@ -279,7 +280,7 @@ const styles = StyleSheet.create({
   },
   profileText: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '700',
   },
 });

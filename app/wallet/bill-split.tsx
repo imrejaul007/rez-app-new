@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 /**
  * Bill Split Screen
  * Split bills and send payment requests
@@ -128,8 +129,8 @@ export default function BillSplitScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: Colors.background }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -468,7 +469,7 @@ export default function BillSplitScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -477,7 +478,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: colors.border,
   },
   headerTitle: {
     ...Typography.heading3,
@@ -517,7 +518,7 @@ const styles = StyleSheet.create({
   progressLine: {
     height: 2,
     flex: 1,
-    backgroundColor: Colors.border,
+    backgroundColor: colors.border,
   },
   progressLineActive: {
     backgroundColor: Colors.primary,
@@ -591,7 +592,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
     backgroundColor: Colors.white,
     gap: Spacing.sm,
   },
@@ -684,7 +685,7 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.border,
+    backgroundColor: colors.border,
   },
   participantsReview: {
     gap: Spacing.md,
@@ -806,15 +807,15 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
     padding: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    backgroundColor: Colors.background,
+    borderTopColor: colors.border,
+    backgroundColor: colors.background,
   },
   secondaryButton: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: colors.border,
   },
   secondaryButtonText: {
     ...Typography.body2,

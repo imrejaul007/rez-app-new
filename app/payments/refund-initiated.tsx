@@ -399,7 +399,7 @@ function RefundInitiatedPage() {
 
         {/* Note */}
         <View style={styles.noteCard}>
-          <Ionicons name="information-circle-outline" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="information-circle-outline" size={20} color={colors.text.tertiary} />
           <ThemedText style={styles.noteText}>
             Refunds typically take 5-7 business days to reflect in your account. Bank processing times may vary.
           </ThemedText>
@@ -413,7 +413,7 @@ function RefundInitiatedPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -446,7 +446,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   statusCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   },
   statusTitle: {
     ...Typography.h3,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   statusBadge: {
@@ -475,7 +475,7 @@ const styles = StyleSheet.create({
     ...Typography.label,
   },
   amountCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -489,7 +489,7 @@ const styles = StyleSheet.create({
   },
   amountLabel: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   amountValue: {
     ...Typography.h2,
@@ -497,15 +497,15 @@ const styles = StyleSheet.create({
   },
   amountDate: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   divider: {
     height: 1,
-    backgroundColor: Colors.border.light,
+    backgroundColor: colors.border.light,
     marginVertical: Spacing.sm,
   },
   timelineSection: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -513,7 +513,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   timeline: {
@@ -556,23 +556,23 @@ const styles = StyleSheet.create({
   },
   timelineTitle: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.xs,
   },
   timelineTitlePending: {
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   timelineDescription: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.xs,
   },
   timelineTime: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   detailsCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.base,
@@ -584,16 +584,16 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   detailLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
   },
   detailValue: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     flex: 2,
     textAlign: 'right',
   },
@@ -619,7 +619,7 @@ const styles = StyleSheet.create({
   },
   helpText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
   },
   helpButton: {
@@ -642,7 +642,7 @@ const styles = StyleSheet.create({
   },
   noteText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
     lineHeight: 18,
   },
@@ -662,13 +662,13 @@ const styles = StyleSheet.create({
   },
   centeredStateTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginTop: Spacing.md,
     textAlign: 'center',
   },
   centeredStateText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: Spacing.sm,
     textAlign: 'center',
   },

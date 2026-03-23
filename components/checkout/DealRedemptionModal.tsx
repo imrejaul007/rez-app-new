@@ -3,7 +3,7 @@ import { View, Modal, TextInput, Pressable, ActivityIndicator, StyleSheet } from
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
 import { useRouter } from 'expo-router';
-import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface DealRedemptionModalProps {
@@ -37,7 +37,7 @@ function DealRedemptionModal({
           <View style={styles.modalHeader}>
             <ThemedText style={styles.modalTitle}>Redeem Deal Code</ThemedText>
             <Pressable onPress={onClose}>
-              <Ionicons name="close" size={24} color={Colors.neutral[700]} />
+              <Ionicons name="close" size={24} color={colors.neutral[700]} />
             </Pressable>
           </View>
 
@@ -53,12 +53,12 @@ function DealRedemptionModal({
 
             <View style={{ marginTop: 16 }}>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                <Ionicons name="information-circle" size={18} color={Colors.neutral[500]} />
-                <ThemedText style={{ fontSize: 13, color: Colors.neutral[500], marginLeft: 6 }}>
+                <Ionicons name="information-circle" size={18} color={colors.neutral[500]} />
+                <ThemedText style={{ fontSize: 13, color: colors.neutral[500], marginLeft: 6 }}>
                   Enter the redemption code you received when you redeemed a deal.
                 </ThemedText>
               </View>
-              <ThemedText style={{ fontSize: 12, color: Colors.neutral[400] }}>
+              <ThemedText style={{ fontSize: 12, color: colors.neutral[400] }}>
                 You can find your redeemed deals in the "My Deals" section.
               </ThemedText>
             </View>
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     paddingTop: Spacing.lg,
@@ -114,29 +114,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   modalTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   modalBody: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.lg,
   },
   promoInput: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.lg,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   applyButton: {
-    backgroundColor: Colors.gold,
+    backgroundColor: colors.gold,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.base,
     alignItems: 'center',
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
   applyText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 

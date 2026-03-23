@@ -42,7 +42,7 @@ const recordTypes: Record<string, { icon: string; color: string; label: string }
   vaccination: { icon: '💉', color: Colors.success, label: 'Vaccination' },
   imaging: { icon: '📷', color: Colors.warning, label: 'Imaging' },
   discharge_summary: { icon: '🏥', color: Colors.error, label: 'Discharge Summary' },
-  other: { icon: '📄', color: Colors.text.tertiary, label: 'Other' },
+  other: { icon: '📄', color: colors.text.tertiary, label: 'Other' },
 };
 
 const HealthRecordsPage: React.FC = () => {
@@ -315,7 +315,7 @@ const HealthRecordsPage: React.FC = () => {
           <View style={[styles.fileTypeBadge, { backgroundColor: record.documentType === 'pdf' ? Colors.error : Colors.info }]}>
             <Text style={styles.fileTypeText}>{record.documentType.toUpperCase()}</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
         </View>
       </Pressable>
     );
@@ -328,7 +328,7 @@ const HealthRecordsPage: React.FC = () => {
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Upload Health Record</Text>
             <Pressable onPress={() => setShowUploadModal(false)}>
-              <Ionicons name="close" size={24} color={Colors.text.tertiary} />
+              <Ionicons name="close" size={24} color={colors.text.tertiary} />
             </Pressable>
           </View>
 
@@ -427,10 +427,10 @@ const HealthRecordsPage: React.FC = () => {
               disabled={uploadLoading || !selectedFile || !uploadForm.title}
             >
               {uploadLoading ? (
-                <ActivityIndicator color={Colors.text.inverse} />
+                <ActivityIndicator color={colors.text.inverse} />
               ) : (
                 <>
-                  <Ionicons name="cloud-upload" size={20} color={Colors.text.inverse} />
+                  <Ionicons name="cloud-upload" size={20} color={colors.text.inverse} />
                   <Text style={styles.submitButtonText}>Upload Record</Text>
                 </>
               )}
@@ -457,7 +457,7 @@ const HealthRecordsPage: React.FC = () => {
                 <Text style={styles.modalTitle}>{typeConfig.label}</Text>
               </View>
               <Pressable onPress={() => setShowRecordModal(false)}>
-                <Ionicons name="close" size={24} color={Colors.text.tertiary} />
+                <Ionicons name="close" size={24} color={colors.text.tertiary} />
               </Pressable>
             </View>
 
@@ -466,16 +466,16 @@ const HealthRecordsPage: React.FC = () => {
 
               <View style={styles.recordDetailMeta}>
                 <View style={styles.metaItem}>
-                  <Ionicons name="calendar" size={16} color={Colors.text.tertiary} />
+                  <Ionicons name="calendar" size={16} color={colors.text.tertiary} />
                   <Text style={styles.metaText}>{formatDate(selectedRecord.createdAt)}</Text>
                 </View>
                 <View style={styles.metaItem}>
-                  <Ionicons name="document" size={16} color={Colors.text.tertiary} />
+                  <Ionicons name="document" size={16} color={colors.text.tertiary} />
                   <Text style={styles.metaText}>{selectedRecord.documentType.toUpperCase()}</Text>
                 </View>
                 {selectedRecord.fileSize > 0 && (
                   <View style={styles.metaItem}>
-                    <Ionicons name="cloud-download" size={16} color={Colors.text.tertiary} />
+                    <Ionicons name="cloud-download" size={16} color={colors.text.tertiary} />
                     <Text style={styles.metaText}>{formatFileSize(selectedRecord.fileSize)}</Text>
                   </View>
                 )}
@@ -513,7 +513,7 @@ const HealthRecordsPage: React.FC = () => {
                   <Text style={styles.detailLabel}>Shared With ({selectedRecord.sharedWith.length})</Text>
                   {selectedRecord.sharedWith.map((share, index) => (
                     <View key={index} style={styles.shareItem}>
-                      <Ionicons name="person" size={16} color={Colors.text.tertiary} />
+                      <Ionicons name="person" size={16} color={colors.text.tertiary} />
                       <Text style={styles.shareText}>
                         {share.accessLevel === 'download' ? 'Full Access' : 'View Only'}
                       </Text>
@@ -538,25 +538,25 @@ const HealthRecordsPage: React.FC = () => {
             <View style={styles.modalFooter}>
               <View style={styles.actionButtons}>
                 <Pressable style={[styles.actionButton, { backgroundColor: Colors.info }]}>
-                  <Ionicons name="share-social" size={18} color={Colors.text.inverse} />
+                  <Ionicons name="share-social" size={18} color={colors.text.inverse} />
                   <Text style={styles.actionButtonText}>Share</Text>
                 </Pressable>
                 <Pressable style={[styles.actionButton, { backgroundColor: Colors.success }]}>
-                  <Ionicons name="download" size={18} color={Colors.text.inverse} />
+                  <Ionicons name="download" size={18} color={colors.text.inverse} />
                   <Text style={styles.actionButtonText}>Download</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.actionButton, { backgroundColor: Colors.warning }]}
                   onPress={() => handleArchiveRecord(selectedRecord._id, selectedRecord.isArchived)}
                 >
-                  <Ionicons name={selectedRecord.isArchived ? 'archive' : 'archive-outline'} size={18} color={Colors.text.inverse} />
+                  <Ionicons name={selectedRecord.isArchived ? 'archive' : 'archive-outline'} size={18} color={colors.text.inverse} />
                   <Text style={styles.actionButtonText}>{selectedRecord.isArchived ? 'Unarchive' : 'Archive'}</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.actionButton, { backgroundColor: Colors.error }]}
                   onPress={() => handleDeleteRecord(selectedRecord._id)}
                 >
-                  <Ionicons name="trash" size={18} color={Colors.text.inverse} />
+                  <Ionicons name="trash" size={18} color={colors.text.inverse} />
                   <Text style={styles.actionButtonText}>Delete</Text>
                 </Pressable>
               </View>
@@ -594,7 +594,7 @@ const HealthRecordsPage: React.FC = () => {
           <View style={[styles.fileTypeBadge, { backgroundColor: item.documentType === 'pdf' ? Colors.error : Colors.info }]}>
             <Text style={styles.fileTypeText}>{item.documentType.toUpperCase()}</Text>
           </View>
-          <Ionicons name="chevron-forward" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
         </View>
       </Pressable>
     );
@@ -610,7 +610,7 @@ const HealthRecordsPage: React.FC = () => {
       >
         <View style={styles.headerTop}>
           <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Health Records</Text>
@@ -620,16 +620,16 @@ const HealthRecordsPage: React.FC = () => {
             style={styles.addButton}
             onPress={() => setShowUploadModal(true)}
           >
-            <Ionicons name="add" size={24} color={Colors.text.inverse} />
+            <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
         <View style={styles.searchContainer}>
-          <Ionicons name="search" size={20} color={Colors.text.tertiary} />
+          <Ionicons name="search" size={20} color={colors.text.tertiary} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search records..."
-            placeholderTextColor={Colors.text.tertiary}
+            placeholderTextColor={colors.text.tertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
             onSubmitEditing={handleSearch}
@@ -643,7 +643,7 @@ const HealthRecordsPage: React.FC = () => {
           style={[styles.archiveToggle, showArchived && styles.archiveToggleActive]}
           onPress={() => setShowArchived(!showArchived)}
         >
-          <Ionicons name="archive" size={16} color={showArchived ? Colors.background.primary : Colors.text.tertiary} />
+          <Ionicons name="archive" size={16} color={showArchived ? colors.background.primary : colors.text.tertiary} />
         </Pressable>
       </View>
 
@@ -658,7 +658,7 @@ const HealthRecordsPage: React.FC = () => {
           </Text>
           {!showArchived && (
             <Pressable style={styles.uploadCTA} onPress={() => setShowUploadModal(true)}>
-              <Ionicons name="add-circle" size={20} color={Colors.text.inverse} />
+              <Ionicons name="add-circle" size={20} color={colors.text.inverse} />
               <Text style={styles.uploadCTAText}>Upload Record</Text>
             </Pressable>
           )}
@@ -680,7 +680,7 @@ const HealthRecordsPage: React.FC = () => {
           colors={[colors.brand.purpleLight, colors.brand.purple]}
           style={styles.fabGradient}
         >
-          <Ionicons name="add" size={28} color={Colors.text.inverse} />
+          <Ionicons name="add" size={28} color={colors.text.inverse} />
         </LinearGradient>
       </Pressable>
 
@@ -691,103 +691,103 @@ const HealthRecordsPage: React.FC = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.primary },
+  container: { flex: 1, backgroundColor: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: Spacing.base },
   headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: Spacing.base },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
-  headerTitle: { ...Typography.h3, fontWeight: '700', color: Colors.text.inverse },
+  headerTitle: { ...Typography.h3, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
   addButton: { padding: Spacing.sm, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: BorderRadius.xl },
-  searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background.primary, marginHorizontal: Spacing.base, borderRadius: BorderRadius.md, paddingHorizontal: Spacing.md },
-  searchInput: { flex: 1, paddingVertical: 10, paddingHorizontal: Spacing.sm, ...Typography.body, color: Colors.nileBlue },
+  searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.primary, marginHorizontal: Spacing.base, borderRadius: BorderRadius.md, paddingHorizontal: Spacing.md },
+  searchInput: { flex: 1, paddingVertical: 10, paddingHorizontal: Spacing.sm, ...Typography.body, color: colors.nileBlue },
 
   filterRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: Spacing.sm },
   typeFilters: { flex: 1, paddingHorizontal: Spacing.base },
-  typeFilterChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.md, paddingVertical: 6, marginRight: Spacing.sm, borderRadius: BorderRadius.lg, backgroundColor: Colors.background.secondary, borderWidth: 1, borderColor: Colors.border.default },
+  typeFilterChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.md, paddingVertical: 6, marginRight: Spacing.sm, borderRadius: BorderRadius.lg, backgroundColor: colors.background.secondary, borderWidth: 1, borderColor: colors.border.default },
   typeFilterChipActive: { backgroundColor: Colors.brand.purple, borderColor: Colors.brand.purple },
   typeFilterEmoji: { ...Typography.body, marginRight: Spacing.xs },
-  typeFilterText: { ...Typography.bodySmall, color: Colors.text.tertiary },
-  typeFilterTextActive: { color: Colors.text.inverse },
-  archiveToggle: { padding: Spacing.sm, marginRight: Spacing.base, backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.xl },
+  typeFilterText: { ...Typography.bodySmall, color: colors.text.tertiary },
+  typeFilterTextActive: { color: colors.text.inverse },
+  archiveToggle: { padding: Spacing.sm, marginRight: Spacing.base, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.xl },
   archiveToggleActive: { backgroundColor: Colors.warning },
 
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: Spacing.md, ...Typography.body, color: Colors.text.tertiary },
+  loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   emptyState: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing['2xl'] },
   emptyIcon: { fontSize: 64, marginBottom: Spacing.base },
-  emptyTitle: { ...Typography.h3, fontWeight: '700', color: Colors.nileBlue, marginBottom: Spacing.sm },
-  emptySubtitle: { ...Typography.body, color: Colors.text.tertiary, textAlign: 'center', marginBottom: Spacing.xl },
+  emptyTitle: { ...Typography.h3, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.sm },
+  emptySubtitle: { ...Typography.body, color: colors.text.tertiary, textAlign: 'center', marginBottom: Spacing.xl },
   uploadCTA: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.brand.purple, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius['2xl'] },
-  uploadCTAText: { ...Typography.body, fontWeight: '600', color: Colors.text.inverse, marginLeft: Spacing.sm },
+  uploadCTAText: { ...Typography.body, fontWeight: '600', color: colors.text.inverse, marginLeft: Spacing.sm },
 
   recordsList: { padding: Spacing.base },
-  recordCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background.primary, padding: Spacing.md, borderRadius: BorderRadius.md, marginBottom: Spacing.md, borderWidth: 1, borderColor: Colors.border.default },
+  recordCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.primary, padding: Spacing.md, borderRadius: BorderRadius.md, marginBottom: Spacing.md, borderWidth: 1, borderColor: colors.border.default },
   recordIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], justifyContent: 'center', alignItems: 'center' },
   recordEmoji: { ...Typography.h2 },
   recordInfo: { flex: 1, marginLeft: Spacing.md },
-  recordTitle: { ...Typography.body, fontWeight: '600', color: Colors.nileBlue },
-  recordMeta: { ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: 2 },
-  recordIssuer: { ...Typography.caption, color: Colors.text.tertiary, marginTop: 2 },
+  recordTitle: { ...Typography.body, fontWeight: '600', color: colors.nileBlue },
+  recordMeta: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: 2 },
+  recordIssuer: { ...Typography.caption, color: colors.text.tertiary, marginTop: 2 },
   recordActions: { alignItems: 'flex-end' },
   fileTypeBadge: { paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: 4, marginBottom: Spacing.xs },
-  fileTypeText: { ...Typography.caption, fontWeight: '700', color: Colors.text.inverse },
+  fileTypeText: { ...Typography.caption, fontWeight: '700', color: colors.text.inverse },
 
   fab: { position: 'absolute', bottom: 90, right: 20, borderRadius: 28, overflow: 'hidden', elevation: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
   fabGradient: { width: 56, height: 56, justifyContent: 'center', alignItems: 'center' },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: Colors.background.primary, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '90%' },
-  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Spacing.base, borderBottomWidth: 1, borderBottomColor: Colors.border.default },
+  modalContent: { backgroundColor: colors.background.primary, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '90%' },
+  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Spacing.base, borderBottomWidth: 1, borderBottomColor: colors.border.default },
   recordModalHeader: { flexDirection: 'row', alignItems: 'center' },
   recordModalIcon: { width: 40, height: 40, borderRadius: BorderRadius.xl, justifyContent: 'center', alignItems: 'center', marginRight: Spacing.md },
   recordModalEmoji: { ...Typography.h3 },
-  modalTitle: { ...Typography.h4, fontWeight: '700', color: Colors.nileBlue },
+  modalTitle: { ...Typography.h4, fontWeight: '700', color: colors.nileBlue },
   modalBody: { padding: Spacing.base, maxHeight: 400 },
-  modalFooter: { padding: Spacing.base, borderTopWidth: 1, borderTopColor: Colors.border.default },
+  modalFooter: { padding: Spacing.base, borderTopWidth: 1, borderTopColor: colors.border.default },
 
   uploadSection: { marginBottom: Spacing.lg },
-  uploadLabel: { ...Typography.bodySmall, fontWeight: '600', color: Colors.nileBlue, marginBottom: Spacing.md },
+  uploadLabel: { ...Typography.bodySmall, fontWeight: '600', color: colors.nileBlue, marginBottom: Spacing.md },
   uploadButtons: { flexDirection: 'row', gap: Spacing.md },
-  uploadButton: { flex: 1, alignItems: 'center', padding: Spacing.lg, backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.md, borderWidth: 1, borderColor: Colors.border.default, borderStyle: 'dashed' },
-  uploadButtonText: { ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: Spacing.sm },
+  uploadButton: { flex: 1, alignItems: 'center', padding: Spacing.lg, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.md, borderWidth: 1, borderColor: colors.border.default, borderStyle: 'dashed' },
+  uploadButtonText: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.sm },
   selectedFile: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.success + '10', padding: Spacing.md, borderRadius: BorderRadius.sm, marginTop: Spacing.md },
-  selectedFileName: { flex: 1, ...Typography.bodySmall, color: Colors.nileBlue, marginLeft: Spacing.sm },
+  selectedFileName: { flex: 1, ...Typography.bodySmall, color: colors.nileBlue, marginLeft: Spacing.sm },
 
   formGroup: { marginBottom: Spacing.base },
-  formLabel: { ...Typography.bodySmall, fontWeight: '600', color: Colors.nileBlue, marginBottom: Spacing.sm },
-  formInput: { borderWidth: 1, borderColor: Colors.border.default, borderRadius: BorderRadius.md, padding: Spacing.md, ...Typography.body, color: Colors.nileBlue },
+  formLabel: { ...Typography.bodySmall, fontWeight: '600', color: colors.nileBlue, marginBottom: Spacing.sm },
+  formInput: { borderWidth: 1, borderColor: colors.border.default, borderRadius: BorderRadius.md, padding: Spacing.md, ...Typography.body, color: colors.nileBlue },
   formTextArea: { height: 80, textAlignVertical: 'top' },
   recordTypeGrid: { flexDirection: 'row', gap: Spacing.sm },
-  recordTypeOption: { alignItems: 'center', padding: Spacing.md, borderRadius: BorderRadius.md, borderWidth: 1, borderColor: Colors.border.default, minWidth: 80 },
+  recordTypeOption: { alignItems: 'center', padding: Spacing.md, borderRadius: BorderRadius.md, borderWidth: 1, borderColor: colors.border.default, minWidth: 80 },
   recordTypeEmoji: { ...Typography.h2, marginBottom: Spacing.xs },
-  recordTypeLabel: { ...Typography.caption, color: Colors.text.tertiary },
+  recordTypeLabel: { ...Typography.caption, color: colors.text.tertiary },
 
   submitButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.brand.purple, padding: Spacing.base, borderRadius: BorderRadius.md },
-  submitButtonDisabled: { backgroundColor: Colors.text.tertiary },
-  submitButtonText: { ...Typography.bodyLarge, fontWeight: '700', color: Colors.text.inverse, marginLeft: Spacing.sm },
+  submitButtonDisabled: { backgroundColor: colors.text.tertiary },
+  submitButtonText: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse, marginLeft: Spacing.sm },
 
-  recordDetailTitle: { ...Typography.h3, fontWeight: '700', color: Colors.nileBlue, marginBottom: Spacing.md },
+  recordDetailTitle: { ...Typography.h3, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.md },
   recordDetailMeta: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md, marginBottom: Spacing.lg },
   metaItem: { flexDirection: 'row', alignItems: 'center' },
-  metaText: { ...Typography.bodySmall, color: Colors.text.tertiary, marginLeft: 6 },
+  metaText: { ...Typography.bodySmall, color: colors.text.tertiary, marginLeft: 6 },
   detailSection: { marginBottom: Spacing.base },
-  detailLabel: { ...Typography.bodySmall, fontWeight: '600', color: Colors.text.tertiary, marginBottom: Spacing.xs },
-  detailValue: { ...Typography.body, color: Colors.nileBlue },
+  detailLabel: { ...Typography.bodySmall, fontWeight: '600', color: colors.text.tertiary, marginBottom: Spacing.xs },
+  detailValue: { ...Typography.body, color: colors.nileBlue },
   tagsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   tag: { backgroundColor: Colors.brand.purple + '20', paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md },
   tagText: { ...Typography.bodySmall, color: Colors.brand.purple },
   shareItem: { flexDirection: 'row', alignItems: 'center', marginTop: Spacing.xs },
-  shareText: { ...Typography.bodySmall, color: Colors.nileBlue, marginLeft: Spacing.sm },
-  documentPreview: { marginTop: Spacing.base, borderRadius: BorderRadius.md, overflow: 'hidden', backgroundColor: Colors.background.secondary },
+  shareText: { ...Typography.bodySmall, color: colors.nileBlue, marginLeft: Spacing.sm },
+  documentPreview: { marginTop: Spacing.base, borderRadius: BorderRadius.md, overflow: 'hidden', backgroundColor: colors.background.secondary },
   previewImage: { width: '100%', height: 200 },
   pdfPreview: { alignItems: 'center', padding: Spacing['2xl'] },
-  pdfPreviewText: { ...Typography.body, fontWeight: '600', color: Colors.nileBlue, marginTop: Spacing.sm },
-  pdfPreviewName: { ...Typography.bodySmall, color: Colors.text.tertiary, marginTop: Spacing.xs },
+  pdfPreviewText: { ...Typography.body, fontWeight: '600', color: colors.nileBlue, marginTop: Spacing.sm },
+  pdfPreviewName: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.xs },
 
   actionButtons: { flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.sm },
   actionButton: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: Spacing.md, borderRadius: BorderRadius.md },
-  actionButtonText: { ...Typography.caption, fontWeight: '600', color: Colors.text.inverse, marginLeft: Spacing.xs },
+  actionButtonText: { ...Typography.caption, fontWeight: '600', color: colors.text.inverse, marginLeft: Spacing.xs },
 });
 
 export default withErrorBoundary(HealthRecordsPage, 'HealthcareRecords');

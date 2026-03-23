@@ -6,7 +6,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { Spacing, BorderRadius } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import subscriptionApi from '@/services/subscriptionApi';
 import type { SubscriptionTier, ValueProposition } from '@/services/subscriptionApi';
 import PaybackProgressBar from './PaybackProgressBar';
@@ -76,7 +77,7 @@ function ValueCalculator({ selectedTier, currencySymbol, isAuthenticated, select
       <View style={styles.container}>
         <Text style={styles.title}>Your Estimated Savings</Text>
         <View style={styles.card}>
-          <ActivityIndicator size="small" color={Colors.gold} style={styles.spinner} />
+          <ActivityIndicator size="small" color={colors.gold} style={styles.spinner} />
         </View>
       </View>
     );
@@ -96,7 +97,7 @@ function ValueCalculator({ selectedTier, currencySymbol, isAuthenticated, select
         <View style={styles.grid}>
           {/* Monthly Savings */}
           <View style={styles.statBox}>
-            <Ionicons name="trending-up-outline" size={20} color={Colors.success} />
+            <Ionicons name="trending-up-outline" size={20} color={colors.success} />
             <Text style={styles.statValue}>
               {currencySymbol}{data.estimatedMonthlySavings.toFixed(2)}
             </Text>
@@ -105,7 +106,7 @@ function ValueCalculator({ selectedTier, currencySymbol, isAuthenticated, select
 
           {/* Yearly Savings */}
           <View style={styles.statBox}>
-            <Ionicons name="calendar-outline" size={20} color={Colors.gold} />
+            <Ionicons name="calendar-outline" size={20} color={colors.gold} />
             <Text style={styles.statValue}>
               {currencySymbol}{data.estimatedYearlySavings.toFixed(2)}
             </Text>
@@ -123,7 +124,7 @@ function ValueCalculator({ selectedTier, currencySymbol, isAuthenticated, select
 
           {/* Top Benefit */}
           <View style={styles.statBox}>
-            <Ionicons name="star-outline" size={20} color={Colors.gold} />
+            <Ionicons name="star-outline" size={20} color={colors.gold} />
             <Text style={styles.statValue} numberOfLines={2}>
               {topBenefit}
             </Text>

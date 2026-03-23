@@ -417,7 +417,7 @@ function HotelDetailsPage() {
             
             return (
               <View style={[styles.headerImage, styles.placeholderImage]}>
-                <Ionicons name="bed" size={64} color={Colors.text.tertiary} />
+                <Ionicons name="bed" size={64} color={colors.text.tertiary} />
                 <Text style={styles.placeholderText}>Hotel Image</Text>
                 {imageUrl && (
                   <Text style={styles.placeholderSubtext}>
@@ -435,7 +435,7 @@ function HotelDetailsPage() {
           {/* Back and Action Buttons */}
           <View style={styles.headerActions}>
             <Pressable style={styles.backButton} onPress={handleBack}>
-              <Ionicons name="arrow-back" size={24} color={Colors.text.inverse} />
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             
             <View style={styles.headerRightActions}>
@@ -446,11 +446,11 @@ function HotelDetailsPage() {
                 <Ionicons
                   name={isInWishlist(hotel.id) ? 'heart' : 'heart-outline'}
                   size={24}
-                  color={isInWishlist(hotel.id) ? Colors.error : Colors.text.inverse}
+                  color={isInWishlist(hotel.id) ? Colors.error : colors.text.inverse}
                 />
               </Pressable>
               <Pressable style={styles.actionButton}>
-                <Ionicons name="share-outline" size={24} color={Colors.text.inverse} />
+                <Ionicons name="share-outline" size={24} color={colors.text.inverse} />
               </Pressable>
             </View>
           </View>
@@ -599,11 +599,11 @@ function HotelDetailsPage() {
           {/* Additional Info */}
           <View style={styles.additionalInfo}>
             <View style={styles.infoRow}>
-              <Ionicons name="location-outline" size={18} color={Colors.text.tertiary} />
+              <Ionicons name="location-outline" size={18} color={colors.text.tertiary} />
               <Text style={styles.infoText}>{hotel.location.address || hotel.location.city}</Text>
             </View>
             <View style={styles.infoRow}>
-              <Ionicons name="bed-outline" size={18} color={Colors.text.tertiary} />
+              <Ionicons name="bed-outline" size={18} color={colors.text.tertiary} />
               <Text style={styles.infoText}>{hotel.roomFeatures.beds} • {hotel.roomFeatures.size}</Text>
             </View>
           </View>
@@ -684,7 +684,7 @@ function HotelDetailsPage() {
             end={{ x: 1, y: 0 }}
           >
             <Text style={styles.bookButtonText}>Book Now</Text>
-            <Ionicons name="arrow-forward" size={20} color={Colors.text.inverse} />
+            <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
           </LinearGradient>
         </Pressable>
       </View>
@@ -728,7 +728,7 @@ function HotelDetailsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   scrollView: {
     flex: 1,
@@ -740,7 +740,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingContent: {
     alignItems: 'center',
@@ -748,13 +748,13 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
     marginTop: Spacing.sm,
   },
   loadingSubtext: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   errorContainer: {
@@ -777,7 +777,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -785,27 +785,27 @@ const styles = StyleSheet.create({
     width: screenWidth,
     height: 320,
     position: 'relative',
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
   },
   headerImage: {
     width: '100%',
     height: '100%',
   },
   placeholderImage: {
-    backgroundColor: Colors.border.default,
+    backgroundColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
   },
   placeholderText: {
     marginTop: Spacing.md,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   placeholderSubtext: {
     marginTop: Spacing.xs,
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   headerGradient: {
     position: 'absolute',
@@ -855,7 +855,7 @@ const styles = StyleSheet.create({
     ...Shadows.subtle,
   },
   discountText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.body,
     fontWeight: '800',
     letterSpacing: 0.5,
@@ -879,7 +879,7 @@ const styles = StyleSheet.create({
   },
   indicatorActive: {
     width: Spacing.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
   },
   hotelInfoWrapper: {
     marginHorizontal: Spacing.lg,
@@ -892,10 +892,10 @@ const styles = StyleSheet.create({
     marginTop: Spacing.sm,
     marginBottom: Spacing.sm,
     padding: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   storeHeader: {
     flexDirection: 'row',
@@ -906,9 +906,9 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   storeLogoPlaceholder: {
     width: 56,
@@ -926,7 +926,7 @@ const styles = StyleSheet.create({
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 6,
   },
   storeBadges: {
@@ -980,9 +980,9 @@ const styles = StyleSheet.create({
   },
   priceSection: {
     padding: Spacing.xl,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
     ...Shadows.subtle,
   },
   priceRow: {
@@ -996,7 +996,7 @@ const styles = StyleSheet.create({
   },
   priceLabel: {
     fontSize: 13,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: 6,
     fontWeight: '500',
     textTransform: 'uppercase',
@@ -1010,19 +1010,19 @@ const styles = StyleSheet.create({
   },
   originalPrice: {
     ...Typography.h4,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
     fontWeight: '500',
   },
   price: {
     fontSize: 32,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.5,
   },
   pricePerNight: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.sm,
   },
   discountTag: {
@@ -1069,14 +1069,14 @@ const styles = StyleSheet.create({
   },
   cashbackAmount: {
     ...Typography.bodySmall,
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     fontWeight: '600',
   },
   section: {
     padding: Spacing.xl,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
-    backgroundColor: Colors.background.primary,
+    borderBottomColor: colors.border.default,
+    backgroundColor: colors.background.primary,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -1087,7 +1087,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.3,
   },
   detailsGrid: {
@@ -1101,10 +1101,10 @@ const styles = StyleSheet.create({
     minWidth: '30%',
     alignItems: 'center',
     padding: Spacing.base,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   detailIconContainer: {
     width: 48,
@@ -1117,7 +1117,7 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: 11,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
     marginBottom: 6,
     fontWeight: '500',
@@ -1127,14 +1127,14 @@ const styles = StyleSheet.create({
   detailValue: {
     fontSize: 15,
     fontWeight: '700',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     textAlign: 'center',
   },
   additionalInfo: {
     marginTop: Spacing.base,
     paddingTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     gap: Spacing.md,
   },
   infoRow: {
@@ -1144,13 +1144,13 @@ const styles = StyleSheet.create({
   },
   infoText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   description: {
     ...Typography.bodyLarge,
     lineHeight: 26,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.xs,
   },
   highlightsContainer: {
@@ -1164,7 +1164,7 @@ const styles = StyleSheet.create({
   },
   highlightText: {
     fontSize: 15,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     fontWeight: '500',
   },
   reviewsHeader: {
@@ -1194,9 +1194,9 @@ const styles = StyleSheet.create({
     right: 0,
     padding: Spacing.lg,
     paddingBottom: Platform.OS === 'ios' ? Spacing.lg : Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: Colors.border.default,
+    borderTopColor: colors.border.default,
     ...Shadows.strong,
     zIndex: 1001, // Higher than bottom nav (1000)
   },
@@ -1213,7 +1213,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
   },
   bookButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.h4,
     fontWeight: '800',
     letterSpacing: 0.5,

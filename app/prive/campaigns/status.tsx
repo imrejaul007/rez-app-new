@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 /**
  * Privé Campaign Submission Status Screen
  * View submission status and earned coins
@@ -41,8 +42,8 @@ export default function CampaignStatusScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: Colors.background }]}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={Colors.text} />
@@ -59,8 +60,8 @@ export default function CampaignStatusScreen() {
 
   if (error || !status) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: Colors.background }]}>
-        <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={Colors.text} />
@@ -113,8 +114,8 @@ export default function CampaignStatusScreen() {
   ];
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: Colors.background }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={Colors.background} />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -282,7 +283,7 @@ export default function CampaignStatusScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor: colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -291,7 +292,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
+    borderBottomColor: colors.border,
   },
   headerTitle: {
     ...Typography.heading3,
@@ -345,7 +346,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: Colors.border,
+    backgroundColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -359,7 +360,7 @@ const styles = StyleSheet.create({
   timelineConnector: {
     height: 20,
     width: 2,
-    backgroundColor: Colors.border,
+    backgroundColor: colors.border,
     marginLeft: 9,
     marginVertical: 0,
   },
@@ -451,8 +452,8 @@ const styles = StyleSheet.create({
   footer: {
     padding: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.border,
-    backgroundColor: Colors.background,
+    borderTopColor: colors.border,
+    backgroundColor: colors.background,
   },
   ctaButton: {
     borderRadius: BorderRadius.md,

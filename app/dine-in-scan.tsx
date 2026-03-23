@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 /**
  * Dine-In Scan - Entry Screen
  *
@@ -183,7 +184,7 @@ function DineInScanScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <View style={styles.headerTextContainer}>
           <Text style={styles.headerTitle}>Dine-In</Text>
@@ -241,7 +242,7 @@ function DineInScanScreen() {
               {/* Store Card */}
               <View style={styles.storeCard}>
                 <View style={styles.storeIconWrap}>
-                  <Ionicons name="restaurant" size={28} color={Colors.nileBlue} />
+                  <Ionicons name="restaurant" size={28} color={colors.nileBlue} />
                 </View>
                 <View style={{ flex: 1 }}>
                   <Text style={styles.storeName}>{resolvedStore.name}</Text>
@@ -269,7 +270,7 @@ function DineInScanScreen() {
                 <TextInput
                   style={styles.tableInput}
                   placeholder="e.g. T1, 12, A5"
-                  placeholderTextColor={Colors.text.tertiary}
+                  placeholderTextColor={colors.text.tertiary}
                   value={tableNumber}
                   onChangeText={setTableNumber}
                   autoCapitalize="characters"
@@ -285,7 +286,7 @@ function DineInScanScreen() {
                 disabled={!tableNumber.trim()}
                
               >
-                <Ionicons name="restaurant-outline" size={20} color={Colors.nileBlue} />
+                <Ionicons name="restaurant-outline" size={20} color={colors.nileBlue} />
                 <Text style={styles.startBtnText}>Start Ordering</Text>
               </Pressable>
             </View>
@@ -295,7 +296,7 @@ function DineInScanScreen() {
           {!resolvedStore && !isLoading && (
             <View style={styles.illustrationSection}>
               <View style={styles.illustrationCircle}>
-                <Ionicons name="restaurant" size={48} color={Colors.nileBlue} />
+                <Ionicons name="restaurant" size={48} color={colors.nileBlue} />
               </View>
               <Text style={styles.illustrationTitle}>How it works</Text>
               <View style={styles.stepRow}>
@@ -325,55 +326,55 @@ function DineInScanScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.background.secondary },
+  container: { flex: 1, backgroundColor: colors.background.secondary },
   centerContent: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing.xl, gap: 12 },
-  authTitle: { fontSize: 22, fontWeight: '700', color: Colors.nileBlue },
-  authSubtitle: { fontSize: 15, color: Colors.text.secondary, textAlign: 'center', lineHeight: 22 },
+  authTitle: { fontSize: 22, fontWeight: '700', color: colors.nileBlue },
+  authSubtitle: { fontSize: 15, color: colors.text.secondary, textAlign: 'center', lineHeight: 22 },
   primaryBtn: { backgroundColor: Colors.gold, paddingHorizontal: Spacing['2xl'], paddingVertical: 14, borderRadius: BorderRadius.md, marginTop: 8 },
-  primaryBtnText: { fontSize: 16, fontWeight: '600', color: Colors.nileBlue },
+  primaryBtnText: { fontSize: 16, fontWeight: '600', color: colors.nileBlue },
 
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md, backgroundColor: Colors.background.secondary, borderBottomWidth: 1, borderBottomColor: Colors.border.default },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md, backgroundColor: colors.background.secondary, borderBottomWidth: 1, borderBottomColor: colors.border.default },
   backButton: { width: 40, height: 40, borderRadius: BorderRadius.xl, justifyContent: 'center', alignItems: 'center' },
   headerTextContainer: { flex: 1, alignItems: 'center' },
-  headerTitle: { fontSize: 18, fontWeight: '700', color: Colors.nileBlue },
-  headerSubtitle: { fontSize: 12, color: Colors.text.secondary, marginTop: 2, textAlign: 'center' },
+  headerTitle: { fontSize: 18, fontWeight: '700', color: colors.nileBlue },
+  headerSubtitle: { fontSize: 12, color: colors.text.secondary, marginTop: 2, textAlign: 'center' },
 
   scrollContent: { paddingTop: 16 },
 
-  manualSearchButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: Spacing.base, marginBottom: Spacing.lg, paddingVertical: 14, borderRadius: BorderRadius.md, borderWidth: 2, borderColor: Colors.gold, backgroundColor: Colors.background.secondary, gap: 8 },
+  manualSearchButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginHorizontal: Spacing.base, marginBottom: Spacing.lg, paddingVertical: 14, borderRadius: BorderRadius.md, borderWidth: 2, borderColor: Colors.gold, backgroundColor: colors.background.secondary, gap: 8 },
   manualSearchText: { fontSize: 15, fontWeight: '600', color: Colors.gold },
 
-  loadingCard: { backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.lg, padding: Spacing['2xl'], alignItems: 'center', marginHorizontal: Spacing.base, gap: 12 },
-  loadingText: { fontSize: 14, color: Colors.text.secondary },
+  loadingCard: { backgroundColor: colors.background.secondary, borderRadius: BorderRadius.lg, padding: Spacing['2xl'], alignItems: 'center', marginHorizontal: Spacing.base, gap: 12 },
+  loadingText: { fontSize: 14, color: colors.text.secondary },
 
   errorContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.errorLight, padding: Spacing.md, borderRadius: BorderRadius.md, marginHorizontal: Spacing.base, marginBottom: Spacing.base, gap: 8 },
   errorText: { flex: 1, fontSize: 14, color: Colors.error },
 
   resolvedSection: { paddingHorizontal: 16 },
 
-  storeCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.background.secondary, borderRadius: BorderRadius.lg, padding: Spacing.base, marginBottom: Spacing.lg, borderWidth: 1.5, borderColor: Colors.nileBlue },
+  storeCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.secondary, borderRadius: BorderRadius.lg, padding: Spacing.base, marginBottom: Spacing.lg, borderWidth: 1.5, borderColor: colors.nileBlue },
   storeIconWrap: { width: 52, height: 52, borderRadius: 26, backgroundColor: '#f0f6fa', alignItems: 'center', justifyContent: 'center', marginRight: 14 },
-  storeName: { fontSize: 17, fontWeight: '700', color: Colors.nileBlue },
-  storeSubtext: { fontSize: 13, color: Colors.text.secondary, marginTop: 2 },
+  storeName: { fontSize: 17, fontWeight: '700', color: colors.nileBlue },
+  storeSubtext: { fontSize: 13, color: colors.text.secondary, marginTop: 2 },
   changeStoreBtn: { paddingHorizontal: Spacing.md, paddingVertical: 6, borderRadius: BorderRadius.sm, backgroundColor: '#f0f6fa' },
-  changeStoreText: { fontSize: 13, fontWeight: '600', color: Colors.nileBlue },
+  changeStoreText: { fontSize: 13, fontWeight: '600', color: colors.nileBlue },
 
   tableSection: { marginBottom: 24 },
-  tableSectionTitle: { fontSize: 17, fontWeight: '700', color: Colors.nileBlue, marginBottom: 4 },
-  tableSectionSub: { fontSize: 13, color: Colors.text.secondary, marginBottom: 14 },
-  tableInput: { backgroundColor: Colors.background.secondary, borderRadius: 14, paddingHorizontal: 18, paddingVertical: 18, fontSize: 18, fontWeight: '600', color: Colors.nileBlue, borderWidth: 1.5, borderColor: Colors.border.default, textAlign: 'center', letterSpacing: 1 },
+  tableSectionTitle: { fontSize: 17, fontWeight: '700', color: colors.nileBlue, marginBottom: 4 },
+  tableSectionSub: { fontSize: 13, color: colors.text.secondary, marginBottom: 14 },
+  tableInput: { backgroundColor: colors.background.secondary, borderRadius: 14, paddingHorizontal: 18, paddingVertical: 18, fontSize: 18, fontWeight: '600', color: colors.nileBlue, borderWidth: 1.5, borderColor: colors.border.default, textAlign: 'center', letterSpacing: 1 },
 
   startBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.gold, paddingVertical: Spacing.base, borderRadius: 14, gap: 10 },
   startBtnDisabled: { opacity: 0.45 },
-  startBtnText: { fontSize: 17, fontWeight: '700', color: Colors.nileBlue },
+  startBtnText: { fontSize: 17, fontWeight: '700', color: colors.nileBlue },
 
   illustrationSection: { alignItems: 'center', paddingHorizontal: Spacing.xl, paddingTop: 10 },
   illustrationCircle: { width: 90, height: 90, borderRadius: 45, backgroundColor: '#f0f6fa', alignItems: 'center', justifyContent: 'center', marginBottom: 20 },
-  illustrationTitle: { fontSize: 18, fontWeight: '700', color: Colors.nileBlue, marginBottom: 20 },
+  illustrationTitle: { fontSize: 18, fontWeight: '700', color: colors.nileBlue, marginBottom: 20 },
   stepRow: { flexDirection: 'row', alignItems: 'center', width: '100%', marginBottom: 14, gap: 14 },
   stepNumber: { width: 28, height: 28, borderRadius: 14, backgroundColor: Colors.gold, alignItems: 'center', justifyContent: 'center' },
-  stepNumberText: { fontSize: 14, fontWeight: '700', color: Colors.nileBlue },
-  stepText: { fontSize: 15, color: Colors.nileBlue, flex: 1 },
+  stepNumberText: { fontSize: 14, fontWeight: '700', color: colors.nileBlue },
+  stepText: { fontSize: 15, color: colors.nileBlue, flex: 1 },
 });
 
 export default withErrorBoundary(DineInScanScreen, 'Dine-In Scan');

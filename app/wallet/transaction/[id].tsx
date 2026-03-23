@@ -133,7 +133,7 @@ function TransactionDetailPage() {
           </View>
         </LinearGradient>
         <View style={styles.errorContainer}>
-          <Ionicons name="alert-circle-outline" size={48} color={Colors.text.tertiary} />
+          <Ionicons name="alert-circle-outline" size={48} color={colors.text.tertiary} />
           <ThemedText style={styles.errorText}>{error || 'Transaction not found'}</ThemedText>
           <Pressable style={styles.retryButton} onPress={fetchTransaction}>
             <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
@@ -260,7 +260,7 @@ function DetailRow({ label, value }: { label: string; value: string }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: Spacing.md,
     marginBottom: Spacing.lg,
     textAlign: 'center',
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   amountCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
     padding: Spacing.xl,
     alignItems: 'center',
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   },
   description: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     textAlign: 'center',
     marginBottom: Spacing.md,
   },
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     ...Typography.label,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.md,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -375,12 +375,12 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     flex: 1,
   },
   detailValue: {
     ...Typography.bodySmall,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '500',
     flex: 1.5,
     textAlign: 'right',
@@ -412,22 +412,22 @@ const styles = StyleSheet.create({
   },
   timelineStatus: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   timelineDate: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   timelineReason: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginTop: 4,
     fontStyle: 'italic',
   },
   notesText: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
 });
 

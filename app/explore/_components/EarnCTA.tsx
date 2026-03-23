@@ -138,7 +138,7 @@ const EarnCTA = () => {
             </View>
 
             <View style={styles.earnBadge}>
-              <Ionicons name="gift" size={24} color={Colors.text.inverse} />
+              <Ionicons name="gift" size={24} color={colors.text.inverse} />
               <Text style={styles.earnLabel}>Earn Rewards</Text>
             </View>
           </View>
@@ -146,7 +146,7 @@ const EarnCTA = () => {
           {/* Top Earners - Only show if we have real data */}
           {isLoading ? (
             <View style={styles.earnersSection}>
-              <ActivityIndicator size="small" color={Colors.text.inverse} />
+              <ActivityIndicator size="small" color={colors.text.inverse} />
             </View>
           ) : topEarners.length > 0 ? (
             <View style={styles.earnersSection}>
@@ -250,7 +250,7 @@ const styles = StyleSheet.create({
   ctaTitle: {
     fontSize: 22,
     fontWeight: '800',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: 6,
   },
   ctaSubtitle: {
@@ -262,7 +262,7 @@ const styles = StyleSheet.create({
   ctaButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     paddingHorizontal: Spacing.base,
     paddingVertical: 10,
     borderRadius: BorderRadius.xl,
@@ -296,7 +296,7 @@ const styles = StyleSheet.create({
   earnersTitle: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginBottom: Spacing.md,
     textAlign: 'center',
   },
@@ -342,18 +342,18 @@ const styles = StyleSheet.create({
   rankText: {
     ...Typography.caption,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   earnerName: {
     ...Typography.caption,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     marginTop: 6,
   },
   earnerAmount: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     opacity: 0.9,
   },
   statsRow: {
@@ -363,12 +363,12 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
   },
   statIcon: {
     width: 36,
@@ -382,11 +382,11 @@ const styles = StyleSheet.create({
   statValue: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   statLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
 });

@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
 import {
@@ -77,7 +78,7 @@ function ProductDetailScreen() {
       case 'replaced':
         return Colors.info;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -90,9 +91,9 @@ function ProductDetailScreen() {
       case 'expired':
         return Colors.error;
       case 'no_warranty':
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
       default:
-        return Colors.text.tertiary;
+        return colors.text.tertiary;
     }
   };
 
@@ -169,7 +170,7 @@ function ProductDetailScreen() {
           accessibilityRole="button"
           accessibilityHint="Navigate to previous screen"
         >
-          <Ionicons name="arrow-back" size={24} color={Colors.text.primary} />
+          <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text
           style={styles.headerTitle}
@@ -353,7 +354,7 @@ function ProductDetailScreen() {
             accessibilityRole="button"
             accessibilityHint="Double tap to create a service request for repairs or maintenance"
           >
-            <Ionicons name="construct" size={20} color={Colors.text.inverse} />
+            <Ionicons name="construct" size={20} color={colors.text.inverse} />
             <Text style={styles.actionButtonText}>Request Service</Text>
           </Pressable>
 
@@ -365,7 +366,7 @@ function ProductDetailScreen() {
               accessibilityRole="button"
               accessibilityHint="Double tap to schedule product installation with a technician"
             >
-              <Ionicons name="calendar" size={20} color={Colors.text.inverse} />
+              <Ionicons name="calendar" size={20} color={colors.text.inverse} />
               <Text style={styles.actionButtonText}>Schedule Installation</Text>
             </Pressable>
           )}
@@ -378,7 +379,7 @@ function ProductDetailScreen() {
               accessibilityRole="button"
               accessibilityHint="Double tap to renew annual maintenance contract for this product"
             >
-              <Ionicons name="refresh" size={20} color={Colors.text.inverse} />
+              <Ionicons name="refresh" size={20} color={colors.text.inverse} />
               <Text style={styles.actionButtonText}>Renew AMC</Text>
             </Pressable>
           )}
@@ -391,7 +392,7 @@ function ProductDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -399,9 +400,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.base,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     padding: Spacing.sm,
@@ -409,7 +410,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     ...Typography.h3,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   content: {
     flex: 1,
@@ -417,35 +418,35 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: 'center',
     paddingVertical: Spacing.lg,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     marginBottom: Spacing.sm,
   },
   productImage: {
     width: 200,
     height: 200,
     borderRadius: BorderRadius.md,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   section: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
   },
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.md,
   },
   productName: {
     ...Typography.h2,
     fontWeight: 'bold',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: Spacing.sm,
   },
   productDescription: {
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.base,
     lineHeight: 24,
   },
@@ -457,12 +458,12 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontWeight: '500',
   },
   infoValue: {
     ...Typography.body,
-    color: Colors.text.primary,
+    color: colors.text.primary,
     fontWeight: '600',
   },
   statusBadge: {
@@ -473,11 +474,11 @@ const styles = StyleSheet.create({
   statusText: {
     ...Typography.bodySmall,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   noInfoText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     fontStyle: 'italic',
   },
   actionsSection: {
@@ -495,7 +496,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   actionButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },
@@ -503,18 +504,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     padding: Spacing.lg,
   },
   errorTitle: {
@@ -526,7 +527,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textAlign: 'center',
     marginBottom: Spacing.base,
   },
@@ -537,7 +538,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.sm,
   },
   retryButtonText: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
   },

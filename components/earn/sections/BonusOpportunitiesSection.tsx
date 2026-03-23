@@ -2,7 +2,8 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { BonusOpportunity } from '@/services/gamificationApi';
-import { Colors, Spacing } from '@/constants/DesignSystem';
+import { Spacing } from '@/constants/DesignSystem';
+import { colors } from '@/constants/theme';
 import { earnStyles as styles } from './styles';
 
 interface BonusOpportunitiesSectionProps {
@@ -21,7 +22,7 @@ const BonusOpportunitiesSection = React.memo(function BonusOpportunitiesSection(
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
-        <Ionicons name="flash" size={24} color={Colors.error} />
+        <Ionicons name="flash" size={24} color={colors.error} />
         <Text style={styles.sectionTitle}>Limited-Time Opportunities</Text>
       </View>
       {bonusOpportunities.map((opp) => (
@@ -40,8 +41,8 @@ const BonusOpportunitiesSection = React.memo(function BonusOpportunitiesSection(
               <Text style={styles.bonusOppReward}>{replaceCurrencySymbol(opp.reward)}</Text>
               {opp.timeLeft ? (
                 <View style={[styles.bonusOppTimeBadge, opp.urgent && styles.bonusOppUrgent]}>
-                  <Ionicons name="time" size={10} color={opp.urgent ? Colors.error : Colors.text.tertiary} />
-                  <Text style={[styles.bonusOppTime, opp.urgent && { color: Colors.error }]}>{opp.timeLeft}</Text>
+                  <Ionicons name="time" size={10} color={opp.urgent ? colors.error : colors.text.tertiary} />
+                  <Text style={[styles.bonusOppTime, opp.urgent && { color: colors.error }]}>{opp.timeLeft}</Text>
                 </View>
               ) : null}
             </View>

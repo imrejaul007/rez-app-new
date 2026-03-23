@@ -1,3 +1,4 @@
+import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, {} from "react";
 import {
@@ -140,7 +141,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     flex: 1,
-    backgroundColor: Colors.background.purpleLight,
+    backgroundColor: colors.background.purpleLight,
     paddingVertical: 10,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,

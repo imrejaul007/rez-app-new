@@ -241,7 +241,7 @@ const UGCPostsFeed = () => {
           <Ionicons name="alert-circle-outline" size={32} color={Colors.error} />
           <Text style={styles.errorText}>{error}</Text>
           <Pressable style={styles.retryButton} onPress={handleRetry}>
-            <Ionicons name="refresh" size={16} color={Colors.text.inverse} />
+            <Ionicons name="refresh" size={16} color={colors.text.inverse} />
             <Text style={styles.retryText}>Retry</Text>
           </Pressable>
         </View>
@@ -278,7 +278,7 @@ const UGCPostsFeed = () => {
               <View style={styles.userInfo}>
                 <Text style={styles.userName}>{post.user.name}</Text>
                 <View style={styles.userMeta}>
-                  <Ionicons name="location-outline" size={12} color={Colors.text.tertiary} />
+                  <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />
                   <Text style={styles.userMetaText}>{post.user.distance}</Text>
                   <Text style={styles.metaDot}>•</Text>
                   <Text style={styles.userMetaText}>{post.time}</Text>
@@ -302,7 +302,7 @@ const UGCPostsFeed = () => {
               {/* Savings Badge */}
               <View style={styles.savingsBadge}>
                 <View style={styles.savingsIcon}>
-                  <Ionicons name="wallet-outline" size={14} color={Colors.text.inverse} />
+                  <Ionicons name="wallet-outline" size={14} color={colors.text.inverse} />
                 </View>
                 <Text style={styles.savingsText}>{currencySymbol}{post.saved}</Text>
               </View>
@@ -350,7 +350,7 @@ const UGCPostsFeed = () => {
                 style={styles.actionButton}
                 onPress={() => handleComment(post.id)}
               >
-                <Ionicons name="chatbubble-outline" size={18} color={Colors.text.tertiary} />
+                <Ionicons name="chatbubble-outline" size={18} color={colors.text.tertiary} />
                 <Text style={styles.actionText}>{post.comments}</Text>
                 <Text style={styles.actionLabel}>Comment</Text>
               </Pressable>
@@ -359,7 +359,7 @@ const UGCPostsFeed = () => {
                 style={styles.actionButton}
                 onPress={() => handleShare(post)}
               >
-                <Ionicons name="share-outline" size={18} color={Colors.text.tertiary} />
+                <Ionicons name="share-outline" size={18} color={colors.text.tertiary} />
                 <Text style={styles.actionLabel}>Share</Text>
               </Pressable>
             </View>
@@ -406,7 +406,7 @@ const styles = StyleSheet.create({
   retryText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -418,11 +418,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   sectionSubtitle: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   seeAllText: {
@@ -434,11 +434,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
   },
   postCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     marginBottom: Spacing.base,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     overflow: 'hidden',
   },
   postHeader: {
@@ -450,7 +450,7 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   userInfo: {
     flex: 1,
@@ -459,7 +459,7 @@ const styles = StyleSheet.create({
   userName: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   userMeta: {
     flexDirection: 'row',
@@ -469,11 +469,11 @@ const styles = StyleSheet.create({
   },
   userMetaText: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   metaDot: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   viewStoreButton: {
     borderWidth: 1.5,
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   postImage: {
     width: '100%',
     height: '100%',
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   savingsBadge: {
     position: 'absolute',
@@ -521,7 +521,7 @@ const styles = StyleSheet.create({
   savingsText: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   storeRow: {
     flexDirection: 'row',
@@ -540,7 +540,7 @@ const styles = StyleSheet.create({
   },
   caption: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 21,
     paddingHorizontal: 14,
     paddingTop: Spacing.sm,
@@ -563,11 +563,11 @@ const styles = StyleSheet.create({
   actionText: {
     ...Typography.body,
     fontWeight: '600',
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   actionLabel: {
     ...Typography.bodySmall,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   actionTextActive: {
     color: Colors.gold,

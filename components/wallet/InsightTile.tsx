@@ -6,7 +6,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/ThemedText';
-import { Colors, BorderRadius, Shadows, Spacing } from '@/constants/DesignSystem';
+import { BorderRadius, Shadows, Spacing } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 
 interface InsightTileProps {
@@ -24,9 +24,9 @@ export const InsightTile: React.FC<InsightTileProps> = ({
   trend,
   trendValue,
   icon,
-  iconColor = Colors.nileBlue,
+  iconColor = colors.nileBlue,
 }) => {
-  const trendColor = trend === 'up' ? colors.successScale[700] : trend === 'down' ? colors.error : Colors.text.tertiary;
+  const trendColor = trend === 'up' ? colors.successScale[700] : trend === 'down' ? colors.error : colors.text.tertiary;
   const trendIcon = trend === 'up' ? 'trending-up' : trend === 'down' ? 'trending-down' : undefined;
 
   return (
@@ -51,7 +51,7 @@ export const InsightTile: React.FC<InsightTileProps> = ({
 const styles = StyleSheet.create({
   tile: {
     flex: 1,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     padding: Spacing.sm,
     alignItems: 'center',
@@ -68,13 +68,13 @@ const styles = StyleSheet.create({
   value: {
     fontSize: 15,
     fontWeight: '800',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     letterSpacing: -0.2,
   },
   label: {
     fontSize: 10,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 1,
     textAlign: 'center',
   },

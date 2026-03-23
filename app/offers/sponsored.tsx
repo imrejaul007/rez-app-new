@@ -203,7 +203,7 @@ function SponsoredCashbackPage() {
 
       <View style={styles.offerFooter}>
         <View style={styles.validTill}>
-          <Ionicons name="calendar-outline" size={14} color={Colors.text.tertiary} />
+          <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
           <ThemedText style={styles.validTillText}>Valid till {item.validTill}</ThemedText>
         </View>
         <Pressable style={styles.claimButton}>
@@ -228,7 +228,7 @@ function SponsoredCashbackPage() {
     return (
       <View style={styles.emptyContainer}>
         <View style={styles.emptyIconWrap}>
-          <Ionicons name="megaphone-outline" size={36} color={Colors.text.tertiary} />
+          <Ionicons name="megaphone-outline" size={36} color={colors.text.tertiary} />
         </View>
         <ThemedText style={styles.emptyTitle}>No Sponsored Offers</ThemedText>
         <ThemedText style={styles.emptySubtitle}>
@@ -320,7 +320,7 @@ function SponsoredCashbackPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.full,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     alignItems: 'center',
     ...Shadows.subtle,
   },
@@ -380,7 +380,7 @@ const styles = StyleSheet.create({
   },
   filterButtonText: {
     ...Typography.caption,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
   },
   filterButtonTextActive: {
     color: colors.background.primary,
@@ -391,7 +391,7 @@ const styles = StyleSheet.create({
     paddingBottom: 120,
   },
   offerCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
@@ -435,17 +435,17 @@ const styles = StyleSheet.create({
   },
   brandName: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   offerTitle: {
     ...Typography.h4,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   offerDescription: {
     ...Typography.body,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     marginBottom: Spacing.md,
   },
   offerDetails: {
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
     paddingBottom: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.light,
+    borderBottomColor: colors.border.light,
   },
   cashbackBadge: {
     flexDirection: 'row',
@@ -477,11 +477,11 @@ const styles = StyleSheet.create({
   },
   minPurchaseLabel: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   minPurchaseValue: {
     ...Typography.label,
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   offerFooter: {
     flexDirection: 'row',
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   },
   validTillText: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   claimButton: {
     flexDirection: 'row',

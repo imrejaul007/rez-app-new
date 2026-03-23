@@ -75,7 +75,7 @@ function TermsTransparencySection({
       >
         <ThemedText style={styles.headerTitle}>Terms & Transparency</ThemedText>
         <Animated.View style={rotateStyle}>
-          <Ionicons name="chevron-down" size={22} color={Colors.text.secondary} />
+          <Ionicons name="chevron-down" size={22} color={colors.text.secondary} />
         </Animated.View>
       </Pressable>
 
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 16,
     fontWeight: "600",
-    color: Colors.text.primary },
+    color: colors.text.primary },
   content: {
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.md,
@@ -142,11 +142,11 @@ const styles = StyleSheet.create({
   termTitle: {
     fontSize: 14,
     fontWeight: "600",
-    color: Colors.text.primary,
+    color: colors.text.primary,
     marginBottom: 4 },
   termText: {
     fontSize: 13,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 18 },
   supportLink: {
     fontSize: 14,

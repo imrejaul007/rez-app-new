@@ -108,7 +108,7 @@ const FriendsCommunity = () => {
       case 'popular':
         return <Ionicons name="heart" size={16} color={Colors.error} />;
       default:
-        return <Ionicons name="ellipse" size={16} color={Colors.text.tertiary} />;
+        return <Ionicons name="ellipse" size={16} color={colors.text.tertiary} />;
     }
   };
 
@@ -240,14 +240,14 @@ const FriendsCommunity = () => {
                 </View>
 
                 <View style={styles.activityAction}>
-                  <Ionicons name="chevron-forward" size={18} color={Colors.text.tertiary} />
+                  <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
                 </View>
               </Pressable>
             ))}
           </View>
         ) : (
           <View style={styles.emptyActivityContainer}>
-            <Ionicons name="people-outline" size={32} color={Colors.text.tertiary} />
+            <Ionicons name="people-outline" size={32} color={colors.text.tertiary} />
             <Text style={styles.emptyText}>No recent activity</Text>
           </View>
         )}
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   retryButton: {
     marginTop: Spacing.sm,
@@ -294,7 +294,7 @@ const styles = StyleSheet.create({
   },
   emptyFriendsText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   inviteButtonSmall: {
     flexDirection: 'row',
@@ -318,7 +318,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     ...Typography.body,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   friendsSection: {
     marginBottom: Spacing.lg,
@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   viewAllText: {
     ...Typography.bodySmall,
@@ -367,17 +367,17 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     backgroundColor: Colors.gold,
     borderWidth: 2,
-    borderColor: Colors.text.inverse,
+    borderColor: colors.text.inverse,
   },
   friendName: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     marginTop: 6,
   },
   friendStore: {
     ...Typography.overline,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   inviteBubble: {
     alignItems: 'center',
@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   activityIconContainer: {
     marginRight: Spacing.md,
@@ -443,7 +443,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -452,12 +452,12 @@ const styles = StyleSheet.create({
   },
   activityText: {
     ...Typography.bodySmall,
-    color: Colors.text.secondary,
+    color: colors.text.secondary,
     lineHeight: 18,
   },
   activityUserName: {
     fontWeight: '600',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   activityStore: {
     fontWeight: '600',
@@ -469,7 +469,7 @@ const styles = StyleSheet.create({
   },
   activityTime: {
     ...Typography.caption,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginTop: 2,
   },
   activityAction: {

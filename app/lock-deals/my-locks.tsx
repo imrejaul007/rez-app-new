@@ -128,11 +128,11 @@ const MyLocksPage: React.FC = () => {
       case 'expired':
         return { label: 'Expired', color: Colors.error, bg: Colors.errorScale[50], icon: 'time' as const };
       case 'refunded':
-        return { label: 'Refunded', color: Colors.text.tertiary, bg: Colors.background.secondary, icon: 'arrow-undo' as const };
+        return { label: 'Refunded', color: colors.text.tertiary, bg: colors.background.secondary, icon: 'arrow-undo' as const };
       case 'cancelled':
-        return { label: 'Cancelled', color: Colors.text.tertiary, bg: Colors.background.secondary, icon: 'close-circle' as const };
+        return { label: 'Cancelled', color: colors.text.tertiary, bg: colors.background.secondary, icon: 'close-circle' as const };
       default:
-        return { label: status, color: Colors.text.tertiary, bg: Colors.background.secondary, icon: 'help-circle' as const };
+        return { label: status, color: colors.text.tertiary, bg: colors.background.secondary, icon: 'help-circle' as const };
     }
   };
 
@@ -212,7 +212,7 @@ const MyLocksPage: React.FC = () => {
               <Ionicons
                 name="time-outline"
                 size={14}
-                color={daysLeft <= 2 ? Colors.error : Colors.text.tertiary}
+                color={daysLeft <= 2 ? Colors.error : colors.text.tertiary}
               />
               <Text style={[styles.expiryText, daysLeft <= 2 && { color: Colors.error, fontWeight: '600' }]}>
                 {daysLeft === 0 ? 'Expires today!' : `${daysLeft} day${daysLeft !== 1 ? 's' : ''} to pick up`}
@@ -233,7 +233,7 @@ const MyLocksPage: React.FC = () => {
           {/* Refund info */}
           {lock.refundAmount && lock.refundAmount > 0 && (
             <View style={styles.expiryRow}>
-              <Ionicons name="arrow-undo" size={14} color={Colors.text.tertiary} />
+              <Ionicons name="arrow-undo" size={14} color={colors.text.tertiary} />
               <Text style={styles.expiryText}>Refund: {currSymbol}{lock.refundAmount}</Text>
             </View>
           )}
@@ -275,7 +275,7 @@ const MyLocksPage: React.FC = () => {
       {/* Header */}
       <View style={styles.header}>
         <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={Colors.nileBlue} />
+          <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <Text style={styles.headerTitle}>My Locked Deals</Text>
         <View style={{ width: 40 }} />
@@ -310,7 +310,7 @@ const MyLocksPage: React.FC = () => {
               <Ionicons
                 name={activeTab === 'active' ? 'lock-open-outline' : activeTab === 'completed' ? 'bag-check-outline' : 'time-outline'}
                 size={48}
-                color={Colors.text.tertiary}
+                color={colors.text.tertiary}
               />
               <Text style={styles.emptyTitle}>
                 {activeTab === 'active' ? 'No active locks' : activeTab === 'completed' ? 'No picked up deals yet' : 'No cancelled or expired deals'}
@@ -339,7 +339,7 @@ const MyLocksPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
   },
   header: {
     flexDirection: 'row',
@@ -348,9 +348,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
     paddingBottom: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.border.default,
+    borderBottomColor: colors.border.default,
   },
   backButton: {
     width: 40,
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   loadingContainer: {
     flex: 1,
@@ -378,35 +378,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     gap: Spacing.sm,
   },
   tab: {
     flex: 1,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.sm,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     alignItems: 'center',
   },
   tabActive: {
-    backgroundColor: Colors.nileBlue,
+    backgroundColor: colors.nileBlue,
   },
   tabText: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '500',
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   tabTextActive: {
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
     fontWeight: '600',
   },
 
   // Lock Card
   lockCard: {
-    backgroundColor: Colors.background.primary,
+    backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     marginBottom: Spacing.md,
     overflow: 'hidden',
   },
@@ -426,13 +426,13 @@ const styles = StyleSheet.create({
   lockTitle: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
     lineHeight: 20,
     marginBottom: 2,
   },
   lockStore: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   lockPriceRow: {
@@ -444,11 +444,11 @@ const styles = StyleSheet.create({
   lockPrice: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '700',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
   },
   lockOriginal: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     textDecorationLine: 'line-through',
   },
   statusBadge: {
@@ -470,7 +470,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingBottom: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
     paddingTop: 10,
   },
   detailRow: {
@@ -481,12 +481,12 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
   detailValue: {
     fontSize: Typography.bodySmall.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   rewardBadge: {
     flexDirection: 'row',
@@ -510,23 +510,23 @@ const styles = StyleSheet.create({
   },
   pickupCodeLabel: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
     marginBottom: Spacing.xs,
   },
   pickupCodeContainer: {
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: colors.background.secondary,
     paddingVertical: 10,
     paddingHorizontal: Spacing.base,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
-    borderColor: Colors.border.default,
+    borderColor: colors.border.default,
     borderStyle: 'dashed',
     alignItems: 'center',
   },
   pickupCode: {
     fontSize: Typography.h4.fontSize,
     fontWeight: '800',
-    color: Colors.nileBlue,
+    color: colors.nileBlue,
     letterSpacing: 2,
   },
 
@@ -539,7 +539,7 @@ const styles = StyleSheet.create({
   },
   expiryText: {
     fontSize: Typography.bodySmall.fontSize,
-    color: Colors.text.tertiary,
+    color: colors.text.tertiary,
   },
 
   // Actions
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
     padding: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.background.secondary,
+    borderTopColor: colors.background.secondary,
   },
   payBalanceButton: {
     flex: 1,
@@ -560,7 +560,7 @@ const styles = StyleSheet.create({
   payBalanceText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
   cancelButton: {
     paddingVertical: 10,
@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: Typography.bodyLarge.fontSize,
     fontWeight: '600',
-    color: Colors.text.primary,
+    color: colors.text.primary,
   },
   browseCta: {
     marginTop: Spacing.md,
@@ -599,7 +599,7 @@ const styles = StyleSheet.create({
   browseCtaText: {
     fontSize: Typography.body.fontSize,
     fontWeight: '600',
-    color: Colors.text.inverse,
+    color: colors.text.inverse,
   },
 });
 
