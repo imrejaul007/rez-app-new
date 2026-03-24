@@ -12,6 +12,8 @@ export default function LoyaltyLayout() {
       <Stack.Screen name="coins" />
       <Stack.Screen name="brands" />
       <Stack.Screen name="missions" />
+      <Stack.Screen name="stamp-card" />
+      <Stack.Screen name="tier-progress" />
     </Stack>
   );
 }

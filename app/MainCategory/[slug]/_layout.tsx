@@ -16,6 +16,7 @@ export default function CategorySlugLayout() {
       <Stack.Screen name="offers" />
       <Stack.Screen name="stories" />
       <Stack.Screen name="experiences" />
+      <Stack.Screen name="combos" />
     </Stack>
   );
 }
