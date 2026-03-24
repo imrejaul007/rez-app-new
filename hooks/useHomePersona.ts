@@ -15,7 +15,7 @@
 
 import { useMemo } from 'react';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
-import { useAuthUser } from '@/hooks/useAuth';
+import { useAuthStore } from '@/stores/authStore';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -196,7 +196,7 @@ const GENERAL_PERSONA: PersonaConfig = {
 
 export function useHomePersona(): PersonaConfig & { displayName: string } {
   const { statedIdentity, segment } = useUserIdentityStore();
-  const authUser = useAuthUser();
+  const authUser = useAuthStore((s) => s.state.user);
 
   const firstName = useMemo(() => {
     const fullName = (authUser as any)?.profile?.firstName
