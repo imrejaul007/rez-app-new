@@ -52,6 +52,7 @@ function SignInScreen() {
 
   const [otpTimer, setOtpTimer] = useState(0);
   const [canResendOTP, setCanResendOTP] = useState(false);
+  const [slowLoadingMsg, setSlowLoadingMsg] = useState('');
   const isMounted = useIsMounted();
 
   // OTP timer effect
@@ -118,9 +119,16 @@ function SignInScreen() {
       return;
     }
 
+    // Show "waking up server" hint after 5s so users know it's a cold start, not a crash
+    const slowHintTimer = setTimeout(() => {
+      if (isMounted()) setSlowLoadingMsg('Waking up server, please wait…');
+    }, 5000);
+
     try {
       const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
       await actions.sendOTP(formattedPhone);
+      clearTimeout(slowHintTimer);
+      if (isMounted()) setSlowLoadingMsg('');
       if (!isMounted()) return;
       setStep('otp');
       if (!isMounted()) return;
@@ -133,6 +141,8 @@ function SignInScreen() {
         `Verification code sent to ${selectedCountry.dialCode}${formData.phoneNumber}${__DEV__ ? '\n\nFor demo, use: 123456' : ''}`
       );
     } catch (error: any) {
+      clearTimeout(slowHintTimer);
+      if (isMounted()) setSlowLoadingMsg('');
       const errorMessage = error?.message || authError || 'Failed to send OTP. Please try again.';
 
       if (errorMessage.toLowerCase().includes('user not found') ||
@@ -303,6 +313,11 @@ function SignInScreen() {
               )}
             </View>
           </Pressable>
+          {!!slowLoadingMsg && (
+            <Text style={{ textAlign: 'center', color: colors.text.secondary, fontSize: 13, marginTop: 8 }}>
+              {slowLoadingMsg}
+            </Text>
+          )}
         </View>
       </View>
     </View>

@@ -90,6 +90,8 @@ module.exports = {
         },
       ],
       permissions: [
+        'android.permission.INTERNET',
+        'android.permission.ACCESS_NETWORK_STATE',
         'android.permission.CAMERA',
         'android.permission.ACCESS_FINE_LOCATION',
         'android.permission.ACCESS_COARSE_LOCATION',

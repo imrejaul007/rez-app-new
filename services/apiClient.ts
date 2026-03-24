@@ -617,7 +617,7 @@ export const API_TIMEOUTS = {
   LONG_RUNNING: 15000,    // Reports, exports, heavy aggregations
   PAYMENT: 20000,         // Payment processing — give gateway time to respond
   BILL_FETCH: 12000,      // Fetch bill from BBPS/utility provider — external call
-  AUTH: 10000,            // Login / token refresh — slightly more than default
+  AUTH: 60000,            // Login / token refresh — 60s to handle Render free-tier cold starts
 } as const;
 
 // Create singleton instance

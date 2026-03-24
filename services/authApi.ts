@@ -2,7 +2,7 @@
 // Handles user authentication, registration, and profile management
 // Enhanced with comprehensive error handling, validation, token management, and logging
 
-import apiClient, { ApiResponse } from './apiClient';
+import apiClient, { ApiResponse, API_TIMEOUTS } from './apiClient';
 import { withRetry, createErrorResponse, logApiRequest, logApiResponse } from '@/utils/apiUtils';
 import {
   User as UnifiedUser,
@@ -229,7 +229,7 @@ class AuthService {
       });
 
       const response = await withRetry(
-        () => apiClient.post<{ message: string; expiresIn: number }>('/user/auth/send-otp', data),
+        () => apiClient.post<{ message: string; expiresIn: number }>('/user/auth/send-otp', data, { timeout: API_TIMEOUTS.AUTH }),
         { maxRetries: 2 }
       );
 
@@ -289,7 +289,7 @@ class AuthService {
       });
 
       const response = await withRetry(
-        () => apiClient.post<AuthResponse>('/user/auth/verify-otp', data),
+        () => apiClient.post<AuthResponse>('/user/auth/verify-otp', data, { timeout: API_TIMEOUTS.AUTH }),
         { maxRetries: 1 } // Don't retry OTP verification
       );
 
