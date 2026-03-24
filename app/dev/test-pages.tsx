@@ -3,6 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Developer screen to test all 47 pages
 
 import React, { useState } from 'react';
+import { Redirect } from 'expo-router';
 import {
   View,
   ScrollView,
@@ -151,6 +152,8 @@ const PAGE_CATEGORIES: PageCategory[] = [
 ];
 
 function TestPagesScreen() {
+  if (!__DEV__) return <Redirect href="/(tabs)/" />;
+
   const router = useRouter();
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 

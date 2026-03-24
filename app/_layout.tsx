@@ -34,6 +34,7 @@ initSentry();
 
 import { useFonts } from 'expo-font';
 import * as Constants from 'expo-constants';
+import * as Updates from 'expo-updates';
 import React, { useEffect, useState } from 'react';
 import { View, useColorScheme } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -121,6 +122,19 @@ function RootLayout() {
     }, FONT_TIMEOUT_MS);
     return () => clearTimeout(timer);
   }, [loaded, fontError]);
+
+  useEffect(() => {
+    if (!__DEV__) {
+      Updates.checkForUpdateAsync()
+        .then(async ({ isAvailable }) => {
+          if (isAvailable) {
+            await Updates.fetchUpdateAsync();
+            await Updates.reloadAsync();
+          }
+        })
+        .catch(() => {});
+    }
+  }, []);
 
   const systemScheme = useColorScheme();
   const fontsReady = loaded || fontError != null || fontTimedOut;

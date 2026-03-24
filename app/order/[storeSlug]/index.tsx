@@ -166,8 +166,8 @@ function CategorySection({
   onIncrease: (item: WebMenuItem) => void;
   onDecrease: (item: WebMenuItem) => void;
 }) {
-  const availableItems = category.items.filter((i) => !i.is86d);
-  const unavailableItems = category.items.filter((i) => i.is86d);
+  const availableItems = (category.items ?? []).filter((i) => !i.is86d);
+  const unavailableItems = (category.items ?? []).filter((i) => i.is86d);
 
   return (
     <View style={styles.categorySection}>
