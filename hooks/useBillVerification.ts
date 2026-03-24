@@ -1,7 +1,7 @@
 // Use Bill Verification Hook
 // Manages bill verification workflow state
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import * as billVerificationServiceModule from '@/services/billVerificationService';
 
 const billVerificationService = billVerificationServiceModule as any;
@@ -40,17 +40,35 @@ export function useBillVerification(): UseBillVerificationReturn {
   const [workflow, setWorkflow] = useState<BillVerificationWorkflow | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /**
    * Start verification workflow
+   * M-11: Add 30-second timeout for verification
    */
   const startVerification = useCallback(async (imageUri: string) => {
     setIsProcessing(true);
     setError(null);
 
+    // M-11: Set 30-second timeout
+    timeoutRef.current = setTimeout(() => {
+      setError('Bill verification is taking longer than expected. Please try again.');
+      setIsProcessing(false);
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    }, 30000);
+
     try {
 
       const result = await billVerificationService.performCompleteVerification(imageUri);
+
+      // M-11: Clear timeout on success
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
 
       if (result.success && result.data) {
         setWorkflow(result.data);
@@ -59,6 +77,11 @@ export function useBillVerification(): UseBillVerificationReturn {
         setError(result.error || 'Verification failed');
       }
     } catch (err) {
+      // M-11: Clear timeout on error
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
       const errorMessage = err instanceof Error ? err.message : 'Unknown error';
       setError(errorMessage);
     } finally {
@@ -163,6 +186,16 @@ export function useBillVerification(): UseBillVerificationReturn {
     setWorkflow(null);
     setIsProcessing(false);
     setError(null);
+  }, []);
+
+  // M-11: Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
   }, []);
 
   // Computed values
