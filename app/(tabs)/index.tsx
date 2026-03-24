@@ -57,17 +57,13 @@ import HeroBanner from '@/components/homepage/HeroBanner';
 import type { TabId } from '@/components/homepage/HomeTabSection';
 import { useHomepage, useHomepageNavigation } from '@/hooks/useHomepage';
 import { useLoyaltySection } from '@/hooks/useLoyaltySection';
+import { PersonalizedHeroBanner } from '@/components/home/PersonalizedHeroBanner';
 
 function lazyWithRetry<T extends React.ComponentType<any>>(
-  factory: () => Promise<{ default: T }>
+  factory: () => Promise<{ default: T }>,
 ): React.LazyExoticComponent<T> {
   return React.lazy(() =>
-    factory().catch(
-      () =>
-        new Promise<{ default: T }>(resolve =>
-          setTimeout(() => resolve(factory()), 1500)
-        )
-    )
+    factory().catch(() => new Promise<{ default: T }>((resolve) => setTimeout(() => resolve(factory()), 1500))),
   );
 }
 
@@ -78,7 +74,7 @@ const CashStoreHeaderWrapper = lazyWithRetry(() => import('@/components/cash-sto
 const CashStoreSectionContainer = lazyWithRetry(() => import('@/components/cash-store/CashStoreSectionContainer'));
 const PriveHeaderWrapper = lazyWithRetry(() => import('@/components/prive/PriveHeaderWrapper'));
 const PriveSectionContainer = lazyWithRetry(() =>
-  import('@/components/prive/PriveSectionContainer').then(m => ({ default: m.PriveSectionContainer }))
+  import('@/components/prive/PriveSectionContainer').then((m) => ({ default: m.PriveSectionContainer })),
 );
 import { useRecentlyViewed } from '@/hooks/useRecentlyViewed';
 // Profile now from Zustand store (imported above)
@@ -97,7 +93,13 @@ import HomepageSkeleton from '@/components/homepage/HomepageSkeleton';
 import { BRAND } from '@/constants/brand';
 import { queryClient } from '@/lib/queryClient';
 import { queryKeys } from '@/lib/queryKeys';
-import { isUserFirstDay, getStreakDisplay, getDaysSinceJoined, trackSessionStart, trackSessionEnd } from '@/utils/retentionHooks';
+import {
+  isUserFirstDay,
+  getStreakDisplay,
+  getDaysSinceJoined,
+  trackSessionStart,
+  trackSessionEnd,
+} from '@/utils/retentionHooks';
 import sessionTrackingService from '@/services/sessionTrackingService';
 
 // ProfileMenuModal eagerly loaded — React.lazy + Suspense(null) causes modal to not appear on Android
@@ -141,46 +143,52 @@ function prefetchOtherTabs() {
   import('@/components/playPage/MerchantVideoSection').catch(() => {});
 
   // Prefetch API data (backend caches in Redis — first call warms it)
-  import('@/services/mallApi').then(m => m.mallApi.getMallHomepageBatch().catch(() => {})).catch(() => {});
-  import('@/services/cashStoreApi').then(m => m.default.getHomepageData().catch(() => {})).catch(() => {});
+  import('@/services/mallApi').then((m) => m.mallApi.getMallHomepageBatch().catch(() => {})).catch(() => {});
+  import('@/services/cashStoreApi').then((m) => m.default.getHomepageData().catch(() => {})).catch(() => {});
 
   // Seed TanStack Query cache so tab switches are instant
-  queryClient.prefetchQuery({
-    queryKey: queryKeys.cashStore.homepage(),
-    queryFn: () => import('@/services/cashStoreApi').then(m => m.default.getHomepageData()),
-    staleTime: 5 * 60_000,
-  }).catch(() => {});
+  queryClient
+    .prefetchQuery({
+      queryKey: queryKeys.cashStore.homepage(),
+      queryFn: () => import('@/services/cashStoreApi').then((m) => m.default.getHomepageData()),
+      staleTime: 5 * 60_000,
+    })
+    .catch(() => {});
 
-  queryClient.prefetchQuery({
-    queryKey: queryKeys.categories.list(),
-    queryFn: () => import('@/services/categoriesApi').then(m => m.default.getCategories()),
-    staleTime: 30 * 60_000,
-  }).catch(() => {});
+  queryClient
+    .prefetchQuery({
+      queryKey: queryKeys.categories.list(),
+      queryFn: () => import('@/services/categoriesApi').then((m) => m.default.getCategories()),
+      staleTime: 30 * 60_000,
+    })
+    .catch(() => {});
 
   // Prefetch top homepage product/store images into expo-image disk cache
-  import('@/services/homepageDataService').then(m => {
-    const service = m.default;
-    if (service && typeof service.getCachedSections === 'function') {
-      const sections = service.getCachedSections?.();
-      if (sections) {
-        const imageUrls: string[] = [];
-        for (const section of sections) {
-          const items = (section as any).items || (section as any).data || [];
-          for (const item of items.slice(0, 10)) {
-            const url = item.image || item.imageUrl || item.logo || item.banner?.[0];
-            if (url && typeof url === 'string' && url.startsWith('http')) {
-              imageUrls.push(url);
+  import('@/services/homepageDataService')
+    .then((m) => {
+      const service = m.default;
+      if (service && typeof service.getCachedSections === 'function') {
+        const sections = service.getCachedSections?.();
+        if (sections) {
+          const imageUrls: string[] = [];
+          for (const section of sections) {
+            const items = (section as any).items || (section as any).data || [];
+            for (const item of items.slice(0, 10)) {
+              const url = item.image || item.imageUrl || item.logo || item.banner?.[0];
+              if (url && typeof url === 'string' && url.startsWith('http')) {
+                imageUrls.push(url);
+              }
+              if (imageUrls.length >= 15) break;
             }
             if (imageUrls.length >= 15) break;
           }
-          if (imageUrls.length >= 15) break;
-        }
-        if (imageUrls.length > 0) {
-          prefetchImages(imageUrls);
+          if (imageUrls.length > 0) {
+            prefetchImages(imageUrls);
+          }
         }
       }
-    }
-  }).catch(() => {});
+    })
+    .catch(() => {});
 }
 
 // Tab content loading fallback — static styles to avoid creating objects per render
@@ -210,7 +218,6 @@ const TabContentFallback = React.memo(() => (
 // Fallback components for Suspense boundaries
 const FABFallback = () => null;
 
-
 // Badge/Shield shaped avatar component - View-based (no SVG dependency)
 interface BadgeAvatarProps {
   size?: number;
@@ -219,21 +226,29 @@ interface BadgeAvatarProps {
 
 const BadgeAvatar: React.FC<BadgeAvatarProps> = React.memo(({ size = 24, color }) => {
   const shieldColor = color || colors.lightMustard;
-  const iconColor = color === colors.brand.sky ? colors.brand.sky : color === colors.brand.goldAccent ? colors.brand.goldAccent : colors.nileBlue;
+  const iconColor =
+    color === colors.brand.sky
+      ? colors.brand.sky
+      : color === colors.brand.goldAccent
+        ? colors.brand.goldAccent
+        : colors.nileBlue;
 
   // Memoize the style object so a new object isn't allocated on every render
-  const shieldStyle = useMemo(() => ({
-    width: size,
-    height: size * 1.15,
-    backgroundColor: shieldColor,
-    borderTopLeftRadius: size * 0.15,
-    borderTopRightRadius: size * 0.15,
-    borderBottomLeftRadius: size * 0.45,
-    borderBottomRightRadius: size * 0.45,
-    justifyContent: 'center' as const,
-    alignItems: 'center' as const,
-    paddingBottom: size * 0.05,
-  }), [size, shieldColor]);
+  const shieldStyle = useMemo(
+    () => ({
+      width: size,
+      height: size * 1.15,
+      backgroundColor: shieldColor,
+      borderTopLeftRadius: size * 0.15,
+      borderTopRightRadius: size * 0.15,
+      borderBottomLeftRadius: size * 0.45,
+      borderBottomRightRadius: size * 0.45,
+      justifyContent: 'center' as const,
+      alignItems: 'center' as const,
+      paddingBottom: size * 0.05,
+    }),
+    [size, shieldColor],
+  );
 
   return (
     <View style={shieldStyle}>
@@ -295,18 +310,25 @@ function HomeScreen() {
     if (permissionStatus === 'granted' || permissionStatus === 'denied') return;
     // Check if user already dismissed the banner
     let mounted = true;
-    import('@react-native-async-storage/async-storage').then(({ default: AS }) =>
-      AS.getItem('location_banner_dismissed').then(v => {
-        if (mounted && v !== 'true') setLocationBannerDismissed(false);
-      })
-    ).catch(() => {});
-    return () => { mounted = false; };
+    import('@react-native-async-storage/async-storage')
+      .then(({ default: AS }) =>
+        AS.getItem('location_banner_dismissed').then((v) => {
+          if (mounted && v !== 'true') setLocationBannerDismissed(false);
+        }),
+      )
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
   }, [permissionStatus]);
 
   // Handler for tab changes
-  const handleTabChange = React.useCallback((tab: TabId) => {
-    setActiveTab(tab);
-  }, [setActiveTab]);
+  const handleTabChange = React.useCallback(
+    (tab: TabId) => {
+      setActiveTab(tab);
+    },
+    [setActiveTab],
+  );
 
   // Get current location hook for editable location
   const { currentLocation, updateLocation: updateUserLocation } = useCurrentLocation();
@@ -331,28 +353,38 @@ function HomeScreen() {
     const lng = currentLocation.coordinates.longitude;
     let mounted = true;
 
-    import('@/utils/serviceabilityCheck').then(({ checkAreaServiceability }) => {
-      checkAreaServiceability(lat, lng).then(result => {
-        if (mounted) {
-          setIsAreaServiceable(result.isServiceable);
-          setServiceabilityChecked(true);
-        }
-        // No auto-switch — unserviceable areas see a banner with "Mall →" CTA instead
-      }).catch(() => {});
-    }).catch(() => {});
-    
-    return () => { mounted = false; };
+    import('@/utils/serviceabilityCheck')
+      .then(({ checkAreaServiceability }) => {
+        checkAreaServiceability(lat, lng)
+          .then((result) => {
+            if (mounted) {
+              setIsAreaServiceable(result.isServiceable);
+              setServiceabilityChecked(true);
+            }
+            // No auto-switch — unserviceable areas see a banner with "Mall →" CTA instead
+          })
+          .catch(() => {});
+      })
+      .catch(() => {});
+
+    return () => {
+      mounted = false;
+    };
   }, [currentLocation?.coordinates?.latitude, currentLocation?.coordinates?.longitude]);
 
   // Get recently viewed items
-  const { items: recentlyViewedItems, isLoading: isLoadingRecentlyViewed, refresh: refreshRecentlyViewed } = useRecentlyViewed();
+  const {
+    items: recentlyViewedItems,
+    isLoading: isLoadingRecentlyViewed,
+    refresh: refreshRecentlyViewed,
+  } = useRecentlyViewed();
 
   // Get loyalty section data for homepage cards - only fetch when near-u tab is active
   const {
     loyaltyHub,
     featuredLockProduct,
     trendingService,
-    isLoading: isLoyaltySectionLoading
+    isLoading: isLoyaltySectionLoading,
   } = useLoyaltySection({ autoFetch: activeTab === 'near-u' });
 
   // CARLOS: retention — check if user is on first day and should see day-1 challenge
@@ -362,13 +394,17 @@ function HomeScreen() {
     setIsFirstDay(isDay1);
     if (isDay1) {
       // Show day-1 challenge card (only once per session)
-      import('@react-native-async-storage/async-storage').then(({ default: AS }) => {
-        AS.getItem('day1_challenge_shown').then(shown => {
-          if (!shown) {
-            setShowDay1Challenge(true);
-          }
-        }).catch(() => {});
-      }).catch(() => {});
+      import('@react-native-async-storage/async-storage')
+        .then(({ default: AS }) => {
+          AS.getItem('day1_challenge_shown')
+            .then((shown) => {
+              if (!shown) {
+                setShowDay1Challenge(true);
+              }
+            })
+            .catch(() => {});
+        })
+        .catch(() => {});
     }
   }, [authUser]);
 
@@ -410,20 +446,24 @@ function HomeScreen() {
   React.useEffect(() => {
     if (!authUser) return;
     // Fetch or calculate streak from local storage or backend
-    import('@react-native-async-storage/async-storage').then(({ default: AS }) => {
-      AS.getItem('last_active_date').then(lastActive => {
-        // Simple streak: if visited yesterday or today, show streak
-        // Real implementation would track full streak on backend
-        const daysSinceJoined = getDaysSinceJoined(authUser);
-        // For MVP, show a visual if user is in early days
-        if (daysSinceJoined >= 0 && daysSinceJoined <= 30) {
-          // Show a placeholder streak display for early users
-          const display = getStreakDisplay(Math.max(1, daysSinceJoined + 1));
-          setStreakCount(daysSinceJoined + 1);
-          setStreakDisplay(display);
-        }
-      }).catch(() => {});
-    }).catch(() => {});
+    import('@react-native-async-storage/async-storage')
+      .then(({ default: AS }) => {
+        AS.getItem('last_active_date')
+          .then((lastActive) => {
+            // Simple streak: if visited yesterday or today, show streak
+            // Real implementation would track full streak on backend
+            const daysSinceJoined = getDaysSinceJoined(authUser);
+            // For MVP, show a visual if user is in early days
+            if (daysSinceJoined >= 0 && daysSinceJoined <= 30) {
+              // Show a placeholder streak display for early users
+              const display = getStreakDisplay(Math.max(1, daysSinceJoined + 1));
+              setStreakCount(daysSinceJoined + 1);
+              setStreakDisplay(display);
+            }
+          })
+          .catch(() => {});
+      })
+      .catch(() => {});
   }, [authUser]);
 
   const animatedHeight = useSharedValue(0);
@@ -487,20 +527,24 @@ function HomeScreen() {
     let mounted = true;
     if (isAuthenticated && authUser && !authUser.isOnboarded && !onboardingCompletedRef.current) {
       onboardingCompletedRef.current = true;
-      authActions.completeOnboarding({
-        preferences: {
-          notifications: { push: true, email: true, sms: true },
-          currency: getCurrency(),
-          language: getLocale().split('-')[0] || 'en',
-        },
-      }).catch(() => {
-        // If completeOnboarding API fails, reset so it can retry on next render
-        if (mounted) {
-          onboardingCompletedRef.current = false;
-        }
-      });
+      authActions
+        .completeOnboarding({
+          preferences: {
+            notifications: { push: true, email: true, sms: true },
+            currency: getCurrency(),
+            language: getLocale().split('-')[0] || 'en',
+          },
+        })
+        .catch(() => {
+          // If completeOnboarding API fails, reset so it can retry on next render
+          if (mounted) {
+            onboardingCompletedRef.current = false;
+          }
+        });
     }
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [isAuthenticated, authUser, authActions, getCurrency, getLocale]);
 
   // Load supplementary homepage data (wallet balance comes from WalletContext)
@@ -522,8 +566,8 @@ function HomeScreen() {
 
     // Fallback: separate API call if batch didn't include userContext (e.g., not authenticated during batch)
     const contextResult = await HomepageCacheWarmer.getUserContext()
-      .then(r => ({ status: 'fulfilled' as const, value: r }))
-      .catch(e => ({ status: 'rejected' as const, reason: e }));
+      .then((r) => ({ status: 'fulfilled' as const, value: r }))
+      .catch((e) => ({ status: 'rejected' as const, reason: e }));
 
     if (contextResult.status === 'fulfilled' && contextResult.value.success && contextResult.value.data) {
       if (!isMounted()) return;
@@ -547,7 +591,9 @@ function HomeScreen() {
       statsLoadedRef.current = false;
       _statsLoadedGlobal = false;
     }
-    return () => { mounted = false; };
+    return () => {
+      mounted = false;
+    };
   }, [isAuthenticated, interactionsComplete, loadUserContext]);
 
   // Refresh all dynamic data when screen comes into focus (throttled to prevent continuous refreshing)
@@ -577,9 +623,8 @@ function HomeScreen() {
         // Refresh cart context (for badge updates from context)
         refreshCart();
       }
-    }, [authUser, isAuthenticated, refreshCart, refreshRecentlyViewed, loadUserContext])
+    }, [authUser, isAuthenticated, refreshCart, refreshRecentlyViewed, loadUserContext]),
   );
-
 
   // Auth status check removed — AuthContext already calls checkAuthStatus on mount.
   // Calling it again here caused a redundant AUTH_LOADING→AUTH_SUCCESS cycle = flicker.
@@ -588,36 +633,34 @@ function HomeScreen() {
 
   // Debug user and modal state (removed for production)
 
-  const handleRefresh = React.useCallback(
-    async () => {
-      setRefreshing(true);
-      // Reset dedup timers so explicit refresh always works
-      _lastFocusRefreshTime = 0;
-      _statsLoadedGlobal = false;
-      statsLoadedRef.current = false;
-      try {
-        // Refresh sections first (visual feedback) — force=true bypasses dedup
-        await actions.refreshAllSections(true);
+  const handleRefresh = React.useCallback(async () => {
+    setRefreshing(true);
+    // Reset dedup timers so explicit refresh always works
+    _lastFocusRefreshTime = 0;
+    _statsLoadedGlobal = false;
+    statsLoadedRef.current = false;
+    try {
+      // Refresh sections first (visual feedback) — force=true bypasses dedup
+      await actions.refreshAllSections(true);
 
-        // Refresh all user data in background (non-blocking)
-        if (authUser && isAuthenticated) {
-          // Single API call for all user-specific data
-          loadUserContext().catch(() => {});
+      // Refresh all user data in background (non-blocking)
+      if (authUser && isAuthenticated) {
+        // Single API call for all user-specific data
+        loadUserContext().catch(() => {});
 
-          // Refresh cart context
-          refreshCart();
+        // Refresh cart context
+        refreshCart();
 
-          // Refresh recently viewed
-          refreshRecentlyViewed();
-        }
-      } catch (error) {
-        // silently handle
-      } finally {
-        if (!isMounted()) return;
-        setRefreshing(false);
+        // Refresh recently viewed
+        refreshRecentlyViewed();
       }
-    },
-    [actions, authUser, isAuthenticated, loadUserContext, refreshCart, refreshRecentlyViewed]);
+    } catch (error) {
+      // silently handle
+    } finally {
+      if (!isMounted()) return;
+      setRefreshing(false);
+    }
+  }, [actions, authUser, isAuthenticated, loadUserContext, refreshCart, refreshRecentlyViewed]);
 
   const handleSearchPress = useCallback(() => {
     router.push('/search');
@@ -658,25 +701,28 @@ function HomeScreen() {
   }, [isAuthenticated, authUser, showModal]);
 
   // Handle location selection from the picker modal
-  const handleLocationSelect = useCallback(async (selectedLocation: AddressSearchResult) => {
-    try {
-      const coordinates = {
-        latitude: selectedLocation.coordinates.latitude,
-        longitude: selectedLocation.coordinates.longitude,
-      };
-      // Pass city/state/pincode/neighbourhood from search results
-      await updateUserLocation(coordinates, selectedLocation.formattedAddress, 'manual', {
-        city: selectedLocation.city,
-        state: selectedLocation.state,
-        pincode: selectedLocation.pincode,
-        neighbourhood: selectedLocation.neighbourhood,
-      });
-      if (!isMounted()) return;
-      setIsLocationModalVisible(false);
-    } catch (error) {
-      platformAlertSimple('Error', 'Failed to update location. Please try again.');
-    }
-  }, [updateUserLocation]);
+  const handleLocationSelect = useCallback(
+    async (selectedLocation: AddressSearchResult) => {
+      try {
+        const coordinates = {
+          latitude: selectedLocation.coordinates.latitude,
+          longitude: selectedLocation.coordinates.longitude,
+        };
+        // Pass city/state/pincode/neighbourhood from search results
+        await updateUserLocation(coordinates, selectedLocation.formattedAddress, 'manual', {
+          city: selectedLocation.city,
+          state: selectedLocation.state,
+          pincode: selectedLocation.pincode,
+          neighbourhood: selectedLocation.neighbourhood,
+        });
+        if (!isMounted()) return;
+        setIsLocationModalVisible(false);
+      } catch (error) {
+        platformAlertSimple('Error', 'Failed to update location. Please try again.');
+      }
+    },
+    [updateUserLocation],
+  );
 
   // Handle location pill expansion/collapse
   const handleLocationPillPress = useCallback(() => {
@@ -709,25 +755,28 @@ function HomeScreen() {
   }, []);
 
   // CARLOS: retention — day-1 challenge action handler (booking, earn, or store)
-  const handleDay1ChallengePress = useCallback((action: 'booking' | 'earn' | 'store') => {
-    // CARLOS: retention — track day-1 challenge engagement
-    sessionTrackingService.trackFeatureTouch(`day1_challenge_${action}`);
-    handleDismissDay1Challenge();
-    switch (action) {
-      case 'booking':
-        sessionTrackingService.trackFeatureTouch('booking');
-        router.push('/book' as any);
-        break;
-      case 'earn':
-        sessionTrackingService.trackFeatureTouch('earn');
-        router.push('/(tabs)/earn' as any);
-        break;
-      case 'store':
-        sessionTrackingService.trackFeatureTouch('mall');
-        setActiveTab('mall');
-        break;
-    }
-  }, [handleDismissDay1Challenge, router, setActiveTab]);
+  const handleDay1ChallengePress = useCallback(
+    (action: 'booking' | 'earn' | 'store') => {
+      // CARLOS: retention — track day-1 challenge engagement
+      sessionTrackingService.trackFeatureTouch(`day1_challenge_${action}`);
+      handleDismissDay1Challenge();
+      switch (action) {
+        case 'booking':
+          sessionTrackingService.trackFeatureTouch('booking');
+          router.push('/book' as any);
+          break;
+        case 'earn':
+          sessionTrackingService.trackFeatureTouch('earn');
+          router.push('/(tabs)/earn' as any);
+          break;
+        case 'store':
+          sessionTrackingService.trackFeatureTouch('mall');
+          setActiveTab('mall');
+          break;
+      }
+    },
+    [handleDismissDay1Challenge, router, setActiveTab],
+  );
 
   const handleDismissLocationBanner = useCallback(async () => {
     setLocationBannerDismissed(true);
@@ -738,10 +787,14 @@ function HomeScreen() {
   // Memoize gradient colors to avoid new array allocation on every scroll frame
   const gradientColors = useMemo((): string[] => {
     switch (activeTab) {
-      case 'prive': return [colors.neutral[800], colors.neutral[800], colors.neutral[900], colors.neutral[900]];
-      case 'mall': return [colors.infoScale[200], colors.tint.blueLight, colors.tint.blue, colors.background.primary];
-      case 'cash': return [colors.lightPeach, colors.background.peach, colors.background.accent, colors.background.primary];
-      default: return [colors.primary[300], colors.primary[200], colors.linen, colors.background.primary];
+      case 'prive':
+        return [colors.neutral[800], colors.neutral[800], colors.neutral[900], colors.neutral[900]];
+      case 'mall':
+        return [colors.infoScale[200], colors.tint.blueLight, colors.tint.blue, colors.background.primary];
+      case 'cash':
+        return [colors.lightPeach, colors.background.peach, colors.background.accent, colors.background.primary];
+      default:
+        return [colors.primary[300], colors.primary[200], colors.linen, colors.background.primary];
     }
   }, [activeTab]);
 
@@ -751,15 +804,53 @@ function HomeScreen() {
     const isMall = activeTab === 'mall';
     const isCash = activeTab === 'cash';
     return {
-      locationIconBg: isPrive ? { backgroundColor: colors.brand.goldAccent } : isMall ? { backgroundColor: colors.brand.sky } : isCash ? { backgroundColor: colors.brand.caramel } : undefined,
-      locationText: isPrive ? { color: colors.text.inverse, ...typography.body, fontWeight: '600' as const } : undefined,
-      chevronColor: isPrive ? colors.brand.goldAccent : isMall ? colors.brand.sky : isCash ? colors.brand.caramel : colors.text.tertiary,
-      coinContainerStyle: isPrive ? { backgroundColor: 'rgba(201, 169, 98, 0.2)', borderColor: 'rgba(201, 169, 98, 0.4)' } : isMall ? { backgroundColor: 'rgba(2, 132, 199, 0.15)', borderColor: 'rgba(2, 132, 199, 0.3)' } : isCash ? { backgroundColor: 'rgba(212, 160, 122, 0.15)', borderColor: 'rgba(212, 160, 122, 0.3)' } : undefined,
-      coinTextColor: isPrive ? { color: colors.brand.goldAccent } : isMall ? { color: colors.brand.sky } : isCash ? { color: colors.brand.caramel } : undefined,
+      locationIconBg: isPrive
+        ? { backgroundColor: colors.brand.goldAccent }
+        : isMall
+          ? { backgroundColor: colors.brand.sky }
+          : isCash
+            ? { backgroundColor: colors.brand.caramel }
+            : undefined,
+      locationText: isPrive
+        ? { color: colors.text.inverse, ...typography.body, fontWeight: '600' as const }
+        : undefined,
+      chevronColor: isPrive
+        ? colors.brand.goldAccent
+        : isMall
+          ? colors.brand.sky
+          : isCash
+            ? colors.brand.caramel
+            : colors.text.tertiary,
+      coinContainerStyle: isPrive
+        ? { backgroundColor: 'rgba(201, 169, 98, 0.2)', borderColor: 'rgba(201, 169, 98, 0.4)' }
+        : isMall
+          ? { backgroundColor: 'rgba(2, 132, 199, 0.15)', borderColor: 'rgba(2, 132, 199, 0.3)' }
+          : isCash
+            ? { backgroundColor: 'rgba(212, 160, 122, 0.15)', borderColor: 'rgba(212, 160, 122, 0.3)' }
+            : undefined,
+      coinTextColor: isPrive
+        ? { color: colors.brand.goldAccent }
+        : isMall
+          ? { color: colors.brand.sky }
+          : isCash
+            ? { color: colors.brand.caramel }
+            : undefined,
       iconColor: isPrive ? colors.text.inverse : isMall ? colors.brand.sky : colors.text.primary,
       whatsNewVariant: (isMall ? 'blue' : isPrive ? 'gold' : 'green') as 'blue' | 'gold' | 'green',
-      savedPillBg: isPrive ? { backgroundColor: 'rgba(201, 169, 98, 0.25)' } : isMall ? { backgroundColor: 'rgba(2, 132, 199, 0.2)' } : isCash ? { backgroundColor: 'rgba(212, 160, 122, 0.2)' } : undefined,
-      savedTextColor: isPrive ? { color: colors.brand.goldAccent } : isMall ? { color: colors.brand.sky } : isCash ? { color: colors.brand.caramel } : undefined,
+      savedPillBg: isPrive
+        ? { backgroundColor: 'rgba(201, 169, 98, 0.25)' }
+        : isMall
+          ? { backgroundColor: 'rgba(2, 132, 199, 0.2)' }
+          : isCash
+            ? { backgroundColor: 'rgba(212, 160, 122, 0.2)' }
+            : undefined,
+      savedTextColor: isPrive
+        ? { color: colors.brand.goldAccent }
+        : isMall
+          ? { color: colors.brand.sky }
+          : isCash
+            ? { color: colors.brand.caramel }
+            : undefined,
     };
   }, [activeTab]);
 
@@ -782,432 +873,453 @@ function HomeScreen() {
         scrollEnabled={true}
         onScroll={scrollHandler}
         refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.lightMustard} colors={[colors.lightMustard]} />
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.lightMustard}
+            colors={[colors.lightMustard]}
+          />
         }
       >
-      {/* Header - Dynamic gradient based on active tab */}
-      <LinearGradient
-        colors={gradientColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={viewStyles.header}
-      >
-        <View style={viewStyles.headerTop}>
-          {/* Modern Location Pill - Tap to expand details */}
-          <Pressable
-            style={viewStyles.locationPill}
-            onPress={handleLocationPillPress}
-            accessibilityLabel="Current location"
-            accessibilityHint={showDetailedLocation ? "Tap to collapse location details" : "Tap to expand location details"}
-            accessibilityState={{ expanded: showDetailedLocation }}
-          >
-            <View style={[viewStyles.locationIconWrapper, tabStyles.locationIconBg]}>
-              <Ionicons name="location" size={14} color={colors.text.inverse} />
-            </View>
-            <LocationDisplay
-              compact={true}
-              showCoordinates={false}
-              showLastUpdated={false}
-              showRefreshButton={false}
-              style={viewStyles.locationDisplay}
-              textStyle={tabStyles.locationText || textStyles.locationText}
-            />
-            <View style={viewStyles.locationChevron}>
-              <Ionicons
-                name={showDetailedLocation ? "chevron-up" : "chevron-down"}
-                size={14}
-                color={tabStyles.chevronColor}
-              />
-            </View>
-          </Pressable>
-
-          {/* Modern Header Actions */}
-          <View style={viewStyles.headerActions}>
-            {/* CARLOS retention fix: Streak pill — always-visible in header, no scroll needed */}
-            {streakCount > 0 && streakDisplay.emoji && (
-              <Pressable
-                onPress={() => router.push('/(tabs)/earn' as any)}
-                accessibilityRole="button"
-                accessibilityLabel={`${streakCount}-day streak`}
-                accessibilityHint="Tap to see your streak and earn missions"
-                style={viewStyles.headerStreakPill}
-              >
-                <Text style={viewStyles.headerStreakEmoji}>{streakDisplay.emoji}</Text>
-                <Text style={viewStyles.headerStreakText}>{streakCount}d</Text>
-              </Pressable>
-            )}
-
-            {/* Coin Balance Display - Horizontal Pill Style */}
+        {/* Header - Dynamic gradient based on active tab */}
+        <LinearGradient colors={gradientColors} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={viewStyles.header}>
+          <View style={viewStyles.headerTop}>
+            {/* Modern Location Pill - Tap to expand details */}
             <Pressable
-              onPress={handleCoinPress}
-              accessibilityRole="button"
-              accessibilityLabel={`Your balance: ${userPoints} coins`}
-              accessibilityHint="Tap to view wallet details"
-              style={[viewStyles.headerCoinContainer, tabStyles.coinContainerStyle]}
+              style={viewStyles.locationPill}
+              onPress={handleLocationPillPress}
+              accessibilityLabel="Current location"
+              accessibilityHint={
+                showDetailedLocation ? 'Tap to collapse location details' : 'Tap to expand location details'
+              }
+              accessibilityState={{ expanded: showDetailedLocation }}
             >
-              <CachedImage
-                source={BRAND.COIN_IMAGE}
-                style={viewStyles.headerCoinImage}
-                contentFit="contain"
-                showShimmer={false}
-              />
-              <ReAnimated.Text
-                key={isWalletLoading ? 'loading' : 'loaded'}
-                entering={FadeIn.duration(350)}
-                style={[viewStyles.headerCoinText, tabStyles.coinTextColor]}
-              >
-                {!walletData && isWalletLoading ? '...' : userPoints}
-              </ReAnimated.Text>
-            </Pressable>
-
-            {/* Cart Button with Modern Badge */}
-            <Pressable
-              onPress={handleCartPress}
-             
-              accessibilityLabel={`Shopping cart: ${cartItemCount} items`}
-              accessibilityRole="button"
-              accessibilityHint="Double tap to view your shopping cart"
-              style={viewStyles.headerIconButton}
-            >
-              <Ionicons name="cart-outline" size={24} color={tabStyles.iconColor} />
-              {cartItemCount > 0 && (
-                <LinearGradient
-                  colors={[colors.error, colors.errorScale[400]]}
-                  style={viewStyles.cartBadgeModern}
-                >
-                  <Text style={viewStyles.cartBadgeTextModern}>
-                    {cartItemCount > 9 ? '9+' : cartItemCount}
-                  </Text>
-                </LinearGradient>
-              )}
-            </Pressable>
-
-            {/* Notification Bell */}
-            <Pressable
-              onPress={handleNotificationPress}
-              accessibilityLabel="Notifications"
-              accessibilityRole="button"
-              accessibilityHint="Tap to view your notifications"
-              style={viewStyles.headerIconButton}
-            >
-              <Ionicons name="notifications-outline" size={22} color={tabStyles.iconColor} />
-            </Pressable>
-
-            {/* Profile Badge Avatar with Savings - Badge then text pill */}
-            <Pressable
-              onPress={handleProfilePress}
-
-              accessibilityLabel="User profile menu"
-              accessibilityRole="button"
-              accessibilityHint="Double tap to open profile menu and account settings"
-              style={viewStyles.profileSavingsContainer}
-            >
-              {/* Text pill - on left */}
-              <View style={[viewStyles.savedTextPill, tabStyles.savedPillBg]}>
-                <Text style={[viewStyles.savedText, tabStyles.savedTextColor]}>
-                  {!walletData && isWalletLoading ? '...' : `${currencySymbol}${totalSaved} saved`}
-                </Text>
-              </View>
-              {/* Badge on right - overlaps text slightly with negative margin */}
-              <View style={viewStyles.badgeOverlay}>
-                <BadgeAvatar color={tabStyles.savedTextColor?.color} />
-              </View>
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Detailed Location Section - Animated */}
-        <ReAnimated.View
-          style={[
-            viewStyles.detailedLocationContainer,
-            locationExpandStyle,
-          ]}
-        >
-          <View style={viewStyles.detailedLocationContent}>
-            {/* Full Address Section */}
-            <View style={viewStyles.addressSection}>
-              <View style={viewStyles.addressHeader}>
-                <Ionicons name="location" size={16} color={activeTab === 'mall' ? colors.brand.sky : activeTab === 'cash' ? colors.brand.caramel : colors.lightMustard} />
-                <Text style={viewStyles.addressHeaderText}>Current Location</Text>
+              <View style={[viewStyles.locationIconWrapper, tabStyles.locationIconBg]}>
+                <Ionicons name="location" size={14} color={colors.text.inverse} />
               </View>
               <LocationDisplay
-                compact={false}
+                compact={true}
                 showCoordinates={false}
                 showLastUpdated={false}
                 showRefreshButton={false}
-                style={viewStyles.detailedLocationDisplay}
-                textStyle={viewStyles.detailedLocationText}
+                style={viewStyles.locationDisplay}
+                textStyle={tabStyles.locationText || textStyles.locationText}
               />
-            </View>
-
-            {/* Change Location Button */}
-            <Pressable
-              style={[
-                viewStyles.changeLocationButton,
-                activeTab === 'mall' && {
-                  // MEERA: design token — hardcoded '#E0F2FE' -> colors.tint.blue (sky blue tint for mall tab)
-                  backgroundColor: colors.tint.blueLight,
-                  // MEERA: design token — hardcoded '#BAE6FD' -> colors.infoScale[200] (lighter sky blue border)
-                  borderColor: colors.infoScale[200],
-                }
-              ]}
-              onPress={handleChangeLocationPress}
-              accessibilityRole="button"
-              accessibilityLabel="Change location"
-              accessibilityHint="Tap to search and change your current location"
-            >
-              <View style={[
-                viewStyles.changeLocationIconWrapper,
-                // MEERA: design token — hardcoded '#0EA5E9' -> colors.brand.sky (sky blue for mall tab accent)
-                activeTab === 'mall' && { backgroundColor: colors.brand.sky }
-              ]}>
-                <Ionicons name="search" size={12} color={colors.text.inverse} />
+              <View style={viewStyles.locationChevron}>
+                <Ionicons
+                  name={showDetailedLocation ? 'chevron-up' : 'chevron-down'}
+                  size={14}
+                  color={tabStyles.chevronColor}
+                />
               </View>
-              <Text style={viewStyles.changeLocationText}>Change Location</Text>
-              <Ionicons name="chevron-forward" size={14} color={activeTab === 'mall' ? colors.brand.sky : activeTab === 'cash' ? colors.brand.caramel : colors.lightMustard} />
             </Pressable>
-          </View>
-        </ReAnimated.View>
 
-        {/* Hero Banner - Dynamic content based on user - Only show when "near-u" tab is active */}
-        {activeTab === 'near-u' && <HeroBanner totalSaved={totalSaved} />}
+            {/* Modern Header Actions */}
+            <View style={viewStyles.headerActions}>
+              {/* CARLOS retention fix: Streak pill — always-visible in header, no scroll needed */}
+              {streakCount > 0 && streakDisplay.emoji && (
+                <Pressable
+                  onPress={() => router.push('/(tabs)/earn' as any)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${streakCount}-day streak`}
+                  accessibilityHint="Tap to see your streak and earn missions"
+                  style={viewStyles.headerStreakPill}
+                >
+                  <Text style={viewStyles.headerStreakEmoji}>{streakDisplay.emoji}</Text>
+                  <Text style={viewStyles.headerStreakText}>{streakCount}d</Text>
+                </Pressable>
+              )}
 
-        {/* Mall Hero Banner */}
-        {activeTab === 'mall' && (
-          <Suspense fallback={<View style={{ height: 185 }} />}>
-            <MallHeaderWrapper />
-          </Suspense>
-        )}
-
-        {/* Cash Store Header */}
-        {activeTab === 'cash' && (
-          <Suspense fallback={<View style={{ height: 60 }} />}>
-            <CashStoreHeaderWrapper />
-          </Suspense>
-        )}
-
-        {/* Privé Member Card */}
-        {activeTab === 'prive' && (
-          <Suspense fallback={<View style={{ height: 60 }} />}>
-            <PriveHeaderWrapper />
-          </Suspense>
-        )}
-
-        </LinearGradient>
-
-      {/* Home Tab Section with 4 Tabs - Outside gradient */}
-      <Suspense fallback={<View style={{ height: 44 }} />}>
-        <HomeTabSection
-          activeTab={activeTab}
-          onTabChange={handleTabChange}
-          isPriveEligible={isPriveEligible}
-          onPriveLockedPress={handlePriveLockedPress}
-          onSearchPress={handleSearchPress}
-          coinBalance={userPoints}
-          onCoinPress={handleCoinPress}
-          selectedCategory={selectedCategory}
-          onCategoryChange={setSelectedCategory}
-        />
-      </Suspense>
-
-      {/* Deferred location permission banner */}
-      {!locationBannerDismissed && permissionStatus !== 'granted' && permissionStatus !== 'denied' && (
-        <View style={viewStyles.locationBanner}>
-          <Ionicons name="location" size={20} color={colors.lightMustard} />
-          <Text style={viewStyles.locationBannerText}>
-            Enable location to find deals near you
-          </Text>
-          <Pressable
-            style={viewStyles.locationBannerBtn}
-            onPress={handleEnableLocationPress}
-            accessibilityRole="button"
-            accessibilityLabel="Enable location permission"
-            accessibilityHint="Tap to grant location access and find deals near you"
-          >
-            <Text style={viewStyles.locationBannerBtnText}>Enable</Text>
-          </Pressable>
-          <Pressable
-            onPress={handleDismissLocationBanner}
-            hitSlop={8}
-            accessibilityRole="button"
-            accessibilityLabel="Dismiss location request"
-            accessibilityHint="Tap to close this notification"
-          >
-            <Ionicons name="close" size={18} color={colors.text.tertiary} />
-          </Pressable>
-        </View>
-      )}
-
-      {/* Try Before You Buy Banner */}
-      {activeTab !== 'prive' && activeTab !== 'mall' && (
-        <Pressable
-          style={viewStyles.tryBanner}
-          onPress={() => router.push('/try' as any)}
-          accessibilityLabel="Try before you buy"
-          accessibilityRole="button"
-          accessibilityHint="Tap to explore products you can try risk-free and earn coins"
-        >
-          <LinearGradient
-            // MEERA: design token — hardcoded '#0d2035' -> colors.secondary[900] (darker nile blue for gradient)
-            colors={[colors.nileBlue, colors.secondary[900]]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={viewStyles.tryBannerGradient}
-          >
-            <View style={viewStyles.tryBannerContent}>
-              <View style={viewStyles.tryBannerTextSection}>
-                <Text style={viewStyles.tryBannerTitle}>Try Before You Buy</Text>
-                <Text style={viewStyles.tryBannerSubtitle}>Experience products risk-free, earn coins</Text>
-              </View>
-              {/* MEERA: design token — hardcoded 'rgba(255,255,255,0.6)' -> colors.overlay.light (white with subtle opacity) */}
-              <Ionicons name="chevron-forward" size={20} color={colors.overlay.light} style={viewStyles.tryBannerChevron} />
-            </View>
-          </LinearGradient>
-        </Pressable>
-      )}
-
-      {/* Stories Row — What's New (Instagram-style) */}
-      {activeTab !== 'prive' && (
-        <StoriesRow variant={tabStyles.whatsNewVariant} />
-      )}
-
-      {/* CARLOS: retention — Day-1 Challenge Card (Habit Loop Trigger) */}
-      {showDay1Challenge && activeTab === 'near-u' && (
-        <Pressable
-          style={viewStyles.day1ChallengeCard}
-          onPress={() => handleDay1ChallengePress('earn')}
-          accessibilityRole="button"
-          accessibilityLabel="Today's challenge: earn your first coins"
-          accessibilityHint="Tap to start earning coins"
-        >
-          <LinearGradient
-            colors={[colors.lightMustard, colors.linen]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={viewStyles.day1ChallengeGradient}
-          >
-            <View style={viewStyles.day1ChallengeContent}>
-              <View style={viewStyles.day1ChallengeText}>
-                <Text style={viewStyles.day1ChallengeTitle}>🎯 Today's Challenge</Text>
-                <Text style={viewStyles.day1ChallengeSub}>Earn your first coins & start your journey</Text>
-              </View>
+              {/* Coin Balance Display - Horizontal Pill Style */}
               <Pressable
-                onPress={handleDismissDay1Challenge}
-                hitSlop={8}
+                onPress={handleCoinPress}
                 accessibilityRole="button"
-                accessibilityLabel="Dismiss challenge"
+                accessibilityLabel={`Your balance: ${userPoints} coins`}
+                accessibilityHint="Tap to view wallet details"
+                style={[viewStyles.headerCoinContainer, tabStyles.coinContainerStyle]}
               >
-                <Ionicons name="close" size={20} color={colors.text.tertiary} />
+                <CachedImage
+                  source={BRAND.COIN_IMAGE}
+                  style={viewStyles.headerCoinImage}
+                  contentFit="contain"
+                  showShimmer={false}
+                />
+                <ReAnimated.Text
+                  key={isWalletLoading ? 'loading' : 'loaded'}
+                  entering={FadeIn.duration(350)}
+                  style={[viewStyles.headerCoinText, tabStyles.coinTextColor]}
+                >
+                  {!walletData && isWalletLoading ? '...' : userPoints}
+                </ReAnimated.Text>
+              </Pressable>
+
+              {/* Cart Button with Modern Badge */}
+              <Pressable
+                onPress={handleCartPress}
+                accessibilityLabel={`Shopping cart: ${cartItemCount} items`}
+                accessibilityRole="button"
+                accessibilityHint="Double tap to view your shopping cart"
+                style={viewStyles.headerIconButton}
+              >
+                <Ionicons name="cart-outline" size={24} color={tabStyles.iconColor} />
+                {cartItemCount > 0 && (
+                  <LinearGradient colors={[colors.error, colors.errorScale[400]]} style={viewStyles.cartBadgeModern}>
+                    <Text style={viewStyles.cartBadgeTextModern}>{cartItemCount > 9 ? '9+' : cartItemCount}</Text>
+                  </LinearGradient>
+                )}
+              </Pressable>
+
+              {/* Notification Bell */}
+              <Pressable
+                onPress={handleNotificationPress}
+                accessibilityLabel="Notifications"
+                accessibilityRole="button"
+                accessibilityHint="Tap to view your notifications"
+                style={viewStyles.headerIconButton}
+              >
+                <Ionicons name="notifications-outline" size={22} color={tabStyles.iconColor} />
+              </Pressable>
+
+              {/* Profile Badge Avatar with Savings - Badge then text pill */}
+              <Pressable
+                onPress={handleProfilePress}
+                accessibilityLabel="User profile menu"
+                accessibilityRole="button"
+                accessibilityHint="Double tap to open profile menu and account settings"
+                style={viewStyles.profileSavingsContainer}
+              >
+                {/* Text pill - on left */}
+                <View style={[viewStyles.savedTextPill, tabStyles.savedPillBg]}>
+                  <Text style={[viewStyles.savedText, tabStyles.savedTextColor]}>
+                    {!walletData && isWalletLoading ? '...' : `${currencySymbol}${totalSaved} saved`}
+                  </Text>
+                </View>
+                {/* Badge on right - overlaps text slightly with negative margin */}
+                <View style={viewStyles.badgeOverlay}>
+                  <BadgeAvatar color={tabStyles.savedTextColor?.color} />
+                </View>
               </Pressable>
             </View>
-          </LinearGradient>
-        </Pressable>
-      )}
+          </View>
 
-      {/* CARLOS: retention — Streak Display Card (Habit Loop Reinforcement) */}
-      {streakCount > 0 && streakDisplay.emoji && activeTab === 'near-u' && (
-        <View style={viewStyles.streakCard}>
-          <LinearGradient
-            colors={[colors.brand.orange, colors.brand.orange]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={viewStyles.streakGradient}
-          >
-            <Text style={viewStyles.streakEmoji}>{streakDisplay.emoji}</Text>
-            <Text style={viewStyles.streakText}>{streakDisplay.text}</Text>
-          </LinearGradient>
-        </View>
-      )}
+          {/* Detailed Location Section - Animated */}
+          <ReAnimated.View style={[viewStyles.detailedLocationContainer, locationExpandStyle]}>
+            <View style={viewStyles.detailedLocationContent}>
+              {/* Full Address Section */}
+              <View style={viewStyles.addressSection}>
+                <View style={viewStyles.addressHeader}>
+                  <Ionicons
+                    name="location"
+                    size={16}
+                    color={
+                      activeTab === 'mall'
+                        ? colors.brand.sky
+                        : activeTab === 'cash'
+                          ? colors.brand.caramel
+                          : colors.lightMustard
+                    }
+                  />
+                  <Text style={viewStyles.addressHeaderText}>Current Location</Text>
+                </View>
+                <LocationDisplay
+                  compact={false}
+                  showCoordinates={false}
+                  showLastUpdated={false}
+                  showRefreshButton={false}
+                  style={viewStyles.detailedLocationDisplay}
+                  textStyle={viewStyles.detailedLocationText}
+                />
+              </View>
 
-      {/* Content */}
-      <View style={[
-        viewStyles.content,
-        activeTab === 'mall' && viewStyles.mallContent,
-        activeTab === 'cash' && viewStyles.cashStoreContent,
-        activeTab === 'prive' && viewStyles.priveContent
-      ]}>
-        {/* Near-U Tab Content - All sections with viewport-based lazy loading */}
-        {activeTab === 'near-u' && (
-          <FeatureErrorBoundary featureName="Near-U" compact={false}>
-            <Suspense fallback={<TabContentFallback />}>
-              <NearUTabContent
-                state={state}
-                actions={actions}
-                handleItemPress={handleItemPress}
-                handleAddToCart={handleAddToCart}
-                voucherCount={voucherCount}
-                userPoints={userPoints}
-                newOffersCount={newOffersCount}
-                recentlyViewedItems={recentlyViewedItems}
-                isLoadingRecentlyViewed={isLoadingRecentlyViewed}
-                loyaltyHub={loyaltyHub}
-                featuredLockProduct={featuredLockProduct}
-                trendingService={trendingService}
-                isLoyaltySectionLoading={isLoyaltySectionLoading}
-                scrollY={scrollY}
-                totalSaved={totalSaved}
-                thisMonthSaved={savingsInsights?.thisMonth ?? 0}
-                currencySymbol={currencySymbol}
-                featureLevel={featureLevel}
-                hasCompletedFirstOrder={featureLevel >= 3}
-                isAreaServiceable={isAreaServiceable}
-                areaName={currentLocation?.address?.neighbourhood || currentLocation?.address?.city}
-                onSwitchToMall={() => setActiveTab('mall')}
-              />
+              {/* Change Location Button */}
+              <Pressable
+                style={[
+                  viewStyles.changeLocationButton,
+                  activeTab === 'mall' && {
+                    // MEERA: design token — hardcoded '#E0F2FE' -> colors.tint.blue (sky blue tint for mall tab)
+                    backgroundColor: colors.tint.blueLight,
+                    // MEERA: design token — hardcoded '#BAE6FD' -> colors.infoScale[200] (lighter sky blue border)
+                    borderColor: colors.infoScale[200],
+                  },
+                ]}
+                onPress={handleChangeLocationPress}
+                accessibilityRole="button"
+                accessibilityLabel="Change location"
+                accessibilityHint="Tap to search and change your current location"
+              >
+                <View
+                  style={[
+                    viewStyles.changeLocationIconWrapper,
+                    // MEERA: design token — hardcoded '#0EA5E9' -> colors.brand.sky (sky blue for mall tab accent)
+                    activeTab === 'mall' && { backgroundColor: colors.brand.sky },
+                  ]}
+                >
+                  <Ionicons name="search" size={12} color={colors.text.inverse} />
+                </View>
+                <Text style={viewStyles.changeLocationText}>Change Location</Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={14}
+                  color={
+                    activeTab === 'mall'
+                      ? colors.brand.sky
+                      : activeTab === 'cash'
+                        ? colors.brand.caramel
+                        : colors.lightMustard
+                  }
+                />
+              </Pressable>
+            </View>
+          </ReAnimated.View>
+
+          {/* Hero Banner - Dynamic content based on user - Only show when "near-u" tab is active */}
+          {activeTab === 'near-u' && <HeroBanner totalSaved={totalSaved} />}
+
+          {/* Mall Hero Banner */}
+          {activeTab === 'mall' && (
+            <Suspense fallback={<View style={{ height: 185 }} />}>
+              <MallHeaderWrapper />
             </Suspense>
-          </FeatureErrorBoundary>
-        )}
+          )}
 
+          {/* Cash Store Header */}
+          {activeTab === 'cash' && (
+            <Suspense fallback={<View style={{ height: 60 }} />}>
+              <CashStoreHeaderWrapper />
+            </Suspense>
+          )}
 
+          {/* Privé Member Card */}
+          {activeTab === 'prive' && (
+            <Suspense fallback={<View style={{ height: 60 }} />}>
+              <PriveHeaderWrapper />
+            </Suspense>
+          )}
+        </LinearGradient>
 
-        {/* Mall Tab Content */}
-        {activeTab === 'mall' && (
-          <Suspense fallback={<TabContentFallback />}>
-            <MallSectionContainer />
-          </Suspense>
-        )}
-
-        {/* Cash Store Tab Content */}
-        {activeTab === 'cash' && (
-          <Suspense fallback={<TabContentFallback />}>
-            <CashStoreSectionContainer />
-          </Suspense>
-        )}
-
-        {/* Privé Tab Content */}
-        {activeTab === 'prive' && (
-          <Suspense fallback={<TabContentFallback />}>
-            <PriveSectionContainer />
-          </Suspense>
-        )}
-      </View>
-
-      {/* Profile Menu Modal */}
-      {(profileUser || authUser) && (
-        <ProfileMenuModal visible={isModalVisible} onClose={hideModal} user={profileUser || authUser} menuSections={profileMenuSections} onMenuItemPress={handleMenuItemPress} />
-      )}
-
-      {/* Location Picker Modal — lazy-loaded (only needed on tap) */}
-      <Suspense fallback={null}>
-        <LocationPickerModal
-          visible={isLocationModalVisible}
-          onClose={() => setIsLocationModalVisible(false)}
-          onLocationSelect={handleLocationSelect}
-          currentLocation={currentLocation}
-        />
-      </Suspense>
-
-      {/* Quick Access FAB - Lazy Loaded */}
-      <Suspense fallback={<FABFallback />}>
-        <QuickAccessFAB />
-      </Suspense>
-
-      {/* Push Notification Init - deferred 3s after mount */}
-      {pushReady && (
-        <Suspense fallback={null}>
-          <PushNotificationInitializer />
+        {/* Home Tab Section with 4 Tabs - Outside gradient */}
+        <Suspense fallback={<View style={{ height: 44 }} />}>
+          <HomeTabSection
+            activeTab={activeTab}
+            onTabChange={handleTabChange}
+            isPriveEligible={isPriveEligible}
+            onPriveLockedPress={handlePriveLockedPress}
+            onSearchPress={handleSearchPress}
+            coinBalance={userPoints}
+            onCoinPress={handleCoinPress}
+            selectedCategory={selectedCategory}
+            onCategoryChange={setSelectedCategory}
+          />
         </Suspense>
-      )}
+
+        {/* Deferred location permission banner */}
+        {!locationBannerDismissed && permissionStatus !== 'granted' && permissionStatus !== 'denied' && (
+          <View style={viewStyles.locationBanner}>
+            <Ionicons name="location" size={20} color={colors.lightMustard} />
+            <Text style={viewStyles.locationBannerText}>Enable location to find deals near you</Text>
+            <Pressable
+              style={viewStyles.locationBannerBtn}
+              onPress={handleEnableLocationPress}
+              accessibilityRole="button"
+              accessibilityLabel="Enable location permission"
+              accessibilityHint="Tap to grant location access and find deals near you"
+            >
+              <Text style={viewStyles.locationBannerBtnText}>Enable</Text>
+            </Pressable>
+            <Pressable
+              onPress={handleDismissLocationBanner}
+              hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel="Dismiss location request"
+              accessibilityHint="Tap to close this notification"
+            >
+              <Ionicons name="close" size={18} color={colors.text.tertiary} />
+            </Pressable>
+          </View>
+        )}
+
+        {/* Try Before You Buy Banner */}
+        {activeTab !== 'prive' && activeTab !== 'mall' && (
+          <Pressable
+            style={viewStyles.tryBanner}
+            onPress={() => router.push('/try' as any)}
+            accessibilityLabel="Try before you buy"
+            accessibilityRole="button"
+            accessibilityHint="Tap to explore products you can try risk-free and earn coins"
+          >
+            <LinearGradient
+              // MEERA: design token — hardcoded '#0d2035' -> colors.secondary[900] (darker nile blue for gradient)
+              colors={[colors.nileBlue, colors.secondary[900]]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={viewStyles.tryBannerGradient}
+            >
+              <View style={viewStyles.tryBannerContent}>
+                <View style={viewStyles.tryBannerTextSection}>
+                  <Text style={viewStyles.tryBannerTitle}>Try Before You Buy</Text>
+                  <Text style={viewStyles.tryBannerSubtitle}>Experience products risk-free, earn coins</Text>
+                </View>
+                {/* MEERA: design token — hardcoded 'rgba(255,255,255,0.6)' -> colors.overlay.light (white with subtle opacity) */}
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={colors.overlay.light}
+                  style={viewStyles.tryBannerChevron}
+                />
+              </View>
+            </LinearGradient>
+          </Pressable>
+        )}
+
+        {/* Stories Row — What's New (Instagram-style) */}
+        {activeTab !== 'prive' && <StoriesRow variant={tabStyles.whatsNewVariant} />}
+
+        {/* Personalised hero — student / corporate / general */}
+        {activeTab === 'near-u' && <PersonalizedHeroBanner />}
+
+        {/* CARLOS: retention — Day-1 Challenge Card (Habit Loop Trigger) */}
+        {showDay1Challenge && activeTab === 'near-u' && (
+          <Pressable
+            style={viewStyles.day1ChallengeCard}
+            onPress={() => handleDay1ChallengePress('earn')}
+            accessibilityRole="button"
+            accessibilityLabel="Today's challenge: earn your first coins"
+            accessibilityHint="Tap to start earning coins"
+          >
+            <LinearGradient
+              colors={[colors.lightMustard, colors.linen]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={viewStyles.day1ChallengeGradient}
+            >
+              <View style={viewStyles.day1ChallengeContent}>
+                <View style={viewStyles.day1ChallengeText}>
+                  <Text style={viewStyles.day1ChallengeTitle}>🎯 Today's Challenge</Text>
+                  <Text style={viewStyles.day1ChallengeSub}>Earn your first coins & start your journey</Text>
+                </View>
+                <Pressable
+                  onPress={handleDismissDay1Challenge}
+                  hitSlop={8}
+                  accessibilityRole="button"
+                  accessibilityLabel="Dismiss challenge"
+                >
+                  <Ionicons name="close" size={20} color={colors.text.tertiary} />
+                </Pressable>
+              </View>
+            </LinearGradient>
+          </Pressable>
+        )}
+
+        {/* CARLOS: retention — Streak Display Card (Habit Loop Reinforcement) */}
+        {streakCount > 0 && streakDisplay.emoji && activeTab === 'near-u' && (
+          <View style={viewStyles.streakCard}>
+            <LinearGradient
+              colors={[colors.brand.orange, colors.brand.orange]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={viewStyles.streakGradient}
+            >
+              <Text style={viewStyles.streakEmoji}>{streakDisplay.emoji}</Text>
+              <Text style={viewStyles.streakText}>{streakDisplay.text}</Text>
+            </LinearGradient>
+          </View>
+        )}
+
+        {/* Content */}
+        <View
+          style={[
+            viewStyles.content,
+            activeTab === 'mall' && viewStyles.mallContent,
+            activeTab === 'cash' && viewStyles.cashStoreContent,
+            activeTab === 'prive' && viewStyles.priveContent,
+          ]}
+        >
+          {/* Near-U Tab Content - All sections with viewport-based lazy loading */}
+          {activeTab === 'near-u' && (
+            <FeatureErrorBoundary featureName="Near-U" compact={false}>
+              <Suspense fallback={<TabContentFallback />}>
+                <NearUTabContent
+                  state={state}
+                  actions={actions}
+                  handleItemPress={handleItemPress}
+                  handleAddToCart={handleAddToCart}
+                  voucherCount={voucherCount}
+                  userPoints={userPoints}
+                  newOffersCount={newOffersCount}
+                  recentlyViewedItems={recentlyViewedItems}
+                  isLoadingRecentlyViewed={isLoadingRecentlyViewed}
+                  loyaltyHub={loyaltyHub}
+                  featuredLockProduct={featuredLockProduct}
+                  trendingService={trendingService}
+                  isLoyaltySectionLoading={isLoyaltySectionLoading}
+                  scrollY={scrollY}
+                  totalSaved={totalSaved}
+                  thisMonthSaved={savingsInsights?.thisMonth ?? 0}
+                  currencySymbol={currencySymbol}
+                  featureLevel={featureLevel}
+                  hasCompletedFirstOrder={featureLevel >= 3}
+                  isAreaServiceable={isAreaServiceable}
+                  areaName={currentLocation?.address?.neighbourhood || currentLocation?.address?.city}
+                  onSwitchToMall={() => setActiveTab('mall')}
+                />
+              </Suspense>
+            </FeatureErrorBoundary>
+          )}
+
+          {/* Mall Tab Content */}
+          {activeTab === 'mall' && (
+            <Suspense fallback={<TabContentFallback />}>
+              <MallSectionContainer />
+            </Suspense>
+          )}
+
+          {/* Cash Store Tab Content */}
+          {activeTab === 'cash' && (
+            <Suspense fallback={<TabContentFallback />}>
+              <CashStoreSectionContainer />
+            </Suspense>
+          )}
+
+          {/* Privé Tab Content */}
+          {activeTab === 'prive' && (
+            <Suspense fallback={<TabContentFallback />}>
+              <PriveSectionContainer />
+            </Suspense>
+          )}
+        </View>
+
+        {/* Profile Menu Modal */}
+        {(profileUser || authUser) && (
+          <ProfileMenuModal
+            visible={isModalVisible}
+            onClose={hideModal}
+            user={profileUser || authUser}
+            menuSections={profileMenuSections}
+            onMenuItemPress={handleMenuItemPress}
+          />
+        )}
+
+        {/* Location Picker Modal — lazy-loaded (only needed on tap) */}
+        <Suspense fallback={null}>
+          <LocationPickerModal
+            visible={isLocationModalVisible}
+            onClose={() => setIsLocationModalVisible(false)}
+            onLocationSelect={handleLocationSelect}
+            currentLocation={currentLocation}
+          />
+        </Suspense>
+
+        {/* Quick Access FAB - Lazy Loaded */}
+        <Suspense fallback={<FABFallback />}>
+          <QuickAccessFAB />
+        </Suspense>
+
+        {/* Push Notification Init - deferred 3s after mount */}
+        {pushReady && (
+          <Suspense fallback={null}>
+            <PushNotificationInitializer />
+          </Suspense>
+        )}
       </ReAnimated.ScrollView>
 
       {/* Sticky Search Header with Glass Effect - Rendered after ScrollView to avoid blocking touches */}

@@ -868,6 +868,30 @@ class WalletService {
       return { success: false, message: error?.message || 'Failed to fetch scheduled drops', data: null } as any;
     }
   }
+
+  /**
+   * grantWelcomeCoins
+   *
+   * Idempotent — safe to call multiple times for the same user.
+   * The backend records whether the grant was already made and returns
+   * { alreadyClaimed: true } on subsequent calls without crediting again.
+   *
+   * Backend: POST /wallet/welcome-coins
+   */
+  async grantWelcomeCoins(): Promise<{ success: boolean; coinsGranted?: number; alreadyClaimed?: boolean }> {
+    try {
+      const res = await apiClient.post<{ coinsGranted: number; alreadyClaimed: boolean }>('/wallet/welcome-coins');
+      if (res?.success) {
+        if (__DEV__) console.log('[WalletAPI] Welcome coins:', res.data?.alreadyClaimed ? 'already claimed' : `granted ${res.data?.coinsGranted}`);
+        return { success: true, coinsGranted: res.data?.coinsGranted, alreadyClaimed: res.data?.alreadyClaimed };
+      }
+      return { success: false };
+    } catch (error: any) {
+      if (__DEV__) console.warn('[WalletAPI] grantWelcomeCoins failed:', error?.message);
+      // Non-fatal — don't block the success screen if the coins call fails
+      return { success: false };
+    }
+  }
 }
 
 // Export singleton instance

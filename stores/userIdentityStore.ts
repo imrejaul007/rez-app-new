@@ -102,6 +102,13 @@ export const useUserIdentityStore = create<UserIdentityState>()(
         instituteName: state.instituteName,
         companyName: state.companyName,
       }),
+      // Mark store as hydrated once AsyncStorage has loaded —
+      // prevents persona banner from flashing the wrong persona on first paint
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          state._hydrated = true;
+        }
+      },
     }
   )
 );
