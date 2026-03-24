@@ -17,7 +17,8 @@ import { useRouter, useRootNavigationState } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuthUser, useIsAuthenticated, useAuthLoading, useAuthError, useAuthActions } from '@/stores/selectors';
+import { useAuthUser, useIsAuthenticated, useAuthLoading, useAuthError } from '@/stores/selectors';
+import { useAuth } from '@/contexts/AuthContext';
 import FormInput from '@/components/onboarding/FormInput';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import CountryCodePicker, { COUNTRY_CODES, CountryCode } from '@/components/common/CountryCodePicker';
@@ -36,7 +37,8 @@ function SignInScreen() {
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
   const authError = useAuthError();
-  const actions = useAuthActions();
+  // Use AuthContext directly so actions are always real (not Zustand store noops)
+  const { actions } = useAuth();
   const colorScheme = useColorScheme();
   const isDark = colorScheme === 'dark';
 
