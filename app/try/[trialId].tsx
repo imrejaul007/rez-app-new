@@ -14,9 +14,24 @@ import {
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Location from 'expo-location';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+
+// Bangalore city-centre as a safe fallback when location access is denied
+const FALLBACK_GEO = { lat: 12.9716, lng: 77.5946 };
+
+async function getBookingGeo(): Promise<{ lat: number; lng: number }> {
+  try {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') return FALLBACK_GEO;
+    const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+    return { lat: pos.coords.latitude, lng: pos.coords.longitude };
+  } catch {
+    return FALLBACK_GEO;
+  }
+}
 
 interface TrialDetails {
   id: string;
@@ -99,16 +114,53 @@ function TrialDetailScreen() {
   const handleConfirmBooking = async () => {
     if (!trial) return;
 
-    setBookingModal(prev => ({ ...prev, loading: true, error: undefined }));
+    setBookingModal((prev) => ({ ...prev, loading: true, error: undefined }));
 
     try {
-      // TODO: In production, integrate with Razorpay for commitment fee payment
-      // The commitment fee payment step should happen before this call
-      // For now, using mock payment ID - implement actual payment gateway integration
+      // Step 1 — Create a Razorpay order for the commitment fee
+      const order = await tryApi.createPaymentOrder({
+        amount: trial.commitmentFee,
+        trialId: trial.id,
+        source: 'trial_commitment',
+      });
+
+      // Step 2 — Open Razorpay native checkout to collect payment
+      let paymentId: string;
+      try {
+        // react-native-razorpay is a native module; require() lazily so the
+        // module doesn't crash on web (metro shim handles the web case).
+        const RazorpayCheckout = require('react-native-razorpay').default;
+        const paymentResponse = await RazorpayCheckout.open({
+          description: `Trial commitment fee — ${trial.title}`,
+          currency: 'INR',
+          key: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '',
+          amount: order.amount, // already in paise from backend
+          order_id: order.razorpayOrderId,
+          name: 'ReZ TRY',
+          prefill: { name: '', contact: '' },
+          theme: { color: '#7C3AED' }, // brand purple
+        });
+        paymentId = paymentResponse.razorpay_payment_id;
+      } catch (paymentErr: any) {
+        // Code 2 = user cancelled — treat as soft cancel (no error toast)
+        if (paymentErr?.code === 2) {
+          setBookingModal((prev) => ({ ...prev, loading: false }));
+        } else {
+          setBookingModal((prev) => ({
+            ...prev,
+            loading: false,
+            error: 'Payment failed. Please try again.',
+          }));
+        }
+        return;
+      }
+
+      // Step 3 — Confirm the booking with the verified payment ID
+      const userGeo = await getBookingGeo();
       const bookingResponse = await tryApi.bookTrial({
         trialId: trial.id,
-        commitmentFeePaymentId: 'mock_payment_' + Date.now(),
-        userGeo: { lat: 12.9716, lng: 77.5946 }, // Default Bangalore coords - should get actual location from locationService
+        commitmentFeePaymentId: paymentId,
+        userGeo,
       });
 
       setBookingModal({ visible: false, loading: false });
@@ -116,9 +168,14 @@ function TrialDetailScreen() {
         router.push(`/try/booking/${bookingResponse.data.bookingId}`);
       } else {
         console.error('No booking ID in response:', bookingResponse);
+        setBookingModal((prev) => ({
+          ...prev,
+          loading: false,
+          error: 'Booking confirmed but something went wrong. Check My Bookings.',
+        }));
       }
     } catch (err) {
-      setBookingModal(prev => ({
+      setBookingModal((prev) => ({
         ...prev,
         loading: false,
         error: 'Booking failed. Please try again.',
@@ -141,10 +198,7 @@ function TrialDetailScreen() {
       <SafeAreaView style={styles.container}>
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Failed to load trial details</Text>
-          <Pressable
-            style={styles.button}
-            onPress={() => router.back()}
-          >
+          <Pressable style={styles.button} onPress={() => router.back()}>
             <Text style={styles.buttonText}>Go Back</Text>
           </Pressable>
         </View>
@@ -174,7 +228,7 @@ function TrialDetailScreen() {
               pagingEnabled
               showsHorizontalScrollIndicator={false}
               scrollEventThrottle={16}
-              onMomentumScrollEnd={event => {
+              onMomentumScrollEnd={(event) => {
                 const contentOffsetX = event.nativeEvent.contentOffset.x;
                 const index = Math.round(contentOffsetX / 400);
                 setCurrentImageIndex(index);
@@ -193,10 +247,7 @@ function TrialDetailScreen() {
               {trial.images.map((_, idx) => (
                 <View
                   key={idx}
-                  style={[
-                    styles.paginationDot,
-                    idx === currentImageIndex && styles.paginationDotActive,
-                  ]}
+                  style={[styles.paginationDot, idx === currentImageIndex && styles.paginationDotActive]}
                 />
               ))}
             </View>
@@ -220,9 +271,7 @@ function TrialDetailScreen() {
 
           {/* Merchant Info */}
           <Pressable style={styles.merchantCard}>
-            {trial.merchant.image && (
-              <Image source={{ uri: trial.merchant.image }} style={styles.merchantImage} />
-            )}
+            {trial.merchant.image && <Image source={{ uri: trial.merchant.image }} style={styles.merchantImage} />}
             <View style={styles.merchantInfo}>
               <Text style={styles.merchantName}>{trial.merchant.name}</Text>
               <Text style={styles.merchantAction}>View Offers →</Text>
@@ -310,10 +359,7 @@ function TrialDetailScreen() {
             </Pressable>
           </View>
         ) : (
-          <Pressable
-            style={styles.bookButton}
-            onPress={handleBookPress}
-          >
+          <Pressable style={styles.bookButton} onPress={handleBookPress}>
             <LinearGradient
               colors={['#7C3AED', '#A855F7']}
               start={{ x: 0, y: 0 }}
@@ -386,9 +432,7 @@ function TrialDetailScreen() {
                   </View>
                 </View>
 
-                <Text style={styles.disclaimerText}>
-                  💳 Commitment fee is non-refundable
-                </Text>
+                <Text style={styles.disclaimerText}>💳 Commitment fee is non-refundable</Text>
 
                 <Pressable
                   style={[styles.modalButton, bookingModal.loading && styles.modalButtonDisabled]}

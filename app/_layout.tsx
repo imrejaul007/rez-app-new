@@ -1,5 +1,5 @@
 // Side-effect imports — must come first
-import './setup/warningSuppression';
+import '@/utils/setup/warningSuppression';
 import 'react-native-reanimated';
 
 // Sentry must initialize before any rendering
@@ -8,7 +8,7 @@ initSentry();
 
 // CONS-010: Validate required environment variables at startup
 // Fail loudly in production; warn in development so missing configs are caught early
-;(() => {
+(() => {
   const REQUIRED_CONFIGS: Record<string, string> = {
     EXPO_PUBLIC_API_BASE_URL: 'Backend API URL',
     EXPO_PUBLIC_RAZORPAY_KEY_ID: 'Razorpay payment key',
@@ -28,7 +28,9 @@ initSentry();
     }
   }
   if (missingRecommended.length > 0 && __DEV__) {
-    console.warn(`[Config] Recommended env vars not set: ${missingRecommended.map(([k, v]) => `${k} (${v})`).join(', ')}`);
+    console.warn(
+      `[Config] Recommended env vars not set: ${missingRecommended.map(([k, v]) => `${k} (${v})`).join(', ')}`,
+    );
   }
 })();
 
@@ -38,17 +40,10 @@ import * as Updates from 'expo-updates';
 import React, { useEffect, useState } from 'react';
 import { View, useColorScheme } from 'react-native';
 import { useRouter } from 'expo-router';
-import {
-  Poppins_600SemiBold,
-  Poppins_700Bold,
-} from '@expo-google-fonts/poppins';
-import {
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-} from '@expo-google-fonts/inter';
+import { Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
+import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
 import { useAppServices } from '@/hooks/useAppServices';
-import AppProviders from './setup/AppProviders';
+import AppProviders from '@/utils/setup/AppProviders';
 import logger, { installProductionConsoleGuard } from '@/utils/logger';
 import { colors } from '@/constants/theme';
 
@@ -139,11 +134,7 @@ function RootLayout() {
   const systemScheme = useColorScheme();
   const fontsReady = loaded || fontError != null || fontTimedOut;
 
-  const {
-    handleQueueSyncError,
-    handleQueueSyncComplete,
-    handleErrorBoundaryError,
-  } = useAppServices(fontsReady);
+  const { handleQueueSyncError, handleQueueSyncComplete, handleErrorBoundaryError } = useAppServices(fontsReady);
 
   if (!fontsReady) {
     return <View style={{ flex: 1, backgroundColor: systemScheme === 'dark' ? '#121212' : colors.nileBlue }} />;

@@ -7,6 +7,52 @@
 // method — the correct helpers are .get() / .post(). Both issues are fixed here.
 import apiClient from './apiClient';
 
+// Mock data fallback — imported lazily so it tree-shakes in production.
+// When the backend is unreachable during development, we return this seed data
+// so the full UI design is visible. Set EXPO_PUBLIC_USE_MOCK_TRY=true to force
+// mock mode even when the server is reachable (useful for UI-only demos).
+import {
+  MOCK_TRIALS,
+  MOCK_HISTORY,
+  MOCK_COINS,
+  MOCK_SCORE,
+  MOCK_MISSIONS,
+  MOCK_BADGES,
+  MOCK_SURPRISE,
+  MOCK_BUNDLES,
+  MOCK_MY_BUNDLES,
+  MOCK_CAMPAIGNS,
+  MOCK_LEADERBOARD,
+} from '@/utils/mocks/tryMockData';
+
+const USE_MOCK = process.env.EXPO_PUBLIC_USE_MOCK_TRY === 'true' || __DEV__;
+
+/**
+ * Wrap any TRY API call with an automatic mock fallback.
+ * In __DEV__, if the backend is unreachable (network error or server error),
+ * the fallback value is returned silently instead of throwing.
+ * In production the error propagates normally.
+ */
+async function withMockFallback<T>(
+  apiFn: () => Promise<T>,
+  fallback: T,
+  label = '',
+): Promise<T> {
+  if (process.env.EXPO_PUBLIC_USE_MOCK_TRY === 'true') {
+    // Force mock mode — skip the network call entirely
+    return fallback;
+  }
+  try {
+    return await apiFn();
+  } catch (err: any) {
+    if (__DEV__) {
+      console.warn(`[TRY MOCK] ${label} — API unreachable, using mock data.`, err?.message);
+      return fallback;
+    }
+    throw err;
+  }
+}
+
 interface TrialCard {
   id: string;
   title: string;
@@ -241,11 +287,15 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() (non-existent method) with apiClient.get()
    */
   async getFeed(lat: number, lng: number): Promise<TrialCard[]> {
-    const response = await apiClient.get<TrialFeedResponse>('/try/feed', { lat, lng });
-    // The backend wraps the array in response.data.data; apiClient.get already
-    // unwraps one level (responseData.data), so response.data is the array.
-    const payload = response.data as any;
-    return (Array.isArray(payload) ? payload : payload?.data) || [];
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<TrialFeedResponse>('/try/feed', { lat, lng });
+        const payload = response.data as any;
+        return (Array.isArray(payload) ? payload : payload?.data) || [];
+      },
+      MOCK_TRIALS,
+      'getFeed',
+    );
   }
 
   /**
@@ -297,9 +347,15 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getHistory(): Promise<HistoryItem[]> {
-    const response = await apiClient.get<{ data: HistoryItem[] }>('/try/history');
-    const payload = response.data as any;
-    return (Array.isArray(payload) ? payload : payload?.data) || [];
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<{ data: HistoryItem[] }>('/try/history');
+        const payload = response.data as any;
+        return (Array.isArray(payload) ? payload : payload?.data) || [];
+      },
+      MOCK_HISTORY,
+      'getHistory',
+    );
   }
 
   /**
@@ -307,9 +363,15 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getCoins(): Promise<CoinsData> {
-    const response = await apiClient.get<{ data: CoinsData }>('/try/coins');
-    const payload = response.data as any;
-    return (payload?.data ?? payload) || { totalBalance: 0, buckets: [], recentTransactions: [] };
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<{ data: CoinsData }>('/try/coins');
+        const payload = response.data as any;
+        return (payload?.data ?? payload) || { totalBalance: 0, buckets: [], recentTransactions: [] };
+      },
+      MOCK_COINS,
+      'getCoins',
+    );
   }
 
   /**
@@ -327,21 +389,22 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getScore(): Promise<ScoreData> {
-    const response = await apiClient.get<{ data: ScoreData }>('/try/score');
-    const payload = response.data as any;
-    return (payload?.data ?? payload) || {
-      score: 0,
-      tier: 'curious',
-      nextTierPoints: 100,
-      nextTierName: 'explorer',
-      stats: {
-        categoriesTried: 0,
-        merchantsDiscovered: 0,
-        currentStreak: 0,
-        reviewsGiven: 0,
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<{ data: ScoreData }>('/try/score');
+        const payload = response.data as any;
+        return (payload?.data ?? payload) || {
+          score: 0,
+          tier: 'curious',
+          nextTierPoints: 100,
+          nextTierName: 'explorer',
+          stats: { categoriesTried: 0, merchantsDiscovered: 0, currentStreak: 0, reviewsGiven: 0 },
+          recentEvents: [],
+        };
       },
-      recentEvents: [],
-    };
+      MOCK_SCORE,
+      'getScore',
+    );
   }
 
   /**
@@ -349,9 +412,15 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getMissions(): Promise<Mission[]> {
-    const response = await apiClient.get<{ data: Mission[] }>('/try/missions');
-    const payload = response.data as any;
-    return (Array.isArray(payload) ? payload : payload?.data) || [];
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<{ data: Mission[] }>('/try/missions');
+        const payload = response.data as any;
+        return (Array.isArray(payload) ? payload : payload?.data) || [];
+      },
+      MOCK_MISSIONS,
+      'getMissions',
+    );
   }
 
   /**
@@ -359,9 +428,15 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getBadges(): Promise<BadgesData> {
-    const response = await apiClient.get<{ data: BadgesData }>('/try/badges');
-    const payload = response.data as any;
-    return (payload?.data ?? payload) || { earned: [], undiscovered: [] };
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<{ data: BadgesData }>('/try/badges');
+        const payload = response.data as any;
+        return (payload?.data ?? payload) || { earned: [], undiscovered: [] };
+      },
+      MOCK_BADGES,
+      'getBadges',
+    );
   }
 
   /**
@@ -369,9 +444,15 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getLeaderboard(city: string, period: 'weekly' | 'monthly' | 'alltime'): Promise<LeaderboardData> {
-    const response = await apiClient.get<{ data: LeaderboardData }>('/try/leaderboard', { city, period });
-    const payload = response.data as any;
-    return (payload?.data ?? payload) || { entries: [], userRank: 0, userScore: 0 };
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<{ data: LeaderboardData }>('/try/leaderboard', { city, period });
+        const payload = response.data as any;
+        return (payload?.data ?? payload) || { entries: [], userRank: 0, userScore: 0 };
+      },
+      MOCK_LEADERBOARD,
+      'getLeaderboard',
+    );
   }
 
   /**
@@ -379,9 +460,15 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getSurpriseTrial(): Promise<SurpriseData> {
-    const response = await apiClient.get<{ data: SurpriseData }>('/try/surprise');
-    const payload = response.data as any;
-    return (payload?.data ?? payload) || { category: 'Mystery', distance: 'Unknown', expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() };
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<{ data: SurpriseData }>('/try/surprise');
+        const payload = response.data as any;
+        return (payload?.data ?? payload) || { category: 'Mystery', distance: 'Unknown', expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() };
+      },
+      MOCK_SURPRISE,
+      'getSurpriseTrial',
+    );
   }
 
   /**
@@ -399,9 +486,15 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getBundles(category?: string): Promise<Bundle[]> {
-    const response = await apiClient.get<{ data: Bundle[] }>('/try/bundles', category ? { category } : undefined);
-    const payload = response.data as any;
-    return (Array.isArray(payload) ? payload : payload?.data) || [];
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<{ data: Bundle[] }>('/try/bundles', category ? { category } : undefined);
+        const payload = response.data as any;
+        return (Array.isArray(payload) ? payload : payload?.data) || [];
+      },
+      MOCK_BUNDLES,
+      'getBundles',
+    );
   }
 
   /**
@@ -418,9 +511,15 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getMyBundles(): Promise<ActiveBundle[]> {
-    const response = await apiClient.get<{ data: ActiveBundle[] }>('/try/bundles/mine');
-    const payload = response.data as any;
-    return (Array.isArray(payload) ? payload : payload?.data) || [];
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<{ data: ActiveBundle[] }>('/try/bundles/mine');
+        const payload = response.data as any;
+        return (Array.isArray(payload) ? payload : payload?.data) || [];
+      },
+      MOCK_MY_BUNDLES,
+      'getMyBundles',
+    );
   }
 
   /**
@@ -428,9 +527,15 @@ class TryApi {
    * FR-001 FIX: replaced apiClient.request() with apiClient.get()
    */
   async getCampaigns(city: string): Promise<Campaign[]> {
-    const response = await apiClient.get<{ data: Campaign[] }>('/try/campaigns', { city });
-    const payload = response.data as any;
-    return (Array.isArray(payload) ? payload : payload?.data) || [];
+    return withMockFallback(
+      async () => {
+        const response = await apiClient.get<{ data: Campaign[] }>('/try/campaigns', { city });
+        const payload = response.data as any;
+        return (Array.isArray(payload) ? payload : payload?.data) || [];
+      },
+      MOCK_CAMPAIGNS,
+      'getCampaigns',
+    );
   }
 
   /**
@@ -440,6 +545,65 @@ class TryApi {
   async joinCampaign(campaignId: string): Promise<{ success: boolean; message?: string }> {
     const response = await apiClient.post(`/try/campaigns/${campaignId}/join`, {});
     return { success: response.success, message: response.message };
+  }
+
+  /**
+   * Create a Razorpay payment order for commitment fee or pack purchase.
+   * Calls POST /api/razorpay/create-order which returns
+   *   { razorpayOrderId, amount (paise), currency, receipt }
+   * The `notes` field carries context (source, trialId, packIndex, etc.)
+   * so the verify-payment webhook can reconcile the transaction.
+   */
+  async createPaymentOrder(params: {
+    amount: number;          // INR (rupees, not paise) — controller multiplies ×100
+    trialId?: string;
+    bundleId?: string;
+    packIndex?: number;
+    source?: 'trial_commitment' | 'trial_coins' | 'trial_bundle';
+  }): Promise<{ razorpayOrderId: string; amount: number; currency: string }> {
+    const { amount, trialId, bundleId, packIndex, source } = params;
+    const response = await apiClient.post<{
+      razorpayOrderId: string;
+      amount: number;
+      currency: string;
+    }>('/razorpay/create-order', {
+      amount,
+      notes: {
+        source: source || 'trial_commitment',
+        ...(trialId ? { trialId } : {}),
+        ...(bundleId ? { bundleId } : {}),
+        ...(packIndex !== undefined ? { packIndex } : {}),
+      },
+    });
+    const payload = (response.data as any) || {};
+    return {
+      razorpayOrderId: payload.razorpayOrderId || '',
+      amount: payload.amount || amount * 100,
+      currency: payload.currency || 'INR',
+    };
+  }
+
+  /**
+   * Submit a review for a completed trial booking.
+   * POST /api/try/bookings/:bookingId/review
+   * Body: { rating (1-5), reviewText }
+   * Returns: { success, coinsEarned } — the backend may award ReZ coins for review.
+   */
+  async submitReview(
+    bookingId: string,
+    rating: number,
+    reviewText: string,
+  ): Promise<{ success: boolean; coinsEarned?: number; message?: string }> {
+    const response = await apiClient.post<{ coinsEarned?: number }>(
+      `/try/bookings/${bookingId}/review`,
+      { rating, reviewText },
+    );
+    const payload = (response.data as any) || {};
+    return {
+      success: response.success,
+      coinsEarned: payload.coinsEarned,
+      message: response.message,
+    };
   }
 }
 

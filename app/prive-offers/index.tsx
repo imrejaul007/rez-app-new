@@ -6,13 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Share,
-} from 'react-native';
+import { View, StyleSheet, Pressable, StatusBar, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -76,11 +70,7 @@ function PriveOffersScreen() {
 
         {/* Header */}
         <View style={styles.header}>
-          <Pressable
-            style={styles.backButton}
-            onPress={handleBack}
-           
-          >
+          <Pressable style={styles.backButton} onPress={handleBack}>
             <Ionicons name="arrow-back" size={24} color={DarkColors.text} />
           </Pressable>
 
@@ -89,31 +79,14 @@ function PriveOffersScreen() {
               <Ionicons name="diamond" size={12} color={colors.brand.purpleSoft} />
             </View>
             <ThemedText style={styles.headerTitle}>Prive Offers</ThemedText>
-            <ReZCoin
-              balance={userCoins}
-              size="small"
-              onPress={() => router.push('/coins')}
-              style={styles.coinPill}
-            />
+            <ReZCoin balance={userCoins} size="small" onPress={() => router.push('/coins')} style={styles.coinPill} />
           </View>
 
           <View style={styles.headerRight}>
-            <Pressable
-              style={styles.iconButton}
-              onPress={handleShare}
-             
-            >
-              <Ionicons
-                name="share-outline"
-                size={22}
-                color={DarkColors.text}
-              />
+            <Pressable style={styles.iconButton} onPress={handleShare}>
+              <Ionicons name="share-outline" size={22} color={DarkColors.text} />
             </Pressable>
-            <Pressable
-              style={styles.iconButton}
-              onPress={handleFavorite}
-             
-            >
+            <Pressable style={styles.iconButton} onPress={handleFavorite}>
               <Ionicons
                 name={isFavorited ? 'heart' : 'heart-outline'}
                 size={22}
@@ -133,7 +106,7 @@ function PriveOffersScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Darkcolors.background,
+    backgroundColor: DarkColors.background,
   },
   header: {
     flexDirection: 'row',
@@ -141,9 +114,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    backgroundColor: Darkcolors.background,
+    backgroundColor: DarkColors.background,
     borderBottomWidth: 1,
-    borderBottomColor: Darkcolors.border,
+    borderBottomColor: DarkColors.border,
   },
   backButton: {
     width: 40,
@@ -151,7 +124,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,
-    backgroundColor: Darkcolors.backgroundSecondary,
+    backgroundColor: DarkColors.backgroundSecondary,
   },
   headerCenter: {
     flex: 1,
@@ -191,7 +164,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 20,
-    backgroundColor: Darkcolors.backgroundSecondary,
+    backgroundColor: DarkColors.backgroundSecondary,
   },
 });
 

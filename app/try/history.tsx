@@ -44,6 +44,9 @@ export default function TrialHistoryScreen() {
   });
   const [reviewText, setReviewText] = useState('');
   const [reviewRating, setReviewRating] = useState(5);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+  const [reviewSuccess, setReviewSuccess] = useState<{ coins: number } | null>(null);
 
   useEffect(() => {
     const loadHistory = async () => {
@@ -60,7 +63,7 @@ export default function TrialHistoryScreen() {
     loadHistory();
   }, []);
 
-  const filteredBookings = bookings.filter(b => {
+  const filteredBookings = bookings.filter((b) => {
     if (activeFilter === 'all') return true;
     return b.status === activeFilter;
   });
@@ -102,17 +105,15 @@ export default function TrialHistoryScreen() {
       setReviewModal({ visible: true, bookingId: booking.bookingId });
       setReviewRating(5);
       setReviewText('');
+      setReviewError(null);
+      setReviewSuccess(null);
     }
   };
 
   const renderBookingItem = ({ item }: { item: HistoryItem }) => (
     <View style={styles.bookingCard}>
       {/* Image */}
-      <Image
-        source={{ uri: item.image }}
-        style={styles.bookingImage}
-        accessibilityIgnoresInvertColors
-      />
+      <Image source={{ uri: item.image }} style={styles.bookingImage} accessibilityIgnoresInvertColors />
 
       {/* Status Badge */}
       <View
@@ -179,20 +180,14 @@ export default function TrialHistoryScreen() {
         {/* Actions */}
         <View style={styles.actions}>
           {item.status === 'active' && (
-            <Pressable
-              style={styles.actionButton}
-              onPress={() => handleQRPress(item)}
-            >
+            <Pressable style={styles.actionButton} onPress={() => handleQRPress(item)}>
               <Ionicons name="qr-code" size={16} color={colors.brand.purple} />
               <Text style={styles.actionButtonText}>View QR</Text>
             </Pressable>
           )}
 
           {item.status === 'completed' && !item.rating && (
-            <Pressable
-              style={styles.actionButton}
-              onPress={() => handleReviewPress(item)}
-            >
+            <Pressable style={styles.actionButton} onPress={() => handleReviewPress(item)}>
               <Ionicons name="star" size={16} color={colors.brand.goldAccent} />
               <Text style={styles.actionButtonText}>Rate</Text>
             </Pressable>
@@ -207,10 +202,7 @@ export default function TrialHistoryScreen() {
       <Ionicons name="document-outline" size={48} color={colors.text.tertiary} />
       <Text style={styles.emptyTitle}>No {activeFilter === 'all' ? 'bookings' : activeFilter} bookings yet</Text>
       <Text style={styles.emptySubtitle}>Start exploring and booking trials to see them here</Text>
-      <Pressable
-        style={styles.emptyButton}
-        onPress={() => router.back()}
-      >
+      <Pressable style={styles.emptyButton} onPress={() => router.back()}>
         <Text style={styles.emptyButtonText}>Browse Trials</Text>
       </Pressable>
     </View>
@@ -239,18 +231,13 @@ export default function TrialHistoryScreen() {
 
       {/* Filter Tabs */}
       <View style={styles.filterBar}>
-        {(['all', 'active', 'completed', 'expired'] as const).map(tab => (
+        {(['all', 'active', 'completed', 'expired'] as const).map((tab) => (
           <Pressable
             key={tab}
             style={[styles.filterTab, activeFilter === tab && styles.filterTabActive]}
             onPress={() => setActiveFilter(tab)}
           >
-            <Text
-              style={[
-                styles.filterTabText,
-                activeFilter === tab && styles.filterTabTextActive,
-              ]}
-            >
+            <Text style={[styles.filterTabText, activeFilter === tab && styles.filterTabTextActive]}>
               {tab.charAt(0).toUpperCase() + tab.slice(1)}
             </Text>
           </Pressable>
@@ -261,7 +248,7 @@ export default function TrialHistoryScreen() {
       <FlatList
         data={filteredBookings}
         renderItem={renderBookingItem}
-        keyExtractor={item => item.bookingId}
+        keyExtractor={(item) => item.bookingId}
         contentContainerStyle={styles.listContent}
         ListEmptyComponent={<EmptyState />}
         scrollEnabled={true}
@@ -281,7 +268,7 @@ export default function TrialHistoryScreen() {
 
             {/* Star Rating */}
             <View style={styles.starRating}>
-              {[1, 2, 3, 4, 5].map(star => (
+              {[1, 2, 3, 4, 5].map((star) => (
                 <Pressable key={star} onPress={() => setReviewRating(star)}>
                   <Ionicons
                     name={star <= reviewRating ? 'star' : 'star-outline'}
@@ -296,28 +283,74 @@ export default function TrialHistoryScreen() {
               {reviewRating === 1
                 ? 'Poor'
                 : reviewRating === 2
-                ? 'Fair'
-                : reviewRating === 3
-                ? 'Good'
-                : reviewRating === 4
-                ? 'Very Good'
-                : 'Excellent'}
+                  ? 'Fair'
+                  : reviewRating === 3
+                    ? 'Good'
+                    : reviewRating === 4
+                      ? 'Very Good'
+                      : 'Excellent'}
             </Text>
+
+            {/* Error / success feedback */}
+            {reviewError ? <Text style={styles.reviewErrorText}>{reviewError}</Text> : null}
+            {reviewSuccess ? (
+              <Text style={styles.reviewSuccessText}>
+                ✓ Review submitted! You earned 🪙 {reviewSuccess.coins} coins.
+              </Text>
+            ) : null}
 
             {/* Submit Button */}
             <Pressable
-              style={styles.modalButton}
-              onPress={() => {
-                // In a real app, submit the review
-                setReviewModal({ visible: false });
+              style={[styles.modalButton, reviewSubmitting && styles.modalButtonDisabled]}
+              disabled={reviewSubmitting}
+              onPress={async () => {
+                if (!reviewModal.bookingId) return;
+                setReviewSubmitting(true);
+                setReviewError(null);
+                setReviewSuccess(null);
+                try {
+                  const result = await tryApi.submitReview(reviewModal.bookingId, reviewRating, reviewText);
+                  if (result.success) {
+                    // Update local booking list so the star shows immediately
+                    setBookings((prev) =>
+                      prev.map((b) =>
+                        b.bookingId === reviewModal.bookingId ? { ...b, rating: reviewRating, reviewText } : b,
+                      ),
+                    );
+                    setReviewSuccess({ coins: result.coinsEarned ?? 0 });
+                    // Auto-close after 1.5 s
+                    setTimeout(() => {
+                      setReviewModal({ visible: false });
+                      setReviewText('');
+                      setReviewRating(5);
+                      setReviewSuccess(null);
+                    }, 1500);
+                  } else {
+                    setReviewError(result.message || 'Could not submit review. Try again.');
+                  }
+                } catch (err: any) {
+                  setReviewError(err?.message || 'Something went wrong. Please try again.');
+                } finally {
+                  setReviewSubmitting(false);
+                }
               }}
             >
-              <Text style={styles.modalButtonText}>Submit Review</Text>
+              {reviewSubmitting ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <Text style={styles.modalButtonText}>Submit Review</Text>
+              )}
             </Pressable>
 
             <Pressable
               style={[styles.modalButton, styles.modalButtonSecondary]}
-              onPress={() => setReviewModal({ visible: false })}
+              onPress={() => {
+                setReviewModal({ visible: false });
+                setReviewText('');
+                setReviewRating(5);
+                setReviewError(null);
+                setReviewSuccess(null);
+              }}
             >
               <Text style={styles.modalButtonSecondaryText}>Skip</Text>
             </Pressable>
@@ -574,5 +607,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '700',
     color: colors.text.primary,
+  },
+  modalButtonDisabled: {
+    opacity: 0.6,
+  },
+  reviewErrorText: {
+    fontSize: 13,
+    color: colors.errorScale ? colors.errorScale[500] : '#EF4444',
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+  },
+  reviewSuccessText: {
+    fontSize: 13,
+    color: colors.successScale ? colors.successScale[500] : '#22C55E',
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+    fontWeight: '600',
   },
 });

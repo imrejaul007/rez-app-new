@@ -2,7 +2,7 @@ import { colors } from '@/constants/theme';
 // MainStorePage.tsx - Orchestrator component for store page
 // All data fetching & state management lives in useMainStorePageData hook.
 // All section rendering is delegated to extracted components.
-import React, { useMemo, useRef, useState, useEffect, useCallback } from "react";
+import React, { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import {
   Platform,
   RefreshControl,
@@ -12,16 +12,12 @@ import {
   View,
   NativeSyntheticEvent,
   NativeScrollEvent,
-  Linking} from "react-native";
+  Linking,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  interpolate,
-} from 'react-native-reanimated';
-import { useRouter } from "expo-router";
-import { ThemedView } from "@/components/ThemedView";
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } from 'react-native-reanimated';
+import { useRouter } from 'expo-router';
+import { ThemedView } from '@/components/ThemedView';
 import {
   MainStoreHeader,
   ProductDisplay,
@@ -32,32 +28,28 @@ import {
   UserLoyaltyCard,
   PaymentMethodsCard,
   StoreBottomActionBar,
-} from "./MainStoreSection";
-import { MainStorePageProps } from "@/types/mainstore";
-import {
-  StoreHeaderSkeleton,
-  ProductGridSkeleton,
-  PromotionBannerSkeleton,
-} from "@/components/skeletons";
-import { Colors, Spacing } from "@/constants/DesignSystem";
-import { spacing } from "@/constants/theme";
-import { createStyles } from "./MainStorePage.styles";
-import { withErrorBoundary } from "@/utils/withErrorBoundary";
+} from './MainStoreSection';
+import { MainStorePageProps } from '@/types/mainstore';
+import { StoreHeaderSkeleton, ProductGridSkeleton, PromotionBannerSkeleton } from '@/components/skeletons';
+import { Colors, Spacing } from '@/constants/DesignSystem';
+import { spacing } from '@/constants/theme';
+import { createStyles } from '@/utils/MainStorePage.styles';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 // Extracted section components
-import StoreInfoHeader from "@/components/store/StoreInfoHeader";
-import BookTableCard from "@/components/store/BookTableCard";
-import StoreOffersBuilder from "@/components/store/StoreOffersBuilder";
-import ReviewsTabContent from "@/components/store/ReviewsTabContent";
-import AboutTabContent from "@/components/store/AboutTabContent";
-import MenuTabContent from "@/components/store/MenuTabContent";
-import PhotosTabContent from "@/components/store/PhotosTabContent";
-import AlwaysVisibleSections from "@/components/store/AlwaysVisibleSections";
-import StoreModals, { buildAboutModalData } from "@/components/store/StoreModals";
+import StoreInfoHeader from '@/components/store/StoreInfoHeader';
+import BookTableCard from '@/components/store/BookTableCard';
+import StoreOffersBuilder from '@/components/store/StoreOffersBuilder';
+import ReviewsTabContent from '@/components/store/ReviewsTabContent';
+import AboutTabContent from '@/components/store/AboutTabContent';
+import MenuTabContent from '@/components/store/MenuTabContent';
+import PhotosTabContent from '@/components/store/PhotosTabContent';
+import AlwaysVisibleSections from '@/components/store/AlwaysVisibleSections';
+import StoreModals, { buildAboutModalData } from '@/components/store/StoreModals';
 
 // Custom hook for all data/state/handlers
-import { useMainStorePageData } from "@/hooks/useMainStorePageData";
-import apiClient from "@/services/apiClient";
+import { useMainStorePageData } from '@/hooks/useMainStorePageData';
+import apiClient from '@/services/apiClient';
 
 function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   const router = useRouter();
@@ -68,7 +60,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   const [activeCampaigns, setActiveCampaigns] = useState<any[]>([]);
 
   // Responsive layout
-  const isWeb = Platform.OS === "web";
+  const isWeb = Platform.OS === 'web';
   const isDesktop = d.screenData.width >= 1024;
   const HORIZONTAL_PADDING = (() => {
     if (d.screenData.width < 375) return 12;
@@ -91,7 +83,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
 
   const handleBookTable = useCallback(() => {
     router.push(
-      `/MainCategory/food-dining/book-table?storeId=${d.currentStoreId}&storeName=${encodeURIComponent(d.currentStoreName || '')}` as any
+      `/MainCategory/food-dining/book-table?storeId=${d.currentStoreId}&storeName=${encodeURIComponent(d.currentStoreName || '')}` as any,
     );
   }, [router, d.currentStoreId, d.currentStoreName]);
 
@@ -119,12 +111,10 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     if (!d.pageLoading) {
       const timer = setTimeout(() => {
         if (tabsContainerRef.current && (tabsContainerRef.current as any).measure) {
-          (tabsContainerRef.current as any).measure(
-            (_x: number, y: number, _w: number, height: number) => {
-              tabsPositionY.current = y + height;
-              tabsPositionMeasured.current = true;
-            }
-          );
+          (tabsContainerRef.current as any).measure((_x: number, y: number, _w: number, height: number) => {
+            tabsPositionY.current = y + height;
+            tabsPositionMeasured.current = true;
+          });
         } else {
           tabsPositionY.current = 550;
           tabsPositionMeasured.current = true;
@@ -148,15 +138,18 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   useEffect(() => {
     if (!d.currentStoreId) return;
     let cancelled = false;
-    apiClient.get(`/stores/${d.currentStoreId}/page-extras`)
-      .then(res => {
+    apiClient
+      .get(`/stores/${d.currentStoreId}/page-extras`)
+      .then((res) => {
         if (cancelled) return;
         const payload = res.data?.data;
         if (payload?.upcomingDrop) setUpcomingDrop(payload.upcomingDrop);
         if (Array.isArray(payload?.activeCampaigns)) setActiveCampaigns(payload.activeCampaigns);
       })
       .catch(() => {});
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [d.currentStoreId]);
 
   const styles = useMemo(() => createStyles(HORIZONTAL_PADDING, d.screenData), [HORIZONTAL_PADDING, d.screenData]);
@@ -172,7 +165,7 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
   // About modal data (memoized)
   const aboutModalData = useMemo(
     () => buildAboutModalData(d.storeData, d.fullStoreDataRef.current, d.fetchedStoreData, d.productData, d.isDynamic),
-    [d.storeData, d.fetchedStoreData, d.productData, d.isDynamic]
+    [d.storeData, d.fetchedStoreData, d.productData, d.isDynamic],
   );
 
   // Sticky header animated style
@@ -187,8 +180,10 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
     onTabChange: d.handleTabChange,
     menuTabLabel: d.menuTabLabel,
     maxSavingsPercent:
-      typeof d.storeData?.cashback === "number" ? d.storeData.cashback
-        : typeof d.storeData?.discount === "number" ? d.storeData.discount
+      typeof d.storeData?.cashback === 'number'
+        ? d.storeData.cashback
+        : typeof d.storeData?.discount === 'number'
+          ? d.storeData.discount
           : undefined,
     reviewCount: d.totalReviewCount,
     photoCount: (d.storeData as any)?.photoCount,
@@ -200,372 +195,436 @@ function MainStorePage({ productId, initialProduct }: MainStorePageProps = {}) {
       <ThemedView style={styles.page}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
-      <MainStoreHeader
-        storeName={d.currentStoreName || ""}
-        storeCategory={d.storeData?.category || d.productData.category || "Store"}
-        onBack={d.handleBackPress}
-        onFavoritePress={d.handleFavoritePress}
-        isFavorited={d.isFavorited}
-        userCoins={d.userCoins}
-        storeId={d.currentStoreId}
-      />
+        <MainStoreHeader
+          storeName={d.currentStoreName || ''}
+          storeCategory={d.storeData?.category || d.productData.category || 'Store'}
+          onBack={d.handleBackPress}
+          onFavoritePress={d.handleFavoritePress}
+          isFavorited={d.isFavorited}
+          userCoins={d.userCoins}
+          storeId={d.currentStoreId}
+        />
 
-      <Animated.ScrollView
-        ref={scrollViewRef}
-        showsVerticalScrollIndicator={false}
-        scrollEventThrottle={16}
-        onScroll={(event: NativeSyntheticEvent<NativeScrollEvent>) => {
-          const y = event.nativeEvent.contentOffset.y;
-          scrollY.value = y;
-          setShowStickyTabs(tabsPositionMeasured.current && y > tabsPositionY.current);
-        }}
-        contentContainerStyle={[styles.scrollContent, isWeb && styles.webScrollContent]}
-        refreshControl={
-          <RefreshControl
-            refreshing={d.refreshing}
-            onRefresh={d.onRefresh}
-            colors={[Colors.gold, colors.nileBlue]}
-            tintColor={Colors.gold}
-            title="Pull to refresh"
-            titleColor={colors.text.tertiary}
-          />
-        }
-      >
-        <View style={[styles.contentWrapper, MAX_CONTENT_WIDTH && { maxWidth: MAX_CONTENT_WIDTH, alignSelf: "center" as const, width: "100%" }]}>
-          {d.pageLoading ? (
-            <>
-              <PromotionBannerSkeleton count={2} />
-              <StoreHeaderSkeleton />
-              <View style={{ paddingHorizontal: HORIZONTAL_PADDING, marginTop: Spacing.lg }}>
-                <ProductGridSkeleton count={6} />
-              </View>
-            </>
-          ) : (
-            <>
-              {/* Banner / Product Display */}
-              <View style={styles.imageSection}>
-                <View style={styles.imageCard}>
-                  <ProductDisplay
-                    images={d.productData.images}
-                    onSharePress={d.handleSharePress}
-                    onFavoritePress={d.handleFavoritePress}
-                    isFavorited={d.isFavorited}
+        <Animated.ScrollView
+          ref={scrollViewRef}
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={16}
+          onScroll={(event: NativeSyntheticEvent<NativeScrollEvent>) => {
+            const y = event.nativeEvent.contentOffset.y;
+            scrollY.value = y;
+            setShowStickyTabs(tabsPositionMeasured.current && y > tabsPositionY.current);
+          }}
+          contentContainerStyle={[styles.scrollContent, isWeb && styles.webScrollContent]}
+          refreshControl={
+            <RefreshControl
+              refreshing={d.refreshing}
+              onRefresh={d.onRefresh}
+              colors={[Colors.gold, colors.nileBlue]}
+              tintColor={Colors.gold}
+              title="Pull to refresh"
+              titleColor={colors.text.tertiary}
+            />
+          }
+        >
+          <View
+            style={[
+              styles.contentWrapper,
+              MAX_CONTENT_WIDTH && { maxWidth: MAX_CONTENT_WIDTH, alignSelf: 'center' as const, width: '100%' },
+            ]}
+          >
+            {d.pageLoading ? (
+              <>
+                <PromotionBannerSkeleton count={2} />
+                <StoreHeaderSkeleton />
+                <View style={{ paddingHorizontal: HORIZONTAL_PADDING, marginTop: Spacing.lg }}>
+                  <ProductGridSkeleton count={6} />
+                </View>
+              </>
+            ) : (
+              <>
+                {/* Banner / Product Display */}
+                <View style={styles.imageSection}>
+                  <View style={styles.imageCard}>
+                    <ProductDisplay
+                      images={d.productData.images}
+                      onSharePress={d.handleSharePress}
+                      onFavoritePress={d.handleFavoritePress}
+                      isFavorited={d.isFavorited}
+                      rating={d.avgRating}
+                      reviewCount={d.totalReviewCount}
+                      categoryTags={d.storeData?.tags || []}
+                      phoneNumber={d.storeData?.contact?.phone}
+                      locationCoords={
+                        d.storeData?.location && typeof d.storeData.location === 'object'
+                          ? (() => {
+                              const coords = (d.storeData.location as any).coordinates;
+                              if (!coords) return undefined;
+                              const lat = coords.lat || coords[1] || 0;
+                              const lng = coords.lng || coords[0] || 0;
+                              return lat && lng ? { lat, lng } : undefined;
+                            })()
+                          : undefined
+                      }
+                    />
+                  </View>
+                </View>
+
+                {/* Store Info Header */}
+                {(d.productData.title || d.storeData?.name) && (
+                  <StoreInfoHeader
+                    storeName={d.productData.title || d.storeData?.name || 'Store'}
                     rating={d.avgRating}
-                    reviewCount={d.totalReviewCount}
                     categoryTags={d.storeData?.tags || []}
-                    phoneNumber={d.storeData?.contact?.phone}
-                    locationCoords={
-                      d.storeData?.location && typeof d.storeData.location === "object"
-                        ? (() => {
-                            const coords = (d.storeData.location as any).coordinates;
-                            if (!coords) return undefined;
-                            const lat = coords.lat || coords[1] || 0;
-                            const lng = coords.lng || coords[0] || 0;
-                            return lat && lng ? { lat, lng } : undefined;
-                          })()
+                    horizontalPadding={HORIZONTAL_PADDING}
+                  />
+                )}
+
+                {/* Cashback Hero Card */}
+                {d.isDynamic &&
+                  d.storeData &&
+                  (() => {
+                    const cashbackVal =
+                      typeof d.storeData.cashback === 'number'
+                        ? d.storeData.cashback
+                        : (d.storeData as any).offers?.cashback || 0;
+                    return cashbackVal > 0 ? (
+                      <CashbackHeroCard
+                        cashbackPercentage={cashbackVal}
+                        coinsToEarn={(d.storeData as any).rewardRules?.reviewBonusCoins || 50}
+                      />
+                    ) : null;
+                  })()}
+
+                {/* Store Action Buttons */}
+                <NewStoreActionButtons
+                  storeId={d.currentStoreId}
+                  onScanPay={() =>
+                    router.push({
+                      pathname: '/pay-in-store/enter-amount',
+                      params: {
+                        storeId: d.currentStoreId,
+                        storeName: d.currentStoreName || '',
+                        storeLogo: d.currentStoreLogo,
+                      },
+                    } as any)
+                  }
+                  onUploadBill={() =>
+                    router.push({
+                      pathname: '/bill-upload',
+                      params: { storeId: d.currentStoreId, storeName: d.currentStoreName },
+                    } as any)
+                  }
+                  onViewOffers={() =>
+                    router.push({
+                      pathname: '/CardOffersPage',
+                      params: { storeId: d.currentStoreId, storeName: d.currentStoreName, orderValue: '1000' },
+                    } as any)
+                  }
+                />
+
+                {/* Active Campaigns Section */}
+                {activeCampaigns.length > 0 && (
+                  <View style={{ marginHorizontal: HORIZONTAL_PADDING, marginBottom: spacing.xs }}>
+                    <Text style={{ fontWeight: '700', color: '#1a3a52', fontSize: 15, marginBottom: spacing.xs }}>
+                      🎯 Active Offers
+                    </Text>
+                    {activeCampaigns.map((c: any) => (
+                      <View
+                        key={c._id}
+                        style={{
+                          padding: spacing.md,
+                          backgroundColor: '#fff',
+                          borderRadius: 10,
+                          borderWidth: 1,
+                          borderColor: '#E8DCC4',
+                          marginBottom: spacing.xs,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <Text style={{ fontSize: 20, marginRight: spacing.sm }}>✨</Text>
+                        <View style={{ flex: 1 }}>
+                          <Text style={{ fontWeight: '600', color: '#1a3a52', fontSize: 14 }}>{c.title}</Text>
+                          <Text style={{ color: '#2A5577', fontSize: 13 }}>{c.description}</Text>
+                          {c.coinMultiplier > 1 && (
+                            <Text style={{ color: '#ffcd57', fontWeight: '700', fontSize: 13 }}>
+                              {c.coinMultiplier}x coins on every purchase
+                            </Text>
+                          )}
+                        </View>
+                      </View>
+                    ))}
+                  </View>
+                )}
+
+                {/* Upcoming Coin Drop Banner */}
+                {upcomingDrop && (
+                  <View
+                    style={{
+                      margin: HORIZONTAL_PADDING,
+                      padding: spacing.sm,
+                      backgroundColor: '#FFF9E6',
+                      borderRadius: 12,
+                      borderWidth: 1,
+                      borderColor: '#FFE799',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text style={{ fontSize: 22 }}>🪙</Text>
+                    <View style={{ marginLeft: spacing.sm, flex: 1 }}>
+                      <Text style={{ fontWeight: '700', color: '#1a3a52', fontSize: 14 }}>Coin Drop Coming!</Text>
+                      <Text style={{ color: '#2A5577', fontSize: 13 }}>
+                        {upcomingDrop.coinsAmount} coins drop in {getTimeUntil(upcomingDrop.scheduledAt)}
+                      </Text>
+                    </View>
+                  </View>
+                )}
+
+                {/* Store Quick Info */}
+                {d.isDynamic && d.storeData && (
+                  <StoreQuickInfoCard
+                    storeName={d.storeData.name || d.storeData.title || d.productData.title}
+                    description={d.storeData.description}
+                    isVerified={(d.storeData as any).isVerified}
+                    operationalInfo={d.storeData.operationalInfo}
+                    location={
+                      d.storeData.location && typeof d.storeData.location === 'object'
+                        ? {
+                            address: (d.storeData.location as any).address,
+                            city: (d.storeData.location as any).city,
+                            state: (d.storeData.location as any).state,
+                            coordinates: (d.storeData.location as any).coordinates
+                              ? {
+                                  lat:
+                                    (d.storeData.location as any).coordinates.lat ||
+                                    (d.storeData.location as any).coordinates[1],
+                                  lng:
+                                    (d.storeData.location as any).coordinates.lng ||
+                                    (d.storeData.location as any).coordinates[0],
+                                }
+                              : undefined,
+                          }
                         : undefined
                     }
                   />
+                )}
+
+                {/* Book a Table */}
+                {d.isDynamic && d.storeData && (
+                  <BookTableCard
+                    storeId={d.currentStoreId}
+                    storeName={d.currentStoreName || ''}
+                    storeCategory={d.storeData.category || ''}
+                    onPress={(sId, sName) =>
+                      router.push(
+                        `/MainCategory/food-dining/book-table?storeId=${sId}&storeName=${encodeURIComponent(sName)}` as any,
+                      )
+                    }
+                  />
+                )}
+
+                {/* Store Offers Preview */}
+                {d.isDynamic && d.storeData && (
+                  <StoreOffersBuilder
+                    storeData={d.storeData as any}
+                    storeId={d.currentStoreId}
+                    storeName={d.currentStoreName || ''}
+                    onViewAll={() =>
+                      router.push({
+                        pathname: '/CardOffersPage',
+                        params: { storeId: d.currentStoreId, storeName: d.currentStoreName },
+                      } as any)
+                    }
+                    onApplyOffer={(offer) =>
+                      router.push({
+                        pathname: '/pay-in-store',
+                        params: { storeId: d.currentStoreId, offerId: offer.id },
+                      } as any)
+                    }
+                  />
+                )}
+
+                {/* User Loyalty Card */}
+                {d.isDynamic && d.storeData && d.userVisitsData && (
+                  <UserLoyaltyCard
+                    visitsCompleted={d.userVisitsData.visitsCompleted}
+                    totalVisitsRequired={d.userVisitsData.totalVisitsRequired}
+                    nextReward={d.userVisitsData.nextReward}
+                    rewardIcon="cafe"
+                    onViewDetails={() =>
+                      router.push({
+                        pathname: '/loyalty',
+                        params: { storeId: d.currentStoreId, storeName: d.currentStoreName },
+                      } as any)
+                    }
+                  />
+                )}
+
+                {/* Payment Methods Card */}
+                {d.isDynamic && d.storeData && d.fullStoreDataRef.current?.paymentSettings && (
+                  <PaymentMethodsCard
+                    acceptPromoCoins={(d.storeData as any).paymentSettings?.acceptPromoCoins !== false}
+                    acceptBrandedCoins={true}
+                    acceptRezCoins={(d.storeData as any).paymentSettings?.acceptRezCoins !== false}
+                    acceptUPI={(d.storeData as any).paymentSettings?.acceptUPI !== false}
+                    acceptCards={(d.storeData as any).paymentSettings?.acceptCards !== false}
+                    acceptPayLater={(d.storeData as any).paymentSettings?.acceptPayLater === true}
+                  />
+                )}
+
+                {/* Tab Navigation */}
+                <View
+                  ref={tabsContainerRef}
+                  style={styles.tabsContainer}
+                  onLayout={(e) => {
+                    tabsPositionY.current = e.nativeEvent.layout.y + e.nativeEvent.layout.height;
+                    tabsPositionMeasured.current = true;
+                  }}
+                >
+                  <TabNavigation {...tabNavProps} />
                 </View>
-              </View>
 
-              {/* Store Info Header */}
-              {(d.productData.title || d.storeData?.name) && (
-                <StoreInfoHeader
-                  storeName={d.productData.title || d.storeData?.name || "Store"}
-                  rating={d.avgRating}
-                  categoryTags={d.storeData?.tags || []}
-                  horizontalPadding={HORIZONTAL_PADDING}
-                />
-              )}
+                {/* Tab Content */}
+                {d.activeTab === 'menu' && (
+                  <MenuTabContent
+                    productData={d.productData}
+                    storeData={d.storeData}
+                    isDynamic={d.isDynamic}
+                    isFavorited={d.isFavorited}
+                    onFavoritedChange={d.setIsFavorited}
+                    sectionCardStyle={styles.sectionCard}
+                  />
+                )}
 
-              {/* Cashback Hero Card */}
-              {d.isDynamic && d.storeData && (() => {
-                const cashbackVal = typeof d.storeData.cashback === "number"
-                  ? d.storeData.cashback : (d.storeData as any).offers?.cashback || 0;
-                return cashbackVal > 0 ? (
-                  <CashbackHeroCard cashbackPercentage={cashbackVal} coinsToEarn={(d.storeData as any).rewardRules?.reviewBonusCoins || 50} />
-                ) : null;
-              })()}
+                {d.activeTab === 'reviews' && (
+                  <ReviewsTabContent
+                    storeName={d.currentStoreName || ''}
+                    averageRating={d.avgRating}
+                    totalReviews={d.totalReviewCount}
+                    ratingBreakdown={d.reviewRatingBreakdown}
+                    reviews={d.storeReviews}
+                    reviewsLoading={d.reviewsLoading}
+                    canReview={d.canReview}
+                    ugcContent={d.ugcContent}
+                    ugcLoading={d.ugcLoading}
+                    onWriteReview={d.openWriteReviewModal}
+                    onReviewLike={d.handleReviewLike}
+                    onReviewReport={d.handleReviewReport}
+                    onReviewHelpful={d.handleReviewHelpful}
+                    sectionCardStyle={styles.sectionCard}
+                  />
+                )}
 
-              {/* Store Action Buttons */}
-              <NewStoreActionButtons
-                storeId={d.currentStoreId}
-                onScanPay={() => router.push({ pathname: "/pay-in-store/enter-amount", params: { storeId: d.currentStoreId, storeName: d.currentStoreName || "", storeLogo: d.currentStoreLogo } } as any)}
-                onUploadBill={() => router.push({ pathname: "/bill-upload", params: { storeId: d.currentStoreId, storeName: d.currentStoreName } } as any)}
-                onViewOffers={() => router.push({ pathname: "/CardOffersPage", params: { storeId: d.currentStoreId, storeName: d.currentStoreName, orderValue: "1000" } } as any)}
-              />
+                {d.activeTab === 'photos' && (
+                  <PhotosTabContent
+                    storeId={d.productData.storeId}
+                    storeIdParam={d.storeIdParam}
+                    onViewAllPress={d.handleViewAllPress}
+                    onImagePress={d.handleImagePress}
+                    sectionCardStyle={styles.sectionCard}
+                  />
+                )}
 
-              {/* Active Campaigns Section */}
-              {activeCampaigns.length > 0 && (
-                <View style={{ marginHorizontal: HORIZONTAL_PADDING, marginBottom: spacing.xs }}>
-                  <Text style={{ fontWeight: '700', color: '#1a3a52', fontSize: 15, marginBottom: spacing.xs }}>
-                    🎯 Active Offers
-                  </Text>
-                  {activeCampaigns.map((c: any) => (
-                    <View key={c._id} style={{
-                      padding: spacing.md,
-                      backgroundColor: '#fff',
-                      borderRadius: 10,
-                      borderWidth: 1,
-                      borderColor: '#E8DCC4',
-                      marginBottom: spacing.xs,
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                    }}>
-                      <Text style={{ fontSize: 20, marginRight: spacing.sm }}>✨</Text>
-                      <View style={{ flex: 1 }}>
-                        <Text style={{ fontWeight: '600', color: '#1a3a52', fontSize: 14 }}>{c.title}</Text>
-                        <Text style={{ color: '#2A5577', fontSize: 13 }}>{c.description}</Text>
-                        {c.coinMultiplier > 1 && (
-                          <Text style={{ color: '#ffcd57', fontWeight: '700', fontSize: 13 }}>
-                            {c.coinMultiplier}x coins on every purchase
-                          </Text>
-                        )}
-                      </View>
-                    </View>
-                  ))}
-                </View>
-              )}
+                {d.activeTab === 'about' && (
+                  <AboutTabContent
+                    storeId={d.productData.storeId}
+                    storeCategory={d.isDynamic && d.storeData ? d.storeData.category : undefined}
+                    isDynamic={d.isDynamic}
+                    sectionCardStyle={styles.sectionCard}
+                  />
+                )}
 
-              {/* Upcoming Coin Drop Banner */}
-              {upcomingDrop && (
-                <View style={{
-                  margin: HORIZONTAL_PADDING,
-                  padding: spacing.sm,
-                  backgroundColor: '#FFF9E6',
-                  borderRadius: 12,
-                  borderWidth: 1,
-                  borderColor: '#FFE799',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}>
-                  <Text style={{ fontSize: 22 }}>🪙</Text>
-                  <View style={{ marginLeft: spacing.sm, flex: 1 }}>
-                    <Text style={{ fontWeight: '700', color: '#1a3a52', fontSize: 14 }}>
-                      Coin Drop Coming!
-                    </Text>
-                    <Text style={{ color: '#2A5577', fontSize: 13 }}>
-                      {upcomingDrop.coinsAmount} coins drop in {getTimeUntil(upcomingDrop.scheduledAt)}
-                    </Text>
-                  </View>
-                </View>
-              )}
-
-              {/* Store Quick Info */}
-              {d.isDynamic && d.storeData && (
-                <StoreQuickInfoCard
-                  storeName={d.storeData.name || d.storeData.title || d.productData.title}
-                  description={d.storeData.description}
-                  isVerified={(d.storeData as any).isVerified}
-                  operationalInfo={d.storeData.operationalInfo}
-                  location={
-                    d.storeData.location && typeof d.storeData.location === "object"
-                      ? {
-                          address: (d.storeData.location as any).address,
-                          city: (d.storeData.location as any).city,
-                          state: (d.storeData.location as any).state,
-                          coordinates: (d.storeData.location as any).coordinates
-                            ? { lat: (d.storeData.location as any).coordinates.lat || (d.storeData.location as any).coordinates[1], lng: (d.storeData.location as any).coordinates.lng || (d.storeData.location as any).coordinates[0] }
-                            : undefined,
-                        }
-                      : undefined
-                  }
-                />
-              )}
-
-              {/* Book a Table */}
-              {d.isDynamic && d.storeData && (
-                <BookTableCard
-                  storeId={d.currentStoreId}
-                  storeName={d.currentStoreName || ""}
-                  storeCategory={d.storeData.category || ""}
-                  onPress={(sId, sName) => router.push(`/MainCategory/food-dining/book-table?storeId=${sId}&storeName=${encodeURIComponent(sName)}` as any)}
-                />
-              )}
-
-              {/* Store Offers Preview */}
-              {d.isDynamic && d.storeData && (
-                <StoreOffersBuilder
-                  storeData={d.storeData as any}
-                  storeId={d.currentStoreId}
-                  storeName={d.currentStoreName || ""}
-                  onViewAll={() => router.push({ pathname: "/CardOffersPage", params: { storeId: d.currentStoreId, storeName: d.currentStoreName } } as any)}
-                  onApplyOffer={(offer) => router.push({ pathname: "/pay-in-store", params: { storeId: d.currentStoreId, offerId: offer.id } } as any)}
-                />
-              )}
-
-              {/* User Loyalty Card */}
-              {d.isDynamic && d.storeData && d.userVisitsData && (
-                <UserLoyaltyCard
-                  visitsCompleted={d.userVisitsData.visitsCompleted}
-                  totalVisitsRequired={d.userVisitsData.totalVisitsRequired}
-                  nextReward={d.userVisitsData.nextReward}
-                  rewardIcon="cafe"
-                  onViewDetails={() => router.push({ pathname: "/loyalty", params: { storeId: d.currentStoreId, storeName: d.currentStoreName } } as any)}
-                />
-              )}
-
-              {/* Payment Methods Card */}
-              {d.isDynamic && d.storeData && d.fullStoreDataRef.current?.paymentSettings && (
-                <PaymentMethodsCard
-                  acceptPromoCoins={(d.storeData as any).paymentSettings?.acceptPromoCoins !== false}
-                  acceptBrandedCoins={true}
-                  acceptRezCoins={(d.storeData as any).paymentSettings?.acceptRezCoins !== false}
-                  acceptUPI={(d.storeData as any).paymentSettings?.acceptUPI !== false}
-                  acceptCards={(d.storeData as any).paymentSettings?.acceptCards !== false}
-                  acceptPayLater={(d.storeData as any).paymentSettings?.acceptPayLater === true}
-                />
-              )}
-
-              {/* Tab Navigation */}
-              <View
-                ref={tabsContainerRef}
-                style={styles.tabsContainer}
-                onLayout={(e) => {
-                  tabsPositionY.current = e.nativeEvent.layout.y + e.nativeEvent.layout.height;
-                  tabsPositionMeasured.current = true;
-                }}
-              >
-                <TabNavigation {...tabNavProps} />
-              </View>
-
-              {/* Tab Content */}
-              {d.activeTab === "menu" && (
-                <MenuTabContent
-                  productData={d.productData}
+                {/* Always-visible sections */}
+                <AlwaysVisibleSections
+                  storeId={d.productData.storeId}
                   storeData={d.storeData}
                   isDynamic={d.isDynamic}
-                  isFavorited={d.isFavorited}
-                  onFavoritedChange={d.setIsFavorited}
+                  productLocation={d.productData.location}
                   sectionCardStyle={styles.sectionCard}
                 />
-              )}
+              </>
+            )}
+          </View>
+        </Animated.ScrollView>
 
-              {d.activeTab === "reviews" && (
-                <ReviewsTabContent
-                  storeName={d.currentStoreName || ""}
-                  averageRating={d.avgRating}
-                  totalReviews={d.totalReviewCount}
-                  ratingBreakdown={d.reviewRatingBreakdown}
-                  reviews={d.storeReviews}
-                  reviewsLoading={d.reviewsLoading}
-                  canReview={d.canReview}
-                  ugcContent={d.ugcContent}
-                  ugcLoading={d.ugcLoading}
-                  onWriteReview={d.openWriteReviewModal}
-                  onReviewLike={d.handleReviewLike}
-                  onReviewReport={d.handleReviewReport}
-                  onReviewHelpful={d.handleReviewHelpful}
-                  sectionCardStyle={styles.sectionCard}
-                />
-              )}
+        {/* Sticky Tab Navigation */}
+        <Animated.View
+          style={[
+            styles.stickyTabsContainer,
+            stickyHeaderAnimStyle,
+            {
+              pointerEvents: showStickyTabs ? 'auto' : 'none',
+            },
+          ]}
+        >
+          <View style={styles.stickyTabsInner}>
+            <TabNavigation {...tabNavProps} compact />
+          </View>
+        </Animated.View>
 
-              {d.activeTab === "photos" && (
-                <PhotosTabContent
-                  storeId={d.productData.storeId}
-                  storeIdParam={d.storeIdParam}
-                  onViewAllPress={d.handleViewAllPress}
-                  onImagePress={d.handleImagePress}
-                  sectionCardStyle={styles.sectionCard}
-                />
-              )}
-
-              {d.activeTab === "about" && (
-                <AboutTabContent
-                  storeId={d.productData.storeId}
-                  storeCategory={d.isDynamic && d.storeData ? d.storeData.category : undefined}
-                  isDynamic={d.isDynamic}
-                  sectionCardStyle={styles.sectionCard}
-                />
-              )}
-
-              {/* Always-visible sections */}
-              <AlwaysVisibleSections
-                storeId={d.productData.storeId}
-                storeData={d.storeData}
-                isDynamic={d.isDynamic}
-                productLocation={d.productData.location}
-                sectionCardStyle={styles.sectionCard}
-              />
-            </>
-          )}
-        </View>
-      </Animated.ScrollView>
-
-      {/* Sticky Tab Navigation */}
-      <Animated.View
-        style={[
-          styles.stickyTabsContainer,
-          stickyHeaderAnimStyle,
-          {
-            pointerEvents: showStickyTabs ? "auto" : "none",
-          },
-        ]}
-      >
-        <View style={styles.stickyTabsInner}>
-          <TabNavigation {...tabNavProps} compact />
-        </View>
-      </Animated.View>
-
-      {/* Error Toast */}
-      {d.error && (
-        <View style={styles.errorToast}>
-          <Pressable onPress={() => d.setError(null)}>
-            <View style={styles.errorInner}>
-              <View style={styles.errorDot} />
-              <View style={{ marginLeft: 10 }}>
-                <Text style={styles.errorText}>{d.error}</Text>
+        {/* Error Toast */}
+        {d.error && (
+          <View style={styles.errorToast}>
+            <Pressable onPress={() => d.setError(null)}>
+              <View style={styles.errorInner}>
+                <View style={styles.errorDot} />
+                <View style={{ marginLeft: 10 }}>
+                  <Text style={styles.errorText}>{d.error}</Text>
+                </View>
               </View>
-            </View>
-          </Pressable>
-        </View>
-      )}
+            </Pressable>
+          </View>
+        )}
 
-      {/* Modals */}
-      <StoreModals
-        showAboutModal={d.showAboutModal}
-        onCloseAboutModal={d.handleCloseAboutModal}
-        aboutModalData={aboutModalData}
-        showDealsModal={d.showDealsModal}
-        onCloseDealsModal={d.handleCloseDealsModal}
-        storeId={d.currentStoreId}
-        showReviewModal={d.showReviewModal}
-        onCloseReviewModal={d.handleCloseReviewModal}
-        storeName={d.currentStoreName || ""}
-        reviewStoreId={d.reviewStoreId || d.productData.storeId}
-        averageRating={d.avgRating}
-        totalReviews={d.totalReviewCount}
-        ratingBreakdown={d.reviewRatingBreakdown}
-        reviews={d.storeReviews}
-        onLikeReview={d.handleReviewLike}
-        onReportReview={d.handleReviewReport}
-        onHelpfulReview={d.handleReviewHelpful}
-        onWriteReview={d.canReview !== false ? d.handleWriteReview : undefined}
-        ugcContent={d.ugcContent}
-        ugcLoading={d.ugcLoading}
-        showWriteReviewModal={d.showWriteReviewModal}
-        onCloseWriteReviewModal={d.handleCloseWriteReviewModal}
-        writeReviewStoreId={d.reviewStoreId || d.productData.storeId}
-        writeReviewStoreName={d.currentStoreName || ""}
-        onReviewSubmitted={d.handleReviewSubmitted}
-      />
+        {/* Modals */}
+        <StoreModals
+          showAboutModal={d.showAboutModal}
+          onCloseAboutModal={d.handleCloseAboutModal}
+          aboutModalData={aboutModalData}
+          showDealsModal={d.showDealsModal}
+          onCloseDealsModal={d.handleCloseDealsModal}
+          storeId={d.currentStoreId}
+          showReviewModal={d.showReviewModal}
+          onCloseReviewModal={d.handleCloseReviewModal}
+          storeName={d.currentStoreName || ''}
+          reviewStoreId={d.reviewStoreId || d.productData.storeId}
+          averageRating={d.avgRating}
+          totalReviews={d.totalReviewCount}
+          ratingBreakdown={d.reviewRatingBreakdown}
+          reviews={d.storeReviews}
+          onLikeReview={d.handleReviewLike}
+          onReportReview={d.handleReviewReport}
+          onHelpfulReview={d.handleReviewHelpful}
+          onWriteReview={d.canReview !== false ? d.handleWriteReview : undefined}
+          ugcContent={d.ugcContent}
+          ugcLoading={d.ugcLoading}
+          showWriteReviewModal={d.showWriteReviewModal}
+          onCloseWriteReviewModal={d.handleCloseWriteReviewModal}
+          writeReviewStoreId={d.reviewStoreId || d.productData.storeId}
+          writeReviewStoreName={d.currentStoreName || ''}
+          onReviewSubmitted={d.handleReviewSubmitted}
+        />
 
-      {/* Bottom Action Bar */}
-      <StoreBottomActionBar
-        storeId={d.currentStoreId}
-        storeName={d.currentStoreName || ""}
-        storePhone={(d.storeData as any)?.contact?.phone || (d.storeData as any)?.phone}
-        storeCategory={d.storeData?.category || d.productData.category}
-        onScanPayEarn={() => router.push({ pathname: "/pay-in-store/enter-amount", params: { storeId: d.currentStoreId, storeName: d.currentStoreName || "", storeLogo: d.currentStoreLogo } } as any)}
-        onOrderFood={handleOrderFood}
-        onBookTable={handleBookTable}
-        onCallStore={handleCallStore}
-      />
+        {/* Bottom Action Bar */}
+        <StoreBottomActionBar
+          storeId={d.currentStoreId}
+          storeName={d.currentStoreName || ''}
+          storePhone={(d.storeData as any)?.contact?.phone || (d.storeData as any)?.phone}
+          storeCategory={d.storeData?.category || d.productData.category}
+          onScanPayEarn={() =>
+            router.push({
+              pathname: '/pay-in-store/enter-amount',
+              params: { storeId: d.currentStoreId, storeName: d.currentStoreName || '', storeLogo: d.currentStoreLogo },
+            } as any)
+          }
+          onOrderFood={handleOrderFood}
+          onBookTable={handleBookTable}
+          onCallStore={handleCallStore}
+        />
       </ThemedView>
     </SafeAreaView>
   );
 }
 
 export default withErrorBoundary(MainStorePage, 'Store Page');
-

@@ -34,7 +34,7 @@ function BookTableCard({ storeId, storeName, storeCategory, onPress }: BookTable
         >
           <View style={styles.row}>
             <View style={styles.iconWrap}>
-              <Ionicons name="restaurant-outline" size={20} color={Colors.warning} />
+              <Ionicons name="restaurant-outline" size={20} color={colors.warning} />
             </View>
             <View style={{ flex: 1 }}>
               <Text style={styles.title}>Book a Table</Text>
@@ -52,7 +52,7 @@ function BookTableCard({ storeId, storeName, storeCategory, onPress }: BookTable
               <Text style={styles.perkText}>No pre-payment</Text>
             </View>
             <View style={styles.perk}>
-              <Ionicons name="wallet-outline" size={13} color={Colors.warning} />
+              <Ionicons name="wallet-outline" size={13} color={colors.warning} />
               <Text style={styles.perkText}>Bonus coins</Text>
             </View>
             <View style={styles.perk}>
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
     borderRadius: 9,
-    backgroundColor: Colors.warning,
+    backgroundColor: colors.warning,
     justifyContent: 'center',
     alignItems: 'center',
   },

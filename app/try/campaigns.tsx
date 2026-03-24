@@ -13,6 +13,7 @@ import {
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import * as Location from 'expo-location';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
 
@@ -45,30 +46,51 @@ const TYPE_LABELS: Record<string, string> = {
   CATEGORY_PUSH: 'Category Push',
 };
 
+// Derive a city name from reverse-geocoding (best-effort; falls back to 'Bangalore')
+async function resolveCity(): Promise<string> {
+  try {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') return 'Bangalore';
+    const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+    const [place] = await Location.reverseGeocodeAsync(pos.coords);
+    return place?.city || place?.subregion || place?.region || 'Bangalore';
+  } catch {
+    return 'Bangalore';
+  }
+}
+
 export default function CampaignsScreen() {
   const router = useRouter();
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [city, setCity] = useState('Bangalore');
 
   useEffect(() => {
-    loadCampaigns();
+    // Resolve city once on mount, then load campaigns
+    resolveCity().then((resolvedCity) => {
+      setCity(resolvedCity);
+      loadCampaigns(resolvedCity);
+    });
   }, []);
 
-  const loadCampaigns = useCallback(async () => {
-    try {
-      const data = await tryApi.getCampaigns('Mumbai');
-      setCampaigns(data);
-    } catch (err) {
-      console.error('Failed to load campaigns:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const loadCampaigns = useCallback(
+    async (cityName?: string) => {
+      try {
+        const data = await tryApi.getCampaigns(cityName ?? city);
+        setCampaigns(data);
+      } catch (err) {
+        console.error('Failed to load campaigns:', err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [city],
+  );
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await loadCampaigns();
+    await loadCampaigns(city);
     setRefreshing(false);
   };
 
@@ -101,29 +123,14 @@ export default function CampaignsScreen() {
     const isExpired = timeRemaining === 'Ended';
 
     return (
-      <View
-        style={[
-          styles.card,
-          (item.isCompleted || isExpired) && styles.cardCompleted,
-        ]}
-      >
+      <View style={[styles.card, (item.isCompleted || isExpired) && styles.cardCompleted]}>
         {/* Image/Banner */}
         {item.image ? (
-          <ImageBackground
-            source={{ uri: item.image }}
-            style={styles.cardImage}
-            resizeMode="cover"
-          >
-            <LinearGradient
-              colors={['transparent', 'rgba(0,0,0,0.5)']}
-              style={styles.cardImageOverlay}
-            />
+          <ImageBackground source={{ uri: item.image }} style={styles.cardImage} resizeMode="cover">
+            <LinearGradient colors={['transparent', 'rgba(0,0,0,0.5)']} style={styles.cardImageOverlay} />
           </ImageBackground>
         ) : (
-          <LinearGradient
-            colors={[colors.brand.purple, `${colors.brand.purple}dd`]}
-            style={styles.cardImage}
-          />
+          <LinearGradient colors={[colors.brand.purple, `${colors.brand.purple}dd`]} style={styles.cardImage} />
         )}
 
         {/* Completed Badge */}
@@ -206,8 +213,8 @@ export default function CampaignsScreen() {
     );
   };
 
-  const activeCampaigns = campaigns && Array.isArray(campaigns) ? campaigns.filter(c => !c.isCompleted) : [];
-  const completedCampaigns = campaigns && Array.isArray(campaigns) ? campaigns.filter(c => c.isCompleted) : [];
+  const activeCampaigns = campaigns && Array.isArray(campaigns) ? campaigns.filter((c) => !c.isCompleted) : [];
+  const completedCampaigns = campaigns && Array.isArray(campaigns) ? campaigns.filter((c) => c.isCompleted) : [];
 
   const EmptyState = () => (
     <View style={styles.emptyContainer}>
@@ -249,12 +256,10 @@ export default function CampaignsScreen() {
       <FlatList
         data={activeCampaigns.length > 0 ? activeCampaigns : completedCampaigns}
         renderItem={renderCampaignCard}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         scrollEnabled={true}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ListEmptyComponent={<EmptyState />}
         ListHeaderComponent={
           activeCampaigns.length === 0 && completedCampaigns.length > 0 ? (

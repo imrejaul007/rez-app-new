@@ -119,7 +119,11 @@ module.exports = {
       policy: 'appVersion',
     },
     plugins: [
-      'react-native-reanimated',
+      // react-native-reanimated 3.16+ ships a TypeScript/ESM config plugin that
+      // Node's CJS require() cannot parse. Use a local stub instead — the Babel
+      // plugin (babel.config.js) handles all runtime transforms for expo start,
+      // and Expo SDK 53 New Architecture auto-links the native module for builds.
+      './plugins/reanimated',
       'expo-router',
       [
         'expo-splash-screen',

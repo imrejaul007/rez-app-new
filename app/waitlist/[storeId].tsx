@@ -34,7 +34,8 @@ function WaitlistScreen() {
         notes,
       });
       if (response) {
-      setJoined(true);
+        setJoined(true);
+      }
     } catch (e: any) {
       Alert.alert('Error', e?.response?.data?.error || 'Failed to join waitlist');
     } finally {
@@ -42,20 +43,33 @@ function WaitlistScreen() {
     }
   };
 
-  const styles = useMemo(() => StyleSheet.create({
-    container: { flex: 1, backgroundColor: colors.background.primary },
-    header: { flexDirection: 'row', alignItems: 'center', padding: 16, paddingTop: 48 },
-    title: { fontSize: 22, fontWeight: '700', color: colors.text.primary, marginLeft: 12 },
-    section: { padding: 16 },
-    label: { fontSize: 14, fontWeight: '600', color: colors.text.secondary, marginBottom: 8 },
-    input: { borderWidth: 1, borderColor: colors.border.default, borderRadius: 12, padding: 14, fontSize: 16, color: colors.text.primary, backgroundColor: colors.background.secondary, marginBottom: 16 },
-    btn: { margin: 16, backgroundColor: colors.primary[500], borderRadius: 12, padding: 16, alignItems: 'center' },
-    btnText: { fontSize: 16, fontWeight: '700', color: colors.text.inverse },
-    successCard: { margin: 32, padding: 24, alignItems: 'center' },
-    successIcon: { fontSize: 64, marginBottom: 16 },
-    successTitle: { fontSize: 22, fontWeight: '800', color: colors.text.primary, marginBottom: 8 },
-    successSub: { fontSize: 15, color: colors.text.secondary, textAlign: 'center' },
-  }), [colors]);
+  const styles = useMemo(
+    () =>
+      StyleSheet.create({
+        container: { flex: 1, backgroundColor: colors.background.primary },
+        header: { flexDirection: 'row', alignItems: 'center', padding: 16, paddingTop: 48 },
+        title: { fontSize: 22, fontWeight: '700', color: colors.text.primary, marginLeft: 12 },
+        section: { padding: 16 },
+        label: { fontSize: 14, fontWeight: '600', color: colors.text.secondary, marginBottom: 8 },
+        input: {
+          borderWidth: 1,
+          borderColor: colors.border.default,
+          borderRadius: 12,
+          padding: 14,
+          fontSize: 16,
+          color: colors.text.primary,
+          backgroundColor: colors.background.secondary,
+          marginBottom: 16,
+        },
+        btn: { margin: 16, backgroundColor: colors.primary[500], borderRadius: 12, padding: 16, alignItems: 'center' },
+        btnText: { fontSize: 16, fontWeight: '700', color: colors.text.inverse },
+        successCard: { margin: 32, padding: 24, alignItems: 'center' },
+        successIcon: { fontSize: 64, marginBottom: 16 },
+        successTitle: { fontSize: 22, fontWeight: '800', color: colors.text.primary, marginBottom: 8 },
+        successSub: { fontSize: 15, color: colors.text.secondary, textAlign: 'center' },
+      }),
+    [colors],
+  );
 
   if (joined) {
     return (
@@ -85,13 +99,32 @@ function WaitlistScreen() {
 
       <View style={styles.section}>
         <Text style={styles.label}>Service needed *</Text>
-        <TextInput style={styles.input} placeholder="e.g. Haircut, Facial, Massage" placeholderTextColor={colors.text.tertiary} value={serviceType} onChangeText={setServiceType} />
+        <TextInput
+          style={styles.input}
+          placeholder="e.g. Haircut, Facial, Massage"
+          placeholderTextColor={colors.text.tertiary}
+          value={serviceType}
+          onChangeText={setServiceType}
+        />
 
         <Text style={styles.label}>Preferred date (optional)</Text>
-        <TextInput style={styles.input} placeholder="e.g. This weekend, Next Monday" placeholderTextColor={colors.text.tertiary} value={preferredDate} onChangeText={setPreferredDate} />
+        <TextInput
+          style={styles.input}
+          placeholder="e.g. This weekend, Next Monday"
+          placeholderTextColor={colors.text.tertiary}
+          value={preferredDate}
+          onChangeText={setPreferredDate}
+        />
 
         <Text style={styles.label}>Additional notes (optional)</Text>
-        <TextInput style={[styles.input, { height: 100 }]} placeholder="Any specific requirements..." placeholderTextColor={colors.text.tertiary} value={notes} onChangeText={setNotes} multiline />
+        <TextInput
+          style={[styles.input, { height: 100 }]}
+          placeholder="Any specific requirements..."
+          placeholderTextColor={colors.text.tertiary}
+          value={notes}
+          onChangeText={setNotes}
+          multiline
+        />
       </View>
 
       <TouchableOpacity style={styles.btn} onPress={handleJoin} disabled={loading}>

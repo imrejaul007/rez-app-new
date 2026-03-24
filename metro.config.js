@@ -146,6 +146,8 @@ const webShimMap = new Map([
 
 const webPackageShimPrefix = '@stripe/stripe-react-native';
 const stripeShimPath = path.join(shimPath, 'stripe-react-native.js');
+const mapsShimPath = path.join(shimPath, 'react-native-maps.js');
+const sentryShimPath = path.join(shimPath, 'sentry-react-native.js');
 
 const markdownItEntitiesJson = path.resolve(
   __dirname, 'node_modules/markdown-it/node_modules/entities/lib/maps/entities.json'
@@ -186,6 +188,14 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 
   // SHORT-CIRCUIT: Skip all shim logic for non-web platforms
   if (platform === 'web') {
+    // Fix: react-native-maps uses UIManager which doesn't exist on web/SSR
+    if (moduleName === 'react-native-maps' || moduleName.startsWith('react-native-maps/')) {
+      return { filePath: mapsShimPath, type: 'sourceFile' };
+    }
+    // Fix: @sentry/react-native is native-only ("browser": null) — crashes on web
+    if (moduleName === '@sentry/react-native' || moduleName.startsWith('@sentry/react-native/')) {
+      return { filePath: sentryShimPath, type: 'sourceFile' };
+    }
     // Check package shim (single string check, not a loop)
     if (moduleName === webPackageShimPrefix || moduleName.startsWith(webPackageShimPrefix + '/')) {
       return { filePath: stripeShimPath, type: 'sourceFile' };
