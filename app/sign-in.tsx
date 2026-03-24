@@ -57,6 +57,9 @@ function SignInScreen() {
   const [otpTimer, setOtpTimer] = useState(0);
   const [canResendOTP, setCanResendOTP] = useState(false);
   const [slowLoadingMsg, setSlowLoadingMsg] = useState('');
+  // Local button-level loading — separate from global authLoading (which starts
+  // true during app init and would permanently disable the button on cold start)
+  const [isSending, setIsSending] = useState(false);
   const isMounted = useIsMounted();
 
   // OTP timer effect
@@ -64,7 +67,7 @@ function SignInScreen() {
     let interval: ReturnType<typeof setInterval>;
     if (otpTimer > 0) {
       interval = setInterval(() => {
-        setOtpTimer(prev => {
+        setOtpTimer((prev) => {
           if (prev <= 1) {
             setCanResendOTP(true);
             return 0;
@@ -106,20 +109,20 @@ function SignInScreen() {
   };
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field as keyof typeof errors]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
   const handleRequestOTP = async () => {
     if (!formData.phoneNumber.trim()) {
-      setErrors(prev => ({ ...prev, phoneNumber: 'Phone number is required' }));
+      setErrors((prev) => ({ ...prev, phoneNumber: 'Phone number is required' }));
       return;
     }
 
     if (!validatePhoneNumber(formData.phoneNumber)) {
-      setErrors(prev => ({ ...prev, phoneNumber: 'Please enter a valid phone number' }));
+      setErrors((prev) => ({ ...prev, phoneNumber: 'Please enter a valid phone number' }));
       return;
     }
 
@@ -133,6 +136,7 @@ function SignInScreen() {
       if (isMounted()) setSlowLoadingMsg('Waking up server, please wait…');
     }, 5000);
 
+    setIsSending(true);
     try {
       const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
       await actions.sendOTP(formattedPhone);
@@ -152,51 +156,56 @@ function SignInScreen() {
 
       platformAlertSimple(
         'OTP Sent',
-        `Verification code sent to ${selectedCountry.dialCode}${formData.phoneNumber}${__DEV__ ? '\n\nFor demo, use: 123456' : ''}`
+        `Verification code sent to ${selectedCountry.dialCode}${formData.phoneNumber}${__DEV__ ? '\n\nFor demo, use: 123456' : ''}`,
       );
     } catch (error: any) {
       clearTimeout(slowHintTimer);
       if (isMounted()) setSlowLoadingMsg('');
       const errorMessage = error?.message || authError || 'Failed to send OTP. Please try again.';
 
-      if (errorMessage.toLowerCase().includes('user not found') ||
-          errorMessage.toLowerCase().includes('user does not exist') ||
-          errorMessage.toLowerCase().includes("user doesn't exist") ||
-          errorMessage.toLowerCase().includes('please sign up')) {
-        setErrors(prev => ({
+      if (
+        errorMessage.toLowerCase().includes('user not found') ||
+        errorMessage.toLowerCase().includes('user does not exist') ||
+        errorMessage.toLowerCase().includes("user doesn't exist") ||
+        errorMessage.toLowerCase().includes('please sign up')
+      ) {
+        setErrors((prev) => ({
           ...prev,
-          phoneNumber: 'This phone number is not registered. Please sign up first.'
+          phoneNumber: 'This phone number is not registered. Please sign up first.',
         }));
 
         platformAlertConfirm(
           'User Not Found',
           'This phone number is not registered. Please sign up first.',
           () => router.push('/onboarding/splash'),
-          'Sign Up'
+          'Sign Up',
         );
       } else {
         if (!isMounted()) return;
-        setErrors(prev => ({
+        setErrors((prev) => ({
           ...prev,
-          phoneNumber: errorMessage
+          phoneNumber: errorMessage,
         }));
         platformAlertSimple('Error', errorMessage);
       }
       actions.clearError();
+    } finally {
+      if (isMounted()) setIsSending(false);
     }
   };
 
   const handleVerifyOTP = async () => {
     if (!formData.otp.trim()) {
-      setErrors(prev => ({ ...prev, otp: 'OTP is required' }));
+      setErrors((prev) => ({ ...prev, otp: 'OTP is required' }));
       return;
     }
 
     if (!validateOTP(formData.otp)) {
-      setErrors(prev => ({ ...prev, otp: 'Please enter a valid 6-digit OTP' }));
+      setErrors((prev) => ({ ...prev, otp: 'Please enter a valid 6-digit OTP' }));
       return;
     }
 
+    setIsSending(true);
     try {
       const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
       await actions.login(formattedPhone, formData.otp);
@@ -207,11 +216,13 @@ function SignInScreen() {
     } catch (error: any) {
       const errorMessage = error?.message || authError || 'Invalid OTP. Please try again.';
       if (!isMounted()) return;
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        otp: errorMessage
+        otp: errorMessage,
       }));
       actions.clearError();
+    } finally {
+      if (isMounted()) setIsSending(false);
     }
   };
 
@@ -229,7 +240,7 @@ function SignInScreen() {
     } catch (error: any) {
       const errorMessage = error?.message || authError || 'Failed to resend OTP. Please try again.';
       if (!isMounted()) return;
-      setErrors(prev => ({ ...prev, otp: errorMessage }));
+      setErrors((prev) => ({ ...prev, otp: errorMessage }));
       platformAlertSimple('Error', errorMessage);
       actions.clearError();
     }
@@ -237,8 +248,8 @@ function SignInScreen() {
 
   const handleBackToPhone = () => {
     setStep('phone');
-    setFormData(prev => ({ ...prev, otp: '' }));
-    setErrors(prev => ({ ...prev, otp: '' }));
+    setFormData((prev) => ({ ...prev, otp: '' }));
+    setErrors((prev) => ({ ...prev, otp: '' }));
     setOtpTimer(0);
     setCanResendOTP(false);
   };
@@ -263,11 +274,7 @@ function SignInScreen() {
         <View style={styles.header}>
           {/* App Logo */}
           <View style={styles.logoContainer}>
-            <CachedImage
-              source={BRAND.LOGO_IMAGE}
-              style={styles.logoImage}
-              contentFit="contain"
-            />
+            <CachedImage source={BRAND.LOGO_IMAGE} style={styles.logoImage} contentFit="contain" />
           </View>
 
           <Text style={styles.title}>Welcome Back!</Text>
@@ -306,22 +313,21 @@ function SignInScreen() {
                 />
               </View>
             </View>
-            {errors.phoneNumber ? (
-              <Text style={styles.errorText}>{errors.phoneNumber}</Text>
-            ) : null}
+            {errors.phoneNumber ? <Text style={styles.errorText}>{errors.phoneNumber}</Text> : null}
           </View>
 
           {/* Primary Button with Gradient */}
           <Pressable
             style={styles.primaryButtonWrapper}
             onPress={handleRequestOTP}
-            disabled={authLoading}
-           
-            accessibilityLabel={authLoading ? "Sending OTP" : "Send OTP to phone number"}
+            disabled={isSending}
+            accessibilityLabel={isSending ? 'Sending OTP' : 'Send OTP to phone number'}
             accessibilityRole="button"
           >
-            <View style={[styles.primaryButton, { backgroundColor: authLoading ? colors.neutral[300] : colors.brand.purple }]}>
-              {authLoading ? (
+            <View
+              style={[styles.primaryButton, { backgroundColor: isSending ? colors.neutral[300] : colors.brand.purple }]}
+            >
+              {isSending ? (
                 <LoadingSpinner size="small" color={colors.text.inverse} />
               ) : (
                 <>
@@ -369,10 +375,7 @@ function SignInScreen() {
 
           {/* Shield Icon */}
           <View style={styles.shieldIconContainer}>
-            <LinearGradient
-              colors={[colors.brand.purple, colors.brand.purpleDeep]}
-              style={styles.shieldIcon}
-            >
+            <LinearGradient colors={[colors.brand.purple, colors.brand.purpleDeep]} style={styles.shieldIcon}>
               <Ionicons name="shield-checkmark" size={28} color={colors.text.inverse} />
             </LinearGradient>
           </View>
@@ -380,7 +383,9 @@ function SignInScreen() {
           <Text style={styles.title}>Enter OTP</Text>
           <Text style={styles.subtitle}>
             We've sent a verification code to{'\n'}
-            <Text style={styles.phoneNumber}>{selectedCountry.dialCode} {formData.phoneNumber}</Text>
+            <Text style={styles.phoneNumber}>
+              {selectedCountry.dialCode} {formData.phoneNumber}
+            </Text>
           </Text>
 
           {/* Brand Underline */}
@@ -404,9 +409,7 @@ function SignInScreen() {
             maxLength={6}
             error={errors.otp}
             containerStyle={styles.inputContainer}
-            leftIcon={
-              <Ionicons name="keypad-outline" size={20} color={colors.brand.purple} />
-            }
+            leftIcon={<Ionicons name="keypad-outline" size={20} color={colors.brand.purple} />}
           />
 
           <View style={styles.otpActions}>
@@ -416,17 +419,8 @@ function SignInScreen() {
                 <Text style={styles.timerText}>Resend OTP in {otpTimer}s</Text>
               </View>
             ) : (
-              <Pressable
-                onPress={handleResendOTP}
-                disabled={!canResendOTP}
-                style={styles.resendButton}
-              >
-                <Text style={[
-                  styles.resendText,
-                  !canResendOTP && styles.resendTextDisabled
-                ]}>
-                  Resend OTP
-                </Text>
+              <Pressable onPress={handleResendOTP} disabled={!canResendOTP} style={styles.resendButton}>
+                <Text style={[styles.resendText, !canResendOTP && styles.resendTextDisabled]}>Resend OTP</Text>
               </Pressable>
             )}
           </View>
@@ -435,13 +429,14 @@ function SignInScreen() {
           <Pressable
             style={styles.primaryButtonWrapper}
             onPress={handleVerifyOTP}
-            disabled={authLoading}
-           
-            accessibilityLabel={authLoading ? "Verifying OTP" : "Verify OTP and sign in"}
+            disabled={isSending}
+            accessibilityLabel={isSending ? 'Verifying OTP' : 'Verify OTP and sign in'}
             accessibilityRole="button"
           >
-            <View style={[styles.primaryButton, { backgroundColor: authLoading ? colors.neutral[300] : colors.brand.purple }]}>
-              {authLoading ? (
+            <View
+              style={[styles.primaryButton, { backgroundColor: isSending ? colors.neutral[300] : colors.brand.purple }]}
+            >
+              {isSending ? (
                 <LoadingSpinner size="small" color={colors.text.inverse} />
               ) : (
                 <>
@@ -478,10 +473,7 @@ function SignInScreen() {
         <View style={[styles.circle, styles.circleGreenTiny]} />
       </View>
 
-      <KeyboardAvoidingView
-        style={styles.keyboardContainer}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
+      <KeyboardAvoidingView style={styles.keyboardContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="handled"
@@ -498,15 +490,14 @@ function SignInScreen() {
                   {
                     backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)',
                     borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.3)',
-                  }
+                  },
                 ]}
                 onPress={handleGoToSignUp}
                 accessibilityLabel="Don't have an account? Sign up"
                 accessibilityRole="button"
               >
                 <Text style={styles.secondaryButtonText}>
-                  Don't have an account?{' '}
-                  <Text style={styles.signUpText}>Sign Up</Text>
+                  Don't have an account? <Text style={styles.signUpText}>Sign Up</Text>
                 </Text>
               </Pressable>
 
@@ -517,8 +508,7 @@ function SignInScreen() {
                 accessibilityRole="button"
               >
                 <Text style={styles.recoveryLinkText}>
-                  Can't access your account?{' '}
-                  <Text style={styles.recoveryText}>Recover</Text>
+                  Can't access your account? <Text style={styles.recoveryText}>Recover</Text>
                 </Text>
               </Pressable>
             </View>
