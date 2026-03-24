@@ -534,6 +534,13 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   };
 
   const checkAuthStatus = async () => {
+    // Safety net: if the entire auth check hangs (e.g. Render cold-start takes
+    // minutes), give up after 12 s and show the sign-in screen so the user is
+    // never permanently locked out.
+    const authTimeout = setTimeout(() => {
+      dispatch({ type: 'AUTH_LOGOUT' });
+    }, 12_000);
+
     try {
       // Read stored auth FIRST, then only show loading if nothing is cached.
       // This avoids the flash: authenticated → loading skeleton → authenticated.
@@ -635,6 +642,8 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       }
     } catch (error) {
       dispatch({ type: 'AUTH_LOGOUT' });
+    } finally {
+      clearTimeout(authTimeout);
     }
   };
 
