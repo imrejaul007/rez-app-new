@@ -9,6 +9,7 @@ import {
   Platform,
   ScrollView,
   TextInput,
+  useColorScheme,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import CachedImage from '@/components/ui/CachedImage';
@@ -24,6 +25,7 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { BRAND } from '@/constants/brand';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import * as Haptics from 'expo-haptics';
 
 // Rez Design System Colors
 
@@ -35,6 +37,8 @@ function SignInScreen() {
   const authLoading = useAuthLoading();
   const authError = useAuthError();
   const actions = useAuthActions();
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
 
   const [formData, setFormData] = useState({
     phoneNumber: '',
@@ -119,6 +123,11 @@ function SignInScreen() {
       return;
     }
 
+    // Haptic feedback on OTP send
+    try {
+      await Haptics.selectionAsync();
+    } catch {}
+
     // Show "waking up server" hint after 5s so users know it's a cold start, not a crash
     const slowHintTimer = setTimeout(() => {
       if (isMounted()) setSlowLoadingMsg('Waking up server, please wait…');
@@ -135,6 +144,11 @@ function SignInScreen() {
       setOtpTimer(60);
       if (!isMounted()) return;
       setCanResendOTP(false);
+
+      // Haptic feedback on successful OTP send
+      try {
+        await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      } catch {}
 
       platformAlertSimple(
         'OTP Sent',
@@ -186,6 +200,10 @@ function SignInScreen() {
     try {
       const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
       await actions.login(formattedPhone, formData.otp);
+      // Haptic feedback on successful login
+      try {
+        await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } catch {}
     } catch (error: any) {
       const errorMessage = error?.message || authError || 'Invalid OTP. Please try again.';
       if (!isMounted()) return;
@@ -340,6 +358,7 @@ function SignInScreen() {
           <Pressable
             style={styles.backButton}
             onPress={handleBackToPhone}
+            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
             accessibilityLabel="Go back to phone number entry"
             accessibilityRole="button"
           >
@@ -474,7 +493,13 @@ function SignInScreen() {
             {/* Footer */}
             <View style={styles.footer}>
               <Pressable
-                style={styles.secondaryButton}
+                style={[
+                  styles.secondaryButton,
+                  {
+                    backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)',
+                    borderColor: isDark ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.3)',
+                  }
+                ]}
                 onPress={handleGoToSignUp}
                 accessibilityLabel="Don't have an account? Sign up"
                 accessibilityRole="button"
@@ -631,9 +656,6 @@ const styles = StyleSheet.create({
 
   // Back Button
   backButton: {
-    position: 'absolute',
-    top: -8,
-    left: -8,
     zIndex: 10,
   },
   backButtonInner: {

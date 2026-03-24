@@ -376,10 +376,9 @@ function ProfilePage() {
       key={item.id}
       style={styles.iconGridItem}
       onPress={() => handleIconGridItemPress(item)}
-     
-      accessibilityLabel={`${item.title}, ${item.count || 0} items`}
+      accessibilityLabel={item.title}
       accessibilityRole="button"
-      accessibilityHint={`Double tap to view your ${item.title.toLowerCase()}`}
+      accessibilityHint={`${item.count || 0} items. Double tap to view your ${item.title.toLowerCase()}`}
     >
       <View style={[styles.iconContainer, { backgroundColor: item.backgroundColor }]}>
         <Ionicons
@@ -902,7 +901,7 @@ function ProfilePage() {
               </Pressable>
             </View>
             {statsLoading ? (
-              <ThemedText style={styles.loadingText}>Loading stats...</ThemedText>
+              <View style={{ height: 60, backgroundColor: '#E0E0E0', borderRadius: 8, marginVertical: 8 }} />
             ) : statistics ? (
               <View style={styles.statsGrid}>
                 <Pressable
@@ -1482,7 +1481,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   iconLabel: {
-    fontSize: 11,
+    fontSize: 12, // min readable font size
     fontWeight: '700',
     color: PROFILE_COLORS.primaryDark,
     textAlign: 'center',
@@ -1560,7 +1559,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#2E7D32',
   },
   menuBadgeText: {
-    fontSize: 11,
+    fontSize: 12, // min readable font size
     fontWeight: '700',
     color: 'white',
   },
@@ -1624,7 +1623,7 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   statLabel: {
-    fontSize: 11,
+    fontSize: 12, // min readable font size
     color: PROFILE_COLORS.textSecondary,
     fontWeight: '600',
     textTransform: 'uppercase',

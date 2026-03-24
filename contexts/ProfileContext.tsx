@@ -167,8 +167,9 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
     const balance = typeof w?.balance === 'object' ? (w.balance as any).available || (w.balance as any).total || 0 : w?.balance || 0;
     if (balance || w?.totalEarned) return; // wallet data looks populated
 
+    let mounted = true;
     walletApi.getBalance().then((res) => {
-      if (res.success && res.data) {
+      if (mounted && res.success && res.data) {
         setWalletOverride({
           balance: (res.data as any).balance?.available || (res.data as any).balance || 0,
           totalEarned: (res.data as any).totalEarned || 0,
@@ -177,6 +178,8 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
         });
       }
     }).catch(() => { /* non-blocking */ });
+
+    return () => { mounted = false; };
   }, [authUser, isAuthenticated, authLoading]);
 
   // Fetch profile completion from backend (single source of truth)

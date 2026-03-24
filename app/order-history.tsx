@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   Dimensions,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -242,11 +243,12 @@ function OrderHistoryPage() {
   }
 
   return (
-    <ThemedView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.brand.green} />
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex:1}}>
+      <ThemedView style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.brand.green} />
 
-      {/* Header */}
-      <LinearGradient colors={[colors.brand.green, colors.brand.teal]} style={styles.headerBg}>
+        {/* Header */}
+        <LinearGradient colors={[colors.brand.green, colors.brand.teal]} style={styles.headerBg}>
         <View style={styles.headerContainer}>
           <Pressable style={styles.backButton} onPress={handleBackPress}
             accessibilityLabel="Go back" accessibilityRole="button">
@@ -294,6 +296,7 @@ function OrderHistoryPage() {
           contentContainerStyle={styles.listContainer}
           showsVerticalScrollIndicator={false}
           estimatedItemSize={120}
+          keyboardShouldPersistTaps="handled"
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -316,7 +319,8 @@ function OrderHistoryPage() {
         onApply={handleFilterApply}
         currentFilter={selectedFilter}
       />
-    </ThemedView>
+      </ThemedView>
+    </KeyboardAvoidingView>
   );
 }
 

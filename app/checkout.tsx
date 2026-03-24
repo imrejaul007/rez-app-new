@@ -8,6 +8,7 @@ import {
   Text,
   Pressable,
   Dimensions,
+  Keyboard,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useCheckout } from '@/hooks/useCheckout';
@@ -59,7 +60,7 @@ const DeliverySlotPickerImpl = memo(({ selectedSlot, onSelectSlot }: { selectedS
   }), []);
 
   const slotTextStyle = useCallback((isSelected: boolean) => ({
-    fontSize: isSmallDevice ? 11 : 12,
+    fontSize: 13, // readable on all devices without conditional logic
     fontWeight: '600' as const,
     color: isSelected ? '#fff' : colors.text.secondary,
   }), []);
@@ -98,7 +99,7 @@ const DeliverySlotPickerImpl = memo(({ selectedSlot, onSelectSlot }: { selectedS
 
   return (
     <View style={containerStyle}>
-      <Text style={{ fontSize: isSmallDevice ? 13 : 14, fontWeight: '700', color: colors.text.primary, marginBottom: Spacing.sm }}>Delivery Time Slot</Text>
+      <Text style={{ fontSize: 13, fontWeight: '700', color: colors.text.primary, marginBottom: Spacing.sm }}>Delivery Time Slot</Text>
       <View style={rowStyle}>
         {DELIVERY_SLOTS.map(renderSlotButton)}
       </View>
@@ -116,6 +117,7 @@ function CheckoutPage() {
   const currencySymbol = getCurrencySymbol();
   const authUser = useAuthUser();
   const userLoyaltyTier = (authUser as any)?.loyaltyTier || null;
+  const scrollViewRef = useRef<ScrollView>(null);
 
   // Core checkout state & logic
   const { state, actions, handlers: checkoutHandlers } = useCheckout(params.orderId);
@@ -150,6 +152,9 @@ function CheckoutPage() {
 
   useEffect(() => {
     if (validationState.validationResult && errorCount > 0) {
+      // Focus management: dismiss keyboard and scroll to top on validation error
+      Keyboard.dismiss();
+      scrollViewRef.current?.scrollTo({ y: 0, animated: true });
       dispatch({ type: 'SET_FIELD', field: 'showValidationModal', value: true });
     }
   }, [errorCount, validationState.validationResult, dispatch]);
@@ -201,7 +206,7 @@ function CheckoutPage() {
           onBack={checkoutHandlers.handleBackNavigation}
         />
 
-        <ScrollView style={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+        <ScrollView ref={scrollViewRef} style={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} scrollEventThrottle={16}>
           {uiState.showWarningBanner && validationState.validationResult && validationState.validationResult.issues.length > 0 && (
             <StockWarningBanner
               issues={validationState.validationResult.issues}

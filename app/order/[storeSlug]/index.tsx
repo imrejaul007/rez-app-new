@@ -28,6 +28,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeInDown, FadeInUp, SlideInUp } from 'react-native-reanimated';
 import { fetchWebStore, WebMenuItem, WebMenuCategory, WebStoreData, CartItem } from '@/services/webOrderingApi';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { colors as themeColors } from '@/constants/theme';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -47,8 +48,8 @@ function cartCount(cart: CartItem[]): number {
 
 function VegDot({ isVeg }: { isVeg: boolean }) {
   return (
-    <View style={[styles.vegDot, { borderColor: isVeg ? '#16A34A' : '#DC2626' }]}>
-      <View style={[styles.vegDotInner, { backgroundColor: isVeg ? '#16A34A' : '#DC2626' }]} />
+    <View style={[styles.vegDot, { borderColor: isVeg ? themeColors.successScale[600] : themeColors.errorScale[600] }]}>
+      <View style={[styles.vegDotInner, { backgroundColor: isVeg ? themeColors.successScale[600] : themeColors.errorScale[600] }]} />
     </View>
   );
 }
@@ -66,12 +67,12 @@ function QuantityStepper({
 }) {
   return (
     <View style={styles.stepper}>
-      <TouchableOpacity style={styles.stepperBtn} onPress={onDecrease}>
-        <Ionicons name="remove" size={16} color="#7C3AED" />
+      <TouchableOpacity style={styles.stepperBtn} onPress={onDecrease} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        <Ionicons name="remove" size={16} color={themeColors.brand.purple} />
       </TouchableOpacity>
       <Text style={styles.stepperCount}>{quantity}</Text>
-      <TouchableOpacity style={styles.stepperBtn} onPress={onIncrease}>
-        <Ionicons name="add" size={16} color="#7C3AED" />
+      <TouchableOpacity style={styles.stepperBtn} onPress={onIncrease} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+        <Ionicons name="add" size={16} color={themeColors.brand.purple} />
       </TouchableOpacity>
     </View>
   );
@@ -127,7 +128,9 @@ function MenuItemCard({
       {/* Right: image + add/stepper */}
       <View style={styles.itemRight}>
         {item.image ? (
-          <Image source={{ uri: item.image }} style={styles.itemImage} />
+          <View style={{ backgroundColor: '#F3F4F6' }}>
+            <Image source={{ uri: item.image }} style={styles.itemImage} />
+          </View>
         ) : (
           <View style={[styles.itemImage, styles.itemImagePlaceholder]}>
             <Ionicons name="fast-food-outline" size={26} color="#D1D5DB" />
@@ -139,9 +142,9 @@ function MenuItemCard({
             <Text style={styles.unavailableText}>Unavailable</Text>
           </View>
         ) : quantity === 0 ? (
-          <TouchableOpacity style={styles.addBtn} onPress={onAdd}>
+          <TouchableOpacity style={styles.addBtn} onPress={onAdd} accessibilityLabel="Add item" accessibilityRole="button">
             <Text style={styles.addBtnText}>ADD</Text>
-            <Ionicons name="add" size={14} color="#7C3AED" />
+            <Ionicons name="add" size={14} color={themeColors.brand.purple} />
           </TouchableOpacity>
         ) : (
           <QuantityStepper quantity={quantity} onIncrease={onIncrease} onDecrease={onDecrease} />
@@ -272,7 +275,7 @@ function WebOrderMenuScreen() {
   if (loading) {
     return (
       <View style={styles.centerScreen}>
-        <ActivityIndicator size="large" color="#7C3AED" />
+        <ActivityIndicator size="large" color={themeColors.brand.purple} />
         <Text style={styles.loadingText}>Loading menu…</Text>
       </View>
     );
@@ -281,7 +284,7 @@ function WebOrderMenuScreen() {
   if (error || !storeData) {
     return (
       <View style={styles.centerScreen}>
-        <Ionicons name="alert-circle-outline" size={52} color="#EF4444" />
+        <Ionicons name="alert-circle-outline" size={52} color={themeColors.errorScale[600]} />
         <Text style={styles.errorTitle}>Couldn't load menu</Text>
         <Text style={styles.errorSub}>{error ?? 'Store not found'}</Text>
       </View>
@@ -293,8 +296,8 @@ function WebOrderMenuScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
       {/* Store header */}
-      <LinearGradient colors={['#7C3AED', '#6366F1']} style={styles.header}>
-        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : undefined} style={styles.backBtn}>
+      <LinearGradient colors={[themeColors.brand.purple, themeColors.brand.purpleMuted]} style={styles.header}>
+        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : undefined} style={styles.backBtn} accessibilityLabel="Go back" accessibilityRole="button">
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
@@ -375,7 +378,7 @@ function WebOrderMenuScreen() {
               <Text style={styles.cartTaxNote}>+{formatCurrency(taxes)} GST</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.cartCheckoutBtn} onPress={handleCheckout}>
+          <TouchableOpacity style={styles.cartCheckoutBtn} onPress={handleCheckout} accessibilityLabel="View cart and checkout" accessibilityRole="button">
             <Text style={styles.cartCheckoutText}>{formatCurrency(total + taxes)}</Text>
             <Text style={styles.cartCheckoutArrow}>View Cart →</Text>
           </TouchableOpacity>
@@ -439,19 +442,19 @@ const styles = StyleSheet.create({
   itemPrice: { fontSize: 14, fontWeight: '700', color: '#111827' },
   itemOriginalPrice: { fontSize: 11, color: '#9CA3AF', textDecorationLine: 'line-through' },
   prepTimeRow: { flexDirection: 'row', alignItems: 'center', gap: 3, marginTop: 4 },
-  prepTimeText: { fontSize: 10, color: '#9CA3AF' },
+  prepTimeText: { fontSize: 12, color: '#9CA3AF' }, // min readable font size
   itemRight: { width: 90, alignItems: 'center', gap: 8 },
   itemImage: { width: 86, height: 86, borderRadius: 10 },
   itemImagePlaceholder: { backgroundColor: '#F9FAFB', justifyContent: 'center', alignItems: 'center' },
   addBtn: {
-    borderWidth: 1.5, borderColor: '#7C3AED', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 5,
-    flexDirection: 'row', alignItems: 'center', gap: 2,
+    borderWidth: 1.5, borderColor: '#7C3AED', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 5, minHeight: 44,
+    flexDirection: 'row', alignItems: 'center', gap: 2, justifyContent: 'center',
   },
   addBtnText: { fontSize: 12, fontWeight: '700', color: '#7C3AED' },
   unavailableChip: { backgroundColor: '#FEE2E2', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4 },
-  unavailableText: { fontSize: 10, fontWeight: '600', color: '#DC2626' },
+  unavailableText: { fontSize: 11, fontWeight: '600', color: '#DC2626' }, // min readable font size
   stepper: { flexDirection: 'row', alignItems: 'center', gap: 0, backgroundColor: '#F5F3FF', borderRadius: 8, overflow: 'hidden', borderWidth: 1.5, borderColor: '#7C3AED' },
-  stepperBtn: { width: 28, height: 28, justifyContent: 'center', alignItems: 'center' },
+  stepperBtn: { minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' },
   stepperCount: { minWidth: 22, textAlign: 'center', fontSize: 13, fontWeight: '700', color: '#7C3AED' },
 
   // Empty search
@@ -462,14 +465,14 @@ const styles = StyleSheet.create({
   cartBar: {
     position: 'absolute', bottom: 16, left: 16, right: 16,
     flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#7C3AED', borderRadius: 16, padding: 12,
+    backgroundColor: '#7C3AED', borderRadius: 16, padding: 12, minHeight: 60,
     shadowColor: '#7C3AED', shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 8,
   },
   cartBarLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
   cartCountBadge: { width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
   cartCountText: { color: '#fff', fontWeight: '800', fontSize: 14 },
   cartItemsLabel: { fontSize: 13, fontWeight: '700', color: '#fff' },
-  cartTaxNote: { fontSize: 10, color: 'rgba(255,255,255,0.7)' },
+  cartTaxNote: { fontSize: 12, color: 'rgba(255,255,255,0.7)' }, // min readable font size
   cartCheckoutBtn: { alignItems: 'flex-end' },
   cartCheckoutText: { fontSize: 15, fontWeight: '800', color: '#fff' },
   cartCheckoutArrow: { fontSize: 11, color: 'rgba(255,255,255,0.8)', marginTop: 1 },

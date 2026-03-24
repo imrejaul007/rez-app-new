@@ -39,7 +39,7 @@ function PaymentBottomSheet({
   return (
     <View style={styles.paymentBottomSheet}>
       {/* Main Pay Button - Always Visible */}
-      <Pressable style={styles.payNowBar} onPress={() => { triggerImpact('Medium'); onToggleExpanded(); }}>
+      <Pressable style={styles.payNowBar} onPress={() => { triggerImpact('Medium'); onToggleExpanded(); }} accessibilityLabel="Payment total" accessibilityRole="button" accessibilityHint={`${paymentExpanded ? 'Collapse' : 'Expand'} payment options`}>
         <View style={styles.payNowLeft}>
           <ThemedText style={styles.payNowAmount}>{currencySymbol}{finalAmount}</ThemedText>
           <ThemedText style={styles.payNowLabel}>Total Amount</ThemedText>
@@ -75,6 +75,9 @@ function PaymentBottomSheet({
               ]}
               onPress={() => { triggerImpact('Heavy'); onPaymentSelect('wallet'); }}
               disabled={loading || totalWalletBalance < totalPayable || !canCheckout}
+              accessibilityLabel="Pay with wallet"
+              accessibilityRole="button"
+              accessibilityHint={`Available balance: ${totalWalletBalance} coins`}
             >
               <View style={[styles.quickPayIcon, { backgroundColor: colors.brand.purpleLight }]}>
                 <CachedImage
@@ -95,6 +98,9 @@ function PaymentBottomSheet({
               ]}
               onPress={() => { triggerImpact('Heavy'); onPaymentSelect('cod'); }}
               disabled={loading || !canCheckout || hasServiceItems}
+              accessibilityLabel="Cash on delivery"
+              accessibilityRole="button"
+              accessibilityHint="Pay when your order arrives"
             >
               <View style={[styles.quickPayIcon, { backgroundColor: hasServiceItems ? colors.neutral[400] : colors.warningScale[400] }]}>
                 <Ionicons name="cash" size={20} color="white" />
@@ -110,6 +116,9 @@ function PaymentBottomSheet({
             style={[styles.otherPaymentOption, loading && { opacity: 0.5 }]}
             onPress={() => { if (!loading && canCheckout) { triggerImpact('Heavy'); onPaymentSelect('razorpay'); } }}
             disabled={loading || !canCheckout}
+            accessibilityLabel="Other payment methods"
+            accessibilityRole="button"
+            accessibilityHint="UPI, Credit/Debit Card, or Net Banking"
           >
             <View style={styles.otherPaymentLeft}>
               <Ionicons name="card-outline" size={22} color={colors.neutral[700]} />

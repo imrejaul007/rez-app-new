@@ -10,7 +10,7 @@ import {
 import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
 import { platformAlertSimple } from '@/utils/platformAlert';
-import { SafeAreaView } from 'react-native-safe-area-context'; // ✅ supports 'edges'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'; // ✅ supports 'edges'
 
 import { useRouter, useFocusEffect, useLocalSearchParams } from 'expo-router';
 import CartHeader from '@/components/cart/CartHeader';
@@ -63,6 +63,7 @@ function CartPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const params = useLocalSearchParams<{ offerRedemptionCode?: string }>();
+  const insets = useSafeAreaInsets();
   const cartState = useCartStore((s) => s.state);
   const cartActions = useCartStore((s) => s.actions);
   const totalBalance = useTotalBalance();
@@ -539,6 +540,8 @@ function CartPage() {
         <Pressable
           style={styles.browseCTAButton}
           onPress={() => router.push('/(tabs)')}
+          accessibilityLabel="Browse stores"
+          accessibilityRole="button"
         >
           <Ionicons name="storefront" size={20} color={colors.text.inverse} />
           <ThemedText style={styles.browseCTAButtonText}>Browse Stores</ThemedText>
@@ -585,10 +588,10 @@ function CartPage() {
               {
                 paddingHorizontal: isSmallDevice ? 12 : 16,
                 paddingTop: 16,
-                paddingBottom: currentItems.length < 3 ? 80 : 120,
+                paddingBottom: insets.bottom + (currentItems.length < 3 ? 80 : 120),
               },
               currentItems.length === 0 && styles.emptyListContent,
-            ], [currentItems.length])}
+            ], [currentItems.length, insets.bottom])}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
@@ -613,7 +616,7 @@ function CartPage() {
 
       {/* Wallet Balance Banner */}
       {overallItemCount > 0 && isAuthenticated && !walletLoading && totalBalance > 0 && (
-        <Pressable style={styles.walletBanner} onPress={handleBuyNow}>
+        <Pressable style={styles.walletBanner} onPress={handleBuyNow} accessibilityLabel="Wallet balance" accessibilityRole="button" accessibilityHint={`You have ${totalBalance} coins available. Double tap to apply at checkout`}>
           <CachedImage
             source={BRAND.COIN_IMAGE}
             style={styles.walletBannerCoin}

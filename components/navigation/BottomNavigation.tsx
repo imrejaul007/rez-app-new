@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 import { useRouter, usePathname } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -126,6 +127,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   const pathname = usePathname();
   const { isDark } = useTheme();
   const { segment, statedIdentity } = useUserIdentityStore();
+  const insets = useSafeAreaInsets();
+  const [imageError, setImageError] = useState(false);
 
   // Get active home tab from context (with fallback for when context is not available)
   let isRezMallActive = false;
@@ -327,7 +330,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   const renderTab = (tab: { name: string; route: string; icon: string; isActive: boolean; showBadge?: boolean }, index?: number) => {
     // Theme-aware tab colors
     const activeColor = isPriveActive ? colors.brand.goldAccent : isDark ? colors.lightMustard : colors.secondary[600];
-    const inactiveColor = isPriveActive ? '#A0A0A0' : isDark ? colors.neutral[500] : colors.neutral[500];
+    const inactiveColor = isPriveActive ? '#A0A0A0' : isDark ? colors.neutral[400] : colors.neutral[500];
 
     return (
       <Pressable
@@ -349,7 +352,9 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
             <View style={styles.badgeDot} />
           )}
         </View>
-        <Text style={[
+        <Text
+          numberOfLines={1}
+          style={[
           styles.tabLabelText,
           { color: tab.isActive ? activeColor : inactiveColor }
         ]}>
@@ -391,15 +396,16 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
     ];
 
     return (
-      <View style={[styles.cashStoreContainer, style]}>
+      <View style={[styles.cashStoreContainer, { paddingBottom: insets.bottom }, style]}>
         {/* Simple flat background */}
         <View style={[
           styles.cashStoreBackground,
+          { height: 70 + insets.bottom },
           isDark && { backgroundColor: 'rgba(30, 30, 30, 0.98)', borderTopColor: 'rgba(255, 255, 255, 0.06)' },
         ]} />
 
         {/* 4 equal tabs */}
-        <View style={styles.cashStoreTabBar}>
+        <View style={[styles.cashStoreTabBar, { paddingBottom: insets.bottom }]}>
           {cashStoreTabs.map((tab, index) => renderTab(tab, index))}
         </View>
       </View>
@@ -496,7 +502,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   const centerTab = tabs.find(t => t.isCenter)!;
 
   return (
-    <View style={[styles.container, style]} pointerEvents="box-none">
+    <View style={[styles.container, { height: 105 + insets.bottom, paddingBottom: insets.bottom }, style]} pointerEvents="box-none">
       {/* Layer 1: Curved background (dark for Privé) */}
       <CurvedBackground isPrive={isPriveActive} isDark={isDark} />
 
@@ -519,13 +525,22 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
             styles.floatingButtonCircle,
             isPriveActive && styles.floatingButtonCirclePrive,
           ]}>
-            <ExpoImage
-              source={payInStoreIcon}
-              style={styles.payInStoreGif}
-              contentFit="cover"
-              cachePolicy="memory-disk"
-              autoPlay={true}
-            />
+            {!imageError ? (
+              <ExpoImage
+                source={payInStoreIcon}
+                style={styles.payInStoreGif}
+                contentFit="cover"
+                cachePolicy="memory-disk"
+                autoPlay={true}
+                onError={() => setImageError(true)}
+              />
+            ) : (
+              <Ionicons
+                name="ellipse"
+                size={44}
+                color={isPriveActive ? colors.brand.goldAccent : colors.secondary[600]}
+              />
+            )}
           </View>
         </Pressable>
         <Text style={[
