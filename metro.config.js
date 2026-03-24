@@ -188,6 +188,17 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
 
   // SHORT-CIRCUIT: Skip all shim logic for non-web platforms
   if (platform === 'web') {
+    // Fix: react-native-reanimated has "browser": null in its package.json, so Metro
+    // resolves it to an empty stub on web — _WORKLET is never initialized, causing
+    // "_WORKLET is not defined" crashes in any component using useAnimatedStyle etc.
+    // Redirect to the pre-built ESM lib so the real Reanimated web runtime loads.
+    if (moduleName === 'react-native-reanimated') {
+      return {
+        filePath: path.resolve(__dirname, 'node_modules/react-native-reanimated/lib/module/index.js'),
+        type: 'sourceFile',
+      };
+    }
+
     // Fix: react-native-maps uses UIManager which doesn't exist on web/SSR
     if (moduleName === 'react-native-maps' || moduleName.startsWith('react-native-maps/')) {
       return { filePath: mapsShimPath, type: 'sourceFile' };
