@@ -27,13 +27,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
-import {
-  sendWebOtp,
-  verifyWebOtp,
-  createWebOrder,
-  verifyWebPayment,
-  CartItem,
-} from '@/services/webOrderingApi';
+import { sendWebOtp, verifyWebOtp, createWebOrder, verifyWebPayment, CartItem } from '@/services/webOrderingApi';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -52,28 +46,20 @@ function formatCurrency(amount: number): string {
 
 // ─── OTP Input ────────────────────────────────────────────────────────────────
 
-function OtpInput({
-  value,
-  onChange,
-  disabled,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  disabled: boolean;
-}) {
-  const refs = Array.from({ length: 6 }, () => useRef<TextInput>(null));
+function OtpInput({ value, onChange, disabled }: { value: string; onChange: (v: string) => void; disabled: boolean }) {
+  const refs = useRef<(TextInput | null)[]>(Array(6).fill(null));
 
   const handleChange = (char: string, index: number) => {
     const digits = value.split('');
     digits[index] = char.replace(/\D/g, '').slice(-1);
     const next = digits.join('');
     onChange(next);
-    if (char && index < 5) refs[index + 1]?.current?.focus();
+    if (char && index < 5) refs.current[index + 1]?.focus();
   };
 
   const handleKeyPress = (key: string, index: number) => {
     if (key === 'Backspace' && !value[index] && index > 0) {
-      refs[index - 1]?.current?.focus();
+      refs.current[index - 1]?.focus();
     }
   };
 
@@ -82,7 +68,9 @@ function OtpInput({
       {Array.from({ length: 6 }, (_, i) => (
         <TextInput
           key={i}
-          ref={refs[i]}
+          ref={(el) => {
+            refs.current[i] = el;
+          }}
           style={[otpStyles.cell, value[i] ? otpStyles.cellFilled : null]}
           value={value[i] ?? ''}
           onChangeText={(c) => handleChange(c, i)}
@@ -101,8 +89,16 @@ function OtpInput({
 const otpStyles = StyleSheet.create({
   row: { flexDirection: 'row', gap: 10, justifyContent: 'center' },
   cell: {
-    width: 44, height: 52, borderRadius: 12, borderWidth: 1.5, borderColor: '#D1D5DB',
-    textAlign: 'center', fontSize: 20, fontWeight: '700', color: '#111827', backgroundColor: '#F9FAFB',
+    width: 44,
+    height: 52,
+    borderRadius: 12,
+    borderWidth: 1.5,
+    borderColor: '#D1D5DB',
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#111827',
+    backgroundColor: '#F9FAFB',
   },
   cellFilled: { borderColor: '#7C3AED', backgroundColor: '#F5F3FF' },
 });
@@ -120,7 +116,9 @@ function OrderSummary({ cart, gstPercent }: { cart: CartItem[]; gstPercent: numb
       {cart.map((c) => (
         <View key={c.item.id} style={styles.summaryRow}>
           <Text style={styles.summaryQty}>{c.quantity}×</Text>
-          <Text style={styles.summaryName} numberOfLines={1}>{c.item.name}</Text>
+          <Text style={styles.summaryName} numberOfLines={1}>
+            {c.item.name}
+          </Text>
           <Text style={styles.summaryPrice}>{formatCurrency(c.item.price * c.quantity)}</Text>
         </View>
       ))}
@@ -153,11 +151,19 @@ export default function CheckoutScreen() {
   }>();
 
   const cart: CartItem[] = React.useMemo(() => {
-    try { return JSON.parse(params.cartJson || '[]'); } catch { return []; }
+    try {
+      return JSON.parse(params.cartJson || '[]');
+    } catch {
+      return [];
+    }
   }, [params.cartJson]);
 
   const store: StoreInfo | null = React.useMemo(() => {
-    try { return JSON.parse(params.storeJson || 'null'); } catch { return null; }
+    try {
+      return JSON.parse(params.storeJson || 'null');
+    } catch {
+      return null;
+    }
   }, [params.storeJson]);
 
   // ── Customer fields ──
@@ -182,13 +188,21 @@ export default function CheckoutScreen() {
     if (countdownRef.current) clearInterval(countdownRef.current);
     countdownRef.current = setInterval(() => {
       setOtpResendCountdown((p) => {
-        if (p <= 1) { clearInterval(countdownRef.current!); return 0; }
+        if (p <= 1) {
+          clearInterval(countdownRef.current!);
+          return 0;
+        }
         return p - 1;
       });
     }, 1000);
   }, []);
 
-  useEffect(() => () => { if (countdownRef.current) clearInterval(countdownRef.current); }, []);
+  useEffect(
+    () => () => {
+      if (countdownRef.current) clearInterval(countdownRef.current);
+    },
+    [],
+  );
 
   const handleSendOtp = useCallback(async () => {
     const cleaned = phone.replace(/\s/g, '');
@@ -224,7 +238,10 @@ export default function CheckoutScreen() {
 
   const handlePlaceOrder = useCallback(async () => {
     if (!sessionToken || !store) return;
-    if (!name.trim()) { Alert.alert('Name required', 'Please enter your name.'); return; }
+    if (!name.trim()) {
+      Alert.alert('Name required', 'Please enter your name.');
+      return;
+    }
 
     setPlacingOrder(true);
     try {
@@ -354,9 +371,7 @@ export default function CheckoutScreen() {
 
           {/* Phone verification */}
           <Animated.View entering={FadeInDown.delay(160).springify()} style={styles.card}>
-            <Text style={styles.sectionTitle}>
-              {sessionToken ? '✅ Phone Verified' : 'Verify Your Phone'}
-            </Text>
+            <Text style={styles.sectionTitle}>{sessionToken ? '✅ Phone Verified' : 'Verify Your Phone'}</Text>
 
             {!sessionToken && (
               <>
@@ -383,7 +398,11 @@ export default function CheckoutScreen() {
                     onPress={handleSendOtp}
                     disabled={otpLoading}
                   >
-                    {otpLoading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.primaryBtnText}>Send OTP</Text>}
+                    {otpLoading ? (
+                      <ActivityIndicator size="small" color="#fff" />
+                    ) : (
+                      <Text style={styles.primaryBtnText}>Send OTP</Text>
+                    )}
                   </TouchableOpacity>
                 ) : (
                   <>
@@ -391,11 +410,18 @@ export default function CheckoutScreen() {
                     <OtpInput value={otpValue} onChange={setOtpValue} disabled={otpLoading} />
 
                     <TouchableOpacity
-                      style={[styles.primaryBtn, { marginTop: 16, opacity: otpValue.length < 6 || otpLoading ? 0.6 : 1 }]}
+                      style={[
+                        styles.primaryBtn,
+                        { marginTop: 16, opacity: otpValue.length < 6 || otpLoading ? 0.6 : 1 },
+                      ]}
                       onPress={handleVerifyOtp}
                       disabled={otpValue.length < 6 || otpLoading}
                     >
-                      {otpLoading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.primaryBtnText}>Verify OTP</Text>}
+                      {otpLoading ? (
+                        <ActivityIndicator size="small" color="#fff" />
+                      ) : (
+                        <Text style={styles.primaryBtnText}>Verify OTP</Text>
+                      )}
                     </TouchableOpacity>
 
                     <TouchableOpacity
@@ -467,14 +493,28 @@ const styles = StyleSheet.create({
 
   // Cards
   summaryCard: {
-    backgroundColor: '#fff', borderRadius: 16, padding: 16,
-    borderWidth: 1, borderColor: '#F3F4F6',
-    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
   card: {
-    backgroundColor: '#fff', borderRadius: 16, padding: 16,
-    borderWidth: 1, borderColor: '#F3F4F6',
-    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 6, shadowOffset: { width: 0, height: 2 }, elevation: 2,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 2,
   },
   sectionTitle: { fontSize: 15, fontWeight: '800', color: '#111827', marginBottom: 12 },
   summaryRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 5 },
@@ -487,10 +527,24 @@ const styles = StyleSheet.create({
   totalAmount: { fontSize: 16, fontWeight: '800', color: '#7C3AED' },
 
   // Form
-  fieldLabel: { fontSize: 12, fontWeight: '600', color: '#6B7280', marginBottom: 6, textTransform: 'uppercase', letterSpacing: 0.4 },
+  fieldLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6B7280',
+    marginBottom: 6,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
   input: {
-    backgroundColor: '#F9FAFB', borderRadius: 10, borderWidth: 1, borderColor: '#E5E7EB',
-    paddingHorizontal: 12, paddingVertical: 10, fontSize: 14, color: '#111827', marginBottom: 12,
+    backgroundColor: '#F9FAFB',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
+    color: '#111827',
+    marginBottom: 12,
   },
   inputMulti: { minHeight: 72, textAlignVertical: 'top' },
   tableRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
@@ -498,7 +552,14 @@ const styles = StyleSheet.create({
 
   // Phone
   phoneRow: { flexDirection: 'row', gap: 8, alignItems: 'stretch', marginBottom: 12 },
-  phonePrefix: { backgroundColor: '#F3F4F6', borderRadius: 10, borderWidth: 1, borderColor: '#E5E7EB', paddingHorizontal: 12, justifyContent: 'center' },
+  phonePrefix: {
+    backgroundColor: '#F3F4F6',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    paddingHorizontal: 12,
+    justifyContent: 'center',
+  },
   phonePrefixText: { fontSize: 14, fontWeight: '600', color: '#374151' },
 
   // Buttons
@@ -513,8 +574,13 @@ const styles = StyleSheet.create({
   // Place order bar
   placeOrderBar: { padding: 16, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#F3F4F6' },
   placeOrderBtn: {
-    backgroundColor: '#7C3AED', borderRadius: 14, paddingVertical: 15,
-    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 20,
+    backgroundColor: '#7C3AED',
+    borderRadius: 14,
+    paddingVertical: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
   placeOrderText: { fontSize: 16, fontWeight: '700', color: '#fff' },
   placeOrderAmount: { fontSize: 16, fontWeight: '800', color: '#fff' },
