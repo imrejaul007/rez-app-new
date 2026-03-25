@@ -368,15 +368,15 @@ class WalletService {
   }
 
   /**
-   * Topup wallet
+   * @deprecated ADMIN-ONLY — consumer app must NOT call POST /wallet/topup directly.
+   * Wallet top-ups for consumers are handled via the payment gateway flow (Razorpay/UPI).
+   * This endpoint requires admin privileges on the backend and will be rejected for
+   * regular user tokens.
    */
   async topup(data: TopupRequest): Promise<ApiResponse<TopupResponse>> {
-    try {
-      return await apiClient.post('/wallet/topup', data);
-    } catch (error: any) {
-      if (__DEV__) console.warn('[WalletAPI] topup failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to topup wallet', data: null } as any;
-    }
+    // These are admin-only endpoints - consumer app should not call them directly
+    console.warn('[WalletAPI] topup is admin-only and cannot be called from consumer app');
+    throw new Error('This operation requires admin privileges');
   }
 
   /**
@@ -460,7 +460,9 @@ class WalletService {
   }
 
   /**
-   * Credit loyalty points to wallet
+   * @deprecated ADMIN-ONLY — consumer app must NOT call POST /wallet/credit-loyalty-points directly.
+   * Loyalty points are credited automatically by the backend when orders are completed.
+   * Calling this endpoint from the consumer app will be rejected as it requires admin privileges.
    */
   async creditLoyaltyPoints(data: {
     amount: number;
@@ -480,12 +482,9 @@ class WalletService {
     credited: number;
     message: string;
   }>> {
-    try {
-      return await apiClient.post('/wallet/credit-loyalty-points', data);
-    } catch (error: any) {
-      if (__DEV__) console.warn('[WalletAPI] creditLoyaltyPoints failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to credit loyalty points', data: null } as any;
-    }
+    // These are admin-only endpoints - consumer app should not call them directly
+    console.warn('[WalletAPI] creditLoyaltyPoints is admin-only and cannot be called from consumer app');
+    throw new Error('This operation requires admin privileges');
   }
 
   /**
@@ -552,8 +551,9 @@ class WalletService {
   }
 
   /**
-   * Refund a wallet payment (used when order creation fails after payment)
-   * @param data Refund details including transaction ID and reason
+   * @deprecated ADMIN-ONLY — consumer app must NOT call POST /wallet/refund directly.
+   * Refunds are initiated by the backend automatically when an order is cancelled or failed.
+   * Calling this endpoint from the consumer app will be rejected as it requires admin privileges.
    */
   async refundPayment(data: {
     transactionId: string;
@@ -571,12 +571,9 @@ class WalletService {
     };
     status: 'success' | 'failed' | 'pending';
   }>> {
-    try {
-      return await apiClient.post('/wallet/refund', data);
-    } catch (error: any) {
-      if (__DEV__) console.warn('[WalletAPI] refundPayment failed:', error?.message);
-      return { success: false, message: error?.message || 'Failed to process refund', data: null } as any;
-    }
+    // These are admin-only endpoints - consumer app should not call them directly
+    console.warn('[WalletAPI] refundPayment is admin-only and cannot be called from consumer app');
+    throw new Error('This operation requires admin privileges');
   }
 
   // ========================================================================

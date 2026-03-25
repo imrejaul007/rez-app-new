@@ -401,6 +401,14 @@ class OrdersService {
     }
   }
 
+  /**
+   * @deprecated ADMIN/STORE-OWNER ONLY — consumer app must NOT call PATCH /orders/:id/status.
+   * This endpoint is restricted to admin and merchant roles on the backend.
+   * Consumer app should use specific consumer-facing endpoints instead:
+   *   - To cancel an order: PATCH /orders/:id/cancel (cancelOrder method above)
+   *   - To rate an order:   POST  /orders/:id/rate   (rateOrder method above)
+   * Calling this directly from the consumer app will result in a 403 Forbidden response.
+   */
   // Update order status (admin/store owner)
   async updateOrderStatus(
     orderId: string,
