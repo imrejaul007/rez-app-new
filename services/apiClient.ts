@@ -97,12 +97,15 @@ class ApiClient {
     // CONS-009: Require explicit API URL — no silent localhost fallback
     // In dev: set EXPO_PUBLIC_API_BASE_URL=http://localhost:5001/api in .env
     // In prod: set EXPO_PUBLIC_API_BASE_URL=https://api.rez.app/api
-    const rawURL = process.env.EXPO_PUBLIC_API_BASE_URL || process.env.EXPO_PUBLIC_API_BASE_URL;
+    const rawURL = process.env.EXPO_PUBLIC_API_BASE_URL;
     if (!rawURL) {
       if (__DEV__) {
         console.error('[ApiClient] EXPO_PUBLIC_API_BASE_URL is not set. Defaulting to localhost for dev.');
       } else {
-        throw new Error('[ApiClient] FATAL: EXPO_PUBLIC_API_BASE_URL is required but not configured.');
+        // During `expo export` static pre-rendering, env vars may not be present.
+        // Log a warning but don't throw — the app will show API errors at runtime
+        // rather than crashing the entire build.
+        console.error('[ApiClient] WARNING: EXPO_PUBLIC_API_BASE_URL is not configured. API calls will fail at runtime.');
       }
     }
     const resolvedURL = resolveBaseURL(rawURL || 'http://localhost:5001/api');
