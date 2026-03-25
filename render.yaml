@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: rez-app-consumer
+    runtime: node
+    buildCommand: npm install && npm run build:render
+    startCommand: npm run serve:render
+    envVars:
+      - key: NODE_VERSION
+        value: 22
