@@ -457,8 +457,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
     // Orange/warning if 1 < daysLeft ≤ 7
     return {
       backgroundColor: colors.warningScale?.[50] ?? '#FFF9E6',
-      borderColor: colors.warningScale?.[300] ?? '#FCD34D',
-      iconColor: colors.warningScale?.[600] ?? '#D97706',
+      borderColor: (colors.warningScale as any)?.[300] ?? '#FCD34D',
+      iconColor: (colors.warningScale as any)?.[600] ?? '#D97706',
     };
   }, [minDaysLeft]);
 

@@ -522,7 +522,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
                 style={styles.payInStoreGif}
                 contentFit="cover"
                 cachePolicy="memory-disk"
-                autoPlay={true}
+                {...({ autoPlay: true } as any)}
                 onError={() => setImageError(true)}
               />
             ) : (

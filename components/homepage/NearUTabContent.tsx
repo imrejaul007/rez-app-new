@@ -623,7 +623,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
       )}
 
       {/* Legacy fallback for non-persona-matched verified_employee state */}
-      {!isStudentUser && !isEmployeeCorporate && segment === 'verified_employee' && (
+      {!isStudentUser && !isEmployeeCorporate && (segment as string) === 'verified_employee' && (
         <LazySection sectionId="financial-priority-ns" scrollY={scrollY} height={300}
           renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FinancialServicesSection /></Suspense>} />
       )}
