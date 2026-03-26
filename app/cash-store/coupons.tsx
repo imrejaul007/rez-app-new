@@ -95,39 +95,42 @@ function CouponsPage() {
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isInitialRef = useRef(true);
 
-  const fetchCoupons = useCallback(async (query?: string, category?: string) => {
-    try {
-      setError(null);
-      let response;
+  const fetchCoupons = useCallback(
+    async (query?: string, category?: string) => {
+      try {
+        setError(null);
+        let response;
 
-      if (query && query.length >= 2) {
-        response = await couponService.searchCoupons({
-          q: query,
-          ...(category && category !== 'all' ? { category } : {}),
-        });
-      } else {
-        response = await couponService.getAvailableCoupons({
-          ...(category && category !== 'all' ? { category } : {}),
-        });
-      }
+        if (query && query.length >= 2) {
+          response = await couponService.searchCoupons({
+            q: query,
+            ...(category && category !== 'all' ? { category } : {}),
+          });
+        } else {
+          response = await couponService.getAvailableCoupons({
+            ...(category && category !== 'all' ? { category } : {}),
+          });
+        }
 
-      if (response.success && response.data) {
-        const rawCoupons = response.data.coupons || [];
+        if (response.success && response.data) {
+          const rawCoupons = response.data.coupons || [];
+          if (!isMounted()) return;
+          setCoupons(rawCoupons.map(transformCoupon));
+        }
+      } catch (err) {
+        if (coupons.length === 0) {
+          if (!isMounted()) return;
+          setError('Unable to load coupons. Pull down to retry.');
+        }
+      } finally {
         if (!isMounted()) return;
-        setCoupons(rawCoupons.map(transformCoupon));
-      }
-    } catch (err) {
-      if (coupons.length === 0) {
+        setIsLoading(false);
         if (!isMounted()) return;
-        setError('Unable to load coupons. Pull down to retry.');
+        setIsRefreshing(false);
       }
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-    }
-  }, [coupons.length]);
+    },
+    [coupons.length],
+  );
 
   // Initial fetch
   useEffect(() => {
@@ -172,113 +175,134 @@ function CouponsPage() {
     }
   }, []);
 
-  const renderCouponCard = useCallback(({ item }: { item: DisplayCoupon }) => {
-    const isCopied = copiedCode === item.code;
-    const discountDisplay = item.discountType === 'PERCENTAGE'
-      ? `${item.discountValue}% OFF`
-      : `${currencySymbol}${item.discountValue} OFF`;
+  const renderCouponCard = useCallback(
+    ({ item }: { item: DisplayCoupon }) => {
+      const isCopied = copiedCode === item.code;
+      const discountDisplay =
+        item.discountType === 'PERCENTAGE'
+          ? `${item.discountValue}% OFF`
+          : `${currencySymbol}${item.discountValue} OFF`;
 
-    return (
-      <View style={styles.couponCard}>
-        {/* Badges Row */}
-        <View style={styles.badgesRow}>
-          {item.isVerified && (
-            <View style={styles.verifiedBadge}>
-              <Ionicons name="shield-checkmark" size={10} color={colors.background.primary} />
-              <Text style={styles.badgeText}>Verified</Text>
-            </View>
-          )}
-          {item.isExclusive && (
-            <View style={styles.exclusiveBadge}>
-              <Ionicons name="diamond" size={10} color={Colors.gold} />
-              <Text style={[styles.badgeText, { color: Colors.gold }]}>Exclusive</Text>
-            </View>
-          )}
-        </View>
-
-        <View style={styles.couponCardContent}>
-          {/* Brand Logo */}
-          <View style={styles.logoSection}>
-            {item.brandLogo ? (
-              <CachedImage source={item.brandLogo} style={styles.brandLogo} contentFit="contain" />
-            ) : (
-              <LinearGradient colors={[Colors.lightPeach, colors.brand.caramel]} style={styles.logoPlaceholder}>
-                <Text style={styles.logoInitial}>{item.brandName.charAt(0)}</Text>
-              </LinearGradient>
-            )}
-          </View>
-
-          {/* Info */}
-          <View style={styles.infoSection}>
-            <Text style={styles.brandName}>{item.brandName}</Text>
-            <Text style={styles.discount}>{discountDisplay}</Text>
-            <Text style={styles.title} numberOfLines={2}>{item.title}</Text>
-            {item.minOrderValue > 0 && (
-              <Text style={styles.minOrder}>Min. order {currencySymbol}{item.minOrderValue}</Text>
-            )}
-
-            {/* Success Rate */}
-            <View style={styles.successRateRow}>
-              <View style={styles.successBarBg}>
-                <View style={[styles.successBarFill, { width: `${item.successRate}%` }]} />
+      return (
+        <View style={styles.couponCard}>
+          {/* Badges Row */}
+          <View style={styles.badgesRow}>
+            {item.isVerified && (
+              <View style={styles.verifiedBadge}>
+                <Ionicons name="shield-checkmark" size={10} color={colors.background.primary} />
+                <Text style={styles.badgeText}>Verified</Text>
               </View>
-              <Text style={styles.successRateText}>{item.successRate}%</Text>
+            )}
+            {item.isExclusive && (
+              <View style={styles.exclusiveBadge}>
+                <Ionicons name="diamond" size={10} color={Colors.gold} />
+                <Text style={[styles.badgeText, { color: Colors.gold }]}>Exclusive</Text>
+              </View>
+            )}
+          </View>
+
+          <View style={styles.couponCardContent}>
+            {/* Brand Logo */}
+            <View style={styles.logoSection}>
+              {item.brandLogo ? (
+                <CachedImage source={item.brandLogo} style={styles.brandLogo} contentFit="contain" />
+              ) : (
+                <LinearGradient colors={[Colors.lightPeach, colors.brand.caramel]} style={styles.logoPlaceholder}>
+                  <Text style={styles.logoInitial}>{item.brandName.charAt(0)}</Text>
+                </LinearGradient>
+              )}
+            </View>
+
+            {/* Info */}
+            <View style={styles.infoSection}>
+              <Text style={styles.brandName}>{item.brandName}</Text>
+              <Text style={styles.discount}>{discountDisplay}</Text>
+              <Text style={styles.title} numberOfLines={2}>
+                {item.title}
+              </Text>
+              {item.minOrderValue > 0 && (
+                <Text style={styles.minOrder}>
+                  Min. order {currencySymbol}
+                  {item.minOrderValue}
+                </Text>
+              )}
+
+              {/* Success Rate */}
+              <View style={styles.successRateRow}>
+                <View style={styles.successBarBg}>
+                  <View style={[styles.successBarFill, { width: `${item.successRate}%` }]} />
+                </View>
+                <Text style={styles.successRateText}>{item.successRate}%</Text>
+              </View>
             </View>
           </View>
-        </View>
 
-        {/* Code + Copy Section */}
-        <View style={styles.codeSection}>
-          <View style={styles.dashedBorder}>
-            <Text style={styles.codeText}>{item.code}</Text>
-          </View>
-          <Pressable
-            style={[styles.copyButton, isCopied && styles.copyButtonCopied]}
-            onPress={() => handleCopyCoupon(item.code)}
-           
-          >
-            <LinearGradient
-              colors={isCopied ? [colors.nileBlue, colors.brand.nileBlueLight] : [colors.brand.caramel, colors.brand.caramel]}
-              style={styles.copyButtonGradient}
+          {/* Code + Copy Section */}
+          <View style={styles.codeSection}>
+            <View style={styles.dashedBorder}>
+              <Text style={styles.codeText}>{item.code}</Text>
+            </View>
+            <Pressable
+              style={[styles.copyButton, isCopied && styles.copyButtonCopied]}
+              onPress={() => handleCopyCoupon(item.code)}
             >
-              <Ionicons name={isCopied ? 'checkmark' : 'copy'} size={14} color={colors.background.primary} />
-              <Text style={styles.copyText}>{isCopied ? 'COPIED' : 'COPY'}</Text>
-            </LinearGradient>
-          </Pressable>
-        </View>
-
-        {/* Validity */}
-        {item.validUntil && (
-          <View style={styles.validityRow}>
-            <Ionicons name="time-outline" size={12} color={colors.background.secondary0} />
-            <Text style={styles.validityText}>
-              Valid till {new Date(item.validUntil).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
-            </Text>
+              <LinearGradient
+                colors={
+                  isCopied
+                    ? [colors.nileBlue, colors.brand.nileBlueLight]
+                    : [colors.brand.caramel, colors.brand.caramel]
+                }
+                style={styles.copyButtonGradient}
+              >
+                <Ionicons name={isCopied ? 'checkmark' : 'copy'} size={14} color={colors.background.primary} />
+                <Text style={styles.copyText}>{isCopied ? 'COPIED' : 'COPY'}</Text>
+              </LinearGradient>
+            </Pressable>
           </View>
-        )}
-      </View>
-    );
-  }, [copiedCode, currencySymbol, handleCopyCoupon]);
 
-  const renderCategoryFilterItem = useCallback(({ item }: { item: typeof CATEGORIES[number] }) => {
-    const isActive = selectedCategory === item.key;
-    return (
-      <Pressable
-        style={[styles.filterChip, isActive && styles.filterChipActive]}
-        onPress={() => setSelectedCategory(item.key)}
-      >
-        <Text style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>
-          {item.label}
-        </Text>
-      </Pressable>
-    );
-  }, [selectedCategory]);
+          {/* Validity */}
+          {item.validUntil && (
+            <View style={styles.validityRow}>
+              <Ionicons name="time-outline" size={12} color={colors.background.secondary} />
+              <Text style={styles.validityText}>
+                Valid till{' '}
+                {new Date(item.validUntil).toLocaleDateString('en-IN', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                })}
+              </Text>
+            </View>
+          )}
+        </View>
+      );
+    },
+    [copiedCode, currencySymbol, handleCopyCoupon],
+  );
+
+  const renderCategoryFilterItem = useCallback(
+    ({ item }: { item: (typeof CATEGORIES)[number] }) => {
+      const isActive = selectedCategory === item.key;
+      return (
+        <Pressable
+          style={[styles.filterChip, isActive && styles.filterChipActive]}
+          onPress={() => setSelectedCategory(item.key)}
+        >
+          <Text style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>{item.label}</Text>
+        </Pressable>
+      );
+    },
+    [selectedCategory],
+  );
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <View style={styles.headerCenter}>
@@ -295,18 +319,18 @@ function CouponsPage() {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={18} color={colors.background.secondary0} />
+          <Ionicons name="search" size={18} color={colors.background.secondary} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search coupons or brands..."
-            placeholderTextColor={colors.background.secondary0}
+            placeholderTextColor={colors.background.secondary}
             value={searchQuery}
             onChangeText={setSearchQuery}
             autoCapitalize="none"
           />
           {searchQuery.length > 0 && (
             <Pressable onPress={() => setSearchQuery('')}>
-              <Ionicons name="close-circle" size={18} color={colors.background.secondary0} />
+              <Ionicons name="close-circle" size={18} color={colors.background.secondary} />
             </Pressable>
           )}
         </View>
@@ -333,10 +357,7 @@ function CouponsPage() {
           <Ionicons name="cloud-offline-outline" size={48} color={colors.brand.caramel} />
           <Text style={styles.errorTitle}>Something went wrong</Text>
           <Text style={styles.errorSubtitle}>{error}</Text>
-          <Pressable
-            onPress={handleRefresh}
-            style={styles.retryButton}
-          >
+          <Pressable onPress={handleRefresh} style={styles.retryButton}>
             <Text style={styles.retryText}>Try Again</Text>
           </Pressable>
         </View>
@@ -353,7 +374,7 @@ function CouponsPage() {
           estimatedItemSize={100}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
-              <Ionicons name="pricetags-outline" size={48} color={colors.background.secondary0} />
+              <Ionicons name="pricetags-outline" size={48} color={colors.background.secondary} />
               <Text style={styles.emptyTitle}>No Coupons Found</Text>
               <Text style={styles.emptySubtitle}>
                 {searchQuery ? 'Try a different search term' : 'Check back later for new coupon codes'}
@@ -483,7 +504,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 14,
-    color: colors.background.secondary0,
+    color: colors.background.secondary,
   },
   errorContainer: {
     flex: 1,
@@ -500,7 +521,7 @@ const styles = StyleSheet.create({
   },
   errorSubtitle: {
     fontSize: 14,
-    color: colors.background.secondary0,
+    color: colors.background.secondary,
     textAlign: 'center',
     marginBottom: Spacing.sm,
   },
@@ -527,7 +548,7 @@ const styles = StyleSheet.create({
   },
   emptySubtitle: {
     fontSize: 14,
-    color: colors.background.secondary0,
+    color: colors.background.secondary,
     textAlign: 'center',
   },
 
@@ -540,7 +561,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: `${Colors.lightPeach}40`,
     ...Platform.select({
-      ios: { shadowColor: Colors.lightPeach, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 6 },
+      ios: {
+        shadowColor: Colors.lightPeach,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 6,
+      },
       android: { elevation: 2 },
     }),
   },
@@ -606,7 +632,7 @@ const styles = StyleSheet.create({
   },
   brandName: {
     fontSize: 12,
-    color: colors.background.secondary0,
+    color: colors.background.secondary,
     fontWeight: '500',
     marginBottom: 2,
   },
@@ -626,7 +652,7 @@ const styles = StyleSheet.create({
   },
   minOrder: {
     fontSize: 11,
-    color: colors.background.secondary0,
+    color: colors.background.secondary,
     marginBottom: 6,
   },
   successRateRow: {
@@ -703,7 +729,7 @@ const styles = StyleSheet.create({
   },
   validityText: {
     fontSize: 11,
-    color: colors.background.secondary0,
+    color: colors.background.secondary,
   },
 });
 

@@ -11,7 +11,7 @@ import {
   ScrollView,
   Platform,
   StatusBar,
-  KeyboardAvoidingView
+  KeyboardAvoidingView,
 } from 'react-native';
 import Animated, {
   interpolate,
@@ -101,7 +101,7 @@ function BuyCouponsPage() {
       return;
     }
     if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    debounceTimer.current = setTimeout(() => setDebouncedSearch(searchQuery), 300);
+    debounceTimer.current = setTimeout(() => setDebouncedSearch(searchQuery), 300) as any;
     return () => {
       if (debounceTimer.current) clearTimeout(debounceTimer.current);
     };
@@ -123,56 +123,59 @@ function BuyCouponsPage() {
   }, []);
 
   // ─── Fetch Gift Cards ──────────────────────────────────────
-  const fetchGiftCards = useCallback(async (pageNum: number, append: boolean) => {
-    try {
-      setGiftCardsError(null);
-      const params: any = { limit: PAGE_SIZE, page: pageNum };
+  const fetchGiftCards = useCallback(
+    async (pageNum: number, append: boolean) => {
+      try {
+        setGiftCardsError(null);
+        const params: any = { limit: PAGE_SIZE, page: pageNum };
 
-      if (debouncedSearch.length >= 2) {
-        params.search = debouncedSearch;
-      } else if (selectedCategory !== 'all') {
-        params.category = selectedCategory;
-      }
-
-      const response = await realVouchersApi.getVoucherBrands(params);
-
-      if (response.success && response.data) {
-        const brands = (response.data as any)?.brands || response.data;
-        const brandsArray = Array.isArray(brands) ? brands : [];
-        const total = (response.data as any)?.total || brandsArray.length;
-
-        const mapped: VoucherBrandItem[] = brandsArray.map((b: any) => ({
-          _id: b._id,
-          name: b.name || '',
-          logo: b.logo || '',
-          category: b.category || '',
-          cashbackRate: b.cashbackRate || 0,
-          isFeatured: b.isFeatured ?? false,
-          isNewlyAdded: b.isNewlyAdded ?? false,
-          denominations: b.denominations || [],
-          purchaseCount: b.purchaseCount || 0,
-          rating: b.rating,
-        }));
-
-        if (append) {
-          if (!isMounted()) return;
-          setGiftCards(prev => [...prev, ...mapped]);
-        } else {
-          if (!isMounted()) return;
-          setGiftCards(mapped);
+        if (debouncedSearch.length >= 2) {
+          params.search = debouncedSearch;
+        } else if (selectedCategory !== 'all') {
+          params.category = selectedCategory;
         }
-        if (!isMounted()) return;
-        setTotalGiftCards(total);
-        if (!isMounted()) return;
-        setGiftCardsHasMore(mapped.length >= PAGE_SIZE);
+
+        const response = await realVouchersApi.getVoucherBrands(params);
+
+        if (response.success && response.data) {
+          const brands = (response.data as any)?.brands || response.data;
+          const brandsArray = Array.isArray(brands) ? brands : [];
+          const total = (response.data as any)?.total || brandsArray.length;
+
+          const mapped: VoucherBrandItem[] = brandsArray.map((b: any) => ({
+            _id: b._id,
+            name: b.name || '',
+            logo: b.logo || '',
+            category: b.category || '',
+            cashbackRate: b.cashbackRate || 0,
+            isFeatured: b.isFeatured ?? false,
+            isNewlyAdded: b.isNewlyAdded ?? false,
+            denominations: b.denominations || [],
+            purchaseCount: b.purchaseCount || 0,
+            rating: b.rating,
+          }));
+
+          if (append) {
+            if (!isMounted()) return;
+            setGiftCards((prev) => [...prev, ...mapped]);
+          } else {
+            if (!isMounted()) return;
+            setGiftCards(mapped);
+          }
+          if (!isMounted()) return;
+          setTotalGiftCards(total);
+          if (!isMounted()) return;
+          setGiftCardsHasMore(mapped.length >= PAGE_SIZE);
+        }
+      } catch (err) {
+        if (!append) {
+          if (!isMounted()) return;
+          setGiftCardsError('Unable to load gift cards. Pull down to retry.');
+        }
       }
-    } catch (err) {
-      if (!append) {
-        if (!isMounted()) return;
-        setGiftCardsError('Unable to load gift cards. Pull down to retry.');
-      }
-    }
-  }, [debouncedSearch, selectedCategory]);
+    },
+    [debouncedSearch, selectedCategory],
+  );
 
   // Trigger gift card fetch on filter/search changes
   useEffect(() => {
@@ -241,9 +244,12 @@ function BuyCouponsPage() {
     fetchGiftCards(nextPage, true).finally(() => setGiftCardsLoadingMore(false));
   }, [giftCardsLoadingMore, giftCardsHasMore, giftCardsPage, fetchGiftCards, debouncedSearch]);
 
-  const handleGiftCardPress = useCallback((brand: VoucherBrandItem) => {
-    router.push(`/vouchers/brand/${brand._id}` as any);
-  }, [router]);
+  const handleGiftCardPress = useCallback(
+    (brand: VoucherBrandItem) => {
+      router.push(`/vouchers/brand/${brand._id}` as any);
+    },
+    [router],
+  );
 
   const handleCategorySelect = useCallback((cat: string) => {
     setSelectedCategory(cat);
@@ -260,119 +266,133 @@ function BuyCouponsPage() {
     setCouponsRefreshing(false);
   }, [fetchCoupons]);
 
-  const handleClaimCoupon = useCallback(async (couponId: string) => {
-    if (claimingCouponId) return;
-    setClaimingCouponId(couponId);
-    try {
-      const response = await couponService.claimCoupon(couponId);
-      if (response.success) {
-        setClaimedCoupons(prev => new Set(prev).add(couponId));
+  const handleClaimCoupon = useCallback(
+    async (couponId: string) => {
+      if (claimingCouponId) return;
+      setClaimingCouponId(couponId);
+      try {
+        const response = await couponService.claimCoupon(couponId);
+        if (response.success) {
+          setClaimedCoupons((prev) => new Set(prev).add(couponId));
+        }
+      } catch (err: any) {
+        // silently handle
+      } finally {
+        if (!isMounted()) return;
+        setClaimingCouponId(null);
       }
-    } catch (err: any) {
-      // silently handle
-    } finally {
-      if (!isMounted()) return;
-      setClaimingCouponId(null);
-    }
-  }, [claimingCouponId]);
+    },
+    [claimingCouponId],
+  );
 
   const handleViewMyCoupons = useCallback(() => {
     router.push('/account/coupons' as any);
   }, [router]);
 
   // ─── Denomination Range Display ────────────────────────────
-  const getDenominationRange = useCallback((denoms: number[]) => {
-    if (!denoms || denoms.length === 0) return '';
-    const sorted = [...denoms].sort((a, b) => a - b);
-    if (sorted.length === 1) return `${currencySymbol}${sorted[0]}`;
-    return `${currencySymbol}${sorted[0]} - ${currencySymbol}${sorted[sorted.length - 1]}`;
-  }, [currencySymbol]);
+  const getDenominationRange = useCallback(
+    (denoms: number[]) => {
+      if (!denoms || denoms.length === 0) return '';
+      const sorted = [...denoms].sort((a, b) => a - b);
+      if (sorted.length === 1) return `${currencySymbol}${sorted[0]}`;
+      return `${currencySymbol}${sorted[0]} - ${currencySymbol}${sorted[sorted.length - 1]}`;
+    },
+    [currencySymbol],
+  );
 
   // ─── Render Gift Card ──────────────────────────────────────
-  const renderGiftCard = useCallback(({ item, index }: { item: VoucherBrandItem; index: number }) => (
-    <GiftCardCard
-      brand={item}
-      index={index}
-      onPress={handleGiftCardPress}
-      denominationRange={getDenominationRange(item.denominations)}
-      currencySymbol={currencySymbol}
-    />
-  ), [handleGiftCardPress, getDenominationRange, currencySymbol]);
+  const renderGiftCard = useCallback(
+    ({ item, index }: { item: VoucherBrandItem; index: number }) => (
+      <GiftCardCard
+        brand={item}
+        index={index}
+        onPress={handleGiftCardPress}
+        denominationRange={getDenominationRange(item.denominations)}
+        currencySymbol={currencySymbol}
+      />
+    ),
+    [handleGiftCardPress, getDenominationRange, currencySymbol],
+  );
 
   // ─── Render Coupon ─────────────────────────────────────────
-  const renderCoupon = useCallback(({ item, index }: { item: Coupon; index: number }) => (
-    <CouponCard
-      coupon={item}
-      index={index}
-      onClaim={handleClaimCoupon}
-      isClaiming={claimingCouponId === item._id}
-      isClaimed={claimedCoupons.has(item._id)}
-      currencySymbol={currencySymbol}
-      onViewMyCoupons={handleViewMyCoupons}
-    />
-  ), [handleClaimCoupon, claimingCouponId, claimedCoupons, currencySymbol, handleViewMyCoupons]);
+  const renderCoupon = useCallback(
+    ({ item, index }: { item: Coupon; index: number }) => (
+      <CouponCard
+        coupon={item}
+        index={index}
+        onClaim={handleClaimCoupon}
+        isClaiming={claimingCouponId === item._id}
+        isClaimed={claimedCoupons.has(item._id)}
+        currencySymbol={currencySymbol}
+        onViewMyCoupons={handleViewMyCoupons}
+      />
+    ),
+    [handleClaimCoupon, claimingCouponId, claimedCoupons, currencySymbol, handleViewMyCoupons],
+  );
 
   const giftCardKeyExtractor = useCallback((item: VoucherBrandItem) => item._id, []);
   const couponKeyExtractor = useCallback((item: Coupon) => item._id, []);
 
   // ─── Gift Card List Header ─────────────────────────────────
-  const GiftCardListHeader = useMemo(() => (
-    <View>
-      {/* Category Filter Chips */}
-      {giftCardCategories.length > 0 && (
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.chipsContent}
-          style={styles.chipsScroll}
-        >
-          <Pressable
-            onPress={() => handleCategorySelect('all')}
-            style={[styles.chip, selectedCategory === 'all' && styles.chipActive]}
+  const GiftCardListHeader = useMemo(
+    () => (
+      <View>
+        {/* Category Filter Chips */}
+        {giftCardCategories.length > 0 && (
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.chipsContent}
+            style={styles.chipsScroll}
           >
-            <Ionicons name="apps" size={12} color={selectedCategory === 'all' ? colors.text.inverse : '#7C8A97'} />
-            <Text style={[styles.chipText, selectedCategory === 'all' && styles.chipTextActive]}>All</Text>
-          </Pressable>
-          {giftCardCategories.map((cat) => {
-            const isActive = selectedCategory === cat;
-            return (
-              <Pressable
-                key={cat}
-                onPress={() => handleCategorySelect(cat)}
-                style={[styles.chip, isActive && styles.chipActive]}
-              >
-                <Text style={[styles.chipText, isActive && styles.chipTextActive]}>
-                  {cat}
-                </Text>
-              </Pressable>
-            );
-          })}
-        </ScrollView>
-      )}
+            <Pressable
+              onPress={() => handleCategorySelect('all')}
+              style={[styles.chip, selectedCategory === 'all' && styles.chipActive]}
+            >
+              <Ionicons name="apps" size={12} color={selectedCategory === 'all' ? colors.text.inverse : '#7C8A97'} />
+              <Text style={[styles.chipText, selectedCategory === 'all' && styles.chipTextActive]}>All</Text>
+            </Pressable>
+            {giftCardCategories.map((cat) => {
+              const isActive = selectedCategory === cat;
+              return (
+                <Pressable
+                  key={cat}
+                  onPress={() => handleCategorySelect(cat)}
+                  style={[styles.chip, isActive && styles.chipActive]}
+                >
+                  <Text style={[styles.chipText, isActive && styles.chipTextActive]}>{cat}</Text>
+                </Pressable>
+              );
+            })}
+          </ScrollView>
+        )}
 
-      {/* Results Count */}
+        {/* Results Count */}
+        <View style={styles.resultsRow}>
+          <Text style={styles.resultsText}>
+            {debouncedSearch.length >= 2
+              ? `${giftCards.length} result${giftCards.length !== 1 ? 's' : ''}`
+              : `${totalGiftCards > 0 ? totalGiftCards : '\u2014'} gift cards`}
+          </Text>
+        </View>
+      </View>
+    ),
+    [giftCardCategories, selectedCategory, giftCards.length, debouncedSearch, totalGiftCards, handleCategorySelect],
+  );
+
+  // ─── Coupon List Header ────────────────────────────────────
+  const CouponListHeader = useMemo(
+    () => (
       <View style={styles.resultsRow}>
         <Text style={styles.resultsText}>
           {debouncedSearch.length >= 2
-            ? `${giftCards.length} result${giftCards.length !== 1 ? 's' : ''}`
-            : `${totalGiftCards > 0 ? totalGiftCards : '\u2014'} gift cards`
-          }
+            ? `${coupons.length} result${coupons.length !== 1 ? 's' : ''}`
+            : `${coupons.length > 0 ? coupons.length : '\u2014'} coupons available`}
         </Text>
       </View>
-    </View>
-  ), [giftCardCategories, selectedCategory, giftCards.length, debouncedSearch, totalGiftCards, handleCategorySelect]);
-
-  // ─── Coupon List Header ────────────────────────────────────
-  const CouponListHeader = useMemo(() => (
-    <View style={styles.resultsRow}>
-      <Text style={styles.resultsText}>
-        {debouncedSearch.length >= 2
-          ? `${coupons.length} result${coupons.length !== 1 ? 's' : ''}`
-          : `${coupons.length > 0 ? coupons.length : '\u2014'} coupons available`
-        }
-      </Text>
-    </View>
-  ), [coupons.length, debouncedSearch]);
+    ),
+    [coupons.length, debouncedSearch],
+  );
 
   // ─── List Footer ───────────────────────────────────────────
   const GiftCardListFooter = useMemo(() => {
@@ -416,7 +436,11 @@ function BuyCouponsPage() {
     return (
       <View style={styles.emptyContainer}>
         <View style={styles.emptyIconWrap}>
-          <Ionicons name={debouncedSearch.length >= 2 ? 'search-outline' : 'gift-outline'} size={28} color={colors.brand.caramel} />
+          <Ionicons
+            name={debouncedSearch.length >= 2 ? 'search-outline' : 'gift-outline'}
+            size={28}
+            color={colors.brand.caramel}
+          />
         </View>
         <Text style={styles.emptyTitle}>
           {debouncedSearch.length >= 2 ? 'No gift cards found' : 'No gift cards yet'}
@@ -460,7 +484,11 @@ function BuyCouponsPage() {
     return (
       <View style={styles.emptyContainer}>
         <View style={styles.emptyIconWrap}>
-          <Ionicons name={debouncedSearch.length >= 2 ? 'search-outline' : 'pricetag-outline'} size={28} color={colors.brand.caramel} />
+          <Ionicons
+            name={debouncedSearch.length >= 2 ? 'search-outline' : 'pricetag-outline'}
+            size={28}
+            color={colors.brand.caramel}
+          />
         </View>
         <Text style={styles.emptyTitle}>
           {debouncedSearch.length >= 2 ? 'No coupons found' : 'No coupons available'}
@@ -483,7 +511,10 @@ function BuyCouponsPage() {
         <StatusBar barStyle="dark-content" />
         <View style={[styles.stickyHeader, { paddingTop: skeletonTop }]}>
           <View style={styles.headerRow}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backBtn}
+            >
               <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
             </Pressable>
             <Text style={styles.headerTitle}>Gift Cards & Coupons</Text>
@@ -516,410 +547,388 @@ function BuyCouponsPage() {
   const headerTop = Platform.OS === 'web' ? 0 : insets.top;
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+      <View style={styles.container}>
+        <StatusBar barStyle="dark-content" />
 
-      {/* Sticky Header */}
-      <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
-        <View style={styles.headerRow}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-            <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
-          </Pressable>
-          <Text style={styles.headerTitle}>Gift Cards & Coupons</Text>
-          <View style={{ width: 36 }} />
-        </View>
-
-        {/* Search */}
-        <View style={[styles.searchBar, searchFocused && styles.searchBarFocused]}>
-          <Ionicons name="search" size={15} color={searchFocused ? colors.brand.caramel : '#94A3B8'} />
-          <TextInput
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            onFocus={() => setSearchFocused(true)}
-            onBlur={() => setSearchFocused(false)}
-            placeholder={activeTab === 'gift-cards' ? 'Search gift cards...' : 'Search coupons...'}
-            placeholderTextColor="#94A3B8"
-            returnKeyType="search"
-            selectionColor="rgba(212,160,122,0.5)"
-          />
-          {searchQuery.length > 0 && (
+        {/* Sticky Header */}
+        <View style={[styles.stickyHeader, { paddingTop: headerTop }]}>
+          <View style={styles.headerRow}>
             <Pressable
-              onPress={() => {
-                setSearchQuery('');
-                setDebouncedSearch('');
-                isFirstSearch.current = true;
-              }}
-              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backBtn}
             >
-              <Ionicons name="close-circle" size={16} color="#94A3B8" />
+              <Ionicons name="chevron-back" size={20} color={colors.nileBlue} />
             </Pressable>
-          )}
+            <Text style={styles.headerTitle}>Gift Cards & Coupons</Text>
+            <View style={{ width: 36 }} />
+          </View>
+
+          {/* Search */}
+          <View style={[styles.searchBar, searchFocused && styles.searchBarFocused]}>
+            <Ionicons name="search" size={15} color={searchFocused ? colors.brand.caramel : '#94A3B8'} />
+            <TextInput
+              style={styles.searchInput}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              placeholder={activeTab === 'gift-cards' ? 'Search gift cards...' : 'Search coupons...'}
+              placeholderTextColor="#94A3B8"
+              returnKeyType="search"
+              selectionColor="rgba(212,160,122,0.5)"
+            />
+            {searchQuery.length > 0 && (
+              <Pressable
+                onPress={() => {
+                  setSearchQuery('');
+                  setDebouncedSearch('');
+                  isFirstSearch.current = true;
+                }}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Ionicons name="close-circle" size={16} color="#94A3B8" />
+              </Pressable>
+            )}
+          </View>
+
+          {/* Tab Switcher */}
+          <View style={styles.tabRow}>
+            <Pressable
+              onPress={() => handleTabSwitch('gift-cards')}
+              style={[styles.tab, activeTab === 'gift-cards' && styles.tabActive]}
+            >
+              <Ionicons
+                name="gift-outline"
+                size={14}
+                color={activeTab === 'gift-cards' ? colors.text.inverse : '#7C8A97'}
+              />
+              <Text style={[styles.tabText, activeTab === 'gift-cards' && styles.tabTextActive]}>Gift Cards</Text>
+            </Pressable>
+            <Pressable
+              onPress={() => handleTabSwitch('coupons')}
+              style={[styles.tab, activeTab === 'coupons' && styles.tabActive]}
+            >
+              <Ionicons
+                name="pricetag-outline"
+                size={14}
+                color={activeTab === 'coupons' ? colors.text.inverse : '#7C8A97'}
+              />
+              <Text style={[styles.tabText, activeTab === 'coupons' && styles.tabTextActive]}>Coupons</Text>
+            </Pressable>
+          </View>
         </View>
 
-        {/* Tab Switcher */}
-        <View style={styles.tabRow}>
-          <Pressable
-            onPress={() => handleTabSwitch('gift-cards')}
-            style={[styles.tab, activeTab === 'gift-cards' && styles.tabActive]}
-          >
-            <Ionicons
-              name="gift-outline"
-              size={14}
-              color={activeTab === 'gift-cards' ? colors.text.inverse : '#7C8A97'}
-            />
-            <Text style={[styles.tabText, activeTab === 'gift-cards' && styles.tabTextActive]}>
-              Gift Cards
-            </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => handleTabSwitch('coupons')}
-            style={[styles.tab, activeTab === 'coupons' && styles.tabActive]}
-          >
-            <Ionicons
-              name="pricetag-outline"
-              size={14}
-              color={activeTab === 'coupons' ? colors.text.inverse : '#7C8A97'}
-            />
-            <Text style={[styles.tabText, activeTab === 'coupons' && styles.tabTextActive]}>
-              Coupons
-            </Text>
-          </Pressable>
-        </View>
+        {/* ─── Gift Cards Tab ─────────────────────────────────── */}
+        {activeTab === 'gift-cards' && (
+          <FlashList
+            style={{ flex: 1 }}
+            data={giftCards}
+            renderItem={renderGiftCard}
+            keyExtractor={giftCardKeyExtractor}
+            numColumns={2}
+            estimatedItemSize={220}
+            ListHeaderComponent={GiftCardListHeader}
+            ListFooterComponent={GiftCardListFooter}
+            ListEmptyComponent={GiftCardEmpty}
+            refreshControl={
+              <RefreshControl
+                refreshing={giftCardsRefreshing}
+                onRefresh={handleGiftCardRefresh}
+                tintColor={colors.brand.caramel}
+                colors={[colors.brand.caramel]}
+              />
+            }
+            onEndReached={handleGiftCardLoadMore}
+            onEndReachedThreshold={0.3}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.listContent}
+          />
+        )}
+
+        {/* ─── Coupons Tab ────────────────────────────────────── */}
+        {activeTab === 'coupons' && (
+          <FlashList
+            style={{ flex: 1 }}
+            data={coupons}
+            renderItem={renderCoupon}
+            keyExtractor={couponKeyExtractor}
+            estimatedItemSize={70}
+            ListHeaderComponent={CouponListHeader}
+            ListEmptyComponent={CouponEmpty}
+            refreshControl={
+              <RefreshControl
+                refreshing={couponsRefreshing}
+                onRefresh={handleCouponRefresh}
+                tintColor={colors.brand.caramel}
+                colors={[colors.brand.caramel]}
+              />
+            }
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.couponListContent}
+          />
+        )}
       </View>
-
-      {/* ─── Gift Cards Tab ─────────────────────────────────── */}
-      {activeTab === 'gift-cards' && (
-        <FlashList
-          style={{ flex: 1 }}
-          data={giftCards}
-          renderItem={renderGiftCard}
-          keyExtractor={giftCardKeyExtractor}
-          numColumns={2}
-          columnWrapperStyle={styles.gridRow}
-          ListHeaderComponent={GiftCardListHeader}
-          ListFooterComponent={GiftCardListFooter}
-          ListEmptyComponent={GiftCardEmpty}
-          refreshControl={
-            <RefreshControl
-              refreshing={giftCardsRefreshing}
-              onRefresh={handleGiftCardRefresh}
-              tintColor={colors.brand.caramel}
-              colors={[colors.brand.caramel]}
-              estimatedItemSize={220}
-            />
-          }
-          onEndReached={handleGiftCardLoadMore}
-          onEndReachedThreshold={0.3}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.listContent}
-        />
-      )}
-
-      {/* ─── Coupons Tab ────────────────────────────────────── */}
-      {activeTab === 'coupons' && (
-        <FlashList
-          style={{ flex: 1 }}
-          data={coupons}
-          renderItem={renderCoupon}
-          keyExtractor={couponKeyExtractor}
-          ListHeaderComponent={CouponListHeader}
-          ListEmptyComponent={CouponEmpty}
-          refreshControl={
-            <RefreshControl
-              refreshing={couponsRefreshing}
-              onRefresh={handleCouponRefresh}
-              tintColor={colors.brand.caramel}
-              colors={[colors.brand.caramel]}
-              estimatedItemSize={70}
-            />
-          }
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.couponListContent}
-        />
-      )}
-    </View>
     </KeyboardAvoidingView>
   );
 }
 
 // ─── Gift Card Card ──────────────────────────────────────────
-const GiftCardCard = React.memo(({
-  brand,
-  index,
-  onPress,
-  denominationRange,
-  currencySymbol,
-}: {
-  brand: VoucherBrandItem;
-  index: number;
-  onPress: (brand: VoucherBrandItem) => void;
-  denominationRange: string;
-  currencySymbol: string;
-}) => {
-  const fadeAnim = useSharedValue(0);
-  const pressAnim = useSharedValue(1);
+const GiftCardCard = React.memo(
+  ({
+    brand,
+    index,
+    onPress,
+    denominationRange,
+    currencySymbol,
+  }: {
+    brand: VoucherBrandItem;
+    index: number;
+    onPress: (brand: VoucherBrandItem) => void;
+    denominationRange: string;
+    currencySymbol: string;
+  }) => {
+    const fadeAnim = useSharedValue(0);
+    const pressAnim = useSharedValue(1);
 
-  useEffect(() => {
-    fadeAnim.value = withTiming(1, { duration: 300 });
-  }, [index]);
+    useEffect(() => {
+      fadeAnim.value = withTiming(1, { duration: 300 });
+    }, [index]);
 
-  const handlePressIn = () => {
-    pressAnim.value = withSpring(0.96);
-  };
+    const handlePressIn = () => {
+      pressAnim.value = withSpring(0.96);
+    };
 
-  const handlePressOut = () => {
-    pressAnim.value = withSpring(1);
-  };
+    const handlePressOut = () => {
+      pressAnim.value = withSpring(1);
+    };
 
-  const [logoError, setLogoError] = useState(false);
+    const [logoError, setLogoError] = useState(false);
 
-  const cardAnimStyle = useAnimatedStyle(() => ({
-    opacity: fadeAnim.value,
-    transform: [{ scale: pressAnim.value }],
-  }));
+    const cardAnimStyle = useAnimatedStyle(() => ({
+      opacity: fadeAnim.value,
+      transform: [{ scale: pressAnim.value }],
+    }));
 
-  return (
-    <Animated.View
-      style={[
-        styles.cardWrapper,
-        cardAnimStyle,
-      ]}
-    >
-      <Pressable
-        onPress={() => onPress(brand)}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-       
-        style={styles.card}
-      >
-        {/* Featured Badge */}
-        {brand.isFeatured && (
-          <View style={styles.featuredBadge}>
-            <Ionicons name="star" size={9} color={colors.text.inverse} />
-            <Text style={styles.featuredText}>Featured</Text>
-          </View>
-        )}
-
-        {/* New Badge */}
-        {brand.isNewlyAdded && !brand.isFeatured && (
-          <View style={[styles.featuredBadge, { backgroundColor: Colors.success }]}>
-            <Ionicons name="sparkles" size={9} color={colors.text.inverse} />
-            <Text style={styles.featuredText}>New</Text>
-          </View>
-        )}
-
-        {/* Logo */}
-        <View style={styles.logoArea}>
-          {brand.logo?.startsWith('http') && !logoError ? (
-            <CachedImage
-              source={brand.logo}
-              style={styles.logo}
-              contentFit="contain"
-              onError={() => setLogoError(true)}
-            />
-          ) : (
-            <View style={styles.logoPlaceholder}>
-              <Text style={styles.logoInitial}>
-                {brand.logo && !brand.logo.startsWith('http') ? brand.logo : brand.name.charAt(0).toUpperCase()}
-              </Text>
+    return (
+      <Animated.View style={[styles.cardWrapper, cardAnimStyle]}>
+        <Pressable
+          onPress={() => onPress(brand)}
+          onPressIn={handlePressIn}
+          onPressOut={handlePressOut}
+          style={styles.card}
+        >
+          {/* Featured Badge */}
+          {brand.isFeatured && (
+            <View style={styles.featuredBadge}>
+              <Ionicons name="star" size={9} color={colors.text.inverse} />
+              <Text style={styles.featuredText}>Featured</Text>
             </View>
           )}
-        </View>
 
-        {/* Brand Name */}
-        <Text style={styles.brandName} numberOfLines={1}>
-          {brand.name}
-        </Text>
-
-        {/* Category */}
-        {brand.category ? (
-          <Text style={styles.categoryLabel} numberOfLines={1}>
-            {brand.category}
-          </Text>
-        ) : null}
-
-        {/* Denomination Range */}
-        {denominationRange ? (
-          <Text style={styles.denomRange} numberOfLines={1}>
-            {denominationRange}
-          </Text>
-        ) : null}
-
-        {/* Cashback Rate */}
-        {brand.cashbackRate > 0 && (
-          <View style={styles.cashbackRow}>
-            <Text style={styles.cashbackRate}>{brand.cashbackRate}%</Text>
-            <Text style={styles.cashbackLabel}> cashback</Text>
-          </View>
-        )}
-
-        {/* Buy CTA */}
-        <View style={styles.shopCta}>
-          <Text style={styles.shopCtaText}>Buy Gift Card</Text>
-          <Ionicons name="arrow-forward" size={12} color={colors.text.inverse} />
-        </View>
-      </Pressable>
-    </Animated.View>
-  );
-});
-
-// ─── Coupon Card ─────────────────────────────────────────────
-const CouponCard = React.memo(({
-  coupon,
-  index,
-  onClaim,
-  isClaiming,
-  isClaimed,
-  currencySymbol,
-  onViewMyCoupons,
-}: {
-  coupon: Coupon;
-  index: number;
-  onClaim: (id: string) => void;
-  isClaiming: boolean;
-  isClaimed: boolean;
-  currencySymbol: string;
-  onViewMyCoupons: () => void;
-}) => {
-  const fadeAnim = useSharedValue(0);
-
-  useEffect(() => {
-    fadeAnim.value = withTiming(1, { duration: 300 });
-  }, [index]);
-
-  const couponAnimStyle = useAnimatedStyle(() => ({
-    opacity: fadeAnim.value,
-  }));
-
-  const discountDisplay = coupon.discountType === 'PERCENTAGE'
-    ? `${coupon.discountValue}% OFF`
-    : `${currencySymbol}${coupon.discountValue} OFF`;
-
-  const maskedCode = coupon.couponCode.length > 4
-    ? `${coupon.couponCode.slice(0, 4)}${'•'.repeat(Math.min(coupon.couponCode.length - 4, 4))}`
-    : coupon.couponCode;
-
-  const validUntil = coupon.validTo
-    ? new Date(coupon.validTo).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-    : null;
-
-  return (
-    <Animated.View style={[styles.couponCardWrapper, couponAnimStyle]}>
-      <View style={styles.couponCard}>
-        {/* Left accent strip */}
-        <View style={[styles.couponAccent, isClaimed && { backgroundColor: Colors.success }]} />
-
-        <View style={styles.couponContent}>
-          {/* Top row: discount + badge */}
-          <View style={styles.couponTopRow}>
-            <View style={styles.discountBadge}>
-              <Text style={styles.discountText}>{discountDisplay}</Text>
+          {/* New Badge */}
+          {brand.isNewlyAdded && !brand.isFeatured && (
+            <View style={[styles.featuredBadge, { backgroundColor: Colors.success }]}>
+              <Ionicons name="sparkles" size={9} color={colors.text.inverse} />
+              <Text style={styles.featuredText}>New</Text>
             </View>
-            {coupon.isFeatured && (
-              <View style={styles.couponFeaturedBadge}>
-                <Ionicons name="star" size={10} color={colors.brand.sand} />
-                <Text style={styles.couponFeaturedText}>Featured</Text>
+          )}
+
+          {/* Logo */}
+          <View style={styles.logoArea}>
+            {brand.logo?.startsWith('http') && !logoError ? (
+              <CachedImage
+                source={brand.logo}
+                style={styles.logo}
+                contentFit="contain"
+                onError={() => setLogoError(true)}
+              />
+            ) : (
+              <View style={styles.logoPlaceholder}>
+                <Text style={styles.logoInitial}>
+                  {brand.logo && !brand.logo.startsWith('http') ? brand.logo : brand.name.charAt(0).toUpperCase()}
+                </Text>
               </View>
             )}
           </View>
 
-          {/* Title & description */}
-          <Text style={styles.couponTitle} numberOfLines={1}>{coupon.title}</Text>
-          {coupon.description ? (
-            <Text style={styles.couponDescription} numberOfLines={2}>{coupon.description}</Text>
+          {/* Brand Name */}
+          <Text style={styles.brandName} numberOfLines={1}>
+            {brand.name}
+          </Text>
+
+          {/* Category */}
+          {brand.category ? (
+            <Text style={styles.categoryLabel} numberOfLines={1}>
+              {brand.category}
+            </Text>
           ) : null}
 
-          {/* Details row */}
-          <View style={styles.couponDetailsRow}>
-            {coupon.minOrderValue > 0 && (
-              <Text style={styles.couponDetail}>
-                Min. order: {currencySymbol}{coupon.minOrderValue}
-              </Text>
-            )}
-            {coupon.maxDiscountCap > 0 && coupon.discountType === 'PERCENTAGE' && (
-              <Text style={styles.couponDetail}>
-                Max: {currencySymbol}{coupon.maxDiscountCap}
-              </Text>
-            )}
-            {validUntil && (
-              <Text style={styles.couponDetail}>
-                Valid till {validUntil}
-              </Text>
-            )}
-          </View>
+          {/* Denomination Range */}
+          {denominationRange ? (
+            <Text style={styles.denomRange} numberOfLines={1}>
+              {denominationRange}
+            </Text>
+          ) : null}
 
-          {/* Bottom row: code + claim button */}
-          <View style={styles.couponBottomRow}>
-            <View style={styles.couponCodeBox}>
-              <Ionicons name="ticket-outline" size={13} color={isClaimed ? Colors.success : colors.brand.caramel} />
-              <Text style={styles.couponCodeText}>
-                {isClaimed ? coupon.couponCode : maskedCode}
-              </Text>
+          {/* Cashback Rate */}
+          {brand.cashbackRate > 0 && (
+            <View style={styles.cashbackRow}>
+              <Text style={styles.cashbackRate}>{brand.cashbackRate}%</Text>
+              <Text style={styles.cashbackLabel}> cashback</Text>
+            </View>
+          )}
+
+          {/* Buy CTA */}
+          <View style={styles.shopCta}>
+            <Text style={styles.shopCtaText}>Buy Gift Card</Text>
+            <Ionicons name="arrow-forward" size={12} color={colors.text.inverse} />
+          </View>
+        </Pressable>
+      </Animated.View>
+    );
+  },
+);
+
+// ─── Coupon Card ─────────────────────────────────────────────
+const CouponCard = React.memo(
+  ({
+    coupon,
+    index,
+    onClaim,
+    isClaiming,
+    isClaimed,
+    currencySymbol,
+    onViewMyCoupons,
+  }: {
+    coupon: Coupon;
+    index: number;
+    onClaim: (id: string) => void;
+    isClaiming: boolean;
+    isClaimed: boolean;
+    currencySymbol: string;
+    onViewMyCoupons: () => void;
+  }) => {
+    const fadeAnim = useSharedValue(0);
+
+    useEffect(() => {
+      fadeAnim.value = withTiming(1, { duration: 300 });
+    }, [index]);
+
+    const couponAnimStyle = useAnimatedStyle(() => ({
+      opacity: fadeAnim.value,
+    }));
+
+    const discountDisplay =
+      coupon.discountType === 'PERCENTAGE'
+        ? `${coupon.discountValue}% OFF`
+        : `${currencySymbol}${coupon.discountValue} OFF`;
+
+    const maskedCode =
+      coupon.couponCode.length > 4
+        ? `${coupon.couponCode.slice(0, 4)}${'•'.repeat(Math.min(coupon.couponCode.length - 4, 4))}`
+        : coupon.couponCode;
+
+    const validUntil = coupon.validTo
+      ? new Date(coupon.validTo).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+      : null;
+
+    return (
+      <Animated.View style={[styles.couponCardWrapper, couponAnimStyle]}>
+        <View style={styles.couponCard}>
+          {/* Left accent strip */}
+          <View style={[styles.couponAccent, isClaimed && { backgroundColor: Colors.success }]} />
+
+          <View style={styles.couponContent}>
+            {/* Top row: discount + badge */}
+            <View style={styles.couponTopRow}>
+              <View style={styles.discountBadge}>
+                <Text style={styles.discountText}>{discountDisplay}</Text>
+              </View>
+              {coupon.isFeatured && (
+                <View style={styles.couponFeaturedBadge}>
+                  <Ionicons name="star" size={10} color={colors.brand.sand} />
+                  <Text style={styles.couponFeaturedText}>Featured</Text>
+                </View>
+              )}
             </View>
 
-            <Pressable
-              onPress={() => onClaim(coupon._id)}
-              style={[
-                styles.claimBtn,
-                isClaimed && styles.claimBtnClaimed,
-              ]}
-             
-              disabled={isClaiming || isClaimed}
-            >
-              {isClaiming ? (
-                <ActivityIndicator size="small" color={colors.text.inverse} />
-              ) : (
-                <>
-                  <Ionicons
-                    name={isClaimed ? 'checkmark-circle' : 'download-outline'}
-                    size={14}
-                    color={colors.text.inverse}
-                  />
-                  <Text style={styles.claimBtnText}>
-                    {isClaimed ? 'Claimed' : 'Claim'}
-                  </Text>
-                </>
-              )}
-            </Pressable>
-          </View>
-
-          {/* Post-claim guidance */}
-          {isClaimed && (
-            <Pressable
-              onPress={onViewMyCoupons}
-              style={styles.claimedGuide}
-            >
-              <Ionicons name="checkmark-circle" size={14} color={colors.success} />
-              <Text style={styles.claimedGuideText}>
-                Coupon saved! Apply it at checkout or
+            {/* Title & description */}
+            <Text style={styles.couponTitle} numberOfLines={1}>
+              {coupon.title}
+            </Text>
+            {coupon.description ? (
+              <Text style={styles.couponDescription} numberOfLines={2}>
+                {coupon.description}
               </Text>
-              <Text style={styles.claimedGuideLink}> view my coupons</Text>
-              <Ionicons name="chevron-forward" size={12} color={colors.brand.sand} />
-            </Pressable>
-          )}
+            ) : null}
+
+            {/* Details row */}
+            <View style={styles.couponDetailsRow}>
+              {coupon.minOrderValue > 0 && (
+                <Text style={styles.couponDetail}>
+                  Min. order: {currencySymbol}
+                  {coupon.minOrderValue}
+                </Text>
+              )}
+              {coupon.maxDiscountCap > 0 && coupon.discountType === 'PERCENTAGE' && (
+                <Text style={styles.couponDetail}>
+                  Max: {currencySymbol}
+                  {coupon.maxDiscountCap}
+                </Text>
+              )}
+              {validUntil && <Text style={styles.couponDetail}>Valid till {validUntil}</Text>}
+            </View>
+
+            {/* Bottom row: code + claim button */}
+            <View style={styles.couponBottomRow}>
+              <View style={styles.couponCodeBox}>
+                <Ionicons name="ticket-outline" size={13} color={isClaimed ? Colors.success : colors.brand.caramel} />
+                <Text style={styles.couponCodeText}>{isClaimed ? coupon.couponCode : maskedCode}</Text>
+              </View>
+
+              <Pressable
+                onPress={() => onClaim(coupon._id)}
+                style={[styles.claimBtn, isClaimed && styles.claimBtnClaimed]}
+                disabled={isClaiming || isClaimed}
+              >
+                {isClaiming ? (
+                  <ActivityIndicator size="small" color={colors.text.inverse} />
+                ) : (
+                  <>
+                    <Ionicons
+                      name={isClaimed ? 'checkmark-circle' : 'download-outline'}
+                      size={14}
+                      color={colors.text.inverse}
+                    />
+                    <Text style={styles.claimBtnText}>{isClaimed ? 'Claimed' : 'Claim'}</Text>
+                  </>
+                )}
+              </Pressable>
+            </View>
+
+            {/* Post-claim guidance */}
+            {isClaimed && (
+              <Pressable onPress={onViewMyCoupons} style={styles.claimedGuide}>
+                <Ionicons name="checkmark-circle" size={14} color={colors.success} />
+                <Text style={styles.claimedGuideText}>Coupon saved! Apply it at checkout or</Text>
+                <Text style={styles.claimedGuideLink}> view my coupons</Text>
+                <Ionicons name="chevron-forward" size={12} color={colors.brand.sand} />
+              </Pressable>
+            )}
+          </View>
         </View>
-      </View>
-    </Animated.View>
-  );
-});
+      </Animated.View>
+    );
+  },
+);
 
 // ─── Skeleton Card ───────────────────────────────────────────
 const SkeletonCard = React.memo(({ index }: { index: number }) => {
   const shimmer = useSharedValue(0);
 
   useEffect(() => {
-    shimmer.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
-      ),
-      -1
-    );
+    shimmer.value = withRepeat(withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })), -1);
   }, [index]);
 
   const skeletonAnimStyle = useAnimatedStyle(() => ({
@@ -1096,7 +1105,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     padding: 14,
     alignItems: 'center',
-    ...Platform.select({
+    ...(Platform.select({
       ios: {
         shadowColor: '#8B7355',
         shadowOffset: { width: 0, height: 2 },
@@ -1105,7 +1114,7 @@ const styles = StyleSheet.create({
       },
       android: { elevation: 2 },
       web: { boxShadow: '0 2px 6px rgba(139,115,85,0.07)' },
-    }),
+    } as any) as any),
   },
   featuredBadge: {
     position: 'absolute',
@@ -1217,7 +1226,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     borderRadius: 14,
     overflow: 'hidden',
-    ...Platform.select({
+    ...(Platform.select({
       ios: {
         shadowColor: '#8B7355',
         shadowOffset: { width: 0, height: 2 },
@@ -1226,7 +1235,7 @@ const styles = StyleSheet.create({
       },
       android: { elevation: 2 },
       web: { boxShadow: '0 2px 6px rgba(139,115,85,0.07)' },
-    }),
+    } as any) as any),
   },
   couponAccent: {
     width: 5,
