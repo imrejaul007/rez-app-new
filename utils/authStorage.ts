@@ -95,10 +95,15 @@ async function nativeGet(key: string): Promise<string | null> {
 
 /**
  * Write a value on native: writes to SecureStore only.
+ * Only removes the AsyncStorage copy if SecureStore write succeeded,
+ * so the AsyncStorage copy remains as a fallback if SecureStore fails.
  */
 async function nativeSet(key: string, value: string): Promise<void> {
-  await secureSet(key, value);
-  await AsyncStorage.removeItem(key);
+  const success = await secureSet(key, value);
+  if (success) {
+    await AsyncStorage.removeItem(key);
+  }
+  // If SecureStore failed, keep the AsyncStorage copy as fallback
 }
 
 /**
@@ -224,6 +229,7 @@ export async function clearAuthData(): Promise<void> {
     STORAGE_KEYS.REFRESH_TOKEN,
     STORAGE_KEYS.USER,
   ]);
+  await AsyncStorage.removeItem('onboarding_completed');
 
   if (isWeb) {
     // Clear localStorage on web

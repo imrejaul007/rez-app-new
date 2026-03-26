@@ -26,6 +26,7 @@ export default function OnboardingLayout() {
       <Stack.Screen name="teacher-verify" options={{ headerShown: false }} />
       <Stack.Screen name="verification-success" options={{ headerShown: false }} />
       <Stack.Screen name="verification-pending" options={{ headerShown: false }} />
+      <Stack.Screen name="set-pin" options={{ headerShown: false }} />
     </Stack>
   );
 }

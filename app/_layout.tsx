@@ -81,9 +81,12 @@ function RootLayout() {
   }, []);
 
   const checkAppStatus = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
     try {
       const apiUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://api.rezapp.com';
-      const resp = await fetch(`${apiUrl}/config/app-status`, { timeout: 5000 });
+      const resp = await fetch(`${apiUrl}/config/app-status`, { signal: controller.signal });
+      clearTimeout(timeoutId);
       const json = await resp.json();
       const data = json?.data;
 
@@ -98,6 +101,7 @@ function RootLayout() {
         router.replace('/update-required');
       }
     } catch {
+      clearTimeout(timeoutId);
       // Non-blocking — app continues if config endpoint fails
       logger.debug('[AppStatus] Failed to fetch app status', undefined, 'AppStatus');
     }

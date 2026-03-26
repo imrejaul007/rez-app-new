@@ -36,7 +36,6 @@ function OTPVerificationScreen() {
   }, []);
 
   // Timer interval — restarts cleanly when timer is reset (e.g., on resend OTP)
-  const timerKeyRef = React.useRef(0);
   const [timerKey, setTimerKey] = React.useState(0);
   useEffect(() => {
     if (timer <= 0) return;
@@ -109,12 +108,9 @@ function OTPVerificationScreen() {
 
       if (!isMounted()) return;
 
-      const resolvedUser = freshUser ?? useAuthStore.getState().state.user;
-      if (resolvedUser?.isOnboarded) {
-        router.replace('/(tabs)');
-      } else {
-        router.replace('/onboarding/notification-permission');
-      }
+      // Always prompt to set a PIN after OTP login (new users go to set-pin,
+      // which then continues to notification-permission or tabs).
+      router.replace('/onboarding/set-pin');
     } catch (error: any) {
       const errorMessage =
         error?.message || useAuthStore.getState().state.error || 'Invalid OTP. Please check and try again.';

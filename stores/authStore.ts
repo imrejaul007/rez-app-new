@@ -25,6 +25,8 @@ interface AuthActions {
   completeOnboarding: (data: Partial<User>) => Promise<void>;
   clearError: () => void;
   checkAuthStatus: () => Promise<void>;
+  // PIN auth: accept pre-resolved tokens + user
+  loginWithTokens: (tokens: { accessToken: string; refreshToken: string }, user: User) => Promise<User>;
 }
 
 interface AuthStoreState {
@@ -58,6 +60,7 @@ const defaultActions: AuthActions = {
   completeOnboarding: noopAsync,
   clearError: noop,
   checkAuthStatus: noopAsync,
+  loginWithTokens: noopAsync,
 };
 
 // ---------------------------------------------------------------------------

@@ -106,6 +106,8 @@ interface AuthContextType {
     completeOnboarding: (data: Partial<User>) => Promise<void>;
     clearError: () => void;
     checkAuthStatus: () => Promise<void>;
+    // PIN auth: accept tokens + user object from PIN verify response
+    loginWithTokens: (tokens: { accessToken: string; refreshToken: string }, user: User) => Promise<User>;
   };
 }
 
@@ -220,7 +222,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       setShouldRedirectToSignIn(false);
     } else if (!state.isAuthenticated) {
       if (isSignInRoute) return;
-      if (isOnboardingRoute && !state.error) return;
+      if (isOnboardingRoute) return;
       needsRedirect = true;
     }
 
@@ -529,6 +531,36 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     }
   };
 
+  // loginWithTokens: used after PIN verification — tokens + user already resolved by caller
+  const loginWithTokens = async (
+    tokens: { accessToken: string; refreshToken: string },
+    user: User,
+  ): Promise<User> => {
+    try {
+      await authStorage.saveAuthData(tokens.accessToken, tokens.refreshToken, user);
+
+      if (user.isOnboarded) {
+        AsyncStorage.setItem('onboarding_completed', 'true').catch(() => {});
+      }
+
+      authService.setAuthToken(tokens.accessToken);
+      apiClient.setAuthToken(tokens.accessToken);
+
+      dispatch({ type: 'AUTH_SUCCESS', payload: { user, token: tokens.accessToken } });
+
+      try {
+        const userId = (user as any)._id || user.id;
+        analytics.setUserId(userId);
+      } catch {}
+
+      setHasExplicitlyLoggedOut(false);
+      return user;
+    } catch (error: any) {
+      dispatch({ type: 'AUTH_FAILURE', payload: error?.message || 'Login failed' });
+      throw error;
+    }
+  };
+
   const clearError = () => {
     dispatch({ type: 'CLEAR_ERROR' });
   };
@@ -757,11 +789,11 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   // Pattern copied from GamificationContext (lines 655-689).
   const actionsRef = useRef({
     sendOTP, login, register, verifyOTP, logout, forceLogout,
-    updateProfile, completeOnboarding, clearError, checkAuthStatus,
+    updateProfile, completeOnboarding, clearError, checkAuthStatus, loginWithTokens,
   });
   actionsRef.current = {
     sendOTP, login, register, verifyOTP, logout, forceLogout,
-    updateProfile, completeOnboarding, clearError, checkAuthStatus,
+    updateProfile, completeOnboarding, clearError, checkAuthStatus, loginWithTokens,
   };
 
   // Stable wrapper that delegates to latest callbacks via ref — identity never changes
@@ -776,6 +808,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     completeOnboarding: (...args: Parameters<typeof completeOnboarding>) => actionsRef.current.completeOnboarding(...args),
     clearError: () => actionsRef.current.clearError(),
     checkAuthStatus: () => actionsRef.current.checkAuthStatus(),
+    loginWithTokens: (...args: Parameters<typeof loginWithTokens>) => actionsRef.current.loginWithTokens(...args),
   }), []); // Empty deps — wrapper identity never changes
 
   // Memoize context value — only re-renders consumers when state changes (not actions)

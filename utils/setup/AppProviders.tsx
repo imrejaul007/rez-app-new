@@ -25,7 +25,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * - DeferredRecommendation → recommendationStore
  */
 import React, { useEffect, useRef } from 'react';
-import { Platform } from 'react-native';
+import { Platform, View, ActivityIndicator } from 'react-native';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
@@ -216,6 +216,7 @@ const ScreenTrackerInner = React.memo(function ScreenTrackerInner() {
 
 function ThemedNavigation() {
   const { isDark } = useTheme();
+  const { state: authState } = useAuth();
 
   // Initialize analytics, remote feature flags, and offline sync queue (fire-and-forget)
   useEffect(() => {
@@ -223,6 +224,15 @@ function ThemedNavigation() {
     import('@/services/remoteFeatureConfig').then(m => m.remoteFeatureConfig.initialize()).catch(() => {});
     import('@/services/offlineSyncService').then(m => m.default.initialize()).catch(() => {});
   }, []);
+
+  // BUG 25: Show splash while auth is initializing to prevent flash of home page
+  if (authState.isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1a3a52' }}>
+        <ActivityIndicator size="large" color="#FFC857" />
+      </View>
+    );
+  }
 
   return (
     <ThemeProvider value={isDark ? DarkTheme : DefaultTheme}>

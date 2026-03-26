@@ -55,15 +55,17 @@ function SignInScreen() {
   const [formData, setFormData] = useState({
     phoneNumber: '',
     otp: '',
+    pin: '',
   });
 
   // Default to UAE (+971)
   const [selectedCountry, setSelectedCountry] = useState<CountryCode>(COUNTRY_CODES[0]);
 
-  const [step, setStep] = useState<'phone' | 'otp'>('phone');
+  const [step, setStep] = useState<'phone' | 'otp' | 'pin'>('phone');
   const [errors, setErrors] = useState({
     phoneNumber: '',
     otp: '',
+    pin: '',
   });
 
   const [otpTimer, setOtpTimer] = useState(0);
@@ -136,30 +138,13 @@ function SignInScreen() {
     }
   };
 
-  const handleRequestOTP = async () => {
-    if (!formData.phoneNumber.trim()) {
-      setErrors((prev) => ({ ...prev, phoneNumber: 'Phone number is required' }));
-      return;
-    }
-
-    if (!validatePhoneNumber(formData.phoneNumber)) {
-      setErrors((prev) => ({ ...prev, phoneNumber: 'Please enter a valid phone number' }));
-      return;
-    }
-
-    // Haptic feedback on OTP send
-    try {
-      await Haptics.selectionAsync();
-    } catch {}
-
+  const doSendOTP = async (formattedPhone: string) => {
     // Show "waking up server" hint after 5s so users know it's a cold start, not a crash
     const slowHintTimer = setTimeout(() => {
       if (isMounted()) setSlowLoadingMsg('Waking up server, please wait…');
     }, 5000);
 
-    setIsSending(true);
     try {
-      const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
       await actions.sendOTP(formattedPhone);
       clearTimeout(slowHintTimer);
       if (isMounted()) setSlowLoadingMsg('');
@@ -177,7 +162,7 @@ function SignInScreen() {
 
       platformAlertSimple(
         'OTP Sent',
-        `Verification code sent to ${selectedCountry.dialCode}${formData.phoneNumber}${__DEV__ ? '\n\nFor demo, use: 123456' : ''}`,
+        `Verification code sent to ${formattedPhone}${__DEV__ ? '\n\nFor demo, use: 123456' : ''}`,
       );
     } catch (error: any) {
       clearTimeout(slowHintTimer);
@@ -211,6 +196,107 @@ function SignInScreen() {
         platformAlertSimple('Error', errorMessage);
       }
       actions.clearError();
+      throw error;
+    }
+  };
+
+  const handleRequestOTP = async () => {
+    if (!formData.phoneNumber.trim()) {
+      setErrors((prev) => ({ ...prev, phoneNumber: 'Phone number is required' }));
+      return;
+    }
+
+    if (!validatePhoneNumber(formData.phoneNumber)) {
+      setErrors((prev) => ({ ...prev, phoneNumber: 'Please enter a valid phone number' }));
+      return;
+    }
+
+    // Haptic feedback on phone continue
+    try {
+      await Haptics.selectionAsync();
+    } catch {}
+
+    setIsSending(true);
+    try {
+      const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
+
+      // Check if this phone number has a PIN set — if so, show PIN screen instead of OTP
+      try {
+        const apiBase = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
+        const hasPinResp = await fetch(
+          `${apiBase}/user/auth/has-pin?phoneNumber=${encodeURIComponent(formattedPhone)}`,
+        );
+        const hasPinData = await hasPinResp.json();
+        if (hasPinData.success && hasPinData.hasPin) {
+          if (!isMounted()) return;
+          setStep('pin');
+          return;
+        }
+      } catch {
+        // If has-pin check fails (e.g. network error), fall through to OTP
+      }
+
+      await doSendOTP(formattedPhone);
+    } finally {
+      if (isMounted()) setIsSending(false);
+    }
+  };
+
+  const handleVerifyPIN = async () => {
+    if (!formData.pin || formData.pin.length !== 4) {
+      setErrors((prev) => ({ ...prev, pin: 'Please enter your 4-digit PIN' }));
+      return;
+    }
+
+    setIsSending(true);
+    try {
+      const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
+      const apiBase = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
+      const response = await fetch(`${apiBase}/user/auth/verify-pin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phoneNumber: formattedPhone, pin: formData.pin }),
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        // Normalise user: backend returns _id, frontend expects id
+        const rawUser = data.data.user;
+        const user = { ...rawUser, id: rawUser._id || rawUser.id };
+        await actions.loginWithTokens(data.data.tokens, user);
+        try {
+          await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        } catch {}
+        // Navigate based on onboarding status
+        if (user.isOnboarded) {
+          router.replace('/(tabs)/');
+        } else {
+          router.replace('/onboarding/notification-permission');
+        }
+      } else {
+        if (!isMounted()) return;
+        setErrors((prev) => ({ ...prev, pin: data.message || 'Incorrect PIN' }));
+        if (data.attemptsLeft !== undefined && data.attemptsLeft <= 2) {
+          platformAlertSimple('PIN Error', `${data.message} (${data.attemptsLeft} attempts left)`);
+        }
+      }
+    } catch (err) {
+      if (!isMounted()) return;
+      setErrors((prev) => ({ ...prev, pin: 'Connection error. Try again.' }));
+    } finally {
+      if (isMounted()) setIsSending(false);
+    }
+  };
+
+  const handleForgotPIN = async () => {
+    setFormData((prev) => ({ ...prev, pin: '' }));
+    setErrors((prev) => ({ ...prev, pin: '' }));
+    setIsSending(true);
+    try {
+      const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
+      await doSendOTP(formattedPhone);
+    } catch {
+      // error already handled inside doSendOTP
     } finally {
       if (isMounted()) setIsSending(false);
     }
@@ -235,6 +321,13 @@ function SignInScreen() {
       try {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch {}
+      // Explicit navigation after successful OTP login
+      const currentUser = useAuthStore.getState().state.user;
+      if (currentUser?.isOnboarded) {
+        router.replace('/(tabs)/');
+      } else {
+        router.replace('/onboarding/notification-permission');
+      }
     } catch (error: any) {
       const errorMessage = error?.message || useAuthStore.getState().state.error || 'Invalid OTP. Please try again.';
       if (!isMounted()) return;
@@ -271,8 +364,8 @@ function SignInScreen() {
 
   const handleBackToPhone = () => {
     setStep('phone');
-    setFormData((prev) => ({ ...prev, otp: '' }));
-    setErrors((prev) => ({ ...prev, otp: '' }));
+    setFormData((prev) => ({ ...prev, otp: '', pin: '' }));
+    setErrors((prev) => ({ ...prev, otp: '', pin: '' }));
     setOtpTimer(0);
     setCanResendOTP(false);
   };
@@ -489,6 +582,123 @@ function SignInScreen() {
     </View>
   );
 
+  const renderPINStep = () => (
+    <View style={styles.stepContainer}>
+      <View style={styles.glassCard}>
+        <LinearGradient
+          colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0)']}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.glassShine}
+        />
+
+        <View style={styles.header}>
+          <Pressable
+            style={styles.backButton}
+            onPress={handleBackToPhone}
+            hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
+            accessibilityLabel="Go back to phone number entry"
+            accessibilityRole="button"
+          >
+            <View style={styles.backButtonInner}>
+              <Ionicons name="arrow-back" size={20} color={colors.brand.purple} />
+            </View>
+          </Pressable>
+
+          <View style={styles.shieldIconContainer}>
+            <LinearGradient colors={[colors.brand.purple, colors.brand.purpleDeep]} style={styles.shieldIcon}>
+              <Ionicons name="keypad" size={28} color={colors.text.inverse} />
+            </LinearGradient>
+          </View>
+
+          <Text style={styles.title}>Enter PIN</Text>
+          <Text style={styles.subtitle}>
+            Enter your 4-digit PIN to sign in{'\n'}
+            <Text style={styles.phoneNumber}>
+              {selectedCountry.dialCode} {formData.phoneNumber}
+            </Text>
+          </Text>
+
+          <View style={styles.underlineContainer}>
+            <LinearGradient
+              colors={[colors.brand.purple, colors.brand.purpleLight]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.underline}
+            />
+          </View>
+        </View>
+
+        <View style={styles.form}>
+          <View style={{ marginBottom: 16 }}>
+            <TextInput
+              placeholder="Enter 4-digit PIN"
+              value={formData.pin}
+              onChangeText={(v) => handleInputChange('pin', v.replace(/\D/g, ''))}
+              keyboardType="number-pad"
+              maxLength={4}
+              secureTextEntry={true}
+              autoFocus={true}
+              style={{
+                backgroundColor: colors.background.primary,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: errors.pin ? colors.error : colors.neutral[200],
+                paddingHorizontal: 16,
+                paddingVertical: 14,
+                fontSize: 24,
+                fontWeight: '700',
+                color: colors.neutral[700],
+                textAlign: 'center',
+                letterSpacing: 12,
+              }}
+              placeholderTextColor={colors.neutral[400]}
+            />
+            {!!errors.pin && <Text style={{ color: colors.error, fontSize: 14, marginTop: 4 }}>{errors.pin}</Text>}
+          </View>
+
+          <Pressable
+            style={styles.primaryButtonWrapper}
+            onPress={handleVerifyPIN}
+            disabled={isSending || formData.pin.length !== 4}
+            accessibilityLabel={isSending ? 'Signing in' : 'Sign in with PIN'}
+            accessibilityRole="button"
+          >
+            <View
+              style={[
+                styles.primaryButton,
+                {
+                  backgroundColor: isSending || formData.pin.length !== 4 ? colors.neutral[300] : colors.brand.purple,
+                },
+              ]}
+            >
+              {isSending ? (
+                <LoadingSpinner size="small" color={colors.text.inverse} />
+              ) : (
+                <>
+                  <Text style={styles.primaryButtonText}>Sign In</Text>
+                  <Ionicons name="checkmark-circle" size={20} color={colors.text.inverse} />
+                </>
+              )}
+            </View>
+          </Pressable>
+
+          <Pressable
+            onPress={handleForgotPIN}
+            disabled={isSending}
+            style={{ alignItems: 'center', marginTop: 16, paddingVertical: 8 }}
+            accessibilityLabel="Forgot PIN? Login with OTP instead"
+            accessibilityRole="button"
+          >
+            <Text style={{ color: colors.brand.purple, fontWeight: '600', fontSize: 14 }}>
+              Forgot PIN? Login with OTP
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Hero Gradient Background - Brand Purple */}
@@ -518,7 +728,7 @@ function SignInScreen() {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.content}>
-            {step === 'phone' ? renderPhoneStep() : renderOTPStep()}
+            {step === 'phone' ? renderPhoneStep() : step === 'pin' ? renderPINStep() : renderOTPStep()}
 
             {/* Footer */}
             <View style={styles.footer}>

@@ -6,7 +6,8 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import FormInput from '@/components/onboarding/FormInput';
-import { useAuthLoading, useAuthError, useAuthActions } from '@/stores/selectors';
+import { useAuthActions } from '@/stores/selectors';
+import { useAuthStore } from '@/stores/authStore';
 import CountryCodePicker, { COUNTRY_CODES, CountryCode } from '@/components/common/CountryCodePicker';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import ReferralHandler from '@/utils/referralHandler';
@@ -19,8 +20,7 @@ function RegistrationScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const params = useLocalSearchParams<{ referralCode?: string }>();
-  const authLoading = useAuthLoading();
-  const authError = useAuthError();
+  const [authLoading, setAuthLoading] = useState(false);
   const actions = useAuthActions();
 
   const [formData, setFormData] = useState({
@@ -38,14 +38,14 @@ function RegistrationScreen() {
     const loadReferralCode = async () => {
       // Priority: route params > stored deep link code
       if (params.referralCode) {
-        setFormData(prev => ({ ...prev, referralCode: params.referralCode! }));
+        setFormData((prev) => ({ ...prev, referralCode: params.referralCode! }));
         return;
       }
       try {
         const storedReferral = await ReferralHandler.getStoredReferralCode();
         if (storedReferral?.code) {
           if (!isMounted()) return;
-          setFormData(prev => ({ ...prev, referralCode: storedReferral.code }));
+          setFormData((prev) => ({ ...prev, referralCode: storedReferral.code }));
         }
       } catch (error) {
         // silently handle
@@ -65,9 +65,9 @@ function RegistrationScreen() {
   const [showExistingUserMessage, setShowExistingUserMessage] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field as keyof typeof errors]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
@@ -95,6 +95,7 @@ function RegistrationScreen() {
   const handleSubmit = async () => {
     if (!validateForm()) return;
 
+    setAuthLoading(true);
     try {
       const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
       const emailToSend = formData.email.trim() || undefined;
@@ -102,24 +103,28 @@ function RegistrationScreen() {
 
       router.push({
         pathname: '/onboarding/otp-verification',
-        params: { phoneNumber: formattedPhone }
+        params: { phoneNumber: formattedPhone },
       });
     } catch (error: any) {
-      const errorMessage = error?.message || authError || 'Failed to send OTP. Please try again.';
+      const errorMessage =
+        error?.message || useAuthStore.getState().state.error || 'Failed to send OTP. Please try again.';
 
-      if (errorMessage.toLowerCase().includes('already') &&
-          (errorMessage.toLowerCase().includes('registered') ||
-           errorMessage.toLowerCase().includes('exists'))) {
+      if (
+        errorMessage.toLowerCase().includes('already') &&
+        (errorMessage.toLowerCase().includes('registered') || errorMessage.toLowerCase().includes('exists'))
+      ) {
         if (!isMounted()) return;
         setShowExistingUserMessage(true);
       } else if (errorMessage.toLowerCase().includes('phone')) {
         // Show phone number error in the UI
         if (!isMounted()) return;
-        setErrors(prev => ({ ...prev, phoneNumber: errorMessage }));
+        setErrors((prev) => ({ ...prev, phoneNumber: errorMessage }));
       } else {
         platformAlertSimple('Error', errorMessage);
       }
       actions.clearError();
+    } finally {
+      if (isMounted()) setAuthLoading(false);
     }
   };
 
@@ -136,10 +141,7 @@ function RegistrationScreen() {
   return (
     <View style={styles.container}>
       {/* Background */}
-      <LinearGradient
-        colors={[colors.linen, '#EDF2F7', colors.linen]}
-        style={StyleSheet.absoluteFill}
-      />
+      <LinearGradient colors={[colors.linen, '#EDF2F7', colors.linen]} style={StyleSheet.absoluteFill} />
 
       {/* Decorative Elements */}
       <View style={styles.decorativeCircles}>
@@ -147,167 +149,139 @@ function RegistrationScreen() {
         <View style={[styles.circle, styles.circleGold]} />
       </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-      <ScrollView
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-      >
-        {showExistingUserMessage ? (
-          // Existing User Message
-          <View style={styles.glassCard}>
-            <LinearGradient
-              colors={['rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
-              style={styles.glassShine}
-            />
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {showExistingUserMessage ? (
+            // Existing User Message
+            <View style={styles.glassCard}>
+              <LinearGradient colors={['rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']} style={styles.glassShine} />
 
-            <View style={styles.existingUserContainer}>
-              <View style={styles.iconContainer}>
-                <LinearGradient
-                  colors={[Colors.gold, colors.nileBlue]}
-                  style={styles.iconGradient}
-                >
-                  <Ionicons name="person-circle" size={48} color={colors.background.primary} />
-                </LinearGradient>
+              <View style={styles.existingUserContainer}>
+                <View style={styles.iconContainer}>
+                  <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.iconGradient}>
+                    <Ionicons name="person-circle" size={48} color={colors.background.primary} />
+                  </LinearGradient>
+                </View>
+
+                <Text style={styles.existingUserTitle}>Welcome Back!</Text>
+                <Text style={styles.existingUserMessage}>Great to see you again! Sign in to continue.</Text>
+
+                <Pressable style={styles.primaryButtonWrapper} onPress={handleGoToSignIn}>
+                  <LinearGradient
+                    colors={[Colors.gold, colors.nileBlue]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={styles.primaryButton}
+                  >
+                    <Ionicons name="log-in-outline" size={20} color={colors.background.primary} />
+                    <Text style={styles.primaryButtonText}>Go to Sign In</Text>
+                  </LinearGradient>
+                </Pressable>
+
+                <Pressable style={styles.secondaryButton} onPress={handleTryAgain}>
+                  <Text style={styles.secondaryButtonText}>Try Different Number</Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : (
+            // Registration Form
+            <View style={styles.glassCard}>
+              <LinearGradient colors={['rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']} style={styles.glassShine} />
+
+              {/* Header */}
+              <View style={styles.header}>
+                <View style={styles.progressDots}>
+                  <View style={[styles.dot, styles.dotActive]} />
+                  <View style={[styles.dot, styles.dotInactive]} />
+                  <View style={[styles.dot, styles.dotInactive]} />
+                  <View style={[styles.dot, styles.dotInactive]} />
+                </View>
+
+                <Text style={styles.title}>Create your account</Text>
+                <Text style={styles.subtitle}>Enter your details to get started</Text>
+
+                <View style={styles.underlineContainer}>
+                  <LinearGradient
+                    colors={[Colors.gold, colors.lightPeach]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.underline}
+                  />
+                </View>
               </View>
 
-              <Text style={styles.existingUserTitle}>Welcome Back!</Text>
-              <Text style={styles.existingUserMessage}>
-                Great to see you again! Sign in to continue.
-              </Text>
+              {/* Form */}
+              <View style={styles.form}>
+                <View style={styles.phoneFieldContainer}>
+                  <View style={styles.unifiedPhoneInput}>
+                    <CountryCodePicker
+                      selectedCountry={selectedCountry}
+                      onSelect={setSelectedCountry}
+                      style={styles.countryPickerInline}
+                    />
+                    <View style={styles.phoneDivider} />
+                    <View style={styles.phoneNumberInput}>
+                      <Ionicons name="call-outline" size={18} color={Colors.gold} style={styles.phoneIcon} />
+                      <TextInput
+                        style={styles.phoneTextInput}
+                        placeholder="Mobile number"
+                        placeholderTextColor={colors.gray[400]}
+                        value={formData.phoneNumber}
+                        onChangeText={(value) => handleInputChange('phoneNumber', value)}
+                        keyboardType="phone-pad"
+                      />
+                    </View>
+                  </View>
+                  {errors.phoneNumber ? <Text style={styles.errorText}>{errors.phoneNumber}</Text> : null}
+                </View>
 
-              <Pressable
-                style={styles.primaryButtonWrapper}
-                onPress={handleGoToSignIn}
-               
-              >
+                <FormInput
+                  placeholder="Email Id (Optional)"
+                  value={formData.email}
+                  onChangeText={(value) => handleInputChange('email', value)}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  error={errors.email}
+                  containerStyle={styles.inputContainer}
+                  leftIcon={<Ionicons name="mail-outline" size={20} color={Colors.gold} />}
+                />
+
+                <FormInput
+                  placeholder="Referral code (Optional)"
+                  value={formData.referralCode}
+                  onChangeText={(value) => handleInputChange('referralCode', value)}
+                  autoCapitalize="characters"
+                  containerStyle={styles.inputContainer}
+                  leftIcon={<Ionicons name="gift-outline" size={20} color={Colors.gold} />}
+                />
+              </View>
+
+              {/* Submit Button */}
+              <Pressable style={styles.primaryButtonWrapper} onPress={handleSubmit} disabled={authLoading}>
                 <LinearGradient
-                  colors={[Colors.gold, colors.nileBlue]}
+                  colors={authLoading ? [colors.border.default, colors.border.default] : [Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.primaryButton}
                 >
-                  <Ionicons name="log-in-outline" size={20} color={colors.background.primary} />
-                  <Text style={styles.primaryButtonText}>Go to Sign In</Text>
+                  <Text style={styles.primaryButtonText}>{authLoading ? 'Submitting...' : 'Continue'}</Text>
+                  {!authLoading && <Ionicons name="arrow-forward" size={20} color={colors.background.primary} />}
                 </LinearGradient>
               </Pressable>
 
-              <Pressable style={styles.secondaryButton} onPress={handleTryAgain}>
-                <Text style={styles.secondaryButtonText}>Try Different Number</Text>
+              {/* Sign In Link */}
+              <Pressable style={styles.signInLink} onPress={handleGoToSignIn}>
+                <Text style={styles.signInText}>
+                  Already have an account? <Text style={styles.signInHighlight}>Sign In</Text>
+                </Text>
               </Pressable>
             </View>
-          </View>
-        ) : (
-          // Registration Form
-          <View style={styles.glassCard}>
-            <LinearGradient
-              colors={['rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
-              style={styles.glassShine}
-            />
-
-            {/* Header */}
-            <View style={styles.header}>
-              <View style={styles.progressDots}>
-                <View style={[styles.dot, styles.dotActive]} />
-                <View style={[styles.dot, styles.dotInactive]} />
-                <View style={[styles.dot, styles.dotInactive]} />
-                <View style={[styles.dot, styles.dotInactive]} />
-              </View>
-
-              <Text style={styles.title}>Create your account</Text>
-              <Text style={styles.subtitle}>Enter your details to get started</Text>
-
-              <View style={styles.underlineContainer}>
-                <LinearGradient
-                  colors={[Colors.gold, colors.lightPeach]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.underline}
-                />
-              </View>
-            </View>
-
-            {/* Form */}
-            <View style={styles.form}>
-              <View style={styles.phoneFieldContainer}>
-                <View style={styles.unifiedPhoneInput}>
-                  <CountryCodePicker
-                    selectedCountry={selectedCountry}
-                    onSelect={setSelectedCountry}
-                    style={styles.countryPickerInline}
-                  />
-                  <View style={styles.phoneDivider} />
-                  <View style={styles.phoneNumberInput}>
-                    <Ionicons name="call-outline" size={18} color={Colors.gold} style={styles.phoneIcon} />
-                    <TextInput
-                      style={styles.phoneTextInput}
-                      placeholder="Mobile number"
-                      placeholderTextColor={colors.gray[400]}
-                      value={formData.phoneNumber}
-                      onChangeText={(value) => handleInputChange('phoneNumber', value)}
-                      keyboardType="phone-pad"
-                    />
-                  </View>
-                </View>
-                {errors.phoneNumber ? (
-                  <Text style={styles.errorText}>{errors.phoneNumber}</Text>
-                ) : null}
-              </View>
-
-              <FormInput
-                placeholder="Email Id (Optional)"
-                value={formData.email}
-                onChangeText={(value) => handleInputChange('email', value)}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                error={errors.email}
-                containerStyle={styles.inputContainer}
-                leftIcon={<Ionicons name="mail-outline" size={20} color={Colors.gold} />}
-              />
-
-              <FormInput
-                placeholder="Referral code (Optional)"
-                value={formData.referralCode}
-                onChangeText={(value) => handleInputChange('referralCode', value)}
-                autoCapitalize="characters"
-                containerStyle={styles.inputContainer}
-                leftIcon={<Ionicons name="gift-outline" size={20} color={Colors.gold} />}
-              />
-            </View>
-
-            {/* Submit Button */}
-            <Pressable
-              style={styles.primaryButtonWrapper}
-              onPress={handleSubmit}
-              disabled={authLoading}
-             
-            >
-              <LinearGradient
-                colors={authLoading ? [colors.border.default, colors.border.default] : [Colors.gold, colors.nileBlue]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.primaryButton}
-              >
-                <Text style={styles.primaryButtonText}>
-                  {authLoading ? 'Submitting...' : 'Continue'}
-                </Text>
-                {!authLoading && <Ionicons name="arrow-forward" size={20} color={colors.background.primary} />}
-              </LinearGradient>
-            </Pressable>
-
-            {/* Sign In Link */}
-            <Pressable style={styles.signInLink} onPress={handleGoToSignIn}>
-              <Text style={styles.signInText}>
-                Already have an account?{' '}
-                <Text style={styles.signInHighlight}>Sign In</Text>
-              </Text>
-            </Pressable>
-          </View>
-        )}
-      </ScrollView>
+          )}
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );
@@ -338,7 +312,7 @@ const styles = StyleSheet.create({
     height: 200,
     top: -60,
     right: -60,
-    backgroundColor: 'rgba(26, 58, 82, 0.08)',  // Nile Blue
+    backgroundColor: 'rgba(26, 58, 82, 0.08)', // Nile Blue
   },
   circleGold: {
     width: 150,
@@ -402,7 +376,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: colors.nileBlue,    // Nile Blue,
+    color: colors.nileBlue, // Nile Blue,
     marginBottom: Spacing.sm,
     textAlign: 'center',
     letterSpacing: -0.5,
@@ -468,7 +442,7 @@ const styles = StyleSheet.create({
   phoneTextInput: {
     flex: 1,
     fontSize: Typography.body.fontSize,
-    color: colors.nileBlue,    // Nile Blue,
+    color: colors.nileBlue, // Nile Blue,
     paddingVertical: 14,
   },
   errorText: {
@@ -482,7 +456,7 @@ const styles = StyleSheet.create({
   primaryButtonWrapper: {
     borderRadius: BorderRadius.lg,
     overflow: 'hidden',
-    shadowColor: Colors.gold,        // Light Mustard,
+    shadowColor: Colors.gold, // Light Mustard,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
@@ -521,7 +495,7 @@ const styles = StyleSheet.create({
     color: colors.gray[400],
   },
   signInHighlight: {
-    color: Colors.gold,        // Light Mustard,
+    color: Colors.gold, // Light Mustard,
     fontWeight: '700',
   },
 
@@ -532,7 +506,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     marginBottom: Spacing.lg,
-    shadowColor: Colors.gold,        // Light Mustard,
+    shadowColor: Colors.gold, // Light Mustard,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
@@ -548,7 +522,7 @@ const styles = StyleSheet.create({
   existingUserTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: colors.nileBlue,    // Nile Blue,
+    color: colors.nileBlue, // Nile Blue,
     textAlign: 'center',
     marginBottom: Spacing.md,
   },
