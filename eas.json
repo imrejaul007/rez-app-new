@@ -26,14 +26,14 @@
     "preview": {
       "distribution": "internal",
       "android": {
-        "buildType": "app-bundle"
+        "buildType": "apk"
       },
       "ios": {
         "simulator": false
       },
       "env": {
         "APP_ENV": "preview",
-        "EXPO_PUBLIC_API_BASE_URL": "https://rez-backend-vvhl.onrender.com/api"
+        "EXPO_PUBLIC_API_BASE_URL": "https://rez-backend-8dfu.onrender.com/api"
       }
     },
     "production": {
@@ -46,7 +46,7 @@
       },
       "env": {
         "APP_ENV": "production",
-        "EXPO_PUBLIC_API_BASE_URL": "https://rez-backend-vvhl.onrender.com/api"
+        "EXPO_PUBLIC_API_BASE_URL": "https://rez-backend-8dfu.onrender.com/api"
       }
     }
   },
