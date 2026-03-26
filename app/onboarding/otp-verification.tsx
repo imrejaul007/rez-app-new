@@ -1,6 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, Platform, KeyboardAvoidingView } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, Platform, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import analyticsService from '@/services/analyticsService';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -25,7 +25,8 @@ function OTPVerificationScreen() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  // Use ref instead of state to avoid re-renders that dismiss the keyboard
+  const focusedIndexRef = useRef<number | null>(null);
 
   const inputRefs = useRef<TextInput[]>([]);
 
@@ -39,7 +40,7 @@ function OTPVerificationScreen() {
   useEffect(() => {
     if (timer <= 0) return;
     const interval = setInterval(() => {
-      setTimer(prev => {
+      setTimer((prev) => {
         if (prev <= 1) {
           setCanResend(true);
           clearInterval(interval);
@@ -72,7 +73,7 @@ function OTPVerificationScreen() {
       inputRefs.current[index + 1]?.focus();
     }
 
-    if (newOtp.every(digit => digit.length === 1)) {
+    if (newOtp.every((digit) => digit.length === 1)) {
       handleSubmit(newOtp.join(''));
     }
   };
@@ -88,7 +89,7 @@ function OTPVerificationScreen() {
 
     if (otpString.length !== 6 || !/^\d{6}$/.test(otpString)) {
       triggerImpact('Light');
-      platformAlertSimple('That code didn\'t match', 'Please enter a valid 6-digit OTP');
+      platformAlertSimple("That code didn't match", 'Please enter a valid 6-digit OTP');
       return;
     }
 
@@ -120,7 +121,7 @@ function OTPVerificationScreen() {
       }
     } catch (error: any) {
       const errorMessage = error?.message || authError || 'Invalid OTP. Please check and try again.';
-      platformAlertSimple('That code didn\'t match', errorMessage);
+      platformAlertSimple("That code didn't match", errorMessage);
       if (!isMounted()) return;
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
@@ -139,7 +140,7 @@ function OTPVerificationScreen() {
       if (!isMounted()) return;
       setCanResend(false);
       if (!isMounted()) return;
-      setTimerKey(k => k + 1); // Restart interval cleanly
+      setTimerKey((k) => k + 1); // Restart interval cleanly
       platformAlertSimple('Success', 'OTP has been resent to your phone number');
     } catch (error: any) {
       const errorMessage = error?.message || authError || 'Failed to resend OTP. Please try again.';
@@ -150,144 +151,135 @@ function OTPVerificationScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
         {/* Background */}
         <LinearGradient
           colors={[colors.background.secondary, '#EDF2F7', colors.background.secondary]}
           style={StyleSheet.absoluteFill}
         />
 
-      {/* Decorative Elements */}
-      <View style={styles.decorativeCircles}>
-        <View style={[styles.circle, styles.circleGreen]} />
-        <View style={[styles.circle, styles.circleGold]} />
-      </View>
-
-      <View style={styles.content} pointerEvents="box-none">
-        <View style={styles.glassCard} pointerEvents="auto">
-          <LinearGradient
-            colors={['rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']}
-            style={styles.glassShine}
-          />
-
-          {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.progressDots}>
-              <View style={[styles.dot, styles.dotActive]} />
-              <View style={[styles.dot, styles.dotActive]} />
-              <View style={[styles.dot, styles.dotInactive]} />
-              <View style={[styles.dot, styles.dotInactive]} />
-            </View>
-
-            {/* Shield Icon */}
-            <View style={styles.iconContainer}>
-              <LinearGradient
-                colors={[Colors.gold, colors.nileBlue]}
-                style={styles.iconGradient}
-              >
-                <Ionicons name="shield-checkmark" size={32} color={colors.background.primary} />
-              </LinearGradient>
-            </View>
-
-            <Text style={styles.title}>Verify your number</Text>
-            <Text style={styles.subtitle}>
-              Enter the 6-digit code sent to{'\n'}
-              <Text style={styles.phoneText}>{phoneNumber}</Text>
-            </Text>
-
-            <View style={styles.underlineContainer}>
-              <LinearGradient
-                colors={[Colors.gold, Colors.goldDark]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.underline}
-              />
-            </View>
-          </View>
-
-          {/* OTP Inputs */}
-          <View style={styles.otpContainer}>
-            {otp.map((digit, index) => (
-              <View
-                key={index}
-                style={[
-                  styles.otpInputWrapper,
-                  focusedIndex === index && styles.otpInputWrapperFocused,
-                  digit && styles.otpInputWrapperFilled,
-                ]}
-              >
-                <TextInput
-                  ref={ref => {
-                    if (ref) inputRefs.current[index] = ref;
-                  }}
-                  style={[
-                    styles.otpInput,
-                    digit && styles.otpInputFilled,
-                  ]}
-                  value={digit}
-                  onChangeText={(value) => handleOTPChange(value, index)}
-                  onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
-                  onFocus={() => setFocusedIndex(index)}
-                  onBlur={() => setFocusedIndex(null)}
-                  keyboardType="number-pad"
-                  maxLength={index === 0 ? 6 : 1}
-                  textAlign="center"
-                  selectTextOnFocus
-                  textContentType={index === 0 ? 'oneTimeCode' : 'none'}
-                  autoComplete={index === 0 ? 'sms-otp' : 'off'}
-                  accessibilityLabel={`OTP digit ${index + 1} of 6`}
-                />
-              </View>
-            ))}
-          </View>
-
-          {/* Resend Section */}
-          <View style={styles.resendContainer}>
-            {timer > 0 ? (
-              <View style={styles.timerPill}>
-                <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
-                <Text style={styles.timerText}>Resend in {timer}s</Text>
-              </View>
-            ) : (
-              <Pressable
-                onPress={handleResendOTP}
-                disabled={!canResend || authLoading}
-                style={styles.resendButton}
-              >
-                <Ionicons name="refresh-outline" size={18} color={Colors.gold} />
-                <Text style={styles.resendText}>Resend OTP</Text>
-              </Pressable>
-            )}
-          </View>
-
-          {/* Submit Button */}
-          <Pressable
-            style={styles.primaryButtonWrapper}
-            onPress={() => handleSubmit()}
-            disabled={authLoading || !otp.every(digit => digit.length === 1)}
-           
-          >
-            <LinearGradient
-              colors={
-                authLoading || !otp.every(digit => digit.length === 1)
-                  ? [colors.neutral[300], colors.neutral[300]]
-                  : [Colors.gold, colors.nileBlue]
-              }
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.primaryButton}
-            >
-              <Text style={styles.primaryButtonText}>
-                {authLoading ? 'Verifying...' : 'Verify & Continue'}
-              </Text>
-              {!authLoading && <Ionicons name="checkmark-circle" size={20} color={colors.background.primary} />}
-            </LinearGradient>
-          </Pressable>
+        {/* Decorative Elements */}
+        <View style={styles.decorativeCircles}>
+          <View style={[styles.circle, styles.circleGreen]} />
+          <View style={[styles.circle, styles.circleGold]} />
         </View>
-      </View>
+
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="always"
+          keyboardDismissMode="none"
+        >
+          <View style={styles.content} pointerEvents="box-none">
+            <View style={styles.glassCard} pointerEvents="auto">
+              <LinearGradient colors={['rgba(255,255,255,0.5)', 'rgba(255,255,255,0)']} style={styles.glassShine} />
+
+              {/* Header */}
+              <View style={styles.header}>
+                <View style={styles.progressDots}>
+                  <View style={[styles.dot, styles.dotActive]} />
+                  <View style={[styles.dot, styles.dotActive]} />
+                  <View style={[styles.dot, styles.dotInactive]} />
+                  <View style={[styles.dot, styles.dotInactive]} />
+                </View>
+
+                {/* Shield Icon */}
+                <View style={styles.iconContainer}>
+                  <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.iconGradient}>
+                    <Ionicons name="shield-checkmark" size={32} color={colors.background.primary} />
+                  </LinearGradient>
+                </View>
+
+                <Text style={styles.title}>Verify your number</Text>
+                <Text style={styles.subtitle}>
+                  Enter the 6-digit code sent to{'\n'}
+                  <Text style={styles.phoneText}>{phoneNumber}</Text>
+                </Text>
+
+                <View style={styles.underlineContainer}>
+                  <LinearGradient
+                    colors={[Colors.gold, Colors.goldDark]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.underline}
+                  />
+                </View>
+              </View>
+
+              {/* OTP Inputs */}
+              <View style={styles.otpContainer}>
+                {otp.map((digit, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.otpInputWrapper,
+                      /* focused style handled by TextInput focus state */
+                      digit && styles.otpInputWrapperFilled,
+                    ]}
+                  >
+                    <TextInput
+                      ref={(ref) => {
+                        if (ref) inputRefs.current[index] = ref;
+                      }}
+                      style={[styles.otpInput, digit && styles.otpInputFilled]}
+                      value={digit}
+                      onChangeText={(value) => handleOTPChange(value, index)}
+                      onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
+                      onFocus={() => {
+                        focusedIndexRef.current = index;
+                      }}
+                      onBlur={() => {
+                        focusedIndexRef.current = null;
+                      }}
+                      keyboardType="number-pad"
+                      maxLength={index === 0 ? 6 : 1}
+                      textAlign="center"
+                      selectTextOnFocus
+                      textContentType={index === 0 ? 'oneTimeCode' : 'none'}
+                      autoComplete={index === 0 ? 'sms-otp' : 'off'}
+                      accessibilityLabel={`OTP digit ${index + 1} of 6`}
+                    />
+                  </View>
+                ))}
+              </View>
+
+              {/* Resend Section */}
+              <View style={styles.resendContainer}>
+                {timer > 0 ? (
+                  <View style={styles.timerPill}>
+                    <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
+                    <Text style={styles.timerText}>Resend in {timer}s</Text>
+                  </View>
+                ) : (
+                  <Pressable onPress={handleResendOTP} disabled={!canResend || authLoading} style={styles.resendButton}>
+                    <Ionicons name="refresh-outline" size={18} color={Colors.gold} />
+                    <Text style={styles.resendText}>Resend OTP</Text>
+                  </Pressable>
+                )}
+              </View>
+
+              {/* Submit Button */}
+              <Pressable
+                style={styles.primaryButtonWrapper}
+                onPress={() => handleSubmit()}
+                disabled={authLoading || !otp.every((digit) => digit.length === 1)}
+              >
+                <LinearGradient
+                  colors={
+                    authLoading || !otp.every((digit) => digit.length === 1)
+                      ? [colors.neutral[300], colors.neutral[300]]
+                      : [Colors.gold, colors.nileBlue]
+                  }
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.primaryButton}
+                >
+                  <Text style={styles.primaryButtonText}>{authLoading ? 'Verifying...' : 'Verify & Continue'}</Text>
+                  {!authLoading && <Ionicons name="checkmark-circle" size={20} color={colors.background.primary} />}
+                </LinearGradient>
+              </Pressable>
+            </View>
+          </View>
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
@@ -318,7 +310,7 @@ const styles = StyleSheet.create({
     height: 200,
     top: -60,
     right: -60,
-    backgroundColor: 'rgba(26, 58, 82, 0.08)',  // Nile Blue
+    backgroundColor: 'rgba(26, 58, 82, 0.08)', // Nile Blue
   },
   circleGold: {
     width: 150,
@@ -449,7 +441,7 @@ const styles = StyleSheet.create({
   },
   otpInputWrapperFilled: {
     borderColor: Colors.gold,
-    backgroundColor: 'rgba(255, 205, 87, 0.1)',  // Light Mustard
+    backgroundColor: 'rgba(255, 205, 87, 0.1)', // Light Mustard
   },
   otpInput: {
     flex: 1,
