@@ -6,7 +6,8 @@ import analyticsService from '@/services/analyticsService';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuthUser, useAuthLoading, useAuthError, useAuthActions } from '@/stores/selectors';
+import { useAuthActions } from '@/stores/selectors';
+import { useAuthStore } from '@/stores/authStore';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { triggerImpact, triggerNotification } from '@/utils/haptics';
 
@@ -17,10 +18,10 @@ function OTPVerificationScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { phoneNumber } = useLocalSearchParams<{ phoneNumber: string }>();
-  const user = useAuthUser();
-  const authLoading = useAuthLoading();
-  const authError = useAuthError();
+  // DO NOT subscribe to authLoading/authError/authUser via selectors
+  // They cause re-renders that dismiss the keyboard on Android
   const actions = useAuthActions();
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(30);
@@ -98,13 +99,9 @@ function OTPVerificationScreen() {
       return;
     }
 
+    setIsVerifying(true);
     try {
       triggerImpact('Medium');
-      // FR-D003 FIX: Use the freshly-returned user from verifyOTP instead of the
-      // stale `user` value from Zustand. When verifyOTP resolves, the Zustand store
-      // dispatch has not yet triggered a re-render, so `user` is still null/old.
-      // Reading isOnboarded from the stale store meant ALL new signups were always
-      // sent to /onboarding even when they were returning users (isOnboarded=true).
       const freshUser = await actions.verifyOTP(phoneNumber, otpString);
 
       analyticsService.track('otp_verified');
@@ -112,20 +109,22 @@ function OTPVerificationScreen() {
 
       if (!isMounted()) return;
 
-      // Prefer freshUser from the response; fall back to Zustand store user.
-      const resolvedUser = freshUser ?? user;
+      const resolvedUser = freshUser ?? useAuthStore.getState().state.user;
       if (resolvedUser?.isOnboarded) {
         router.replace('/(tabs)');
       } else {
         router.replace('/onboarding/notification-permission');
       }
     } catch (error: any) {
-      const errorMessage = error?.message || authError || 'Invalid OTP. Please check and try again.';
+      const errorMessage =
+        error?.message || useAuthStore.getState().state.error || 'Invalid OTP. Please check and try again.';
       platformAlertSimple("That code didn't match", errorMessage);
       if (!isMounted()) return;
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
       actions.clearError();
+    } finally {
+      if (isMounted()) setIsVerifying(false);
     }
   };
 
@@ -143,7 +142,8 @@ function OTPVerificationScreen() {
       setTimerKey((k) => k + 1); // Restart interval cleanly
       platformAlertSimple('Success', 'OTP has been resent to your phone number');
     } catch (error: any) {
-      const errorMessage = error?.message || authError || 'Failed to resend OTP. Please try again.';
+      const errorMessage =
+        error?.message || useAuthStore.getState().state.error || 'Failed to resend OTP. Please try again.';
       platformAlertSimple('Error', errorMessage);
       actions.clearError();
     }
@@ -250,7 +250,7 @@ function OTPVerificationScreen() {
                     <Text style={styles.timerText}>Resend in {timer}s</Text>
                   </View>
                 ) : (
-                  <Pressable onPress={handleResendOTP} disabled={!canResend || authLoading} style={styles.resendButton}>
+                  <Pressable onPress={handleResendOTP} disabled={!canResend || isVerifying} style={styles.resendButton}>
                     <Ionicons name="refresh-outline" size={18} color={Colors.gold} />
                     <Text style={styles.resendText}>Resend OTP</Text>
                   </Pressable>
@@ -261,11 +261,11 @@ function OTPVerificationScreen() {
               <Pressable
                 style={styles.primaryButtonWrapper}
                 onPress={() => handleSubmit()}
-                disabled={authLoading || !otp.every((digit) => digit.length === 1)}
+                disabled={isVerifying || !otp.every((digit) => digit.length === 1)}
               >
                 <LinearGradient
                   colors={
-                    authLoading || !otp.every((digit) => digit.length === 1)
+                    isVerifying || !otp.every((digit) => digit.length === 1)
                       ? [colors.neutral[300], colors.neutral[300]]
                       : [Colors.gold, colors.nileBlue]
                   }
@@ -273,8 +273,8 @@ function OTPVerificationScreen() {
                   end={{ x: 1, y: 1 }}
                   style={styles.primaryButton}
                 >
-                  <Text style={styles.primaryButtonText}>{authLoading ? 'Verifying...' : 'Verify & Continue'}</Text>
-                  {!authLoading && <Ionicons name="checkmark-circle" size={20} color={colors.background.primary} />}
+                  <Text style={styles.primaryButtonText}>{isVerifying ? 'Verifying...' : 'Verify & Continue'}</Text>
+                  {!isVerifying && <Ionicons name="checkmark-circle" size={20} color={colors.background.primary} />}
                 </LinearGradient>
               </Pressable>
             </View>
