@@ -92,22 +92,30 @@ const EventsPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const transformEventToDisplay = (event: EventItem): DisplayEvent => {
-    if (!event) return {
-      id: '', title: '', type: 'Event', date: 'TBD',
-      price: 'Free', image: '', isOnline: false,
-    };
+    if (!event)
+      return {
+        id: '',
+        title: '',
+        type: 'Event',
+        date: 'TBD',
+        price: 'Free',
+        image: '',
+        isOnline: false,
+      };
 
     const cashbackValue = (event as any).cashback;
     const cashbackText = cashbackValue && cashbackValue > 0 ? `${cashbackValue}%` : undefined;
 
     const isOnline = (event as any).isOnline || (event.location as any)?.isOnline || false;
-    const displayCurrency = isOnline ? currencySymbol : (event.price?.currency || currencySymbol);
+    const displayCurrency = isOnline ? currencySymbol : event.price?.currency || currencySymbol;
 
     let formattedDate = 'TBD';
     if (event.date) {
       try {
         formattedDate = new Date(event.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
-      } catch { formattedDate = event.date; }
+      } catch {
+        formattedDate = event.date;
+      }
     }
 
     return {
@@ -163,9 +171,7 @@ const EventsPage: React.FC = () => {
 
       // Set upcoming events — handle both flat array and { events: [] } shapes
       const upcomingRaw = upcoming.status === 'fulfilled' ? upcoming.value : null;
-      const upcomingEvents = Array.isArray(upcomingRaw)
-        ? upcomingRaw
-        : (upcomingRaw?.events || []);
+      const upcomingEvents = Array.isArray(upcomingRaw) ? upcomingRaw : upcomingRaw?.events || [];
       if (upcomingEvents.length > 0) {
         setUpcomingEvents(upcomingEvents.slice(0, 8).map(transformEventToDisplay));
       } else {
@@ -222,7 +228,7 @@ const EventsPage: React.FC = () => {
     if (rewardConfig && rewardConfig.rewards.length > 0) {
       return rewardConfig.rewards
         .slice(0, 4)
-        .map(r => r.description || r.action.replace(/_/g, ' '))
+        .map((r) => r.description || r.action.replace(/_/g, ' '))
         .join('  \u2022  ');
     }
     return 'Book  \u2022  Check-in  \u2022  Share  \u2022  Review';
@@ -262,7 +268,10 @@ const EventsPage: React.FC = () => {
           style={styles.header}
         >
           <View style={styles.headerTop}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
@@ -284,7 +293,6 @@ const EventsPage: React.FC = () => {
               setIsLoading(true);
               fetchEvents();
             }}
-           
           >
             <Ionicons name="refresh-outline" size={20} color={colors.text.inverse} />
             <Text style={styles.retryButtonText}>Try Again</Text>
@@ -297,7 +305,7 @@ const EventsPage: React.FC = () => {
   const displayCategories = categories.length > 0 ? categories : FALLBACK_CATEGORIES;
 
   return (
-    <Animated.View style={styles.container} entering={FadeIn.duration(300)}>
+    <Animated.View style={styles.container} entering={FadeIn.duration(300)} pointerEvents="box-none">
       {/* Header */}
       <LinearGradient
         colors={[colors.nileBlue, Colors.secondary[500]]}
@@ -306,7 +314,10 @@ const EventsPage: React.FC = () => {
         style={[styles.header, { paddingTop: insets.top + 12 }]}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -327,11 +338,7 @@ const EventsPage: React.FC = () => {
 
         {/* Search Bar */}
         <View style={styles.searchBarContainer}>
-          <Pressable
-            style={styles.searchBar}
-            onPress={() => router.push('/events-list' as any)}
-           
-          >
+          <Pressable style={styles.searchBar} onPress={() => router.push('/events-list' as any)}>
             <Ionicons name="search" size={18} color={colors.text.tertiary} />
             <TextInput
               style={styles.searchInput}
@@ -366,22 +373,15 @@ const EventsPage: React.FC = () => {
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoriesScroll}
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesScroll}>
             {displayCategories.map((cat) => (
-              <Pressable
-                key={cat.slug}
-                style={styles.categoryCard}
-                onPress={() => handleCategoryPress(cat.slug)}
-               
-              >
+              <Pressable key={cat.slug} style={styles.categoryCard} onPress={() => handleCategoryPress(cat.slug)}>
                 <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}15` }]}>
                   <Text style={styles.categoryEmoji}>{cat.icon}</Text>
                 </View>
-                <Text style={styles.categoryTitle} numberOfLines={1}>{cat.name}</Text>
+                <Text style={styles.categoryTitle} numberOfLines={1}>
+                  {cat.name}
+                </Text>
                 {cat.eventCount !== undefined && cat.eventCount > 0 ? (
                   <Text style={styles.categoryCount}>
                     {cat.eventCount} {cat.eventCount === 1 ? 'event' : 'events'}
@@ -426,14 +426,13 @@ const EventsPage: React.FC = () => {
             </Pressable>
           </View>
           {featuredEvents.length > 0 ? (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 16, paddingRight: 8 }}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingLeft: 16, paddingRight: 8 }}
+            >
               {featuredEvents.map((event) => (
-                <Pressable
-                  key={event.id}
-                  style={styles.featuredCard}
-                  onPress={() => handleEventPress(event.id)}
-                 
-                >
+                <Pressable key={event.id} style={styles.featuredCard} onPress={() => handleEventPress(event.id)}>
                   <CachedImage source={event.image} style={styles.featuredImage} />
                   {/* Price badge top-right */}
                   <View style={[styles.featuredPriceBadgeAbs, event.price === 'Free' && styles.featuredPriceFreeAbs]}>
@@ -443,17 +442,16 @@ const EventsPage: React.FC = () => {
                   <View style={styles.featuredCategoryPill}>
                     <Text style={styles.featuredCategoryText}>{event.type}</Text>
                   </View>
-                  <LinearGradient
-                    colors={['transparent', 'rgba(0,0,0,0.88)']}
-                    style={styles.featuredOverlay}
-                  >
+                  <LinearGradient colors={['transparent', 'rgba(0,0,0,0.88)']} style={styles.featuredOverlay}>
                     {event.cashback && (
                       <View style={styles.cashbackBadge}>
                         <Ionicons name="gift" size={10} color={colors.text.inverse} />
                         <Text style={styles.cashbackText}>{event.cashback} Cashback</Text>
                       </View>
                     )}
-                    <Text style={styles.featuredTitle} numberOfLines={2}>{event.title}</Text>
+                    <Text style={styles.featuredTitle} numberOfLines={2}>
+                      {event.title}
+                    </Text>
                     <View style={styles.featuredMeta}>
                       <View style={styles.featuredMetaItem}>
                         <Ionicons name="calendar" size={12} color="rgba(255,255,255,0.8)" />
@@ -461,7 +459,11 @@ const EventsPage: React.FC = () => {
                       </View>
                       <View style={styles.featuredMetaDot} />
                       <View style={styles.featuredMetaItem}>
-                        <Ionicons name={event.isOnline ? "globe" : "location"} size={12} color="rgba(255,255,255,0.8)" />
+                        <Ionicons
+                          name={event.isOnline ? 'globe' : 'location'}
+                          size={12}
+                          color="rgba(255,255,255,0.8)"
+                        />
                         <Text style={styles.featuredMetaText} numberOfLines={1}>
                           {event.isOnline ? 'Online' : event.location}
                         </Text>
@@ -494,12 +496,7 @@ const EventsPage: React.FC = () => {
           </View>
           {upcomingEvents.length > 0 ? (
             upcomingEvents.map((event) => (
-              <Pressable
-                key={event.id}
-                style={styles.eventCard}
-                onPress={() => handleEventPress(event.id)}
-
-              >
+              <Pressable key={event.id} style={styles.eventCard} onPress={() => handleEventPress(event.id)}>
                 <CachedImage source={event.image} style={styles.eventImage} />
                 <View style={styles.eventInfo}>
                   <View style={styles.eventTopRow}>
@@ -513,17 +510,18 @@ const EventsPage: React.FC = () => {
                       </View>
                     )}
                   </View>
-                  <Text style={styles.eventTitle} numberOfLines={2}>{event.title}</Text>
+                  <Text style={styles.eventTitle} numberOfLines={2}>
+                    {event.title}
+                  </Text>
                   <View style={styles.eventDateRow}>
                     <Ionicons name="calendar-outline" size={12} color={colors.text.tertiary} />
                     <Text style={styles.eventDate}>{event.date}</Text>
                   </View>
                 </View>
                 <View style={styles.eventPriceContainer}>
-                  <Text style={[
-                    styles.eventPrice,
-                    event.price === 'Free' && styles.eventPriceFree,
-                  ]}>{event.price}</Text>
+                  <Text style={[styles.eventPrice, event.price === 'Free' && styles.eventPriceFree]}>
+                    {event.price}
+                  </Text>
                   {/* Primary CTA: Book Now */}
                   <Pressable
                     style={styles.eventBookNowBtn}

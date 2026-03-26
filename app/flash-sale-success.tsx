@@ -3,18 +3,14 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Shows voucher code after successful Stripe payment
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Dimensions
-} from 'react-native';
+import { View, StyleSheet, Pressable, Dimensions } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -75,7 +71,8 @@ function FlashSaleSuccessPage() {
 
       const response = await realOffersApi.verifyFlashSalePayment({
         purchaseId: purchaseId!,
-        stripeSessionId: session_id! });
+        stripeSessionId: session_id!,
+      });
 
       if (response.success && response.data) {
         if (!isMounted()) return;
@@ -117,7 +114,8 @@ function FlashSaleSuccessPage() {
     return date.toLocaleDateString('en-IN', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric' });
+      day: 'numeric',
+    });
   };
 
   if (isLoading) {
@@ -139,10 +137,7 @@ function FlashSaleSuccessPage() {
           </View>
           <ThemedText style={styles.errorTitle}>Payment Verification Failed</ThemedText>
           <ThemedText style={styles.errorMessage}>{error}</ThemedText>
-          <Pressable
-            style={styles.retryButton}
-            onPress={() => router.replace('/offers')}
-          >
+          <Pressable style={styles.retryButton} onPress={() => router.replace('/offers')}>
             <ThemedText style={styles.retryButtonText}>Back to Offers</ThemedText>
           </Pressable>
         </SafeAreaView>
@@ -153,34 +148,27 @@ function FlashSaleSuccessPage() {
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
-      <LinearGradient
-        colors={[colors.successScale[400], colors.successScale[700]]}
-        style={styles.successGradient}
-      >
+      <LinearGradient colors={[colors.successScale[400], colors.successScale[700]]} style={styles.successGradient}>
         <SafeAreaView style={styles.safeArea}>
           {/* Success Icon */}
-          <Animated.View
-            style={[
-              styles.successIconContainer,
-              scaleAnimStyle,
-            ]}
-          >
+          <Animated.View style={[styles.successIconContainer, scaleAnimStyle]}>
             <View style={styles.successIcon}>
               <Ionicons name="checkmark" size={60} color={Colors.success} />
             </View>
           </Animated.View>
 
           {/* Success Message */}
-          <Animated.View style={[styles.contentContainer, fadeAnimStyle]}>
+          <Animated.View style={[styles.contentContainer, fadeAnimStyle]} pointerEvents="box-none">
             <ThemedText style={styles.successTitle}>Payment Successful!</ThemedText>
-            <ThemedText style={styles.successSubtitle}>
-              Your deal has been claimed
-            </ThemedText>
+            <ThemedText style={styles.successSubtitle}>Your deal has been claimed</ThemedText>
 
             {/* Amount Paid */}
             <View style={styles.amountCard}>
               <ThemedText style={styles.amountLabel}>Amount Paid</ThemedText>
-              <ThemedText style={styles.amountValue}>{currencySymbol}{amount}</ThemedText>
+              <ThemedText style={styles.amountValue}>
+                {currencySymbol}
+                {amount}
+              </ThemedText>
             </View>
 
             {/* Voucher Code Card */}
@@ -189,33 +177,19 @@ function FlashSaleSuccessPage() {
                 <Ionicons name="ticket" size={24} color={Colors.brand.purple} />
                 <ThemedText style={styles.voucherLabel}>Your Voucher Code</ThemedText>
               </View>
-              <Pressable
-                style={styles.voucherCodeBox}
-                onPress={() => handleCopyCode(voucherCode)}
-               
-              >
+              <Pressable style={styles.voucherCodeBox} onPress={() => handleCopyCode(voucherCode)}>
                 <ThemedText style={styles.voucherCode}>{voucherCode}</ThemedText>
                 <View style={styles.copyIcon}>
-                  <Ionicons
-                    name={copiedCode ? "checkmark" : "copy"}
-                    size={20}
-                    color={Colors.brand.purple}
-                  />
+                  <Ionicons name={copiedCode ? 'checkmark' : 'copy'} size={20} color={Colors.brand.purple} />
                 </View>
               </Pressable>
-              {copiedCode && (
-                <ThemedText style={styles.copiedText}>Copied to clipboard!</ThemedText>
-              )}
+              {copiedCode && <ThemedText style={styles.copiedText}>Copied to clipboard!</ThemedText>}
 
               {/* Promo Code (if exists) */}
               {promoCode && (
                 <View style={styles.promoCodeSection}>
                   <ThemedText style={styles.promoLabel}>Promo Code</ThemedText>
-                  <Pressable
-                    style={styles.promoCodeBox}
-                    onPress={() => handleCopyCode(promoCode)}
-                   
-                  >
+                  <Pressable style={styles.promoCodeBox} onPress={() => handleCopyCode(promoCode)}>
                     <ThemedText style={styles.promoCode}>{promoCode}</ThemedText>
                     <Ionicons name="copy-outline" size={18} color={colors.text.tertiary} />
                   </Pressable>
@@ -225,9 +199,7 @@ function FlashSaleSuccessPage() {
               {/* Expiry Date */}
               <View style={styles.expirySection}>
                 <Ionicons name="calendar-outline" size={18} color={colors.text.tertiary} />
-                <ThemedText style={styles.expiryText}>
-                  Valid until {formatDate(expiresAt)}
-                </ThemedText>
+                <ThemedText style={styles.expiryText}>Valid until {formatDate(expiresAt)}</ThemedText>
               </View>
             </View>
 
@@ -238,51 +210,35 @@ function FlashSaleSuccessPage() {
                 <View style={styles.instructionNumber}>
                   <ThemedText style={styles.instructionNumberText}>1</ThemedText>
                 </View>
-                <ThemedText style={styles.instructionText}>
-                  Visit the store and show this voucher code
-                </ThemedText>
+                <ThemedText style={styles.instructionText}>Visit the store and show this voucher code</ThemedText>
               </View>
               <View style={styles.instructionItem}>
                 <View style={styles.instructionNumber}>
                   <ThemedText style={styles.instructionNumberText}>2</ThemedText>
                 </View>
-                <ThemedText style={styles.instructionText}>
-                  The store will verify and apply your discount
-                </ThemedText>
+                <ThemedText style={styles.instructionText}>The store will verify and apply your discount</ThemedText>
               </View>
               <View style={styles.instructionItem}>
                 <View style={styles.instructionNumber}>
                   <ThemedText style={styles.instructionNumberText}>3</ThemedText>
                 </View>
-                <ThemedText style={styles.instructionText}>
-                  Enjoy your deal before it expires!
-                </ThemedText>
+                <ThemedText style={styles.instructionText}>Enjoy your deal before it expires!</ThemedText>
               </View>
             </View>
 
             {/* Action Buttons */}
             <View style={styles.buttonContainer}>
-              <Pressable
-                style={styles.primaryButton}
-                onPress={() => router.replace('/offers')}
-              >
+              <Pressable style={styles.primaryButton} onPress={() => router.replace('/offers')}>
                 <LinearGradient
                   colors={[colors.brand.purpleLight, colors.brand.purple]}
                   style={styles.primaryButtonGradient}
                 >
-                  <ThemedText style={styles.primaryButtonText}>
-                    Browse More Deals
-                  </ThemedText>
+                  <ThemedText style={styles.primaryButtonText}>Browse More Deals</ThemedText>
                 </LinearGradient>
               </Pressable>
 
-              <Pressable
-                style={styles.secondaryButton}
-                onPress={() => router.push('/my-vouchers' as any)}
-              >
-                <ThemedText style={styles.secondaryButtonText}>
-                  View My Vouchers
-                </ThemedText>
+              <Pressable style={styles.secondaryButton} onPress={() => router.push('/my-vouchers' as any)}>
+                <ThemedText style={styles.secondaryButtonText}>View My Vouchers</ThemedText>
               </Pressable>
             </View>
           </Animated.View>
@@ -294,52 +250,64 @@ function FlashSaleSuccessPage() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1 },
+    flex: 1,
+  },
   loadingGradient: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   loadingText: {
     color: colors.text.inverse,
     ...Typography.h4,
-    marginTop: Spacing.base },
+    marginTop: Spacing.base,
+  },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.xl,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   errorIcon: {
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   errorTitle: {
     ...Typography.h2,
     fontWeight: '800',
     color: colors.text.primary,
     marginBottom: Spacing.md,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   errorMessage: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
     textAlign: 'center',
-    marginBottom: Spacing['2xl'] },
+    marginBottom: Spacing['2xl'],
+  },
   retryButton: {
     backgroundColor: Colors.brand.purple,
     paddingHorizontal: Spacing['2xl'],
     paddingVertical: 14,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   retryButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   successGradient: {
-    flex: 1 },
+    flex: 1,
+  },
   safeArea: {
     flex: 1,
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   successIconContainer: {
     alignItems: 'center',
     marginTop: Spacing.lg,
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   successIcon: {
     width: 100,
     height: 100,
@@ -351,34 +319,41 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.2,
     shadowRadius: 8,
-    elevation: 8 },
+    elevation: 8,
+  },
   contentContainer: {
-    flex: 1 },
+    flex: 1,
+  },
   successTitle: {
     ...Typography.h1,
     fontWeight: '800',
     color: colors.text.inverse,
     textAlign: 'center',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   successSubtitle: {
     ...Typography.bodyLarge,
     color: 'rgba(255, 255, 255, 0.9)',
     textAlign: 'center',
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   amountCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     alignItems: 'center',
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   amountLabel: {
     ...Typography.body,
     color: 'rgba(255, 255, 255, 0.8)',
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   amountValue: {
     fontSize: 32,
     fontWeight: '800',
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
   voucherCard: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
@@ -388,15 +363,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 12,
-    elevation: 8 },
+    elevation: 8,
+  },
   voucherHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   voucherLabel: {
     ...Typography.body,
     color: colors.text.tertiary,
-    marginLeft: Spacing.sm },
+    marginLeft: Spacing.sm,
+  },
   voucherCodeBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -406,64 +384,77 @@ const styles = StyleSheet.create({
     padding: Spacing.base,
     borderWidth: 2,
     borderColor: colors.warningScale[400],
-    borderStyle: 'dashed' },
+    borderStyle: 'dashed',
+  },
   voucherCode: {
     ...Typography.h2,
     fontWeight: '800',
     color: colors.brand.amberDark,
-    letterSpacing: 2 },
+    letterSpacing: 2,
+  },
   copyIcon: {
     backgroundColor: colors.background.primary,
     padding: Spacing.sm,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   copiedText: {
     ...Typography.bodySmall,
     color: Colors.success,
     textAlign: 'center',
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   promoCodeSection: {
     marginTop: Spacing.base,
     paddingTop: Spacing.base,
     borderTopWidth: 1,
-    borderTopColor: colors.border.default },
+    borderTopColor: colors.border.default,
+  },
   promoLabel: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   promoCodeBox: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.sm,
-    padding: Spacing.md },
+    padding: Spacing.md,
+  },
   promoCode: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: colors.text.secondary },
+    color: colors.text.secondary,
+  },
   expirySection: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: Spacing.base },
+    marginTop: Spacing.base,
+  },
   expiryText: {
     ...Typography.body,
     color: colors.text.tertiary,
-    marginLeft: Spacing.sm },
+    marginLeft: Spacing.sm,
+  },
   instructionsCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   instructionsTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
     color: colors.text.inverse,
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   instructionItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   instructionNumber: {
     width: 24,
     height: 24,
@@ -471,36 +462,46 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: Spacing.md },
+    marginRight: Spacing.md,
+  },
   instructionNumberText: {
     ...Typography.bodySmall,
     fontWeight: '800',
-    color: Colors.success },
+    color: Colors.success,
+  },
   instructionText: {
     flex: 1,
     ...Typography.body,
-    color: 'rgba(255, 255, 255, 0.9)' },
+    color: 'rgba(255, 255, 255, 0.9)',
+  },
   buttonContainer: {
-    marginTop: 'auto' },
+    marginTop: 'auto',
+  },
   primaryButton: {
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   primaryButtonGradient: {
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   primaryButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   secondaryButton: {
     borderWidth: 2,
     borderColor: 'white',
     borderRadius: BorderRadius.md,
     padding: 14,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   secondaryButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '600' } });
+    fontWeight: '600',
+  },
+});
 
 export default withErrorBoundary(FlashSaleSuccessPage, 'FlashSaleSuccess');

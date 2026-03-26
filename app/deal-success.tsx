@@ -9,19 +9,14 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  Platform
-} from 'react-native';
+import { View, StyleSheet, Pressable, Dimensions, Platform } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -112,7 +107,8 @@ function DealSuccessPage() {
         message: string;
       }>('/campaigns/deals/verify-payment', {
         sessionId,
-        redemptionId });
+        redemptionId,
+      });
 
       if (response.success && response.data?.redemption) {
         const redemption = response.data.redemption;
@@ -132,16 +128,15 @@ function DealSuccessPage() {
         fadeAnim.value = withTiming(1, { duration: 300 });
       } else if (retryCount < maxRetries) {
         // Payment might still be processing, retry
-        await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, retryCount)));
+        await new Promise((resolve) => setTimeout(resolve, baseDelay * Math.pow(2, retryCount)));
         return verifyPayment(retryCount + 1);
       } else {
         if (!isMounted()) return;
         setError(response.message || 'Payment verification failed. Please check My Deals.');
       }
     } catch (err: any) {
-
       if (retryCount < maxRetries) {
-        await new Promise(resolve => setTimeout(resolve, baseDelay * Math.pow(2, retryCount)));
+        await new Promise((resolve) => setTimeout(resolve, baseDelay * Math.pow(2, retryCount)));
         return verifyPayment(retryCount + 1);
       }
 
@@ -165,7 +160,8 @@ function DealSuccessPage() {
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric' });
+      year: 'numeric',
+    });
   };
 
   if (isLoading) {
@@ -191,17 +187,17 @@ function DealSuccessPage() {
             If you completed the payment, your deal should appear in My Deals shortly.
           </ThemedText>
           <Pressable style={styles.primaryBtn} onPress={() => verifyPayment()}>
-            <LinearGradient
-              colors={[Colors.warning, colors.warningScale[700]]}
-              style={styles.primaryBtnGradient}
-            >
+            <LinearGradient colors={[Colors.warning, colors.warningScale[700]]} style={styles.primaryBtnGradient}>
               <ThemedText style={styles.primaryBtnText}>Try Again</ThemedText>
             </LinearGradient>
           </Pressable>
           <Pressable style={styles.secondaryBtn} onPress={() => router.replace('/my-deals' as any)}>
             <ThemedText style={styles.secondaryBtnText}>Check My Deals</ThemedText>
           </Pressable>
-          <Pressable style={styles.backLink} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backLink}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <ThemedText style={styles.backLinkText}>Go Back</ThemedText>
           </Pressable>
         </View>
@@ -216,10 +212,7 @@ function DealSuccessPage() {
       {/* Success Animation */}
       <View style={styles.content}>
         <Animated.View style={[styles.successIcon, scaleAnimStyle]}>
-          <LinearGradient
-            colors={[Colors.success, colors.brand.greenDark]}
-            style={styles.successGradient}
-          >
+          <LinearGradient colors={[Colors.success, colors.brand.greenDark]} style={styles.successGradient}>
             <Ionicons name="checkmark" size={48} color={colors.background.primary} />
           </LinearGradient>
         </Animated.View>
@@ -227,12 +220,13 @@ function DealSuccessPage() {
         <Animated.View style={[styles.textContainer, fadeAnimStyle]}>
           <ThemedText style={styles.successTitle}>Purchase Successful!</ThemedText>
           <ThemedText style={styles.successSubtitle}>
-            {dealStore} deal purchased for {getCurrencySymbol(purchaseCurrency)}{purchaseAmount}
+            {dealStore} deal purchased for {getCurrencySymbol(purchaseCurrency)}
+            {purchaseAmount}
           </ThemedText>
         </Animated.View>
 
         {/* Redemption Code Card */}
-        <Animated.View style={[styles.codeCard, fadeAnimStyle]}>
+        <Animated.View style={[styles.codeCard, fadeAnimStyle]} pointerEvents="box-none">
           <ThemedText style={styles.codeLabel}>Your Redemption Code</ThemedText>
           <View style={styles.codeContainer}>
             <ThemedText style={styles.codeText}>{redemptionCode}</ThemedText>
@@ -244,15 +238,11 @@ function DealSuccessPage() {
               />
             </Pressable>
           </View>
-          {copiedCode && (
-            <ThemedText style={styles.copiedText}>Copied!</ThemedText>
-          )}
+          {copiedCode && <ThemedText style={styles.copiedText}>Copied!</ThemedText>}
           {expiresAt && (
             <View style={styles.expiryRow}>
               <Ionicons name="time-outline" size={16} color={colors.neutral[500]} />
-              <ThemedText style={styles.expiryText}>
-                Valid until {formatDate(expiresAt)}
-              </ThemedText>
+              <ThemedText style={styles.expiryText}>Valid until {formatDate(expiresAt)}</ThemedText>
             </View>
           )}
         </Animated.View>
@@ -268,22 +258,13 @@ function DealSuccessPage() {
 
       {/* Bottom Buttons */}
       <View style={styles.bottomButtons}>
-        <Pressable
-          style={styles.primaryButton}
-          onPress={() => router.replace('/my-deals' as any)}
-        >
-          <LinearGradient
-            colors={[Colors.warning, colors.warningScale[700]]}
-            style={styles.primaryButtonGradient}
-          >
+        <Pressable style={styles.primaryButton} onPress={() => router.replace('/my-deals' as any)}>
+          <LinearGradient colors={[Colors.warning, colors.warningScale[700]]} style={styles.primaryButtonGradient}>
             <ThemedText style={styles.primaryButtonText}>View My Deals</ThemedText>
           </LinearGradient>
         </Pressable>
 
-        <Pressable
-          style={styles.secondaryButton}
-          onPress={() => router.replace('/' as any)}
-        >
+        <Pressable style={styles.secondaryButton} onPress={() => router.replace('/' as any)}>
           <ThemedText style={styles.secondaryButtonText}>Back to Home</ThemedText>
         </Pressable>
       </View>
@@ -294,92 +275,114 @@ function DealSuccessPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     gap: Spacing.md,
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   loadingText: {
     fontSize: 16,
     fontWeight: '600',
     color: colors.nileBlue,
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   loadingSubtext: {
     fontSize: 14,
-    color: colors.neutral[500] },
+    color: colors.neutral[500],
+  },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   errorIcon: {
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   errorTitle: {
     fontSize: 22,
     fontWeight: '700',
     color: colors.nileBlue,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   errorMessage: {
     fontSize: 14,
     color: colors.neutral[500],
     textAlign: 'center',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   errorHint: {
     fontSize: 13,
     color: colors.neutral[400],
     textAlign: 'center',
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   primaryBtn: {
     width: '100%',
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   primaryBtnGradient: {
     paddingVertical: 14,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   primaryBtnText: {
     color: colors.text.inverse,
     fontWeight: '600',
-    fontSize: 16 },
+    fontSize: 16,
+  },
   secondaryBtn: {
     paddingVertical: Spacing.md,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   secondaryBtnText: {
     color: colors.warningScale[700],
     fontWeight: '600',
-    fontSize: 14 },
+    fontSize: 14,
+  },
   backLink: {
-    paddingVertical: Spacing.md },
+    paddingVertical: Spacing.md,
+  },
   backLinkText: {
     color: colors.neutral[500],
-    fontSize: 14 },
+    fontSize: 14,
+  },
   content: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   successIcon: {
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   successGradient: {
     width: 96,
     height: 96,
     borderRadius: 48,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   textContainer: {
     alignItems: 'center',
-    marginBottom: Spacing['2xl'] },
+    marginBottom: Spacing['2xl'],
+  },
   successTitle: {
     fontSize: 24,
     fontWeight: '700',
     color: colors.nileBlue,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   successSubtitle: {
     fontSize: 14,
     color: colors.neutral[500],
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   codeCard: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
@@ -391,39 +394,47 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   codeLabel: {
     fontSize: 12,
     color: colors.neutral[500],
     marginBottom: Spacing.md,
     textTransform: 'uppercase',
-    letterSpacing: 1 },
+    letterSpacing: 1,
+  },
   codeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.md,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   codeText: {
     fontSize: 28,
     fontWeight: '800',
     color: colors.nileBlue,
-    letterSpacing: 2 },
+    letterSpacing: 2,
+  },
   copyButton: {
     padding: Spacing.sm,
     backgroundColor: colors.neutral[100],
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   copiedText: {
     fontSize: 12,
     color: Colors.success,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   expiryRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   expiryText: {
     fontSize: 13,
-    color: colors.neutral[500] },
+    color: colors.neutral[500],
+  },
   infoBox: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -431,31 +442,40 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.warning + '15',
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
-    width: '100%' },
+    width: '100%',
+  },
   infoText: {
     flex: 1,
     fontSize: 13,
     color: colors.neutral[500],
-    lineHeight: 18 },
+    lineHeight: 18,
+  },
   bottomButtons: {
     padding: Spacing.xl,
-    paddingBottom: Platform.OS === 'ios' ? 40 : 24 },
+    paddingBottom: Platform.OS === 'ios' ? 40 : 24,
+  },
   primaryButton: {
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   primaryButtonGradient: {
     paddingVertical: Spacing.base,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   primaryButtonText: {
     color: colors.text.inverse,
     fontSize: 16,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   secondaryButton: {
     paddingVertical: Spacing.md,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   secondaryButtonText: {
     color: colors.neutral[500],
-    fontSize: 14 } });
+    fontSize: 14,
+  },
+});
 
 export default withErrorBoundary(DealSuccessPage, 'DealSuccess');

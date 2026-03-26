@@ -187,9 +187,7 @@ const StoreDetailPage: React.FC = () => {
 
         // If a redemption code was passed in URL, select that one
         if (passedRedemptionCode) {
-          const passedRedemption = storeRedemptions.find(
-            (r) => r.redemptionCode === passedRedemptionCode
-          );
+          const passedRedemption = storeRedemptions.find((r) => r.redemptionCode === passedRedemptionCode);
           if (passedRedemption) {
             setSelectedRedemption(passedRedemption);
           }
@@ -217,7 +215,11 @@ const StoreDetailPage: React.FC = () => {
 
   const handleCall = () => {
     if (store?.contact?.phone) {
-      try { Linking.openURL(`tel:${store.contact.phone}`); } catch (e) { catchAndWarn(e, 'StoreDetail/openURL'); }
+      try {
+        Linking.openURL(`tel:${store.contact.phone}`);
+      } catch (e) {
+        catchAndWarn(e, 'StoreDetail/openURL');
+      }
     }
   };
 
@@ -225,7 +227,11 @@ const StoreDetailPage: React.FC = () => {
     const phone = store?.contact?.whatsapp || store?.contact?.phone;
     if (phone) {
       const cleanPhone = phone.replace(/[^0-9]/g, '');
-      try { Linking.openURL(`whatsapp://send?phone=${cleanPhone}&text=Hi, I found you on ${BRAND.APP_NAME} app!`); } catch (e) { catchAndWarn(e, 'StoreDetail/openURL'); }
+      try {
+        Linking.openURL(`whatsapp://send?phone=${cleanPhone}&text=Hi, I found you on ${BRAND.APP_NAME} app!`);
+      } catch (e) {
+        catchAndWarn(e, 'StoreDetail/openURL');
+      }
     }
   };
 
@@ -237,13 +243,23 @@ const StoreDetailPage: React.FC = () => {
         android: `google.navigation:q=${lat},${lng}`,
         default: `https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`,
       });
-      if (url) { try { Linking.openURL(url); } catch (e) { catchAndWarn(e, 'StoreDetail/openURL'); } }
+      if (url) {
+        try {
+          Linking.openURL(url);
+        } catch (e) {
+          catchAndWarn(e, 'StoreDetail/openURL');
+        }
+      }
     }
   };
 
   const handleWebsite = () => {
     if (store?.contact?.website) {
-      try { Linking.openURL(store.contact.website); } catch (e) { catchAndWarn(e, 'StoreDetail/openURL'); }
+      try {
+        Linking.openURL(store.contact.website);
+      } catch (e) {
+        catchAndWarn(e, 'StoreDetail/openURL');
+      }
     }
   };
 
@@ -251,11 +267,9 @@ const StoreDetailPage: React.FC = () => {
     if (!store) return;
 
     const fitnessKeywords = ['gym', 'fitness', 'yoga', 'studio', 'trainer', 'sports', 'pilates', 'crossfit', 'workout'];
-    const isFitnessStore = store.tags?.some(tag =>
-      fitnessKeywords.some(keyword => tag.toLowerCase().includes(keyword))
-    ) || store.serviceTypes?.some(type =>
-      fitnessKeywords.some(keyword => type.toLowerCase().includes(keyword))
-    );
+    const isFitnessStore =
+      store.tags?.some((tag) => fitnessKeywords.some((keyword) => tag.toLowerCase().includes(keyword))) ||
+      store.serviceTypes?.some((type) => fitnessKeywords.some((keyword) => type.toLowerCase().includes(keyword)));
 
     // Build params with optional redemption info
     const baseParams: Record<string, string> = {
@@ -331,11 +345,19 @@ const StoreDetailPage: React.FC = () => {
     if (store?.serviceTypes && store.serviceTypes.length > 0) {
       return store.serviceTypes
         .slice(0, 2)
-        .map(s => s.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '))
+        .map((s) =>
+          s
+            .split('-')
+            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(' '),
+        )
         .join(' • ');
     }
     if (store?.tags && store.tags.length > 0) {
-      return store.tags.slice(0, 2).map(t => t.charAt(0).toUpperCase() + t.slice(1)).join(' • ');
+      return store.tags
+        .slice(0, 2)
+        .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+        .join(' • ');
     }
     return 'Store';
   };
@@ -365,10 +387,11 @@ const StoreDetailPage: React.FC = () => {
           <Ionicons name="storefront-outline" size={48} color={COLORS.gray400} />
         </View>
         <Text style={styles.errorTitle}>Store Not Found</Text>
-        <Text style={styles.errorDescription}>
-          This store may have been removed or is temporarily unavailable.
-        </Text>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Text style={styles.errorDescription}>This store may have been removed or is temporarily unavailable.</Text>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={18} color={COLORS.white} />
           <Text style={styles.backButtonText}>Go Back</Text>
         </Pressable>
@@ -377,15 +400,12 @@ const StoreDetailPage: React.FC = () => {
   }
 
   return (
-    <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)}>
+    <Animated.View style={{ flex: 1 }} entering={FadeIn.duration(300)} pointerEvents="box-none">
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
         {/* Hero Section */}
         <View style={styles.heroContainer}>
-          <CachedImage
-            source={store.banner?.[0] || store.logo}
-            style={styles.heroImage}
-          />
+          <CachedImage source={store.banner?.[0] || store.logo} style={styles.heroImage} />
           <LinearGradient
             colors={['rgba(0,0,0,0.3)', 'transparent', 'rgba(0,0,0,0.6)']}
             locations={[0, 0.4, 1]}
@@ -394,7 +414,10 @@ const StoreDetailPage: React.FC = () => {
 
           {/* Top Navigation Bar */}
           <View style={styles.topNav}>
-            <Pressable style={styles.navButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.navButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={22} color={COLORS.white} />
             </Pressable>
             <View style={styles.navRight}>
@@ -451,7 +474,9 @@ const StoreDetailPage: React.FC = () => {
                 )}
               </View>
               <View style={styles.storeInfo}>
-                <Text style={styles.storeName} numberOfLines={2}>{store.name}</Text>
+                <Text style={styles.storeName} numberOfLines={2}>
+                  {store.name}
+                </Text>
                 <Text style={styles.storeCategory}>{getServiceTypeLabel()}</Text>
                 <View style={styles.ratingContainer}>
                   <View style={styles.ratingBadge}>
@@ -460,8 +485,15 @@ const StoreDetailPage: React.FC = () => {
                   </View>
                   <Text style={styles.reviewCount}>{store.ratings?.count || 0} reviews</Text>
                   {store.offers?.partnerLevel && (
-                    <View style={[styles.partnerBadge, { backgroundColor: getPartnerLevelColor(store.offers.partnerLevel).bg }]}>
-                      <Text style={[styles.partnerText, { color: getPartnerLevelColor(store.offers.partnerLevel).text }]}>
+                    <View
+                      style={[
+                        styles.partnerBadge,
+                        { backgroundColor: getPartnerLevelColor(store.offers.partnerLevel).bg },
+                      ]}
+                    >
+                      <Text
+                        style={[styles.partnerText, { color: getPartnerLevelColor(store.offers.partnerLevel).text }]}
+                      >
                         {store.offers.partnerLevel.toUpperCase()}
                       </Text>
                     </View>
@@ -548,12 +580,8 @@ const StoreDetailPage: React.FC = () => {
                 return (
                   <Pressable
                     key={redemption.id}
-                    style={[
-                      styles.redemptionCard,
-                      isSelected && styles.redemptionCardSelected,
-                    ]}
+                    style={[styles.redemptionCard, isSelected && styles.redemptionCardSelected]}
                     onPress={() => setSelectedRedemption(isSelected ? null : redemption)}
-                   
                   >
                     <View style={styles.redemptionLeft}>
                       <View style={styles.redemptionCheckbox}>
@@ -571,17 +599,13 @@ const StoreDetailPage: React.FC = () => {
                           <Ionicons name="qr-code-outline" size={12} color={COLORS.gray500} />
                           <Text style={styles.redemptionCode}>{redemption.redemptionCode}</Text>
                         </View>
-                        <Text style={styles.redemptionExpiry}>
-                          {getTimeRemaining(redemption.expiresAt)}
-                        </Text>
+                        <Text style={styles.redemptionExpiry}>{getTimeRemaining(redemption.expiresAt)}</Text>
                       </View>
                     </View>
                     {dealValue && (
                       <View style={[styles.redemptionValue, { backgroundColor: `${dealValue.color}15` }]}>
                         {dealValue.type === 'Coins' && <CoinIcon size={14} />}
-                        <Text style={[styles.redemptionValueText, { color: dealValue.color }]}>
-                          {dealValue.value}
-                        </Text>
+                        <Text style={[styles.redemptionValueText, { color: dealValue.color }]}>{dealValue.value}</Text>
                       </View>
                     )}
                   </Pressable>
@@ -591,9 +615,7 @@ const StoreDetailPage: React.FC = () => {
               {selectedRedemption && (
                 <View style={styles.selectedDealBanner}>
                   <Ionicons name="checkmark-circle" size={16} color={COLORS.green500} />
-                  <Text style={styles.selectedDealText}>
-                    Deal will be applied when you book
-                  </Text>
+                  <Text style={styles.selectedDealText}>Deal will be applied when you book</Text>
                 </View>
               )}
             </View>
@@ -645,7 +667,11 @@ const StoreDetailPage: React.FC = () => {
                     <View key={day} style={[styles.hoursRow, isToday && styles.hoursRowToday]}>
                       <Text style={[styles.dayText, isToday && styles.dayTextToday]}>{getDayName(day)}</Text>
                       <Text style={[styles.timeText, hours?.closed && styles.closedTimeText]}>
-                        {hours?.closed ? 'Closed' : hours ? `${formatTime(hours.open)} - ${formatTime(hours.close)}` : 'Not set'}
+                        {hours?.closed
+                          ? 'Closed'
+                          : hours
+                            ? `${formatTime(hours.open)} - ${formatTime(hours.close)}`
+                            : 'Not set'}
                       </Text>
                     </View>
                   );
@@ -666,7 +692,10 @@ const StoreDetailPage: React.FC = () => {
                   <View key={index} style={styles.serviceTag}>
                     <Ionicons name="checkmark-circle" size={14} color={COLORS.green500} />
                     <Text style={styles.serviceTagText}>
-                      {service.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')}
+                      {service
+                        .split('-')
+                        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                        .join(' ')}
                     </Text>
                   </View>
                 ))}
@@ -686,10 +715,15 @@ const StoreDetailPage: React.FC = () => {
                   <View key={index} style={styles.paymentItem}>
                     <Ionicons
                       name={
-                        method === 'card' ? 'card-outline' :
-                        method === 'upi' ? 'phone-portrait-outline' :
-                        method === 'wallet' ? 'wallet-outline' :
-                        method === 'cash' ? 'cash-outline' : 'ellipse-outline'
+                        method === 'card'
+                          ? 'card-outline'
+                          : method === 'upi'
+                            ? 'phone-portrait-outline'
+                            : method === 'wallet'
+                              ? 'wallet-outline'
+                              : method === 'cash'
+                                ? 'cash-outline'
+                                : 'ellipse-outline'
                       }
                       size={20}
                       color={COLORS.gray600}

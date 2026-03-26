@@ -49,7 +49,12 @@ function cartCount(cart: CartItem[]): number {
 function VegDot({ isVeg }: { isVeg: boolean }) {
   return (
     <View style={[styles.vegDot, { borderColor: isVeg ? themeColors.successScale[600] : themeColors.errorScale[600] }]}>
-      <View style={[styles.vegDotInner, { backgroundColor: isVeg ? themeColors.successScale[600] : themeColors.errorScale[600] }]} />
+      <View
+        style={[
+          styles.vegDotInner,
+          { backgroundColor: isVeg ? themeColors.successScale[600] : themeColors.errorScale[600] },
+        ]}
+      />
     </View>
   );
 }
@@ -67,11 +72,19 @@ function QuantityStepper({
 }) {
   return (
     <View style={styles.stepper}>
-      <TouchableOpacity style={styles.stepperBtn} onPress={onDecrease} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+      <TouchableOpacity
+        style={styles.stepperBtn}
+        onPress={onDecrease}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      >
         <Ionicons name="remove" size={16} color={themeColors.brand.purple} />
       </TouchableOpacity>
       <Text style={styles.stepperCount}>{quantity}</Text>
-      <TouchableOpacity style={styles.stepperBtn} onPress={onIncrease} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+      <TouchableOpacity
+        style={styles.stepperBtn}
+        onPress={onIncrease}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+      >
         <Ionicons name="add" size={16} color={themeColors.brand.purple} />
       </TouchableOpacity>
     </View>
@@ -96,20 +109,23 @@ function MenuItemCard({
   const unavailable = item.is86d;
 
   return (
-    <Animated.View entering={FadeInDown.springify()} style={[styles.itemCard, unavailable && styles.itemCardUnavailable]}>
+    <Animated.View
+      entering={FadeInDown.springify()}
+      style={[styles.itemCard, unavailable && styles.itemCardUnavailable]}
+    >
       {/* Left: info */}
       <View style={{ flex: 1 }}>
         <View style={styles.itemTopRow}>
           <VegDot isVeg={item.isVeg} />
-          {item.spicyLevel > 0 && (
-            <View style={styles.spicyBadge}>
-              {'🌶'.repeat(Math.min(item.spicyLevel, 3))}
-            </View>
-          )}
+          {item.spicyLevel > 0 && <View style={styles.spicyBadge}>{'🌶'.repeat(Math.min(item.spicyLevel, 3))}</View>}
         </View>
-        <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
+        <Text style={styles.itemName} numberOfLines={2}>
+          {item.name}
+        </Text>
         {item.description ? (
-          <Text style={styles.itemDesc} numberOfLines={2}>{item.description}</Text>
+          <Text style={styles.itemDesc} numberOfLines={2}>
+            {item.description}
+          </Text>
         ) : null}
         <View style={styles.itemPriceRow}>
           <Text style={styles.itemPrice}>{formatCurrency(item.price)}</Text>
@@ -142,7 +158,12 @@ function MenuItemCard({
             <Text style={styles.unavailableText}>Unavailable</Text>
           </View>
         ) : quantity === 0 ? (
-          <TouchableOpacity style={styles.addBtn} onPress={onAdd} accessibilityLabel="Add item" accessibilityRole="button">
+          <TouchableOpacity
+            style={styles.addBtn}
+            onPress={onAdd}
+            accessibilityLabel="Add item"
+            accessibilityRole="button"
+          >
             <Text style={styles.addBtnText}>ADD</Text>
             <Ionicons name="add" size={14} color={themeColors.brand.purple} />
           </TouchableOpacity>
@@ -211,27 +232,39 @@ function WebOrderMenuScreen() {
 
   useEffect(() => {
     isMountedRef.current = true;
-    return () => { isMountedRef.current = false; };
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
 
   useEffect(() => {
-    if (!storeSlug) { setError('Invalid store link'); setLoading(false); return; }
+    if (!storeSlug) {
+      setError('Invalid store link');
+      setLoading(false);
+      return;
+    }
     fetchWebStore(storeSlug, table as string | undefined)
-      .then((data) => { if (isMountedRef.current) setStoreData(data); })
-      .catch((e) => { if (isMountedRef.current) setError(e.message); })
-      .finally(() => { if (isMountedRef.current) setLoading(false); });
+      .then((data) => {
+        if (isMountedRef.current) setStoreData(data);
+      })
+      .catch((e) => {
+        if (isMountedRef.current) setError(e.message);
+      })
+      .finally(() => {
+        if (isMountedRef.current) setLoading(false);
+      });
   }, [storeSlug, table]);
 
   const handleAdd = useCallback((item: WebMenuItem) => {
     setCart((prev) => {
       const existing = prev.find((c) => c.item.id === item.id);
-      if (existing) return prev.map((c) => c.item.id === item.id ? { ...c, quantity: c.quantity + 1 } : c);
+      if (existing) return prev.map((c) => (c.item.id === item.id ? { ...c, quantity: c.quantity + 1 } : c));
       return [...prev, { item, quantity: 1 }];
     });
   }, []);
 
   const handleIncrease = useCallback((item: WebMenuItem) => {
-    setCart((prev) => prev.map((c) => c.item.id === item.id ? { ...c, quantity: c.quantity + 1 } : c));
+    setCart((prev) => prev.map((c) => (c.item.id === item.id ? { ...c, quantity: c.quantity + 1 } : c)));
   }, []);
 
   const handleDecrease = useCallback((item: WebMenuItem) => {
@@ -239,7 +272,7 @@ function WebOrderMenuScreen() {
       const existing = prev.find((c) => c.item.id === item.id);
       if (!existing) return prev;
       if (existing.quantity === 1) return prev.filter((c) => c.item.id !== item.id);
-      return prev.map((c) => c.item.id === item.id ? { ...c, quantity: c.quantity - 1 } : c);
+      return prev.map((c) => (c.item.id === item.id ? { ...c, quantity: c.quantity - 1 } : c));
     });
   }, []);
 
@@ -258,14 +291,15 @@ function WebOrderMenuScreen() {
   }, [cart, router, storeSlug, table, storeData]);
 
   // Filter categories by search
-  const filteredCategories = storeData?.menu?.categories
-    .map((cat) => ({
-      ...cat,
-      items: searchQuery
-        ? cat.items.filter((i) => i.name.toLowerCase().includes(searchQuery.toLowerCase()))
-        : cat.items,
-    }))
-    .filter((cat) => cat.items.length > 0) ?? [];
+  const filteredCategories =
+    storeData?.menu?.categories
+      .map((cat) => ({
+        ...cat,
+        items: searchQuery
+          ? cat.items.filter((i) => i.name.toLowerCase().includes(searchQuery.toLowerCase()))
+          : cat.items,
+      }))
+      .filter((cat) => cat.items.length > 0) ?? [];
 
   const total = cartTotal(cart);
   const count = cartCount(cart);
@@ -297,18 +331,27 @@ function WebOrderMenuScreen() {
     <SafeAreaView style={styles.screen} edges={['top']}>
       {/* Store header */}
       <LinearGradient colors={[themeColors.brand.purple, themeColors.brand.purpleMuted]} style={styles.header}>
-        <TouchableOpacity onPress={() => router.canGoBack() ? router.back() : undefined} style={styles.backBtn} accessibilityLabel="Go back" accessibilityRole="button">
+        <TouchableOpacity
+          onPress={() => (router.canGoBack() ? router.back() : undefined)}
+          style={styles.backBtn}
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+        >
           <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <View style={{ flex: 1 }}>
-          <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
+          <Text style={styles.storeName} numberOfLines={1}>
+            {store.name}
+          </Text>
           {table ? (
             <View style={styles.tableBadge}>
               <Ionicons name="restaurant-outline" size={12} color="#FCD34D" />
               <Text style={styles.tableText}>Table {table}</Text>
             </View>
           ) : (
-            <Text style={styles.storeAddress} numberOfLines={1}>{store.address}</Text>
+            <Text style={styles.storeAddress} numberOfLines={1}>
+              {store.address}
+            </Text>
           )}
         </View>
         {store.logo && <Image source={{ uri: store.logo }} style={styles.storeLogo} />}
@@ -368,17 +411,24 @@ function WebOrderMenuScreen() {
 
       {/* Floating cart bar */}
       {count > 0 && (
-        <Animated.View entering={SlideInUp.springify()} style={styles.cartBar}>
+        <Animated.View entering={SlideInUp.springify()} style={styles.cartBar} pointerEvents="box-none">
           <View style={styles.cartBarLeft}>
             <View style={styles.cartCountBadge}>
               <Text style={styles.cartCountText}>{count}</Text>
             </View>
             <View>
-              <Text style={styles.cartItemsLabel}>{count} item{count !== 1 ? 's' : ''} added</Text>
+              <Text style={styles.cartItemsLabel}>
+                {count} item{count !== 1 ? 's' : ''} added
+              </Text>
               <Text style={styles.cartTaxNote}>+{formatCurrency(taxes)} GST</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.cartCheckoutBtn} onPress={handleCheckout} accessibilityLabel="View cart and checkout" accessibilityRole="button">
+          <TouchableOpacity
+            style={styles.cartCheckoutBtn}
+            onPress={handleCheckout}
+            accessibilityLabel="View cart and checkout"
+            accessibilityRole="button"
+          >
             <Text style={styles.cartCheckoutText}>{formatCurrency(total + taxes)}</Text>
             <Text style={styles.cartCheckoutArrow}>View Cart →</Text>
           </TouchableOpacity>
@@ -410,26 +460,53 @@ const styles = StyleSheet.create({
 
   // Search
   searchBar: {
-    flexDirection: 'row', alignItems: 'center', gap: 8,
-    backgroundColor: '#fff', margin: 12, borderRadius: 12, paddingHorizontal: 12, paddingVertical: 10,
-    borderWidth: 1, borderColor: '#E5E7EB',
-    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#fff',
+    margin: 12,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
   searchInput: { flex: 1, fontSize: 14, color: '#111827' },
 
   // Menu
   menuContent: { paddingHorizontal: 12 },
   categorySection: { marginBottom: 16 },
-  categoryHeader: { flexDirection: 'row', alignItems: 'baseline', justifyContent: 'space-between', paddingVertical: 8, paddingHorizontal: 4 },
+  categoryHeader: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+  },
   categoryName: { fontSize: 16, fontWeight: '800', color: '#111827' },
   categoryCount: { fontSize: 11, color: '#9CA3AF' },
   categoryDesc: { fontSize: 12, color: '#6B7280', marginBottom: 6, paddingHorizontal: 4 },
 
   // Item card
   itemCard: {
-    flexDirection: 'row', backgroundColor: '#fff', borderRadius: 14, padding: 12, marginBottom: 8,
-    borderWidth: 1, borderColor: '#F3F4F6', gap: 10,
-    shadowColor: '#000', shadowOpacity: 0.03, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1,
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 12,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    gap: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
   itemCardUnavailable: { opacity: 0.55 },
   itemTopRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
@@ -447,13 +524,30 @@ const styles = StyleSheet.create({
   itemImage: { width: 86, height: 86, borderRadius: 10 },
   itemImagePlaceholder: { backgroundColor: '#F9FAFB', justifyContent: 'center', alignItems: 'center' },
   addBtn: {
-    borderWidth: 1.5, borderColor: '#7C3AED', borderRadius: 8, paddingHorizontal: 12, paddingVertical: 5, minHeight: 44,
-    flexDirection: 'row', alignItems: 'center', gap: 2, justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#7C3AED',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    minHeight: 44,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+    justifyContent: 'center',
   },
   addBtnText: { fontSize: 12, fontWeight: '700', color: '#7C3AED' },
   unavailableChip: { backgroundColor: '#FEE2E2', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4 },
   unavailableText: { fontSize: 11, fontWeight: '600', color: '#DC2626' }, // min readable font size
-  stepper: { flexDirection: 'row', alignItems: 'center', gap: 0, backgroundColor: '#F5F3FF', borderRadius: 8, overflow: 'hidden', borderWidth: 1.5, borderColor: '#7C3AED' },
+  stepper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 0,
+    backgroundColor: '#F5F3FF',
+    borderRadius: 8,
+    overflow: 'hidden',
+    borderWidth: 1.5,
+    borderColor: '#7C3AED',
+  },
   stepperBtn: { minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' },
   stepperCount: { minWidth: 22, textAlign: 'center', fontSize: 13, fontWeight: '700', color: '#7C3AED' },
 
@@ -463,13 +557,31 @@ const styles = StyleSheet.create({
 
   // Cart bar
   cartBar: {
-    position: 'absolute', bottom: 16, left: 16, right: 16,
-    flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#7C3AED', borderRadius: 16, padding: 12, minHeight: 60,
-    shadowColor: '#7C3AED', shadowOpacity: 0.35, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 8,
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#7C3AED',
+    borderRadius: 16,
+    padding: 12,
+    minHeight: 60,
+    shadowColor: '#7C3AED',
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 4 },
+    elevation: 8,
   },
   cartBarLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 10 },
-  cartCountBadge: { width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+  cartCountBadge: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   cartCountText: { color: '#fff', fontWeight: '800', fontSize: 14 },
   cartItemsLabel: { fontSize: 13, fontWeight: '700', color: '#fff' },
   cartTaxNote: { fontSize: 12, color: 'rgba(255,255,255,0.7)' }, // min readable font size

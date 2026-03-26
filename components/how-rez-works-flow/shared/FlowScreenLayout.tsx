@@ -93,6 +93,7 @@ const FlowScreenLayout: React.FC<FlowScreenLayoutProps> = ({
                 <Animated.View
                     entering={FadeIn.delay(200).duration(300)}
                     style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 80) + 16 }]}
+                    pointerEvents="box-none"
                 >
                     <LinearGradient
                         colors={['rgba(255,255,255,0)', 'rgba(255,255,255,1)', 'rgba(255,255,255,1)']}

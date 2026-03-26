@@ -530,7 +530,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
   return (
     <FeatureErrorBoundary featureName="Wallet">
-      <Animated.View style={styles.root} entering={FadeIn.duration(300)}>
+      <Animated.View style={styles.root} entering={FadeIn.duration(300)} pointerEvents="box-none">
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
         {/* Fixed Header */}

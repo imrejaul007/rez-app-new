@@ -26,11 +26,7 @@ const INSTANT_BENEFITS = [
   'Campus community access',
 ];
 
-const PROVISIONAL_BENEFITS = [
-  '30+ deals unlocked now',
-  'Full 120+ deals in 2-4 hours',
-  'Provisional campus access',
-];
+const PROVISIONAL_BENEFITS = ['30+ deals unlocked now', 'Full 120+ deals in 2-4 hours', 'Provisional campus access'];
 
 function VerificationSuccessPage() {
   const isMounted = useIsMounted();
@@ -52,26 +48,33 @@ function VerificationSuccessPage() {
   // TODO: replace the import path below with the real wallet/rewards API when available.
   useEffect(() => {
     let mounted = true;
-    import('@/services/walletApi').then(({ default: walletApi }) => {
-      // TODO: ensure backend exposes POST /wallet/welcome-coins that:
-      //   1. Checks if user already received welcome coins (idempotent guard)
-      //   2. Credits WELCOME_COINS to the user's wallet
-      //   3. Returns { success: true, coinsGranted: number }
-      walletApi.grantWelcomeCoins().then((res: any) => {
-        if (!mounted) return;
-        if (res?.success) {
-          setWelcomeCoinsGranted(true);
-          analyticsService.track('welcome_coins_granted', { amount: WELCOME_COINS, zone, type });
-        }
-      }).catch(() => {
+    import('@/services/walletApi')
+      .then(({ default: walletApi }) => {
+        // TODO: ensure backend exposes POST /wallet/welcome-coins that:
+        //   1. Checks if user already received welcome coins (idempotent guard)
+        //   2. Credits WELCOME_COINS to the user's wallet
+        //   3. Returns { success: true, coinsGranted: number }
+        walletApi
+          .grantWelcomeCoins()
+          .then((res: any) => {
+            if (!mounted) return;
+            if (res?.success) {
+              setWelcomeCoinsGranted(true);
+              analyticsService.track('welcome_coins_granted', { amount: WELCOME_COINS, zone, type });
+            }
+          })
+          .catch(() => {
+            if (mounted) setWelcomeCoinsError(true);
+          });
+      })
+      .catch(() => {
         if (mounted) setWelcomeCoinsError(true);
       });
-    }).catch(() => {
-      if (mounted) setWelcomeCoinsError(true);
-    });
-    return () => { mounted = false; };
-  // Only run once — new users should only receive welcome coins one time
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      mounted = false;
+    };
+    // Only run once — new users should only receive welcome coins one time
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -86,9 +89,7 @@ function VerificationSuccessPage() {
     }, 300);
 
     // Coin rain at 600ms (instant only)
-    const coinTimer = isInstant
-      ? setTimeout(() => setShowCoinRain(true), 600)
-      : undefined;
+    const coinTimer = isInstant ? setTimeout(() => setShowCoinRain(true), 600) : undefined;
 
     return () => {
       clearTimeout(hapticTimer);
@@ -137,37 +138,23 @@ function VerificationSuccessPage() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
-      {showCoinRain && (
-        <CoinRainOverlay
-          visible={showCoinRain}
-          onComplete={() => setShowCoinRain(false)}
-        />
-      )}
+      {showCoinRain && <CoinRainOverlay visible={showCoinRain} onComplete={() => setShowCoinRain(false)} />}
 
       <View style={styles.content}>
         {/* Icon */}
-        <Animated.View
-          entering={FadeInDown.delay(100).springify()}
-          style={styles.iconContainer}
-        >
+        <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.iconContainer}>
           <View
             style={[
               styles.iconCircle,
               {
-                backgroundColor: isInstant
-                  ? colors.successScale[50]
-                  : colors.warningScale[50],
+                backgroundColor: isInstant ? colors.successScale[50] : colors.warningScale[50],
               },
             ]}
           >
             <Ionicons
               name={isInstant ? 'checkmark-circle' : 'flash'}
               size={72}
-              color={
-                isInstant
-                  ? colors.successScale[500]
-                  : colors.warningScale[500]
-              }
+              color={isInstant ? colors.successScale[500] : colors.warningScale[500]}
             />
           </View>
         </Animated.View>
@@ -178,9 +165,7 @@ function VerificationSuccessPage() {
           style={[
             styles.badge,
             {
-              backgroundColor: isInstant
-                ? colors.successScale[100]
-                : colors.warningScale[100],
+              backgroundColor: isInstant ? colors.successScale[100] : colors.warningScale[100],
             },
           ]}
         >
@@ -188,9 +173,7 @@ function VerificationSuccessPage() {
             style={[
               styles.badgeText,
               {
-                color: isInstant
-                  ? colors.successScale[700]
-                  : colors.warningScale[700],
+                color: isInstant ? colors.successScale[700] : colors.warningScale[700],
               },
             ]}
           >
@@ -206,36 +189,43 @@ function VerificationSuccessPage() {
               entering={FadeInDown.delay(900 + idx * 150).springify()}
               style={styles.benefitRow}
             >
-              <Ionicons
-                name="checkmark-circle"
-                size={20}
-                color={colors.successScale[500]}
-              />
+              <Ionicons name="checkmark-circle" size={20} color={colors.successScale[500]} />
               <ThemedText style={styles.benefitText}>{benefit}</ThemedText>
             </Animated.View>
           ))}
         </View>
 
         {/* CARLOS retention fix: Welcome Coins Banner */}
-        <Animated.View
-          entering={FadeInDown.delay(1350).springify()}
-          style={styles.welcomeCoinsContainer}
-        >
-          <View style={[
-            styles.welcomeCoinsBanner,
-            welcomeCoinsGranted ? styles.welcomeCoinsGranted : styles.welcomeCoinsPending,
-          ]}>
+        <Animated.View entering={FadeInDown.delay(1350).springify()} style={styles.welcomeCoinsContainer}>
+          <View
+            style={[
+              styles.welcomeCoinsBanner,
+              welcomeCoinsGranted ? styles.welcomeCoinsGranted : styles.welcomeCoinsPending,
+            ]}
+          >
             <Ionicons
-              name={welcomeCoinsGranted ? 'checkmark-circle' : welcomeCoinsError ? 'alert-circle-outline' : 'hourglass-outline'}
+              name={
+                welcomeCoinsGranted
+                  ? 'checkmark-circle'
+                  : welcomeCoinsError
+                    ? 'alert-circle-outline'
+                    : 'hourglass-outline'
+              }
               size={22}
-              color={welcomeCoinsGranted ? colors.successScale[600] : welcomeCoinsError ? colors.warningScale[500] : colors.text.tertiary}
+              color={
+                welcomeCoinsGranted
+                  ? colors.successScale[600]
+                  : welcomeCoinsError
+                    ? colors.warningScale[500]
+                    : colors.text.tertiary
+              }
             />
             <ThemedText style={styles.welcomeCoinsText}>
               {welcomeCoinsGranted
                 ? `+${WELCOME_COINS} welcome coins added to your wallet!`
                 : welcomeCoinsError
-                ? 'Welcome coins will be added shortly'
-                : 'Crediting your welcome coins…'}
+                  ? 'Welcome coins will be added shortly'
+                  : 'Crediting your welcome coins…'}
             </ThemedText>
           </View>
         </Animated.View>
@@ -244,11 +234,10 @@ function VerificationSuccessPage() {
         <Animated.View
           entering={FadeInDown.delay(1500).springify()}
           style={styles.ctaContainer}
+          pointerEvents="box-none"
         >
           <Pressable onPress={handleContinue} style={styles.ctaButton}>
-            <ThemedText style={styles.ctaText}>
-              {isInstant ? 'See My Deals' : 'Explore Available Deals'}
-            </ThemedText>
+            <ThemedText style={styles.ctaText}>{isInstant ? 'See My Deals' : 'Explore Available Deals'}</ThemedText>
             <Ionicons name="arrow-forward" size={18} color="#fff" />
           </Pressable>
         </Animated.View>

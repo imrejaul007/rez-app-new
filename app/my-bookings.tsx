@@ -552,7 +552,7 @@ const MyBookingsPage = () => {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      <Animated.View style={[{ flex: 1 }, fadeAnimStyle]}>
+      <Animated.View style={[{ flex: 1 }, fadeAnimStyle]} pointerEvents="box-none">
         {/* Header */}
         <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.header}>
           <View style={styles.headerContent}>
