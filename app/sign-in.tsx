@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -82,9 +82,13 @@ function SignInScreen() {
   }, [otpTimer]);
 
   // Navigate to homepage on successful login (wait for router to be ready)
+  // Use a ref to track if we already navigated to prevent repeated effect triggers
+  const hasNavigatedRef = useRef(false);
   useEffect(() => {
+    if (hasNavigatedRef.current) return;
     if (!rootNavigationState?.key) return; // Router not mounted yet
     if (isAuthenticated && user) {
+      hasNavigatedRef.current = true;
       // Small delay ensures Root Layout is fully mounted on web
       const timer = setTimeout(() => {
         try {
@@ -94,9 +98,9 @@ function SignInScreen() {
             router.replace('/onboarding/notification-permission');
           }
         } catch {
-          // Root layout not ready yet — will retry on next state change
+          hasNavigatedRef.current = false; // Allow retry if navigation failed
         }
-      }, 100);
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [isAuthenticated, user, rootNavigationState?.key]);
