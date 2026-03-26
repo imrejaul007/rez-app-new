@@ -789,6 +789,246 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
           {/* Partner Earnings Breakdown */}
           <EarningsBreakdown compact={true} onViewDetails={() => router.push('/explore')} />
 
+          {/* ── Persona-Specific Wallet Cards ─────────────────────────── */}
+
+          {/* STUDENT: Student Savings Card */}
+          {(segment === 'verified_student' || statedIdentity === 'student') && (
+            <View
+              style={{
+                marginHorizontal: 14,
+                marginVertical: 8,
+                borderRadius: 18,
+                overflow: 'hidden',
+              }}
+            >
+              <LinearGradient
+                colors={['#F97316', '#FBBF24']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{ padding: 18 }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14, gap: 10 }}>
+                  <View
+                    style={{
+                      width: 42,
+                      height: 42,
+                      borderRadius: 21,
+                      backgroundColor: 'rgba(255,255,255,0.3)',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Text style={{ fontSize: 22 }}>🎓</Text>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, fontWeight: '700', color: '#fff' }}>Student Savings</Text>
+                    <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.85)' }}>Your campus coins & rewards</Text>
+                  </View>
+                </View>
+
+                {/* Stats row */}
+                <View style={{ flexDirection: 'row', gap: 10, marginBottom: 14 }}>
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: 'rgba(255,255,255,0.25)',
+                      borderRadius: 12,
+                      padding: 12,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text style={{ fontSize: 20, fontWeight: '800', color: '#fff' }}>
+                      {currencySymbol}
+                      {walletData?.savingsInsights?.thisMonth ?? 0}
+                    </Text>
+                    <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)', marginTop: 2 }}>
+                      Saved this month
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      flex: 1,
+                      backgroundColor: 'rgba(255,255,255,0.25)',
+                      borderRadius: 12,
+                      padding: 12,
+                      alignItems: 'center',
+                    }}
+                  >
+                    <Text style={{ fontSize: 20, fontWeight: '800', color: '#fff' }}>{rezBalance + promoBalance}</Text>
+                    <Text style={{ fontSize: 11, color: 'rgba(255,255,255,0.85)', marginTop: 2 }}>Total coins</Text>
+                  </View>
+                </View>
+
+                {/* Micro Pack CTA */}
+                <Pressable
+                  onPress={() => router.push('/value-packs?persona=student' as any)}
+                  style={{
+                    backgroundColor: '#fff',
+                    borderRadius: 12,
+                    paddingVertical: 11,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <Ionicons name="flash" size={15} color="#EA580C" />
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#EA580C' }}>
+                    Buy a Micro Pack — unlock more deals
+                  </Text>
+                </Pressable>
+              </LinearGradient>
+            </View>
+          )}
+
+          {/* EMPLOYEE/CORPORATE: Monthly Savings Report Card */}
+          {(segment === 'verified_employee' || statedIdentity === 'corporate') && (
+            <View
+              style={{
+                marginHorizontal: 14,
+                marginVertical: 8,
+                borderRadius: 18,
+                overflow: 'hidden',
+              }}
+            >
+              <LinearGradient
+                colors={['#1a3a52', '#2A5577']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={{ padding: 18 }}
+              >
+                {/* Header */}
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14, gap: 10 }}>
+                  <View
+                    style={{
+                      width: 42,
+                      height: 42,
+                      borderRadius: 21,
+                      backgroundColor: 'rgba(255,205,87,0.2)',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    <Ionicons name="briefcase" size={22} color={colors.lightMustard} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, fontWeight: '700', color: '#fff' }}>Monthly Savings Report</Text>
+                    <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.75)' }}>
+                      Your corporate spending breakdown
+                    </Text>
+                  </View>
+                  <View
+                    style={{
+                      backgroundColor: colors.lightMustard,
+                      borderRadius: 8,
+                      paddingHorizontal: 8,
+                      paddingVertical: 3,
+                    }}
+                  >
+                    <Text style={{ fontSize: 10, fontWeight: '700', color: colors.nileBlue }}>VERIFIED</Text>
+                  </View>
+                </View>
+
+                {/* Total saved */}
+                <View
+                  style={{
+                    backgroundColor: 'rgba(255,205,87,0.15)',
+                    borderRadius: 14,
+                    padding: 14,
+                    marginBottom: 12,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <View>
+                    <Text style={{ fontSize: 13, color: 'rgba(255,255,255,0.75)' }}>Total saved this month</Text>
+                    <Text style={{ fontSize: 28, fontWeight: '800', color: '#fff', marginTop: 2 }}>
+                      {currencySymbol}
+                      {walletData?.savingsInsights?.thisMonth ?? 0}
+                    </Text>
+                  </View>
+                  <View style={{ alignItems: 'flex-end' }}>
+                    <Text style={{ fontSize: 12, color: 'rgba(255,255,255,0.6)' }}>All time</Text>
+                    <Text style={{ fontSize: 18, fontWeight: '700', color: colors.lightMustard }}>
+                      {currencySymbol}
+                      {walletData?.savingsInsights?.totalSaved ?? 0}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Category breakdown */}
+                <View style={{ gap: 8, marginBottom: 14 }}>
+                  {[
+                    {
+                      label: 'Dining',
+                      emoji: '🍱',
+                      value: Math.round((walletData?.savingsInsights?.thisMonth ?? 0) * 0.45),
+                    },
+                    {
+                      label: 'Grooming',
+                      emoji: '💆',
+                      value: Math.round((walletData?.savingsInsights?.thisMonth ?? 0) * 0.3),
+                    },
+                    {
+                      label: 'Fitness',
+                      emoji: '💪',
+                      value: Math.round((walletData?.savingsInsights?.thisMonth ?? 0) * 0.25),
+                    },
+                  ].map((cat) => (
+                    <View key={cat.label} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                      <Text style={{ fontSize: 16 }}>{cat.emoji}</Text>
+                      <Text style={{ flex: 1, fontSize: 13, color: 'rgba(255,255,255,0.85)', fontWeight: '500' }}>
+                        {cat.label}
+                      </Text>
+                      <View
+                        style={{
+                          height: 6,
+                          flex: 2,
+                          backgroundColor: 'rgba(255,255,255,0.15)',
+                          borderRadius: 4,
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <View
+                          style={{
+                            width: cat.value > 0 ? `${Math.max(cat.value, 5)}%` : '5%',
+                            height: '100%',
+                            backgroundColor: colors.lightMustard,
+                            borderRadius: 4,
+                          }}
+                        />
+                      </View>
+                      <Text style={{ fontSize: 13, fontWeight: '700', color: '#fff', width: 48, textAlign: 'right' }}>
+                        {currencySymbol}
+                        {cat.value}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
+                {/* Value Pack CTA */}
+                <Pressable
+                  onPress={() => router.push('/value-packs?persona=corporate' as any)}
+                  style={{
+                    backgroundColor: colors.lightMustard,
+                    borderRadius: 12,
+                    paddingVertical: 11,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <Ionicons name="briefcase-outline" size={15} color={colors.nileBlue} />
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: colors.nileBlue }}>
+                    Get a Smart Value Pack — save 30%+
+                  </Text>
+                </Pressable>
+              </LinearGradient>
+            </View>
+          )}
+
           {/* Verification CTA for unverified users who stated an identity */}
           {segment === 'normal' && statedIdentity && statedIdentity !== 'general' && (
             <Pressable

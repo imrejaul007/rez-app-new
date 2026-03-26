@@ -10,7 +10,7 @@
  */
 
 import React, { Suspense, useCallback, useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -19,6 +19,20 @@ import LazySection from '@/components/homepage/LazySection';
 import { SectionSkeleton } from '@/components/homepage/skeletons';
 import HomeSavingsSummaryCard from '@/components/homepage/HomeSavingsSummaryCard';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
+
+// Employee-specific sections (direct imports — co-located in /sections/)
+import EmployeeLunchDealsSection from '@/components/homepage/sections/EmployeeLunchDealsSection';
+import EmployeeAfterWorkSection from '@/components/homepage/sections/EmployeeAfterWorkSection';
+import EmployeeWellnessBookingSection from '@/components/homepage/sections/EmployeeWellnessBookingSection';
+import EmployeeValuePacksSection from '@/components/homepage/sections/EmployeeValuePacksSection';
+import EmployeeUtilityServicesSection from '@/components/homepage/sections/EmployeeUtilityServicesSection';
+
+// ── Student-specific sections (static imports — rendered early for student persona) ──
+import CampusHotDealsStrip from '@/components/homepage/sections/CampusHotDealsStrip';
+import StudentBudgetFoodGrid from '@/components/homepage/sections/StudentBudgetFoodGrid';
+import StudentEntertainmentSection from '@/components/homepage/sections/StudentEntertainmentSection';
+import StudentUtilityDealsSection from '@/components/homepage/sections/StudentUtilityDealsSection';
+import StudentMicroPrepaidPacks from '@/components/homepage/sections/StudentMicroPrepaidPacks';
 
 // Identity Layer - renders at top of NearU tab (self-gates: null for general users)
 import IdentitySectionContainer from '@/components/homepage/identity/IdentitySectionContainer';
@@ -234,8 +248,22 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
   onSwitchToMall,
 }) => {
   const router = useRouter();
-  const { segment } = useUserIdentityStore();
+  const { segment, statedIdentity } = useUserIdentityStore();
+  const isStudentUser = segment === 'verified_student' || statedIdentity === 'student';
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [exploreMoreExpanded, setExploreMoreExpanded] = useState(false);
+
+  // ── Employee / Corporate persona helpers ──────────────────────────────────
+  const isEmployeeCorporate =
+    segment === 'verified_employee' || statedIdentity === 'corporate';
+
+  // Time-aware flags used to pick which primary section renders first
+  const _now = new Date();
+  const _currentHour = _now.getHours();
+  const _currentDay = _now.getDay(); // 0 = Sunday, 6 = Saturday
+  const _isWeekend = _currentDay === 0 || _currentDay === 6;
+  const _isLunchWindow = _currentHour >= 11 && _currentHour < 14;
+  const _isAfterWorkWindow = _isWeekend || _currentHour >= 17;
   // Memoize card renderers
   const renderEventCard = useCallback((item: HomepageSectionItem) => {
     const event = item as EventItem;
@@ -508,21 +536,87 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
       )}
 
       {/* ===== SEGMENT-FIRST: Promoted section for verified users ===== */}
-      {segment === 'verified_healthcare' && (
-        <LazySection sectionId="healthcare-priority" scrollY={scrollY} height={300}
+      {/* ===== STUDENT PERSONA: Priority sections (replaces generic trending) ===== */}
+      {isStudentUser && (
+        <>
+          {/* 1. Campus Hot Deals Strip — replaces generic trending section */}
+          <LazySection sectionId="campus-trending" scrollY={scrollY} height={240}
+            renderSection={() => <CampusHotDealsStrip />} />
+
+          {/* 2. Budget Eats grid — top student priority */}
+          <LazySection sectionId="student-budget-food" scrollY={scrollY} height={380}
+            renderSection={() => <StudentBudgetFoodGrid />} />
+
+          {/* 3. Entertainment carousel — #2 student priority */}
+          <LazySection sectionId="student-entertainment" scrollY={scrollY} height={280}
+            renderSection={() => <StudentEntertainmentSection />} />
+
+          {/* 4. Utility Deals — retention driver */}
+          <LazySection sectionId="student-utility-deals" scrollY={scrollY} height={320}
+            renderSection={() => <StudentUtilityDealsSection />} />
+
+          {/* 5. Micro Prepaid Packs — revenue */}
+          <LazySection sectionId="student-micro-packs" scrollY={scrollY} height={220}
+            renderSection={() => <StudentMicroPrepaidPacks />} />
+
+          {/* 6. Events & Experiences — promoted for students */}
+          <LazySection sectionId="events-priority" scrollY={scrollY} height={300}
+            renderSection={() => <EventsExperiencesSection />} />
+        </>
+      )}
+
+      {/* Non-student: keep original single-section promotion per verified segment */}
+      {!isStudentUser && segment === 'verified_healthcare' && (
+        <LazySection sectionId="healthcare-priority-ns" scrollY={scrollY} height={300}
           renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HealthcareSection /></Suspense>} />
       )}
-      {segment === 'verified_defence' && (
-        <LazySection sectionId="fitness-priority" scrollY={scrollY} height={300}
+      {!isStudentUser && segment === 'verified_defence' && (
+        <LazySection sectionId="fitness-priority-ns" scrollY={scrollY} height={300}
           renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FitnessSportsSection /></Suspense>} />
       )}
-      {segment === 'verified_employee' && (
-        <LazySection sectionId="financial-priority" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FinancialServicesSection /></Suspense>} />
+      {/* ===== EMPLOYEE / CORPORATE PERSONA: Full promoted section suite ===== */}
+      {!isStudentUser && isEmployeeCorporate && (
+        <>
+          {/* 1. Time-aware primary section */}
+          {_isLunchWindow && (
+            <LazySection sectionId="employee-lunch-deals" scrollY={scrollY} height={340}
+              renderSection={() => <EmployeeLunchDealsSection />} />
+          )}
+          {_isAfterWorkWindow && !_isLunchWindow && (
+            <LazySection sectionId="employee-afterwork" scrollY={scrollY} height={360}
+              renderSection={() => <EmployeeAfterWorkSection />} />
+          )}
+          {!_isLunchWindow && !_isAfterWorkWindow && (
+            <LazySection sectionId="employee-lunch-preview" scrollY={scrollY} height={340}
+              renderSection={() => <EmployeeLunchDealsSection />} />
+          )}
+
+          {/* 2. Wellness & Grooming — always shown */}
+          <LazySection sectionId="employee-wellness-booking" scrollY={scrollY} height={380}
+            renderSection={() => <EmployeeWellnessBookingSection />} />
+
+          {/* 3. Smart Value Packs */}
+          <LazySection sectionId="employee-value-packs" scrollY={scrollY} height={480}
+            renderSection={() => <EmployeeValuePacksSection />} />
+
+          {/* 4. Utility Services — prominent for employees */}
+          <LazySection sectionId="employee-utility-services" scrollY={scrollY} height={380}
+            renderSection={() => <EmployeeUtilityServicesSection />} />
+
+          {/* 5. Financial Services — expense-friendly */}
+          <LazySection sectionId="financial-priority-employee" scrollY={scrollY} height={300}
+            renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FinancialServicesSection /></Suspense>} />
+
+          {/* 6. Fitness & Sports */}
+          <LazySection sectionId="fitness-priority-employee" scrollY={scrollY} height={300}
+            renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FitnessSportsSection /></Suspense>} />
+        </>
       )}
-      {segment === 'verified_student' && (
-        <LazySection sectionId="events-priority" scrollY={scrollY} height={300}
-          renderSection={() => <EventsExperiencesSection />} />
+
+      {/* Legacy fallback for non-persona-matched verified_employee state */}
+      {!isStudentUser && !isEmployeeCorporate && segment === 'verified_employee' && (
+        <LazySection sectionId="financial-priority-ns" scrollY={scrollY} height={300}
+          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FinancialServicesSection /></Suspense>} />
       )}
       {segment === 'verified_teacher' && (
         <LazySection sectionId="beauty-priority" scrollY={scrollY} height={300}
@@ -578,39 +672,84 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
       )}
       <LazySection sectionId="new-on-rez" scrollY={scrollY} height={300}
         renderSection={() => <NewOnRezSection />} />
-      {segment !== 'verified_student' && (
+      {/* Events hidden for students — already shown in the student priority block above */}
+      {!isStudentUser && (
         <LazySection sectionId="events-experiences" scrollY={scrollY} height={300}
           renderSection={() => <EventsExperiencesSection />} />
       )}
 
       {/* ===== TIER 3: Below fold - viewport + React.lazy dynamic loading ===== */}
-      {segment !== 'verified_teacher' && (
-        <LazySection sectionId="beauty-wellness" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><BeautyWellnessSection /></Suspense>} />
+
+      {/*
+        For students, wrap secondary category sections in a collapsible "Explore More Categories"
+        accordion that is collapsed by default. This keeps the student feed focused while still
+        allowing discovery of non-primary verticals.
+      */}
+      {/* Collapsed "Explore More" section for personas with a curated primary feed */}
+      {(isStudentUser || isEmployeeCorporate) && (
+        <View style={studentCollapsibleStyles.wrapper}>
+          <Pressable
+            style={studentCollapsibleStyles.header}
+            onPress={() => setExploreMoreExpanded((v) => !v)}
+            android_ripple={{ color: 'rgba(0,0,0,0.06)' }}
+          >
+            <View style={studentCollapsibleStyles.headerLeft}>
+              <Text style={studentCollapsibleStyles.headerIcon}>🗂️</Text>
+              <View>
+                <Text style={studentCollapsibleStyles.headerTitle}>Explore More Categories</Text>
+                <Text style={studentCollapsibleStyles.headerSub}>
+                  {isEmployeeCorporate
+                    ? 'Beauty, Grocery, Events & more'
+                    : 'Fashion, Finance, Healthcare & more'}
+                </Text>
+              </View>
+            </View>
+            <Ionicons
+              name={exploreMoreExpanded ? 'chevron-up' : 'chevron-down'}
+              size={18}
+              color={colors.nileBlue}
+            />
+          </Pressable>
+        </View>
       )}
 
-      {segment !== 'verified_defence' && (
-        <LazySection sectionId="fitness-sports" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FitnessSportsSection /></Suspense>} />
-      )}
+      {/* Render secondary category sections:
+          - Always for general users
+          - Only when accordion is expanded for students or employees
+          - Employee sections: hide fitness/financial (already promoted above) unless expanded */}
+      {(!isStudentUser && !isEmployeeCorporate) || exploreMoreExpanded ? (
+        <>
+          {segment !== 'verified_teacher' && (
+            <LazySection sectionId="beauty-wellness" scrollY={scrollY} height={300}
+              renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><BeautyWellnessSection /></Suspense>} />
+          )}
 
-      <LazySection sectionId="grocery-essentials" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><GroceryEssentialsSection /></Suspense>} />
+          {/* Skip fitness for employees — already shown in the promoted suite above */}
+          {segment !== 'verified_defence' && !isEmployeeCorporate && (
+            <LazySection sectionId="fitness-sports" scrollY={scrollY} height={300}
+              renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FitnessSportsSection /></Suspense>} />
+          )}
 
-      {segment !== 'verified_healthcare' && segment !== 'verified_senior' && (
-        <LazySection sectionId="healthcare" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HealthcareSection /></Suspense>} />
-      )}
+          <LazySection sectionId="grocery-essentials" scrollY={scrollY} height={300}
+            renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><GroceryEssentialsSection /></Suspense>} />
 
-      {segment !== 'verified_differentlyAbled' && (
-        <LazySection sectionId="home-services" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HomeServicesSection /></Suspense>} />
-      )}
+          {segment !== 'verified_healthcare' && segment !== 'verified_senior' && (
+            <LazySection sectionId="healthcare" scrollY={scrollY} height={300}
+              renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HealthcareSection /></Suspense>} />
+          )}
 
-      {segment !== 'verified_employee' && segment !== 'verified_government' && (
-        <LazySection sectionId="financial-services" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FinancialServicesSection /></Suspense>} />
-      )}
+          {segment !== 'verified_differentlyAbled' && (
+            <LazySection sectionId="home-services" scrollY={scrollY} height={300}
+              renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HomeServicesSection /></Suspense>} />
+          )}
+
+          {/* Skip financial services for employees — already promoted above */}
+          {segment !== 'verified_employee' && segment !== 'verified_government' && !isEmployeeCorporate && (
+            <LazySection sectionId="financial-services" scrollY={scrollY} height={300}
+              renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FinancialServicesSection /></Suspense>} />
+          )}
+        </>
+      ) : null}
 
       <LazySection sectionId="travel" scrollY={scrollY} height={300}
         renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><TravelSection /></Suspense>} />
@@ -760,5 +899,47 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
     </>
   );
 };
+
+// ─── Student collapsible accordion styles ────────────────────────────────────
+
+const studentCollapsibleStyles = StyleSheet.create({
+  wrapper: {
+    marginHorizontal: 16,
+    marginTop: 20,
+    marginBottom: 4,
+    borderRadius: 14,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(249, 115, 22, 0.2)',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: 14,
+    backgroundColor: 'rgba(249, 115, 22, 0.05)',
+  },
+  headerLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    flex: 1,
+  },
+  headerIcon: {
+    fontSize: 22,
+  },
+  headerTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: colors.nileBlue,
+    fontFamily: 'Inter-Bold',
+  },
+  headerSub: {
+    fontSize: 11,
+    color: colors.neutral?.[500] || '#6B7280',
+    marginTop: 1,
+    fontFamily: 'Inter-Regular',
+  },
+});
 
 export default React.memo(NearUTabContent);
