@@ -17,7 +17,7 @@ import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { SearchResult, GroupedProductResult, SearchResultsSummary as SearchSummaryType } from '@/types/search.types';
 import { BRAND } from '@/constants/brand';
-import { apiClient } from '@/utils/apiClient';
+import { apiClient } from '@/services/apiClient';
 import SearchResultsSummary from './SearchResultsSummary';
 import FilterBar, { SortOption } from './FilterBar';
 import SearchSortChips from './SearchSortChips';

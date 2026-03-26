@@ -21,7 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useCurrentLocation } from '@/hooks/useLocation';
-import { apiClient } from '@/utils/apiClient';
+import { apiClient } from '@/services/apiClient';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -104,20 +104,23 @@ function HotspotsPage() {
     return `${(distance / 1000).toFixed(1)} km`;
   };
 
-  const navigateToDetail = useCallback((hotspot: HotspotFromAPI) => {
-    router.push({
-      pathname: '/search/hotspot-detail',
-      params: {
-        slug: hotspot.slug,
-        name: hotspot.name,
-        image: hotspot.image || '',
-        totalDeals: String(hotspot.totalDeals || 0),
-        lat: String(hotspot.coordinates?.lat || ''),
-        lng: String(hotspot.coordinates?.lng || ''),
-        city: hotspot.city || '',
-      },
-    } as any);
-  }, [router]);
+  const navigateToDetail = useCallback(
+    (hotspot: HotspotFromAPI) => {
+      router.push({
+        pathname: '/search/hotspot-detail',
+        params: {
+          slug: hotspot.slug,
+          name: hotspot.name,
+          image: hotspot.image || '',
+          totalDeals: String(hotspot.totalDeals || 0),
+          lat: String(hotspot.coordinates?.lat || ''),
+          lng: String(hotspot.coordinates?.lng || ''),
+          city: hotspot.city || '',
+        },
+      } as any);
+    },
+    [router],
+  );
 
   const openDirections = useCallback((hotspot: HotspotFromAPI) => {
     if (!hotspot.coordinates?.lat || !hotspot.coordinates?.lng) return;
@@ -134,66 +137,70 @@ function HotspotsPage() {
     ? (currentLocation as any).city || 'Your Location'
     : 'Location unavailable';
 
-  const renderHotspot = useCallback(({ item }: { item: HotspotFromAPI }) => (
-    <Pressable
-      style={styles.hotspotCard}
-      onPress={() => navigateToDetail(item)}
-    >
-      {item.priority >= 90 && (
-        <View style={styles.trendingBadge}>
-          <Ionicons name="flame" size={12} color={colors.text.inverse} />
-          <ThemedText style={styles.trendingText}>Trending</ThemedText>
-        </View>
-      )}
-
-      <View style={styles.hotspotImage}>
-        {item.image ? (
-          <CachedImage source={item.image} style={styles.hotspotImg} contentFit="cover" />
-        ) : (
-          <View style={styles.hotspotImgPlaceholder}>
-            <Ionicons name="location" size={28} color={NUQTA.nileBlue} />
+  const renderHotspot = useCallback(
+    ({ item }: { item: HotspotFromAPI }) => (
+      <Pressable style={styles.hotspotCard} onPress={() => navigateToDetail(item)}>
+        {item.priority >= 90 && (
+          <View style={styles.trendingBadge}>
+            <Ionicons name="flame" size={12} color={colors.text.inverse} />
+            <ThemedText style={styles.trendingText}>Trending</ThemedText>
           </View>
         )}
-      </View>
 
-      <View style={styles.hotspotInfo}>
-        <View style={styles.hotspotHeader}>
-          <ThemedText style={styles.hotspotName}>{item.name}</ThemedText>
-          {item.distance !== undefined && (
-            <View style={styles.distanceBadge}>
-              <Ionicons name="navigate" size={12} color={NUQTA.nileBlue} />
-              <ThemedText style={styles.distanceText}>{formatDistance(item.distance)}</ThemedText>
+        <View style={styles.hotspotImage}>
+          {item.image ? (
+            <CachedImage source={item.image} style={styles.hotspotImg} contentFit="cover" />
+          ) : (
+            <View style={styles.hotspotImgPlaceholder}>
+              <Ionicons name="location" size={28} color={NUQTA.nileBlue} />
             </View>
           )}
         </View>
 
-        <View style={styles.cityBadge}>
-          <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />
-          <ThemedText style={styles.cityText}>{item.city}</ThemedText>
-        </View>
+        <View style={styles.hotspotInfo}>
+          <View style={styles.hotspotHeader}>
+            <ThemedText style={styles.hotspotName}>{item.name}</ThemedText>
+            {item.distance !== undefined && (
+              <View style={styles.distanceBadge}>
+                <Ionicons name="navigate" size={12} color={NUQTA.nileBlue} />
+                <ThemedText style={styles.distanceText}>{formatDistance(item.distance)}</ThemedText>
+              </View>
+            )}
+          </View>
 
-        <View style={styles.hotspotStats}>
-          <View style={styles.statItem}>
-            <Ionicons name="pricetag-outline" size={14} color={NUQTA.lightMustard} />
-            <ThemedText style={styles.statText}>{item.totalDeals} deals</ThemedText>
+          <View style={styles.cityBadge}>
+            <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />
+            <ThemedText style={styles.cityText}>{item.city}</ThemedText>
+          </View>
+
+          <View style={styles.hotspotStats}>
+            <View style={styles.statItem}>
+              <Ionicons name="pricetag-outline" size={14} color={NUQTA.lightMustard} />
+              <ThemedText style={styles.statText}>{item.totalDeals} deals</ThemedText>
+            </View>
           </View>
         </View>
-      </View>
 
-      <Pressable style={styles.directionsButton} onPress={(e) => { e.stopPropagation(); openDirections(item); }}>
-        <Ionicons name="navigate-circle" size={32} color={NUQTA.nileBlue} />
+        <Pressable
+          style={styles.directionsButton}
+          onPress={(e) => {
+            e.stopPropagation();
+            openDirections(item);
+          }}
+        >
+          <Ionicons name="navigate-circle" size={32} color={NUQTA.nileBlue} />
+        </Pressable>
       </Pressable>
-    </Pressable>
-  ), [navigateToDetail, openDirections]);
+    ),
+    [navigateToDetail, openDirections],
+  );
 
   const renderMapView = () => (
     <View style={styles.mapContainer}>
       <View style={styles.mapPlaceholder}>
         <Ionicons name="map" size={64} color={colors.text.tertiary} />
         <ThemedText style={styles.mapPlaceholderText}>Map View</ThemedText>
-        <ThemedText style={styles.mapPlaceholderSubtext}>
-          Interactive map with hotspot markers
-        </ThemedText>
+        <ThemedText style={styles.mapPlaceholderSubtext}>Interactive map with hotspot markers</ThemedText>
       </View>
 
       <ScrollView
@@ -202,15 +209,15 @@ function HotspotsPage() {
         style={styles.mapCardsScroll}
         contentContainerStyle={styles.mapCardsContainer}
       >
-        {filteredHotspots.map(hotspot => (
-          <Pressable
-            key={hotspot._id}
-            style={styles.mapCard}
-            onPress={() => navigateToDetail(hotspot)}
-          >
+        {filteredHotspots.map((hotspot) => (
+          <Pressable key={hotspot._id} style={styles.mapCard} onPress={() => navigateToDetail(hotspot)}>
             <View style={styles.mapCardImage}>
               {hotspot.image ? (
-                <CachedImage source={hotspot.image} style={{ width: 48, height: 48, borderRadius: BorderRadius.sm }} contentFit="cover" />
+                <CachedImage
+                  source={hotspot.image}
+                  style={{ width: 48, height: 48, borderRadius: BorderRadius.sm }}
+                  contentFit="cover"
+                />
               ) : (
                 <Ionicons name="location" size={24} color={NUQTA.nileBlue} />
               )}
@@ -231,12 +238,12 @@ function HotspotsPage() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={NUQTA.nileBlue} />
 
-      <LinearGradient
-        colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Nearby Hotspots</ThemedText>
@@ -255,11 +262,7 @@ function HotspotsPage() {
               style={[styles.toggleButton, viewMode === 'map' && styles.toggleButtonActive]}
               onPress={() => setViewMode('map')}
             >
-              <Ionicons
-                name="map"
-                size={18}
-                color={viewMode === 'map' ? NUQTA.nileBlue : colors.background.primary}
-              />
+              <Ionicons name="map" size={18} color={viewMode === 'map' ? NUQTA.nileBlue : colors.background.primary} />
             </Pressable>
           </View>
         </View>
@@ -279,18 +282,25 @@ function HotspotsPage() {
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle-outline" size={48} color={NUQTA.nileBlue} />
           <ThemedText style={styles.errorText}>{error}</ThemedText>
-          <Pressable style={styles.retryButton} onPress={() => {
-            setLoading(true);
-            setError(null);
-            const params: any = { limit: 20 };
-            if (currentLocation?.coordinates) {
-              params.lat = currentLocation.coordinates.latitude;
-              params.lng = currentLocation.coordinates.longitude;
-            }
-            apiClient.get('/offers/hotspots', params).then(r => {
-              setHotspots(Array.isArray(r.data) ? r.data : []);
-            }).catch(() => setError('Failed to load hotspots.')).finally(() => setLoading(false));
-          }}>
+          <Pressable
+            style={styles.retryButton}
+            onPress={() => {
+              setLoading(true);
+              setError(null);
+              const params: any = { limit: 20 };
+              if (currentLocation?.coordinates) {
+                params.lat = currentLocation.coordinates.latitude;
+                params.lng = currentLocation.coordinates.longitude;
+              }
+              apiClient
+                .get('/offers/hotspots', params)
+                .then((r) => {
+                  setHotspots(Array.isArray(r.data) ? r.data : []);
+                })
+                .catch(() => setError('Failed to load hotspots.'))
+                .finally(() => setLoading(false));
+            }}
+          >
             <ThemedText style={styles.retryText}>Retry</ThemedText>
           </Pressable>
         </View>
@@ -303,7 +313,7 @@ function HotspotsPage() {
         <FlashList
           data={filteredHotspots}
           renderItem={renderHotspot}
-          keyExtractor={item => item._id}
+          keyExtractor={(item) => item._id}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           estimatedItemSize={120}

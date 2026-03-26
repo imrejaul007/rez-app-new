@@ -20,7 +20,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useGetCurrencySymbol } from '@/stores/selectors';
-import { apiClient } from '@/utils/apiClient';
+import { apiClient } from '@/services/apiClient';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -48,10 +48,10 @@ interface AIResult {
 
 const getExamplePrompts = (currencySymbol: string) => [
   `Find me a gift for my mom under ${currencySymbol}2000`,
-  "Best coffee shops near me with wifi",
-  "Comfortable running shoes for beginners",
-  "Romantic dinner date options",
-  "Healthy meal delivery options",
+  'Best coffee shops near me with wifi',
+  'Comfortable running shoes for beginners',
+  'Romantic dinner date options',
+  'Healthy meal delivery options',
 ];
 
 function AISearchPage() {
@@ -99,24 +99,31 @@ function AISearchPage() {
     handleSearch(prompt);
   };
 
-  const handleResultPress = useCallback((item: AIResult) => {
-    if (item.type === 'store' && item.storeId) {
-      router.push(`/MainStorePage?storeId=${item.storeId}`);
-    } else if (item.type === 'product' && item.id) {
-      router.push({
-        pathname: '/product-page' as any,
-        params: { cardId: item.id, cardType: 'product' },
-      });
-    }
-  }, [router]);
+  const handleResultPress = useCallback(
+    (item: AIResult) => {
+      if (item.type === 'store' && item.storeId) {
+        router.push(`/MainStorePage?storeId=${item.storeId}`);
+      } else if (item.type === 'product' && item.id) {
+        router.push({
+          pathname: '/product-page' as any,
+          params: { cardId: item.id, cardType: 'product' },
+        });
+      }
+    },
+    [router],
+  );
   const isMounted = useIsMounted();
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'product': return NUQTA.nileBlue;
-      case 'store': return Colors.info;
-      case 'offer': return Colors.success;
-      default: return colors.text.tertiary;
+      case 'product':
+        return NUQTA.nileBlue;
+      case 'store':
+        return Colors.info;
+      case 'offer':
+        return Colors.success;
+      default:
+        return colors.text.tertiary;
     }
   };
 
@@ -125,56 +132,56 @@ function AISearchPage() {
     return `${currencySymbol}${price.toLocaleString()}`;
   };
 
-  const renderResult = useCallback(({ item }: { item: AIResult }) => (
-    <Pressable
-      style={styles.resultCard}
-      onPress={() => handleResultPress(item)}
-    >
-      <View style={styles.relevanceBadge}>
-        <ThemedText style={styles.relevanceText}>{item.relevance}% match</ThemedText>
-      </View>
-
-      <View style={styles.resultImage}>
-        {item.image ? (
-          <CachedImage source={item.image} style={styles.resultImg} contentFit="cover" />
-        ) : (
-          <View style={styles.resultImgPlaceholder}>
-            <Ionicons
-              name={item.type === 'store' ? 'storefront' : item.type === 'offer' ? 'pricetag' : 'cube'}
-              size={24}
-              color={NUQTA.nileBlue}
-            />
-          </View>
-        )}
-      </View>
-
-      <View style={styles.resultInfo}>
-        <View style={[styles.typeBadge, { backgroundColor: getTypeColor(item.type) + '20' }]}>
-          <ThemedText style={[styles.typeText, { color: getTypeColor(item.type) }]}>
-            {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-          </ThemedText>
+  const renderResult = useCallback(
+    ({ item }: { item: AIResult }) => (
+      <Pressable style={styles.resultCard} onPress={() => handleResultPress(item)}>
+        <View style={styles.relevanceBadge}>
+          <ThemedText style={styles.relevanceText}>{item.relevance}% match</ThemedText>
         </View>
-        <ThemedText style={styles.resultTitle}>{item.title}</ThemedText>
-        <ThemedText style={styles.resultSubtitle}>{item.subtitle}</ThemedText>
-        {item.price !== undefined && item.price > 0 && (
-          <ThemedText style={styles.resultPrice}>{formatPrice(item.price)}</ThemedText>
-        )}
-      </View>
 
-      <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-    </Pressable>
-  ), [currencySymbol, handleResultPress]);
+        <View style={styles.resultImage}>
+          {item.image ? (
+            <CachedImage source={item.image} style={styles.resultImg} contentFit="cover" />
+          ) : (
+            <View style={styles.resultImgPlaceholder}>
+              <Ionicons
+                name={item.type === 'store' ? 'storefront' : item.type === 'offer' ? 'pricetag' : 'cube'}
+                size={24}
+                color={NUQTA.nileBlue}
+              />
+            </View>
+          )}
+        </View>
+
+        <View style={styles.resultInfo}>
+          <View style={[styles.typeBadge, { backgroundColor: getTypeColor(item.type) + '20' }]}>
+            <ThemedText style={[styles.typeText, { color: getTypeColor(item.type) }]}>
+              {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+            </ThemedText>
+          </View>
+          <ThemedText style={styles.resultTitle}>{item.title}</ThemedText>
+          <ThemedText style={styles.resultSubtitle}>{item.subtitle}</ThemedText>
+          {item.price !== undefined && item.price > 0 && (
+            <ThemedText style={styles.resultPrice}>{formatPrice(item.price)}</ThemedText>
+          )}
+        </View>
+
+        <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+      </Pressable>
+    ),
+    [currencySymbol, handleResultPress],
+  );
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={NUQTA.nileBlue} />
 
-      <LinearGradient
-        colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[NUQTA.nileBlue, NUQTA.nileBlueLight]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>AI Search</ThemedText>
@@ -225,11 +232,7 @@ function AISearchPage() {
           <ThemedText style={styles.sectionTitle}>Try asking...</ThemedText>
           <View style={styles.promptsContainer}>
             {getExamplePrompts(currencySymbol).map((prompt, index) => (
-              <Pressable
-                key={index}
-                style={styles.promptCard}
-                onPress={() => handlePromptSelect(prompt)}
-              >
+              <Pressable key={index} style={styles.promptCard} onPress={() => handlePromptSelect(prompt)}>
                 <Ionicons name="chatbubble-outline" size={16} color={NUQTA.nileBlue} />
                 <ThemedText style={styles.promptText}>{prompt}</ThemedText>
               </Pressable>
@@ -260,9 +263,7 @@ function AISearchPage() {
               <Ionicons name="location-outline" size={20} color={Colors.info} />
               <View style={styles.featureContent}>
                 <ThemedText style={styles.featureLabel}>Location Smart</ThemedText>
-                <ThemedText style={styles.featureText}>
-                  "Near me" → Uses your location
-                </ThemedText>
+                <ThemedText style={styles.featureText}>"Near me" → Uses your location</ThemedText>
               </View>
             </View>
           </View>
@@ -290,7 +291,7 @@ function AISearchPage() {
         <FlashList
           data={results}
           renderItem={renderResult}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           estimatedItemSize={100}
@@ -300,22 +301,16 @@ function AISearchPage() {
                 {results.length} results for "{query}"
               </ThemedText>
               {parsedInfo.keywords && parsedInfo.keywords !== query && (
-                <ThemedText style={styles.parsedText}>
-                  Searched: "{parsedInfo.keywords}"
-                </ThemedText>
+                <ThemedText style={styles.parsedText}>Searched: "{parsedInfo.keywords}"</ThemedText>
               )}
-              <ThemedText style={styles.resultsSubtitle}>
-                Sorted by relevance
-              </ThemedText>
+              <ThemedText style={styles.resultsSubtitle}>Sorted by relevance</ThemedText>
             </View>
           }
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons name="search-outline" size={48} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyTitle}>No results found</ThemedText>
-              <ThemedText style={styles.emptyText}>
-                Try rephrasing your search or being more specific
-              </ThemedText>
+              <ThemedText style={styles.emptyText}>Try rephrasing your search or being more specific</ThemedText>
             </View>
           }
         />

@@ -4,7 +4,7 @@ import { searchCacheService } from '@/services/searchCacheService';
 import { searchAnalyticsService } from '@/services/searchAnalyticsService';
 import { searchHistoryService } from '@/services/searchHistoryService';
 import { SearchPageState, SearchSection, SearchCategory, SearchResult, SearchSuggestion, GroupedProductResult, SearchResultsSummary } from '@/types/search.types';
-import { apiClient } from '@/utils/apiClient';
+import { apiClient } from '@/services/apiClient';
 import searchService from '@/services/searchApi';
 import searchDiscoveryApi, { TrendingSearch, StoreItem } from '@/services/searchDiscoveryApi';
 import type { FilterState } from '@/components/search/FilterModal';

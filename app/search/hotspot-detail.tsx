@@ -1,22 +1,13 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Hotspot Detail Page — Shows offers for a specific hotspot area
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-  Linking,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, ActivityIndicator, Linking } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
-import { apiClient } from '@/utils/apiClient';
+import { apiClient } from '@/services/apiClient';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -119,11 +110,16 @@ function HotspotDetailPage() {
       {/* Header */}
       <LinearGradient colors={[colors.nileBlue, colors.nileBlueLight]} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
-            <ThemedText style={styles.headerTitle} numberOfLines={1}>{params.name || 'Hotspot'}</ThemedText>
+            <ThemedText style={styles.headerTitle} numberOfLines={1}>
+              {params.name || 'Hotspot'}
+            </ThemedText>
             {params.city && <ThemedText style={styles.headerSubtitle}>{params.city}</ThemedText>}
           </View>
           <Pressable style={styles.directionsHeaderBtn} onPress={handleDirections}>
@@ -157,17 +153,21 @@ function HotspotDetailPage() {
         <View style={styles.centerContainer}>
           <Ionicons name="alert-circle-outline" size={48} color={colors.nileBlue} />
           <ThemedText style={styles.errorText}>{error}</ThemedText>
-          <Pressable style={styles.retryButton} onPress={() => {
-            setLoading(true);
-            setError(null);
-            apiClient.get(`/offers/hotspots/${params.slug}/offers`, { limit: 30 })
-              .then(r => {
-                const data = r.data as any;
-                setOffers(Array.isArray(data?.offers) ? data.offers : []);
-              })
-              .catch(() => setError('Failed to load offers.'))
-              .finally(() => setLoading(false));
-          }}>
+          <Pressable
+            style={styles.retryButton}
+            onPress={() => {
+              setLoading(true);
+              setError(null);
+              apiClient
+                .get(`/offers/hotspots/${params.slug}/offers`, { limit: 30 })
+                .then((r) => {
+                  const data = r.data as any;
+                  setOffers(Array.isArray(data?.offers) ? data.offers : []);
+                })
+                .catch(() => setError('Failed to load offers.'))
+                .finally(() => setLoading(false));
+            }}
+          >
             <ThemedText style={styles.retryText}>Retry</ThemedText>
           </Pressable>
         </View>
@@ -180,17 +180,16 @@ function HotspotDetailPage() {
           </ThemedText>
         </View>
       ) : (
-        <ScrollView style={styles.content} contentContainerStyle={styles.contentContainer} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={styles.contentContainer}
+          showsVerticalScrollIndicator={false}
+        >
           <ThemedText style={styles.sectionTitle}>
             {offers.length} {offers.length === 1 ? 'Offer' : 'Offers'} Available
           </ThemedText>
           {offers.map((offer) => (
-            <Pressable
-              key={offer._id}
-              style={styles.offerCard}
-              onPress={() => handleOfferPress(offer)}
-             
-            >
+            <Pressable key={offer._id} style={styles.offerCard} onPress={() => handleOfferPress(offer)}>
               <View style={styles.offerLeft}>
                 {offer.store?.logo ? (
                   <CachedImage source={offer.store.logo} style={styles.storeLogo} contentFit="cover" />
@@ -208,7 +207,9 @@ function HotspotDetailPage() {
                   <ThemedText style={styles.offerStore}>{offer.store.name}</ThemedText>
                 )}
                 {offer.description && (
-                  <ThemedText style={styles.offerDescription} numberOfLines={2}>{offer.description}</ThemedText>
+                  <ThemedText style={styles.offerDescription} numberOfLines={2}>
+                    {offer.description}
+                  </ThemedText>
                 )}
               </View>
               {formatDiscount(offer) ? (

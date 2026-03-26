@@ -2,7 +2,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 import { platformAlertSimple, platformAlert } from '@/utils/platformAlert';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { apiClient } from '@/utils/apiClient';
+import { apiClient } from '@/services/apiClient';
 
 // Types
 export interface ImagePickerOptions {
