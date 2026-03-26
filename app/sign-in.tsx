@@ -58,8 +58,9 @@ function SignInScreen() {
     pin: '',
   });
 
-  // Default to UAE (+971)
-  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(COUNTRY_CODES[0]);
+  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
+    COUNTRY_CODES.find((c) => c.dialCode === '+91') || COUNTRY_CODES[0],
+  );
 
   const [step, setStep] = useState<'phone' | 'otp' | 'pin'>('phone');
   const [errors, setErrors] = useState({

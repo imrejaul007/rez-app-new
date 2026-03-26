@@ -54,8 +54,9 @@ function RegistrationScreen() {
     loadReferralCode();
   }, [params.referralCode]);
 
-  // Default to UAE (+971)
-  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(COUNTRY_CODES[0]);
+  const [selectedCountry, setSelectedCountry] = useState<CountryCode>(
+    COUNTRY_CODES.find((c) => c.dialCode === '+91') || COUNTRY_CODES[0],
+  );
 
   const [errors, setErrors] = useState({
     phoneNumber: '',
@@ -99,7 +100,7 @@ function RegistrationScreen() {
     try {
       const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
       const emailToSend = formData.email.trim() || undefined;
-      await actions.sendOTP(formattedPhone, emailToSend, formData.referralCode || undefined);
+      await actions.sendOTP(formattedPhone, emailToSend, formData.referralCode || undefined, 'signup');
 
       router.push({
         pathname: '/onboarding/otp-verification',

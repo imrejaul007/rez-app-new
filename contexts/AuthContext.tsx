@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, ReactNode, useRef, useCallback, useMemo } from 'react';
+import { logger } from '@/utils/logger';
 import { useAuthStore } from '@/stores/authStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useSegments } from 'expo-router';
@@ -94,7 +95,7 @@ function authReducer(state: AuthState, action: AuthAction): AuthState {
 interface AuthContextType {
   state: AuthState;
   actions: {
-    sendOTP: (phoneNumber: string, email?: string, referralCode?: string) => Promise<void>;
+    sendOTP: (phoneNumber: string, email?: string, referralCode?: string, flow?: 'login' | 'signup') => Promise<void>;
     login: (phoneNumber: string, otp: string) => Promise<void>;
     register: (phoneNumber: string, email: string, referralCode?: string) => Promise<void>;
     // FR-D003 FIX: verifyOTP returns the fresh User so the OTP screen can navigate
@@ -252,11 +253,11 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   // Backend service integration (dummy + real API ready)
 
   // Actions
-  const sendOTP = async (phoneNumber: string, email?: string, referralCode?: string) => {
+  const sendOTP = async (phoneNumber: string, email?: string, referralCode?: string, flow: 'login' | 'signup' = 'login') => {
     try {
       dispatch({ type: 'AUTH_LOADING', payload: true });
 
-      const requestData: any = { phoneNumber };
+      const requestData: any = { phoneNumber, flow };
       if (email) requestData.email = email;
       if (referralCode) requestData.referralCode = referralCode;
 
@@ -570,8 +571,9 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     // minutes), give up after 12 s and show the sign-in screen so the user is
     // never permanently locked out.
     const authTimeout = setTimeout(() => {
+      logger.warn('[AUTH] checkAuthStatus timed out after 8s');
       dispatch({ type: 'AUTH_LOGOUT' });
-    }, 12_000);
+    }, 8_000);
 
     try {
       // Read stored auth FIRST, then only show loading if nothing is cached.
@@ -743,10 +745,13 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         const errorMessage = error?.message?.toLowerCase() || '';
         const isInvalidToken = error?.response?.status === 401 ||
                               error?.response?.status === 403 ||
-                              errorMessage.includes('401') ||
-                              errorMessage.includes('403') ||
-                              errorMessage.includes('invalid') ||
-                              errorMessage.includes('expired');
+                              errorMessage.includes('token expired') ||
+                              errorMessage.includes('invalid token') ||
+                              errorMessage.includes('token has been revoked') ||
+                              errorMessage.includes('session expired') ||
+                              errorMessage.includes('refresh token') ||
+                              errorMessage === '401' ||
+                              errorMessage === '403';
 
         if (isInvalidToken) {
           // Clear all stored auth data.
@@ -782,7 +787,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     refreshPromiseRef.current = refreshPromise;
 
     return refreshPromise;
-  }, [router]);
+  }, []);
 
   // Stable actions ref — callbacks change identity on re-render but their behavior
   // is always "latest". Using a ref avoids invalidating the context memo on every render.
