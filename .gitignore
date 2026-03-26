@@ -55,6 +55,16 @@ patch-*.js
 typescript-check.log
 typescript_errors.log
 
+# CI artifact files
+eslint-full-report.json
+bundle-analysis-report.json
+asset-inventory-report.json
+accessibility-report.txt
+errors.txt
+new-wallet-code.txt
+homepage-optimization.patch
+generate_tracker.ps1
+
 # Internal debug documents
 PHASE*.txt
 *_SUMMARY.txt
