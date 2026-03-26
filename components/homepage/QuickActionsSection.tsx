@@ -6,35 +6,40 @@ import {
   Platform,
   Text,
 } from 'react-native';
+// Platform used for web-only text-overflow styles
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/constants/theme';
 import { useUserIdentityStore, IdentitySegment } from '@/stores/userIdentityStore';
 
-// Color themes for each action - Nuqta palette
+// Color themes for each action — Section 12 handoff spec
 const ACTION_THEMES = {
   voucher: {
-    iconBg: colors.linen,      // Linen
-    iconColor: colors.nileBlue,    // Nile Blue
+    // g50 / linen background
+    iconBg: colors.linen,
+    iconColor: colors.nileBlue,
     descBg: colors.linen,
     descColor: colors.nileBlue,
   },
   wallet: {
-    iconBg: colors.lavenderMist,      // Lavender Mist
-    iconColor: colors.nileBlue,    // Nile Blue
-    descBg: colors.lavenderMist,
+    // #dfebf7 lavenderMist
+    iconBg: '#dfebf7',
+    iconColor: colors.nileBlue,
+    descBg: '#dfebf7',
     descColor: colors.nileBlue,
   },
   offers: {
-    iconBg: colors.lightPeach,      // Light Peach
-    iconColor: colors.nileBlue,    // Nile Blue
-    descBg: colors.lightPeach,
+    // #ffd7b5 lightPeach
+    iconBg: '#ffd7b5',
+    iconColor: colors.nileBlue,
+    descBg: '#ffd7b5',
     descColor: colors.nileBlue,
   },
   store: {
-    iconBg: colors.lightMustard,      // Light Mustard
-    iconColor: colors.nileBlue,    // Nile blue
-    descBg: colors.lightMustard,
+    // mustard light #FFF3CC
+    iconBg: '#FFF3CC',
+    iconColor: colors.nileBlue,
+    descBg: '#FFF3CC',
     descColor: colors.nileBlue,
   },
 };
@@ -135,55 +140,6 @@ function QuickActionsSection({
     router.push(route as any);
   }, [router]);
 
-  const renderValue = (actionId: string) => {
-    const greyBg = colors.neutral[100];
-    const greyText = colors.neutral[500];
-
-    switch (actionId) {
-      case 'voucher':
-        return (
-          <View style={[styles.valuePill, { backgroundColor: greyBg }]}>
-            <Text style={[styles.valueNumber, { color: greyText }]}>{voucherCount}</Text>
-            <Text style={[styles.valueLabel, { color: greyText }]}>New</Text>
-          </View>
-        );
-      case 'wallet':
-        if (walletBalance > 0) {
-          return (
-            <View style={[styles.valuePill, { backgroundColor: greyBg }]}>
-              <Text style={[styles.valueNumber, { color: colors.primary[700] }]}>
-                {Math.floor(walletBalance).toLocaleString('en-IN')}
-              </Text>
-              <Text style={[styles.valueLabel, { color: colors.primary[700] }]}>RC</Text>
-            </View>
-          );
-        }
-        return (
-          <View style={[styles.valuePill, styles.walletPill, { backgroundColor: greyBg }]}>
-            <Text style={[styles.valueText, { color: greyText }]}>Add</Text>
-            <View style={[styles.plusButton, { backgroundColor: greyText }]}>
-              <Ionicons name="add" size={10} color={colors.background.primary} />
-            </View>
-          </View>
-        );
-      case 'offers':
-        return (
-          <View style={[styles.valuePill, { backgroundColor: greyBg }]}>
-            <Text style={[styles.valueNumber, { color: greyText }]}>{newOffersCount}</Text>
-            <Text style={[styles.valueLabel, { color: greyText }]}>New</Text>
-          </View>
-        );
-      case 'store':
-        return (
-          <View style={[styles.valuePill, { backgroundColor: greyBg }]}>
-            <Text style={[styles.valueText, { color: greyText }]}>Explore</Text>
-          </View>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.actionsRow}>
@@ -194,15 +150,14 @@ function QuickActionsSection({
               key={action.id}
               style={styles.actionItem}
               onPress={() => handlePress(action.route)}
-
             >
               <View style={[styles.iconContainer, { backgroundColor: theme.iconBg }]}>
-                <Ionicons name={action.icon} size={22} color={theme.iconColor} />
+                <Ionicons name={action.icon} size={18} color={theme.iconColor} />
               </View>
-              <Text style={styles.actionTitle}>{action.title}</Text>
-              {renderValue(action.id)}
-              <View style={[styles.descriptionPill, { backgroundColor: theme.descBg }]}>
-                <Text style={[styles.actionDescription, { color: theme.descColor }]}>
+              <Text style={styles.actionTitle} numberOfLines={1}>{action.title}</Text>
+              {/* Single bottom pill — replaces old qa-val + qa-desc */}
+              <View style={[styles.bottomPill, { backgroundColor: theme.descBg }]}>
+                <Text style={[styles.bottomPillText, { color: theme.descColor }]} numberOfLines={1}>
                   {action.description}
                 </Text>
               </View>
@@ -230,66 +185,53 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
     gap: 8,
   },
+  // Section 12: all 4 tiles identical height via minHeight: 120
   actionItem: {
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: 2,
+    paddingVertical: 10,
+    minHeight: 120,
+    justifyContent: 'flex-start',
   },
+  // Section 12: 40x40 icon box, 11px radius
   iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 11,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 6,
   },
+  // Section 12: title never wraps
   actionTitle: {
     fontSize: 12,
     fontWeight: '600',
     color: colors.nileBlue,
     textAlign: 'center',
-    marginBottom: 4,
+    marginBottom: 6,
+    // Prevent title from wrapping on any platform
+    ...Platform.select({
+      web: {
+        whiteSpace: 'nowrap' as any,
+        overflow: 'hidden' as any,
+        textOverflow: 'ellipsis' as any,
+      },
+    }),
   },
-  valuePill: {
+  // Section 12: single bottom pill replaces old qa-val + qa-desc
+  bottomPill: {
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: 6,
-    flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
-    marginBottom: 4,
+    justifyContent: 'center',
+    marginTop: 'auto' as any,
+    maxWidth: '100%',
   },
-  valueNumber: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  valueLabel: {
+  bottomPillText: {
     fontSize: 10,
     fontWeight: '600',
-  },
-  valueText: {
-    fontSize: 11,
-    fontWeight: '600',
-  },
-  walletPill: {
-    paddingRight: 4,
-  },
-  plusButton: {
-    width: 16,
-    height: 16,
-    borderRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  descriptionPill: {
-    paddingHorizontal: 8,
-    paddingVertical: 3,
-    borderRadius: 6,
-    marginTop: 2,
-  },
-  actionDescription: {
-    fontSize: 9,
-    fontWeight: '500',
     textAlign: 'center',
   },
 });

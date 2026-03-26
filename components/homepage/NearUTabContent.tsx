@@ -1,202 +1,83 @@
 /**
  * Near-U Tab Content
  *
- * Contains all sections for the "Near-U" tab of the homepage.
- * Below-fold sections are wrapped in LazySection for viewport-based rendering.
+ * Rebuilt to match the 24-section order from the developer handoff (Section 10).
+ * Only Near-U / persona-specific sections are here; category verticals and
+ * discovery sections have moved to the categories page.
  *
- * Lazy imports are grouped into 6 barrel files (lazyGroups/) to reduce
- * Metro bundler chunk count from 45 to ~9, preventing OOM during bundling.
- * LazySection controls mount timing independently of React.lazy().
+ * Section order:
+ *  1.  TimeAwareContextPill   (Near U only)
+ *  2.  DailyCheckInStrip      (Near U only)
+ *  3.  CampusLeaderboardTeaser (Student only)
+ *  4.  VisitStreakCard         (Near U only)
+ *  5.  TryBeforeYouBuyCard    (Near U only)
+ *  6.  NearbyOffersCarousel   (Near U only) — with urgency tags
+ *  7.  CampusHotDealsStrip    (Student only)
+ *  8.  StudentBudgetFoodGrid  (Student only)
+ *  9.  StudentEntertainmentSection (Student only)
+ *  10. StudentUtilityDealsSection  (Student only)
+ *  11. StudentMicroPrepaidPacks    (Student only)
+ *  12. EmployeeLunchDealsSection   (Employee only, 11-14h)
+ *  13. EmployeeAfterWorkSection    (Employee only, 17h+)
+ *  14. EmployeeWellnessBookingSection (Employee only)
+ *  15. EmployeeValuePacksSection   (Employee only)
+ *  16. StoriesRow / What's New     (General + Employee)
+ *  17. PersonalizedHeroBanner      (tiles ALL; banner card Student only)
+ *  18. StreakFireIcon + RezScoreCard row (Near U only)
+ *  19. HomeSavingsSummaryCard      (Always) — wired with unlockAmount
+ *  20. QuickReorderSection         (featureLevel >= 3)
+ *  21. BonusZoneHighlight + FlashDealCountdown (Always)
+ *  22. TrendingNearYou             (Always)
+ *  23. EarnRezCoinsSection + PlayAndEarnSectionV2 (Always)
+ *  24. GlobeBanner                 (Always)
  */
 
-import React, { Suspense, useCallback, useState } from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Pressable } from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/constants/theme';
+
 import LazySection from '@/components/homepage/LazySection';
-import { SectionSkeleton } from '@/components/homepage/skeletons';
 import HomeSavingsSummaryCard from '@/components/homepage/HomeSavingsSummaryCard';
-import { useUserIdentityStore } from '@/stores/userIdentityStore';
+import EarnRezCoinsSection from '@/components/homepage/EarnRezCoinsSection';
+import BonusZoneHighlight from '@/components/homepage/BonusZoneHighlight';
+import GlobeBanner from '@/components/homepage/GlobeBanner';
+import PlayAndEarnSectionV2 from '@/components/homepage/PlayAndEarnSectionV2';
+import QuickReorderSection from '@/components/homepage/QuickReorderSection';
 
-// Employee-specific sections (direct imports — co-located in /sections/)
-import EmployeeLunchDealsSection from '@/components/homepage/sections/EmployeeLunchDealsSection';
-import EmployeeAfterWorkSection from '@/components/homepage/sections/EmployeeAfterWorkSection';
-import EmployeeWellnessBookingSection from '@/components/homepage/sections/EmployeeWellnessBookingSection';
-import EmployeeValuePacksSection from '@/components/homepage/sections/EmployeeValuePacksSection';
-import EmployeeUtilityServicesSection from '@/components/homepage/sections/EmployeeUtilityServicesSection';
+import TrendingNearYou from '@/components/homepage/TrendingNearYou';
 
-// ── Student-specific sections (static imports — rendered early for student persona) ──
+// Student-specific sections
 import CampusHotDealsStrip from '@/components/homepage/sections/CampusHotDealsStrip';
 import StudentBudgetFoodGrid from '@/components/homepage/sections/StudentBudgetFoodGrid';
 import StudentEntertainmentSection from '@/components/homepage/sections/StudentEntertainmentSection';
 import StudentUtilityDealsSection from '@/components/homepage/sections/StudentUtilityDealsSection';
 import StudentMicroPrepaidPacks from '@/components/homepage/sections/StudentMicroPrepaidPacks';
 
-// Identity Layer - renders at top of NearU tab (self-gates: null for general users)
-import IdentitySectionContainer from '@/components/homepage/identity/IdentitySectionContainer';
-import IdentityPromptModal from '@/components/homepage/identity/IdentityPromptModal';
+// Employee-specific sections
+import EmployeeLunchDealsSection from '@/components/homepage/sections/EmployeeLunchDealsSection';
+import EmployeeAfterWorkSection from '@/components/homepage/sections/EmployeeAfterWorkSection';
+import EmployeeWellnessBookingSection from '@/components/homepage/sections/EmployeeWellnessBookingSection';
+import EmployeeValuePacksSection from '@/components/homepage/sections/EmployeeValuePacksSection';
 
-// Tier 1: Above the fold - render immediately (static imports)
-import QuickActionsSection from '@/components/homepage/QuickActionsSection';
-import HowRezWorksCard from '@/components/homepage/HowRezWorksCard';
-import EarnRezCoinsSection from '@/components/homepage/EarnRezCoinsSection';
-import HorizontalScrollSection from '@/components/homepage/HorizontalScrollSection';
-import ProductCard from '@/components/homepage/cards/ProductCard';
-import EventCard from '@/components/homepage/cards/EventCard';
-import StoreCard from '@/components/homepage/cards/StoreCard';
-import BrandedStoreCard from '@/components/homepage/cards/BrandedStoreCard';
-import RecommendationCard from '@/components/homepage/cards/RecommendationCard';
+// New components created by Agent 1 — will be at these paths once generated
+import TimeAwareContextPill from '@/components/homepage/TimeAwareContextPill';
+import DailyCheckInStrip from '@/components/homepage/DailyCheckInStrip';
+import CampusLeaderboardTeaser from '@/components/homepage/CampusLeaderboardTeaser';
+import VisitStreakCard from '@/components/homepage/VisitStreakCard';
+import TryBeforeYouBuyCard from '@/components/homepage/TryBeforeYouBuyCard';
+import NearbyOffersCarousel from '@/components/homepage/NearbyOffersCarousel';
+import StoriesRow from '@/components/homepage/StoriesRow';
+import PersonalizedHeroBanner from '@/components/homepage/PersonalizedHeroBanner';
+import RezScoreCard from '@/components/homepage/RezScoreCard';
+import FlashDealCountdown from '@/components/homepage/FlashDealCountdown';
 
-// Quick Reorder (compact, above-fold — renders immediately)
-import QuickReorderSection from '@/components/homepage/QuickReorderSection';
+import { useHomePersona } from '@/hooks/useHomePersona';
+import { useWalletStore } from '@/stores/walletStore';
 
-// Tier 2: Near fold - static imports (LazySection still controls mount timing)
-import PlayAndEarnSectionV2 from '@/components/homepage/PlayAndEarnSectionV2';
-import BonusZoneHighlight from '@/components/homepage/BonusZoneHighlight';
-import NewOnRezSection from '@/components/homepage/NewOnRezSection';
-import EventsExperiencesSection from '@/components/homepage/EventsExperiencesSection';
-import ShopByCategorySection from '@/components/homepage/ShopByCategorySection';
-import RecommendedStoresSection from '@/components/homepage/RecommendedStoresSection';
-
-// Lightweight banners - static imports
-import PromoBanner from '@/components/homepage/PromoBanner';
-import GlobeBanner from '@/components/homepage/GlobeBanner';
-
-// Tier 3: Below fold - grouped lazy imports (6 barrel chunks instead of 38 individual chunks)
-// This reduces Metro bundler memory usage by deduplicating shared dependencies across chunks.
-
-// Group A: Category verticals (1 chunk)
-const BeautyWellnessSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/categorySections').then(m => ({ default: m.BeautyWellnessSection }))
-);
-const FitnessSportsSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/categorySections').then(m => ({ default: m.FitnessSportsSection }))
-);
-const GroceryEssentialsSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/categorySections').then(m => ({ default: m.GroceryEssentialsSection }))
-);
-const HealthcareSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/categorySections').then(m => ({ default: m.HealthcareSection }))
-);
-const HomeServicesSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/categorySections').then(m => ({ default: m.HomeServicesSection }))
-);
-const FinancialServicesSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/categorySections').then(m => ({ default: m.FinancialServicesSection }))
-);
-const TravelSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/categorySections').then(m => ({ default: m.TravelSection }))
-);
-
-// Group B: Category list sections (1 chunk)
-const BestDiscountSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/categoryListSections').then(m => ({ default: m.BestDiscountSection }))
-);
-const BestSellerSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/categoryListSections').then(m => ({ default: m.BestSellerSection }))
-);
-
-// Group C: Store browse sections with react-native-reanimated (1 chunk)
-const GoingOutSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/storeBrowseSections').then(m => ({ default: m.GoingOutSection }))
-);
-const HomeDeliverySection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/storeBrowseSections').then(m => ({ default: m.HomeDeliverySection }))
-);
-const ServiceSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/storeBrowseSections').then(m => ({ default: m.ServiceSection }))
-);
-
-// Group D: Gamification sections (1 chunk)
-const WalletSnapshotCard = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/gamificationSections').then(m => ({ default: m.WalletSnapshotCard }))
-);
-const LoyaltyRewardsHubCard = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/gamificationSections').then(m => ({ default: m.LoyaltyRewardsHubCard }))
-);
-const FeatureTryCards = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/gamificationSections').then(m => ({ default: m.FeatureTryCards }))
-);
-const StreaksGamification = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/gamificationSections').then(m => ({ default: m.StreaksGamification }))
-);
-const ZeroEMICard = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/gamificationSections').then(m => ({ default: m.ZeroEMICard }))
-);
-const PlayAndEarnSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/gamificationSections').then(m => ({ default: m.PlayAndEarnSection }))
-);
-const SocialProofSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/gamificationSections').then(m => ({ default: m.SocialProofSection }))
-);
-const FeatureHighlights = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/gamificationSections').then(m => ({ default: m.FeatureHighlights }))
-);
-
-// Group E: Deal sections (1 chunk)
-const ExcitingDealsSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/dealSections').then(m => ({ default: m.ExcitingDealsSection }))
-);
-const DealsThatSaveMoney = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/dealSections').then(m => ({ default: m.DealsThatSaveMoney }))
-);
-const FlashSales = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/dealSections').then(m => ({ default: m.FlashSales }))
-);
-const ShopByExperienceSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/dealSections').then(m => ({ default: m.ShopByExperienceSection }))
-);
-const HotDealsSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/dealSections').then(m => ({ default: m.HotDealsSection }))
-);
-const PopularProductsSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/dealSections').then(m => ({ default: m.PopularProductsSection }))
-);
-
-// Group F: Discovery sections (1 chunk)
-const PickedForYou = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/discoverySections').then(m => ({ default: m.PickedForYou }))
-);
-const NearbyProductsSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/discoverySections').then(m => ({ default: m.NearbyProductsSection }))
-);
-const StoresNearYou = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/discoverySections').then(m => ({ default: m.StoresNearYou }))
-);
-const BrandPartnerships = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/discoverySections').then(m => ({ default: m.BrandPartnerships }))
-);
-const StoreDiscoverySection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/discoverySections').then(m => ({ default: m.StoreDiscoverySection }))
-);
-const FeaturedCategoriesContainer = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/discoverySections').then(m => ({ default: m.FeaturedCategoriesContainer }))
-);
-const StoreExperiencesSection = React.lazy(() =>
-  import('@/components/homepage/lazyGroups/discoverySections').then(m => ({ default: m.StoreExperiencesSection }))
-);
-
-// Standalone lazy imports (different directories, unique deps)
-const TrendingNearYou = React.lazy(() => import('@/components/homepage/TrendingNearYou'));
-const RecentlyViewedSection = React.lazy(() => import('@/components/category/RecentlyViewedSection'));
-const DiscoverAndShopSection = React.lazy(() => import('@/components/discover/DiscoverAndShopSection'));
-
-import {
-  EventItem,
-  StoreItem,
-  ProductItem,
-  BrandedStoreItem,
-  RecommendationItem,
-  HomepageSectionItem,
-} from '@/types/homepage.types';
-
-// Sized placeholder for Suspense boundaries — prevents content from
-// collapsing to 0px while the lazy chunk loads (causes layout jump / flicker)
-const SuspensePlaceholder: React.FC<{ height: number }> = React.memo(({ height }) => (
-  <View style={{ height, backgroundColor: '#f5f5f5' }} />
-));
+// ─── Props ────────────────────────────────────────────────────────────────────
 
 interface NearUTabContentProps {
   state: any;
@@ -223,6 +104,8 @@ interface NearUTabContentProps {
   onSwitchToMall?: () => void;
 }
 
+// ─── Component ────────────────────────────────────────────────────────────────
+
 const NearUTabContent: React.FC<NearUTabContentProps> = ({
   state,
   actions,
@@ -248,251 +131,31 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
   onSwitchToMall,
 }) => {
   const router = useRouter();
-  const { segment, statedIdentity } = useUserIdentityStore();
-  const isStudentUser = segment === 'verified_student' || statedIdentity === 'student';
-  const [bannerDismissed, setBannerDismissed] = useState(false);
-  const [exploreMoreExpanded, setExploreMoreExpanded] = useState(false);
+  const persona = useHomePersona();
 
-  // ── Employee / Corporate persona helpers ──────────────────────────────────
-  const isEmployeeCorporate =
-    segment === 'verified_employee' || statedIdentity === 'corporate';
+  // Derive persona flags from the hook
+  const isStudent = persona.id === 'student';
+  const isEmployee = persona.id === 'corporate';
+  const isGeneral = persona.id === 'general';
 
-  // Time-aware flags used to pick which primary section renders first
+  // Time-aware flags for employee sections
   const _now = new Date();
   const _currentHour = _now.getHours();
   const _currentDay = _now.getDay(); // 0 = Sunday, 6 = Saturday
   const _isWeekend = _currentDay === 0 || _currentDay === 6;
   const _isLunchWindow = _currentHour >= 11 && _currentHour < 14;
   const _isAfterWorkWindow = _isWeekend || _currentHour >= 17;
-  // Memoize card renderers
-  const renderEventCard = useCallback((item: HomepageSectionItem) => {
-    const event = item as EventItem;
-    return (
-      <EventCard
-        event={event}
-        onPress={eventItem => {
-          actions.trackSectionView('events');
-          actions.trackItemClick('events', eventItem.id);
-          handleItemPress('events', eventItem);
-        }}
-      />
-    );
-  }, [actions, handleItemPress]);
 
-  const renderRecommendationCard = useCallback((item: HomepageSectionItem) => {
-    const recommendation = item as RecommendationItem;
-    return (
-      <RecommendationCard
-        recommendation={recommendation}
-        onPress={rec => {
-          actions.trackSectionView('just_for_you');
-          actions.trackItemClick('just_for_you', rec.id);
-          handleItemPress('just_for_you', rec);
-        }}
-        onAddToCart={rec => {
-          actions.trackItemClick('just_for_you', rec.id);
-          handleAddToCart(rec);
-        }}
-      />
-    );
-  }, [actions, handleItemPress, handleAddToCart]);
+  // Wallet data for HomeSavingsSummaryCard unlockAmount
+  const walletData = useWalletStore();
+  const unlockAmount = (walletData as any)?.unlockAmount ?? (walletData as any)?.lockedBalance ?? undefined;
 
-  const renderStoreCard = useCallback((item: HomepageSectionItem, sectionId: string) => {
-    const store = item as StoreItem;
-    return (
-      <StoreCard
-        store={store}
-        onPress={storeItem => {
-          actions.trackSectionView(sectionId);
-          actions.trackItemClick(sectionId, storeItem.id);
-          handleItemPress(sectionId, storeItem);
-        }}
-      />
-    );
-  }, [actions, handleItemPress]);
-
-  const renderBrandedStoreCard = useCallback((item: HomepageSectionItem) => {
-    const store = item as BrandedStoreItem;
-    return (
-      <BrandedStoreCard
-        store={store}
-        onPress={storeItem => {
-          actions.trackSectionView('top_stores');
-          actions.trackItemClick('top_stores', storeItem.id);
-          handleItemPress('top_stores', storeItem);
-        }}
-        width={200}
-      />
-    );
-  }, [actions, handleItemPress]);
-
-  const renderProductCard = useCallback((item: HomepageSectionItem) => {
-    const product = item as ProductItem;
-    return (
-      <ProductCard
-        product={product}
-        onPress={productItem => {
-          actions.trackSectionView('new_arrivals');
-          actions.trackItemClick('new_arrivals', productItem.id);
-          handleItemPress('new_arrivals', productItem);
-        }}
-        onAddToCart={productItem => {
-          actions.trackItemClick('new_arrivals', productItem.id);
-          handleAddToCart(productItem);
-        }}
-      />
-    );
-  }, [actions, handleItemPress, handleAddToCart]);
-
-  // Dynamic sections renderer (trending stores, events, etc.)
-  const renderDynamicSections = useCallback(() => {
-    const filteredSections = state.sections.filter((section: any) => {
-      if (section.id === 'just_for_you') return false;
-      if (section.id === 'new_arrivals') return false;
-      if (section.error && section.error.includes('fallback')) return false;
-      return true;
-    });
-
-    const isGlobalLoading = state.loading;
-
-    return filteredSections.map((section: any) => {
-      const isSectionLoading = section.loading;
-      const hasNoItems = !section.items || section.items.length === 0;
-
-      // Show skeleton for trending_stores only while actually loading
-      if (section.id === 'trending_stores' && (isGlobalLoading || (isSectionLoading && hasNoItems))) {
-        return (
-          <SectionSkeleton
-            key={`skeleton-${section.id}`}
-            cardType="store"
-            cardWidth={280}
-            spacing={16}
-            numCards={4}
-            showIndicator={false}
-          />
-        );
-      }
-
-      if (hasNoItems && !isGlobalLoading && !isSectionLoading) {
-        return null;
-      }
-
-      return (
-        <HorizontalScrollSection
-          key={section.id}
-          section={section}
-          onItemPress={item => handleItemPress(section.id, item)}
-          onRefresh={() => actions.refreshSection(section.id)}
-          renderCard={item => {
-            switch (section.type) {
-              case 'events':
-                return renderEventCard(item);
-              case 'recommendations':
-                return renderRecommendationCard(item);
-              case 'stores':
-                return renderStoreCard(item, section.id);
-              case 'branded_stores':
-                return renderBrandedStoreCard(item);
-              case 'products':
-                return renderProductCard(item);
-              default:
-                return renderStoreCard(item, section.id);
-            }
-          }}
-          cardWidth={
-            section.id === 'new_arrivals' ? 160 :
-              section.type === 'branded_stores' ? 200 : 280
-          }
-          spacing={section.id === 'new_arrivals' ? 12 : 16}
-          showIndicator={false}
-        />
-      );
-    });
-  }, [state.sections, state.loading, handleItemPress, actions, renderEventCard, renderRecommendationCard, renderStoreCard, renderBrandedStoreCard, renderProductCard]);
-
-  // New Arrivals section renderer
-  const renderNewArrivals = useCallback(() => {
-    const newArrivalsSection = state.sections.find((section: any) => section.id === 'new_arrivals');
-    const isGlobalLoading = state.loading;
-    const isSectionLoading = newArrivalsSection?.loading;
-    const hasNoItems = !newArrivalsSection?.items || newArrivalsSection.items.length === 0;
-
-    if (isGlobalLoading || !newArrivalsSection || (isSectionLoading && hasNoItems)) {
-      return (
-        <SectionSkeleton
-          cardType="product"
-          cardWidth={160}
-          spacing={16}
-          numCards={4}
-          showIndicator={false}
-        />
-      );
-    }
-
-    if (!hasNoItems) {
-      return (
-        <HorizontalScrollSection
-          key={newArrivalsSection.id}
-          section={newArrivalsSection}
-          onItemPress={item => handleItemPress(newArrivalsSection.id, item)}
-          onRefresh={() => actions.refreshSection(newArrivalsSection.id)}
-          renderCard={item => renderProductCard(item)}
-          cardWidth={160}
-          spacing={16}
-          showIndicator={false}
-        />
-      );
-    }
-
-    return null;
-  }, [state.sections, state.loading, handleItemPress, actions, renderProductCard]);
-
-  // Just for you section renderer
-  const renderJustForYou = useCallback(() => {
-    const justForYouSection = state.sections.find((section: any) => section.id === 'just_for_you');
-    const isGlobalLoading = state.loading;
-    const isSectionLoading = justForYouSection?.loading;
-    const hasNoItems = !justForYouSection?.items || justForYouSection.items.length === 0;
-
-    // Show skeleton only while actually loading (global or section-level)
-    if (isGlobalLoading || !justForYouSection || (isSectionLoading && hasNoItems)) {
-      return (
-        <SectionSkeleton
-          cardType="recommendation"
-          cardWidth={230}
-          spacing={12}
-          numCards={4}
-          showIndicator={false}
-        />
-      );
-    }
-
-    // Loading done but no items — hide section instead of permanent skeleton
-    if (hasNoItems) {
-      return null;
-    }
-
-    return (
-      <HorizontalScrollSection
-        key={justForYouSection.id}
-        section={justForYouSection}
-        onItemPress={item => handleItemPress(justForYouSection.id, item)}
-        onRefresh={() => actions.refreshSection(justForYouSection.id)}
-        renderCard={item => renderRecommendationCard(item)}
-        cardWidth={230}
-        spacing={12}
-        showIndicator={false}
-      />
-    );
-  }, [state.sections, state.loading, handleItemPress, actions, renderRecommendationCard]);
+  // Area not-serviceable dismissible banner
+  const [bannerDismissed, setBannerDismissed] = useState(false);
 
   return (
     <>
-      {/* ===== IDENTITY LAYER: Personalized segment content ===== */}
-      <IdentityPromptModal />
-      <IdentitySectionContainer />
-
-      {/* Coming soon banner — shown when user is outside serviceable area */}
+      {/* Coming-soon banner — shown when user is outside serviceable area */}
       {!isAreaServiceable && !bannerDismissed && (
         <View style={{
           backgroundColor: '#FFF8E1',
@@ -544,415 +207,148 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
         </View>
       )}
 
-      {/* ===== SEGMENT-FIRST: Promoted section for verified users ===== */}
-      {/* ===== STUDENT PERSONA: Priority sections (replaces generic trending) ===== */}
-      {isStudentUser && (
+      {/* ── Section 1: TimeAwareContextPill (Near U only) ──────────────────── */}
+      <LazySection sectionId="time-aware-context-pill" scrollY={scrollY} height={56}
+        renderSection={() => <TimeAwareContextPill persona={persona} />} />
+
+      {/* ── Section 2: DailyCheckInStrip (Near U only) ─────────────────────── */}
+      <LazySection sectionId="daily-check-in-strip" scrollY={scrollY} height={80}
+        renderSection={() => <DailyCheckInStrip />} />
+
+      {/* ── Section 3: CampusLeaderboardTeaser (Student only) ──────────────── */}
+      {isStudent && (
+        <LazySection sectionId="campus-leaderboard-teaser" scrollY={scrollY} height={160}
+          renderSection={() => <CampusLeaderboardTeaser />} />
+      )}
+
+      {/* ── Section 4: VisitStreakCard (Near U only) ────────────────────────── */}
+      <LazySection sectionId="visit-streak-card" scrollY={scrollY} height={120}
+        renderSection={() => <VisitStreakCard />} />
+
+      {/* ── Section 5: TryBeforeYouBuyCard (Near U only) ───────────────────── */}
+      <LazySection sectionId="try-before-you-buy" scrollY={scrollY} height={180}
+        renderSection={() => <TryBeforeYouBuyCard />} />
+
+      {/* ── Section 6: NearbyOffersCarousel (Near U only) — with urgency tags ─ */}
+      <LazySection sectionId="nearby-offers-carousel" scrollY={scrollY} height={240}
+        renderSection={() => <NearbyOffersCarousel showUrgencyTags />} />
+
+      {/* ── Section 7-11: Student persona sections ─────────────────────────── */}
+      {isStudent && (
         <>
-          {/* 1. Campus Hot Deals Strip — replaces generic trending section */}
-          <LazySection sectionId="campus-trending" scrollY={scrollY} height={240}
+          {/* Section 7: CampusHotDealsStrip */}
+          <LazySection sectionId="campus-hot-deals" scrollY={scrollY} height={240}
             renderSection={() => <CampusHotDealsStrip />} />
 
-          {/* 2. Budget Eats grid — top student priority */}
+          {/* Section 8: StudentBudgetFoodGrid */}
           <LazySection sectionId="student-budget-food" scrollY={scrollY} height={380}
             renderSection={() => <StudentBudgetFoodGrid />} />
 
-          {/* 3. Entertainment carousel — #2 student priority */}
+          {/* Section 9: StudentEntertainmentSection */}
           <LazySection sectionId="student-entertainment" scrollY={scrollY} height={280}
             renderSection={() => <StudentEntertainmentSection />} />
 
-          {/* 4. Utility Deals — retention driver */}
+          {/* Section 10: StudentUtilityDealsSection */}
           <LazySection sectionId="student-utility-deals" scrollY={scrollY} height={320}
             renderSection={() => <StudentUtilityDealsSection />} />
 
-          {/* 5. Micro Prepaid Packs — revenue */}
+          {/* Section 11: StudentMicroPrepaidPacks */}
           <LazySection sectionId="student-micro-packs" scrollY={scrollY} height={220}
             renderSection={() => <StudentMicroPrepaidPacks />} />
-
-          {/* 6. Events & Experiences — promoted for students */}
-          <LazySection sectionId="events-priority" scrollY={scrollY} height={300}
-            renderSection={() => <EventsExperiencesSection />} />
         </>
       )}
 
-      {/* Non-student: keep original single-section promotion per verified segment */}
-      {!isStudentUser && segment === 'verified_healthcare' && (
-        <LazySection sectionId="healthcare-priority-ns" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HealthcareSection /></Suspense>} />
-      )}
-      {!isStudentUser && segment === 'verified_defence' && (
-        <LazySection sectionId="fitness-priority-ns" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FitnessSportsSection /></Suspense>} />
-      )}
-      {/* ===== EMPLOYEE / CORPORATE PERSONA: Full promoted section suite ===== */}
-      {!isStudentUser && isEmployeeCorporate && (
+      {/* ── Section 12-15: Employee persona sections ───────────────────────── */}
+      {isEmployee && (
         <>
-          {/* 1. Time-aware primary section */}
+          {/* Section 12: EmployeeLunchDealsSection (11-14h) */}
           {_isLunchWindow && (
             <LazySection sectionId="employee-lunch-deals" scrollY={scrollY} height={340}
               renderSection={() => <EmployeeLunchDealsSection />} />
           )}
+
+          {/* Section 13: EmployeeAfterWorkSection (17h+) */}
           {_isAfterWorkWindow && !_isLunchWindow && (
-            <LazySection sectionId="employee-afterwork" scrollY={scrollY} height={360}
+            <LazySection sectionId="employee-after-work" scrollY={scrollY} height={360}
               renderSection={() => <EmployeeAfterWorkSection />} />
           )}
+
+          {/* Outside both windows — show lunch section as preview */}
           {!_isLunchWindow && !_isAfterWorkWindow && (
             <LazySection sectionId="employee-lunch-preview" scrollY={scrollY} height={340}
               renderSection={() => <EmployeeLunchDealsSection />} />
           )}
 
-          {/* 2. Wellness & Grooming — always shown */}
+          {/* Section 14: EmployeeWellnessBookingSection */}
           <LazySection sectionId="employee-wellness-booking" scrollY={scrollY} height={380}
             renderSection={() => <EmployeeWellnessBookingSection />} />
 
-          {/* 3. Smart Value Packs */}
+          {/* Section 15: EmployeeValuePacksSection */}
           <LazySection sectionId="employee-value-packs" scrollY={scrollY} height={480}
             renderSection={() => <EmployeeValuePacksSection />} />
-
-          {/* 4. Utility Services — prominent for employees */}
-          <LazySection sectionId="employee-utility-services" scrollY={scrollY} height={380}
-            renderSection={() => <EmployeeUtilityServicesSection />} />
-
-          {/* 5. Financial Services — expense-friendly */}
-          <LazySection sectionId="financial-priority-employee" scrollY={scrollY} height={300}
-            renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FinancialServicesSection /></Suspense>} />
-
-          {/* 6. Fitness & Sports */}
-          <LazySection sectionId="fitness-priority-employee" scrollY={scrollY} height={300}
-            renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FitnessSportsSection /></Suspense>} />
         </>
       )}
 
-      {/* Legacy fallback for non-persona-matched verified_employee state */}
-      {!isStudentUser && !isEmployeeCorporate && (segment as string) === 'verified_employee' && (
-        <LazySection sectionId="financial-priority-ns" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FinancialServicesSection /></Suspense>} />
-      )}
-      {segment === 'verified_teacher' && (
-        <LazySection sectionId="beauty-priority" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><BeautyWellnessSection /></Suspense>} />
-      )}
-      {segment === 'verified_senior' && (
-        <LazySection sectionId="healthcare-senior-priority" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HealthcareSection /></Suspense>} />
-      )}
-      {segment === 'verified_government' && (
-        <LazySection sectionId="financial-gov-priority" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FinancialServicesSection /></Suspense>} />
-      )}
-      {segment === 'verified_differentlyAbled' && (
-        <LazySection sectionId="home-services-priority" scrollY={scrollY} height={300}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HomeServicesSection /></Suspense>} />
+      {/* ── Section 16: StoriesRow / What's New (General + Employee) ───────── */}
+      {(isGeneral || isEmployee) && (
+        <LazySection sectionId="stories-row" scrollY={scrollY} height={200}
+          renderSection={() => <StoriesRow />} />
       )}
 
-      {/* ===== TIER 1: Above the fold - render immediately ===== */}
+      {/* ── Section 17: PersonalizedHeroBanner ─────────────────────────────── */}
+      {/* Banner card rendered for Student only; tiles rendered for ALL personas */}
+      <LazySection sectionId="personalized-hero-banner" scrollY={scrollY} height={isStudent ? 420 : 200}
+        renderSection={() => (
+          <PersonalizedHeroBanner
+            persona={persona}
+            showBannerCard={isStudent}
+            showTiles
+          />
+        )} />
+
+      {/* ── Section 18: StreakFireIcon + RezScoreCard row (Near U only) ─────── */}
+      <LazySection sectionId="rez-score-row" scrollY={scrollY} height={160}
+        renderSection={() => <RezScoreCard />} />
+
+      {/* ── Section 19: HomeSavingsSummaryCard (Always) ─────────────────────── */}
       <HomeSavingsSummaryCard
         totalSaved={totalSaved ?? 0}
         thisMonthSaved={thisMonthSaved ?? 0}
         currencySymbol={currencySymbol ?? '\u20B9'}
+        unlockAmount={unlockAmount}
         onPress={() => router.push('/wallet-screen')}
       />
-      <QuickActionsSection
-        voucherCount={voucherCount}
-        walletBalance={userPoints}
-        newOffersCount={newOffersCount}
-      />
-      <ShopByCategorySection />
 
-      {/* Quick Reorder — compact cards, above the fold (Level 3+ / has order history) */}
+      {/* ── Section 20: QuickReorderSection (featureLevel >= 3) ────────────── */}
       {(featureLevel >= 3 || hasCompletedFirstOrder) && (
         <QuickReorderSection />
       )}
 
-      {/* ===== TIER 2: Near fold - static imports, LazySection controls mount ===== */}
-      <HowRezWorksCard />
+      {/* ── Section 21: BonusZoneHighlight + FlashDealCountdown (Always) ───── */}
+      <LazySection sectionId="bonus-zone" scrollY={scrollY} height={260}
+        renderSection={() => (
+          <>
+            <BonusZoneHighlight />
+            <FlashDealCountdown />
+          </>
+        )} />
+
+      {/* ── Section 22: TrendingNearYou (Always) ────────────────────────────── */}
+      <LazySection sectionId="trending-near-you" scrollY={scrollY} height={300}
+        renderSection={() => <TrendingNearYou />} />
+
+      {/* ── Section 23: EarnRezCoinsSection + PlayAndEarnSectionV2 (Always) ── */}
       <EarnRezCoinsSection />
-      {/* Savings Streak — FIRST for habit formation */}
-      {featureLevel >= 2 && (
-        <LazySection sectionId="streaks" scrollY={scrollY} height={200}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={200} />}><StreaksGamification /></Suspense>} />
-      )}
       {featureLevel >= 5 && (
-        <LazySection sectionId="play-earn-v2" scrollY={scrollY} height={250}
+        <LazySection sectionId="play-and-earn" scrollY={scrollY} height={250}
           renderSection={() => <PlayAndEarnSectionV2 />} />
       )}
-      {featureLevel >= 2 && (
-        <LazySection sectionId="bonus-zone" scrollY={scrollY} height={200}
-          renderSection={() => <BonusZoneHighlight />} />
-      )}
-      <LazySection sectionId="new-on-rez" scrollY={scrollY} height={300}
-        renderSection={() => <NewOnRezSection />} />
-      {/* Events hidden for students — already shown in the student priority block above */}
-      {!isStudentUser && (
-        <LazySection sectionId="events-experiences" scrollY={scrollY} height={300}
-          renderSection={() => <EventsExperiencesSection />} />
-      )}
 
-      {/* ===== TIER 3: Below fold - viewport + React.lazy dynamic loading ===== */}
-
-      {/*
-        For students, wrap secondary category sections in a collapsible "Explore More Categories"
-        accordion that is collapsed by default. This keeps the student feed focused while still
-        allowing discovery of non-primary verticals.
-      */}
-      {/* Collapsed "Explore More" section for personas with a curated primary feed */}
-      {(isStudentUser || isEmployeeCorporate) && (
-        <View style={studentCollapsibleStyles.wrapper}>
-          <Pressable
-            style={studentCollapsibleStyles.header}
-            onPress={() => setExploreMoreExpanded((v) => !v)}
-            android_ripple={{ color: 'rgba(0,0,0,0.06)' }}
-            accessibilityRole="button"
-            accessibilityLabel="Explore more categories"
-            accessibilityState={{ expanded: exploreMoreExpanded }}
-            accessibilityHint={exploreMoreExpanded ? 'Tap to collapse' : 'Tap to expand more categories'}
-          >
-            <View style={studentCollapsibleStyles.headerLeft}>
-              <Text style={studentCollapsibleStyles.headerIcon}>🗂️</Text>
-              <View>
-                <Text style={studentCollapsibleStyles.headerTitle}>Explore More Categories</Text>
-                <Text style={studentCollapsibleStyles.headerSub}>
-                  {isEmployeeCorporate
-                    ? 'Beauty, Grocery, Events & more'
-                    : 'Fashion, Finance, Healthcare & more'}
-                </Text>
-              </View>
-            </View>
-            <Ionicons
-              name={exploreMoreExpanded ? 'chevron-up' : 'chevron-down'}
-              size={18}
-              color={colors.nileBlue}
-            />
-          </Pressable>
-        </View>
-      )}
-
-      {/* Render secondary category sections:
-          - Always for general users
-          - Only when accordion is expanded for students or employees
-          - Employee sections: hide fitness/financial (already promoted above) unless expanded */}
-      {(!isStudentUser && !isEmployeeCorporate) || exploreMoreExpanded ? (
-        <>
-          {segment !== 'verified_teacher' && (
-            <LazySection sectionId="beauty-wellness" scrollY={scrollY} height={300}
-              renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><BeautyWellnessSection /></Suspense>} />
-          )}
-
-          {/* Skip fitness for employees — already shown in the promoted suite above */}
-          {segment !== 'verified_defence' && !isEmployeeCorporate && (
-            <LazySection sectionId="fitness-sports" scrollY={scrollY} height={300}
-              renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FitnessSportsSection /></Suspense>} />
-          )}
-
-          <LazySection sectionId="grocery-essentials" scrollY={scrollY} height={300}
-            renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><GroceryEssentialsSection /></Suspense>} />
-
-          {segment !== 'verified_healthcare' && segment !== 'verified_senior' && (
-            <LazySection sectionId="healthcare" scrollY={scrollY} height={300}
-              renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HealthcareSection /></Suspense>} />
-          )}
-
-          {segment !== 'verified_differentlyAbled' && (
-            <LazySection sectionId="home-services" scrollY={scrollY} height={300}
-              renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HomeServicesSection /></Suspense>} />
-          )}
-
-          {/* Skip financial services for employees — already promoted above */}
-          {segment !== 'verified_employee' && segment !== 'verified_government' && !isEmployeeCorporate && (
-            <LazySection sectionId="financial-services" scrollY={scrollY} height={300}
-              renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FinancialServicesSection /></Suspense>} />
-          )}
-        </>
-      ) : null}
-
-      <LazySection sectionId="travel" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><TravelSection /></Suspense>} />
-
-      <LazySection sectionId="exciting-deals" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><ExcitingDealsSection /></Suspense>} />
-
-      <LazySection sectionId="shop-by-experience" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><ShopByExperienceSection /></Suspense>} />
-
-      <LazySection sectionId="deals-save-money" scrollY={scrollY} height={400}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={400} />}><DealsThatSaveMoney /></Suspense>} />
-
-      {recentlyViewedItems.length > 0 && (
-        <LazySection sectionId="recently-viewed" scrollY={scrollY} height={250}
-          renderSection={() => (
-            <Suspense fallback={<SuspensePlaceholder height={250} />}>
-              <RecentlyViewedSection
-                items={recentlyViewedItems}
-                isLoading={isLoadingRecentlyViewed}
-                maxItems={10}
-              />
-            </Suspense>
-          )} />
-      )}
-
-      <LazySection sectionId="store-discovery" scrollY={scrollY} height={350}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={350} />}><StoreDiscoverySection limit={10} /></Suspense>} />
-
-      <LazySection sectionId="trending-near-you" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><TrendingNearYou /></Suspense>} />
-
-      <LazySection sectionId="flash-sales" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><FlashSales /></Suspense>} />
-
-      <LazySection sectionId="new-arrivals" scrollY={scrollY} height={280}
-        renderSection={renderNewArrivals} />
-
-      <LazySection sectionId="popular-products" scrollY={scrollY} height={280}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={280} />}><PopularProductsSection title="Popular Near You" limit={3} /></Suspense>} />
-
-      <LazySection sectionId="going-out" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><GoingOutSection /></Suspense>} />
-
-      <LazySection sectionId="just-for-you" scrollY={scrollY} height={280}
-        renderSection={renderJustForYou} />
-
-      <LazySection sectionId="recommended-stores" scrollY={scrollY} height={180}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={180} />}><RecommendedStoresSection /></Suspense>} />
-
-      <LazySection sectionId="home-delivery" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><HomeDeliverySection /></Suspense>} />
-
-      <LazySection sectionId="service" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><ServiceSection /></Suspense>} />
-
-      <LazySection sectionId="dynamic-sections" scrollY={scrollY} height={300}
-        renderSection={renderDynamicSections} />
-
-      <LazySection sectionId="promo-banner" scrollY={scrollY} height={200}
-        renderSection={() => <PromoBanner />} />
-
-      <LazySection sectionId="best-discount" scrollY={scrollY} height={280}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={280} />}><BestDiscountSection title="Best Discount" limit={10} /></Suspense>} />
-
-      <LazySection sectionId="best-seller" scrollY={scrollY} height={280}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={280} />}><BestSellerSection title="Best Seller" limit={10} /></Suspense>} />
-
-      <LazySection sectionId="discover-shop" scrollY={scrollY} height={600}
-        renderSection={() => (
-          <Suspense fallback={<SuspensePlaceholder height={600} />}>
-            <View style={{ marginHorizontal: -20, marginTop: 16, marginBottom: 16 }}>
-              <DiscoverAndShopSection
-                showHeader={true}
-                showCategories={true}
-                initialTab="reels"
-                maxHeight={600}
-              />
-            </View>
-          </Suspense>
-        )} />
-
-      <LazySection sectionId="nearby-products" scrollY={scrollY} height={280}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={280} />}><NearbyProductsSection title="In Your Area" limit={10} radius={10} /></Suspense>} />
-
-      <LazySection sectionId="stores-near-you" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><StoresNearYou /></Suspense>} />
-
-      <LazySection sectionId="picked-for-you" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><PickedForYou limit={2} /></Suspense>} />
-
-      <LazySection sectionId="brand-partnerships" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><BrandPartnerships /></Suspense>} />
-
+      {/* ── Section 24: GlobeBanner (Always) ────────────────────────────────── */}
       <LazySection sectionId="globe-banner" scrollY={scrollY} height={200}
         renderSection={() => <GlobeBanner />} />
-
-      <LazySection sectionId="hot-deals" scrollY={scrollY} height={280}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={280} />}><HotDealsSection title="Hot deals" limit={10} /></Suspense>} />
-
-      <LazySection sectionId="featured-categories" scrollY={scrollY} height={400}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={400} />}><FeaturedCategoriesContainer productsPerCategory={10} /></Suspense>} />
-
-      {featureLevel >= 5 && (
-        <LazySection sectionId="feature-highlights" scrollY={scrollY} height={200}
-          renderSection={() => <Suspense fallback={<SuspensePlaceholder height={200} />}><FeatureHighlights /></Suspense>} />
-      )}
-
-      <LazySection sectionId="wallet-snapshot" scrollY={scrollY} height={200}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={200} />}><WalletSnapshotCard /></Suspense>} />
-
-      <LazySection sectionId="loyalty-hub" scrollY={scrollY} height={300}
-        renderSection={() => (
-          <Suspense fallback={<SuspensePlaceholder height={300} />}>
-            <LoyaltyRewardsHubCard
-              activeBrands={loyaltyHub?.activeBrands}
-              streaks={loyaltyHub?.streaks}
-              unlocked={loyaltyHub?.unlocked}
-              tiers={loyaltyHub?.tiers}
-              isLoading={isLoyaltySectionLoading}
-            />
-          </Suspense>
-        )} />
-
-      <LazySection sectionId="feature-try" scrollY={scrollY} height={250}
-        renderSection={() => (
-          <Suspense fallback={<SuspensePlaceholder height={250} />}>
-            <FeatureTryCards
-              lockProduct={featuredLockProduct}
-              trendingService={trendingService}
-              isLoading={isLoyaltySectionLoading}
-            />
-          </Suspense>
-        )} />
-
-      <LazySection sectionId="zero-emi" scrollY={scrollY} height={200}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={200} />}><ZeroEMICard /></Suspense>} />
-
-      <LazySection sectionId="store-experiences" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><StoreExperiencesSection /></Suspense>} />
-
-      <LazySection sectionId="play-earn-more" scrollY={scrollY} height={300}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={300} />}><PlayAndEarnSection /></Suspense>} />
-
-      <LazySection sectionId="social-proof" scrollY={scrollY} height={250}
-        renderSection={() => <Suspense fallback={<SuspensePlaceholder height={250} />}><SocialProofSection /></Suspense>} />
     </>
   );
 };
-
-// ─── Student collapsible accordion styles ────────────────────────────────────
-
-const studentCollapsibleStyles = StyleSheet.create({
-  wrapper: {
-    marginHorizontal: 16,
-    marginTop: 20,
-    marginBottom: 4,
-    borderRadius: 14,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(249, 115, 22, 0.2)',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 14,
-    backgroundColor: 'rgba(249, 115, 22, 0.05)',
-  },
-  headerLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-    flex: 1,
-  },
-  headerIcon: {
-    fontSize: 22,
-  },
-  headerTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: colors.nileBlue,
-    fontFamily: 'Inter-Bold',
-  },
-  headerSub: {
-    fontSize: 11,
-    color: colors.neutral?.[500] || '#6B7280',
-    marginTop: 1,
-    fontFamily: 'Inter-Regular',
-  },
-});
 
 export default React.memo(NearUTabContent);

@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
-import CategoryCashbackGrid from './CategoryCashbackGrid';
+// CategoryCashbackGrid removed per Section 6 handoff (category chips row removed)
 import { colors, spacing } from '@/constants/theme';
 
 // Updated to 4 tabs
@@ -41,7 +41,8 @@ const TAB_CONFIG: Record<TabId, {
   'prive': {
     iconName: 'diamond-outline',
     label: 'Privé',
-    description: 'Invite-only luxury deals',
+    // Section 6: exact tagline from handoff
+    description: 'Exclusive luxury & privileges',
   },
 };
 
@@ -210,36 +211,24 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
         <Pressable
           style={styles.tabItem}
           onPress={() => onTabChange('near-u')}
-         
           onLayout={(e) => handleTabLayout('near-u', e)}
         >
           <View style={[
             styles.tab,
             styles.tabPill,
-            activeTab === 'near-u'
-              ? styles.tabActiveTransparent
-              : styles.tabInactive
+            activeTab === 'near-u' ? styles.tabActiveTransparent : styles.tabInactive,
           ]}>
+            {/* Section 6: icon 16x16 */}
             <Ionicons
               name={TAB_CONFIG['near-u'].iconName}
-              size={18}
-              color={activeTab === 'near-u'
-                ? colors.nileBlue
-                : TAB_THEMES[activeTab].tabInactiveTextColor
-              }
+              size={16}
+              color={colors.nileBlue}
               style={styles.tabIcon}
             />
             <Text
               numberOfLines={1}
-              adjustsFontSizeToFit={true}
-              minimumFontScale={0.8}
-              style={[
-                styles.tabText,
-                { color: activeTab === 'near-u'
-                  ? colors.nileBlue
-                  : TAB_THEMES[activeTab].tabInactiveTextColor
-                }
-              ]}>{TAB_CONFIG['near-u'].label}</Text>
+              style={[styles.tabText, { color: colors.nileBlue }]}
+            >{TAB_CONFIG['near-u'].label}</Text>
           </View>
         </Pressable>
 
@@ -247,36 +236,23 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
         <Pressable
           style={styles.tabItem}
           onPress={() => onTabChange('mall')}
-         
           onLayout={(e) => handleTabLayout('mall', e)}
         >
           <View style={[
             styles.tab,
             styles.tabPill,
-            activeTab === 'mall'
-              ? styles.tabActiveTransparent
-              : styles.tabInactive
+            activeTab === 'mall' ? styles.tabActiveTransparent : styles.tabInactive,
           ]}>
             <Ionicons
               name={TAB_CONFIG['mall'].iconName}
-              size={18}
-              color={activeTab === 'mall'
-                ? colors.brand.sky
-                : TAB_THEMES[activeTab].tabInactiveTextColor
-              }
+              size={16}
+              color={colors.brand.sky}
               style={styles.tabIcon}
             />
-            <Text 
+            <Text
               numberOfLines={1}
-              adjustsFontSizeToFit={true}
-              minimumFontScale={0.8}
-              style={[
-                styles.tabText,
-                { color: activeTab === 'mall'
-                  ? colors.brand.sky
-                  : TAB_THEMES[activeTab].tabInactiveTextColor
-                }
-              ]}>{TAB_CONFIG['mall'].label}</Text>
+              style={[styles.tabText, { color: colors.brand.sky }]}
+            >{TAB_CONFIG['mall'].label}</Text>
           </View>
         </Pressable>
 
@@ -284,36 +260,23 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
         <Pressable
           style={styles.tabItem}
           onPress={() => onTabChange('cash')}
-         
           onLayout={(e) => handleTabLayout('cash', e)}
         >
           <View style={[
             styles.tab,
             styles.tabPill,
-            activeTab === 'cash'
-              ? styles.tabActiveTransparent
-              : styles.tabInactive
+            activeTab === 'cash' ? styles.tabActiveTransparent : styles.tabInactive,
           ]}>
             <Ionicons
               name={TAB_CONFIG['cash'].iconName}
-              size={18}
-              color={activeTab === 'cash'
-                ? colors.brand.caramel // Nuqta Peach Dark
-                : TAB_THEMES[activeTab].tabInactiveTextColor
-              }
+              size={16}
+              color={colors.brand.caramel}
               style={styles.tabIcon}
             />
             <Text
               numberOfLines={1}
-              adjustsFontSizeToFit={true}
-              minimumFontScale={0.8}
-              style={[
-                styles.tabText,
-                { color: activeTab === 'cash'
-                  ? colors.brand.caramel // Nuqta Peach Dark
-                  : TAB_THEMES[activeTab].tabInactiveTextColor
-                }
-              ]}>{TAB_CONFIG['cash'].label}</Text>
+              style={[styles.tabText, { color: colors.brand.caramel }]}
+            >{TAB_CONFIG['cash'].label}</Text>
           </View>
         </Pressable>
 
@@ -321,7 +284,6 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
         <Pressable
           style={styles.tabItem}
           onPress={handlePrivePress}
-         
           onLayout={(e) => handleTabLayout('prive', e)}
         >
           <View style={[
@@ -329,28 +291,21 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
             styles.tabPill,
             activeTab === 'prive'
               ? styles.tabActiveTransparent
-              : [styles.tabInactive, !isPriveEligible && styles.tabLocked]
+              : [styles.tabInactive, !isPriveEligible && styles.tabLocked],
           ]}>
             <View style={styles.priveTabContent}>
               {!isPriveEligible && activeTab !== 'prive' && (
                 <Ionicons
                   name="lock-closed-outline"
                   size={12}
-                  color={TAB_THEMES[activeTab].tabInactiveTextColor}
+                  color={colors.brand.goldAccent}
                   style={styles.lockIcon}
                 />
               )}
-              <Text 
+              <Text
                 numberOfLines={1}
-                adjustsFontSizeToFit={true}
-                minimumFontScale={0.8}
-                style={[
-                  styles.tabText,
-                  { color: activeTab === 'prive'
-                    ? colors.brand.goldAccent
-                    : TAB_THEMES[activeTab].tabInactiveTextColor
-                  }
-                ]}>{TAB_CONFIG['prive'].label}</Text>
+                style={[styles.tabText, { color: colors.brand.goldAccent }]}
+              >{TAB_CONFIG['prive'].label}</Text>
             </View>
           </View>
         </Pressable>
@@ -381,33 +336,32 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
           </Text>
         </View>
 
-        {/* Search Row with Promo Banner - Hide for Cash tab (has its own search bar) */}
+        {/* Section 6: Search row — pill search (~65% width) + TRY button. Hide for Cash tab. */}
         {activeTab !== 'cash' && (
           <View style={styles.searchRow}>
-            {/* Compact Search Bar */}
+            {/* Section 6: pill shape search bar, 99px radius, ~65% width */}
             <Pressable
               style={[
                 styles.searchContainerCompact,
-                isPriveMode && styles.searchContainerPrive
+                isPriveMode && styles.searchContainerPrive,
               ]}
               onPress={onSearchPress}
-             
             >
               <Ionicons
                 name="search"
-                size={18}
+                size={16}
                 color={isPriveMode ? '#A0A0A0' : colors.neutral[400]}
                 style={styles.searchIcon}
               />
               <Text style={[
                 styles.searchPlaceholderCompact,
-                isPriveMode && styles.searchPlaceholderPrive
+                isPriveMode && styles.searchPlaceholderPrive,
               ]}>
                 {isPriveMode ? 'Search exclusive offers...' : 'Search products...'}
               </Text>
             </Pressable>
 
-            {/* ReZ TRY Button — replaces Deals CTA */}
+            {/* Section 6: TRY button — purple pill, color changes per tab */}
             <Pressable
               style={styles.promoBannerContainer}
               onPress={() => {
@@ -417,42 +371,29 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
               }}
             >
               {isPriveMode ? (
-                <LinearGradient
-                  colors={['#2A2A2A', '#1F1F1F']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.promoBannerGradient}
-                >
-                  <View style={styles.promoBannerContent}>
-                    <Text style={styles.promoBannerTitlePrive}>EXCLUSIVE</Text>
-                    <Text style={styles.promoBannerSubtitlePrive}>ACCESS</Text>
-                  </View>
-                  <View style={styles.promoBannerIconWrapperPrive}>
-                    <Ionicons name="diamond" size={18} color={colors.brand.goldAccent} />
-                  </View>
-                </LinearGradient>
-              ) : (
-                <LinearGradient
-                  colors={['#7C3AED', '#A855F7']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.promoBannerGradientDeals}
-                >
+                // Privé: #1a1a1a
+                <View style={[styles.promoBannerGradientDeals, { backgroundColor: '#1a1a1a' }]}>
+                  <Text style={styles.dealsIcon}>✦</Text>
+                  <Text style={styles.dealsText}>TRY</Text>
+                </View>
+              ) : activeTab === 'mall' ? (
+                // Mall: #185FA5
+                <View style={[styles.promoBannerGradientDeals, { backgroundColor: '#185FA5' }]}>
                   <Text style={styles.dealsIcon}>🔥</Text>
                   <Text style={styles.dealsText}>TRY</Text>
-                </LinearGradient>
+                </View>
+              ) : (
+                // Near U: #6C3FD4 (purple)
+                <View style={[styles.promoBannerGradientDeals, { backgroundColor: '#6C3FD4' }]}>
+                  <Text style={styles.dealsIcon}>🔥</Text>
+                  <Text style={styles.dealsText}>TRY</Text>
+                </View>
               )}
             </Pressable>
           </View>
         )}
 
-        {/* Category Cashback Grid - Only show when near-u tab is selected */}
-        {activeTab === 'near-u' && (
-          <CategoryCashbackGrid
-            onCategoryPress={onCategoryChange}
-            style={styles.categoryCashbackGrid}
-          />
-        )}
+        {/* Section 6: Category chips row REMOVED per handoff spec */}
 
         {/* Privé mode exclusive content teaser */}
         {isPriveMode && (
@@ -510,49 +451,52 @@ const styles = StyleSheet.create({
   tabItem: {
     flex: 1,
   },
+  // Section 6: horizontal pill — icon (16x16) + label side by side
   tab: {
-    borderRadius: 14,
+    borderRadius: 12,
     paddingVertical: 8,
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 52,
+    minHeight: 40,
     flexDirection: 'row',
-    gap: 6,
+    gap: 5,
   },
   tabPill: {
-    borderRadius: 18,
-    paddingVertical: 12,
+    borderRadius: 12,
+    paddingVertical: 9,
     paddingHorizontal: 10,
-    minHeight: 54,
+    minHeight: 40,
   },
   tabIcon: {
-    // Icon size is controlled by Ionicons size prop
+    // Icon size controlled by Ionicons size prop (16)
   },
+  // Section 6: active tab — white card bg + shadow, 12px radius
   tabActiveTransparent: {
-    backgroundColor: 'transparent',
-  },
-  tabInactive: {
     backgroundColor: colors.background.primary,
-    borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
+    borderRadius: 12,
     ...Platform.select({
       ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowColor: 'rgba(26,58,82,1)',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
       },
       android: {
         elevation: 3,
       },
       web: {
-        boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0px 1px 8px rgba(26,58,82,0.12)',
       },
     }),
   },
+  // Section 6: inactive tab — no background, 35% opacity on text+icon
+  tabInactive: {
+    backgroundColor: 'transparent',
+    opacity: 0.35,
+  },
   tabLocked: {
-    opacity: 0.7,
+    opacity: 0.25,
   },
   tabText: {
     fontSize: 11,
@@ -570,6 +514,7 @@ const styles = StyleSheet.create({
     marginLeft: 0,
   },
   // Description Section
+  // Section 6: 11px centered tagline at 45% opacity
   descriptionSection: {
     paddingHorizontal: 16,
     paddingTop: 0,
@@ -579,11 +524,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   descriptionText: {
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: '500',
     color: colors.nileBlue,
     textAlign: 'center',
     letterSpacing: 0.2,
+    opacity: 0.45,
   },
   descriptionTextPrive: {
     color: colors.brand.goldAccent,
@@ -597,12 +543,13 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     gap: 10,
   },
+  // Section 6: pill shape (99px radius), ~65% width
   searchContainerCompact: {
     flex: 2,
     backgroundColor: colors.background.primary,
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 12,
+    borderRadius: 99,
     paddingHorizontal: spacing.base,
     paddingVertical: 8,
     ...Platform.select({
@@ -637,9 +584,10 @@ const styles = StyleSheet.create({
     color: colors.neutral[500],
   },
   // Promotional Banner
+  // Section 6: TRY button right of search
   promoBannerContainer: {
     flex: 1,
-    borderRadius: 14,
+    borderRadius: 99,
     overflow: 'hidden',
     ...Platform.select({
       ios: {
@@ -653,83 +601,28 @@ const styles = StyleSheet.create({
       },
     }),
   },
-  promoBannerGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    borderRadius: 9,
-  },
+  // Section 6: TRY pill button
   promoBannerGradientDeals: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 14,
-    gap: 8,
-  },
-  promoBannerContent: {
-    flex: 1,
-  },
-  promoBannerTitle: {
-    fontSize: 10,
-    fontWeight: '900',
-    color: colors.error,
-    letterSpacing: 0.5,
-  },
-  promoBannerTitlePrive: {
-    color: colors.brand.goldAccent,
-    fontSize: 10,
-    fontWeight: '900',
-    letterSpacing: 0.5,
-  },
-  promoBannerSubtitle: {
-    fontSize: 12,
-    fontWeight: '900',
-    color: '#991B1B',
-    letterSpacing: 0.3,
-    marginTop: -2,
-  },
-  promoBannerSubtitlePrive: {
-    color: '#A88B4A',
-    fontSize: 12,
-    fontWeight: '900',
-    letterSpacing: 0.3,
-    marginTop: -2,
-  },
-  promoBannerIconWrapper: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: 'rgba(220, 38, 38, 0.1)',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  promoBannerIconWrapperPrive: {
-    backgroundColor: 'rgba(201, 169, 98, 0.15)',
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingHorizontal: 14,
+    borderRadius: 99,
+    gap: 5,
   },
   // Deals Button Styles (Orange Gradient)
   dealsIcon: {
     marginRight: 0,
   },
+  // Section 6: TRY label — 800 weight
   dealsText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '800',
     color: colors.background.primary,
-    letterSpacing: 0.3,
+    letterSpacing: 0.5,
   },
-  // Category Cashback Grid Container
-  categoryCashbackGrid: {
-    marginTop: 8,
-    backgroundColor: 'transparent',
-  },
+  // categoryCashbackGrid removed per Section 6 handoff
   // Privé teaser
   priveTeaser: {
     flexDirection: 'row',

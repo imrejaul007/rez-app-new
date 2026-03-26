@@ -1,4 +1,5 @@
 import React, { Suspense, useCallback, useMemo, useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import {
   View,
   StyleSheet,
@@ -63,6 +64,8 @@ import type { TabId } from '@/components/homepage/HomeTabSection';
 import { useHomepage, useHomepageNavigation } from '@/hooks/useHomepage';
 import { useLoyaltySection } from '@/hooks/useLoyaltySection';
 import { PersonalizedHeroBanner } from '@/components/home/PersonalizedHeroBanner';
+import * as insightsApi from '@/services/insightsApi';
+import HeroCard from '@/components/homepage/HeroCard';
 
 function lazyWithRetry<T extends React.ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
@@ -223,44 +226,7 @@ const TabContentFallback = React.memo(() => (
 // Fallback components for Suspense boundaries
 const FABFallback = () => null;
 
-// Badge/Shield shaped avatar component - View-based (no SVG dependency)
-interface BadgeAvatarProps {
-  size?: number;
-  color?: string;
-}
-
-const BadgeAvatar: React.FC<BadgeAvatarProps> = React.memo(({ size = 24, color }) => {
-  const shieldColor = color || colors.lightMustard;
-  const iconColor =
-    color === colors.brand.sky
-      ? colors.brand.sky
-      : color === colors.brand.goldAccent
-        ? colors.brand.goldAccent
-        : colors.nileBlue;
-
-  // Memoize the style object so a new object isn't allocated on every render
-  const shieldStyle = useMemo(
-    () => ({
-      width: size,
-      height: size * 1.15,
-      backgroundColor: shieldColor,
-      borderTopLeftRadius: size * 0.15,
-      borderTopRightRadius: size * 0.15,
-      borderBottomLeftRadius: size * 0.45,
-      borderBottomRightRadius: size * 0.45,
-      justifyContent: 'center' as const,
-      alignItems: 'center' as const,
-      paddingBottom: size * 0.05,
-    }),
-    [size, shieldColor],
-  );
-
-  return (
-    <View style={shieldStyle}>
-      <Ionicons name="person" size={size * 0.5} color={iconColor} />
-    </View>
-  );
-});
+// BadgeAvatar replaced by inline savedAvatarBox (Section 4 handoff)
 
 function HomeScreen() {
   const isMounted = useIsMounted();
@@ -287,6 +253,13 @@ function HomeScreen() {
   const isWalletLoading = useWalletLoading();
   const savingsInsights = useSavingsInsights();
   const totalSaved = savingsInsights?.totalSaved ?? 0;
+
+  // Wire missing API on mount — Section 12 / HeroCard missedAmount
+  const { data: missedSavings } = useQuery({
+    queryKey: ['missed-savings'],
+    queryFn: () => insightsApi.getMissedSavings(),
+    enabled: isAuthenticated,
+  });
   // Zustand selectors for home tab — granular subscriptions
   const activeTab = useActiveTab();
   const setActiveTab = useSetActiveTab();
@@ -904,9 +877,11 @@ function HomeScreen() {
               }
               accessibilityState={{ expanded: showDetailedLocation }}
             >
-              <View style={[viewStyles.locationIconWrapper, tabStyles.locationIconBg]}>
-                <Ionicons name="location" size={14} color={colors.text.inverse} />
+              {/* Section 4: 22x22 circle, rgba(255,178,60,.9) background */}
+              <View style={viewStyles.locationIconWrapper}>
+                <Ionicons name="location" size={12} color={colors.text.inverse} />
               </View>
+              {/* Section 4: single line, truncated, maxWidth 80 */}
               <LocationDisplay
                 compact={true}
                 showCoordinates={false}
@@ -915,19 +890,14 @@ function HomeScreen() {
                 style={viewStyles.locationDisplay}
                 textStyle={tabStyles.locationText || textStyles.locationText}
               />
-              <View style={viewStyles.locationChevron}>
-                <Ionicons
-                  name={showDetailedLocation ? 'chevron-up' : 'chevron-down'}
-                  size={14}
-                  color={tabStyles.chevronColor}
-                />
-              </View>
+              {/* Section 4: ⌄ character at 55% opacity, replaces Ionicons chevron */}
+              <Text style={[viewStyles.locationChevronChar, { color: tabStyles.chevronColor }]}>⌄</Text>
             </Pressable>
 
             {/* Modern Header Actions */}
             <View style={viewStyles.headerActions}>
-              {/* CARLOS retention fix: Streak pill — always-visible in header, no scroll needed */}
-              {streakCount > 0 && streakDisplay.emoji && (
+              {/* Section 4: Streak pill — solid orange rgba(255,152,40,.82), fire emoji + bold dark number */}
+              {streakCount > 0 && (
                 <Pressable
                   onPress={() => router.push('/(tabs)/earn' as any)}
                   accessibilityRole="button"
@@ -935,18 +905,18 @@ function HomeScreen() {
                   accessibilityHint="Tap to see your streak and earn missions"
                   style={viewStyles.headerStreakPill}
                 >
-                  <Text style={viewStyles.headerStreakEmoji}>{streakDisplay.emoji}</Text>
-                  <Text style={viewStyles.headerStreakText}>{streakCount}d</Text>
+                  <Text style={viewStyles.headerStreakEmoji}>🔥</Text>
+                  <Text style={viewStyles.headerStreakText}>{streakCount}</Text>
                 </Pressable>
               )}
 
-              {/* Coin Balance Display - Horizontal Pill Style */}
+              {/* Section 4: Coin pill — white card rgba(255,255,255,.9), coin circle + navy number */}
               <Pressable
                 onPress={handleCoinPress}
                 accessibilityRole="button"
                 accessibilityLabel={`Your balance: ${userPoints} coins`}
                 accessibilityHint="Tap to view wallet details"
-                style={[viewStyles.headerCoinContainer, tabStyles.coinContainerStyle]}
+                style={viewStyles.headerCoinContainer}
               >
                 <CachedImage
                   source={BRAND.COIN_IMAGE}
@@ -957,13 +927,13 @@ function HomeScreen() {
                 <ReAnimated.Text
                   key={isWalletLoading ? 'loading' : 'loaded'}
                   entering={FadeIn.duration(350)}
-                  style={[viewStyles.headerCoinText, tabStyles.coinTextColor]}
+                  style={viewStyles.headerCoinText}
                 >
                   {!walletData && isWalletLoading ? '...' : userPoints}
                 </ReAnimated.Text>
               </Pressable>
 
-              {/* Cart Button with Modern Badge */}
+              {/* Section 4: Cart icon — dark navy stroke #1a3a52, no background */}
               <Pressable
                 onPress={handleCartPress}
                 accessibilityLabel={`Shopping cart: ${cartItemCount} items`}
@@ -971,7 +941,7 @@ function HomeScreen() {
                 accessibilityHint="Double tap to view your shopping cart"
                 style={viewStyles.headerIconButton}
               >
-                <Ionicons name="cart-outline" size={24} color={tabStyles.iconColor} />
+                <Ionicons name="cart-outline" size={24} color="#1a3a52" />
                 {cartItemCount > 0 && (
                   <LinearGradient colors={[colors.error, colors.errorScale[400]]} style={viewStyles.cartBadgeModern}>
                     <Text style={viewStyles.cartBadgeTextModern}>{cartItemCount > 9 ? '9+' : cartItemCount}</Text>
@@ -990,7 +960,7 @@ function HomeScreen() {
                 <Ionicons name="notifications-outline" size={22} color={tabStyles.iconColor} />
               </Pressable>
 
-              {/* Profile Badge Avatar with Savings - Badge then text pill */}
+              {/* Section 4: Saved pill — white half pill + orange square avatar joined (no gap) */}
               <Pressable
                 onPress={handleProfilePress}
                 accessibilityLabel="User profile menu"
@@ -998,15 +968,15 @@ function HomeScreen() {
                 accessibilityHint="Double tap to open profile menu and account settings"
                 style={viewStyles.profileSavingsContainer}
               >
-                {/* Text pill - on left */}
-                <View style={[viewStyles.savedTextPill, tabStyles.savedPillBg]}>
-                  <Text style={[viewStyles.savedText, tabStyles.savedTextColor]}>
+                {/* White half-pill on left, rounded only on left side */}
+                <View style={viewStyles.savedTextPill}>
+                  <Text style={viewStyles.savedText}>
                     {!walletData && isWalletLoading ? '...' : `${currencySymbol}${totalSaved} saved`}
                   </Text>
                 </View>
-                {/* Badge on right - overlaps text slightly with negative margin */}
-                <View style={viewStyles.badgeOverlay}>
-                  <BadgeAvatar color={tabStyles.savedTextColor?.color} />
+                {/* Orange square avatar on right — flush against pill, no gap */}
+                <View style={viewStyles.savedAvatarBox}>
+                  <Ionicons name="person" size={13} color={colors.nileBlue} />
                 </View>
               </Pressable>
             </View>
@@ -1082,8 +1052,18 @@ function HomeScreen() {
             </View>
           </ReAnimated.View>
 
-          {/* Hero Banner - Dynamic content based on user - Only show when "near-u" tab is active */}
-          {activeTab === 'near-u' && <HeroBanner totalSaved={totalSaved} />}
+          {/* Section 4 / HeroCard: shown in header gradient for Near U tab.
+              HeroCard (Agent 1) replaces the old HeroBanner for near-u. */}
+          {activeTab === 'near-u' && (
+            <HeroCard
+              totalSaved={walletData?.savingsInsights?.totalSaved}
+              savingsThisMonth={walletData?.savingsInsights?.thisMonth}
+              unlockAmount={580}
+              missedAmount={missedSavings?.totalMissedThisMonth}
+              onScanPay={handleSearchPress}
+              onViewWallet={handleCoinPress}
+            />
+          )}
 
           {/* Mall Hero Banner */}
           {activeTab === 'mall' && (
@@ -1184,8 +1164,8 @@ function HomeScreen() {
         {/* Stories Row — What's New (Instagram-style) */}
         {activeTab !== 'prive' && <StoriesRow variant={tabStyles.whatsNewVariant} />}
 
-        {/* Personalised hero — student / corporate / general */}
-        {activeTab === 'near-u' && <PersonalizedHeroBanner />}
+        {/* PersonalizedHeroBanner moved to header as HeroCard (Section 4).
+            Kept here for non-near-u tabs if needed by other agents. */}
 
         {/* CARLOS: retention — Day-1 Challenge Card (Habit Loop Trigger) */}
         {showDay1Challenge && activeTab === 'near-u' && (
@@ -1369,11 +1349,13 @@ function HomeScreen() {
    --------------------------- */
 
 const textStyles = StyleSheet.create({
+  // Section 4: single line, truncated, maxWidth enforced by locationDisplay container
   locationText: {
     color: colors.text.primary,
-    ...typography.body,
+    fontSize: 13,
     fontWeight: '600',
-  },
+    numberOfLines: 1,
+  } as any,
 });
 
 const viewStyles = StyleSheet.create({
@@ -1427,18 +1409,24 @@ const viewStyles = StyleSheet.create({
       default: {}, // Web: no constraint, flexShrink handles it
     }),
   },
+  // Section 4: 22x22 circle with rgba(255,178,60,.9) background
   locationIconWrapper: {
-    width: 24,
-    height: 24,
-    borderRadius: borderRadius.md,
-    backgroundColor: colors.lightMustard,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: 'rgba(255,178,60,0.9)',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.sm,
     flexShrink: 0,
   },
-  locationChevron: {
+  // Section 4: ⌄ text chevron at 55% opacity
+  locationChevronChar: {
     marginLeft: spacing.xs,
+    fontSize: 16,
+    fontWeight: '700',
+    opacity: 0.55,
+    lineHeight: 16,
     flexShrink: 0,
   },
   // Modern Header Actions
@@ -1451,43 +1439,37 @@ const viewStyles = StyleSheet.create({
       default: { gap: spacing.xs }, // Web: use gap (well-supported)
     }),
   },
-  // CARLOS retention fix: always-visible streak pill in header row
+  // Section 4: Streak pill — solid orange card rgba(255,152,40,.82)
   headerStreakPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255, 107, 53, 0.15)',
+    backgroundColor: 'rgba(255,152,40,0.82)',
     borderRadius: borderRadius.md,
-    paddingVertical: spacing.sm,
+    paddingVertical: 5,
     paddingHorizontal: spacing.sm,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 107, 53, 0.35)',
-    minHeight: 32,
+    minHeight: 30,
     gap: 2,
   },
   headerStreakEmoji: {
-    fontSize: 14,
+    fontSize: 13,
   },
+  // Section 4: bold dark number on streak pill
   headerStreakText: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.brand.orange,
+    color: colors.nileBlue,
   },
   // What's New Badge
-  // Header Coin - Horizontal Pill Style
+  // Section 4: Coin pill — white card rgba(255,255,255,.9), coin circle + navy number
   headerCoinContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    // MEERA: design token — hardcoded 'rgba(255, 200, 87, 0.25)' -> colors.primary[50] (light mustard tint)
-    backgroundColor: colors.primary[50],
+    backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: borderRadius.md,
-    // MEERA: design token — hardcoded padding 5 -> spacing.sm (8px, 4px not in 8px grid) + spacing.xs (4px)
-    paddingVertical: spacing.sm,
+    paddingVertical: 5,
     paddingLeft: spacing.xs,
     paddingRight: spacing.sm,
-    borderWidth: 1,
-    // MEERA: design token — hardcoded 'rgba(255, 200, 87, 0.5)' -> colors.primary[200] (medium mustard with opacity)
-    borderColor: colors.primary[200],
-    minHeight: 32,
+    minHeight: 30,
     ...Platform.select({
       android: { flexShrink: 0 },
       ios: { flexShrink: 0 },
@@ -1495,14 +1477,15 @@ const viewStyles = StyleSheet.create({
     }),
   },
   headerCoinImage: {
-    width: 20,
-    height: 20,
+    width: 18,
+    height: 18,
     marginRight: 4,
   },
+  // Section 4: navy number on coin pill
   headerCoinText: {
     fontSize: 13,
     fontWeight: '700',
-    color: colors.brand.amberDeep,
+    color: colors.nileBlue,
   },
   headerIconButton: {
     width: 32,
@@ -1533,45 +1516,53 @@ const viewStyles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
   },
-  // Container for badge + text pill - badge overlaps pill
+  // Section 4: Saved pill — white half pill + orange square avatar joined, no gap
   profileSavingsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    borderRadius: borderRadius.md,
+    overflow: 'hidden',
     ...Platform.select({
       android: { marginLeft: 4, flexShrink: 0 },
       ios: { marginLeft: 4, flexShrink: 0 },
-      default: {}, // Web: gap handles spacing
+      default: {},
     }),
   },
-  // Text pill with background - positioned to the left of badge
+  // White half-pill (left side) — rounded on left only
   savedTextPill: {
-    // MEERA: design token — hardcoded 'rgba(255, 200, 87, 0.35)' -> colors.primary[100] (very light mustard tint)
-    backgroundColor: colors.primary[100],
+    backgroundColor: 'rgba(255,255,255,0.9)',
     paddingLeft: spacing.sm,
     paddingRight: spacing.xs,
-    paddingVertical: spacing.xs,
-    borderRadius: borderRadius.sm,
-    marginRight: -spacing.xs,
+    paddingVertical: 5,
+    borderTopLeftRadius: borderRadius.md,
+    borderBottomLeftRadius: borderRadius.md,
   },
-  // Badge overlay - overlaps text from right
-  badgeOverlay: {
-    zIndex: 1,
-  },
-  // Savings text - Nuqta Nile Blue
   savedText: {
     color: colors.nileBlue,
     fontSize: 10,
     fontWeight: '600',
   },
+  // Orange square avatar (right side) — flush against pill, no gap
+  savedAvatarBox: {
+    width: 28,
+    height: 28,
+    backgroundColor: 'rgba(255,178,60,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopRightRadius: borderRadius.md,
+    borderBottomRightRadius: borderRadius.md,
+  },
+  // Section 4: single line location text, maxWidth 80, ellipsis
   locationDisplay: {
     backgroundColor: 'transparent',
     shadowOpacity: 0,
     elevation: 0,
     padding: 0,
+    maxWidth: 80,
     ...Platform.select({
       android: { flex: 0, flexGrow: 0, flexShrink: 1 },
       ios: { flex: 0, flexShrink: 1 },
-      default: {}, // Web: let it size naturally
+      default: {},
     }),
   },
   detailedLocationContainer: {
