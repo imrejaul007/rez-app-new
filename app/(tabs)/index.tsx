@@ -66,6 +66,7 @@ import { useLoyaltySection } from '@/hooks/useLoyaltySection';
 import { PersonalizedHeroBanner } from '@/components/home/PersonalizedHeroBanner';
 import * as insightsApi from '@/services/insightsApi';
 import HeroCard from '@/components/homepage/HeroCard';
+import CoinExpiryBanner from '@/components/wallet/CoinExpiryBanner';
 
 function lazyWithRetry<T extends React.ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
@@ -1056,13 +1057,26 @@ function HomeScreen() {
               HeroCard (Agent 1) replaces the old HeroBanner for near-u. */}
           {activeTab === 'near-u' && (
             <HeroCard
-              totalSaved={walletData?.savingsInsights?.totalSaved}
-              savingsThisMonth={walletData?.savingsInsights?.thisMonth}
+              totalSaved={walletData?.savingsInsights?.totalSaved ?? 0}
+              savingsThisMonth={walletData?.savingsInsights?.thisMonth ?? 0}
               unlockAmount={580}
-              missedAmount={missedSavings?.totalMissedThisMonth}
+              missedAmount={missedSavings?.totalMissedThisMonth ?? 0}
+              expiringCoins={walletData?.promoCoinBalance ?? 0}
               onScanPay={handleSearchPress}
               onViewWallet={handleCoinPress}
+              onClaimPress={() => router.push('/offers' as any)}
             />
+          )}
+
+          {/* CoinExpiryBanner — shown when wallet has expiring promo coins (near-u tab only) */}
+          {activeTab === 'near-u' && walletData?.promoCoinBalance > 0 && walletData?.promoCoinDaysLeft != null && (
+            <View style={{ paddingHorizontal: spacing.base, paddingBottom: spacing.sm }}>
+              <CoinExpiryBanner
+                expiringCount={walletData.promoCoinBalance}
+                daysLeft={walletData.promoCoinDaysLeft}
+                onPress={handleCoinPress}
+              />
+            </View>
           )}
 
           {/* Mall Hero Banner */}
@@ -1444,9 +1458,9 @@ const viewStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255,152,40,0.82)',
-    borderRadius: borderRadius.md,
-    paddingVertical: 5,
-    paddingHorizontal: spacing.sm,
+    borderRadius: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 9,
     minHeight: 30,
     gap: 2,
   },
@@ -1455,9 +1469,9 @@ const viewStyles = StyleSheet.create({
   },
   // Section 4: bold dark number on streak pill
   headerStreakText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: colors.nileBlue,
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#7a2800',
   },
   // What's New Badge
   // Section 4: Coin pill — white card rgba(255,255,255,.9), coin circle + navy number
@@ -1465,10 +1479,9 @@ const viewStyles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.9)',
-    borderRadius: borderRadius.md,
-    paddingVertical: 5,
-    paddingLeft: spacing.xs,
-    paddingRight: spacing.sm,
+    borderRadius: 10,
+    paddingVertical: 6,
+    paddingHorizontal: 9,
     minHeight: 30,
     ...Platform.select({
       android: { flexShrink: 0 },
@@ -1484,8 +1497,8 @@ const viewStyles = StyleSheet.create({
   // Section 4: navy number on coin pill
   headerCoinText: {
     fontSize: 13,
-    fontWeight: '700',
-    color: colors.nileBlue,
+    fontWeight: '800',
+    color: '#1a3a52',
   },
   headerIconButton: {
     width: 32,
@@ -1530,12 +1543,12 @@ const viewStyles = StyleSheet.create({
   },
   // White half-pill (left side) — rounded on left only
   savedTextPill: {
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    paddingLeft: spacing.sm,
-    paddingRight: spacing.xs,
+    backgroundColor: 'rgba(255,255,255,0.88)',
+    borderTopLeftRadius: 8,
+    borderBottomLeftRadius: 8,
     paddingVertical: 5,
-    borderTopLeftRadius: borderRadius.md,
-    borderBottomLeftRadius: borderRadius.md,
+    paddingLeft: 10,
+    paddingRight: 7,
   },
   savedText: {
     color: colors.nileBlue,
@@ -1544,13 +1557,13 @@ const viewStyles = StyleSheet.create({
   },
   // Orange square avatar (right side) — flush against pill, no gap
   savedAvatarBox: {
-    width: 28,
-    height: 28,
-    backgroundColor: 'rgba(255,178,60,0.9)',
+    width: 30,
+    height: 30,
+    backgroundColor: 'rgba(255,152,40,0.85)',
     justifyContent: 'center',
     alignItems: 'center',
-    borderTopRightRadius: borderRadius.md,
-    borderBottomRightRadius: borderRadius.md,
+    borderTopRightRadius: 8,
+    borderBottomRightRadius: 8,
   },
   // Section 4: single line location text, maxWidth 80, ellipsis
   locationDisplay: {

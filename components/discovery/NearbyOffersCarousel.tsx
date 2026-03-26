@@ -30,6 +30,9 @@ export interface NearbyOffer {
   distance: string;      // e.g. "120m", "0.8 km"
   savings: number;       // in Rs.
   description: string;   // e.g. "10% cashback up to Rs.50"
+  closingSoon?: boolean;
+  slotsLeft?: number;
+  urgencyLabel?: string;
 }
 
 export interface NearbyOffersCarouselProps {
@@ -37,6 +40,7 @@ export interface NearbyOffersCarouselProps {
   onOfferPress: (offer: NearbyOffer) => void;
   onSeeAllPress: () => void;
   title?: string;
+  showUrgencyTags?: boolean;
 }
 
 // ============================================================================
@@ -46,14 +50,40 @@ export interface NearbyOffersCarouselProps {
 interface OfferCardProps {
   offer: NearbyOffer;
   onPress: () => void;
+  showUrgencyTags?: boolean;
 }
 
-const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress }) => {
+const NILE_BLUE = colors.nileBlue;
+
+const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, showUrgencyTags }) => {
   const initials = offer.merchantName
     .split(' ')
     .slice(0, 2)
     .map((w) => w[0]?.toUpperCase() ?? '')
     .join('');
+
+  // Determine urgency badge to show
+  const urgencyBadge = showUrgencyTags ? (() => {
+    if (offer.slotsLeft != null && offer.slotsLeft > 0) {
+      return {
+        label: `${offer.slotsLeft} slots left`,
+        style: { backgroundColor: '#ffd7b5' },
+        textStyle: { color: NILE_BLUE },
+      };
+    }
+    if (offer.closingSoon) {
+      return {
+        label: offer.urgencyLabel ?? 'Closes soon',
+        style: { backgroundColor: '#FFF3CC' },
+        textStyle: { color: NILE_BLUE },
+      };
+    }
+    return {
+      label: 'Open',
+      style: { backgroundColor: 'rgba(26,58,82,0.07)', borderWidth: 1, borderColor: 'rgba(26,58,82,0.1)' },
+      textStyle: { color: NILE_BLUE },
+    };
+  })() : null;
 
   return (
     <Pressable
@@ -91,6 +121,15 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress }) => {
         <ThemedText style={styles.offerDesc} numberOfLines={2}>
           {offer.description}
         </ThemedText>
+
+        {/* Urgency badge */}
+        {urgencyBadge && (
+          <View style={[styles.urgencyBadge, urgencyBadge.style]}>
+            <ThemedText style={[styles.urgencyBadgeText, urgencyBadge.textStyle]}>
+              {urgencyBadge.label}
+            </ThemedText>
+          </View>
+        )}
 
         {/* Savings chip */}
         <View style={styles.savingsChip}>
@@ -130,6 +169,7 @@ const NearbyOffersCarousel: React.FC<NearbyOffersCarouselProps> = ({
   onOfferPress,
   onSeeAllPress,
   title = 'Save near you',
+  showUrgencyTags = false,
 }) => {
   if (!offers.length) return null;
 
@@ -158,6 +198,7 @@ const NearbyOffersCarousel: React.FC<NearbyOffersCarouselProps> = ({
             key={offer.id}
             offer={offer}
             onPress={() => onOfferPress(offer)}
+            showUrgencyTags={showUrgencyTags}
           />
         ))}
         <SeeAllCard onPress={onSeeAllPress} count={offers.length} />
@@ -263,6 +304,16 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: colors.gray[500],
     lineHeight: 15,
+  },
+  urgencyBadge: {
+    borderRadius: 4,
+    paddingHorizontal: 7,
+    paddingVertical: 2,
+    alignSelf: 'flex-start',
+  },
+  urgencyBadgeText: {
+    fontSize: 8,
+    fontWeight: '600',
   },
   savingsChip: {
     backgroundColor: colors.tint.greenLight,
