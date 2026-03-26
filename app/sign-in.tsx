@@ -424,16 +424,31 @@ function SignInScreen() {
 
         {/* Form */}
         <View style={styles.form}>
-          <FormInput
-            placeholder="Enter 6-digit OTP"
-            value={formData.otp}
-            onChangeText={(value) => handleInputChange('otp', value)}
-            keyboardType="number-pad"
-            maxLength={6}
-            error={errors.otp}
-            containerStyle={styles.inputContainer}
-            autoFocus={true}
-          />
+          <View style={{ marginBottom: 16 }}>
+            <TextInput
+              placeholder="Enter 6-digit OTP"
+              value={formData.otp}
+              onChangeText={(value) => handleInputChange('otp', value.replace(/\D/g, ''))}
+              keyboardType="number-pad"
+              maxLength={6}
+              autoFocus={true}
+              style={{
+                backgroundColor: colors.background.primary,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: errors.otp ? colors.error : colors.neutral[200],
+                paddingHorizontal: 16,
+                paddingVertical: 14,
+                fontSize: 20,
+                fontWeight: '700',
+                color: colors.neutral[700],
+                textAlign: 'center',
+                letterSpacing: 8,
+              }}
+              placeholderTextColor={colors.neutral[400]}
+            />
+            {!!errors.otp && <Text style={{ color: colors.error, fontSize: 14, marginTop: 4 }}>{errors.otp}</Text>}
+          </View>
 
           <View style={styles.otpActions}>
             {otpTimer > 0 ? (
