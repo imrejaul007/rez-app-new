@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState, memo, useEffect } from "react";
+import React, { useCallback, useRef, useState, memo, useEffect } from 'react';
 import {
   View,
   Pressable,
@@ -8,7 +8,8 @@ import {
   ViewToken,
   Platform,
   ScrollView,
-  Linking} from 'react-native';
+  Linking,
+} from 'react-native';
 import ReAnimated, {
   useSharedValue,
   useAnimatedStyle,
@@ -21,11 +22,11 @@ import ReAnimated, {
 } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
-import { LinearGradient } from "expo-linear-gradient";
-import { Ionicons } from "@expo/vector-icons";
-import { triggerImpact, triggerNotification } from "@/utils/haptics";
-import { GlassCard } from "@/components/ui";
-import { ThemedText } from "@/components/ThemedText";
+import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { triggerImpact, triggerNotification } from '@/utils/haptics';
+import { GlassCard } from '@/components/ui';
+import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
 import { catchAndWarn } from '@/utils/catchAndReport';
 import {
@@ -37,7 +38,7 @@ import {
   Timing,
   Typography,
   Gradients,
-} from "@/constants/DesignSystem";
+} from '@/constants/DesignSystem';
 
 interface ProductImage {
   id: string;
@@ -71,11 +72,7 @@ const ProductPaginationDot: React.FC<{
     const isActive = activeIndex.value === index ? 1 : 0;
     return {
       width: withSpring(isActive ? 24 : 8, { damping: 15, stiffness: 120 }),
-      backgroundColor: interpolateColor(
-        isActive,
-        [0, 1],
-        ['rgba(255,255,255,0.5)', colors.lightMustard],
-      ),
+      backgroundColor: interpolateColor(isActive, [0, 1], ['rgba(255,255,255,0.5)', colors.lightMustard]),
     };
   });
 
@@ -109,7 +106,7 @@ export default memo(function ProductDisplay({
   // Use default images when empty array is passed
   const images = imagesProp.length > 0 ? imagesProp : DEFAULT_IMAGES;
 
-  const { width } = Dimensions.get("window");
+  const { width } = Dimensions.get('window');
   const isTablet = width >= 768;
   const imageCardWidth = Math.round(width * (isTablet ? 0.7 : 0.92));
   // Reduced height ratio for less whitespace - edge-to-edge look
@@ -150,7 +147,8 @@ export default memo(function ProductDisplay({
     const lowerTag = tag.toLowerCase();
     if (lowerTag.includes('coffee') || lowerTag.includes('cafe')) return 'cafe-outline';
     if (lowerTag.includes('art')) return 'color-palette-outline';
-    if (lowerTag.includes('food') || lowerTag.includes('restaurant') || lowerTag.includes('dining')) return 'restaurant-outline';
+    if (lowerTag.includes('food') || lowerTag.includes('restaurant') || lowerTag.includes('dining'))
+      return 'restaurant-outline';
     if (lowerTag.includes('local')) return 'location-outline';
     if (lowerTag.includes('fashion') || lowerTag.includes('clothing')) return 'shirt-outline';
     if (lowerTag.includes('beauty') || lowerTag.includes('spa')) return 'sparkles-outline';
@@ -163,10 +161,7 @@ export default memo(function ProductDisplay({
   useEffect(() => {
     if (isFavorited) {
       heartPulseAnim.value = withRepeat(
-        withSequence(
-          withTiming(1.2, { duration: 400 }),
-          withTiming(1, { duration: 400 }),
-        ),
+        withSequence(withTiming(1.2, { duration: 400 }), withTiming(1, { duration: 400 })),
         -1,
       );
     } else {
@@ -200,7 +195,7 @@ export default memo(function ProductDisplay({
   }).current;
 
   const handleImageError = useCallback((imageId: string) => {
-    setImageErrors(prev => new Set(prev).add(imageId));
+    setImageErrors((prev) => new Set(prev).add(imageId));
   }, []);
 
   // Animation helper
@@ -230,7 +225,11 @@ export default memo(function ProductDisplay({
         android: `geo:${locationCoords.lat},${locationCoords.lng}?q=${locationCoords.lat},${locationCoords.lng}`,
         default: `https://www.google.com/maps/search/?api=1&query=${locationCoords.lat},${locationCoords.lng}`,
       });
-      try { Linking.openURL(url); } catch (e) { catchAndWarn(e, 'ProductDisplay/openURL'); }
+      try {
+        Linking.openURL(url);
+      } catch (e) {
+        catchAndWarn(e, 'ProductDisplay/openURL');
+      }
     }
   }, [onDirectionsPress, locationCoords]);
 
@@ -239,7 +238,11 @@ export default memo(function ProductDisplay({
     if (onCallPress) {
       onCallPress();
     } else if (phoneNumber) {
-      try { Linking.openURL(`tel:${phoneNumber}`); } catch (e) { catchAndWarn(e, 'ProductDisplay/openURL'); }
+      try {
+        Linking.openURL(`tel:${phoneNumber}`);
+      } catch (e) {
+        catchAndWarn(e, 'ProductDisplay/openURL');
+      }
     }
   }, [onCallPress, phoneNumber]);
 
@@ -256,7 +259,7 @@ export default memo(function ProductDisplay({
               style={[styles.image, { width: imageCardWidth, height: imageHeight }]}
               contentFit="cover"
               onError={() => handleImageError(item.id)}
-              defaultSource={require('@/assets/images/icon.png')}
+              {...({ defaultSource: require('@/assets/images/icon.png') } as any)}
             />
             {/* Gradient Overlay for Depth */}
             <LinearGradient
@@ -272,24 +275,21 @@ export default memo(function ProductDisplay({
         </View>
       );
     },
-    [imageCardWidth, imageHeight, width, imageErrors, handleImageError]
+    [imageCardWidth, imageHeight, width, imageErrors, handleImageError],
   );
 
   return (
-    <View
-      style={styles.container}
-      accessibilityLabel="Product image gallery"
-    >
+    <View style={styles.container} accessibilityLabel="Product image gallery">
       <FlashList
         ref={flatRef}
         data={images}
         keyExtractor={(i) => i.id}
-        renderItem={renderImage}
+        renderItem={renderImage as any}
         horizontal
         pagingEnabled
         showsHorizontalScrollIndicator={false}
         snapToInterval={width}
-        decelerationRate={Platform.OS === "ios" ? "fast" : 0.98}
+        decelerationRate={Platform.OS === 'ios' ? 'fast' : 0.98}
         scrollEventThrottle={16}
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
@@ -305,44 +305,38 @@ export default memo(function ProductDisplay({
         <View style={styles.pagination}>
           <View style={styles.paginationInner}>
             {images.map((_, i) => (
-              <ProductPaginationDot
-                key={i}
-                index={i}
-                activeIndex={activeDotIndex}
-                totalCount={images.length}
-              />
+              <ProductPaginationDot key={i} index={i} activeIndex={activeDotIndex} totalCount={images.length} />
             ))}
           </View>
         </View>
       )}
-
     </View>
-);
+  );
 });
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "transparent",
+    backgroundColor: 'transparent',
   },
   imageWrapper: {
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
     // Removed background color for cleaner look
   },
   imageCard: {
     borderRadius: BorderRadius.xl,
-    overflow: "hidden",
+    overflow: 'hidden',
     backgroundColor: Colors.gray[100],
     // Enhanced shadow for depth
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.15,
     shadowRadius: 16,
     elevation: 8,
   },
   image: {
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
   },
   imageGradientOverlay: {
     position: 'absolute',
@@ -352,27 +346,27 @@ const styles = StyleSheet.create({
     height: 120,
   },
   errorOverlay: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
     backgroundColor: Colors.gray[100],
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   // Enhanced Glassmorphic Action Buttons
   actionCol: {
-    position: "absolute",
+    position: 'absolute',
     right: Spacing.lg,
     zIndex: 20,
-    justifyContent: "flex-start",
-    alignItems: "center",
+    justifyContent: 'flex-start',
+    alignItems: 'center',
   },
   actionBtnShadow: {
     borderRadius: BorderRadius.full,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.25,
     shadowRadius: 8,
@@ -380,33 +374,33 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   actionBtnGlow: {
-    shadowColor: "#FF4757",
+    shadowColor: '#FF4757',
     shadowOpacity: 0.4,
   },
   actionBtn: {
     width: 48,
     height: 48,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   actionBtnTouchable: {
     width: 48,
     height: 48,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   // Modern Animated Pagination Dots
   pagination: {
-    position: "absolute",
+    position: 'absolute',
     bottom: Spacing.lg,
     left: 0,
     right: 0,
-    alignItems: "center",
+    alignItems: 'center',
   },
   paginationInner: {
-    flexDirection: "row",
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    flexDirection: 'row',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
@@ -419,7 +413,7 @@ const styles = StyleSheet.create({
 
   // Rating Badge - Magicpin Style
   ratingBadgeContainer: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 60,
     left: Spacing.lg,
     zIndex: 30,
@@ -429,14 +423,14 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
   },
   ratingBadgeInner: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: Spacing.xs,
   },
   ratingText: {
     ...Typography.label,
     color: colors.text.primary,
-    fontWeight: "700",
+    fontWeight: '700',
   },
   ratingDivider: {
     width: 1,
@@ -455,34 +449,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
   },
   categoryTagsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    flexWrap: "nowrap",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'nowrap',
     gap: 8,
   },
   categoryTag: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: "rgba(255, 205, 87, 0.2)",
-    backgroundColor: "rgba(255, 205, 87, 0.06)",
+    borderColor: 'rgba(255, 205, 87, 0.2)',
+    backgroundColor: 'rgba(255, 205, 87, 0.06)',
     gap: 4,
   },
   categoryTagText: {
     fontSize: 11,
-    color: "#00875A",
-    fontWeight: "600",
+    color: '#00875A',
+    fontWeight: '600',
   },
 
   // Quick Actions Bar - Left & Right with Center Gap
   quickActionsBar: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     marginTop: Spacing.md,
     marginBottom: Spacing.md,
     paddingHorizontal: Spacing.base,
@@ -490,7 +484,7 @@ const styles = StyleSheet.create({
   directionsButton: {
     width: 110,
     borderRadius: 8,
-    overflow: "hidden",
+    overflow: 'hidden',
     shadowColor: colors.lightMustard,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.15,
@@ -498,29 +492,29 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   directionsButtonGradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 8,
     gap: 5,
   },
   directionsButtonText: {
     fontSize: 12,
     color: colors.background.primary,
-    fontWeight: "600",
+    fontWeight: '600',
   },
   callButton: {
     width: 110,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 7,
     gap: 5,
     backgroundColor: colors.background.primary,
     borderRadius: 8,
     borderWidth: 1.5,
-    borderColor: "rgba(255, 205, 87, 0.25)",
-    shadowColor: "#000",
+    borderColor: 'rgba(255, 205, 87, 0.25)',
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.06,
     shadowRadius: 3,
@@ -528,7 +522,7 @@ const styles = StyleSheet.create({
   },
   callButtonText: {
     fontSize: 12,
-    color: "#00875A",
-    fontWeight: "600",
+    color: '#00875A',
+    fontWeight: '600',
   },
 });

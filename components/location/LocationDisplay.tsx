@@ -144,7 +144,7 @@ function LocationDisplay({
         return location;
       } catch (error) {
         if (!isMounted()) return;
-        setWebError(`Location error: ${error.message || 'Unknown error'}`);
+        setWebError(`Location error: ${(error as any)?.message || 'Unknown error'}`);
         return null;
       } finally {
         if (!isMounted()) return;
@@ -341,7 +341,7 @@ function LocationDisplay({
 
       // Try to extract city from string address
       if (typeof location.address === 'string') {
-        const addressParts = location.address.split(',');
+        const addressParts = (location.address as string).split(',');
         // Find the city (common cities)
         for (let i = 0; i < addressParts.length; i++) {
           const part = addressParts[i].trim();
