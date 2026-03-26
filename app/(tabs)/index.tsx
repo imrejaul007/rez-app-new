@@ -50,9 +50,9 @@ import { useProfile, useProfileMenu } from '@/contexts/ProfileContext';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 
 // Phase 1: Habit Engine components
-import { StreakFireIcon } from '@/components/gamification/StreakFireIcon';
-import { RezScoreCard } from '@/components/gamification/RezScoreCard';
-import { NearbyOffersCarousel } from '@/components/discovery/NearbyOffersCarousel';
+import StreakFireIcon from '@/components/gamification/StreakFireIcon';
+import RezScoreCard from '@/components/gamification/RezScoreCard';
+import NearbyOffersCarousel from '@/components/discovery/NearbyOffersCarousel';
 
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import FeatureErrorBoundary from '@/components/common/FeatureErrorBoundary';
