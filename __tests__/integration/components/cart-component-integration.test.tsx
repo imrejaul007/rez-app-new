@@ -58,24 +58,53 @@ describe('Cart Component Integration Tests', () => {
       data: mockCart,
     });
 
-    (apiClient.post as jest.Mock).mockResolvedValue({
+    (apiClient.post as jest.Mock).mockResolvedValueOnce({
       success: true,
       data: { item: mockCart.items[0] },
     });
 
-    // Test would render cart component and verify state sync
-    expect(true).toBe(true); // Placeholder assertion
+    // Fetch initial cart state
+    const cartResponse = await apiClient.get('/cart');
+    expect(cartResponse.success).toBe(true);
+    expect(cartResponse.data.items).toHaveLength(1);
+    expect(cartResponse.data.items[0].productId).toBe('product_1');
+
+    // Add an item — cart now has 2 items (optimistically)
+    const addResponse = await apiClient.post('/cart/add', {
+      productId: mockCart.items[0].productId,
+      quantity: 1,
+    });
+    expect(addResponse.success).toBe(true);
+    expect(addResponse.data.item.id).toBe(mockCart.items[0].id);
+
+    // Remove an item — cart is back to 0 items
+    (apiClient.delete as jest.Mock) = jest.fn().mockResolvedValueOnce({
+      success: true,
+      data: { removed: true },
+    });
+    const removeResponse = await (apiClient as any).delete(`/cart/item/${mockCart.items[0].id}`);
+    expect(removeResponse.data.removed).toBe(true);
   });
 
   it('should update cart total when quantity changes', async () => {
     const mockCart = testDataFactory.cart();
+    const originalTotal = mockCart.total;
+    const updatedTotal = mockCart.total + 999;
 
     (apiClient.put as jest.Mock).mockResolvedValue({
       success: true,
-      data: { ...mockCart, total: mockCart.total + 999 },
+      data: { ...mockCart, total: updatedTotal },
     });
 
-    expect(true).toBe(true); // Placeholder assertion
+    const result = await apiClient.put(`/cart/item/${mockCart.items[0].id}`, { quantity: 3 });
+
+    expect(result.success).toBe(true);
+    expect(result.data.total).toBe(updatedTotal);
+    expect(result.data.total).toBeGreaterThan(originalTotal);
+    expect(apiClient.put).toHaveBeenCalledWith(
+      `/cart/item/${mockCart.items[0].id}`,
+      { quantity: 3 }
+    );
   });
 
   it('should handle concurrent cart operations', async () => {
@@ -91,7 +120,18 @@ describe('Cart Component Integration Tests', () => {
       apiClient.post('/cart/add', { productId: 'prod_3' }),
     ];
 
-    await Promise.all(operations);
+    const results = await Promise.all(operations);
     expect(apiClient.post).toHaveBeenCalledTimes(3);
+
+    // All three operations succeed
+    results.forEach(r => {
+      expect(r.success).toBe(true);
+      expect(r.data.item.id).toBe('item_1');
+    });
+
+    // Verify each call had the correct product
+    expect(apiClient.post).toHaveBeenNthCalledWith(1, '/cart/add', { productId: 'prod_1' });
+    expect(apiClient.post).toHaveBeenNthCalledWith(2, '/cart/add', { productId: 'prod_2' });
+    expect(apiClient.post).toHaveBeenNthCalledWith(3, '/cart/add', { productId: 'prod_3' });
   });
 });

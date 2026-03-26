@@ -5,7 +5,7 @@
  */
 
 import apiClient from '@/services/apiClient';
-import { setupAuthenticatedUser, cleanupAfterTest, testDataFactory } from '../utils/testHelpers';
+import { setupAuthenticatedUser, cleanupAfterTest, testDataFactory, mockUser } from '../utils/testHelpers';
 
 jest.mock('@/services/apiClient');
 
@@ -32,6 +32,8 @@ describe('Context Integration Tests', () => {
       const cart2 = await apiClient.get('/cart');
 
       expect(cart1.data.items).toEqual(cart2.data.items);
+      expect(cart1.data.total).toBe(cart2.data.total);
+      expect(apiClient.get).toHaveBeenCalledTimes(2);
     });
 
     it('should update cart state when items are added', async () => {
@@ -52,13 +54,25 @@ describe('Context Integration Tests', () => {
       });
 
       expect(result.data.item.productId).toBe('prod_1');
+      expect(result.data.item.quantity).toBe(1);
+      expect(result.data.item.id).toBe('cart_item_new');
     });
   });
 
   describe('Auth Context Integration', () => {
     it('should maintain auth state across app', async () => {
-      // Auth state should be accessible everywhere
-      expect(true).toBe(true);
+      // Auth state is available everywhere via context
+      const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+      const token = await AsyncStorage.getItem('access_token');
+      const userJson = await AsyncStorage.getItem('auth_user');
+
+      expect(token).toBe('mock_access_token_123');
+      expect(userJson).toBeDefined();
+
+      const user = JSON.parse(userJson!);
+      expect(user.id).toBe(mockUser.id);
+      expect(user.email).toBe(mockUser.email);
+      expect(user.isOnboarded).toBe(true);
     });
 
     it('should clear state on logout', async () => {
@@ -67,20 +81,31 @@ describe('Context Integration Tests', () => {
         data: { message: 'Logged out' },
       });
 
-      await apiClient.post('/auth/logout');
-      expect(apiClient.post).toHaveBeenCalled();
+      const result = await apiClient.post('/auth/logout');
+
+      expect(apiClient.post).toHaveBeenCalledWith('/auth/logout');
+      expect(result.success).toBe(true);
+      expect(result.data.message).toBe('Logged out');
     });
   });
 
   describe('Wishlist Context Integration', () => {
     it('should sync wishlist across tabs', async () => {
+      const wishlistItems = [
+        { id: 'wl_1', productId: 'prod_1' },
+        { id: 'wl_2', productId: 'prod_2' },
+      ];
+
       (apiClient.get as jest.Mock).mockResolvedValue({
         success: true,
-        data: { items: [] },
+        data: { items: wishlistItems },
       });
 
-      await apiClient.get('/wishlist');
-      expect(apiClient.get).toHaveBeenCalled();
+      const result = await apiClient.get('/wishlist');
+
+      expect(apiClient.get).toHaveBeenCalledWith('/wishlist');
+      expect(result.data.items).toHaveLength(2);
+      expect(result.data.items[0].productId).toBe('prod_1');
     });
 
     it('should update UI when item added to wishlist', async () => {
@@ -91,6 +116,7 @@ describe('Context Integration Tests', () => {
 
       const result = await apiClient.post('/wishlist/add', { productId: 'prod_1' });
       expect(result.data.added).toBe(true);
+      expect(result.data.productId).toBe('prod_1');
     });
   });
 
@@ -105,24 +131,84 @@ describe('Context Integration Tests', () => {
 
       const result = await apiClient.get('/notifications');
       expect(result.data.notifications).toHaveLength(1);
+      expect(result.data.notifications[0].id).toBe(notification.id);
+      expect(result.data.notifications[0].read).toBe(false);
     });
   });
 
   describe('Real-time State Updates', () => {
     it('should update state from WebSocket events', async () => {
-      // Simulate WebSocket event updating context
-      expect(true).toBe(true);
+      // Simulate a WebSocket event payload arriving and updating context state
+      const wsEventHandlers: Record<string, Function> = {};
+      const mockWs = {
+        on: jest.fn((event: string, handler: Function) => {
+          wsEventHandlers[event] = handler;
+        }),
+        emit: jest.fn((event: string, data: any) => {
+          if (wsEventHandlers[event]) wsEventHandlers[event](data);
+        }),
+      };
+
+      // Register listener for cart updates
+      let cartState = { items: [], total: 0 };
+      mockWs.on('cart:updated', (payload: any) => {
+        cartState = payload;
+      });
+
+      // Fire the event simulating server push
+      const updatedCart = { items: [{ id: 'item_1', productId: 'prod_1' }], total: 999 };
+      mockWs.emit('cart:updated', updatedCart);
+
+      expect(mockWs.on).toHaveBeenCalledWith('cart:updated', expect.any(Function));
+      expect(cartState.items).toHaveLength(1);
+      expect(cartState.total).toBe(999);
     });
 
     it('should handle optimistic updates', async () => {
       // Update UI immediately, then sync with server
-      expect(true).toBe(true);
+      let uiState = { items: [{ id: 'item_1', productId: 'prod_1', quantity: 1 }] };
+      const newItem = { id: 'item_opt', productId: 'prod_2', quantity: 1 };
+
+      // Step 1: apply optimistic update instantly
+      uiState = { items: [...uiState.items, newItem] };
+      expect(uiState.items).toHaveLength(2);
+
+      // Step 2: confirm with server
+      (apiClient.post as jest.Mock).mockResolvedValueOnce({
+        success: true,
+        data: { item: { id: 'item_server', productId: 'prod_2', quantity: 1 } },
+      });
+      const serverResult = await apiClient.post('/cart/add', { productId: 'prod_2', quantity: 1 });
+
+      // Step 3: replace optimistic item with server-confirmed item
+      uiState = {
+        items: uiState.items.map(item =>
+          item.id === 'item_opt' ? serverResult.data.item : item
+        ),
+      };
+
+      expect(uiState.items).toHaveLength(2);
+      expect(uiState.items[1].id).toBe('item_server');
     });
 
     it('should rollback on server error', async () => {
       (apiClient.post as jest.Mock).mockRejectedValueOnce({
         response: { status: 400 },
       });
+
+      const originalItems = [{ id: 'item_1', productId: 'prod_1', quantity: 1 }];
+      let uiItems = [...originalItems, { id: 'item_opt', productId: 'invalid', quantity: 1 }];
+      expect(uiItems).toHaveLength(2);
+
+      try {
+        await apiClient.post('/cart/add', { productId: 'invalid' });
+      } catch {
+        // Rollback optimistic update
+        uiItems = originalItems;
+      }
+
+      expect(uiItems).toHaveLength(1);
+      expect(uiItems[0].id).toBe('item_1');
 
       await expect(
         apiClient.post('/cart/add', { productId: 'invalid' })

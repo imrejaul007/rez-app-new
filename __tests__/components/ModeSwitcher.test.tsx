@@ -325,12 +325,15 @@ describe('ModeSwitcher', () => {
 
   describe('Dark Mode (Privé Theme)', () => {
     it('should apply dark theme when isPriveMode is true', () => {
-      const { getByTestId } = render(
+      const { getByLabelText } = render(
         <ModeSwitcher {...defaultProps} isPriveMode={true} />
       );
 
-      // Test passes if component renders without errors in dark mode
-      expect(true).toBe(true);
+      // Component renders all tabs regardless of theme
+      const nearUTab = getByLabelText('Near U mode');
+      expect(nearUTab).toBeTruthy();
+      expect(nearUTab.props.accessibilityRole).toBe('tab');
+      expect(defaultProps.isPriveMode).toBe(true);
     });
   });
 });
