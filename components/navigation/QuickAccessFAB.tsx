@@ -80,7 +80,7 @@ function QuickAccessFAB() {
   return (
     <View style={styles.container} pointerEvents="box-none">
       {expanded && (
-        <View style={styles.actionsContainer}>
+        <View style={styles.actionsContainer} pointerEvents="box-none">
           {actions.map((action, index) => (
             <FABActionItem
               key={index}
