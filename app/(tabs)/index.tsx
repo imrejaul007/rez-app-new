@@ -49,6 +49,11 @@ import {
 import { useProfile, useProfileMenu } from '@/contexts/ProfileContext';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 
+// Phase 1: Habit Engine components
+import { StreakFireIcon } from '@/components/gamification/StreakFireIcon';
+import { RezScoreCard } from '@/components/gamification/RezScoreCard';
+import { NearbyOffersCarousel } from '@/components/discovery/NearbyOffersCarousel';
+
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import FeatureErrorBoundary from '@/components/common/FeatureErrorBoundary';
 import { colors, spacing, borderRadius, shadows, typography } from '@/constants/theme';
@@ -1210,18 +1215,31 @@ function HomeScreen() {
           </Pressable>
         )}
 
-        {/* CARLOS: retention — Streak Display Card (Habit Loop Reinforcement) */}
-        {streakCount > 0 && streakDisplay.emoji && activeTab === 'near-u' && (
-          <View style={viewStyles.streakCard}>
-            <LinearGradient
-              colors={[colors.brand.orange, colors.brand.orange]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={viewStyles.streakGradient}
-            >
-              <Text style={viewStyles.streakEmoji}>{streakDisplay.emoji}</Text>
-              <Text style={viewStyles.streakText}>{streakDisplay.text}</Text>
-            </LinearGradient>
+        {/* Phase 1: Habit Engine — Streak + Score + Nearby Offers */}
+        {activeTab === 'near-u' && (
+          <View
+            style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8, gap: 12 }}
+          >
+            {streakCount > 0 && (
+              <Pressable
+                onPress={() => router.push('/smart-spending')}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+              >
+                <StreakFireIcon streakDays={streakCount} size="small" />
+                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text.primary }}>
+                  {streakCount}d streak
+                </Text>
+              </Pressable>
+            )}
+            <Pressable onPress={() => router.push('/rez-score')} style={{ flex: 1 }}>
+              <RezScoreCard
+                score={0}
+                tier="beginner"
+                trend="stable"
+                percentile={0}
+                onPress={() => router.push('/rez-score')}
+              />
+            </Pressable>
           </View>
         )}
 

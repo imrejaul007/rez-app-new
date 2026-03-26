@@ -442,7 +442,8 @@ class ApiClient {
   async get<T>(
     endpoint: string,
     params?: Record<string, any>,
-    options?: { deduplicate?: boolean; timeout?: number }
+    // Fixed: Add headers option so callers can pass explicit auth headers - Phase 0
+    options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string> }
   ): Promise<ApiResponse<T>> {
     let url = endpoint;
 
@@ -459,6 +460,9 @@ class ApiClient {
     const requestOptions: RequestOptions = { method: 'GET' };
     if (options?.timeout) {
       requestOptions.timeout = options.timeout;
+    }
+    if (options?.headers) {
+      requestOptions.headers = options.headers;
     }
 
     // Deduplicate GET requests by default (can be disabled per-request)

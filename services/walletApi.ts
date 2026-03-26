@@ -584,7 +584,7 @@ class WalletService {
     recipientPhone?: string;
     recipientId?: string;
     amount: number;
-    coinType: 'nuqta' | 'promo' | 'branded';
+    coinType: 'rez' | 'promo' | 'branded';
     merchantId?: string;
     note?: string;
     idempotencyKey?: string;

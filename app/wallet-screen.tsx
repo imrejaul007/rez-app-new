@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useFocusEffect } from 'expo-router';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import RechargeWalletCard from "../components/RechargeWalletCard";
-import ReferAndEarnCard from "@/components/ReferAndEarnCard";
+import RechargeWalletCard from '../components/RechargeWalletCard';
+import ReferAndEarnCard from '@/components/ReferAndEarnCard';
 import {
   View,
   Text,
@@ -23,7 +23,17 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { CoinBalance, WalletScreenProps, COIN_TYPES, CoinType } from '@/types/wallet';
-import { useGetCurrency, useGetCurrencySymbol, useAuthUser, useIsAuthenticated, useAuthLoading, useWalletData, useWalletLoading, useWalletRefreshing, useRefreshWallet } from '@/stores/selectors';
+import {
+  useGetCurrency,
+  useGetCurrencySymbol,
+  useAuthUser,
+  useIsAuthenticated,
+  useAuthLoading,
+  useWalletData,
+  useWalletLoading,
+  useWalletRefreshing,
+  useRefreshWallet,
+} from '@/stores/selectors';
 import { useSafeNavigation } from '@/hooks/useSafeNavigation';
 import { useProfile } from '@/contexts/ProfileContext';
 import { useReferral } from '@/hooks/useReferral';
@@ -48,15 +58,15 @@ import { Colors, Spacing, BorderRadius, Typography, Gradients } from '@/constant
 import walletApi from '@/services/walletApi';
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+// Phase 1.3: Simplified wallet view for new/casual users
+import { SimplifiedWalletView } from '@/components/wallet/SimplifiedWalletView';
+import { CoinExpiryBanner } from '@/components/wallet/CoinExpiryBanner';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { useHomeTabStore } from '@/stores/homeTabStore';
 import { getCoinExpiryWarning } from '@/utils/retentionHooks';
 
-const WalletScreen: React.FC<WalletScreenProps> = ({
-  onNavigateBack,
-  onCoinPress,
-}) => {
+const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress }) => {
   const isMounted = useIsMounted();
   const user = useAuthUser();
   const isAuthenticated = useIsAuthenticated();
@@ -80,16 +90,16 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   const { activeTab } = useHomeTabStore();
   const { completionStatus, isLoading: profileLoading, error: profileError } = useProfile();
 
-  const { referralData, isLoading: referralLoading, error: referralError } = useReferral({
+  const {
+    referralData,
+    isLoading: referralLoading,
+    error: referralError,
+  } = useReferral({
     autoFetch: true,
     refreshInterval: 15 * 60 * 1000,
   });
 
-  const {
-    trackWalletViewed,
-    trackTopupInitiated,
-    trackTransactionViewed,
-  } = useWalletAnalytics();
+  const { trackWalletViewed, trackTopupInitiated, trackTransactionViewed } = useWalletAnalytics();
 
   useEffect(() => {
     const subscription = Dimensions.addEventListener('change', ({ window }) => {
@@ -102,11 +112,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   const appStateRef = useRef<AppStateStatus>(AppState.currentState);
   useEffect(() => {
     const subscription = AppState.addEventListener('change', (nextState: AppStateStatus) => {
-      if (
-        appStateRef.current.match(/inactive|background/) &&
-        nextState === 'active' &&
-        isAuthenticated
-      ) {
+      if (appStateRef.current.match(/inactive|background/) && nextState === 'active' && isAuthenticated) {
         refreshWallet().catch(() => {});
       }
       appStateRef.current = nextState;
@@ -116,21 +122,23 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
 
   // Sync balance hidden state from AsyncStorage (same key as BalanceDisplay)
   useEffect(() => {
-    AsyncStorage.getItem('@wallet_balance_hidden').then(val => {
-      if (val === 'true') setIsBalanceHidden(true);
-    }).catch(() => {});
+    AsyncStorage.getItem('@wallet_balance_hidden')
+      .then((val) => {
+        if (val === 'true') setIsBalanceHidden(true);
+      })
+      .catch(() => {});
   }, []);
 
   // Compute coin balances for CoinProportionBar
   const rezBalance = useMemo(() => {
     // ETHAN: crash guard — walletData?.coins could be undefined; filter safely
-    const rezCoin = walletData?.coins?.find(c => c?.type === 'rez' || c?.type === 'nuqta');
+    const rezCoin = walletData?.coins?.find((c) => c?.type === 'rez' || c?.type === 'nuqta');
     return rezCoin?.amount ?? 0;
   }, [walletData?.coins]);
 
   const promoBalance = useMemo(() => {
     // ETHAN: crash guard — walletData?.coins could be undefined or contain null items
-    const promoCoin = walletData?.coins?.find(c => c?.type === 'promo');
+    const promoCoin = walletData?.coins?.find((c) => c?.type === 'promo');
     return promoCoin?.amount ?? 0;
   }, [walletData?.coins]);
 
@@ -157,20 +165,26 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
     let cancelled = false;
     trackWalletViewed();
     // Auto-show coin education on first wallet visit
-    AsyncStorage.getItem('wallet_education_seen').then(seen => {
-      if (cancelled) return;
-      if (!seen) {
-        setCoinEducationVisible(true);
-        AsyncStorage.setItem('wallet_education_seen', '1').catch(() => {});
-      }
-    }).catch(() => {});
-    return () => { cancelled = true; };
+    AsyncStorage.getItem('wallet_education_seen')
+      .then((seen) => {
+        if (cancelled) return;
+        if (!seen) {
+          setCoinEducationVisible(true);
+          AsyncStorage.setItem('wallet_education_seen', '1').catch(() => {});
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, [trackWalletViewed]);
 
   // Expiring coins warning
   const [expiringAmount, setExpiringAmount] = useState(0);
   const [expiringLabel, setExpiringLabel] = useState('');
-  const [expiringByType, setExpiringByType] = useState<Array<{ type: string; amount: number; expiresAt: string; daysLeft: number }>>([]);
+  const [expiringByType, setExpiringByType] = useState<
+    Array<{ type: string; amount: number; expiresAt: string; daysLeft: number }>
+  >([]);
   const [minDaysLeft, setMinDaysLeft] = useState<number>(30); // Track minimum days to determine urgency
 
   // Refresh wallet balance and expiring coins in parallel on screen focus.
@@ -180,64 +194,67 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
     useCallback(() => {
       if (!isAuthenticated || authLoading) return;
       let cancelled = false;
-      Promise.all([
-        refreshWallet(),
-        walletApi.getExpiringCoins(),
-      ]).then(([, expiryRes]) => {
-        if (cancelled || !expiryRes.success || !expiryRes.data) return;
-        const expiringCoins = expiryRes.data?.expiringCoins ?? {};
-        const totalExpiring = typeof expiryRes.data?.totalExpiring === 'number' ? expiryRes.data.totalExpiring : 0;
-        if (totalExpiring <= 0) {
-          setExpiringAmount(0);
-          setExpiringLabel('');
-          setExpiringByType([]);
-          return;
-        }
-        setExpiringAmount(totalExpiring);
-        // Determine urgency label from the most imminent bucket
-        const thisWeekAmt = expiringCoins?.this_week?.totalAmount ?? 0;
-        const thisMonthAmt = expiringCoins?.this_month?.totalAmount ?? 0;
-        if (thisWeekAmt > 0) {
-          setExpiringLabel(`${thisWeekAmt} ${BRAND.CURRENCY_CODE} expiring this week`);
-        } else if (thisMonthAmt > 0) {
-          setExpiringLabel(`${thisMonthAmt} ${BRAND.CURRENCY_CODE} expiring this month`);
-        } else {
-          setExpiringLabel(`${totalExpiring} ${BRAND.CURRENCY_CODE} expiring soon`);
-        }
-        // Build per-type breakdown across all periods
-        const typeMap = new Map<string, { amount: number; expiresAt: string; daysLeft: number }>();
-        for (const period of ['this_week', 'this_month', 'next_month'] as const) {
-          const bucket = expiringCoins?.[period];
-          if (!bucket) continue;
-          const coinsList = Array.isArray(bucket.coins) ? bucket.coins : [];
-          for (const coin of coinsList) {
-            if (!coin) continue;
-            const coinType: string = (coin as any).type || (coin as any).source || 'rez';
-            const coinAmount: number = typeof (coin as any).amount === 'number' ? (coin as any).amount : 0;
-            const coinExpiresAt: string = (coin as any).expiresAt || '';
-            const coinDaysLeft: number = typeof (coin as any).daysLeft === 'number' ? (coin as any).daysLeft : 0;
-            const existing = typeMap.get(coinType);
-            if (existing) {
-              existing.amount += coinAmount;
-              if (coinDaysLeft < existing.daysLeft) {
-                existing.daysLeft = coinDaysLeft;
-                existing.expiresAt = coinExpiresAt;
+      Promise.all([refreshWallet(), walletApi.getExpiringCoins()])
+        .then(([, expiryRes]) => {
+          if (cancelled || !expiryRes.success || !expiryRes.data) return;
+          const expiringCoins = expiryRes.data?.expiringCoins ?? {};
+          const totalExpiring = typeof expiryRes.data?.totalExpiring === 'number' ? expiryRes.data.totalExpiring : 0;
+          if (totalExpiring <= 0) {
+            setExpiringAmount(0);
+            setExpiringLabel('');
+            setExpiringByType([]);
+            return;
+          }
+          setExpiringAmount(totalExpiring);
+          // Determine urgency label from the most imminent bucket
+          const thisWeekAmt = expiringCoins?.this_week?.totalAmount ?? 0;
+          const thisMonthAmt = expiringCoins?.this_month?.totalAmount ?? 0;
+          if (thisWeekAmt > 0) {
+            setExpiringLabel(`${thisWeekAmt} ${BRAND.CURRENCY_CODE} expiring this week`);
+          } else if (thisMonthAmt > 0) {
+            setExpiringLabel(`${thisMonthAmt} ${BRAND.CURRENCY_CODE} expiring this month`);
+          } else {
+            setExpiringLabel(`${totalExpiring} ${BRAND.CURRENCY_CODE} expiring soon`);
+          }
+          // Build per-type breakdown across all periods
+          const typeMap = new Map<string, { amount: number; expiresAt: string; daysLeft: number }>();
+          for (const period of ['this_week', 'this_month', 'next_month'] as const) {
+            const bucket = expiringCoins?.[period];
+            if (!bucket) continue;
+            const coinsList = Array.isArray(bucket.coins) ? bucket.coins : [];
+            for (const coin of coinsList) {
+              if (!coin) continue;
+              const coinType: string = (coin as any).type || (coin as any).source || 'rez';
+              const coinAmount: number = typeof (coin as any).amount === 'number' ? (coin as any).amount : 0;
+              const coinExpiresAt: string = (coin as any).expiresAt || '';
+              const coinDaysLeft: number = typeof (coin as any).daysLeft === 'number' ? (coin as any).daysLeft : 0;
+              const existing = typeMap.get(coinType);
+              if (existing) {
+                existing.amount += coinAmount;
+                if (coinDaysLeft < existing.daysLeft) {
+                  existing.daysLeft = coinDaysLeft;
+                  existing.expiresAt = coinExpiresAt;
+                }
+              } else {
+                typeMap.set(coinType, { amount: coinAmount, expiresAt: coinExpiresAt, daysLeft: coinDaysLeft });
               }
-            } else {
-              typeMap.set(coinType, { amount: coinAmount, expiresAt: coinExpiresAt, daysLeft: coinDaysLeft });
             }
           }
-        }
-        const expiringList = Array.from(typeMap.entries()).map(([type, data]) => ({ type, ...data }));
-        setExpiringByType(expiringList);
-        // Calculate minimum days left for urgency styling
-        if (expiringList.length > 0) {
-          const minDays = Math.min(...expiringList.map(item => item.daysLeft));
-          setMinDaysLeft(minDays);
-        }
-      }).catch(() => { /* silent — expiry info is supplementary */ });
-      return () => { cancelled = true; };
-    }, [refreshWallet, isAuthenticated, authLoading])
+          const expiringList = Array.from(typeMap.entries()).map(([type, data]) => ({ type, ...data }));
+          setExpiringByType(expiringList);
+          // Calculate minimum days left for urgency styling
+          if (expiringList.length > 0) {
+            const minDays = Math.min(...expiringList.map((item) => item.daysLeft));
+            setMinDaysLeft(minDays);
+          }
+        })
+        .catch(() => {
+          /* silent — expiry info is supplementary */
+        });
+      return () => {
+        cancelled = true;
+      };
+    }, [refreshWallet, isAuthenticated, authLoading]),
   );
 
   const handleRefresh = useCallback(async () => {
@@ -256,23 +273,29 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
     }
   }, [onNavigateBack, goBack]);
 
-  const handleCoinPress = useCallback((coin: CoinBalance) => {
-    if (onCoinPress) {
-      onCoinPress(coin);
-    } else {
+  const handleCoinPress = useCallback(
+    (coin: CoinBalance) => {
+      if (onCoinPress) {
+        onCoinPress(coin);
+      } else {
+        router.push({
+          pathname: '/wallet/coin-detail/[coinType]',
+          params: { coinType: coin.type },
+        } as any);
+      }
+    },
+    [onCoinPress, router],
+  );
+
+  const handleCoinTypePress = useCallback(
+    (type: CoinType) => {
       router.push({
         pathname: '/wallet/coin-detail/[coinType]',
-        params: { coinType: coin.type }
+        params: { coinType: type },
       } as any);
-    }
-  }, [onCoinPress, router]);
-
-  const handleCoinTypePress = useCallback((type: CoinType) => {
-    router.push({
-      pathname: '/wallet/coin-detail/[coinType]',
-      params: { coinType: type }
-    } as any);
-  }, [router]);
+    },
+    [router],
+  );
 
   const handleRetry = useCallback(() => {
     refreshWallet();
@@ -281,31 +304,64 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   // Topup state management
   const [topupLoading, setTopupLoading] = useState(false);
 
-  const handleAmountSelect = useCallback((amount: number | "other") => {
+  const handleAmountSelect = useCallback((amount: number | 'other') => {
     // No-op: amount selection handled by RechargeWalletCard internally
   }, []);
 
-  const handleTopupSubmit = useCallback((amount: number) => {
-    trackTopupInitiated(amount);
-    router.push({
-      pathname: '/payment',
-      params: {
-        amount: amount.toString(),
-        currency: BRAND.CURRENCY_CODE,
-        fiatCurrency: getCurrency(),
-        timestamp: Date.now().toString()
-      }
-    });
-  }, [trackTopupInitiated, router, getCurrency]);
+  const handleTopupSubmit = useCallback(
+    (amount: number) => {
+      trackTopupInitiated(amount);
+      router.push({
+        pathname: '/payment',
+        params: {
+          amount: amount.toString(),
+          currency: BRAND.CURRENCY_CODE,
+          fiatCurrency: getCurrency(),
+          timestamp: Date.now().toString(),
+        },
+      });
+    },
+    [trackTopupInitiated, router, getCurrency],
+  );
 
   // Segment-specific shortcut for verified users — shown at top of More For You
   const segmentShortcut = useMemo(() => {
     const map: Record<string, { id: string; icon: string; title: string; subtitle: string; route: string }> = {
-      verified_student:    { id: 'student-deals',    icon: 'school-outline',     title: 'Student Deals',     subtitle: 'Exclusive campus offers',       route: '/offers/student' },
-      verified_employee:   { id: 'corporate-deals',  icon: 'briefcase-outline',  title: 'Work Perks',        subtitle: 'Corporate benefits & deals',    route: '/offers/corporate' },
-      verified_healthcare: { id: 'health-deals',     icon: 'medkit-outline',     title: 'Healthcare Offers', subtitle: 'Pharmacy & wellness deals',     route: '/offers/zones/healthcare' },
-      verified_defence:    { id: 'defence-deals',    icon: 'shield-outline',     title: 'Defence Perks',     subtitle: 'Service member deals',          route: '/offers/zones/defence' },
-      verified_teacher:    { id: 'teacher-deals',    icon: 'book-outline',       title: 'Teacher Benefits',  subtitle: 'Education & stationery offers', route: '/offers/zones/teacher' },
+      verified_student: {
+        id: 'student-deals',
+        icon: 'school-outline',
+        title: 'Student Deals',
+        subtitle: 'Exclusive campus offers',
+        route: '/offers/student',
+      },
+      verified_employee: {
+        id: 'corporate-deals',
+        icon: 'briefcase-outline',
+        title: 'Work Perks',
+        subtitle: 'Corporate benefits & deals',
+        route: '/offers/corporate',
+      },
+      verified_healthcare: {
+        id: 'health-deals',
+        icon: 'medkit-outline',
+        title: 'Healthcare Offers',
+        subtitle: 'Pharmacy & wellness deals',
+        route: '/offers/zones/healthcare',
+      },
+      verified_defence: {
+        id: 'defence-deals',
+        icon: 'shield-outline',
+        title: 'Defence Perks',
+        subtitle: 'Service member deals',
+        route: '/offers/zones/defence',
+      },
+      verified_teacher: {
+        id: 'teacher-deals',
+        icon: 'book-outline',
+        title: 'Teacher Benefits',
+        subtitle: 'Education & stationery offers',
+        route: '/offers/zones/teacher',
+      },
     };
     const entry = map[segment];
     if (!entry) return null;
@@ -320,59 +376,62 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
   }, [segment, router]);
 
   // "More for You" options — Ring Sizer + Saved Address moved here from main scroll
-  const moreForYouOptions = useMemo(() => [
-    ...(segmentShortcut ? [segmentShortcut] : []),
-    {
-      id: 'profile',
-      icon: 'person-outline' as const,
-      title: 'Complete Profile',
-      subtitle: `${completionStatus?.completionPercentage || 0}% complete`,
-      onPress: () => router.push('/profile/edit'),
-    },
-    {
-      id: 'scratch-card',
-      icon: 'ticket-outline' as const,
-      title: 'Scratch Card',
-      subtitle: 'Win coins & discounts',
-      onPress: () => router.push('/scratch-card'),
-      badge: 'NEW',
-    },
-    {
-      id: 'refer',
-      icon: 'people-outline' as const,
-      title: 'Refer & Earn',
-      subtitle: 'Invite friends, earn coins',
-      onPress: () => router.push('/referral'),
-    },
-    {
-      id: 'orders',
-      icon: 'receipt-outline' as const,
-      title: 'Order History',
-      subtitle: 'View order details',
-      onPress: () => router.push('/order-history'),
-    },
-    {
-      id: 'wishlist',
-      icon: 'heart-outline' as const,
-      title: 'Wishlist',
-      subtitle: 'All your Favorites',
-      onPress: () => router.push('/wishlist'),
-    },
-    {
-      id: 'address',
-      icon: 'location-outline' as const,
-      title: 'Saved Address',
-      subtitle: 'Edit, add, delete your address',
-      onPress: () => router.push('/account/addresses'),
-    },
-    {
-      id: 'ring-sizer',
-      icon: 'resize-outline' as const,
-      title: 'Ring Sizer',
-      subtitle: 'Check your ring size',
-      onPress: () => router.push('/ring-sizer'),
-    },
-  ], [completionStatus, router, segmentShortcut]);
+  const moreForYouOptions = useMemo(
+    () => [
+      ...(segmentShortcut ? [segmentShortcut] : []),
+      {
+        id: 'profile',
+        icon: 'person-outline' as const,
+        title: 'Complete Profile',
+        subtitle: `${completionStatus?.completionPercentage || 0}% complete`,
+        onPress: () => router.push('/profile/edit'),
+      },
+      {
+        id: 'scratch-card',
+        icon: 'ticket-outline' as const,
+        title: 'Scratch Card',
+        subtitle: 'Win coins & discounts',
+        onPress: () => router.push('/scratch-card'),
+        badge: 'NEW',
+      },
+      {
+        id: 'refer',
+        icon: 'people-outline' as const,
+        title: 'Refer & Earn',
+        subtitle: 'Invite friends, earn coins',
+        onPress: () => router.push('/referral'),
+      },
+      {
+        id: 'orders',
+        icon: 'receipt-outline' as const,
+        title: 'Order History',
+        subtitle: 'View order details',
+        onPress: () => router.push('/order-history'),
+      },
+      {
+        id: 'wishlist',
+        icon: 'heart-outline' as const,
+        title: 'Wishlist',
+        subtitle: 'All your Favorites',
+        onPress: () => router.push('/wishlist'),
+      },
+      {
+        id: 'address',
+        icon: 'location-outline' as const,
+        title: 'Saved Address',
+        subtitle: 'Edit, add, delete your address',
+        onPress: () => router.push('/account/addresses'),
+      },
+      {
+        id: 'ring-sizer',
+        icon: 'resize-outline' as const,
+        title: 'Ring Sizer',
+        subtitle: 'Check your ring size',
+        onPress: () => router.push('/ring-sizer'),
+      },
+    ],
+    [completionStatus, router, segmentShortcut],
+  );
 
   const insets = useSafeAreaInsets();
   const styles = useMemo(() => createStyles(screenData, insets), [screenData, insets]);
@@ -455,7 +514,14 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
 
   if (!walletData) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.secondary }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: colors.background.secondary,
+        }}
+      >
         <ActivityIndicator size="large" color={Colors.primary[600]} />
         <ThemedText style={{ marginTop: Spacing.md, color: colors.text.secondary }}>Loading wallet...</ThemedText>
       </View>
@@ -501,7 +567,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
 
         {/* Scrollable Content */}
         <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: 120 }}
           style={styles.scroll}
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -527,12 +593,26 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
             </View>
           )}
 
-          {/* Balance Display with hide/reveal + coin chips */}
-          <BalanceDisplay
-            walletData={walletData}
-            onCoinPress={handleCoinTypePress}
-            currencySymbol={currencySymbol}
+          {/* Phase 1.3: Simplified wallet view — one-number balance for casual users */}
+          <SimplifiedWalletView
+            balance={walletData?.balance?.available ?? 0}
+            expiringCoins={walletData?.expiringCoins?.count ?? 0}
+            onDetailPress={() => {
+              /* scroll to detailed breakdown below */
+            }}
           />
+
+          {/* Coin expiry banner if coins expiring soon */}
+          {(walletData?.expiringCoins?.count ?? 0) > 0 && (
+            <CoinExpiryBanner
+              expiringCount={walletData.expiringCoins?.count ?? 0}
+              daysLeft={walletData.expiringCoins?.daysLeft ?? 7}
+              onPress={() => router.push('/near-u/map')}
+            />
+          )}
+
+          {/* Balance Display with hide/reveal + coin chips */}
+          <BalanceDisplay walletData={walletData} onCoinPress={handleCoinTypePress} currencySymbol={currencySymbol} />
 
           {/* Coin Proportion Bar */}
           <CoinProportionBar
@@ -557,50 +637,62 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
               accessibilityLabel={`${expiringLabel} — tap to view expiry details`}
               accessibilityRole="button"
             >
-              <View style={[
-                styles.expiryIconWrap,
-                {
-                  backgroundColor: minDaysLeft <= 1
-                    ? (Colors.errorScale?.[100] ?? '#FEE2E2')
-                    : minDaysLeft > 7
-                    ? colors.tint.amberLight
-                    : (colors.warningScale?.[100] ?? '#FEF3C7'),
-                },
-              ]}>
+              <View
+                style={[
+                  styles.expiryIconWrap,
+                  {
+                    backgroundColor:
+                      minDaysLeft <= 1
+                        ? (Colors.errorScale?.[100] ?? '#FEE2E2')
+                        : minDaysLeft > 7
+                          ? colors.tint.amberLight
+                          : (colors.warningScale?.[100] ?? '#FEF3C7'),
+                  },
+                ]}
+              >
                 <Ionicons
-                  name={minDaysLeft <= 1 ? "alert-circle" : "timer-outline"}
+                  name={minDaysLeft <= 1 ? 'alert-circle' : 'timer-outline'}
                   size={20}
                   color={expiryBannerStyle.iconColor}
                 />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={[
-                  styles.expiryText,
-                  {
-                    color: minDaysLeft <= 1
-                      ? (Colors.errorScale?.[700] ?? '#B91C1C')
-                      : minDaysLeft > 7
-                      ? (colors.brand.amberDark ?? '#92400E')
-                      : (colors.warningScale?.[700] ?? '#B45309'),
-                  },
-                ]}>
+                <Text
+                  style={[
+                    styles.expiryText,
+                    {
+                      color:
+                        minDaysLeft <= 1
+                          ? (Colors.errorScale?.[700] ?? '#B91C1C')
+                          : minDaysLeft > 7
+                            ? (colors.brand.amberDark ?? '#92400E')
+                            : (colors.warningScale?.[700] ?? '#B45309'),
+                    },
+                  ]}
+                >
                   {expiringLabel}
                 </Text>
                 {expiringByType.length > 0 && (
                   <View style={{ marginTop: 4 }}>
                     {expiringByType.slice(0, 3).map((item, idx) => {
                       const typeLabel =
-                        item.type === 'promo' ? 'Promo'
-                        : item.type === 'branded' ? 'Branded'
-                        : item.type === 'prive' ? 'Privé'
-                        : 'Rez';
+                        item.type === 'promo'
+                          ? 'Promo'
+                          : item.type === 'branded'
+                            ? 'Branded'
+                            : item.type === 'prive'
+                              ? 'Privé'
+                              : 'Rez';
                       const daysText =
                         typeof item.daysLeft === 'number'
-                          ? (item.daysLeft <= 0 ? 'expires today' : `${item.daysLeft}d left`)
+                          ? item.daysLeft <= 0
+                            ? 'expires today'
+                            : `${item.daysLeft}d left`
                           : '';
                       return (
                         <Text key={idx} style={styles.expiryTypeRow}>
-                          {typeLabel}: {item.amount} {BRAND.CURRENCY_CODE}{daysText ? ` (${daysText})` : ''}
+                          {typeLabel}: {item.amount} {BRAND.CURRENCY_CODE}
+                          {daysText ? ` (${daysText})` : ''}
                         </Text>
                       );
                     })}
@@ -615,7 +707,18 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
           {/* Quick Actions Bar — Add Money is the primary action */}
           {!walletData.isFrozen && (
             <>
-              <Text style={{ fontSize: 11, fontWeight: '600', color: colors.text.tertiary, textTransform: 'uppercase', letterSpacing: 0.8, paddingHorizontal: 16, marginTop: 12, marginBottom: 4 }}>
+              <Text
+                style={{
+                  fontSize: 11,
+                  fontWeight: '600',
+                  color: colors.text.tertiary,
+                  textTransform: 'uppercase',
+                  letterSpacing: 0.8,
+                  paddingHorizontal: 16,
+                  marginTop: 12,
+                  marginBottom: 4,
+                }}
+              >
                 Quick Actions
               </Text>
               <StickyQuickActions />
@@ -623,7 +726,16 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
           )}
 
           {/* Section: Your Savings Breakdown */}
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: Spacing.md, marginTop: Spacing.md, marginBottom: Spacing.xs }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              paddingHorizontal: Spacing.md,
+              marginTop: Spacing.md,
+              marginBottom: Spacing.xs,
+            }}
+          >
             <Text style={{ fontSize: 16, fontWeight: '700', color: colors.text.primary }}>Your Savings Breakdown</Text>
             <Pressable onPress={() => setCoinEducationVisible(true)} hitSlop={8}>
               <Ionicons name="help-circle-outline" size={20} color={colors.neutral[400]} />
@@ -667,16 +779,15 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
           />
 
           {/* View Transactions CTA */}
-          <TransactionCTA onPress={() => {
-            trackTransactionViewed();
-            router.push('/earnings-history');
-          }} />
+          <TransactionCTA
+            onPress={() => {
+              trackTransactionViewed();
+              router.push('/earnings-history');
+            }}
+          />
 
           {/* Partner Earnings Breakdown */}
-          <EarningsBreakdown
-            compact={true}
-            onViewDetails={() => router.push('/explore')}
-          />
+          <EarningsBreakdown compact={true} onViewDetails={() => router.push('/explore')} />
 
           {/* Verification CTA for unverified users who stated an identity */}
           {segment === 'normal' && statedIdentity && statedIdentity !== 'general' && (
@@ -695,7 +806,16 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
                 gap: Spacing.md,
               }}
             >
-              <View style={{ width: 40, height: 40, borderRadius: 20, backgroundColor: colors.background.accent, justifyContent: 'center', alignItems: 'center' }}>
+              <View
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 20,
+                  backgroundColor: colors.background.accent,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                }}
+              >
                 <Ionicons name="lock-open-outline" size={20} color={colors.brand.orange} />
               </View>
               <View style={{ flex: 1 }}>
@@ -716,15 +836,17 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
           {/* Refer and Earn Card */}
           <ReferAndEarnCard
             data={{
-              title: referralData?.title || "Refer and Earn",
-              subtitle: referralData?.subtitle || "Invite your friends and get free jewellery",
-              inviteButtonText: referralData?.inviteButtonText || "Invite",
-              inviteLink: referralData?.inviteLink || "",
+              title: referralData?.title || 'Refer and Earn',
+              subtitle: referralData?.subtitle || 'Invite your friends and get free jewellery',
+              inviteButtonText: referralData?.inviteButtonText || 'Invite',
+              inviteLink: referralData?.inviteLink || '',
             }}
             onInvite={() => {
               const link = referralData?.inviteLink || '';
               if (link) {
-                Share.share({ message: `Join me on ${BRAND.APP_NAME} and earn rewards! ${link}`, url: link }).catch(() => {});
+                Share.share({ message: `Join me on ${BRAND.APP_NAME} and earn rewards! ${link}`, url: link }).catch(
+                  () => {},
+                );
               } else {
                 router.push('/referral' as any);
               }
@@ -734,21 +856,17 @@ const WalletScreen: React.FC<WalletScreenProps> = ({
 
           <View style={{ height: 120 }} />
         </ScrollView>
-
       </Animated.View>
 
       {/* Coin Education Overlay */}
-      <CoinEducationOverlay
-        visible={coinEducationVisible}
-        onDismiss={() => setCoinEducationVisible(false)}
-      />
+      <CoinEducationOverlay visible={coinEducationVisible} onDismiss={() => setCoinEducationVisible(false)} />
     </FeatureErrorBoundary>
   );
 };
 
 const createStyles = (
   screenData: { width: number; height: number },
-  insets: { top: number; bottom: number; left: number; right: number }
+  insets: { top: number; bottom: number; left: number; right: number },
 ) => {
   const isSmallScreen = screenData.width < 375;
   const isTablet = screenData.width > 768;
@@ -799,8 +917,18 @@ const createStyles = (
     loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
     loadingText: { fontSize: Typography.body.fontSize, color: colors.text.secondary },
     errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: Spacing['2xl'] },
-    errorTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.text.primary, marginTop: Spacing.md },
-    errorDetails: { fontSize: Typography.bodySmall.fontSize, color: colors.text.secondary, marginTop: Spacing.xs + 2, textAlign: 'center' },
+    errorTitle: {
+      fontSize: Typography.bodyLarge.fontSize,
+      fontWeight: '700',
+      color: colors.text.primary,
+      marginTop: Spacing.md,
+    },
+    errorDetails: {
+      fontSize: Typography.bodySmall.fontSize,
+      color: colors.text.secondary,
+      marginTop: Spacing.xs + 2,
+      textAlign: 'center',
+    },
     retryButton: {
       backgroundColor: colors.nileBlue,
       paddingHorizontal: Spacing.lg,

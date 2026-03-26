@@ -249,6 +249,19 @@ function emptySearchResponse(category: string, page: number, limit: number): Sto
 
 class StoreSearchService {
   /**
+   * Fixed: Get auth headers to ensure authenticated API calls include the token - Phase 0
+   * All 19 authenticated endpoints (favorites, comparisons, reviews, analytics) must
+   * include the Authorization header. Since apiClient stores the token in defaultHeaders,
+   * this helper provides the explicit header as a fallback for cases where defaultHeaders
+   * may not yet reflect the current auth state.
+   */
+  private getAuthHeaders(): Record<string, string> {
+    const token = apiClient.getAuthToken();
+    if (!token) return {};
+    return { Authorization: `Bearer ${token}` };
+  }
+
+  /**
    * Check if a string is a MongoDB ObjectId (24 hex characters)
    */
   private isMongoObjectId(str: string): boolean {
@@ -581,8 +594,11 @@ class StoreSearchService {
    * Check if user can review a store
    */
   async canUserReviewStore(storeId: string): Promise<{ success: boolean; data: { canReview: boolean; hasReviewed: boolean } }> {
+    // Fixed: Explicitly pass auth headers for authenticated GET endpoint - Phase 0
     const response = await apiClient.get<{ success: boolean; data: { canReview: boolean; hasReviewed: boolean } }>(
-      `/reviews/store/${storeId}/can-review`
+      `/reviews/store/${storeId}/can-review`,
+      undefined,
+      { headers: this.getAuthHeaders() }
     );
 
     if (!response.success) {
@@ -656,8 +672,11 @@ class StoreSearchService {
    * Check if store is favorited
    */
   async isStoreFavorited(storeId: string): Promise<{ success: boolean; data: { isFavorited: boolean } }> {
+    // Fixed: Explicitly pass auth headers for authenticated GET endpoint - Phase 0
     const response = await apiClient.get<{ success: boolean; data: { isFavorited: boolean } }>(
-      `/favorites/store/${storeId}/status`
+      `/favorites/store/${storeId}/status`,
+      undefined,
+      { headers: this.getAuthHeaders() }
     );
 
     if (!response.success) {
@@ -677,7 +696,8 @@ class StoreSearchService {
     const { page = 1, limit = 20 } = params || {};
     const qs = buildQueryString({ page, limit });
 
-    const response = await apiClient.get<FavoritesResponse>(`/favorites/user/my-favorites?${qs}`);
+    // Fixed: Explicitly pass auth headers for authenticated GET endpoint - Phase 0
+    const response = await apiClient.get<FavoritesResponse>(`/favorites/user/my-favorites?${qs}`, undefined, { headers: this.getAuthHeaders() });
 
     if (!response.success) {
       throw new Error(response.error || 'Failed to fetch favorites');
@@ -740,7 +760,8 @@ class StoreSearchService {
     const { page = 1, limit = 20 } = params || {};
     const qs = buildQueryString({ page, limit });
 
-    const response = await apiClient.get<ComparisonsResponse>(`/comparisons/user/my-comparisons?${qs}`);
+    // Fixed: Explicitly pass auth headers for authenticated GET endpoint - Phase 0
+    const response = await apiClient.get<ComparisonsResponse>(`/comparisons/user/my-comparisons?${qs}`, undefined, { headers: this.getAuthHeaders() });
 
     if (!response.success) {
       throw new Error(response.error || 'Failed to fetch comparisons');
@@ -753,7 +774,8 @@ class StoreSearchService {
    * Get specific comparison by ID
    */
   async getComparisonById(comparisonId: string): Promise<ComparisonResponse> {
-    const response = await apiClient.get<ComparisonResponse>(`/comparisons/${comparisonId}`);
+    // Fixed: Explicitly pass auth headers for authenticated GET endpoint - Phase 0
+    const response = await apiClient.get<ComparisonResponse>(`/comparisons/${comparisonId}`, undefined, { headers: this.getAuthHeaders() });
 
     if (!response.success) {
       throw new Error(response.error || 'Failed to fetch comparison');
@@ -900,7 +922,8 @@ class StoreSearchService {
       ...(eventType && { eventType }),
     });
 
-    const response = await apiClient.get<{ success: boolean; data: any }>(`/analytics/store/${storeId}?${qs}`);
+    // Fixed: Explicitly pass auth headers for authenticated GET endpoint - Phase 0
+    const response = await apiClient.get<{ success: boolean; data: any }>(`/analytics/store/${storeId}?${qs}`, undefined, { headers: this.getAuthHeaders() });
 
     if (!response.success) {
       throw new Error(response.error || 'Failed to fetch store analytics');
@@ -950,7 +973,8 @@ class StoreSearchService {
       ...(eventType && { eventType }),
     });
 
-    const response = await apiClient.get<{ success: boolean; data: any }>(`/analytics/user/my-analytics?${qs}`);
+    // Fixed: Explicitly pass auth headers for authenticated GET endpoint - Phase 0
+    const response = await apiClient.get<{ success: boolean; data: any }>(`/analytics/user/my-analytics?${qs}`, undefined, { headers: this.getAuthHeaders() });
 
     if (!response.success) {
       throw new Error(response.error || 'Failed to fetch user analytics');

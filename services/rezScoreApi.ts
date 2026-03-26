@@ -1,0 +1,90 @@
+import apiClient, { ApiResponse } from './apiClient';
+
+// ============================================================================
+// REZ SCORE API SERVICE
+// Phase 2.3 — REZ Score — Universal Savings Score
+// ============================================================================
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+export type RezScoreTier =
+  | 'Beginner'
+  | 'Smart Saver'
+  | 'Super Saver'
+  | 'Elite Saver'
+  | 'Legend';
+
+export interface ScorePillar {
+  name: string;
+  score: number;     // 0-100 contribution
+  weight: number;    // e.g. 0.30 (30%)
+  description: string;
+}
+
+export interface RezScore {
+  score: number;           // 0-999
+  tier: RezScoreTier;
+  tierMinScore: number;
+  tierMaxScore: number;
+  lastMonthScore: number;
+  trend: 'up' | 'down' | 'stable';
+  trendPoints: number;     // e.g. +34
+  peerPercentile: number;  // e.g. 72
+  pillars: ScorePillar[];
+  lastCalculated: string;
+}
+
+export interface ScoreBooster {
+  id: string;
+  title: string;
+  description: string;
+  estimatedBoost: number;   // e.g. 30 points
+  category: 'visits' | 'streaks' | 'diversity' | 'savings' | 'community';
+  actionLabel: string;
+  actionRoute?: string;
+  difficulty: 'easy' | 'medium' | 'hard';
+}
+
+export interface ScoreHistoryEntry {
+  date: string;           // "YYYY-MM-DD"
+  score: number;
+  tier: RezScoreTier;
+  change: number;         // +/- from previous entry
+}
+
+// ============================================================================
+// API FUNCTIONS
+// ============================================================================
+
+/**
+ * Fetch the current user's REZ Score with full pillar breakdown.
+ * GET /api/score
+ */
+export async function getScore(): Promise<RezScore> {
+  const response = await apiClient.get<ApiResponse<RezScore>>('/api/score');
+  return response.data.data;
+}
+
+/**
+ * Fetch actionable suggestions to improve the user's REZ Score.
+ * GET /api/score/boosters
+ */
+export async function getScoreBoosters(): Promise<ScoreBooster[]> {
+  const response = await apiClient.get<ApiResponse<ScoreBooster[]>>(
+    '/api/score/boosters',
+  );
+  return response.data.data;
+}
+
+/**
+ * Fetch the user's historical REZ Score for trend visualization.
+ * GET /api/score/history
+ */
+export async function getScoreHistory(): Promise<ScoreHistoryEntry[]> {
+  const response = await apiClient.get<ApiResponse<ScoreHistoryEntry[]>>(
+    '/api/score/history',
+  );
+  return response.data.data;
+}

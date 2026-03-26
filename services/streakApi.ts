@@ -35,6 +35,11 @@ export interface AllStreaks {
   login: StreakData;
   order: StreakData;
   review: StreakData;
+  savings: StreakData;
+  savingsTier?: {
+    tier: string;
+    level: number;
+  };
 }
 
 export interface StreakStats {
