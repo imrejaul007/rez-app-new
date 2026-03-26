@@ -432,7 +432,7 @@ function SignInScreen() {
             maxLength={6}
             error={errors.otp}
             containerStyle={styles.inputContainer}
-            leftIcon={<Ionicons name="keypad-outline" size={20} color={colors.brand.purple} />}
+            autoFocus={true}
           />
 
           <View style={styles.otpActions}>
@@ -496,7 +496,7 @@ function SignInScreen() {
         <View style={[styles.circle, styles.circleGreenTiny]} />
       </View>
 
-      <KeyboardAvoidingView style={styles.keyboardContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <KeyboardAvoidingView style={styles.keyboardContainer} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="handled"
