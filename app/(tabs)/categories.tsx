@@ -1,20 +1,174 @@
-import { colors } from '@/constants/theme';
-import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useCallback } from 'react';
-import { View, StyleSheet, Pressable, StatusBar, Platform, ScrollView, Dimensions, TextInput } from 'react-native';
-import CachedImage from '@/components/ui/CachedImage';
+/**
+ * Categories Tab — Discover Everything
+ *
+ * A comprehensive discovery page that surfaces every section available on the
+ * homepage.  The category grid (quick nav) sits at the top, followed by all
+ * deal, vertical, store, product, engagement, student, employee, and misc
+ * sections — each lazy-loaded via the LazySection viewport pattern.
+ *
+ * Rules:
+ *  - COPY only — NearUTabContent.tsx is never touched.
+ *  - Lazy imports use the SAME lazyGroups barrel files as NearUTabContent.
+ *  - Student / employee sections are segment-gated via useUserIdentityStore.
+ *  - Every heavy section is wrapped in both LazySection and Suspense.
+ */
+
+import React, { Suspense, useCallback, useState } from 'react';
+import { View, StyleSheet, Pressable, StatusBar, Platform, TextInput, RefreshControl, Dimensions } from 'react-native';
+import Animated, { useSharedValue, useAnimatedScrollHandler } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+
+import { colors } from '@/constants/theme';
+import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { ThemedText } from '@/components/ThemedText';
+import CachedImage from '@/components/ui/CachedImage';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
+
 import { CATEGORY_CONFIGS, SubcategoryItem } from '@/config/categoryConfig';
 import { getSubcategoryIcon } from '@/config/categoryIcons';
-import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 
+import LazySection from '@/components/homepage/LazySection';
+import { useUserIdentityStore } from '@/stores/userIdentityStore';
+
+// ─── Static imports (lightweight / rendered early) ────────────────────────────
+import HomeSavingsSummaryCard from '@/components/homepage/HomeSavingsSummaryCard';
+import EarnRezCoinsSection from '@/components/homepage/EarnRezCoinsSection';
+import HowRezWorksCard from '@/components/homepage/HowRezWorksCard';
+import NewOnRezSection from '@/components/homepage/NewOnRezSection';
+import EventsExperiencesSection from '@/components/homepage/EventsExperiencesSection';
+import PromoBanner from '@/components/homepage/PromoBanner';
+import GlobeBanner from '@/components/homepage/GlobeBanner';
+
+// ─── Student sections (static imports — rendered early for student persona) ───
+import CampusHotDealsStrip from '@/components/homepage/sections/CampusHotDealsStrip';
+import StudentBudgetFoodGrid from '@/components/homepage/sections/StudentBudgetFoodGrid';
+import StudentEntertainmentSection from '@/components/homepage/sections/StudentEntertainmentSection';
+import StudentUtilityDealsSection from '@/components/homepage/sections/StudentUtilityDealsSection';
+import StudentMicroPrepaidPacks from '@/components/homepage/sections/StudentMicroPrepaidPacks';
+
+// ─── Employee sections ─────────────────────────────────────────────────────────
+import EmployeeLunchDealsSection from '@/components/homepage/sections/EmployeeLunchDealsSection';
+import EmployeeAfterWorkSection from '@/components/homepage/sections/EmployeeAfterWorkSection';
+import EmployeeWellnessBookingSection from '@/components/homepage/sections/EmployeeWellnessBookingSection';
+import EmployeeValuePacksSection from '@/components/homepage/sections/EmployeeValuePacksSection';
+import EmployeeUtilityServicesSection from '@/components/homepage/sections/EmployeeUtilityServicesSection';
+
+// ─── Group A: Category verticals (1 lazy chunk) ───────────────────────────────
+const BeautyWellnessSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/categorySections').then((m) => ({ default: m.BeautyWellnessSection })),
+);
+const FitnessSportsSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/categorySections').then((m) => ({ default: m.FitnessSportsSection })),
+);
+const GroceryEssentialsSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/categorySections').then((m) => ({ default: m.GroceryEssentialsSection })),
+);
+const HealthcareSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/categorySections').then((m) => ({ default: m.HealthcareSection })),
+);
+const HomeServicesSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/categorySections').then((m) => ({ default: m.HomeServicesSection })),
+);
+const FinancialServicesSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/categorySections').then((m) => ({ default: m.FinancialServicesSection })),
+);
+const TravelSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/categorySections').then((m) => ({ default: m.TravelSection })),
+);
+
+// ─── Group B: Category list sections (1 lazy chunk) ──────────────────────────
+const BestDiscountSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/categoryListSections').then((m) => ({ default: m.BestDiscountSection })),
+);
+const BestSellerSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/categoryListSections').then((m) => ({ default: m.BestSellerSection })),
+);
+
+// ─── Group C: Store browse sections (1 lazy chunk) ───────────────────────────
+const GoingOutSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/storeBrowseSections').then((m) => ({ default: m.GoingOutSection })),
+);
+const HomeDeliverySection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/storeBrowseSections').then((m) => ({ default: m.HomeDeliverySection })),
+);
+const ServiceSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/storeBrowseSections').then((m) => ({ default: m.ServiceSection })),
+);
+
+// ─── Group D: Gamification sections (1 lazy chunk) ───────────────────────────
+const WalletSnapshotCard = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/gamificationSections').then((m) => ({ default: m.WalletSnapshotCard })),
+);
+const LoyaltyRewardsHubCard = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/gamificationSections').then((m) => ({ default: m.LoyaltyRewardsHubCard })),
+);
+const FeatureTryCards = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/gamificationSections').then((m) => ({ default: m.FeatureTryCards })),
+);
+const PlayAndEarnSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/gamificationSections').then((m) => ({ default: m.PlayAndEarnSection })),
+);
+const SocialProofSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/gamificationSections').then((m) => ({ default: m.SocialProofSection })),
+);
+
+// ─── Group E: Deal sections (1 lazy chunk) ────────────────────────────────────
+const ExcitingDealsSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/dealSections').then((m) => ({ default: m.ExcitingDealsSection })),
+);
+const DealsThatSaveMoney = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/dealSections').then((m) => ({ default: m.DealsThatSaveMoney })),
+);
+const FlashSales = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/dealSections').then((m) => ({ default: m.FlashSales })),
+);
+const ShopByExperienceSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/dealSections').then((m) => ({ default: m.ShopByExperienceSection })),
+);
+const HotDealsSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/dealSections').then((m) => ({ default: m.HotDealsSection })),
+);
+const PopularProductsSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/dealSections').then((m) => ({ default: m.PopularProductsSection })),
+);
+
+// ─── Group F: Discovery sections (1 lazy chunk) ──────────────────────────────
+const PickedForYou = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/discoverySections').then((m) => ({ default: m.PickedForYou })),
+);
+const NearbyProductsSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/discoverySections').then((m) => ({ default: m.NearbyProductsSection })),
+);
+const StoresNearYou = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/discoverySections').then((m) => ({ default: m.StoresNearYou })),
+);
+const BrandPartnerships = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/discoverySections').then((m) => ({ default: m.BrandPartnerships })),
+);
+const StoreDiscoverySection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/discoverySections').then((m) => ({ default: m.StoreDiscoverySection })),
+);
+const FeaturedCategoriesContainer = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/discoverySections').then((m) => ({
+    default: m.FeaturedCategoriesContainer,
+  })),
+);
+const StoreExperiencesSection = React.lazy(() =>
+  import('@/components/homepage/lazyGroups/discoverySections').then((m) => ({ default: m.StoreExperiencesSection })),
+);
+
+// ─── Standalone lazy imports ──────────────────────────────────────────────────
+const TrendingNearYou = React.lazy(() => import('@/components/homepage/TrendingNearYou'));
+const RecentlyViewedSection = React.lazy(() => import('@/components/category/RecentlyViewedSection'));
+const DiscoverAndShopSection = React.lazy(() => import('@/components/discover/DiscoverAndShopSection'));
+const RecommendedStoresSection = React.lazy(() => import('@/components/homepage/RecommendedStoresSection'));
+
+// ─── Dimensions ───────────────────────────────────────────────────────────────
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const NUM_COLUMNS = 4;
 const ITEM_WIDTH = (SCREEN_WIDTH - 32) / NUM_COLUMNS;
 
-// ============ INTERFACES ============
 interface CategorySection {
   id: string;
   name: string;
@@ -22,7 +176,6 @@ interface CategorySection {
   subcategories: SubcategoryItem[];
 }
 
-// Generate category sections from config
 const CATEGORY_SECTIONS: CategorySection[] = Object.values(CATEGORY_CONFIGS).map((cat) => ({
   id: cat.slug,
   name: cat.name,
@@ -30,16 +183,72 @@ const CATEGORY_SECTIONS: CategorySection[] = Object.values(CATEGORY_CONFIGS).map
   subcategories: cat.subcategories,
 }));
 
-// ============ MAIN COMPONENT ============
+// ─── Sized Suspense placeholder to prevent layout collapse ───────────────────
+const SuspensePlaceholder: React.FC<{ height: number }> = React.memo(({ height }) => (
+  <View style={{ height, backgroundColor: '#f5f5f5' }} />
+));
+
+// ─── Section group header ─────────────────────────────────────────────────────
+const SectionGroupHeader: React.FC<{ title: string; subtitle?: string }> = ({ title, subtitle }) => (
+  <View style={groupHeaderStyles.wrapper}>
+    <ThemedText style={groupHeaderStyles.title}>{title}</ThemedText>
+    {subtitle ? <ThemedText style={groupHeaderStyles.subtitle}>{subtitle}</ThemedText> : null}
+  </View>
+);
+
+const groupHeaderStyles = StyleSheet.create({
+  wrapper: {
+    paddingHorizontal: Spacing.base,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.sm,
+    borderTopWidth: 4,
+    borderTopColor: colors.background.secondary || '#F3F4F6',
+    marginTop: Spacing.md,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: colors.text.primary,
+    letterSpacing: -0.3,
+  },
+  subtitle: {
+    fontSize: 12,
+    color: colors.text.tertiary || '#9CA3AF',
+    marginTop: 2,
+  },
+});
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 function CategoriesScreen() {
   const router = useRouter();
+  const scrollY = useSharedValue(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const { segment, statedIdentity } = useUserIdentityStore();
 
-  // Handle wallet press - navigate to WalletScreen
-  const handleWalletPress = () => {
-    router.push('/wallet-screen');
-  };
+  const isStudentUser = segment === 'verified_student' || statedIdentity === 'student';
+  const isEmployeeCorporate = segment === 'verified_employee' || statedIdentity === 'corporate';
 
-  // Handle subcategory press - navigate to StoreListPage
+  // Time-aware flags for employee sections
+  const _now = new Date();
+  const _currentHour = _now.getHours();
+  const _currentDay = _now.getDay();
+  const _isWeekend = _currentDay === 0 || _currentDay === 6;
+  const _isLunchWindow = _currentHour >= 11 && _currentHour < 14;
+  const _isAfterWorkWindow = _isWeekend || _currentHour >= 17;
+
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (event) => {
+      scrollY.value = event.contentOffset.y;
+    },
+  });
+
+  const handleRefresh = useCallback(() => {
+    setRefreshing(true);
+    // Allow components to re-mount / re-fetch by briefly toggling state
+    setTimeout(() => setRefreshing(false), 800);
+  }, []);
+
+  // ─── Category grid renderers ────────────────────────────────────────────────
   const handleSubcategoryPress = useCallback(
     (subcategory: SubcategoryItem, parentSlug: string) => {
       router.push({
@@ -54,7 +263,6 @@ function CategoriesScreen() {
     [router],
   );
 
-  // Render subcategory item
   const renderSubcategoryItem = (item: SubcategoryItem, parentSlug: string, color: string) => {
     const customIcon = getSubcategoryIcon(item.slug);
     return (
@@ -92,7 +300,6 @@ function CategoriesScreen() {
     );
   };
 
-  // Render category section
   const renderCategorySection = (section: CategorySection) => (
     <View key={section.id} style={styles.sectionContainer}>
       <ThemedText style={styles.sectionTitle}>{section.name}</ThemedText>
@@ -106,16 +313,16 @@ function CategoriesScreen() {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.primary[500]} />
 
-      {/* Categories Header */}
+      {/* ── Header ── */}
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <View style={styles.headerLeft}>
-            <ThemedText style={styles.headerTitle}>Categories</ThemedText>
+            <ThemedText style={styles.headerTitle}>Discover Everything</ThemedText>
           </View>
           <View style={styles.headerRight}>
             <Pressable
               style={styles.headerIcon}
-              onPress={handleWalletPress}
+              onPress={() => router.push('/wallet-screen')}
               android_ripple={{ color: 'rgba(0,0,0,0.1)', borderless: true, radius: 20 }}
               accessibilityRole="button"
               accessibilityLabel="Open wallet"
@@ -125,19 +332,19 @@ function CategoriesScreen() {
           </View>
         </View>
 
-        {/* Search Bar */}
+        {/* Search bar — tap navigates to /search */}
         <Pressable
           style={styles.searchBar}
           onPress={() => router.push('/search' as any)}
           android_ripple={{ color: 'rgba(0,0,0,0.06)', borderless: false }}
           accessibilityRole="search"
-          accessibilityLabel="Search categories"
+          accessibilityLabel="Search everything"
           accessibilityHint="Tap to open search"
         >
           <Ionicons name="search" size={20} color={colors.text.tertiary} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search categories"
+            placeholder="Search deals, stores, products..."
             placeholderTextColor={colors.text.tertiary}
             editable={false}
           />
@@ -145,18 +352,539 @@ function CategoriesScreen() {
         </Pressable>
       </View>
 
-      {/* Categories ScrollView */}
-      <ScrollView
+      {/* ── Scrollable body ── */}
+      <Animated.ScrollView
         style={styles.scrollView}
+        onScroll={scrollHandler}
+        scrollEventThrottle={16}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={Colors.primary[500]}
+            colors={[Colors.primary[500]]}
+          />
+        }
       >
+        {/* ════════════════════════════════════════════════════════════════════
+            SECTION 1 — Quick Category Grid
+            ════════════════════════════════════════════════════════════════════ */}
+        <SectionGroupHeader title="Browse by Category" subtitle="Tap any category to explore stores & deals" />
         {CATEGORY_SECTIONS.map((section) => renderCategorySection(section))}
-      </ScrollView>
+
+        {/* ════════════════════════════════════════════════════════════════════
+            SECTION 2 — Deals & Offers
+            ════════════════════════════════════════════════════════════════════ */}
+        <SectionGroupHeader title="Deals & Offers" subtitle="Savings curated just for you" />
+
+        <LazySection
+          sectionId="cat-exciting-deals"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <ExcitingDealsSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-shop-experience"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <ShopByExperienceSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-deals-save"
+          scrollY={scrollY}
+          height={400}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={400} />}>
+              <DealsThatSaveMoney />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-flash-sales"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <FlashSales />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-hot-deals"
+          scrollY={scrollY}
+          height={280}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={280} />}>
+              <HotDealsSection title="Hot Deals" limit={10} />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-best-discount"
+          scrollY={scrollY}
+          height={280}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={280} />}>
+              <BestDiscountSection title="Best Discounts" limit={10} />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-best-seller"
+          scrollY={scrollY}
+          height={280}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={280} />}>
+              <BestSellerSection title="Best Sellers" limit={10} />
+            </Suspense>
+          )}
+        />
+
+        {/* ════════════════════════════════════════════════════════════════════
+            SECTION 3 — Category Verticals
+            ════════════════════════════════════════════════════════════════════ */}
+        <SectionGroupHeader title="Explore Verticals" subtitle="Deep-dive into what matters to you" />
+
+        <LazySection
+          sectionId="cat-beauty-wellness"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <BeautyWellnessSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-fitness-sports"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <FitnessSportsSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-grocery"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <GroceryEssentialsSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-healthcare"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <HealthcareSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-home-services"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <HomeServicesSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-financial-services"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <FinancialServicesSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-travel"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <TravelSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-events-exp"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => <EventsExperiencesSection />}
+        />
+
+        {/* ════════════════════════════════════════════════════════════════════
+            SECTION 4 — Store Discovery
+            ════════════════════════════════════════════════════════════════════ */}
+        <SectionGroupHeader title="Stores Near You" subtitle="Discover the best local shops" />
+
+        <LazySection
+          sectionId="cat-store-discovery"
+          scrollY={scrollY}
+          height={350}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={350} />}>
+              <StoreDiscoverySection limit={10} />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-trending-near-you"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <TrendingNearYou />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-nearby-products"
+          scrollY={scrollY}
+          height={280}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={280} />}>
+              <NearbyProductsSection title="In Your Area" limit={10} radius={10} />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-stores-near-you"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <StoresNearYou />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-picked-for-you"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <PickedForYou limit={2} />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-recommended-stores"
+          scrollY={scrollY}
+          height={180}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={180} />}>
+              <RecommendedStoresSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-going-out"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <GoingOutSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-home-delivery"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <HomeDeliverySection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-service"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <ServiceSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-store-experiences"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <StoreExperiencesSection />
+            </Suspense>
+          )}
+        />
+
+        {/* ════════════════════════════════════════════════════════════════════
+            SECTION 5 — Products & Shopping
+            ════════════════════════════════════════════════════════════════════ */}
+        <SectionGroupHeader title="Products" subtitle="Trending items and new arrivals" />
+
+        <LazySection
+          sectionId="cat-popular-products"
+          scrollY={scrollY}
+          height={280}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={280} />}>
+              <PopularProductsSection title="Popular Products" limit={3} />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-brand-partnerships"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <BrandPartnerships />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-featured-categories"
+          scrollY={scrollY}
+          height={400}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={400} />}>
+              <FeaturedCategoriesContainer productsPerCategory={10} />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-discover-shop"
+          scrollY={scrollY}
+          height={600}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={600} />}>
+              <View style={{ marginHorizontal: -20, marginTop: 16, marginBottom: 16 }}>
+                <DiscoverAndShopSection showHeader={true} showCategories={true} initialTab="reels" maxHeight={600} />
+              </View>
+            </Suspense>
+          )}
+        />
+
+        {/* ════════════════════════════════════════════════════════════════════
+            SECTION 6 — Engagement & Rewards
+            ════════════════════════════════════════════════════════════════════ */}
+        <SectionGroupHeader title="Rewards & Engagement" subtitle="Earn coins, track savings, unlock perks" />
+
+        <HomeSavingsSummaryCard
+          totalSaved={0}
+          thisMonthSaved={0}
+          currencySymbol="\u20B9"
+          onPress={() => router.push('/wallet-screen')}
+        />
+        <EarnRezCoinsSection />
+        <LazySection
+          sectionId="cat-play-earn"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <PlayAndEarnSection />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-wallet-snapshot"
+          scrollY={scrollY}
+          height={200}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={200} />}>
+              <WalletSnapshotCard />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-loyalty-hub"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={300} />}>
+              <LoyaltyRewardsHubCard />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-feature-try"
+          scrollY={scrollY}
+          height={250}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={250} />}>
+              <FeatureTryCards />
+            </Suspense>
+          )}
+        />
+        <LazySection
+          sectionId="cat-social-proof"
+          scrollY={scrollY}
+          height={250}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={250} />}>
+              <SocialProofSection />
+            </Suspense>
+          )}
+        />
+
+        {/* ════════════════════════════════════════════════════════════════════
+            SECTION 7 — Student Sections (segment-gated)
+            ════════════════════════════════════════════════════════════════════ */}
+        {isStudentUser && (
+          <>
+            <SectionGroupHeader title="Student Picks" subtitle="Budget deals, campus offers & entertainment" />
+            <LazySection
+              sectionId="cat-campus-strip"
+              scrollY={scrollY}
+              height={240}
+              renderSection={() => <CampusHotDealsStrip />}
+            />
+            <LazySection
+              sectionId="cat-student-food"
+              scrollY={scrollY}
+              height={380}
+              renderSection={() => <StudentBudgetFoodGrid />}
+            />
+            <LazySection
+              sectionId="cat-student-entertainment"
+              scrollY={scrollY}
+              height={280}
+              renderSection={() => <StudentEntertainmentSection />}
+            />
+            <LazySection
+              sectionId="cat-student-utility"
+              scrollY={scrollY}
+              height={320}
+              renderSection={() => <StudentUtilityDealsSection />}
+            />
+            <LazySection
+              sectionId="cat-student-prepaid"
+              scrollY={scrollY}
+              height={220}
+              renderSection={() => <StudentMicroPrepaidPacks />}
+            />
+          </>
+        )}
+
+        {/* ════════════════════════════════════════════════════════════════════
+            SECTION 8 — Employee Sections (segment-gated)
+            ════════════════════════════════════════════════════════════════════ */}
+        {isEmployeeCorporate && (
+          <>
+            <SectionGroupHeader title="Corporate Perks" subtitle="Lunch, wellness, utilities and after-work deals" />
+            {_isLunchWindow && (
+              <LazySection
+                sectionId="cat-employee-lunch"
+                scrollY={scrollY}
+                height={340}
+                renderSection={() => <EmployeeLunchDealsSection />}
+              />
+            )}
+            {_isAfterWorkWindow && !_isLunchWindow && (
+              <LazySection
+                sectionId="cat-employee-afterwork"
+                scrollY={scrollY}
+                height={360}
+                renderSection={() => <EmployeeAfterWorkSection />}
+              />
+            )}
+            {!_isLunchWindow && !_isAfterWorkWindow && (
+              <LazySection
+                sectionId="cat-employee-lunch-preview"
+                scrollY={scrollY}
+                height={340}
+                renderSection={() => <EmployeeLunchDealsSection />}
+              />
+            )}
+            <LazySection
+              sectionId="cat-employee-wellness"
+              scrollY={scrollY}
+              height={380}
+              renderSection={() => <EmployeeWellnessBookingSection />}
+            />
+            <LazySection
+              sectionId="cat-employee-value-packs"
+              scrollY={scrollY}
+              height={480}
+              renderSection={() => <EmployeeValuePacksSection />}
+            />
+            <LazySection
+              sectionId="cat-employee-utility"
+              scrollY={scrollY}
+              height={380}
+              renderSection={() => <EmployeeUtilityServicesSection />}
+            />
+          </>
+        )}
+
+        {/* ════════════════════════════════════════════════════════════════════
+            SECTION 9 — Misc
+            ════════════════════════════════════════════════════════════════════ */}
+        <LazySection
+          sectionId="cat-promo-banner"
+          scrollY={scrollY}
+          height={200}
+          renderSection={() => <PromoBanner />}
+        />
+        <LazySection
+          sectionId="cat-globe-banner"
+          scrollY={scrollY}
+          height={200}
+          renderSection={() => <GlobeBanner />}
+        />
+        <LazySection
+          sectionId="cat-new-on-rez"
+          scrollY={scrollY}
+          height={300}
+          renderSection={() => <NewOnRezSection />}
+        />
+        <LazySection
+          sectionId="cat-how-rez-works"
+          scrollY={scrollY}
+          height={200}
+          renderSection={() => <HowRezWorksCard />}
+        />
+        <LazySection
+          sectionId="cat-recently-viewed"
+          scrollY={scrollY}
+          height={250}
+          renderSection={() => (
+            <Suspense fallback={<SuspensePlaceholder height={250} />}>
+              <RecentlyViewedSection items={[]} isLoading={false} maxItems={10} />
+            </Suspense>
+          )}
+        />
+
+        {/* Bottom padding for tab bar */}
+        <View style={{ height: 120 }} />
+      </Animated.ScrollView>
     </View>
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -191,7 +919,6 @@ const styles = StyleSheet.create({
     width: Spacing['3xl'],
     height: Spacing['3xl'],
     borderRadius: BorderRadius.xl,
-    // MEERA: design token — hardcoded 'rgba(255,255,255,0.5)' -> colors.glass.light.backgroundColor (glass effect with white transparency)
     backgroundColor: 'rgba(255,255,255,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
@@ -203,7 +930,6 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    // MEERA: design token — hardcoded gap: 10 -> Spacing.sm (8px, consistent 8px grid)
     gap: Spacing.sm,
     ...Platform.select({
       ios: {
@@ -216,7 +942,6 @@ const styles = StyleSheet.create({
         elevation: 3,
       },
       web: {
-        // MEERA: design token — hardcoded inline shadow -> should use theme shadows token
         boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
       },
     }),
@@ -232,8 +957,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: Spacing.sm,
-    paddingBottom: 120,
   },
+  // Category grid styles
   sectionContainer: {
     paddingHorizontal: Spacing.base,
     marginBottom: Spacing.lg,
@@ -278,25 +1003,8 @@ const styles = StyleSheet.create({
     ...Typography.caption,
     color: Colors.gray[700],
     textAlign: 'center',
-    // MEERA: design token — hardcoded marginTop: 6 -> Spacing.sm (8px, not in 8px grid); paddingHorizontal: 2 -> Spacing.xs (4px)
     marginTop: Spacing.sm,
     paddingHorizontal: Spacing.xs,
-  },
-  profileAvatar: {
-    width: Spacing['3xl'],
-    height: Spacing['3xl'],
-    borderRadius: BorderRadius.xl,
-    backgroundColor: Colors.primary[200],
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    // MEERA: design token — hardcoded '#F6D55C' (mustard variant) -> Colors.primary[400] (brand mustard)
-    borderColor: Colors.primary[400],
-  },
-  profileText: {
-    ...Typography.body,
-    color: colors.text.primary,
-    fontWeight: '700',
   },
 });
 
