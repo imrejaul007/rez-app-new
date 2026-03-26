@@ -27,11 +27,9 @@ import {
   Platform,
   KeyboardAvoidingView,
   Modal,
-  Keyboard} from 'react-native';
-import Animated, {
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+  Keyboard,
+} from 'react-native';
+import Animated, { useSharedValue, withTiming } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import * as ExpoCamera from 'expo-camera';
 // Deferred: ImagePicker only needed when user taps "Choose from Library"
@@ -146,7 +144,11 @@ function BillUploadPage() {
   const currencySymbol = getCurrencySymbol();
 
   // Image quality validation hook
-  const { checkQuality, isChecking: isCheckingQuality, result: qualityResult } = useImageQuality({
+  const {
+    checkQuality,
+    isChecking: isCheckingQuality,
+    result: qualityResult,
+  } = useImageQuality({
     minWidth: 800,
     minHeight: 600,
     maxFileSize: FILE_SIZE_LIMITS.MAX_IMAGE_SIZE,
@@ -155,15 +157,8 @@ function BillUploadPage() {
   });
 
   // Offline queue hook (PRIMARY upload method)
-  const {
-    addToQueue,
-    syncQueue,
-    isOnline,
-    hasPendingUploads,
-    pendingCount,
-    canSync,
-    getEstimatedSyncTime,
-  } = useOfflineQueue();
+  const { addToQueue, syncQueue, isOnline, hasPendingUploads, pendingCount, canSync, getEstimatedSyncTime } =
+    useOfflineQueue();
 
   // Refs
   const cameraRef = useRef<ExpoCamera.CameraView>(null);
@@ -184,9 +179,7 @@ function BillUploadPage() {
   const [cameraPermission, requestCameraPermission] = ExpoCamera.useCameraPermissions();
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [showCamera, setShowCamera] = useState(false);
-  const [cameraType, setCameraType] = useState<typeof CAMERA_TYPE[keyof typeof CAMERA_TYPE]>(
-    CAMERA_TYPE.back
-  );
+  const [cameraType, setCameraType] = useState<(typeof CAMERA_TYPE)[keyof typeof CAMERA_TYPE]>(CAMERA_TYPE.back);
 
   // Form state
   const [formData, setFormData] = useState<FormData>({
@@ -270,7 +263,11 @@ function BillUploadPage() {
       const savedData = await AsyncStorage.getItem(FORM_STORAGE_KEY);
       if (savedData) {
         let parsed;
-        try { parsed = JSON.parse(savedData); } catch { parsed = null; }
+        try {
+          parsed = JSON.parse(savedData);
+        } catch {
+          parsed = null;
+        }
         if (parsed) {
           setFormData({
             ...parsed,
@@ -280,7 +277,7 @@ function BillUploadPage() {
         }
       }
     } catch (error) {
-      logger.error('Failed to load saved form data:', error);
+      logger.error('Failed to load saved form data:', error as Error | undefined);
     }
   };
 
@@ -295,7 +292,7 @@ function BillUploadPage() {
       };
       await AsyncStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(dataToSave));
     } catch (error) {
-      logger.error('Failed to save form data:', error);
+      logger.error('Failed to save form data:', error as Error | undefined);
     }
   }, [formData]);
 
@@ -306,7 +303,7 @@ function BillUploadPage() {
     try {
       await AsyncStorage.removeItem(FORM_STORAGE_KEY);
     } catch (error) {
-      logger.error('Failed to clear saved form data:', error);
+      logger.error('Failed to clear saved form data:', error as Error | undefined);
     }
   };
 
@@ -343,7 +340,7 @@ function BillUploadPage() {
         setMerchants(mappedStores);
       }
     } catch (error) {
-      logger.error('Error loading merchants:', error);
+      logger.error('Error loading merchants:', error as Error | undefined);
       showToast('Failed to load merchants', 'error');
     } finally {
       if (!isMounted()) return;
@@ -419,7 +416,7 @@ function BillUploadPage() {
     }));
 
     // Clear error when user starts typing
-    if (errors[fieldName]) {
+    if ((errors as any)[fieldName]) {
       setErrors((prev) => ({
         ...prev,
         [fieldName]: undefined,
@@ -576,7 +573,7 @@ function BillUploadPage() {
           showToast(`Bill photo captured (Quality: ${quality.score}/100)`, 'success');
         }
       } catch (error) {
-        logger.error('Error taking picture:', error);
+        logger.error('Error taking picture:', error as Error | undefined);
         showToast('Failed to take picture', 'error');
       }
     }
@@ -638,8 +635,11 @@ function BillUploadPage() {
           const fd = new (globalThis as any).FormData();
           fd.append('billImage', { uri: compressedUri, type: 'image/jpeg', name: 'bill.jpg' } as any);
           const analyzed = await apiClient.post<{
-            amount: number | null; merchantName: string | null;
-            date: string | null; billNumber: string | null; confidence: number;
+            amount: number | null;
+            merchantName: string | null;
+            date: string | null;
+            billNumber: string | null;
+            confidence: number;
           }>('/bills/analyze-image', fd);
           if (analyzed.success && analyzed.data) {
             const d = analyzed.data;
@@ -657,7 +657,7 @@ function BillUploadPage() {
         }
       }
     } catch (error) {
-      logger.error('Error picking image:', error);
+      logger.error('Error picking image:', error as Error | undefined);
       showToast('Failed to pick image', 'error');
     }
   };
@@ -792,7 +792,7 @@ function BillUploadPage() {
           resetForm();
           return;
         } catch (queueError) {
-          logger.error('❌ [BILL UPLOAD] Failed to add to queue:', queueError);
+          logger.error('❌ [BILL UPLOAD] Failed to add to queue:', queueError as Error | undefined);
           if (!isMounted()) return;
           setShowProgressModal(false);
           showToast('Failed to queue bill for upload. Please try again.', 'error');
@@ -874,7 +874,7 @@ function BillUploadPage() {
         });
       }
     } catch (error) {
-      logger.error('Error uploading bill:', error);
+      logger.error('Error uploading bill:', error as Error | undefined);
       if (!isMounted()) return;
       setShowProgressModal(false);
       showToast('An unexpected error occurred', 'error');
@@ -945,14 +945,23 @@ function BillUploadPage() {
     if (Platform.OS === 'web') {
       return (
         <View style={styles.cameraContainer}>
-          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#111', padding: 24 }}>
-            <Pressable
-              style={styles.cameraCloseButton}
-              onPress={() => setShowCamera(false)}
-            >
+          <View
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#111', padding: 24 }}
+          >
+            <Pressable style={styles.cameraCloseButton} onPress={() => setShowCamera(false)}>
               <Ionicons name="close" size={32} color={colors.text.inverse} />
             </Pressable>
-            <View style={{ width: 80, height: 80, borderRadius: 40, backgroundColor: 'rgba(255,255,255,0.1)', justifyContent: 'center', alignItems: 'center', marginBottom: 16 }}>
+            <View
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: 40,
+                backgroundColor: 'rgba(255,255,255,0.1)',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginBottom: 16,
+              }}
+            >
               <Ionicons name="cloud-upload-outline" size={40} color="#fff" />
             </View>
             <Text style={{ color: '#fff', fontSize: 18, fontWeight: '700', marginBottom: 8, textAlign: 'center' }}>
@@ -977,7 +986,17 @@ function BillUploadPage() {
                   reader.readAsDataURL(file);
                 }
               }}
-              style={{ padding: 12, backgroundColor: '#7C3AED', color: '#fff', borderRadius: 8, cursor: 'pointer', border: 'none', fontSize: 16 } as any}
+              style={
+                {
+                  padding: 12,
+                  backgroundColor: '#7C3AED',
+                  color: '#fff',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  border: 'none',
+                  fontSize: 16,
+                } as any
+              }
             />
           </View>
         </View>
@@ -989,22 +1008,15 @@ function BillUploadPage() {
         <ExpoCamera.CameraView ref={cameraRef} style={styles.camera} facing={cameraType}>
           <View style={styles.cameraOverlay}>
             {/* Close button */}
-            <Pressable
-              style={styles.cameraCloseButton}
-              onPress={() => setShowCamera(false)}
-            >
+            <Pressable style={styles.cameraCloseButton} onPress={() => setShowCamera(false)}>
               <Ionicons name="close" size={32} color={colors.text.inverse} />
             </Pressable>
 
             {/* Guidelines */}
             <View style={styles.cameraGuidelines}>
-              <Text style={styles.cameraGuidelinesText}>
-                Position the bill within the frame
-              </Text>
+              <Text style={styles.cameraGuidelinesText}>Position the bill within the frame</Text>
               <View style={styles.cameraFrame} />
-              <Text style={styles.cameraHelperText}>
-                Ensure all details are visible and well-lit
-              </Text>
+              <Text style={styles.cameraHelperText}>Ensure all details are visible and well-lit</Text>
             </View>
 
             {/* Controls */}
@@ -1013,9 +1025,7 @@ function BillUploadPage() {
               <Pressable
                 style={styles.cameraFlipButton}
                 onPress={() => {
-                  setCameraType(
-                    cameraType === CAMERA_TYPE.back ? CAMERA_TYPE.front : CAMERA_TYPE.back
-                  );
+                  setCameraType(cameraType === CAMERA_TYPE.back ? CAMERA_TYPE.front : CAMERA_TYPE.back);
                 }}
               >
                 <Ionicons name="camera-reverse" size={32} color={colors.text.inverse} />
@@ -1038,13 +1048,12 @@ function BillUploadPage() {
   /**
    * Render merchant selector modal
    */
-  const filteredMerchants = useMemo(() =>
-    merchants.filter((m) =>
-      m.name.toLowerCase().includes(merchantSearchQuery.toLowerCase())
-    ), [merchants, merchantSearchQuery]);
+  const filteredMerchants = useMemo(
+    () => merchants.filter((m) => m.name.toLowerCase().includes(merchantSearchQuery.toLowerCase())),
+    [merchants, merchantSearchQuery],
+  );
 
   const renderMerchantSelector = () => {
-
     return (
       <Modal
         visible={showMerchantSelector}
@@ -1106,9 +1115,7 @@ function BillUploadPage() {
                         }}
                       >
                         <Ionicons name="add-circle" size={20} color={colors.brand.green} />
-                        <Text style={styles.addMerchantButtonText}>
-                          Add &quot;{merchantSearchQuery}&quot;
-                        </Text>
+                        <Text style={styles.addMerchantButtonText}>Add &quot;{merchantSearchQuery}&quot;</Text>
                       </Pressable>
                     </View>
                   ) : filteredMerchants.length === 0 ? (
@@ -1120,36 +1127,32 @@ function BillUploadPage() {
                   ) : (
                     <>
                       {filteredMerchants.map((merchant) => (
-                  <Pressable
-                    key={merchant._id}
-                    style={[
-                      styles.merchantItem,
-                      merchant._id === formData.merchantId && styles.merchantItemSelected,
-                    ]}
-                    onPress={() => selectMerchant(merchant)}
-                  >
-                    {merchant.logo ? (
-                      <CachedImage source={merchant.logo} style={styles.merchantLogo} />
-                    ) : (
-                      <View style={[styles.merchantLogo, styles.merchantLogoPlaceholder]}>
-                        <Ionicons name="storefront" size={20} color="#999" />
-                      </View>
-                    )}
-                    <View style={styles.merchantInfo}>
-                      <Text style={styles.merchantName}>{merchant.name}</Text>
-                      {merchant.category && (
-                        <Text style={styles.merchantCategory}>{merchant.category}</Text>
-                      )}
-                      {merchant.cashbackPercentage && (
-                        <Text style={styles.merchantCashback}>
-                          {merchant.cashbackPercentage}% cashback
-                        </Text>
-                      )}
-                    </View>
-                    {merchant._id === formData.merchantId && (
-                      <Ionicons name="checkmark-circle" size={24} color={colors.brand.emerald} />
-                    )}
-                  </Pressable>
+                        <Pressable
+                          key={merchant._id}
+                          style={[
+                            styles.merchantItem,
+                            merchant._id === formData.merchantId && styles.merchantItemSelected,
+                          ]}
+                          onPress={() => selectMerchant(merchant)}
+                        >
+                          {merchant.logo ? (
+                            <CachedImage source={merchant.logo} style={styles.merchantLogo} />
+                          ) : (
+                            <View style={[styles.merchantLogo, styles.merchantLogoPlaceholder]}>
+                              <Ionicons name="storefront" size={20} color="#999" />
+                            </View>
+                          )}
+                          <View style={styles.merchantInfo}>
+                            <Text style={styles.merchantName}>{merchant.name}</Text>
+                            {merchant.category && <Text style={styles.merchantCategory}>{merchant.category}</Text>}
+                            {merchant.cashbackPercentage && (
+                              <Text style={styles.merchantCashback}>{merchant.cashbackPercentage}% cashback</Text>
+                            )}
+                          </View>
+                          {merchant._id === formData.merchantId && (
+                            <Ionicons name="checkmark-circle" size={24} color={colors.brand.emerald} />
+                          )}
+                        </Pressable>
                       ))}
 
                       {/* "Can't find?" option at the bottom of list */}
@@ -1166,9 +1169,7 @@ function BillUploadPage() {
                           }}
                         >
                           <Ionicons name="help-circle-outline" size={20} color={colors.brand.green} />
-                          <Text style={styles.cantFindMerchantText}>
-                            Can&apos;t find your merchant? Add manually
-                          </Text>
+                          <Text style={styles.cantFindMerchantText}>Can&apos;t find your merchant? Add manually</Text>
                         </Pressable>
                       )}
                     </>
@@ -1186,27 +1187,23 @@ function BillUploadPage() {
    * Render progress modal
    */
   const renderProgressModal = () => (
-    <Modal visible={showProgressModal} transparent animationType="fade" onRequestClose={() => setShowProgressModal(false)}>
+    <Modal
+      visible={showProgressModal}
+      transparent
+      animationType="fade"
+      onRequestClose={() => setShowProgressModal(false)}
+    >
       <View style={styles.progressModalContainer}>
         <View style={styles.progressModalContent}>
           <ActivityIndicator size="large" color={colors.brand.green} />
           <Text style={styles.progressModalTitle}>Uploading Bill</Text>
           <Text style={styles.progressModalSubtitle}>
-            {billUploadHook.percentComplete > 0
-              ? `${billUploadHook.percentComplete}% complete`
-              : 'Preparing upload...'}
+            {billUploadHook.percentComplete > 0 ? `${billUploadHook.percentComplete}% complete` : 'Preparing upload...'}
           </Text>
-          {billUploadHook.uploadSpeed && (
-            <Text style={styles.progressModalSpeed}>{billUploadHook.uploadSpeed}</Text>
-          )}
+          {billUploadHook.uploadSpeed && <Text style={styles.progressModalSpeed}>{billUploadHook.uploadSpeed}</Text>}
           {billUploadHook.percentComplete > 0 && (
             <View style={styles.progressBar}>
-              <View
-                style={[
-                  styles.progressBarFill,
-                  { width: `${billUploadHook.percentComplete}%` },
-                ]}
-              />
+              <View style={[styles.progressBarFill, { width: `${billUploadHook.percentComplete}%` }]} />
             </View>
           )}
           <Pressable
@@ -1242,17 +1239,12 @@ function BillUploadPage() {
             <Text style={styles.infoModalBullet}>• Ensure good lighting with no shadows</Text>
             <Text style={styles.infoModalBullet}>• Keep the camera steady to avoid blur</Text>
             <Text style={styles.infoModalBullet}>• Make sure all text is clearly visible</Text>
-            <Text style={styles.infoModalBullet}>
-              • Bills must be less than 30 days old
-            </Text>
+            <Text style={styles.infoModalBullet}>• Bills must be less than 30 days old</Text>
             <Text style={styles.infoModalBullet}>
               • Amount must be between {currencySymbol}50 and {currencySymbol}1,00,000
             </Text>
           </ScrollView>
-          <Pressable
-            style={styles.infoModalCloseButton}
-            onPress={() => setShowInfoModal(false)}
-          >
+          <Pressable style={styles.infoModalCloseButton} onPress={() => setShowInfoModal(false)}>
             <Text style={styles.infoModalCloseButtonText}>Got it</Text>
           </Pressable>
         </View>
@@ -1270,408 +1262,365 @@ function BillUploadPage() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
       >
-      {/* Header */}
-      <View style={styles.header}>
-        <HeaderBackButton onPress={() => {
-          if (router.canGoBack()) {
-            router.canGoBack() ? router.back() : router.replace('/(tabs)');
-          } else {
-            router.replace('/(tabs)/');
-          }
-        }} iconColor={colors.darkGray} />
-        <Text style={styles.headerTitle}>Upload Bill</Text>
-        <Pressable onPress={() => setShowInfoModal(true)}>
-          <Ionicons name="information-circle-outline" size={24} color={colors.darkGray} />
-        </Pressable>
-      </View>
-
-      <Animated.ScrollView
-        ref={scrollViewRef}
-        style={[styles.scrollView, { opacity: fadeAnim }]}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Offline Banner */}
-        {!isOnline && (
-          <View style={styles.offlineBanner}>
-            <Ionicons name="cloud-offline" size={20} color="#FF9800" />
-            <Text style={styles.offlineBannerText}>
-              You&apos;re offline. Bills will be queued and uploaded automatically when connection is restored.
-            </Text>
-          </View>
-        )}
-
-        {/* Pending Queue Banner */}
-        {hasPendingUploads && isOnline && (
-          <Pressable
-            style={styles.queueBanner}
-            onPress={() => router.push('/bill-history')}
-          >
-            <View style={styles.queueBannerLeft}>
-              <Ionicons name="cloud-upload" size={20} color="#2196F3" />
-              <Text style={styles.queueBannerText}>
-                {pendingCount} bill{pendingCount > 1 ? 's' : ''} waiting to upload
-              </Text>
-            </View>
-            <Text style={styles.queueBannerAction}>Sync Now</Text>
-          </Pressable>
-        )}
-
-        {/* Bonus Campaign Banner */}
-        <BonusCampaignBanner campaignSlug={bonusCampaignSlug as string} />
-
-        {/* Info Banner */}
-        <View style={styles.infoBanner}>
-          <Ionicons name="gift" size={24} color={colors.brand.green} />
-          <Text style={styles.infoBannerText}>
-            Upload offline bills to earn up to 20% cashback!
-          </Text>
-        </View>
-
-        {/* Bill Image Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Bill Photo <Text style={styles.required}>*</Text>
-          </Text>
-          {formData.billImage ? (
-            <View style={styles.imagePreviewContainer}>
-              <CachedImage source={formData.billImage} style={styles.imagePreview} />
-
-              {/* Quality Score Badge */}
-              {qualityResult && (
-                <View
-                  style={[
-                    styles.qualityBadge,
-                    qualityResult.score >= 80
-                      ? styles.qualityBadgeGood
-                      : qualityResult.score >= 60
-                      ? styles.qualityBadgeOk
-                      : styles.qualityBadgePoor,
-                  ]}
-                >
-                  <Ionicons
-                    name={
-                      qualityResult.score >= 80
-                        ? 'checkmark-circle'
-                        : qualityResult.score >= 60
-                        ? 'alert-circle'
-                        : 'warning'
-                    }
-                    size={16}
-                    color={colors.text.inverse}
-                  />
-                  <Text style={styles.qualityBadgeText}>
-                    Quality: {qualityResult.score}/100
-                  </Text>
-                </View>
-              )}
-
-              <Pressable
-                style={styles.removeImageButton}
-                onPress={() => handleFieldChange('billImage', null)}
-              >
-                <Ionicons name="close-circle" size={32} color="#FF4444" />
-              </Pressable>
-              <Pressable style={styles.retakeButton} onPress={openCamera}>
-                <Ionicons name="camera" size={16} color={colors.text.inverse} />
-                <Text style={styles.retakeButtonText}>Retake</Text>
-              </Pressable>
-            </View>
-          ) : (
-            <View style={styles.uploadOptionsContainer}>
-              <Pressable
-                style={styles.uploadOption}
-                onPress={openCamera}
-                disabled={isCheckingQuality}
-              >
-                {isCheckingQuality ? (
-                  <ActivityIndicator size="large" color={colors.brand.green} />
-                ) : (
-                  <>
-                    <Ionicons name="camera" size={40} color={colors.brand.green} />
-                    <Text style={styles.uploadOptionText}>Take Photo</Text>
-                  </>
-                )}
-              </Pressable>
-
-              <Pressable
-                style={styles.uploadOption}
-                onPress={pickImageFromGallery}
-                disabled={isCheckingQuality}
-              >
-                {isCheckingQuality ? (
-                  <ActivityIndicator size="large" color={colors.brand.green} />
-                ) : (
-                  <>
-                    <Ionicons name="images" size={40} color={colors.brand.green} />
-                    <Text style={styles.uploadOptionText}>Choose from Gallery</Text>
-                  </>
-                )}
-              </Pressable>
-            </View>
-          )}
-          {touched.billImage && errors.billImage && (
-            <Text style={styles.errorText}>{errors.billImage}</Text>
-          )}
-
-          {/* Quality check result details */}
-          {qualityResult && qualityResult.warnings.length > 0 && (
-            <View style={styles.qualityWarningContainer}>
-              <Ionicons name="alert-circle" size={16} color="#FF9800" />
-              <Text style={styles.qualityWarningText}>{qualityResult.warnings[0]}</Text>
-            </View>
-          )}
-
-          {/* Quality recommendations */}
-          {qualityResult && qualityResult.recommendations.length > 0 && qualityResult.score < 80 && (
-            <View style={styles.qualityRecommendationContainer}>
-              <Ionicons name="information-circle" size={16} color="#2196F3" />
-              <Text style={styles.qualityRecommendationText}>
-                💡 {qualityResult.recommendations[0]}
-              </Text>
-            </View>
-          )}
-
-          <Text style={styles.helperText}>
-            Ensure the bill is clear and all details are visible
-          </Text>
-        </View>
-
-        {/* Merchant Selection */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Merchant <Text style={styles.required}>*</Text>
-          </Text>
-          <Pressable
-            style={[
-              styles.merchantSelector,
-              touched.merchantId && errors.merchantId && styles.inputError,
-            ]}
+        {/* Header */}
+        <View style={styles.header}>
+          <HeaderBackButton
             onPress={() => {
-              loadMerchants();
-              setShowMerchantSelector(true);
+              if (router.canGoBack()) {
+                router.canGoBack() ? router.back() : router.replace('/(tabs)');
+              } else {
+                router.replace('/(tabs)/' as any);
+              }
             }}
-          >
-            {formData.merchantName ? (
-              <View style={styles.selectedMerchantContainer}>
-                <Ionicons name="storefront" size={20} color={colors.brand.green} />
-                <Text style={styles.selectedMerchant}>{formData.merchantName}</Text>
+            iconColor={colors.darkGray}
+          />
+          <Text style={styles.headerTitle}>Upload Bill</Text>
+          <Pressable onPress={() => setShowInfoModal(true)}>
+            <Ionicons name="information-circle-outline" size={24} color={colors.darkGray} />
+          </Pressable>
+        </View>
+
+        <Animated.ScrollView
+          ref={scrollViewRef as any}
+          style={[styles.scrollView, { opacity: fadeAnim }]}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Offline Banner */}
+          {!isOnline && (
+            <View style={styles.offlineBanner}>
+              <Ionicons name="cloud-offline" size={20} color="#FF9800" />
+              <Text style={styles.offlineBannerText}>
+                You&apos;re offline. Bills will be queued and uploaded automatically when connection is restored.
+              </Text>
+            </View>
+          )}
+
+          {/* Pending Queue Banner */}
+          {hasPendingUploads && isOnline && (
+            <Pressable style={styles.queueBanner} onPress={() => router.push('/bill-history')}>
+              <View style={styles.queueBannerLeft}>
+                <Ionicons name="cloud-upload" size={20} color="#2196F3" />
+                <Text style={styles.queueBannerText}>
+                  {pendingCount} bill{pendingCount > 1 ? 's' : ''} waiting to upload
+                </Text>
+              </View>
+              <Text style={styles.queueBannerAction}>Sync Now</Text>
+            </Pressable>
+          )}
+
+          {/* Bonus Campaign Banner */}
+          <BonusCampaignBanner campaignSlug={bonusCampaignSlug as string} />
+
+          {/* Info Banner */}
+          <View style={styles.infoBanner}>
+            <Ionicons name="gift" size={24} color={colors.brand.green} />
+            <Text style={styles.infoBannerText}>Upload offline bills to earn up to 20% cashback!</Text>
+          </View>
+
+          {/* Bill Image Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              Bill Photo <Text style={styles.required}>*</Text>
+            </Text>
+            {formData.billImage ? (
+              <View style={styles.imagePreviewContainer}>
+                <CachedImage source={formData.billImage} style={styles.imagePreview} />
+
+                {/* Quality Score Badge */}
+                {qualityResult && (
+                  <View
+                    style={[
+                      styles.qualityBadge,
+                      qualityResult.score >= 80
+                        ? styles.qualityBadgeGood
+                        : qualityResult.score >= 60
+                          ? styles.qualityBadgeOk
+                          : styles.qualityBadgePoor,
+                    ]}
+                  >
+                    <Ionicons
+                      name={
+                        qualityResult.score >= 80
+                          ? 'checkmark-circle'
+                          : qualityResult.score >= 60
+                            ? 'alert-circle'
+                            : 'warning'
+                      }
+                      size={16}
+                      color={colors.text.inverse}
+                    />
+                    <Text style={styles.qualityBadgeText}>Quality: {qualityResult.score}/100</Text>
+                  </View>
+                )}
+
+                <Pressable style={styles.removeImageButton} onPress={() => handleFieldChange('billImage', null)}>
+                  <Ionicons name="close-circle" size={32} color="#FF4444" />
+                </Pressable>
+                <Pressable style={styles.retakeButton} onPress={openCamera}>
+                  <Ionicons name="camera" size={16} color={colors.text.inverse} />
+                  <Text style={styles.retakeButtonText}>Retake</Text>
+                </Pressable>
               </View>
             ) : (
-              <Text style={styles.placeholderText}>Select Merchant</Text>
-            )}
-            <Ionicons name="chevron-forward" size={20} color="#999" />
-          </Pressable>
-          {touched.merchantId && errors.merchantId && (
-            <Text style={styles.errorText}>{errors.merchantId}</Text>
-          )}
-        </View>
+              <View style={styles.uploadOptionsContainer}>
+                <Pressable style={styles.uploadOption} onPress={openCamera} disabled={isCheckingQuality}>
+                  {isCheckingQuality ? (
+                    <ActivityIndicator size="large" color={colors.brand.green} />
+                  ) : (
+                    <>
+                      <Ionicons name="camera" size={40} color={colors.brand.green} />
+                      <Text style={styles.uploadOptionText}>Take Photo</Text>
+                    </>
+                  )}
+                </Pressable>
 
-        {/* Bill Amount */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Bill Amount <Text style={styles.required}>*</Text>
-          </Text>
-          {autoDetectedAmount && (
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, gap: 4 }}>
-              <Ionicons name="checkmark-circle" size={14} color="#22c55e" />
-              <Text style={{ fontSize: 12, color: '#22c55e', fontWeight: '600' }}>
-                Auto-detected — verify before submitting
+                <Pressable style={styles.uploadOption} onPress={pickImageFromGallery} disabled={isCheckingQuality}>
+                  {isCheckingQuality ? (
+                    <ActivityIndicator size="large" color={colors.brand.green} />
+                  ) : (
+                    <>
+                      <Ionicons name="images" size={40} color={colors.brand.green} />
+                      <Text style={styles.uploadOptionText}>Choose from Gallery</Text>
+                    </>
+                  )}
+                </Pressable>
+              </View>
+            )}
+            {touched.billImage && errors.billImage && <Text style={styles.errorText}>{errors.billImage}</Text>}
+
+            {/* Quality check result details */}
+            {qualityResult && qualityResult.warnings.length > 0 && (
+              <View style={styles.qualityWarningContainer}>
+                <Ionicons name="alert-circle" size={16} color="#FF9800" />
+                <Text style={styles.qualityWarningText}>{qualityResult.warnings[0]}</Text>
+              </View>
+            )}
+
+            {/* Quality recommendations */}
+            {qualityResult && qualityResult.recommendations.length > 0 && qualityResult.score < 80 && (
+              <View style={styles.qualityRecommendationContainer}>
+                <Ionicons name="information-circle" size={16} color="#2196F3" />
+                <Text style={styles.qualityRecommendationText}>💡 {qualityResult.recommendations[0]}</Text>
+              </View>
+            )}
+
+            <Text style={styles.helperText}>Ensure the bill is clear and all details are visible</Text>
+          </View>
+
+          {/* Merchant Selection */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              Merchant <Text style={styles.required}>*</Text>
+            </Text>
+            <Pressable
+              style={[styles.merchantSelector, touched.merchantId && errors.merchantId && styles.inputError]}
+              onPress={() => {
+                loadMerchants();
+                setShowMerchantSelector(true);
+              }}
+            >
+              {formData.merchantName ? (
+                <View style={styles.selectedMerchantContainer}>
+                  <Ionicons name="storefront" size={20} color={colors.brand.green} />
+                  <Text style={styles.selectedMerchant}>{formData.merchantName}</Text>
+                </View>
+              ) : (
+                <Text style={styles.placeholderText}>Select Merchant</Text>
+              )}
+              <Ionicons name="chevron-forward" size={20} color="#999" />
+            </Pressable>
+            {touched.merchantId && errors.merchantId && <Text style={styles.errorText}>{errors.merchantId}</Text>}
+          </View>
+
+          {/* Bill Amount */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              Bill Amount <Text style={styles.required}>*</Text>
+            </Text>
+            {autoDetectedAmount && (
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, gap: 4 }}>
+                <Ionicons name="checkmark-circle" size={14} color="#22c55e" />
+                <Text style={{ fontSize: 12, color: '#22c55e', fontWeight: '600' }}>
+                  Auto-detected — verify before submitting
+                </Text>
+              </View>
+            )}
+            {isAnalyzingBill && (
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, gap: 4 }}>
+                <ActivityIndicator size="small" color={colors.nileBlue} />
+                <Text style={{ fontSize: 12, color: colors.nileBlue }}>Detecting amount...</Text>
+              </View>
+            )}
+            <View style={[styles.inputContainer, touched.amount && errors.amount && styles.inputError]}>
+              <Text style={styles.currencyPrefix}>{currencySymbol}</Text>
+              <TextInput
+                ref={amountInputRef}
+                style={styles.input}
+                placeholder="0.00"
+                keyboardType="decimal-pad"
+                value={formData.amount}
+                onChangeText={(text) => {
+                  handleFieldChange('amount', text);
+                  setAutoDetectedAmount(false);
+                }}
+                onBlur={() => handleFieldBlur('amount')}
+                returnKeyType="next"
+                onSubmitEditing={() => billNumberInputRef.current?.focus()}
+              />
+            </View>
+            {touched.amount && errors.amount ? (
+              <Text style={styles.errorText}>{errors.amount}</Text>
+            ) : (
+              <Text style={styles.helperText}>
+                Min: {currencySymbol}
+                {VALIDATION_CONFIG.amount.min}, Max: {currencySymbol}
+                {VALIDATION_CONFIG.amount.max.toLocaleString()}
+              </Text>
+            )}
+          </View>
+
+          {/* Bill Date */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              Bill Date <Text style={styles.required}>*</Text>
+            </Text>
+            <View style={[styles.inputContainer, touched.billDate && errors.billDate && styles.inputError]}>
+              <Ionicons name="calendar-outline" size={20} color="#999" />
+              <TextInput
+                style={styles.input}
+                placeholder="YYYY-MM-DD"
+                value={formData.billDate.toISOString().split('T')[0]}
+                onChangeText={(text) => {
+                  try {
+                    const date = new Date(text);
+                    if (!isNaN(date.getTime())) {
+                      handleFieldChange('billDate', date);
+                    }
+                  } catch {
+                    // Invalid date format
+                  }
+                }}
+                onBlur={() => handleFieldBlur('billDate')}
+              />
+            </View>
+            {touched.billDate && errors.billDate ? (
+              <Text style={styles.errorText}>{errors.billDate}</Text>
+            ) : (
+              <Text style={styles.helperText}>
+                Bills older than {VALIDATION_CONFIG.date.maxDaysOld} days may be rejected
+              </Text>
+            )}
+          </View>
+
+          {/* Bill Number (Optional) */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Bill Number (Optional)</Text>
+            <View style={styles.inputContainer}>
+              <Ionicons name="document-text-outline" size={20} color="#999" />
+              <TextInput
+                ref={billNumberInputRef}
+                style={styles.input}
+                placeholder="Enter bill number"
+                value={formData.billNumber}
+                onChangeText={(text) => handleFieldChange('billNumber', text)}
+                onBlur={() => handleFieldBlur('billNumber')}
+                returnKeyType="next"
+                onSubmitEditing={() => notesInputRef.current?.focus()}
+              />
+            </View>
+            {touched.billNumber && errors.billNumber && <Text style={styles.errorText}>{errors.billNumber}</Text>}
+          </View>
+
+          {/* Notes (Optional) */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Notes (Optional)</Text>
+            <TextInput
+              ref={notesInputRef}
+              style={[styles.input, styles.textArea]}
+              placeholder="Add any additional notes..."
+              multiline
+              numberOfLines={3}
+              maxLength={VALIDATION_CONFIG.notes.maxLength}
+              value={formData.notes}
+              onChangeText={(text) => handleFieldChange('notes', text)}
+              onBlur={() => handleFieldBlur('notes')}
+              textAlignVertical="top"
+            />
+            <Text style={styles.characterCount}>
+              {formData.notes.length}/{VALIDATION_CONFIG.notes.maxLength}
+            </Text>
+            {touched.notes && errors.notes && <Text style={styles.errorText}>{errors.notes}</Text>}
+          </View>
+
+          {/* Cashback Preview */}
+          {cashbackCalculation && (
+            <View style={styles.section}>
+              <Pressable
+                style={styles.cashbackPreviewHeader}
+                onPress={() => setShowCashbackPreview(!showCashbackPreview)}
+              >
+                <View style={styles.cashbackPreviewTitleContainer}>
+                  <Ionicons name="gift" size={20} color={colors.brand.emerald} />
+                  <Text style={styles.cashbackPreviewTitle}>Estimated Cashback</Text>
+                </View>
+                <View style={styles.cashbackPreviewAmountContainer}>
+                  <Text style={styles.cashbackPreviewAmount}>
+                    {currencySymbol}
+                    {cashbackCalculation.finalCashback.toFixed(2)}
+                  </Text>
+                  <Ionicons
+                    name={showCashbackPreview ? 'chevron-up' : 'chevron-down'}
+                    size={20}
+                    color={colors.midGray}
+                  />
+                </View>
+              </Pressable>
+              {showCashbackPreview && (
+                <View style={styles.cashbackPreviewContent}>
+                  <CashbackCalculator calculation={cashbackCalculation} />
+                </View>
+              )}
+              <Text style={styles.cashbackDisclaimer}>
+                * Estimated cashback. Final amount may vary based on verification.
               </Text>
             </View>
           )}
-          {isAnalyzingBill && (
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4, gap: 4 }}>
-              <ActivityIndicator size="small" color={colors.nileBlue} />
-              <Text style={{ fontSize: 12, color: colors.nileBlue }}>Detecting amount...</Text>
-            </View>
-          )}
-          <View
-            style={[
-              styles.inputContainer,
-              touched.amount && errors.amount && styles.inputError,
-            ]}
+
+          {/* Submit Button */}
+          <Pressable
+            style={[styles.submitButton, (!isFormValid() || billUploadHook.isUploading) && styles.submitButtonDisabled]}
+            onPress={handleSubmit}
+            disabled={!isFormValid() || billUploadHook.isUploading}
           >
-            <Text style={styles.currencyPrefix}>{currencySymbol}</Text>
-            <TextInput
-              ref={amountInputRef}
-              style={styles.input}
-              placeholder="0.00"
-              keyboardType="decimal-pad"
-              value={formData.amount}
-              onChangeText={(text) => { handleFieldChange('amount', text); setAutoDetectedAmount(false); }}
-              onBlur={() => handleFieldBlur('amount')}
-              returnKeyType="next"
-              onSubmitEditing={() => billNumberInputRef.current?.focus()}
-            />
-          </View>
-          {touched.amount && errors.amount ? (
-            <Text style={styles.errorText}>{errors.amount}</Text>
-          ) : (
-            <Text style={styles.helperText}>
-              Min: {currencySymbol}{VALIDATION_CONFIG.amount.min}, Max: {currencySymbol}
-              {VALIDATION_CONFIG.amount.max.toLocaleString()}
-            </Text>
-          )}
-        </View>
-
-        {/* Bill Date */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            Bill Date <Text style={styles.required}>*</Text>
-          </Text>
-          <View
-            style={[
-              styles.inputContainer,
-              touched.billDate && errors.billDate && styles.inputError,
-            ]}
-          >
-            <Ionicons name="calendar-outline" size={20} color="#999" />
-            <TextInput
-              style={styles.input}
-              placeholder="YYYY-MM-DD"
-              value={formData.billDate.toISOString().split('T')[0]}
-              onChangeText={(text) => {
-                try {
-                  const date = new Date(text);
-                  if (!isNaN(date.getTime())) {
-                    handleFieldChange('billDate', date);
-                  }
-                } catch {
-                  // Invalid date format
-                }
-              }}
-              onBlur={() => handleFieldBlur('billDate')}
-            />
-          </View>
-          {touched.billDate && errors.billDate ? (
-            <Text style={styles.errorText}>{errors.billDate}</Text>
-          ) : (
-            <Text style={styles.helperText}>
-              Bills older than {VALIDATION_CONFIG.date.maxDaysOld} days may be rejected
-            </Text>
-          )}
-        </View>
-
-        {/* Bill Number (Optional) */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Bill Number (Optional)</Text>
-          <View style={styles.inputContainer}>
-            <Ionicons name="document-text-outline" size={20} color="#999" />
-            <TextInput
-              ref={billNumberInputRef}
-              style={styles.input}
-              placeholder="Enter bill number"
-              value={formData.billNumber}
-              onChangeText={(text) => handleFieldChange('billNumber', text)}
-              onBlur={() => handleFieldBlur('billNumber')}
-              returnKeyType="next"
-              onSubmitEditing={() => notesInputRef.current?.focus()}
-            />
-          </View>
-          {touched.billNumber && errors.billNumber && (
-            <Text style={styles.errorText}>{errors.billNumber}</Text>
-          )}
-        </View>
-
-        {/* Notes (Optional) */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Notes (Optional)</Text>
-          <TextInput
-            ref={notesInputRef}
-            style={[styles.input, styles.textArea]}
-            placeholder="Add any additional notes..."
-            multiline
-            numberOfLines={3}
-            maxLength={VALIDATION_CONFIG.notes.maxLength}
-            value={formData.notes}
-            onChangeText={(text) => handleFieldChange('notes', text)}
-            onBlur={() => handleFieldBlur('notes')}
-            textAlignVertical="top"
-          />
-          <Text style={styles.characterCount}>
-            {formData.notes.length}/{VALIDATION_CONFIG.notes.maxLength}
-          </Text>
-          {touched.notes && errors.notes && (
-            <Text style={styles.errorText}>{errors.notes}</Text>
-          )}
-        </View>
-
-        {/* Cashback Preview */}
-        {cashbackCalculation && (
-          <View style={styles.section}>
-            <Pressable
-              style={styles.cashbackPreviewHeader}
-              onPress={() => setShowCashbackPreview(!showCashbackPreview)}
-            >
-              <View style={styles.cashbackPreviewTitleContainer}>
-                <Ionicons name="gift" size={20} color={colors.brand.emerald} />
-                <Text style={styles.cashbackPreviewTitle}>Estimated Cashback</Text>
-              </View>
-              <View style={styles.cashbackPreviewAmountContainer}>
-                <Text style={styles.cashbackPreviewAmount}>
-                  {currencySymbol}{cashbackCalculation.finalCashback.toFixed(2)}
-                </Text>
-                <Ionicons
-                  name={showCashbackPreview ? 'chevron-up' : 'chevron-down'}
-                  size={20}
-                  color={colors.midGray}
-                />
-              </View>
-            </Pressable>
-            {showCashbackPreview && (
-              <View style={styles.cashbackPreviewContent}>
-                <CashbackCalculator calculation={cashbackCalculation} />
-              </View>
+            {billUploadHook.isUploading ? (
+              <ActivityIndicator color={colors.text.inverse} />
+            ) : (
+              <>
+                <Ionicons name="cloud-upload" size={20} color={colors.text.inverse} />
+                <Text style={styles.submitButtonText}>Upload Bill</Text>
+              </>
             )}
-            <Text style={styles.cashbackDisclaimer}>
-              * Estimated cashback. Final amount may vary based on verification.
-            </Text>
-          </View>
+          </Pressable>
+
+          {/* Bottom spacing for navigation */}
+          <View style={{ height: 100 }} />
+        </Animated.ScrollView>
+
+        {/* Merchant Selector Modal */}
+        {renderMerchantSelector()}
+
+        {/* Progress Modal */}
+        {renderProgressModal()}
+
+        {/* Info Modal */}
+        {renderInfoModal()}
+
+        {/* Toast */}
+        {toast.visible && (
+          <Toast message={toast.message} type={toast.type} actions={toast.actions} onDismiss={dismissToast} />
         )}
-
-        {/* Submit Button */}
-        <Pressable
-          style={[
-            styles.submitButton,
-            (!isFormValid() || billUploadHook.isUploading) && styles.submitButtonDisabled,
-          ]}
-          onPress={handleSubmit}
-          disabled={!isFormValid() || billUploadHook.isUploading}
-        >
-          {billUploadHook.isUploading ? (
-            <ActivityIndicator color={colors.text.inverse} />
-          ) : (
-            <>
-              <Ionicons name="cloud-upload" size={20} color={colors.text.inverse} />
-              <Text style={styles.submitButtonText}>Upload Bill</Text>
-            </>
-          )}
-        </Pressable>
-
-        {/* Bottom spacing for navigation */}
-        <View style={{ height: 100 }} />
-      </Animated.ScrollView>
-
-      {/* Merchant Selector Modal */}
-      {renderMerchantSelector()}
-
-      {/* Progress Modal */}
-      {renderProgressModal()}
-
-      {/* Info Modal */}
-      {renderInfoModal()}
-
-      {/* Toast */}
-      {toast.visible && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          actions={toast.actions}
-          onDismiss={dismissToast}
-        />
-      )}
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
     </ErrorBoundary>
   );
 }

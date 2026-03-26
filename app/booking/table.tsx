@@ -9,6 +9,7 @@ import {
   TextInput,
   Dimensions,
   KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
@@ -81,7 +82,7 @@ function TableBookingPage() {
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
         >
-          <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
+          <ThemedText style={(styles as any).backButtonText}>Go Back</ThemedText>
         </Pressable>
       </ThemedView>
     );
@@ -112,7 +113,7 @@ function TableBookingPage() {
       setLoading(true);
       const response = await storesApi.getStoreById(storeId as string);
       if (response.success && response.data) {
-        setStore(response.data);
+        setStore(response.data as any);
       } else {
         platformAlertSimple('Error', 'Failed to load store details');
       }
@@ -151,7 +152,7 @@ function TableBookingPage() {
     const slotDuration = store?.bookingConfig?.slotDuration || 90; // default 90 minutes
 
     // Get today's day name
-    const dayOfWeek = selectedDate.toLocaleDateString('en-US', { weekday: 'lowercase' });
+    const dayOfWeek = selectedDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
     const hours = store?.businessHours?.[dayOfWeek];
 
     if (hours && !hours.isClosed) {
@@ -279,7 +280,7 @@ function TableBookingPage() {
         const selectedTimeSlot = timeSlots.find((s) => s.id === selectedTime);
         platformAlertConfirm(
           'Booking Confirmed!',
-          `Your table has been booked!\nBooking Number: ${response.data.bookingId || response.data.confirmationCode || 'N/A'}\nDate: ${formatDate(selectedDate)}\nTime: ${selectedTimeSlot?.time}\nParty Size: ${partySize}`,
+          `Your table has been booked!\nBooking Number: ${(response.data as any).bookingId || (response.data as any).confirmationCode || 'N/A'}\nDate: ${formatDate(selectedDate)}\nTime: ${selectedTimeSlot?.time}\nParty Size: ${partySize}`,
           () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
           'OK',
         );

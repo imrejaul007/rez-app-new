@@ -86,23 +86,25 @@ function BonusZonePage() {
   }, [fetchCampaigns]);
 
   // Filter campaigns: search first, then type filter
-  const searchFiltered = useMemo(() => searchQuery.trim()
-    ? campaigns.filter(c => {
-        const q = searchQuery.trim().toLowerCase();
-        return (
-          c.title.toLowerCase().includes(q) ||
-          (c.subtitle && c.subtitle.toLowerCase().includes(q))
-        );
-      })
-    : campaigns, [campaigns, searchQuery]);
+  const searchFiltered = useMemo(
+    () =>
+      searchQuery.trim()
+        ? campaigns.filter((c) => {
+            const q = searchQuery.trim().toLowerCase();
+            return c.title.toLowerCase().includes(q) || (c.subtitle && c.subtitle.toLowerCase().includes(q));
+          })
+        : campaigns,
+    [campaigns, searchQuery],
+  );
 
-  const filteredCampaigns = useMemo(() => activeFilter === 'all'
-    ? searchFiltered
-    : searchFiltered.filter(c => c.campaignType === activeFilter), [searchFiltered, activeFilter]);
+  const filteredCampaigns = useMemo(
+    () => (activeFilter === 'all' ? searchFiltered : searchFiltered.filter((c) => c.campaignType === activeFilter)),
+    [searchFiltered, activeFilter],
+  );
 
   // Separate featured and regular
-  const featured = useMemo(() => filteredCampaigns.filter(c => c.display.featured), [filteredCampaigns]);
-  const regular = useMemo(() => filteredCampaigns.filter(c => !c.display.featured), [filteredCampaigns]);
+  const featured = useMemo(() => filteredCampaigns.filter((c) => c.display.featured), [filteredCampaigns]);
+  const regular = useMemo(() => filteredCampaigns.filter((c) => !c.display.featured), [filteredCampaigns]);
 
   return (
     <>
@@ -123,21 +125,19 @@ function BonusZonePage() {
         }
         data={filteredCampaigns}
         keyExtractor={(item) => item.slug}
-        renderItem={useCallback(({ item: campaign }) => (
-          <BonusZoneCard
-            campaign={campaign}
-            currencySymbol={currencySymbol}
-          />
-        ), [currencySymbol])}
+        renderItem={useCallback(
+          ({ item: campaign }: { item: any }) => (
+            <BonusZoneCard campaign={campaign} currencySymbol={currencySymbol} />
+          ),
+          [currencySymbol],
+        )}
         ListHeaderComponent={() => (
           <>
             {/* Header */}
             <View style={styles.header}>
               <Ionicons name="happy" size={28} color={colors.brand.orange} />
               <Text style={styles.headerTitle}>Bonus Zone</Text>
-              <Text style={styles.headerSubtitle}>
-                Earn extra coins with time-limited bonus campaigns
-              </Text>
+              <Text style={styles.headerSubtitle}>Earn extra coins with time-limited bonus campaigns</Text>
             </View>
 
             {/* Search Bar */}
@@ -176,18 +176,10 @@ function BonusZonePage() {
               {FILTER_TABS.map((tab) => (
                 <Pressable
                   key={tab.key}
-                  style={[
-                    styles.filterTab,
-                    activeFilter === tab.key && styles.filterTabActive,
-                  ]}
+                  style={[styles.filterTab, activeFilter === tab.key && styles.filterTabActive]}
                   onPress={() => setActiveFilter(tab.key)}
                 >
-                  <Text
-                    style={[
-                      styles.filterTabText,
-                      activeFilter === tab.key && styles.filterTabTextActive,
-                    ]}
-                  >
+                  <Text style={[styles.filterTabText, activeFilter === tab.key && styles.filterTabTextActive]}>
                     {tab.label}
                   </Text>
                 </Pressable>
@@ -213,16 +205,26 @@ function BonusZonePage() {
                 <Text style={styles.emptyTitle}>Something went wrong</Text>
                 <Text style={styles.emptySubtitle}>{error}</Text>
                 <Pressable
-                  style={{ marginTop: Spacing.base, paddingHorizontal: Spacing.lg, paddingVertical: 10, backgroundColor: colors.brand.orange, borderRadius: BorderRadius.sm }}
+                  style={{
+                    marginTop: Spacing.base,
+                    paddingHorizontal: Spacing.lg,
+                    paddingVertical: 10,
+                    backgroundColor: colors.brand.orange,
+                    borderRadius: BorderRadius.sm,
+                  }}
                   onPress={fetchCampaigns}
                 >
-                  <Text style={{ color: colors.text.inverse, fontWeight: '600', ...Typography.body }}>Retry</Text>
+                  <Text style={{ color: colors.text.inverse, ...Typography.body, fontWeight: '600' }}>Retry</Text>
                 </Pressable>
               </View>
             ) : filteredCampaigns.length === 0 ? (
               /* Empty State */
               <View style={styles.emptyContainer}>
-                <Ionicons name={searchQuery.trim() ? 'search-outline' : 'gift-outline'} size={48} color={colors.border.default} />
+                <Ionicons
+                  name={searchQuery.trim() ? 'search-outline' : 'gift-outline'}
+                  size={48}
+                  color={colors.border.default}
+                />
                 <Text style={styles.emptyTitle}>
                   {searchQuery.trim() ? 'No matching campaigns' : 'No campaigns available'}
                 </Text>
@@ -236,9 +238,7 @@ function BonusZonePage() {
               </View>
             ) : (
               <View style={styles.section}>
-                <Text style={styles.sectionLabel}>
-                  {featured.length > 0 ? 'Featured' : 'Campaigns'}
-                </Text>
+                <Text style={styles.sectionLabel}>{featured.length > 0 ? 'Featured' : 'Campaigns'}</Text>
               </View>
             )}
           </>
@@ -246,10 +246,7 @@ function BonusZonePage() {
         ListFooterComponent={() => (
           <>
             {/* Claim History Link */}
-            <Pressable
-              style={styles.historyLink}
-              onPress={() => router.push('/bonus-zone-history' as any)}
-            >
+            <Pressable style={styles.historyLink} onPress={() => router.push('/bonus-zone-history' as any)}>
               <Ionicons name="receipt-outline" size={18} color={colors.text.tertiary} />
               <Text style={styles.historyLinkText}>View Claim History</Text>
               <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />

@@ -36,10 +36,10 @@ function RescheduleBookingScreen() {
           <Text style={[styles.title, { color: colors.text.primary }]}>Reschedule Appointment</Text>
           <View style={{ width: 24 }} />
         </View>
-        <View style={styles.errorContainer}>
-          <Text style={styles.errorText}>Booking not found</Text>
-          <TouchableOpacity onPress={() => router.back()} style={styles.retryButton}>
-            <Text style={styles.retryButtonText}>Go Back</Text>
+        <View style={(styles as any).errorContainer}>
+          <Text style={(styles as any).errorText}>Booking not found</Text>
+          <TouchableOpacity onPress={() => router.back()} style={(styles as any).retryButton}>
+            <Text style={(styles as any).retryButtonText}>Go Back</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -94,16 +94,13 @@ function RescheduleBookingScreen() {
 
     setLoading(true);
     try {
-      const response = await serviceBookingApi.rescheduleBooking(bookingId || '', {
+      const response = await (serviceBookingApi as any).rescheduleBooking(bookingId || '', {
         newDate: selectedDate,
         newTime: selectedTime,
       });
 
       if (response.success) {
-        platformAlertSimple(
-          'Success!',
-          'Your appointment has been rescheduled. The merchant will be notified.'
-        );
+        platformAlertSimple('Success!', 'Your appointment has been rescheduled. The merchant will be notified.');
         if (isMounted()) {
           setTimeout(() => router.replace('/my-bookings' as any), 1500);
         }
@@ -111,10 +108,7 @@ function RescheduleBookingScreen() {
         platformAlertSimple('Error', response.error || 'Could not reschedule booking');
       }
     } catch (err: any) {
-      platformAlertSimple(
-        'Error',
-        err.response?.data?.error || 'Failed to reschedule booking. Please try again.'
-      );
+      platformAlertSimple('Error', err.response?.data?.error || 'Failed to reschedule booking. Please try again.');
     } finally {
       if (isMounted()) {
         setLoading(false);
@@ -144,17 +138,9 @@ function RescheduleBookingScreen() {
               <Pressable
                 key={date}
                 onPress={() => setSelectedDate(date)}
-                style={[
-                  styles.dateButton,
-                  selectedDate === date && styles.dateButtonSelected,
-                ]}
+                style={[styles.dateButton, selectedDate === date && styles.dateButtonSelected]}
               >
-                <Text
-                  style={[
-                    styles.dateButtonText,
-                    selectedDate === date && styles.dateButtonTextSelected,
-                  ]}
-                >
+                <Text style={[styles.dateButtonText, selectedDate === date && styles.dateButtonTextSelected]}>
                   {formatDate(date)}
                 </Text>
               </Pressable>
@@ -171,17 +157,9 @@ function RescheduleBookingScreen() {
                 <Pressable
                   key={time}
                   onPress={() => setSelectedTime(time)}
-                  style={[
-                    styles.timeButton,
-                    selectedTime === time && styles.timeButtonSelected,
-                  ]}
+                  style={[styles.timeButton, selectedTime === time && styles.timeButtonSelected]}
                 >
-                  <Text
-                    style={[
-                      styles.timeButtonText,
-                      selectedTime === time && styles.timeButtonTextSelected,
-                    ]}
-                  >
+                  <Text style={[styles.timeButtonText, selectedTime === time && styles.timeButtonTextSelected]}>
                     {formatTime(time)}
                   </Text>
                 </Pressable>
@@ -205,10 +183,7 @@ function RescheduleBookingScreen() {
       {selectedDate && selectedTime && (
         <View style={[styles.footer, { backgroundColor: colors.background.primary }]}>
           <Pressable
-            style={[
-              styles.confirmBtn,
-              { backgroundColor: colors.brand.purpleLight, opacity: loading ? 0.7 : 1 },
-            ]}
+            style={[styles.confirmBtn, { backgroundColor: colors.brand.purpleLight, opacity: loading ? 0.7 : 1 }]}
             onPress={handleReschedule}
             disabled={loading}
           >

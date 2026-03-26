@@ -1,14 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  RefreshControl,
-  ActivityIndicator,
-  Pressable,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl, ActivityIndicator, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import bonusZoneApi, { BonusClaim } from '@/services/bonusZoneApi';
@@ -56,21 +48,12 @@ function ClaimRow({ claim, onPress }: { claim: BonusClaim; onPress: () => void }
 
   // campaignId may be populated with campaign object or just a string ID
   const campaignTitle =
-    typeof claim.campaignId === 'object' && claim.campaignId?.title
-      ? claim.campaignId.title
-      : 'Bonus Campaign';
+    typeof claim.campaignId === 'object' && claim.campaignId?.title ? claim.campaignId.title : 'Bonus Campaign';
 
-  const campaignSlug =
-    typeof claim.campaignId === 'object' && claim.campaignId?.slug
-      ? claim.campaignId.slug
-      : null;
+  const campaignSlug = typeof claim.campaignId === 'object' && claim.campaignId?.slug ? claim.campaignId.slug : null;
 
   return (
-    <Pressable
-      style={styles.claimCard}
-      onPress={onPress}
-     
-    >
+    <Pressable style={styles.claimCard} onPress={onPress}>
       <View style={styles.claimTop}>
         <View style={styles.claimInfo}>
           <Text style={styles.claimTitle} numberOfLines={1}>
@@ -88,21 +71,13 @@ function ClaimRow({ claim, onPress }: { claim: BonusClaim; onPress: () => void }
           )}
         </View>
         <View style={styles.claimRight}>
-          <Text style={[
-            styles.rewardAmount,
-            claim.status === 'rejected' && styles.rewardAmountRejected,
-          ]}>
-            {claim.status === 'rejected' ? '' : '+'}{claim.rewardAmount} {claim.rewardType === 'branded' ? 'branded' : 'coins'}
+          <Text style={[styles.rewardAmount, claim.status === 'rejected' && styles.rewardAmountRejected]}>
+            {claim.status === 'rejected' ? '' : '+'}
+            {claim.rewardAmount} {claim.rewardType === 'branded' ? 'branded' : 'coins'}
           </Text>
           <View style={[styles.statusBadge, { backgroundColor: statusInfo.bg }]}>
-            <Ionicons
-              name={statusInfo.icon as any}
-              size={12}
-              color={statusInfo.color}
-            />
-            <Text style={[styles.statusText, { color: statusInfo.color }]}>
-              {statusInfo.label}
-            </Text>
+            <Ionicons name={statusInfo.icon as any} size={12} color={statusInfo.color} />
+            <Text style={[styles.statusText, { color: statusInfo.color }]}>{statusInfo.label}</Text>
           </View>
         </View>
       </View>
@@ -135,40 +110,43 @@ function BonusZoneHistoryPage() {
 
   const PAGE_LIMIT = 20;
 
-  const fetchHistory = useCallback(async (pageNum: number = 1, append: boolean = false, statusFilter?: string) => {
-    try {
-      setError(null);
-      if (append) {
-        setLoadingMore(true);
-      }
-      const params: any = { page: pageNum, limit: PAGE_LIMIT };
-      const filterToUse = statusFilter !== undefined ? statusFilter : activeFilter;
-      if (filterToUse && filterToUse !== 'all') {
-        params.status = filterToUse;
-      }
-      const response = await bonusZoneApi.getMyClaimHistory(params);
-      if (response.success && response.data?.claims) {
+  const fetchHistory = useCallback(
+    async (pageNum: number = 1, append: boolean = false, statusFilter?: string) => {
+      try {
+        setError(null);
         if (append) {
-          setClaims((prev) => [...prev, ...response.data!.claims]);
-        } else {
-          setClaims(response.data.claims);
+          setLoadingMore(true);
         }
-        setPage(pageNum);
-        const pagination = response.data.pagination;
-        setHasMore(pagination ? pagination.page < pagination.pages : false);
+        const params: any = { page: pageNum, limit: PAGE_LIMIT };
+        const filterToUse = statusFilter !== undefined ? statusFilter : activeFilter;
+        if (filterToUse && filterToUse !== 'all') {
+          params.status = filterToUse;
+        }
+        const response = await bonusZoneApi.getMyClaimHistory(params);
+        if (response.success && response.data?.claims) {
+          if (append) {
+            setClaims((prev) => [...prev, ...response.data!.claims]);
+          } else {
+            setClaims(response.data.claims);
+          }
+          setPage(pageNum);
+          const pagination = response.data.pagination;
+          setHasMore(pagination ? pagination.page < pagination.pages : false);
+        }
+      } catch (err: any) {
+        if (!isMounted()) return;
+        setError(err.message || 'Failed to load claim history');
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Failed to load claim history');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [activeFilter]);
+    },
+    [activeFilter],
+  );
 
   useEffect(() => {
     fetchHistory(1);
@@ -186,22 +164,26 @@ function BonusZoneHistoryPage() {
     }
   }, [loadingMore, hasMore, page, fetchHistory]);
 
-  const onFilterChange = useCallback((filter: string) => {
-    setActiveFilter(filter);
-    setLoading(true);
-    setClaims([]);
-    setPage(1);
-    fetchHistory(1, false, filter);
-  }, [fetchHistory]);
+  const onFilterChange = useCallback(
+    (filter: string) => {
+      setActiveFilter(filter);
+      setLoading(true);
+      setClaims([]);
+      setPage(1);
+      fetchHistory(1, false, filter);
+    },
+    [fetchHistory],
+  );
 
-  const handleClaimPress = useCallback((claim: BonusClaim) => {
-    const slug = typeof claim.campaignId === 'object' && claim.campaignId?.slug
-      ? claim.campaignId.slug
-      : null;
-    if (slug) {
-      router.push({ pathname: '/bonus-zone/[slug]', params: { slug } } as any);
-    }
-  }, [router]);
+  const handleClaimPress = useCallback(
+    (claim: BonusClaim) => {
+      const slug = typeof claim.campaignId === 'object' && claim.campaignId?.slug ? claim.campaignId.slug : null;
+      if (slug) {
+        router.push({ pathname: '/bonus-zone/[slug]', params: { slug } } as any);
+      }
+    },
+    [router],
+  );
 
   return (
     <>
@@ -225,30 +207,18 @@ function BonusZoneHistoryPage() {
         <View style={styles.header}>
           <Ionicons name="receipt-outline" size={28} color={colors.brand.orange} />
           <Text style={styles.headerTitle}>Claim History</Text>
-          <Text style={styles.headerSubtitle}>
-            Track the status of your bonus zone claims
-          </Text>
+          <Text style={styles.headerSubtitle}>Track the status of your bonus zone claims</Text>
         </View>
 
         {/* Filter Tabs */}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterContainer}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterContainer}>
           {FILTER_TABS.map((tab) => (
             <Pressable
               key={tab.key}
-              style={[
-                styles.filterTab,
-                activeFilter === tab.key && styles.filterTabActive,
-              ]}
+              style={[styles.filterTab, activeFilter === tab.key && styles.filterTabActive]}
               onPress={() => onFilterChange(tab.key)}
             >
-              <Text style={[
-                styles.filterTabText,
-                activeFilter === tab.key && styles.filterTabTextActive,
-              ]}>
+              <Text style={[styles.filterTabText, activeFilter === tab.key && styles.filterTabTextActive]}>
                 {tab.label}
               </Text>
             </Pressable>
@@ -285,20 +255,12 @@ function BonusZoneHistoryPage() {
           /* Claims List */
           <View style={styles.listSection}>
             {claims.map((claim) => (
-              <ClaimRow
-                key={claim.id}
-                claim={claim}
-                onPress={() => handleClaimPress(claim)}
-              />
+              <ClaimRow key={claim.id} claim={claim} onPress={() => handleClaimPress(claim)} />
             ))}
 
             {/* Load More */}
             {hasMore && (
-              <Pressable
-                style={styles.loadMoreButton}
-                onPress={onLoadMore}
-                disabled={loadingMore}
-              >
+              <Pressable style={styles.loadMoreButton} onPress={onLoadMore} disabled={loadingMore}>
                 {loadingMore ? (
                   <ActivityIndicator size="small" color={colors.brand.orange} />
                 ) : (
@@ -414,8 +376,8 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     color: colors.text.inverse,
-    fontWeight: '600',
     ...Typography.body,
+    fontWeight: '600',
   },
 
   // ---- Claims List ----

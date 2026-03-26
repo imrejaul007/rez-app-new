@@ -107,11 +107,9 @@ const STATUS_TABS: { key: StatusFilter; label: string }[] = [
 ];
 
 // ─── Helper: format date/time ─────────────────────────────────
-const formatDate = (d: Date) =>
-  d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+const formatDate = (d: Date) => d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 
-const formatDateFull = (d: Date) =>
-  d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+const formatDateFull = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
 
 const formatTime12 = (time24: string) => {
   const [h, m] = time24.split(':').map(Number);
@@ -206,7 +204,9 @@ function BookingsPage() {
       referenceNumber: b.bookingReference || b._id,
       details: [
         { label: 'Attendee', value: b.attendeeInfo?.name || '-' },
-        ...(b.amount > 0 ? [{ label: 'Amount', value: `${b.currency || currencySymbol} ${b.amount?.toLocaleString()}` }] : []),
+        ...(b.amount > 0
+          ? [{ label: 'Amount', value: `${b.currency || currencySymbol} ${b.amount?.toLocaleString()}` }]
+          : []),
         ...(b.attendeeInfo?.email ? [{ label: 'Email', value: b.attendeeInfo.email }] : []),
       ],
       canCancel: b.status === 'pending' || b.status === 'confirmed',
@@ -229,8 +229,12 @@ function BookingsPage() {
       referenceNumber: b.bookingNumber || b._id,
       details: [
         { label: 'Customer', value: b.customerName || '-' },
-        ...(b.pricing?.total ? [{ label: 'Amount', value: `${b.pricing.currency || currencySymbol} ${b.pricing.total?.toLocaleString()}` }] : []),
-        ...(b.serviceType ? [{ label: 'Type', value: b.serviceType.charAt(0).toUpperCase() + b.serviceType.slice(1) }] : []),
+        ...(b.pricing?.total
+          ? [{ label: 'Amount', value: `${b.pricing.currency || currencySymbol} ${b.pricing.total?.toLocaleString()}` }]
+          : []),
+        ...(b.serviceType
+          ? [{ label: 'Type', value: b.serviceType.charAt(0).toUpperCase() + b.serviceType.slice(1) }]
+          : []),
         ...(b.duration ? [{ label: 'Duration', value: `${b.duration} min` }] : []),
       ],
       canCancel: b.status === 'pending' || b.status === 'confirmed' || b.status === 'assigned',
@@ -252,111 +256,115 @@ function BookingsPage() {
   };
 
   // ─── Fetch one page from each API ─────────────────────
-  const fetchPage = useCallback(async (
-    tPage: number,
-    eOffset: number,
-    sPage: number,
-    tHasMore: boolean,
-    eHasMore: boolean,
-    sHasMore: boolean,
-  ) => {
-    const promises: Promise<{ type: 'table' | 'event' | 'service'; bookings: any[]; hasMore: boolean }>[] = [];
+  const fetchPage = useCallback(
+    async (tPage: number, eOffset: number, sPage: number, tHasMore: boolean, eHasMore: boolean, sHasMore: boolean) => {
+      const promises: Promise<{ type: 'table' | 'event' | 'service'; bookings: any[]; hasMore: boolean }>[] = [];
 
-    if (tHasMore) {
-      promises.push(
-        tableBookingApi.getUserTableBookings({ page: tPage, limit: PAGE_SIZE })
-          .then((res) => {
-            const data = res.data;
-            const bookings = Array.isArray(data) ? data : (data as any)?.bookings || [];
-            const hasNext = (data as any)?.pagination?.hasNext ?? bookings.length >= PAGE_SIZE;
-            return { type: 'table' as const, bookings, hasMore: hasNext };
-          })
-          .catch(() => ({ type: 'table' as const, bookings: [], hasMore: false }))
-      );
-    }
+      if (tHasMore) {
+        promises.push(
+          tableBookingApi
+            .getUserTableBookings({ page: tPage, limit: PAGE_SIZE })
+            .then((res) => {
+              const data = res.data;
+              const bookings = Array.isArray(data) ? data : (data as any)?.bookings || [];
+              const hasNext = (data as any)?.pagination?.hasNext ?? bookings.length >= PAGE_SIZE;
+              return { type: 'table' as const, bookings, hasMore: hasNext };
+            })
+            .catch(() => ({ type: 'table' as const, bookings: [], hasMore: false })),
+        );
+      }
 
-    if (eHasMore) {
-      promises.push(
-        eventsApiService.getUserBookings(undefined, PAGE_SIZE, eOffset)
-          .then((res) => ({
-            type: 'event' as const,
-            bookings: res.bookings || [],
-            hasMore: res.hasMore ?? (res.bookings || []).length >= PAGE_SIZE,
-          }))
-          .catch(() => ({ type: 'event' as const, bookings: [], hasMore: false }))
-      );
-    }
+      if (eHasMore) {
+        promises.push(
+          eventsApiService
+            .getUserBookings(undefined, PAGE_SIZE, eOffset)
+            .then((res) => ({
+              type: 'event' as const,
+              bookings: res.bookings || [],
+              hasMore: res.hasMore ?? (res.bookings || []).length >= PAGE_SIZE,
+            }))
+            .catch(() => ({ type: 'event' as const, bookings: [], hasMore: false })),
+        );
+      }
 
-    if (sHasMore) {
-      promises.push(
-        serviceBookingService.getUserBookings({ page: sPage, limit: PAGE_SIZE })
-          .then((res) => {
-            const bookings = res.data || [];
-            const totalPages = (res as any).meta?.pagination?.pages || 1;
-            return {
-              type: 'service' as const,
-              bookings,
-              hasMore: sPage < totalPages && bookings.length >= PAGE_SIZE,
-            };
-          })
-          .catch(() => ({ type: 'service' as const, bookings: [], hasMore: false }))
-      );
-    }
+      if (sHasMore) {
+        promises.push(
+          serviceBookingService
+            .getUserBookings({ page: sPage, limit: PAGE_SIZE })
+            .then((res) => {
+              const bookings = res.data || [];
+              const totalPages = (res as any).meta?.pagination?.pages || 1;
+              return {
+                type: 'service' as const,
+                bookings,
+                hasMore: sPage < totalPages && bookings.length >= PAGE_SIZE,
+              };
+            })
+            .catch(() => ({ type: 'service' as const, bookings: [], hasMore: false })),
+        );
+      }
 
-    return Promise.all(promises);
-  }, []);
+      return Promise.all(promises);
+    },
+    [],
+  );
 
   // ─── Initial load (page 1 of each) ────────────────────
-  const loadBookings = useCallback(async (force = false) => {
-    if (!isAuthenticated) {
-      setLoading(false);
-      return;
-    }
-    // Skip fetch if data is fresh (within 30s TTL) unless forced (e.g. pull-to-refresh)
-    if (!force && Date.now() - lastLoadedAt.current < STALE_TTL_MS) {
-      setLoading(false);
-      return;
-    }
-    try {
-      setLoadError(null);
-      if (!refreshing) setLoading(true);
+  const loadBookings = useCallback(
+    async (force = false) => {
+      if (!isAuthenticated) {
+        setLoading(false);
+        return;
+      }
+      // Skip fetch if data is fresh (within 30s TTL) unless forced (e.g. pull-to-refresh)
+      if (!force && Date.now() - lastLoadedAt.current < STALE_TTL_MS) {
+        setLoading(false);
+        return;
+      }
+      try {
+        setLoadError(null);
+        if (!refreshing) setLoading(true);
 
-      // Reset pagination
-      const results = await fetchPage(1, 0, 1, true, true, true);
+        // Reset pagination
+        const results = await fetchPage(1, 0, 1, true, true, true);
 
-      const unified: UnifiedBooking[] = [];
-      let tHasMore = false, eHasMore = false, sHasMore = false;
+        const unified: UnifiedBooking[] = [];
+        let tHasMore = false,
+          eHasMore = false,
+          sHasMore = false;
 
-      results.forEach((r) => {
-        if (r.type === 'table') {
-          r.bookings.forEach((b: any) => unified.push(normalizeTableBooking(b)));
-          tHasMore = r.hasMore;
-        } else if (r.type === 'event') {
-          r.bookings.forEach((b: any) => unified.push(normalizeEventBooking(b)));
-          eHasMore = r.hasMore;
-        } else {
-          r.bookings.forEach((b: any) => unified.push(normalizeServiceBooking(b)));
-          sHasMore = r.hasMore;
-        }
-      });
+        results.forEach((r) => {
+          if (r.type === 'table') {
+            r.bookings.forEach((b: any) => unified.push(normalizeTableBooking(b)));
+            tHasMore = r.hasMore;
+          } else if (r.type === 'event') {
+            r.bookings.forEach((b: any) => unified.push(normalizeEventBooking(b)));
+            eHasMore = r.hasMore;
+          } else {
+            r.bookings.forEach((b: any) => unified.push(normalizeServiceBooking(b)));
+            sHasMore = r.hasMore;
+          }
+        });
 
-      if (!isMounted()) return;
-      setTablePage({ page: 2, hasMore: tHasMore });
-      if (!isMounted()) return;
-      setEventPage({ offset: PAGE_SIZE, hasMore: eHasMore });
-      if (!isMounted()) return;
-      setServicePage({ page: 2, hasMore: sHasMore });
-      if (!isMounted()) return;
-      setAllBookings(sortBookings(unified));
-      lastLoadedAt.current = Date.now();
-    } catch (error: any) {
-      if (!isMounted()) return;
-      setLoadError(error.message || 'Failed to load bookings');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-    }
-  }, [isAuthenticated, refreshing, fetchPage]);
+        if (!isMounted()) return;
+        setTablePage({ page: 2, hasMore: tHasMore });
+        if (!isMounted()) return;
+        setEventPage({ offset: PAGE_SIZE, hasMore: eHasMore });
+        if (!isMounted()) return;
+        setServicePage({ page: 2, hasMore: sHasMore });
+        if (!isMounted()) return;
+        setAllBookings(sortBookings(unified));
+        lastLoadedAt.current = Date.now();
+      } catch (error: any) {
+        if (!isMounted()) return;
+        setLoadError(error.message || 'Failed to load bookings');
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+      }
+    },
+    [isAuthenticated, refreshing, fetchPage],
+  );
 
   // ─── Load more (next page) ────────────────────────────
   const loadMore = useCallback(async () => {
@@ -367,13 +375,21 @@ function BookingsPage() {
     setLoadingMore(true);
     try {
       const results = await fetchPage(
-        tablePage.page, eventPage.offset, servicePage.page,
-        tablePage.hasMore, eventPage.hasMore, servicePage.hasMore,
+        tablePage.page,
+        eventPage.offset,
+        servicePage.page,
+        tablePage.hasMore,
+        eventPage.hasMore,
+        servicePage.hasMore,
       );
 
       const newItems: UnifiedBooking[] = [];
-      let tHasMore = tablePage.hasMore, eHasMore = eventPage.hasMore, sHasMore = servicePage.hasMore;
-      let tNextPage = tablePage.page, eNextOffset = eventPage.offset, sNextPage = servicePage.page;
+      let tHasMore = tablePage.hasMore,
+        eHasMore = eventPage.hasMore,
+        sHasMore = servicePage.hasMore;
+      let tNextPage = tablePage.page,
+        eNextOffset = eventPage.offset,
+        sNextPage = servicePage.page;
 
       results.forEach((r) => {
         if (r.type === 'table') {
@@ -413,7 +429,7 @@ function BookingsPage() {
     useCallback(() => {
       if (isAuthenticated) loadBookings();
       else setLoading(false);
-    }, [isAuthenticated])
+    }, [isAuthenticated]),
   );
 
   const onRefresh = useCallback(async () => {
@@ -448,7 +464,7 @@ function BookingsPage() {
       'Cancel Booking',
       `Are you sure you want to cancel your booking for "${booking.title}"?`,
       'Keep',
-      'Yes, Cancel'
+      'Yes, Cancel',
     );
     if (!confirmed) return;
 
@@ -488,7 +504,10 @@ function BookingsPage() {
         <Stack.Screen options={{ headerShown: false }} />
         <StatusBar barStyle="light-content" />
         <LinearGradient colors={[C.primary, C.primaryDark]} style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backBtn}
+          >
             <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>My Bookings</Text>
@@ -530,202 +549,208 @@ function BookingsPage() {
   }, [hasMoreData, loadingMore]);
 
   // ─── Render booking card ─────────────────────────────────
-  const renderBookingCard = useCallback(({ item: booking }: { item: UnifiedBooking }) => {
-    const typeConf = BOOKING_TYPE_CONFIG[booking.type];
-    const statusConf = STATUS_CONFIG[booking.status] || STATUS_CONFIG.pending;
-    const upcoming = isUpcoming(booking.date) && booking.status !== 'cancelled' && booking.status !== 'completed' && booking.status !== 'no_show';
-    const isExpanded = expandedBookingId === booking.id;
+  const renderBookingCard = useCallback(
+    ({ item: booking }: { item: UnifiedBooking }) => {
+      const typeConf = BOOKING_TYPE_CONFIG[booking.type];
+      const statusConf = STATUS_CONFIG[booking.status] || STATUS_CONFIG.pending;
+      const upcoming =
+        isUpcoming(booking.date) &&
+        booking.status !== 'cancelled' &&
+        booking.status !== 'completed' &&
+        booking.status !== 'no_show';
+      const isExpanded = expandedBookingId === booking.id;
 
-    // Build expanded details from raw data
-    const raw = booking.raw;
-    const storeLocation = raw?.storeId?.location;
-    const storeContact = raw?.storeId?.contact;
+      // Build expanded details from raw data
+      const raw = booking.raw;
+      const storeLocation = raw?.storeId?.location;
+      const storeContact = raw?.storeId?.contact;
 
-    const handleExpand = () => setExpandedBookingId(isExpanded ? null : booking.id);
-    const handleMenuPress = () => {
-      const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
-      router.push({
-        pathname: '/menu/[storeId]',
-        params: {
-          storeId: store?._id || booking.raw?.storeId || '',
-          dineIn: 'true',
-          table: booking.raw?.bookingNumber || '',
-        },
-      } as any);
-    };
-    const handlePayPress = () => {
-      const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
-      router.push({
-        pathname: '/pay-in-store/enter-amount',
-        params: {
-          storeId: store?._id || booking.raw?.storeId || '',
-          storeName: store?.name || booking.title || '',
-          storeLogo: store?.logo || '',
-        },
-      } as any);
-    };
+      const handleExpand = () => setExpandedBookingId(isExpanded ? null : booking.id);
+      const handleMenuPress = () => {
+        const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
+        router.push({
+          pathname: '/menu/[storeId]',
+          params: {
+            storeId: store?._id || booking.raw?.storeId || '',
+            dineIn: 'true',
+            table: booking.raw?.bookingNumber || '',
+          },
+        } as any);
+      };
+      const handlePayPress = () => {
+        const store = booking.raw?.storeId && typeof booking.raw.storeId === 'object' ? booking.raw.storeId : null;
+        router.push({
+          pathname: '/pay-in-store/enter-amount',
+          params: {
+            storeId: store?._id || booking.raw?.storeId || '',
+            storeName: store?.name || booking.title || '',
+            storeLogo: store?.logo || '',
+          },
+        } as any);
+      };
 
-    return (
-      <Pressable
-        style={styles.card}
-
-        onPress={handleExpand}
-      >
-        {/* Type badge + Status badge row */}
-        <View style={styles.cardTopRow}>
-          <View style={[styles.typeBadge, { backgroundColor: typeConf.bgColor }]}>
-            <Ionicons name={typeConf.icon} size={12} color={typeConf.color} />
-            <Text style={[styles.typeBadgeText, { color: typeConf.color }]}>{typeConf.label}</Text>
-          </View>
-          {upcoming && (
-            <View style={styles.upcomingDot}>
-              <View style={styles.upcomingDotInner} />
-              <Text style={styles.upcomingText}>Upcoming</Text>
+      return (
+        <Pressable style={styles.card} onPress={handleExpand}>
+          {/* Type badge + Status badge row */}
+          <View style={styles.cardTopRow}>
+            <View style={[styles.typeBadge, { backgroundColor: typeConf.bgColor }]}>
+              <Ionicons name={typeConf.icon} size={12} color={typeConf.color} />
+              <Text style={[styles.typeBadgeText, { color: typeConf.color }]}>{typeConf.label}</Text>
             </View>
-          )}
-          <View style={{ flex: 1 }} />
-          <View style={[styles.statusBadge, { backgroundColor: statusConf.bg }]}>
-            <Ionicons name={statusConf.icon as any} size={12} color={statusConf.color} />
-            <Text style={[styles.statusBadgeText, { color: statusConf.color }]}>
-              {booking.status.replace('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
-            </Text>
-          </View>
-        </View>
-
-        {/* Main info row */}
-        <View style={styles.cardMainRow}>
-          <View style={[styles.cardIcon, { backgroundColor: typeConf.bgColor }]}>
-            {booking.image ? (
-              <CachedImage source={booking.image} style={styles.cardImage} />
-            ) : (
-              <Ionicons name={typeConf.icon} size={24} color={typeConf.color} />
-            )}
-          </View>
-          <View style={styles.cardInfo}>
-            <Text style={styles.cardTitle} numberOfLines={1}>{booking.title}</Text>
-            <Text style={styles.cardSubtitle} numberOfLines={1}>{booking.subtitle}</Text>
-            <View style={styles.cardDateRow}>
-              <Ionicons name="calendar-outline" size={13} color={C.textTertiary} />
-              <Text style={styles.cardDateText}>{booking.dateLabel}</Text>
-              {booking.timeLabel ? (
-                <>
-                  <Text style={styles.cardDateDot}> </Text>
-                  <Ionicons name="time-outline" size={13} color={C.textTertiary} />
-                  <Text style={styles.cardDateText}>{booking.timeLabel}</Text>
-                </>
-              ) : null}
-            </View>
-          </View>
-          <Ionicons
-            name={isExpanded ? 'chevron-up' : 'chevron-down'}
-            size={18}
-            color={C.textTertiary}
-          />
-        </View>
-
-        {/* Detail pills */}
-        <View style={styles.detailRow}>
-          {booking.details.slice(0, 3).map((d, i) => (
-            <View key={i} style={styles.detailPill}>
-              <Text style={styles.detailPillLabel}>{d.label}</Text>
-              <Text style={styles.detailPillValue} numberOfLines={1}>{d.value}</Text>
-            </View>
-          ))}
-        </View>
-
-        {/* Expanded details section */}
-        {isExpanded && (
-          <View style={styles.expandedSection}>
-            {/* All remaining details */}
-            {booking.details.length > 3 && booking.details.slice(3).map((d, i) => (
-              <View key={`extra-${i}`} style={styles.expandedRow}>
-                <Text style={styles.expandedLabel}>{d.label}</Text>
-                <Text style={styles.expandedValue}>{d.value}</Text>
+            {upcoming && (
+              <View style={styles.upcomingDot}>
+                <View style={styles.upcomingDotInner} />
+                <Text style={styles.upcomingText}>Upcoming</Text>
               </View>
-            ))}
+            )}
+            <View style={{ flex: 1 }} />
+            <View style={[styles.statusBadge, { backgroundColor: statusConf.bg }]}>
+              <Ionicons name={statusConf.icon as any} size={12} color={statusConf.color} />
+              <Text style={[styles.statusBadgeText, { color: statusConf.color }]}>
+                {booking.status.replace('_', ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
+              </Text>
+            </View>
+          </View>
 
-            {/* Store address */}
-            {storeLocation?.address && (
-              <View style={styles.expandedRow}>
-                <Text style={styles.expandedLabel}>Address</Text>
-                <Text style={styles.expandedValue}>
-                  {[storeLocation.address, storeLocation.city, storeLocation.state].filter(Boolean).join(', ')}
+          {/* Main info row */}
+          <View style={styles.cardMainRow}>
+            <View style={[styles.cardIcon, { backgroundColor: typeConf.bgColor }]}>
+              {booking.image ? (
+                <CachedImage source={booking.image} style={styles.cardImage} />
+              ) : (
+                <Ionicons name={typeConf.icon} size={24} color={typeConf.color} />
+              )}
+            </View>
+            <View style={styles.cardInfo}>
+              <Text style={styles.cardTitle} numberOfLines={1}>
+                {booking.title}
+              </Text>
+              <Text style={styles.cardSubtitle} numberOfLines={1}>
+                {booking.subtitle}
+              </Text>
+              <View style={styles.cardDateRow}>
+                <Ionicons name="calendar-outline" size={13} color={C.textTertiary} />
+                <Text style={styles.cardDateText}>{booking.dateLabel}</Text>
+                {booking.timeLabel ? (
+                  <>
+                    <Text style={styles.cardDateDot}> </Text>
+                    <Ionicons name="time-outline" size={13} color={C.textTertiary} />
+                    <Text style={styles.cardDateText}>{booking.timeLabel}</Text>
+                  </>
+                ) : null}
+              </View>
+            </View>
+            <Ionicons name={isExpanded ? 'chevron-up' : 'chevron-down'} size={18} color={C.textTertiary} />
+          </View>
+
+          {/* Detail pills */}
+          <View style={styles.detailRow}>
+            {booking.details.slice(0, 3).map((d, i) => (
+              <View key={i} style={styles.detailPill}>
+                <Text style={styles.detailPillLabel}>{d.label}</Text>
+                <Text style={styles.detailPillValue} numberOfLines={1}>
+                  {d.value}
                 </Text>
               </View>
-            )}
-
-            {/* Store phone */}
-            {storeContact?.phone && (
-              <View style={styles.expandedRow}>
-                <Text style={styles.expandedLabel}>Restaurant Phone</Text>
-                <Text style={styles.expandedValue}>{storeContact.phone}</Text>
-              </View>
-            )}
-
-            {/* Special requests (for table bookings) */}
-            {raw?.specialRequests && (
-              <View style={styles.expandedRow}>
-                <Text style={styles.expandedLabel}>Special Requests</Text>
-                <Text style={styles.expandedValue}>{raw.specialRequests}</Text>
-              </View>
-            )}
-
-            {/* Cancellation reason if cancelled/no_show */}
-            {raw?.cancellationReason && (
-              <View style={styles.expandedRow}>
-                <Text style={styles.expandedLabel}>Cancellation Reason</Text>
-                <Text style={[styles.expandedValue, { color: C.error }]}>{raw.cancellationReason}</Text>
-              </View>
-            )}
+            ))}
           </View>
-        )}
 
-        {/* Ref number + Actions */}
-        <View style={styles.cardFooter}>
-          <View style={styles.refRow}>
-            <Ionicons name="document-text-outline" size={13} color={C.textTertiary} />
-            <Text style={styles.refText} numberOfLines={1}>
-              {booking.referenceNumber}
-            </Text>
+          {/* Expanded details section */}
+          {isExpanded && (
+            <View style={styles.expandedSection}>
+              {/* All remaining details */}
+              {booking.details.length > 3 &&
+                booking.details.slice(3).map((d, i) => (
+                  <View key={`extra-${i}`} style={styles.expandedRow}>
+                    <Text style={styles.expandedLabel}>{d.label}</Text>
+                    <Text style={styles.expandedValue}>{d.value}</Text>
+                  </View>
+                ))}
+
+              {/* Store address */}
+              {storeLocation?.address && (
+                <View style={styles.expandedRow}>
+                  <Text style={styles.expandedLabel}>Address</Text>
+                  <Text style={styles.expandedValue}>
+                    {[storeLocation.address, storeLocation.city, storeLocation.state].filter(Boolean).join(', ')}
+                  </Text>
+                </View>
+              )}
+
+              {/* Store phone */}
+              {storeContact?.phone && (
+                <View style={styles.expandedRow}>
+                  <Text style={styles.expandedLabel}>Restaurant Phone</Text>
+                  <Text style={styles.expandedValue}>{storeContact.phone}</Text>
+                </View>
+              )}
+
+              {/* Special requests (for table bookings) */}
+              {raw?.specialRequests && (
+                <View style={styles.expandedRow}>
+                  <Text style={styles.expandedLabel}>Special Requests</Text>
+                  <Text style={styles.expandedValue}>{raw.specialRequests}</Text>
+                </View>
+              )}
+
+              {/* Cancellation reason if cancelled/no_show */}
+              {raw?.cancellationReason && (
+                <View style={styles.expandedRow}>
+                  <Text style={styles.expandedLabel}>Cancellation Reason</Text>
+                  <Text style={[styles.expandedValue, { color: C.error }]}>{raw.cancellationReason}</Text>
+                </View>
+              )}
+            </View>
+          )}
+
+          {/* Ref number + Actions */}
+          <View style={styles.cardFooter}>
+            <View style={styles.refRow}>
+              <Ionicons name="document-text-outline" size={13} color={C.textTertiary} />
+              <Text style={styles.refText} numberOfLines={1}>
+                {booking.referenceNumber}
+              </Text>
+            </View>
+            <View style={styles.footerActions}>
+              {/* Menu & Order button for table bookings */}
+              {booking.type === 'table' && (booking.status === 'confirmed' || booking.status === 'pending') && (
+                <Pressable
+                  style={styles.menuBtn}
+                  onPress={handleMenuPress}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Ionicons name="restaurant-outline" size={16} color={C.white} />
+                  <Text style={styles.menuBtnText}>Menu</Text>
+                </Pressable>
+              )}
+              {/* Pay button for table bookings with active status */}
+              {booking.type === 'table' && (booking.status === 'confirmed' || booking.status === 'pending') && (
+                <Pressable
+                  style={styles.payBtn}
+                  onPress={handlePayPress}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Ionicons name="card-outline" size={16} color={C.white} />
+                  <Text style={styles.payBtnText}>Pay</Text>
+                </Pressable>
+              )}
+              {booking.canCancel && (
+                <Pressable
+                  style={styles.cancelBtn}
+                  onPress={() => handleCancel(booking)}
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
+                  <Ionicons name="close-circle-outline" size={16} color={C.error} />
+                  <Text style={styles.cancelBtnText}>Cancel</Text>
+                </Pressable>
+              )}
+            </View>
           </View>
-          <View style={styles.footerActions}>
-            {/* Menu & Order button for table bookings */}
-            {booking.type === 'table' && (booking.status === 'confirmed' || booking.status === 'pending') && (
-              <Pressable
-                style={styles.menuBtn}
-                onPress={handleMenuPress}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <Ionicons name="restaurant-outline" size={16} color={C.white} />
-                <Text style={styles.menuBtnText}>Menu</Text>
-              </Pressable>
-            )}
-            {/* Pay button for table bookings with active status */}
-            {booking.type === 'table' && (booking.status === 'confirmed' || booking.status === 'pending') && (
-              <Pressable
-                style={styles.payBtn}
-                onPress={handlePayPress}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <Ionicons name="card-outline" size={16} color={C.white} />
-                <Text style={styles.payBtnText}>Pay</Text>
-              </Pressable>
-            )}
-            {booking.canCancel && (
-              <Pressable
-                style={styles.cancelBtn}
-                onPress={() => handleCancel(booking)}
-                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-              >
-                <Ionicons name="close-circle-outline" size={16} color={C.error} />
-                <Text style={styles.cancelBtnText}>Cancel</Text>
-              </Pressable>
-            )}
-          </View>
-        </View>
-      </Pressable>
-    );
-  }, [expandedBookingId, router]);
+        </Pressable>
+      );
+    },
+    [expandedBookingId, router],
+  );
 
   // ─── Empty state ─────────────────────────────────────────
   const renderEmpty = () => {
@@ -737,33 +762,21 @@ function BookingsPage() {
     return (
       <View style={styles.centeredContainer}>
         <View style={[styles.emptyIconCircle, { backgroundColor: 'rgba(0, 192, 106, 0.08)' }]}>
-          <Ionicons
-            name={isFiltered ? 'filter-outline' : 'calendar-outline'}
-            size={40}
-            color={C.primary}
-          />
+          <Ionicons name={isFiltered ? 'filter-outline' : 'calendar-outline'} size={40} color={C.primary} />
         </View>
-        <Text style={styles.emptyTitle}>
-          {isFiltered ? 'No Matches' : 'No Bookings Yet'}
-        </Text>
+        <Text style={styles.emptyTitle}>{isFiltered ? 'No Matches' : 'No Bookings Yet'}</Text>
         <Text style={styles.emptySubtitle}>
           {isFiltered
             ? `No ${statusLabel} ${typeLabel} bookings found. Try adjusting your filters.`
             : "You haven't made any bookings yet. Start exploring!"}
         </Text>
         {isFiltered ? (
-          <Pressable
-            style={styles.ctaButtonOutline}
-            onPress={handleClearFilters}
-          >
+          <Pressable style={styles.ctaButtonOutline} onPress={handleClearFilters}>
             <Ionicons name="refresh-outline" size={18} color={C.primary} />
             <Text style={styles.ctaButtonOutlineText}>Clear Filters</Text>
           </Pressable>
         ) : (
-          <Pressable
-            style={[styles.ctaButton, { backgroundColor: C.primary }]}
-            onPress={() => router.push('/' as any)}
-          >
+          <Pressable style={[styles.ctaButton, { backgroundColor: C.primary }]} onPress={() => router.push('/' as any)}>
             <Text style={styles.ctaButtonText}>Explore Now</Text>
           </Pressable>
         )}
@@ -779,148 +792,139 @@ function BookingsPage() {
         <Stack.Screen options={{ headerShown: false }} />
         <StatusBar barStyle="light-content" />
 
-      {/* ── Header ── */}
-      <LinearGradient
-        colors={[C.primary, C.primaryDark]}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
-          <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
-        </Pressable>
-        <Text style={styles.headerTitle}>My Bookings</Text>
-        <View style={{ width: 40 }} />
-      </LinearGradient>
-
-      {/* ── Stats row ── */}
-      <View style={styles.statsRow}>
-        <View style={styles.statCard}>
-          <Text style={styles.statNumber}>{stats.total}</Text>
-          <Text style={styles.statLabel}>Total</Text>
-        </View>
-        <View style={[styles.statCard, { backgroundColor: Colors.successScale[50] }]}>
-          <Text style={[styles.statNumber, { color: C.success }]}>{stats.upcoming}</Text>
-          <Text style={styles.statLabel}>Upcoming</Text>
-        </View>
-        <View style={[styles.statCard, { backgroundColor: Colors.warningScale[50] }]}>
-          <Text style={[styles.statNumber, { color: C.orange }]}>{stats.tables}</Text>
-          <Text style={styles.statLabel}>Tables</Text>
-        </View>
-        <View style={[styles.statCard, { backgroundColor: Colors.infoScale[50] }]}>
-          <Text style={[styles.statNumber, { color: C.purple }]}>{stats.events}</Text>
-          <Text style={styles.statLabel}>Events</Text>
-        </View>
-      </View>
-
-      {/* ── Type tabs ── */}
-      <View style={styles.typeTabsContainer}>
-        {TYPE_TABS.map((tab) => {
-          const active = typeFilter === tab.key;
-          return (
-            <Pressable
-              key={tab.key}
-              style={[styles.typeTab, active && styles.typeTabActive]}
-              onPress={() => handleTypeFilterPress(tab.key)}
-
-            >
-              <Ionicons
-                name={tab.icon}
-                size={16}
-                color={active ? C.white : C.textSecondary}
-              />
-              <Text style={[styles.typeTabText, active && styles.typeTabTextActive]}>
-                {tab.label}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </View>
-
-      {/* ── Status pills ── */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.statusPillsScroll}
-        contentContainerStyle={styles.statusPillsContent}
-      >
-        {STATUS_TABS.map((tab) => {
-          const active = statusFilter === tab.key;
-          return (
-            <Pressable
-              key={tab.key}
-              style={[styles.statusPill, active && styles.statusPillActive]}
-              onPress={() => handleStatusFilterPress(tab.key)}
-
-            >
-              <Text style={[styles.statusPillText, active && styles.statusPillTextActive]}>
-                {tab.label}
-              </Text>
-            </Pressable>
-          );
-        })}
-      </ScrollView>
-
-      {/* ── Content ── */}
-      {loading && !refreshing ? (
-        <DetailPageSkeleton />
-      ) : loadError ? (
-        <View style={styles.centeredContainer}>
-          <View style={[styles.emptyIconCircle, { backgroundColor: Colors.errorScale[50] }]}>
-            <Ionicons name="alert-circle-outline" size={40} color={C.error} />
-          </View>
-          <Text style={styles.emptyTitle}>Something went wrong</Text>
-          <Text style={styles.emptySubtitle}>{loadError}</Text>
+        {/* ── Header ── */}
+        <LinearGradient
+          colors={[C.primary, C.primaryDark]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.header}
+        >
           <Pressable
-            style={[styles.ctaButton, { backgroundColor: C.primary }]}
-            onPress={() => loadBookings()}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backBtn}
           >
-            <Text style={styles.ctaButtonText}>Try Again</Text>
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
           </Pressable>
+          <Text style={styles.headerTitle}>My Bookings</Text>
+          <View style={{ width: 40 }} />
+        </LinearGradient>
+
+        {/* ── Stats row ── */}
+        <View style={styles.statsRow}>
+          <View style={styles.statCard}>
+            <Text style={styles.statNumber}>{stats.total}</Text>
+            <Text style={styles.statLabel}>Total</Text>
+          </View>
+          <View style={[styles.statCard, { backgroundColor: Colors.successScale[50] }]}>
+            <Text style={[styles.statNumber, { color: C.success }]}>{stats.upcoming}</Text>
+            <Text style={styles.statLabel}>Upcoming</Text>
+          </View>
+          <View style={[styles.statCard, { backgroundColor: Colors.warningScale[50] }]}>
+            <Text style={[styles.statNumber, { color: C.orange }]}>{stats.tables}</Text>
+            <Text style={styles.statLabel}>Tables</Text>
+          </View>
+          <View style={[styles.statCard, { backgroundColor: Colors.infoScale[50] }]}>
+            <Text style={[styles.statNumber, { color: C.purple }]}>{stats.events}</Text>
+            <Text style={styles.statLabel}>Events</Text>
+          </View>
         </View>
-      ) : (
-        <FlashList
-          data={filteredBookings}
-          keyExtractor={(item) => item.id}
-          renderItem={renderBookingCard}
-          contentContainerStyle={[
-            styles.listContent,
-            filteredBookings.length === 0 && { flex: 1 },
-          ]}
-          ListEmptyComponent={renderEmpty}
-          estimatedItemSize={120}
-          maxToRenderPerBatch={10}
-          updateCellsBatchingPeriod={50}
-          initialNumToRender={8}
-          windowSize={5}
-          removeClippedSubviews={true}
-          ListFooterComponent={
-            hasMoreData && filteredBookings.length > 0 ? (
-              <View style={styles.loadMoreFooter}>
-                {loadingMore ? (
-                  <ActivityIndicator size="small" color={C.primary} />
-                ) : (
-                  <Pressable style={styles.loadMoreBtn} onPress={loadMore}>
-                    <Text style={styles.loadMoreText}>Load More</Text>
-                    <Ionicons name="chevron-down" size={16} color={C.primary} />
-                  </Pressable>
-                )}
-              </View>
-            ) : null
-          }
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.3}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={C.primary}
-              colors={[C.primary]}
-            />
-          }
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+
+        {/* ── Type tabs ── */}
+        <View style={styles.typeTabsContainer}>
+          {TYPE_TABS.map((tab) => {
+            const active = typeFilter === tab.key;
+            return (
+              <Pressable
+                key={tab.key}
+                style={[styles.typeTab, active && styles.typeTabActive]}
+                onPress={() => handleTypeFilterPress(tab.key)}
+              >
+                <Ionicons name={tab.icon} size={16} color={active ? C.white : C.textSecondary} />
+                <Text style={[styles.typeTabText, active && styles.typeTabTextActive]}>{tab.label}</Text>
+              </Pressable>
+            );
+          })}
+        </View>
+
+        {/* ── Status pills ── */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.statusPillsScroll}
+          contentContainerStyle={styles.statusPillsContent}
+        >
+          {STATUS_TABS.map((tab) => {
+            const active = statusFilter === tab.key;
+            return (
+              <Pressable
+                key={tab.key}
+                style={[styles.statusPill, active && styles.statusPillActive]}
+                onPress={() => handleStatusFilterPress(tab.key)}
+              >
+                <Text style={[styles.statusPillText, active && styles.statusPillTextActive]}>{tab.label}</Text>
+              </Pressable>
+            );
+          })}
+        </ScrollView>
+
+        {/* ── Content ── */}
+        {loading && !refreshing ? (
+          <DetailPageSkeleton />
+        ) : loadError ? (
+          <View style={styles.centeredContainer}>
+            <View style={[styles.emptyIconCircle, { backgroundColor: Colors.errorScale[50] }]}>
+              <Ionicons name="alert-circle-outline" size={40} color={C.error} />
+            </View>
+            <Text style={styles.emptyTitle}>Something went wrong</Text>
+            <Text style={styles.emptySubtitle}>{loadError}</Text>
+            <Pressable style={[styles.ctaButton, { backgroundColor: C.primary }]} onPress={() => loadBookings()}>
+              <Text style={styles.ctaButtonText}>Try Again</Text>
+            </Pressable>
+          </View>
+        ) : (
+          <FlashList
+            data={filteredBookings}
+            keyExtractor={(item: any) => item.id}
+            renderItem={renderBookingCard}
+            contentContainerStyle={
+              Object.assign({}, styles.listContent, filteredBookings.length === 0 ? { flex: 1 } : {}) as any
+            }
+            ListEmptyComponent={renderEmpty}
+            estimatedItemSize={120}
+            {...({
+              maxToRenderPerBatch: 10,
+              updateCellsBatchingPeriod: 50,
+              initialNumToRender: 8,
+              windowSize: 5,
+              removeClippedSubviews: true,
+            } as any)}
+            ListFooterComponent={
+              hasMoreData && filteredBookings.length > 0 ? (
+                <View style={styles.loadMoreFooter}>
+                  {loadingMore ? (
+                    <ActivityIndicator size="small" color={C.primary} />
+                  ) : (
+                    <Pressable style={styles.loadMoreBtn} onPress={loadMore}>
+                      <Text style={styles.loadMoreText}>Load More</Text>
+                      <Ionicons name="chevron-down" size={16} color={C.primary} />
+                    </Pressable>
+                  )}
+                </View>
+              ) : null
+            }
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.3}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                tintColor={C.primary}
+                colors={[C.primary]}
+              />
+            }
+            showsVerticalScrollIndicator={false}
+          />
+        )}
       </ThemedView>
     </SafeAreaView>
   );

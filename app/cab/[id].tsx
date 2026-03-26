@@ -4,7 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Production-ready with complete booking flow
  */
 
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,13 +15,9 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Dimensions,
-  Modal
+  Modal,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -136,7 +132,7 @@ function CabDetailsPage() {
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
-  
+
   // Animation for button
   const buttonScale = useSharedValue(1);
   const buttonScaleStyle = useAnimatedStyle(() => ({
@@ -148,9 +144,11 @@ function CabDetailsPage() {
     reviews,
     summary: reviewSummary,
     isLoading: reviewsLoading,
-    refreshReviews } = useProductReviews({
+    refreshReviews,
+  } = useProductReviews({
     productId: id as string,
-    autoLoad: true });
+    autoLoad: true,
+  });
 
   useEffect(() => {
     if (id) {
@@ -171,13 +169,14 @@ function CabDetailsPage() {
         return;
       }
 
-      const productData = response.data;
+      const productData = response.data as any;
 
       // Check if this is a cab service
-      const isCab = productData.serviceCategory?.slug === 'cab' || 
-                   productData.category?.slug === 'cab' ||
-                   productData.name?.toLowerCase().includes('cab') ||
-                   productData.name?.toLowerCase().includes('taxi');
+      const isCab =
+        productData.serviceCategory?.slug === 'cab' ||
+        productData.category?.slug === 'cab' ||
+        productData.name?.toLowerCase().includes('cab') ||
+        productData.name?.toLowerCase().includes('taxi');
 
       if (!isCab) {
         router.replace(`/product-page?cardId=${id}&cardType=product`);
@@ -194,11 +193,7 @@ function CabDetailsPage() {
       let from = specFrom || '';
       let to = specTo || '';
       if (!from || !to) {
-        const routePatterns = [
-          /(.+?)\s+to\s+(.+?)\s+cab/i,
-          /(.+?)\s*-\s*(.+?)\s+cab/i,
-          /(.+?)\s+→\s+(.+?)\s+cab/i,
-        ];
+        const routePatterns = [/(.+?)\s+to\s+(.+?)\s+cab/i, /(.+?)\s*-\s*(.+?)\s+cab/i, /(.+?)\s+→\s+(.+?)\s+cab/i];
         for (const pattern of routePatterns) {
           const match = productData.name.match(pattern);
           if (match) {
@@ -213,7 +208,7 @@ function CabDetailsPage() {
 
       // Duration and times: prefer specs
       const rawDuration = productData.serviceDetails?.duration;
-      const duration = (typeof rawDuration === 'number' && !isNaN(rawDuration) && rawDuration > 0) ? rawDuration : 60;
+      const duration = typeof rawDuration === 'number' && !isNaN(rawDuration) && rawDuration > 0 ? rawDuration : 60;
       const specPickupTime = getSpec('departureTime');
       const specDropoffTime = getSpec('arrivalTime');
       let pickupTime = specPickupTime;
@@ -221,10 +216,12 @@ function CabDetailsPage() {
       if (!pickupTime || !dropoffTime) {
         const durationHours = Math.floor(duration / 60);
         const durationMins = duration % 60;
-        const basePickupHour = 9, basePickupMin = 0;
+        const basePickupHour = 9,
+          basePickupMin = 0;
         const dropoffHour = (basePickupHour + durationHours + Math.floor((basePickupMin + durationMins) / 60)) % 24;
         const dropoffMin = (basePickupMin + durationMins) % 60;
-        const formatTime = (h: number, m: number) => `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+        const formatTime = (h: number, m: number) =>
+          `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
         if (!pickupTime) pickupTime = formatTime(basePickupHour, basePickupMin);
         if (!dropoffTime) dropoffTime = formatTime(dropoffHour, dropoffMin);
       }
@@ -232,12 +229,14 @@ function CabDetailsPage() {
       // Provider and cab type: prefer specs
       const providerName = getSpec('providerName');
       const specCabType = getSpec('cabType');
-      const cabType = specCabType || (() => {
-        if (productData.name.toLowerCase().includes('outstation')) return 'Outstation';
-        if (productData.name.toLowerCase().includes('airport')) return 'Airport Transfer';
-        if (productData.name.toLowerCase().includes('city')) return 'City Ride';
-        return 'Intercity';
-      })();
+      const cabType =
+        specCabType ||
+        (() => {
+          if (productData.name.toLowerCase().includes('outstation')) return 'Outstation';
+          if (productData.name.toLowerCase().includes('airport')) return 'Airport Transfer';
+          if (productData.name.toLowerCase().includes('city')) return 'City Ride';
+          return 'Intercity';
+        })();
 
       // Get cashback
       const cashbackPercentage = (() => {
@@ -248,11 +247,14 @@ function CabDetailsPage() {
       })();
 
       // Calculate price
-      const basePrice = productData.pricing?.selling || productData.pricing?.basePrice || productData.price?.current || 0;
-      const originalPrice = productData.pricing?.original || productData.pricing?.basePrice || productData.price?.original;
-      const calculatedDiscount = originalPrice && basePrice && originalPrice > basePrice
-        ? Math.round(((originalPrice - basePrice) / originalPrice) * 100)
-        : productData.pricing?.discount || 0;
+      const basePrice =
+        productData.pricing?.selling || productData.pricing?.basePrice || productData.price?.current || 0;
+      const originalPrice =
+        productData.pricing?.original || productData.pricing?.basePrice || productData.price?.original;
+      const calculatedDiscount =
+        originalPrice && basePrice && originalPrice > basePrice
+          ? Math.round(((originalPrice - basePrice) / originalPrice) * 100)
+          : productData.pricing?.discount || 0;
 
       // Distance
       let pricePerKm: number | undefined = undefined;
@@ -261,7 +263,8 @@ function CabDetailsPage() {
       if (specDistance) {
         estimatedDistance = parseInt(specDistance) || undefined;
       } else {
-        if (productData.price && typeof productData.price === 'number' && productData.price > 0) pricePerKm = productData.price;
+        if (productData.price && typeof productData.price === 'number' && productData.price > 0)
+          pricePerKm = productData.price;
         else if (basePrice > 0 && basePrice < 100) pricePerKm = basePrice;
         if (pricePerKm && basePrice > 0 && pricePerKm > 0) {
           const calc = basePrice / pricePerKm;
@@ -279,13 +282,15 @@ function CabDetailsPage() {
         const defaults = {
           sedan: { price: basePrice, available: true },
           suv: { price: Math.round(basePrice * 1.5), available: true },
-          premium: { price: Math.round(basePrice * 2), available: true } };
+          premium: { price: Math.round(basePrice * 2), available: true },
+        };
         if (!specVehicleTypes) return defaults;
         const types = specVehicleTypes.split(',').map((t: string) => t.trim().toLowerCase());
         return {
           sedan: { price: basePrice, available: types.includes('sedan') || types.length === 0 },
           suv: { price: Math.round(basePrice * 1.5), available: types.includes('suv') },
-          premium: { price: Math.round(basePrice * 2), available: types.includes('premium') } };
+          premium: { price: Math.round(basePrice * 2), available: types.includes('premium') },
+        };
       };
 
       // Transform to CabDetails
@@ -309,35 +314,47 @@ function CabDetailsPage() {
               return null;
             })
             .filter((url: string | null): url is string => Boolean(url && typeof url === 'string' && url.length > 0));
-          const validatedImages = processedImages.filter(url => {
-            if ((url.toLowerCase().includes('bus') || url.toLowerCase().includes('train') ||
-                 url.toLowerCase().includes('airplane') || url.toLowerCase().includes('hotel')) &&
-                !url.toLowerCase().includes('cab') && !url.toLowerCase().includes('taxi') && !url.toLowerCase().includes('car')) {
+          const validatedImages = processedImages.filter((url: string) => {
+            if (
+              (url.toLowerCase().includes('bus') ||
+                url.toLowerCase().includes('train') ||
+                url.toLowerCase().includes('airplane') ||
+                url.toLowerCase().includes('hotel')) &&
+              !url.toLowerCase().includes('cab') &&
+              !url.toLowerCase().includes('taxi') &&
+              !url.toLowerCase().includes('car')
+            ) {
               return false;
             }
             return true;
           });
           return validatedImages;
         })(),
-        description: productData.description || productData.shortDescription || 'Comfortable cab service with professional drivers.',
+        description:
+          productData.description ||
+          productData.shortDescription ||
+          'Comfortable cab service with professional drivers.',
         duration,
         distance: estimatedDistance,
         pickupTime,
         dropoffTime,
         cashback: {
           percentage: cashbackPercentage,
-          amount: Math.round(basePrice * cashbackPercentage / 100) },
+          amount: Math.round((basePrice * cashbackPercentage) / 100),
+        },
         rating: reviewSummary?.averageRating || productData.ratings?.average || 0,
         reviewCount: reviewSummary?.totalReviews || productData.ratings?.count || 0,
         store: {
           id: productData.store?.id || productData.store?._id,
           name: providerName || productData.store?.name || 'CityRide Cabs',
-          logo: productData.store?.logo },
+          logo: productData.store?.logo,
+        },
         amenities: (() => {
           const tagAmenities: Record<string, string[]> = {
-            'premium': ['AC', 'GPS', 'Music', 'Wi-Fi', 'Charging Point', 'Professional Driver'],
-            'comfort': ['AC', 'GPS', 'Music', 'Professional Driver'],
-            'budget': ['AC', 'GPS', 'Professional Driver'] };
+            premium: ['AC', 'GPS', 'Music', 'Wi-Fi', 'Charging Point', 'Professional Driver'],
+            comfort: ['AC', 'GPS', 'Music', 'Professional Driver'],
+            budget: ['AC', 'GPS', 'Professional Driver'],
+          };
           const tags = productData.tags || [];
           for (const [key, amenities] of Object.entries(tagAmenities)) {
             if (tags.some((tag: string) => tag.toLowerCase().includes(key))) return amenities;
@@ -345,12 +362,15 @@ function CabDetailsPage() {
           return ['AC', 'GPS', 'Music', 'Professional Driver'];
         })(),
         cancellationPolicy: {
-          freeCancellation: productData.specifications?.some((s: any) =>
-            s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free')
-          ) || true,
+          freeCancellation:
+            productData.specifications?.some(
+              (s: any) => s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free'),
+            ) || true,
           cancellationDeadline: '2',
-          refundPercentage: 90 },
-        vehicleOptions: buildVehicleOptions() };
+          refundPercentage: 90,
+        },
+        vehicleOptions: buildVehicleOptions(),
+      };
 
       if (!isMounted()) return;
       setCab(cabDetails);
@@ -365,11 +385,8 @@ function CabDetailsPage() {
 
   const handleBookNow = () => {
     // Animate button press
-    buttonScale.value = withSequence(
-      withTiming(0.95, { duration: 100 }),
-      withTiming(1, { duration: 100 })
-    );
-    
+    buttonScale.value = withSequence(withTiming(0.95, { duration: 100 }), withTiming(1, { duration: 100 }));
+
     setShowBookingFlow(true);
   };
 
@@ -382,7 +399,8 @@ function CabDetailsPage() {
           amount: (data as any).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
-          currency: currency || 'INR' }
+          currency: currency || 'INR',
+        },
       } as any);
     } else {
       setBookingData(data);
@@ -397,12 +415,12 @@ function CabDetailsPage() {
 
   const handleFavorite = async () => {
     if (!cab) return;
-    
+
     try {
       if (isInWishlist(cab.id)) {
         await removeFromWishlist(cab.id);
       } else {
-        await addToWishlist(cab.id);
+        await addToWishlist(cab.id as any);
       }
     } catch (error) {
       // silently handle
@@ -433,8 +451,8 @@ function CabDetailsPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView} 
+      <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -443,7 +461,7 @@ function CabDetailsPage() {
           {(() => {
             const imageUrl = cab.images?.[selectedImageIndex] || cab.images?.[0];
             const hasValidImage = imageUrl && typeof imageUrl === 'string' && imageUrl.length > 0;
-            
+
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
@@ -451,11 +469,10 @@ function CabDetailsPage() {
                   style={styles.headerImage}
                   contentFit="cover"
                   onError={() => setImageError(true)}
-                  onLoadStart={() => setImageError(false)}
                 />
               );
             }
-            
+
             return (
               <View style={[styles.headerImage, styles.placeholderImage]}>
                 <Ionicons name="car" size={64} color={colors.text.tertiary} />
@@ -463,16 +480,13 @@ function CabDetailsPage() {
               </View>
             );
           })()}
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.7)']}
-            style={styles.headerGradient}
-          />
-          
+          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.headerGradient} />
+
           <View style={styles.headerActions}>
             <Pressable style={styles.backButton} onPress={handleBack}>
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
-            
+
             <View style={styles.headerRightActions}>
               <Pressable style={styles.actionButton} onPress={handleFavorite}>
                 <Ionicons
@@ -491,13 +505,7 @@ function CabDetailsPage() {
           {cab.images.length > 1 && (
             <View style={styles.imageIndicators}>
               {cab.images.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.indicator,
-                    selectedImageIndex === index && styles.indicatorActive,
-                  ]}
-                />
+                <View key={index} style={[styles.indicator, selectedImageIndex === index && styles.indicatorActive]} />
               ))}
             </View>
           )}
@@ -515,9 +523,7 @@ function CabDetailsPage() {
             <Text style={styles.sectionTitle}>Service Provider</Text>
           </View>
           <View style={styles.storeCard}>
-            {cab.store.logo && (
-              <CachedImage source={cab.store.logo} style={styles.storeLogo} />
-            )}
+            {cab.store.logo && <CachedImage source={cab.store.logo} style={styles.storeLogo} />}
             <View style={styles.storeInfo}>
               <Text style={styles.storeName}>{cab.store.name}</Text>
               <View style={styles.storeBadge}>
@@ -539,19 +545,25 @@ function CabDetailsPage() {
                 <Text style={styles.priceLabel}>Price</Text>
                 <View style={styles.priceValueContainer}>
                   <Text style={styles.priceValue}>
-                    {cab.pricePerKm ? `${currencySymbol}${cab.pricePerKm}/km` : `${currencySymbol}${cab.price.toLocaleString(locale)}`}
+                    {cab.pricePerKm
+                      ? `${currencySymbol}${cab.pricePerKm}/km`
+                      : `${currencySymbol}${cab.price.toLocaleString(locale)}`}
                   </Text>
                   {cab.originalPrice && cab.originalPrice > cab.price && (
-                    <Text style={styles.originalPrice}>{currencySymbol}{cab.originalPrice.toLocaleString(locale)}</Text>
+                    <Text style={styles.originalPrice}>
+                      {currencySymbol}
+                      {cab.originalPrice.toLocaleString(locale)}
+                    </Text>
                   )}
                 </View>
               </View>
               <View style={styles.cashbackBadge}>
                 <Ionicons name="cash" size={20} color={colors.text.inverse} />
-                <Text style={styles.cashbackText}>
-                  {cab.cashback.percentage}% Cashback
+                <Text style={styles.cashbackText}>{cab.cashback.percentage}% Cashback</Text>
+                <Text style={styles.cashbackAmount}>
+                  {currencySymbol}
+                  {cab.cashback.amount}
                 </Text>
-                <Text style={styles.cashbackAmount}>{currencySymbol}{cab.cashback.amount}</Text>
               </View>
             </View>
             {cab.discount && cab.discount > 0 && (
@@ -633,6 +645,7 @@ function CabDetailsPage() {
             summary={reviewSummary}
             isLoading={reviewsLoading}
             onRefresh={refreshReviews}
+            {...({} as any)}
           />
         </View>
 
@@ -654,10 +667,15 @@ function CabDetailsPage() {
               <Text style={styles.priceInfoLabel}>Total Price</Text>
               <View style={styles.priceInfoValueContainer}>
                 <Text style={styles.priceInfoValue}>
-                  {cab.pricePerKm ? `${currencySymbol}${cab.pricePerKm}/km` : `${currencySymbol}${cab.price.toLocaleString(locale)}`}
+                  {cab.pricePerKm
+                    ? `${currencySymbol}${cab.pricePerKm}/km`
+                    : `${currencySymbol}${cab.price.toLocaleString(locale)}`}
                 </Text>
                 {cab.originalPrice && cab.originalPrice > cab.price && (
-                  <Text style={styles.priceInfoOriginal}>{currencySymbol}{cab.originalPrice.toLocaleString(locale)}</Text>
+                  <Text style={styles.priceInfoOriginal}>
+                    {currencySymbol}
+                    {cab.originalPrice.toLocaleString(locale)}
+                  </Text>
                 )}
               </View>
             </View>
@@ -667,14 +685,10 @@ function CabDetailsPage() {
             </View>
           </View>
         </View>
-        
+
         {/* Book Now Button */}
         <Animated.View style={buttonScaleStyle}>
-          <Pressable 
-            style={styles.bookButton} 
-            onPress={handleBookNow}
-           
-          >
+          <Pressable style={styles.bookButton} onPress={handleBookNow}>
             <LinearGradient
               colors={[colors.brand.amber, '#CA8A04', '#A16207']}
               style={styles.bookButtonGradient}
@@ -703,11 +717,7 @@ function CabDetailsPage() {
         onRequestClose={() => setShowBookingFlow(false)}
       >
         {cab && (
-          <CabBookingFlow
-            cab={cab}
-            onComplete={handleBookingComplete}
-            onClose={() => setShowBookingFlow(false)}
-          />
+          <CabBookingFlow cab={cab} onComplete={handleBookingComplete} onClose={() => setShowBookingFlow(false)} />
         )}
       </Modal>
 
@@ -739,68 +749,84 @@ function CabDetailsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary },
+    backgroundColor: colors.background.primary,
+  },
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   scrollContent: {
-    paddingBottom: 200 },
+    paddingBottom: 200,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   loadingContent: {
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   loadingText: {
     ...Typography.h4,
     fontWeight: '600',
     color: colors.text.primary,
-    marginTop: Spacing.base },
+    marginTop: Spacing.base,
+  },
   loadingSubtext: {
     ...Typography.body,
     color: colors.text.tertiary,
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing['2xl'] },
+    padding: Spacing['2xl'],
+  },
   errorText: {
     ...Typography.h4,
     fontWeight: '600',
     color: Colors.error,
     marginTop: Spacing.base,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   retryButton: {
     marginTop: Spacing.xl,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     backgroundColor: colors.brand.amber,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   retryButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   headerContainer: {
     width: screenWidth,
     height: 300,
-    position: 'relative' },
+    position: 'relative',
+  },
   headerImage: {
     width: '100%',
-    height: '100%' },
+    height: '100%',
+  },
   placeholderImage: {
     backgroundColor: colors.background.secondary,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   placeholderText: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
-    marginTop: Spacing.md },
+    marginTop: Spacing.md,
+  },
   headerGradient: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 150 },
+    height: 150,
+  },
   headerActions: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 50 : 20,
@@ -808,24 +834,28 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: Spacing.base },
+    paddingHorizontal: Spacing.base,
+  },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
     backgroundColor: 'rgba(0,0,0,0.3)',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   headerRightActions: {
     flexDirection: 'row',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   actionButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
     backgroundColor: 'rgba(0,0,0,0.3)',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   imageIndicators: {
     position: 'absolute',
     bottom: Spacing.base,
@@ -833,127 +863,155 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   indicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: 'rgba(255,255,255,0.5)' },
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
   indicatorActive: {
     backgroundColor: colors.background.primary,
-    width: 24 },
+    width: 24,
+  },
   infoCardWrapper: {
     marginTop: -20,
     marginHorizontal: Spacing.base,
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   section: {
     paddingHorizontal: Spacing.base,
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.md,
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   sectionTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   storeCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   storeLogo: {
     width: 48,
     height: 48,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   storeInfo: {
-    flex: 1 },
+    flex: 1,
+  },
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   storeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs },
+    gap: Spacing.xs,
+  },
   storeBadgeText: {
     ...Typography.bodySmall,
     color: Colors.success,
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
   viewStoreButton: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     backgroundColor: colors.brand.amber,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   viewStoreButtonText: {
     color: colors.text.inverse,
     ...Typography.body,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   priceContainer: {
     backgroundColor: colors.background.secondary,
     padding: Spacing.lg,
-    borderRadius: BorderRadius.lg },
+    borderRadius: BorderRadius.lg,
+  },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   priceLabel: {
     ...Typography.body,
     color: colors.text.tertiary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   priceValueContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   priceValue: {
     ...Typography.h1,
     fontWeight: '800',
-    color: colors.brand.amber },
+    color: colors.brand.amber,
+  },
   originalPrice: {
     ...Typography.h4,
     color: colors.text.tertiary,
-    textDecorationLine: 'line-through' },
+    textDecorationLine: 'line-through',
+  },
   cashbackBadge: {
     backgroundColor: colors.brand.amber,
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   cashbackText: {
     color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
-    marginTop: Spacing.xs },
+    marginTop: Spacing.xs,
+  },
   cashbackAmount: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '800',
-    marginTop: 2 },
+    marginTop: 2,
+  },
   discountBadge: {
     alignSelf: 'flex-start',
     backgroundColor: Colors.success,
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.sm,
-    marginTop: Spacing.md },
+    marginTop: Spacing.md,
+  },
   discountText: {
     color: colors.text.inverse,
     ...Typography.bodySmall,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   detailsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.base },
+    gap: Spacing.base,
+  },
   detailItem: {
     width: (screenWidth - 48) / 2,
     backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   detailIconContainer: {
     width: 40,
     height: 40,
@@ -961,25 +1019,30 @@ const styles = StyleSheet.create({
     backgroundColor: colors.tint.amberLight,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   detailLabel: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   detailValue: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   descriptionTitle: {
     ...Typography.h4,
     fontWeight: '700',
     color: colors.text.primary,
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   description: {
     ...Typography.body,
     fontSize: 15,
     lineHeight: 24,
-    color: colors.text.secondary },
+    color: colors.text.secondary,
+  },
   bookButtonContainer: {
     position: 'absolute',
     bottom: 30,
@@ -996,41 +1059,49 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 16,
-    zIndex: 1001 },
+    zIndex: 1001,
+  },
   priceInfoCard: {
     backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: colors.border.default },
+    borderColor: colors.border.default,
+  },
   priceInfoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   priceInfoLeft: {
-    flex: 1 },
+    flex: 1,
+  },
   priceInfoLabel: {
     ...Typography.bodySmall,
     fontWeight: '600',
     color: colors.text.tertiary,
     marginBottom: Spacing.xs,
     textTransform: 'uppercase',
-    letterSpacing: 0.5 },
+    letterSpacing: 0.5,
+  },
   priceInfoValueContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   priceInfoValue: {
     ...Typography.h2,
     fontWeight: '800',
     color: colors.text.primary,
-    letterSpacing: -0.5 },
+    letterSpacing: -0.5,
+  },
   priceInfoOriginal: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
     textDecorationLine: 'line-through',
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   cashbackInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1040,12 +1111,14 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: colors.warningScale[200] },
+    borderColor: colors.warningScale[200],
+  },
   cashbackInfoText: {
     ...Typography.bodySmall,
     fontSize: 13,
     fontWeight: '700',
-    color: colors.brand.amberDark },
+    color: colors.brand.amberDark,
+  },
   bookButton: {
     borderRadius: BorderRadius.xl,
     overflow: 'hidden',
@@ -1053,29 +1126,36 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
-    elevation: 8 },
+    elevation: 8,
+  },
   bookButtonGradient: {
     paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.xl },
+    paddingHorizontal: Spacing.xl,
+  },
   bookButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between' },
+    justifyContent: 'space-between',
+  },
   bookButtonLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   bookButtonText: {
     color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: '800',
-    letterSpacing: 0.5 },
+    letterSpacing: 0.5,
+  },
   bookButtonRight: {
     width: 36,
     height: 36,
     borderRadius: 18,
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
     justifyContent: 'center',
-    alignItems: 'center' } });
+    alignItems: 'center',
+  },
+});
 
 export default withErrorBoundary(CabDetailsPage, 'CabId');

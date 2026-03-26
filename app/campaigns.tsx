@@ -5,16 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  RefreshControl,
-  Dimensions,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, RefreshControl, Dimensions } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -127,12 +118,13 @@ const AllCampaignsPage: React.FC = () => {
     return days;
   };
 
-  const eligibleCount = useMemo(() =>
-    campaigns.filter(c => c.userEligible && c.exclusiveToProgramSlug).length,
-    [campaigns]);
+  const eligibleCount = useMemo(
+    () => campaigns.filter((c) => c.userEligible && c.exclusiveToProgramSlug).length,
+    [campaigns],
+  );
 
   const filteredCampaigns = useMemo(() => {
-    const typed = selectedType === 'all' ? campaigns : campaigns.filter(c => c.type === selectedType);
+    const typed = selectedType === 'all' ? campaigns : campaigns.filter((c) => c.type === selectedType);
     // Sort eligible exclusive campaigns first, keep backend priority order otherwise
     return [...typed].sort((a, b) => {
       const aElig = a.userEligible && a.exclusiveToProgramSlug ? 1 : 0;
@@ -159,7 +151,10 @@ const AllCampaignsPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={22} color={COLORS.white} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -178,14 +173,14 @@ const AllCampaignsPage: React.FC = () => {
           <View style={styles.statsDivider} />
           <View style={styles.statsItem}>
             <Text style={styles.statsValue}>
-              {campaigns.filter(c => getDaysRemaining(c.endTime) <= 3 && getDaysRemaining(c.endTime) > 0).length}
+              {campaigns.filter((c) => getDaysRemaining(c.endTime) <= 3 && getDaysRemaining(c.endTime) > 0).length}
             </Text>
             <Text style={styles.statsLabel}>Ending Soon</Text>
           </View>
           <View style={styles.statsDivider} />
           <View style={styles.statsItem}>
             <Text style={styles.statsValue}>
-              {eligibleCount > 0 ? eligibleCount : new Set(campaigns.map(c => c.type)).size}
+              {eligibleCount > 0 ? eligibleCount : new Set(campaigns.map((c) => c.type)).size}
             </Text>
             <Text style={styles.statsLabel}>{eligibleCount > 0 ? 'For You' : 'Categories'}</Text>
           </View>
@@ -199,20 +194,14 @@ const AllCampaignsPage: React.FC = () => {
             <Pressable
               key={type.id}
               onPress={() => setSelectedType(type.id)}
-              style={[
-                styles.filterChip,
-                selectedType === type.id && styles.filterChipActive
-              ]}
+              style={[styles.filterChip, selectedType === type.id && styles.filterChipActive]}
             >
               <Ionicons
                 name={type.icon as any}
                 size={16}
                 color={selectedType === type.id ? COLORS.white : COLORS.gray600}
               />
-              <Text style={[
-                styles.filterChipText,
-                selectedType === type.id && styles.filterChipTextActive
-              ]}>
+              <Text style={[styles.filterChipText, selectedType === type.id && styles.filterChipTextActive]}>
                 {type.label}
               </Text>
             </Pressable>
@@ -222,9 +211,7 @@ const AllCampaignsPage: React.FC = () => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         contentContainerStyle={styles.scrollContent}
       >
         {filteredCampaigns.length > 0 ? (
@@ -234,15 +221,10 @@ const AllCampaignsPage: React.FC = () => {
               const typeStyle = TYPE_COLORS[campaign.type] || TYPE_COLORS.general;
 
               return (
-                <Pressable
-                  key={campaign._id}
-                  style={styles.campaignCard}
-                  onPress={() => handleCampaignPress(campaign)}
-                 
-                >
+                <Pressable key={campaign._id} style={styles.campaignCard} onPress={() => handleCampaignPress(campaign)}>
                   {/* Card Header with Gradient */}
                   <LinearGradient
-                    colors={campaign.gradientColors || [colors.success, colors.tealGreen]}
+                    colors={(campaign.gradientColors || [colors.success, colors.tealGreen]) as any}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.cardHeader}
@@ -255,8 +237,12 @@ const AllCampaignsPage: React.FC = () => {
                       </View>
                     )}
                     <View style={styles.cardHeaderText}>
-                      <Text style={styles.campaignTitle} numberOfLines={1}>{campaign.title}</Text>
-                      <Text style={styles.campaignSubtitle} numberOfLines={1}>{campaign.subtitle}</Text>
+                      <Text style={styles.campaignTitle} numberOfLines={1}>
+                        {campaign.title}
+                      </Text>
+                      <Text style={styles.campaignSubtitle} numberOfLines={1}>
+                        {campaign.subtitle}
+                      </Text>
                     </View>
                   </LinearGradient>
 
@@ -308,19 +294,17 @@ const AllCampaignsPage: React.FC = () => {
 
                     {/* Urgency Indicator */}
                     {daysRemaining > 0 && daysRemaining <= 7 && (
-                      <View style={[
-                        styles.urgencyBadge,
-                        daysRemaining <= 3 ? styles.urgencyHigh : styles.urgencyMedium
-                      ]}>
+                      <View
+                        style={[styles.urgencyBadge, daysRemaining <= 3 ? styles.urgencyHigh : styles.urgencyMedium]}
+                      >
                         <Ionicons
                           name="time-outline"
                           size={12}
                           color={daysRemaining <= 3 ? COLORS.red500 : COLORS.amber500}
                         />
-                        <Text style={[
-                          styles.urgencyText,
-                          { color: daysRemaining <= 3 ? COLORS.red500 : COLORS.amber500 }
-                        ]}>
+                        <Text
+                          style={[styles.urgencyText, { color: daysRemaining <= 3 ? COLORS.red500 : COLORS.amber500 }]}
+                        >
                           {daysRemaining} day{daysRemaining > 1 ? 's' : ''} left
                         </Text>
                       </View>
@@ -331,12 +315,18 @@ const AllCampaignsPage: React.FC = () => {
                       <View style={styles.additionalInfo}>
                         {campaign.minOrderValue && (
                           <View style={styles.infoChip}>
-                            <Text style={styles.infoChipText}>Min {currencySymbol}{campaign.minOrderValue}</Text>
+                            <Text style={styles.infoChipText}>
+                              Min {currencySymbol}
+                              {campaign.minOrderValue}
+                            </Text>
                           </View>
                         )}
                         {campaign.maxBenefit && (
                           <View style={styles.infoChip}>
-                            <Text style={styles.infoChipText}>Max {currencySymbol}{campaign.maxBenefit}</Text>
+                            <Text style={styles.infoChipText}>
+                              Max {currencySymbol}
+                              {campaign.maxBenefit}
+                            </Text>
                           </View>
                         )}
                       </View>
@@ -364,10 +354,7 @@ const AllCampaignsPage: React.FC = () => {
                 : 'Check back later for new campaigns'}
             </Text>
             {selectedType !== 'all' && (
-              <Pressable
-                style={styles.clearFilterButton}
-                onPress={() => setSelectedType('all')}
-              >
+              <Pressable style={styles.clearFilterButton} onPress={() => setSelectedType('all')}>
                 <Text style={styles.clearFilterText}>Show All Campaigns</Text>
               </Pressable>
             )}

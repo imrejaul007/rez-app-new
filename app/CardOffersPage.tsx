@@ -12,33 +12,29 @@ import {
   Modal,
   Platform,
   RefreshControl,
-  Dimensions
+  Dimensions,
 } from 'react-native';
-import Animated, {
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming } from 'react-native-reanimated';
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import discountsApi, { Discount } from '@/services/discountsApi';
-import { useCartState, useCartActions, useAuthUser, useIsAuthenticated, useGetCurrencySymbol } from '@/stores/selectors';
+import {
+  useCartState,
+  useCartActions,
+  useAuthUser,
+  useIsAuthenticated,
+  useGetCurrencySymbol,
+} from '@/stores/selectors';
 import { triggerImpact, triggerNotification } from '@/utils/haptics';
 import { showToast } from '@/components/common/ToastManager';
 import { platformAlert } from '@/utils/platformAlert';
 import analyticsService from '@/services/analyticsService';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
-import {
-  Colors,
-  Spacing,
-  Shadows,
-  BorderRadius,
-  Typography,
-  Gradients } from '@/constants/DesignSystem';
+import { Colors, Spacing, Shadows, BorderRadius, Typography, Gradients } from '@/constants/DesignSystem';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -102,12 +98,11 @@ function CardOffersPage() {
         storeId,
         orderValue: currentOrderValue,
         page: 1,
-        limit: 50 });
+        limit: 50,
+      });
 
       if (response.success && response.data) {
-        const discounts = Array.isArray(response.data)
-          ? response.data
-          : response.data.discounts || [];
+        const discounts = Array.isArray(response.data) ? response.data : response.data.discounts || [];
         if (!isMounted()) return;
         setCardOffers(discounts);
 
@@ -139,7 +134,8 @@ function CardOffersPage() {
       analyticsService.trackPageView('card_offers_page', {
         storeId,
         storeName,
-        orderValue: currentOrderValue });
+        orderValue: currentOrderValue,
+      });
     }
   }, [storeId, storeName, currentOrderValue]);
 
@@ -150,256 +146,254 @@ function CardOffersPage() {
   }, [fetchCardOffers, isOnline]);
 
   // Handle apply offer
-  const handleApplyOffer = useCallback(async (offer: Discount) => {
-    if (!isAuthenticated) {
-      platformAlert(
-        'Sign In Required',
-        'Please sign in to apply card offers.',
-        [
+  const handleApplyOffer = useCallback(
+    async (offer: Discount) => {
+      if (!isAuthenticated) {
+        platformAlert('Sign In Required', 'Please sign in to apply card offers.', [
           { text: 'Cancel', style: 'cancel' },
           { text: 'Sign In', onPress: () => router.push('/sign-in') },
-        ]
-      );
-      return;
-    }
-
-    if (currentOrderValue < offer.minOrderValue) {
-      const shortfall = offer.minOrderValue - currentOrderValue;
-      platformAlert(
-        'Minimum Order Required',
-        `Add ${currencySymbol}${shortfall.toLocaleString()} more to unlock this offer.`
-      );
-      return;
-    }
-
-    const now = new Date();
-    if (now < new Date(offer.validFrom)) {
-      platformAlert('Not Available Yet', 'This offer is not active yet.');
-      return;
-    }
-    if (now > new Date(offer.validUntil)) {
-      platformAlert('Expired', 'This offer has expired.');
-      return;
-    }
-    if (!offer.isActive) {
-      platformAlert('Unavailable', 'This offer is currently not active.');
-      return;
-    }
-
-    triggerImpact('Medium');
-    setApplyingOffer(true);
-
-    try {
-      if (cartActions && typeof cartActions.applyCoupon === 'function' && offer.code) {
-        await cartActions.applyCoupon(offer.code);
-      } else if (cartActions && typeof (cartActions as any).setCardOffer === 'function') {
-        await (cartActions as any).setCardOffer(offer);
+        ]);
+        return;
       }
 
-      triggerNotification('Success');
-      const discountText = offer.type === 'percentage' ? `${offer.value}%` : `${currencySymbol}${offer.value}`;
-      showToast({
-        message: `${offer.name} applied! Save ${discountText} on card payment.`,
-        type: 'success',
-        duration: 3000 });
+      if (currentOrderValue < offer.minOrderValue) {
+        const shortfall = offer.minOrderValue - currentOrderValue;
+        platformAlert(
+          'Minimum Order Required',
+          `Add ${currencySymbol}${shortfall.toLocaleString()} more to unlock this offer.`,
+        );
+        return;
+      }
 
-      analyticsService.track('card_offer_applied', {
-        offerId: offer._id,
-        offerName: offer.name,
-        discountType: offer.type,
-        discountValue: offer.value,
-        storeId,
-        orderValue: currentOrderValue });
+      const now = new Date();
+      if (now < new Date(offer.validFrom)) {
+        platformAlert('Not Available Yet', 'This offer is not active yet.');
+        return;
+      }
+      if (now > new Date(offer.validUntil)) {
+        platformAlert('Expired', 'This offer has expired.');
+        return;
+      }
+      if (!offer.isActive) {
+        platformAlert('Unavailable', 'This offer is currently not active.');
+        return;
+      }
 
-      if (!isMounted()) return;
-      setShowOfferDetails(false);
-      if (!isMounted()) return;
-      setSelectedOffer(null);
-      setTimeout(() => router.canGoBack() ? router.back() : router.replace('/(tabs)'), 1000);
-    } catch (error: any) {
-      triggerNotification('Error');
-      platformAlert('Error', error?.message || 'Failed to apply offer.');
-    } finally {
-      if (!isMounted()) return;
-      setApplyingOffer(false);
-    }
-  }, [isAuthenticated, currentOrderValue, cartActions, router, storeId]);
+      triggerImpact('Medium');
+      setApplyingOffer(true);
+
+      try {
+        if (cartActions && typeof cartActions.applyCoupon === 'function' && offer.code) {
+          await cartActions.applyCoupon(offer.code);
+        } else if (cartActions && typeof (cartActions as any).setCardOffer === 'function') {
+          await (cartActions as any).setCardOffer(offer);
+        }
+
+        triggerNotification('Success');
+        const discountText = offer.type === 'percentage' ? `${offer.value}%` : `${currencySymbol}${offer.value}`;
+        showToast({
+          message: `${offer.name} applied! Save ${discountText} on card payment.`,
+          type: 'success',
+          duration: 3000,
+        });
+
+        analyticsService.track('card_offer_applied', {
+          offerId: offer._id,
+          offerName: offer.name,
+          discountType: offer.type,
+          discountValue: offer.value,
+          storeId,
+          orderValue: currentOrderValue,
+        });
+
+        if (!isMounted()) return;
+        setShowOfferDetails(false);
+        if (!isMounted()) return;
+        setSelectedOffer(null);
+        setTimeout(() => (router.canGoBack() ? router.back() : router.replace('/(tabs)')), 1000);
+      } catch (error: any) {
+        triggerNotification('Error');
+        platformAlert('Error', error?.message || 'Failed to apply offer.');
+      } finally {
+        if (!isMounted()) return;
+        setApplyingOffer(false);
+      }
+    },
+    [isAuthenticated, currentOrderValue, cartActions, router, storeId],
+  );
 
   // Render offer card
-  const renderOfferCard = useCallback((offer: Discount, index: number) => {
-    const discountText = offer.type === 'percentage' ? `${offer.value}%` : `${currencySymbol}${offer.value}`;
-    const isEligible = currentOrderValue >= offer.minOrderValue;
-    const shortfall = Math.max(0, offer.minOrderValue - currentOrderValue);
-    const bankNames = offer.bankNames?.length ? offer.bankNames.join(', ') : 'All Banks';
-    const maxSavings = offer.type === 'percentage'
-      ? (offer.maxDiscountAmount || Math.round(currentOrderValue * offer.value / 100))
-      : offer.value;
+  const renderOfferCard = useCallback(
+    (offer: Discount, index: number) => {
+      const discountText = offer.type === 'percentage' ? `${offer.value}%` : `${currencySymbol}${offer.value}`;
+      const isEligible = currentOrderValue >= offer.minOrderValue;
+      const shortfall = Math.max(0, offer.minOrderValue - currentOrderValue);
+      const bankNames = offer.bankNames?.length ? offer.bankNames.join(', ') : 'All Banks';
+      const maxSavings =
+        offer.type === 'percentage'
+          ? offer.maxDiscountAmount || Math.round((currentOrderValue * offer.value) / 100)
+          : offer.value;
 
-    return (
-      <Animated.View
-        key={offer._id || index}
-        style={[
-          styles.offerCard,
-          fadeAnimStyle
-        ]}
-      >
-        <Pressable
-         
-          onPress={() => {
-            setSelectedOffer(offer);
-            setShowOfferDetails(true);
-            triggerImpact('Light');
-          }}
-          accessible={true}
-          accessibilityLabel={`Card offer: ${offer.name}, ${discountText} off`}
-          accessibilityRole="button"
-        >
-          <LinearGradient
-            colors={[colors.background.primary, '#F8F5FF']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={styles.offerCardGradient}
+      return (
+        <Animated.View key={offer._id || index} style={[styles.offerCard, fadeAnimStyle]}>
+          <Pressable
+            onPress={() => {
+              setSelectedOffer(offer);
+              setShowOfferDetails(true);
+              triggerImpact('Light');
+            }}
+            accessible={true}
+            accessibilityLabel={`Card offer: ${offer.name}, ${discountText} off`}
+            accessibilityRole="button"
           >
-            {/* Decorative Pattern */}
-            <View style={styles.cardPattern}>
-              <View style={[styles.patternCircle, styles.patternCircle1]} />
-              <View style={[styles.patternCircle, styles.patternCircle2]} />
-            </View>
-
-            {/* Card Header */}
-            <View style={styles.cardHeader}>
-              <View style={styles.cardIconContainer}>
-                <LinearGradient
-                  colors={Gradients.purplePrimary as unknown as string[]}
-                  style={styles.cardIconGradient}
-                >
-                  <MaterialCommunityIcons name="credit-card-chip-outline" size={24} color={colors.background.primary} />
-                </LinearGradient>
+            <LinearGradient
+              colors={[colors.background.primary, '#F8F5FF']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.offerCardGradient}
+            >
+              {/* Decorative Pattern */}
+              <View style={styles.cardPattern}>
+                <View style={[styles.patternCircle, styles.patternCircle1]} />
+                <View style={[styles.patternCircle, styles.patternCircle2]} />
               </View>
 
-              <View style={styles.discountBadge}>
-                <ThemedText style={styles.discountText}>{discountText}</ThemedText>
-                <ThemedText style={styles.discountLabel}>OFF</ThemedText>
+              {/* Card Header */}
+              <View style={styles.cardHeader}>
+                <View style={styles.cardIconContainer}>
+                  <LinearGradient colors={Gradients.purplePrimary as any} style={styles.cardIconGradient}>
+                    <MaterialCommunityIcons
+                      name="credit-card-chip-outline"
+                      size={24}
+                      color={colors.background.primary}
+                    />
+                  </LinearGradient>
+                </View>
+
+                <View style={styles.discountBadge}>
+                  <ThemedText style={styles.discountText}>{discountText}</ThemedText>
+                  <ThemedText style={styles.discountLabel}>OFF</ThemedText>
+                </View>
               </View>
-            </View>
 
-            {/* Offer Info */}
-            <View style={styles.cardBody}>
-              <ThemedText style={styles.offerName} numberOfLines={2}>
-                {offer.name}
-              </ThemedText>
-
-              {offer.description && (
-                <ThemedText style={styles.offerDesc} numberOfLines={2}>
-                  {offer.description}
+              {/* Offer Info */}
+              <View style={styles.cardBody}>
+                <ThemedText style={styles.offerName} numberOfLines={2}>
+                  {offer.name}
                 </ThemedText>
-              )}
 
-              {/* Meta Info */}
-              <View style={styles.metaContainer}>
-                <View style={styles.metaItem}>
-                  <Ionicons name="card" size={14} color={Colors.primary[600]} />
-                  <ThemedText style={styles.metaText}>{bankNames}</ThemedText>
-                </View>
-
-                <View style={styles.metaItem}>
-                  <Ionicons name="pricetag" size={14} color={Colors.primary[600]} />
-                  <ThemedText style={styles.metaText}>
-                    Min {currencySymbol}{offer.minOrderValue.toLocaleString()}
+                {offer.description && (
+                  <ThemedText style={styles.offerDesc} numberOfLines={2}>
+                    {offer.description}
                   </ThemedText>
+                )}
+
+                {/* Meta Info */}
+                <View style={styles.metaContainer}>
+                  <View style={styles.metaItem}>
+                    <Ionicons name="card" size={14} color={Colors.primary[600]} />
+                    <ThemedText style={styles.metaText}>{bankNames}</ThemedText>
+                  </View>
+
+                  <View style={styles.metaItem}>
+                    <Ionicons name="pricetag" size={14} color={Colors.primary[600]} />
+                    <ThemedText style={styles.metaText}>
+                      Min {currencySymbol}
+                      {offer.minOrderValue.toLocaleString()}
+                    </ThemedText>
+                  </View>
+
+                  {offer.maxDiscountAmount && (
+                    <View style={styles.metaItem}>
+                      <Ionicons name="gift" size={14} color={Colors.primary[600]} />
+                      <ThemedText style={styles.metaText}>
+                        Save up to {currencySymbol}
+                        {offer.maxDiscountAmount.toLocaleString()}
+                      </ThemedText>
+                    </View>
+                  )}
                 </View>
 
-                {offer.maxDiscountAmount && (
-                  <View style={styles.metaItem}>
-                    <Ionicons name="gift" size={14} color={Colors.primary[600]} />
-                    <ThemedText style={styles.metaText}>
-                      Save up to {currencySymbol}{offer.maxDiscountAmount.toLocaleString()}
+                {/* Card Type Badge */}
+                {offer.cardType && offer.cardType !== 'all' && (
+                  <View style={styles.cardTypePill}>
+                    <MaterialCommunityIcons
+                      name={offer.cardType === 'credit' ? 'credit-card' : 'card-account-details'}
+                      size={12}
+                      color={Colors.primary[700]}
+                    />
+                    <ThemedText style={styles.cardTypeLabel}>
+                      {offer.cardType === 'credit' ? 'Credit Card' : 'Debit Card'} Only
                     </ThemedText>
                   </View>
                 )}
               </View>
 
-              {/* Card Type Badge */}
-              {offer.cardType && offer.cardType !== 'all' && (
-                <View style={styles.cardTypePill}>
-                  <MaterialCommunityIcons
-                    name={offer.cardType === 'credit' ? 'credit-card' : 'card-account-details'}
-                    size={12}
-                    color={Colors.primary[700]}
-                  />
-                  <ThemedText style={styles.cardTypeLabel}>
-                    {offer.cardType === 'credit' ? 'Credit Card' : 'Debit Card'} Only
-                  </ThemedText>
-                </View>
-              )}
-            </View>
+              {/* Divider with scissors */}
+              <View style={styles.dividerContainer}>
+                <View style={styles.dividerCircleLeft} />
+                <View style={styles.dividerLine} />
+                <View style={styles.dividerCircleRight} />
+              </View>
 
-            {/* Divider with scissors */}
-            <View style={styles.dividerContainer}>
-              <View style={styles.dividerCircleLeft} />
-              <View style={styles.dividerLine} />
-              <View style={styles.dividerCircleRight} />
-            </View>
-
-            {/* Footer */}
-            <View style={styles.cardFooter}>
-              {isEligible ? (
-                <Pressable
-                  style={styles.applyBtn}
-                  onPress={(e) => {
-                    e.stopPropagation();
-                    handleApplyOffer(offer);
-                  }}
-                  disabled={applyingOffer}
-                 
-                >
-                  <LinearGradient
-                    colors={Gradients.purplePrimary as unknown as string[]}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.applyBtnGradient}
+              {/* Footer */}
+              <View style={styles.cardFooter}>
+                {isEligible ? (
+                  <Pressable
+                    style={styles.applyBtn}
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      handleApplyOffer(offer);
+                    }}
+                    disabled={applyingOffer}
                   >
-                    {applyingOffer ? (
-                      <ActivityIndicator size="small" color={colors.background.primary} />
-                    ) : (
-                      <>
-                        <ThemedText style={styles.applyBtnText}>Apply Offer</ThemedText>
-                        <Ionicons name="arrow-forward" size={16} color={colors.background.primary} />
-                      </>
-                    )}
-                  </LinearGradient>
-                </Pressable>
-              ) : (
-                <View style={styles.lockedContainer}>
-                  <View style={styles.lockedBadge}>
-                    <Ionicons name="lock-closed" size={14} color={Colors.warning} />
-                    <ThemedText style={styles.lockedText}>
-                      Add {currencySymbol}{shortfall.toLocaleString()} more
-                    </ThemedText>
+                    <LinearGradient
+                      colors={Gradients.purplePrimary as any}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 0 }}
+                      style={styles.applyBtnGradient}
+                    >
+                      {applyingOffer ? (
+                        <ActivityIndicator size="small" color={colors.background.primary} />
+                      ) : (
+                        <>
+                          <ThemedText style={styles.applyBtnText}>Apply Offer</ThemedText>
+                          <Ionicons name="arrow-forward" size={16} color={colors.background.primary} />
+                        </>
+                      )}
+                    </LinearGradient>
+                  </Pressable>
+                ) : (
+                  <View style={styles.lockedContainer}>
+                    <View style={styles.lockedBadge}>
+                      <Ionicons name="lock-closed" size={14} color={Colors.warning} />
+                      <ThemedText style={styles.lockedText}>
+                        Add {currencySymbol}
+                        {shortfall.toLocaleString()} more
+                      </ThemedText>
+                    </View>
+                    <ThemedText style={styles.unlockHint}>to unlock this offer</ThemedText>
                   </View>
-                  <ThemedText style={styles.unlockHint}>to unlock this offer</ThemedText>
-                </View>
-              )}
-            </View>
-          </LinearGradient>
-        </Pressable>
-      </Animated.View>
-    );
-  }, [currentOrderValue, applyingOffer, handleApplyOffer, fadeAnim]);
+                )}
+              </View>
+            </LinearGradient>
+          </Pressable>
+        </Animated.View>
+      );
+    },
+    [currentOrderValue, applyingOffer, handleApplyOffer, fadeAnim],
+  );
 
   return (
     <ErrorBoundary>
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top']}>
         {/* Header */}
-        <LinearGradient
-          colors={Gradients.purplePrimary as unknown as string[]}
-          style={styles.header}
-        >
+        <LinearGradient colors={Gradients.purplePrimary as any} style={styles.header}>
           <View style={styles.headerTop}>
             <Pressable
               style={styles.backBtn}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
@@ -422,17 +416,14 @@ function CardOffersPage() {
             <View style={styles.orderCardLeft}>
               <ThemedText style={styles.orderLabel}>Current Order Value</ThemedText>
               <ThemedText style={styles.orderAmount}>
-                {currencySymbol}{currentOrderValue.toLocaleString()}
+                {currencySymbol}
+                {currentOrderValue.toLocaleString()}
               </ThemedText>
             </View>
             <View style={styles.orderCardDivider} />
             <View style={styles.orderCardRight}>
-              <ThemedText style={styles.offersCount}>
-                {cardOffers.length}
-              </ThemedText>
-              <ThemedText style={styles.offersLabel}>
-                {cardOffers.length === 1 ? 'Offer' : 'Offers'}
-              </ThemedText>
+              <ThemedText style={styles.offersCount}>{cardOffers.length}</ThemedText>
+              <ThemedText style={styles.offersLabel}>{cardOffers.length === 1 ? 'Offer' : 'Offers'}</ThemedText>
             </View>
           </View>
         </LinearGradient>
@@ -483,9 +474,7 @@ function CardOffersPage() {
                 <Ionicons name="flash" size={20} color={Colors.primary[600]} />
                 <ThemedText style={styles.sectionTitle}>Available Offers</ThemedText>
               </View>
-              <ThemedText style={styles.sectionSubtitle}>
-                Pay with card & save more
-              </ThemedText>
+              <ThemedText style={styles.sectionSubtitle}>Pay with card & save more</ThemedText>
             </View>
 
             {/* Offer Cards */}
@@ -504,30 +493,22 @@ function CardOffersPage() {
           onRequestClose={() => setShowOfferDetails(false)}
         >
           <View style={styles.modalOverlay}>
-            <Pressable
-              style={styles.modalBackdrop}
-             
-              onPress={() => setShowOfferDetails(false)}
-            />
+            <Pressable style={styles.modalBackdrop} onPress={() => setShowOfferDetails(false)} />
             <View style={styles.modalContent}>
               {selectedOffer && (
                 <>
                   {/* Modal Header */}
-                  <LinearGradient
-                    colors={Gradients.purplePrimary as unknown as string[]}
-                    style={styles.modalHeader}
-                  >
-                    <Pressable
-                      style={styles.modalCloseBtn}
-                      onPress={() => setShowOfferDetails(false)}
-                    >
+                  <LinearGradient colors={Gradients.purplePrimary as any} style={styles.modalHeader}>
+                    <Pressable style={styles.modalCloseBtn} onPress={() => setShowOfferDetails(false)}>
                       <Ionicons name="close" size={24} color={colors.background.primary} />
                     </Pressable>
 
                     <View style={styles.modalHeaderContent}>
                       <View style={styles.modalDiscountBadge}>
                         <ThemedText style={styles.modalDiscountText}>
-                          {selectedOffer.type === 'percentage' ? `${selectedOffer.value}%` : `${currencySymbol}${selectedOffer.value}`}
+                          {selectedOffer.type === 'percentage'
+                            ? `${selectedOffer.value}%`
+                            : `${currencySymbol}${selectedOffer.value}`}
                         </ThemedText>
                         <ThemedText style={styles.modalDiscountLabel}>OFF</ThemedText>
                       </View>
@@ -538,9 +519,7 @@ function CardOffersPage() {
                   {/* Modal Body */}
                   <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
                     {selectedOffer.description && (
-                      <ThemedText style={styles.modalDescription}>
-                        {selectedOffer.description}
-                      </ThemedText>
+                      <ThemedText style={styles.modalDescription}>{selectedOffer.description}</ThemedText>
                     )}
 
                     {/* Details List */}
@@ -578,7 +557,8 @@ function CardOffersPage() {
                         <View style={styles.detailContent}>
                           <ThemedText style={styles.detailLabel}>Minimum Order</ThemedText>
                           <ThemedText style={styles.detailValue}>
-                            {currencySymbol}{selectedOffer.minOrderValue.toLocaleString()}
+                            {currencySymbol}
+                            {selectedOffer.minOrderValue.toLocaleString()}
                           </ThemedText>
                         </View>
                       </View>
@@ -591,7 +571,8 @@ function CardOffersPage() {
                           <View style={styles.detailContent}>
                             <ThemedText style={styles.detailLabel}>Max Savings</ThemedText>
                             <ThemedText style={styles.detailValue}>
-                              {currencySymbol}{selectedOffer.maxDiscountAmount.toLocaleString()}
+                              {currencySymbol}
+                              {selectedOffer.maxDiscountAmount.toLocaleString()}
                             </ThemedText>
                           </View>
                         </View>
@@ -607,7 +588,7 @@ function CardOffersPage() {
                             {new Date(selectedOffer.validUntil).toLocaleDateString('en-IN', {
                               day: 'numeric',
                               month: 'short',
-                              year: 'numeric'
+                              year: 'numeric',
                             })}
                           </ThemedText>
                         </View>
@@ -628,7 +609,8 @@ function CardOffersPage() {
                           <View style={styles.termItem}>
                             <Ionicons name="checkmark-circle" size={16} color={Colors.success} />
                             <ThemedText style={styles.termText}>
-                              {selectedOffer.usageLimitPerUser} use{selectedOffer.usageLimitPerUser > 1 ? 's' : ''} per user
+                              {selectedOffer.usageLimitPerUser} use{selectedOffer.usageLimitPerUser > 1 ? 's' : ''} per
+                              user
                             </ThemedText>
                           </View>
                         )}
@@ -643,10 +625,9 @@ function CardOffersPage() {
                         style={styles.modalApplyBtn}
                         onPress={() => handleApplyOffer(selectedOffer)}
                         disabled={applyingOffer}
-                       
                       >
                         <LinearGradient
-                          colors={Gradients.purplePrimary as unknown as string[]}
+                          colors={Gradients.purplePrimary as any}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 0 }}
                           style={styles.modalApplyBtnGradient}
@@ -666,7 +647,8 @@ function CardOffersPage() {
                         <View style={styles.modalLockedBadge}>
                           <Ionicons name="lock-closed" size={16} color={Colors.warning} />
                           <ThemedText style={styles.modalLockedText}>
-                            Add {currencySymbol}{(selectedOffer.minOrderValue - currentOrderValue).toLocaleString()} more to unlock
+                            Add {currencySymbol}
+                            {(selectedOffer.minOrderValue - currentOrderValue).toLocaleString()} more to unlock
                           </ThemedText>
                         </View>
                       </View>
@@ -685,7 +667,8 @@ function CardOffersPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
 
   // Header
   header: {
@@ -693,34 +676,41 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.sm,
     paddingBottom: Spacing.xl,
     borderBottomLeftRadius: BorderRadius['2xl'],
-    borderBottomRightRadius: BorderRadius['2xl'] },
+    borderBottomRightRadius: BorderRadius['2xl'],
+  },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   backBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   headerTitleContainer: {
     flex: 1,
-    marginLeft: Spacing.md },
+    marginLeft: Spacing.md,
+  },
   headerTitle: {
     ...Typography.h2,
     color: colors.background.primary,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   headerSubtitle: {
     ...Typography.body,
     color: 'rgba(255,255,255,0.8)',
-    marginTop: 2 },
+    marginTop: 2,
+  },
   headerRight: {
     width: 40,
     height: 40,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
 
   // Order Card
   orderCard: {
@@ -728,56 +718,68 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   orderCardLeft: {
-    flex: 1 },
+    flex: 1,
+  },
   orderLabel: {
     ...Typography.caption,
-    color: 'rgba(255,255,255,0.7)' },
+    color: 'rgba(255,255,255,0.7)',
+  },
   orderAmount: {
     ...Typography.h2,
     color: colors.background.primary,
     fontWeight: '800',
-    marginTop: 2 },
+    marginTop: 2,
+  },
   orderCardDivider: {
     width: 1,
     height: 40,
     backgroundColor: 'rgba(255,255,255,0.3)',
-    marginHorizontal: Spacing.base },
+    marginHorizontal: Spacing.base,
+  },
   orderCardRight: {
     alignItems: 'center',
-    paddingHorizontal: Spacing.base },
+    paddingHorizontal: Spacing.base,
+  },
   offersCount: {
     ...Typography.h1,
     color: colors.background.primary,
-    fontWeight: '800' },
+    fontWeight: '800',
+  },
   offersLabel: {
     ...Typography.caption,
-    color: 'rgba(255,255,255,0.7)' },
+    color: 'rgba(255,255,255,0.7)',
+  },
 
   // Loading
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   loadingCard: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing['2xl'],
     alignItems: 'center',
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   loadingText: {
     ...Typography.body,
     color: Colors.gray[600],
-    marginTop: Spacing.base },
+    marginTop: Spacing.base,
+  },
 
   // Error
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   errorIconContainer: {
     width: 80,
     height: 80,
@@ -785,17 +787,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.error + '15',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   errorTitle: {
     ...Typography.h3,
     color: Colors.gray[900],
     fontWeight: '700',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   errorText: {
     ...Typography.body,
     color: Colors.gray[600],
     textAlign: 'center',
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   retryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -803,17 +808,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary[600],
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.full },
+    borderRadius: BorderRadius.full,
+  },
   retryBtnText: {
     ...Typography.label,
-    color: colors.background.primary },
+    color: colors.background.primary,
+  },
 
   // Empty
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   emptyIconContainer: {
     width: 100,
     height: 100,
@@ -821,118 +829,145 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gray[100],
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   emptyTitle: {
     ...Typography.h3,
     color: Colors.gray[900],
     fontWeight: '700',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   emptyText: {
     ...Typography.body,
     color: Colors.gray[500],
     textAlign: 'center',
-    maxWidth: 280 },
+    maxWidth: 280,
+  },
 
   // Scroll
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   scrollContent: {
     padding: Spacing.lg,
-    paddingBottom: 120 },
+    paddingBottom: 120,
+  },
 
   // Section Header
   sectionHeader: {
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   sectionTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   sectionTitle: {
     ...Typography.h3,
     color: Colors.gray[900],
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   sectionSubtitle: {
     ...Typography.body,
     color: Colors.gray[500],
     marginTop: 2,
-    marginLeft: 28 },
+    marginLeft: 28,
+  },
 
   // Offer Card
   offerCard: {
     marginBottom: Spacing.base,
     borderRadius: BorderRadius.xl,
     overflow: 'hidden',
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   offerCardGradient: {
     position: 'relative',
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   cardPattern: {
     position: 'absolute',
     top: 0,
     right: 0,
     width: 150,
-    height: 150 },
+    height: 150,
+  },
   patternCircle: {
     position: 'absolute',
     borderRadius: 100,
     backgroundColor: Colors.primary[100],
-    opacity: 0.3 },
+    opacity: 0.3,
+  },
   patternCircle1: {
     width: 100,
     height: 100,
     top: -30,
-    right: -30 },
+    right: -30,
+  },
   patternCircle2: {
     width: 60,
     height: 60,
     top: 40,
-    right: 50 },
+    right: 50,
+  },
   cardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     padding: Spacing.lg,
-    paddingBottom: Spacing.sm },
+    paddingBottom: Spacing.sm,
+  },
   cardIconContainer: {
     borderRadius: BorderRadius.md,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   cardIconGradient: {
     width: 48,
     height: 48,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   discountBadge: {
-    alignItems: 'flex-end' },
+    alignItems: 'flex-end',
+  },
   discountText: {
     ...Typography.h1,
     color: Colors.primary[700],
-    fontWeight: '800' },
+    fontWeight: '800',
+  },
   discountLabel: {
     ...Typography.caption,
     color: Colors.primary[500],
     fontWeight: '700',
-    marginTop: -4 },
+    marginTop: -4,
+  },
   cardBody: {
     paddingHorizontal: Spacing.lg,
-    paddingBottom: Spacing.base },
+    paddingBottom: Spacing.base,
+  },
   offerName: {
     ...Typography.h4,
     color: Colors.gray[900],
     fontWeight: '700',
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   offerDesc: {
     ...Typography.body,
     color: Colors.gray[600],
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   metaContainer: {
-    gap: Spacing.xs },
+    gap: Spacing.xs,
+  },
   metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   metaText: {
     ...Typography.bodySmall,
-    color: Colors.gray[600] },
+    color: Colors.gray[600],
+  },
   cardTypePill: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -942,51 +977,62 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
     alignSelf: 'flex-start',
-    marginTop: Spacing.md },
+    marginTop: Spacing.md,
+  },
   cardTypeLabel: {
     ...Typography.caption,
     color: Colors.primary[700],
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: Spacing.sm },
+    marginVertical: Spacing.sm,
+  },
   dividerCircleLeft: {
     width: 20,
     height: 20,
     borderRadius: 10,
     backgroundColor: colors.background.secondary,
-    marginLeft: -10 },
+    marginLeft: -10,
+  },
   dividerLine: {
     flex: 1,
     height: 1,
     borderStyle: 'dashed',
     borderWidth: 1,
-    borderColor: Colors.gray[200] },
+    borderColor: Colors.gray[200],
+  },
   dividerCircleRight: {
     width: 20,
     height: 20,
     borderRadius: 10,
     backgroundColor: colors.background.secondary,
-    marginRight: -10 },
+    marginRight: -10,
+  },
   cardFooter: {
     padding: Spacing.lg,
-    paddingTop: Spacing.sm },
+    paddingTop: Spacing.sm,
+  },
   applyBtn: {
     borderRadius: BorderRadius.md,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   applyBtnGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    paddingVertical: Spacing.md },
+    paddingVertical: Spacing.md,
+  },
   applyBtnText: {
     ...Typography.label,
     color: colors.background.primary,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   lockedContainer: {
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   lockedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -994,35 +1040,42 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.warning + '15',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.full },
+    borderRadius: BorderRadius.full,
+  },
   lockedText: {
     ...Typography.label,
     color: Colors.warning,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   unlockHint: {
     ...Typography.caption,
     color: Colors.gray[500],
-    marginTop: Spacing.xs },
+    marginTop: Spacing.xs,
+  },
 
   // Modal
   modalOverlay: {
     flex: 1,
-    justifyContent: 'flex-end' },
+    justifyContent: 'flex-end',
+  },
   modalBackdrop: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)' },
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
   modalContent: {
     backgroundColor: colors.background.primary,
     borderTopLeftRadius: BorderRadius['2xl'],
     borderTopRightRadius: BorderRadius['2xl'],
     maxHeight: '85%',
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   modalHeader: {
     paddingTop: Spacing.lg,
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.xl,
     borderBottomLeftRadius: BorderRadius.xl,
-    borderBottomRightRadius: BorderRadius.xl },
+    borderBottomRightRadius: BorderRadius.xl,
+  },
   modalCloseBtn: {
     alignSelf: 'flex-end',
     width: 36,
@@ -1030,93 +1083,116 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   modalHeaderContent: {
     alignItems: 'center',
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   modalDiscountBadge: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    gap: Spacing.xs },
+    gap: Spacing.xs,
+  },
   modalDiscountText: {
     fontSize: 40,
     fontWeight: '800',
-    color: colors.background.primary },
+    color: colors.background.primary,
+  },
   modalDiscountLabel: {
     ...Typography.h4,
     color: 'rgba(255,255,255,0.8)',
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   modalOfferName: {
     ...Typography.h3,
     color: colors.background.primary,
     fontWeight: '600',
     textAlign: 'center',
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   modalBody: {
-    padding: Spacing.lg },
+    padding: Spacing.lg,
+  },
   modalDescription: {
     ...Typography.body,
     color: Colors.gray[600],
     textAlign: 'center',
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   detailsList: {
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   detailItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   detailIcon: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: Colors.primary[50],
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   detailContent: {
-    flex: 1 },
+    flex: 1,
+  },
   detailLabel: {
     ...Typography.caption,
-    color: Colors.gray[500] },
+    color: Colors.gray[500],
+  },
   detailValue: {
     ...Typography.body,
     color: Colors.gray[900],
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   termsSection: {
     marginTop: Spacing.xl,
     paddingTop: Spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: Colors.gray[100] },
+    borderTopColor: Colors.gray[100],
+  },
   termsTitle: {
     ...Typography.label,
     color: Colors.gray[900],
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   termItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   termText: {
     ...Typography.body,
-    color: Colors.gray[600] },
+    color: Colors.gray[600],
+  },
   modalFooter: {
     padding: Spacing.lg,
     borderTopWidth: 1,
     borderTopColor: Colors.gray[100],
-    paddingBottom: Platform.OS === 'ios' ? 34 : Spacing.lg },
+    paddingBottom: Platform.OS === 'ios' ? 34 : Spacing.lg,
+  },
   modalApplyBtn: {
     borderRadius: BorderRadius.md,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   modalApplyBtnGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    paddingVertical: Spacing.base },
+    paddingVertical: Spacing.base,
+  },
   modalApplyBtnText: {
     ...Typography.button,
-    color: colors.background.primary },
+    color: colors.background.primary,
+  },
   modalLockedFooter: {
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   modalLockedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1124,10 +1200,13 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.warning + '15',
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.full },
+    borderRadius: BorderRadius.full,
+  },
   modalLockedText: {
     ...Typography.label,
     color: Colors.warning,
-    fontWeight: '600' } });
+    fontWeight: '600',
+  },
+});
 
 export default withErrorBoundary(CardOffersPage, 'CardOffersPage');

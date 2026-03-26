@@ -25,7 +25,7 @@ import { useThemeColor } from '@/hooks/useThemeColor';
 import storesApi, { Store } from '@/services/storesApi';
 import servicesApi, { ServiceItem } from '@/services/servicesApi';
 import bookingApi from '@/services/bookingApi';
-import razorpayApi from '@/services/razorpayApi';
+import { razorpayApi } from '@/services/razorpayApi';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -218,8 +218,8 @@ function AppointmentBookingPage() {
       apiClient
         .get('/consumer/patch-tests/check?category=hair_colour')
         .then((res) => {
-          if (res?.success && res?.data) {
-            setPatchTestStatus(res.data?.data ?? null);
+          if ((res as any)?.success && (res as any)?.data) {
+            setPatchTestStatus((res as any).data?.data ?? null);
           }
         })
         .catch((err) => {
@@ -374,7 +374,7 @@ function AppointmentBookingPage() {
       if (selectedService?.id) {
         try {
           const serviceResp = await servicesApi.getServiceById(selectedService.id);
-          const svc = serviceResp.data?.data || serviceResp.data;
+          const svc = (serviceResp.data as any)?.data || serviceResp.data;
           requiresUpfront = svc?.serviceDetails?.requiresPaymentUpfront || svc?.requiresPaymentUpfront || false;
           servicePrice = svc?.pricing?.selling || svc?.price || selectedService.price || 0;
         } catch (e) {
@@ -437,14 +437,14 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
         },
       });
 
-      if (!orderResponse.data?.data?.razorpayOrderId) {
+      if (!(orderResponse as any).data?.data?.razorpayOrderId) {
         throw new Error('Failed to create payment order');
       }
 
       // Initiate checkout
-      const paymentResult = await razorpayApi.checkout({
+      const paymentResult = await (razorpayApi as any).checkout({
         amount: Math.round(amount * 100),
-        orderId: orderResponse.data.data.razorpayOrderId,
+        orderId: (orderResponse as any).data.data.razorpayOrderId,
         notes: {
           serviceId: selectedService?.id,
           serviceName: selectedService?.name,
@@ -630,34 +630,34 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
           </View>
 
           {/* Dynamic Pricing Badge */}
-          {selectedService && selectedService.pricingRule && (
+          {selectedService && (selectedService as any).pricingRule && (
             <View
               style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                backgroundColor: selectedService.discount > 0 ? '#f0fdf4' : '#fff7ed',
+                backgroundColor: (selectedService as any).discount > 0 ? '#f0fdf4' : '#fff7ed',
                 padding: 10,
                 borderRadius: 8,
                 marginBottom: 12,
               }}
             >
               <Ionicons
-                name={selectedService.discount > 0 ? 'pricetag' : 'trending-up'}
+                name={(selectedService as any).discount > 0 ? 'pricetag' : 'trending-up'}
                 size={16}
-                color={selectedService.discount > 0 ? '#16a34a' : '#d97706'}
+                color={(selectedService as any).discount > 0 ? '#16a34a' : '#d97706'}
               />
               <Text
                 style={{
                   marginLeft: 8,
                   fontSize: 13,
-                  color: selectedService.discount > 0 ? '#16a34a' : '#d97706',
+                  color: (selectedService as any).discount > 0 ? '#16a34a' : '#d97706',
                   fontWeight: '500',
                 }}
               >
-                {selectedService.pricingRule.label}
-                {selectedService.discount > 0
-                  ? ` · Save ${currencySymbol}${selectedService.discount}`
-                  : ` · +${currencySymbol}${selectedService.surcharge}`}
+                {(selectedService as any).pricingRule.label}
+                {(selectedService as any).discount > 0
+                  ? ` · Save ${currencySymbol}${(selectedService as any).discount}`
+                  : ` · +${currencySymbol}${(selectedService as any).surcharge}`}
               </Text>
             </View>
           )}
@@ -884,7 +884,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
               <ThemedText style={styles.sectionTitle}>Booking Summary</ThemedText>
               <View style={styles.summaryCard}>
                 {/* Deposit Banner */}
-                {selectedService.requiresPaymentUpfront && selectedService.price > 0 && (
+                {(selectedService as any).requiresPaymentUpfront && selectedService.price > 0 && (
                   <View
                     style={[
                       styles.depositBanner,

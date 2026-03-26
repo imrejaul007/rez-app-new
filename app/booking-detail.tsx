@@ -61,10 +61,13 @@ function BookingDetailPage() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
-        <View style={styles.errorContainer}>
+        <View style={styles.centered}>
           <Text style={styles.errorText}>Booking not found. Please try again.</Text>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/my-bookings' as any)} style={styles.retryButton}>
-            <Text style={styles.retryButtonText}>Go Back</Text>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/my-bookings' as any))}
+            style={styles.retryBtn}
+          >
+            <Text style={styles.retryBtnText}>Go Back</Text>
           </Pressable>
         </View>
       </View>
@@ -119,7 +122,7 @@ function BookingDetailPage() {
           if (!isMounted()) return;
           setCancelling(false);
         }
-      }
+      },
     );
   };
 
@@ -149,48 +152,73 @@ function BookingDetailPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return colors.nileBlue;
-      case 'pending': return Colors.warning;
-      case 'completed': return Colors.success;
+      case 'confirmed':
+        return colors.nileBlue;
+      case 'pending':
+        return Colors.warning;
+      case 'completed':
+        return Colors.success;
       case 'cancelled':
-      case 'no_show': return Colors.error;
+      case 'no_show':
+        return Colors.error;
       case 'assigned':
-      case 'in_progress': return Colors.brand.purple;
-      default: return colors.text.tertiary;
+      case 'in_progress':
+        return Colors.brand.purple;
+      default:
+        return colors.text.tertiary;
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'Confirmed';
-      case 'pending': return 'Pending';
-      case 'completed': return 'Completed';
-      case 'cancelled': return 'Cancelled';
-      case 'no_show': return 'No Show';
-      case 'assigned': return 'Assigned';
-      case 'in_progress': return 'In Progress';
-      default: return status;
+      case 'confirmed':
+        return 'Confirmed';
+      case 'pending':
+        return 'Pending';
+      case 'completed':
+        return 'Completed';
+      case 'cancelled':
+        return 'Cancelled';
+      case 'no_show':
+        return 'No Show';
+      case 'assigned':
+        return 'Assigned';
+      case 'in_progress':
+        return 'In Progress';
+      default:
+        return status;
     }
   };
 
   const getPaymentStatusText = (status: string) => {
     switch (status) {
-      case 'paid': return 'Paid';
-      case 'pending': return 'Pending';
-      case 'refunded': return 'Refunded';
-      case 'failed': return 'Failed';
-      case 'partial': return 'Partial';
-      default: return status;
+      case 'paid':
+        return 'Paid';
+      case 'pending':
+        return 'Pending';
+      case 'refunded':
+        return 'Refunded';
+      case 'failed':
+        return 'Failed';
+      case 'partial':
+        return 'Partial';
+      default:
+        return status;
     }
   };
 
   const getPaymentStatusColor = (status: string) => {
     switch (status) {
-      case 'paid': return Colors.success;
-      case 'pending': return Colors.warning;
-      case 'refunded': return Colors.info;
-      case 'failed': return Colors.error;
-      default: return colors.text.tertiary;
+      case 'paid':
+        return Colors.success;
+      case 'pending':
+        return Colors.warning;
+      case 'refunded':
+        return Colors.info;
+      case 'failed':
+        return Colors.error;
+      default:
+        return colors.text.tertiary;
     }
   };
 
@@ -221,7 +249,10 @@ function BookingDetailPage() {
         <StatusBar barStyle="light-content" />
         <Ionicons name="alert-circle" size={48} color={Colors.error} />
         <Text style={styles.errorText}>{error || 'Booking not found'}</Text>
-        <Pressable style={styles.retryBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.retryBtn}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Text style={styles.retryBtnText}>Go Back</Text>
         </Pressable>
       </View>
@@ -233,8 +264,8 @@ function BookingDetailPage() {
   const passengers = booking.travelDetails?.passengers;
   const categorySlug = booking.serviceCategory?.slug || '';
   const categoryIcon = CATEGORY_ICONS[categorySlug] || 'briefcase';
-  const canCancel = (booking.status === 'confirmed' || booking.status === 'pending') &&
-    new Date(booking.bookingDate) > new Date();
+  const canCancel =
+    (booking.status === 'confirmed' || booking.status === 'pending') && new Date(booking.bookingDate) > new Date();
   const cashbackAmount = booking.pricing?.cashbackEarned || 0;
 
   return (
@@ -244,7 +275,10 @@ function BookingDetailPage() {
       {/* Header */}
       <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.header}>
         <View style={styles.headerRow}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backBtn}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>Booking Details</Text>
@@ -258,9 +292,7 @@ function BookingDetailPage() {
           {isTravel && (
             <View style={styles.headerCategoryBadge}>
               <Ionicons name={categoryIcon as any} size={18} color={colors.text.inverse} />
-              <Text style={styles.headerCategoryText}>
-                {booking.serviceCategory?.name || 'Travel'}
-              </Text>
+              <Text style={styles.headerCategoryText}>{booking.serviceCategory?.name || 'Travel'}</Text>
             </View>
           )}
           <View style={[styles.headerStatus, { backgroundColor: getStatusColor(booking.status) }]}>
@@ -270,7 +302,6 @@ function BookingDetailPage() {
       </LinearGradient>
 
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-
         {/* Booking Number + PNR */}
         <View style={styles.card}>
           <View style={styles.cardRow}>
@@ -278,7 +309,9 @@ function BookingDetailPage() {
               <Text style={styles.label}>Booking Number</Text>
               <Text style={styles.bookingNumber}>{booking.bookingNumber}</Text>
             </View>
-            <View style={[styles.paymentBadge, { backgroundColor: getPaymentStatusColor(booking.paymentStatus) + '15' }]}>
+            <View
+              style={[styles.paymentBadge, { backgroundColor: getPaymentStatusColor(booking.paymentStatus) + '15' }]}
+            >
               <Text style={[styles.paymentBadgeText, { color: getPaymentStatusColor(booking.paymentStatus) }]}>
                 {getPaymentStatusText(booking.paymentStatus)}
               </Text>
@@ -324,9 +357,7 @@ function BookingDetailPage() {
 
         {/* Service / Travel Details */}
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>
-            {isTravel ? 'Travel Details' : 'Booking Details'}
-          </Text>
+          <Text style={styles.cardTitle}>{isTravel ? 'Travel Details' : 'Booking Details'}</Text>
 
           <View style={styles.detailsList}>
             {/* Service Name */}
@@ -365,11 +396,7 @@ function BookingDetailPage() {
 
             {/* Return date */}
             {booking.travelDetails?.returnDate && (
-              <DetailRow
-                icon="calendar-outline"
-                label="Return"
-                value={formatDate(booking.travelDetails.returnDate)}
-              />
+              <DetailRow icon="calendar-outline" label="Return" value={formatDate(booking.travelDetails.returnDate)} />
             )}
 
             {/* Passengers */}
@@ -379,9 +406,15 @@ function BookingDetailPage() {
                 label="Passengers"
                 value={[
                   `${passengers.adults} Adult${passengers.adults !== 1 ? 's' : ''}`,
-                  passengers.children > 0 ? `${passengers.children} Child${passengers.children !== 1 ? 'ren' : ''}` : '',
-                  (passengers.infants || 0) > 0 ? `${passengers.infants} Infant${(passengers.infants || 0) !== 1 ? 's' : ''}` : '',
-                ].filter(Boolean).join(', ')}
+                  passengers.children > 0
+                    ? `${passengers.children} Child${passengers.children !== 1 ? 'ren' : ''}`
+                    : '',
+                  (passengers.infants || 0) > 0
+                    ? `${passengers.infants} Infant${(passengers.infants || 0) !== 1 ? 's' : ''}`
+                    : '',
+                ]
+                  .filter(Boolean)
+                  .join(', ')}
               />
             )}
 
@@ -407,9 +440,7 @@ function BookingDetailPage() {
           <View style={styles.detailsList}>
             <DetailRow icon="person-outline" label="Name" value={booking.customerName} />
             <DetailRow icon="call-outline" label="Phone" value={booking.customerPhone} />
-            {booking.customerEmail && (
-              <DetailRow icon="mail-outline" label="Email" value={booking.customerEmail} />
-            )}
+            {booking.customerEmail && <DetailRow icon="mail-outline" label="Email" value={booking.customerEmail} />}
           </View>
         </View>
 
@@ -435,7 +466,10 @@ function BookingDetailPage() {
             <View style={styles.totalDivider} />
             <View style={styles.totalRow}>
               <Text style={styles.totalLabel}>Total</Text>
-              <Text style={styles.totalValue}>{currencySymbol}{booking.pricing.total.toLocaleString()}</Text>
+              <Text style={styles.totalValue}>
+                {currencySymbol}
+                {booking.pricing.total.toLocaleString()}
+              </Text>
             </View>
           </View>
         </View>
@@ -465,11 +499,21 @@ function BookingDetailPage() {
             <Text style={styles.cardTitle}>Cancellation Policy</Text>
             {booking.refundPolicy.tiers.map((tier, idx) => (
               <View key={idx} style={styles.policyRow}>
-                <View style={[styles.policyDot, {
-                  backgroundColor: tier.refundPercentage >= 75 ? Colors.success :
-                    tier.refundPercentage >= 50 ? Colors.warning :
-                      tier.refundPercentage > 0 ? Colors.error : colors.text.tertiary
-                }]} />
+                <View
+                  style={[
+                    styles.policyDot,
+                    {
+                      backgroundColor:
+                        tier.refundPercentage >= 75
+                          ? Colors.success
+                          : tier.refundPercentage >= 50
+                            ? Colors.warning
+                            : tier.refundPercentage > 0
+                              ? Colors.error
+                              : colors.text.tertiary,
+                    },
+                  ]}
+                />
                 <Text style={styles.policyText}>
                   {tier.hoursBeforeDeparture > 0
                     ? `More than ${tier.hoursBeforeDeparture}h before departure`
@@ -502,7 +546,7 @@ function BookingDetailPage() {
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Your Rating</Text>
             <View style={styles.ratingRow}>
-              {[1, 2, 3, 4, 5].map(star => (
+              {[1, 2, 3, 4, 5].map((star) => (
                 <Ionicons
                   key={star}
                   name={star <= booking.rating!.score ? 'star' : 'star-outline'}
@@ -512,9 +556,7 @@ function BookingDetailPage() {
               ))}
               <Text style={styles.ratingScore}>{booking.rating.score}/5</Text>
             </View>
-            {booking.rating.review && (
-              <Text style={styles.ratingReview}>{booking.rating.review}</Text>
-            )}
+            {booking.rating.review && <Text style={styles.ratingReview}>{booking.rating.review}</Text>}
           </View>
         )}
 
@@ -540,11 +582,7 @@ function BookingDetailPage() {
 
           {/* Cancel Booking */}
           {canCancel && (
-            <Pressable
-              style={[styles.actionOutline, styles.cancelAction]}
-              onPress={handleCancel}
-              disabled={cancelling}
-            >
+            <Pressable style={[styles.actionOutline, styles.cancelAction]} onPress={handleCancel} disabled={cancelling}>
               {cancelling ? (
                 <ActivityIndicator size="small" color={Colors.error} />
               ) : (
@@ -569,15 +607,24 @@ function BookingDetailPage() {
         {/* Timestamps */}
         <View style={styles.timestamps}>
           <Text style={styles.timestampText}>
-            Booked on {new Date(booking.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+            Booked on{' '}
+            {new Date(booking.createdAt).toLocaleDateString('en-IN', {
+              day: 'numeric',
+              month: 'short',
+              year: 'numeric',
+            })}
           </Text>
           {booking.confirmedAt && (
             <Text style={styles.timestampText}>
-              Confirmed on {new Date(booking.confirmedAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+              Confirmed on{' '}
+              {new Date(booking.confirmedAt).toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+              })}
             </Text>
           )}
         </View>
-
       </ScrollView>
     </View>
   );
@@ -594,12 +641,24 @@ function DetailRow({ icon, label, value }: { icon: string; label: string; value:
   );
 }
 
-function PriceRow({ label, value, symbol, isDiscount }: { label: string; value: number; symbol: string; isDiscount?: boolean }) {
+function PriceRow({
+  label,
+  value,
+  symbol,
+  isDiscount,
+}: {
+  label: string;
+  value: number;
+  symbol: string;
+  isDiscount?: boolean;
+}) {
   return (
     <View style={styles.priceRow}>
       <Text style={styles.priceLabel}>{label}</Text>
       <Text style={[styles.priceValue, isDiscount && styles.discountValue]}>
-        {isDiscount ? '-' : ''}{symbol}{Math.abs(value).toLocaleString()}
+        {isDiscount ? '-' : ''}
+        {symbol}
+        {Math.abs(value).toLocaleString()}
       </Text>
     </View>
   );
@@ -610,7 +669,13 @@ const styles = StyleSheet.create({
   centered: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: Spacing.lg },
   loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   errorText: { marginTop: Spacing.md, ...Typography.body, fontSize: 16, color: Colors.error, textAlign: 'center' },
-  retryBtn: { marginTop: Spacing.lg, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, backgroundColor: colors.nileBlue, borderRadius: BorderRadius.md },
+  retryBtn: {
+    marginTop: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    backgroundColor: colors.nileBlue,
+    borderRadius: BorderRadius.md,
+  },
   retryBtnText: { color: colors.text.inverse, ...Typography.body, fontWeight: '600' },
 
   // Header
@@ -626,15 +691,21 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   backBtn: {
-    width: 40, height: 40, borderRadius: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.15)',
-    justifyContent: 'center', alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerTitle: { ...Typography.h4, fontWeight: '700', color: colors.text.inverse },
   shareBtn: {
-    width: 40, height: 40, borderRadius: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: 'rgba(255,255,255,0.15)',
-    justifyContent: 'center', alignItems: 'center',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   headerStatusRow: {
     flexDirection: 'row',
@@ -678,10 +749,21 @@ const styles = StyleSheet.create({
   bookingNumber: { ...Typography.h3, fontWeight: '700', color: colors.nileBlue, letterSpacing: 1 },
   paymentBadge: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md },
   paymentBadgeText: { ...Typography.caption, fontWeight: '600' },
-  pnrSection: { marginTop: Spacing.md, paddingTop: Spacing.md, borderTopWidth: 1, borderTopColor: colors.background.secondary },
+  pnrSection: {
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: colors.background.secondary,
+  },
   pnrValue: { ...Typography.h4, fontWeight: '600', color: colors.nileBlue, letterSpacing: 2 },
   refValue: { ...Typography.body, fontWeight: '500', color: colors.text.secondary },
-  cardTitle: { ...Typography.body, fontSize: 16, fontWeight: '600', color: colors.text.primary, marginBottom: Spacing.base },
+  cardTitle: {
+    ...Typography.body,
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.text.primary,
+    marginBottom: Spacing.base,
+  },
 
   // Route
   routeContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
@@ -730,14 +812,23 @@ const styles = StyleSheet.create({
   actions: { marginTop: Spacing.sm, gap: Spacing.sm },
   actionButton: { borderRadius: BorderRadius.md, overflow: 'hidden' },
   actionGradient: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: Spacing.sm, paddingVertical: Spacing.base,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.base,
   },
   actionButtonText: { ...Typography.body, fontSize: 16, fontWeight: '600', color: colors.text.inverse },
   actionOutline: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: Spacing.sm, paddingVertical: Spacing.md, borderRadius: BorderRadius.md,
-    borderWidth: 1.5, borderColor: colors.nileBlue, backgroundColor: colors.text.inverse,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1.5,
+    borderColor: colors.nileBlue,
+    backgroundColor: colors.text.inverse,
   },
   actionOutlineText: { ...Typography.body, fontWeight: '600', color: colors.nileBlue },
   cancelAction: { borderColor: Colors.error },
@@ -745,8 +836,10 @@ const styles = StyleSheet.create({
 
   // Timestamps
   timestamps: {
-    marginTop: Spacing.base, paddingTop: Spacing.base,
-    borderTopWidth: 1, borderTopColor: colors.border.default,
+    marginTop: Spacing.base,
+    paddingTop: Spacing.base,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.default,
     gap: Spacing.xs,
   },
   timestampText: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'center' },

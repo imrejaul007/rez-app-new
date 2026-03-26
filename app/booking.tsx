@@ -181,14 +181,14 @@ function BookingPage() {
       // Load store details
       const storeResponse = await storesApi.getStoreById(storeId as string);
       if (storeResponse.success && storeResponse.data) {
-        setStore(storeResponse.data);
+        setStore(storeResponse.data as any);
       }
 
       // If service booking, also load service details
       if (isServiceBooking && productId) {
         const serviceResponse = await productsApi.getProductById(productId as string);
         if (serviceResponse.success && serviceResponse.data) {
-          const productData = serviceResponse.data;
+          const productData = serviceResponse.data as any;
           setService({
             _id: productData.id || productData._id,
             name: productData.name,

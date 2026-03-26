@@ -57,8 +57,11 @@ function ConsultationBookingScreen() {
     return (
       <ThemedView style={styles.container}>
         <ThemedText style={styles.errorText}>Clinic not found</ThemedText>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
+          <ThemedText style={(styles as any).backButtonText}>Go Back</ThemedText>
         </Pressable>
       </ThemedView>
     );
@@ -140,7 +143,7 @@ function ConsultationBookingScreen() {
     }
 
     const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
-    const dayHours = store.hours.find(h => h.day === dayName);
+    const dayHours = store.hours.find((h) => h.day === dayName);
 
     if (!dayHours || dayHours.closed) {
       return [];
@@ -234,7 +237,7 @@ function ConsultationBookingScreen() {
     try {
       setIsSubmitting(true);
 
-      const consultationType = CONSULTATION_TYPES.find(c => c.id === selectedConsultation);
+      const consultationType = CONSULTATION_TYPES.find((c) => c.id === selectedConsultation);
 
       // Prepare consultation data for the API
       const consultationData = {
@@ -250,22 +253,25 @@ function ConsultationBookingScreen() {
         customerEmail: email.trim() || patientName.trim().toLowerCase().replace(/\s+/g, '') + '@temp.com', // Email is required by API
       };
 
-      const response = await consultationApi.createConsultation(consultationData);
+      const response = await consultationApi.createConsultation(consultationData as any);
 
       if (response.success && response.data) {
         platformAlertConfirm(
           'Consultation Confirmed!',
           `Your ${consultationType?.name} consultation has been successfully booked!\n\n` +
-          `Confirmation Code: ${response.data.confirmationCode || 'Pending'}\n` +
-          `Date: ${formatDate(selectedDate)}\n` +
-          `Time: ${selectedTime}\n` +
-          `Patient: ${patientName}\n\n` +
-          `You will receive a confirmation message shortly.`,
-          () => router.canGoBack() ? router.back() : router.replace('/(tabs)'),
-          'OK'
+            `Confirmation Code: ${(response.data as any).confirmationCode || 'Pending'}\n` +
+            `Date: ${formatDate(selectedDate)}\n` +
+            `Time: ${selectedTime}\n` +
+            `Patient: ${patientName}\n\n` +
+            `You will receive a confirmation message shortly.`,
+          () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
+          'OK',
         );
       } else {
-        platformAlertSimple('Booking Failed', response.error || 'Unable to book consultation. Please try again.');
+        platformAlertSimple(
+          'Booking Failed',
+          (response as any).error || 'Unable to book consultation. Please try again.',
+        );
       }
     } catch (err: any) {
       platformAlertSimple('Error', err.message || 'Failed to book consultation. Please try again.');
@@ -280,11 +286,11 @@ function ConsultationBookingScreen() {
     return (
       <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
         <ThemedView style={styles.container}>
-          <LinearGradient
-            colors={[Colors.brand.purpleLight, Colors.brand.purple]}
-            style={styles.header}
-          >
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.header}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
@@ -302,11 +308,11 @@ function ConsultationBookingScreen() {
     return (
       <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
         <ThemedView style={styles.container}>
-          <LinearGradient
-            colors={[Colors.brand.purpleLight, Colors.brand.purple]}
-            style={styles.header}
-          >
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.header}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Book Consultation</ThemedText>
@@ -314,7 +320,10 @@ function ConsultationBookingScreen() {
           <View style={styles.errorContainer}>
             <Ionicons name="alert-circle" size={64} color={Colors.error} />
             <ThemedText style={styles.errorText}>{error || 'Clinic not found'}</ThemedText>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.errorButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.errorButton}
+            >
               <Text style={styles.errorButtonText}>Go Back</Text>
             </Pressable>
           </View>
@@ -323,22 +332,19 @@ function ConsultationBookingScreen() {
     );
   }
 
-  const selectedConsultationType = CONSULTATION_TYPES.find(c => c.id === selectedConsultation);
+  const selectedConsultationType = CONSULTATION_TYPES.find((c) => c.id === selectedConsultation);
 
   return (
     <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
       {/* SOFIA: KeyboardAvoidingView wrapper for TextInput handling on both platforms */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoiding}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardAvoiding}>
         <ThemedView style={styles.container}>
           {/* Header */}
-          <LinearGradient
-            colors={[Colors.brand.purpleLight, Colors.brand.purple]}
-            style={styles.header}
-          >
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.header}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <View style={styles.headerContent}>
@@ -354,257 +360,257 @@ function ConsultationBookingScreen() {
             scrollEnabled={true}
             keyboardShouldPersistTaps="handled"
           >
-        {/* Consultation Type Selection */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="medical" size={20} color={Colors.brand.purple} />
-            <ThemedText style={styles.sectionTitle}>Select Consultation Type</ThemedText>
-          </View>
-          <View style={styles.consultationGrid}>
-            {CONSULTATION_TYPES.map((type) => (
-              <Pressable
-                key={type.id}
-                style={[
-                  styles.consultationCard,
-                  selectedConsultation === type.id && styles.consultationCardSelected,
-                ]}
-                onPress={() => setSelectedConsultation(type.id)}
-              >
-                <View style={[styles.consultationIcon, { backgroundColor: type.color + '20' }]}>
-                  <Ionicons name={type.icon} size={24} color={type.color} />
-                </View>
-                <Text
-                  style={[
-                    styles.consultationName,
-                    selectedConsultation === type.id && styles.consultationNameSelected,
-                  ]}
-                  numberOfLines={2}
-                >
-                  {type.name}
-                </Text>
-                {selectedConsultation === type.id && (
-                  <View style={styles.selectedBadge}>
-                    <Ionicons name="checkmark-circle" size={20} color={Colors.brand.purple} />
-                  </View>
-                )}
-              </Pressable>
-            ))}
-          </View>
-        </View>
-
-        {/* Date Selection */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="calendar" size={20} color={Colors.brand.purple} />
-            <ThemedText style={styles.sectionTitle}>Select Date</ThemedText>
-          </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.dateScroll}
-          >
-            {availableDates.map((date, index) => (
-              <Pressable
-                key={index}
-                style={[
-                  styles.dateCard,
-                  selectedDate?.toDateString() === date.toDateString() && styles.dateCardSelected,
-                ]}
-                onPress={() => {
-                  setSelectedDate(date);
-                  setSelectedTime(null); // Reset time when date changes
-                }}
-              >
-                <Text style={[
-                  styles.dateDay,
-                  selectedDate?.toDateString() === date.toDateString() && styles.dateDaySelected,
-                ]}>
-                  {formatDay(date)}
-                </Text>
-                <Text style={[
-                  styles.dateNumber,
-                  selectedDate?.toDateString() === date.toDateString() && styles.dateNumberSelected,
-                ]}>
-                  {date.getDate()}
-                </Text>
-                <Text style={[
-                  styles.dateMonth,
-                  selectedDate?.toDateString() === date.toDateString() && styles.dateMonthSelected,
-                ]}>
-                  {date.toLocaleDateString('en-US', { month: 'short' })}
-                </Text>
-              </Pressable>
-            ))}
-          </ScrollView>
-        </View>
-
-        {/* Time Slot Selection */}
-        {selectedDate && (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="time" size={20} color={Colors.brand.purple} />
-              <ThemedText style={styles.sectionTitle}>Select Time Slot</ThemedText>
-            </View>
-            {timeSlots.length > 0 ? (
-              <View style={styles.timeGrid}>
-                {timeSlots.map((slot, index) => (
+            {/* Consultation Type Selection */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="medical" size={20} color={Colors.brand.purple} />
+                <ThemedText style={styles.sectionTitle}>Select Consultation Type</ThemedText>
+              </View>
+              <View style={styles.consultationGrid}>
+                {CONSULTATION_TYPES.map((type) => (
                   <Pressable
-                    key={index}
+                    key={type.id}
                     style={[
-                      styles.timeSlot,
-                      !slot.available && styles.timeSlotDisabled,
-                      selectedTime === slot.time && styles.timeSlotSelected,
+                      styles.consultationCard,
+                      selectedConsultation === type.id && styles.consultationCardSelected,
                     ]}
-                    onPress={() => slot.available && setSelectedTime(slot.time)}
-                    disabled={!slot.available}
+                    onPress={() => setSelectedConsultation(type.id)}
                   >
+                    <View style={[styles.consultationIcon, { backgroundColor: type.color + '20' }]}>
+                      <Ionicons name={type.icon} size={24} color={type.color} />
+                    </View>
                     <Text
                       style={[
-                        styles.timeSlotText,
-                        !slot.available && styles.timeSlotTextDisabled,
-                        selectedTime === slot.time && styles.timeSlotTextSelected,
+                        styles.consultationName,
+                        selectedConsultation === type.id && styles.consultationNameSelected,
                       ]}
+                      numberOfLines={2}
                     >
-                      {slot.time}
+                      {type.name}
                     </Text>
+                    {selectedConsultation === type.id && (
+                      <View style={styles.selectedBadge}>
+                        <Ionicons name="checkmark-circle" size={20} color={Colors.brand.purple} />
+                      </View>
+                    )}
                   </Pressable>
                 ))}
               </View>
-            ) : (
-              <View style={styles.noSlotsContainer}>
-                <Ionicons name="close-circle" size={32} color={Colors.error} />
-                <ThemedText style={styles.noSlotsText}>
-                  Clinic is closed on this day
-                </ThemedText>
+            </View>
+
+            {/* Date Selection */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="calendar" size={20} color={Colors.brand.purple} />
+                <ThemedText style={styles.sectionTitle}>Select Date</ThemedText>
+              </View>
+              <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dateScroll}>
+                {availableDates.map((date, index) => (
+                  <Pressable
+                    key={index}
+                    style={[
+                      styles.dateCard,
+                      selectedDate?.toDateString() === date.toDateString() && styles.dateCardSelected,
+                    ]}
+                    onPress={() => {
+                      setSelectedDate(date);
+                      setSelectedTime(null); // Reset time when date changes
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.dateDay,
+                        selectedDate?.toDateString() === date.toDateString() && styles.dateDaySelected,
+                      ]}
+                    >
+                      {formatDay(date)}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.dateNumber,
+                        selectedDate?.toDateString() === date.toDateString() && styles.dateNumberSelected,
+                      ]}
+                    >
+                      {date.getDate()}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.dateMonth,
+                        selectedDate?.toDateString() === date.toDateString() && styles.dateMonthSelected,
+                      ]}
+                    >
+                      {date.toLocaleDateString('en-US', { month: 'short' })}
+                    </Text>
+                  </Pressable>
+                ))}
+              </ScrollView>
+            </View>
+
+            {/* Time Slot Selection */}
+            {selectedDate && (
+              <View style={styles.section}>
+                <View style={styles.sectionHeader}>
+                  <Ionicons name="time" size={20} color={Colors.brand.purple} />
+                  <ThemedText style={styles.sectionTitle}>Select Time Slot</ThemedText>
+                </View>
+                {timeSlots.length > 0 ? (
+                  <View style={styles.timeGrid}>
+                    {timeSlots.map((slot, index) => (
+                      <Pressable
+                        key={index}
+                        style={[
+                          styles.timeSlot,
+                          !slot.available && styles.timeSlotDisabled,
+                          selectedTime === slot.time && styles.timeSlotSelected,
+                        ]}
+                        onPress={() => slot.available && setSelectedTime(slot.time)}
+                        disabled={!slot.available}
+                      >
+                        <Text
+                          style={[
+                            styles.timeSlotText,
+                            !slot.available && styles.timeSlotTextDisabled,
+                            selectedTime === slot.time && styles.timeSlotTextSelected,
+                          ]}
+                        >
+                          {slot.time}
+                        </Text>
+                      </Pressable>
+                    ))}
+                  </View>
+                ) : (
+                  <View style={styles.noSlotsContainer}>
+                    <Ionicons name="close-circle" size={32} color={Colors.error} />
+                    <ThemedText style={styles.noSlotsText}>Clinic is closed on this day</ThemedText>
+                  </View>
+                )}
               </View>
             )}
-          </View>
-        )}
 
-        {/* Patient Details Form */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="person" size={20} color={Colors.brand.purple} />
-            <ThemedText style={styles.sectionTitle}>Patient Details</ThemedText>
-          </View>
+            {/* Patient Details Form */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="person" size={20} color={Colors.brand.purple} />
+                <ThemedText style={styles.sectionTitle}>Patient Details</ThemedText>
+              </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Patient Name *</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter patient's full name"
-              placeholderTextColor={colors.text.tertiary}
-              value={patientName}
-              onChangeText={setPatientName}
-            />
-          </View>
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Patient Name *</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter patient's full name"
+                  placeholderTextColor={colors.text.tertiary}
+                  value={patientName}
+                  onChangeText={setPatientName}
+                />
+              </View>
 
-          <View style={styles.formRow}>
-            <View style={[styles.formGroup, { flex: 1, marginRight: 8 }]}>
-              <Text style={styles.label}>Age *</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Age"
-                placeholderTextColor={colors.text.tertiary}
-                value={age}
-                onChangeText={setAge}
-                keyboardType="numeric"
-              />
+              <View style={styles.formRow}>
+                <View style={[styles.formGroup, { flex: 1, marginRight: 8 }]}>
+                  <Text style={styles.label}>Age *</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Age"
+                    placeholderTextColor={colors.text.tertiary}
+                    value={age}
+                    onChangeText={setAge}
+                    keyboardType="numeric"
+                  />
+                </View>
+
+                <View style={[styles.formGroup, { flex: 2 }]}>
+                  <Text style={styles.label}>Phone Number *</Text>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Enter phone number"
+                    placeholderTextColor={colors.text.tertiary}
+                    value={phoneNumber}
+                    onChangeText={setPhoneNumber}
+                    keyboardType="phone-pad"
+                  />
+                </View>
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Email (Optional)</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter email address"
+                  placeholderTextColor={colors.text.tertiary}
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Reason for Consultation *</Text>
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  placeholder="Describe your symptoms or reason for visit"
+                  placeholderTextColor={colors.text.tertiary}
+                  value={reason}
+                  onChangeText={setReason}
+                  multiline
+                  numberOfLines={4}
+                />
+              </View>
+
+              <View style={styles.formGroup}>
+                <Text style={styles.label}>Medical History (Optional)</Text>
+                <TextInput
+                  style={[styles.input, styles.textArea]}
+                  placeholder="Any relevant medical history, allergies, or current medications"
+                  placeholderTextColor={colors.text.tertiary}
+                  value={medicalHistory}
+                  onChangeText={setMedicalHistory}
+                  multiline
+                  numberOfLines={4}
+                />
+              </View>
             </View>
 
-            <View style={[styles.formGroup, { flex: 2 }]}>
-              <Text style={styles.label}>Phone Number *</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter phone number"
-                placeholderTextColor={colors.text.tertiary}
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                keyboardType="phone-pad"
-              />
-            </View>
-          </View>
+            {/* Booking Summary */}
+            {selectedConsultationType && selectedDate && selectedTime && (
+              <View style={styles.summaryCard}>
+                <View style={styles.summaryHeader}>
+                  <Ionicons name="document-text" size={20} color={Colors.brand.purple} />
+                  <ThemedText style={styles.summaryTitle}>Booking Summary</ThemedText>
+                </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Email (Optional)</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter email address"
-              placeholderTextColor={colors.text.tertiary}
-              value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
-              autoCapitalize="none"
-            />
-          </View>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Clinic</Text>
+                  <Text style={styles.summaryValue}>{store.name}</Text>
+                </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Reason for Consultation *</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="Describe your symptoms or reason for visit"
-              placeholderTextColor={colors.text.tertiary}
-              value={reason}
-              onChangeText={setReason}
-              multiline
-              numberOfLines={4}
-            />
-          </View>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Consultation</Text>
+                  <Text style={styles.summaryValue}>{selectedConsultationType.name}</Text>
+                </View>
 
-          <View style={styles.formGroup}>
-            <Text style={styles.label}>Medical History (Optional)</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="Any relevant medical history, allergies, or current medications"
-              placeholderTextColor={colors.text.tertiary}
-              value={medicalHistory}
-              onChangeText={setMedicalHistory}
-              multiline
-              numberOfLines={4}
-            />
-          </View>
-        </View>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Date</Text>
+                  <Text style={styles.summaryValue}>{formatDate(selectedDate)}</Text>
+                </View>
 
-        {/* Booking Summary */}
-        {selectedConsultationType && selectedDate && selectedTime && (
-          <View style={styles.summaryCard}>
-            <View style={styles.summaryHeader}>
-              <Ionicons name="document-text" size={20} color={Colors.brand.purple} />
-              <ThemedText style={styles.summaryTitle}>Booking Summary</ThemedText>
-            </View>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Time</Text>
+                  <Text style={styles.summaryValue}>{selectedTime}</Text>
+                </View>
 
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Clinic</Text>
-              <Text style={styles.summaryValue}>{store.name}</Text>
-            </View>
-
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Consultation</Text>
-              <Text style={styles.summaryValue}>{selectedConsultationType.name}</Text>
-            </View>
-
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Date</Text>
-              <Text style={styles.summaryValue}>{formatDate(selectedDate)}</Text>
-            </View>
-
-            <View style={styles.summaryRow}>
-              <Text style={styles.summaryLabel}>Time</Text>
-              <Text style={styles.summaryValue}>{selectedTime}</Text>
-            </View>
-
-            {patientName && (
-              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>Patient</Text>
-                <Text style={styles.summaryValue}>{patientName}</Text>
+                {patientName && (
+                  <View style={styles.summaryRow}>
+                    <Text style={styles.summaryLabel}>Patient</Text>
+                    <Text style={styles.summaryValue}>{patientName}</Text>
+                  </View>
+                )}
               </View>
             )}
-          </View>
-        )}
 
-        {/* Bottom spacing for fixed button */}
-        <View style={styles.bottomSpacing} />
-      </ScrollView>
+            {/* Bottom spacing for fixed button */}
+            <View style={styles.bottomSpacing} />
+          </ScrollView>
 
           {/* Fixed Bottom Button */}
           <View style={styles.bottomButtonContainer}>
