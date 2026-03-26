@@ -17,7 +17,7 @@ import { useRouter, useRootNavigationState } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useAuthUser, useIsAuthenticated, useAuthLoading, useAuthError } from '@/stores/selectors';
+import { useAuthStore } from '@/stores/authStore';
 import { useAuth } from '@/contexts/AuthContext';
 import FormInput from '@/components/onboarding/FormInput';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
@@ -33,10 +33,20 @@ import * as Haptics from 'expo-haptics';
 function SignInScreen() {
   const router = useRouter();
   const rootNavigationState = useRootNavigationState();
-  const user = useAuthUser();
-  const isAuthenticated = useIsAuthenticated();
-  const authLoading = useAuthLoading();
-  const authError = useAuthError();
+  // Read auth state via refs to avoid re-renders that dismiss the keyboard.
+  // Only isAuthenticated + user are needed for the navigation effect.
+  const userRef = useRef(useAuthStore.getState().state.user);
+  const isAuthRef = useRef(useAuthStore.getState().state.isAuthenticated);
+  useEffect(() => {
+    const unsub = useAuthStore.subscribe((s) => {
+      userRef.current = s.state.user;
+      isAuthRef.current = s.state.isAuthenticated;
+    });
+    return unsub;
+  }, []);
+  // These are only read inside the navigation effect and catch blocks, not in JSX
+  const user = userRef.current;
+  const isAuthenticated = isAuthRef.current;
   // Use AuthContext directly so actions are always real (not Zustand store noops)
   const { actions } = useAuth();
   const colorScheme = useColorScheme();
@@ -81,29 +91,34 @@ function SignInScreen() {
     return () => clearInterval(interval);
   }, [otpTimer]);
 
-  // Navigate to homepage on successful login (wait for router to be ready)
-  // Use a ref to track if we already navigated to prevent repeated effect triggers
+  // Navigate to homepage on successful login — poll refs instead of depending on store
   const hasNavigatedRef = useRef(false);
   useEffect(() => {
     if (hasNavigatedRef.current) return;
-    if (!rootNavigationState?.key) return; // Router not mounted yet
-    if (isAuthenticated && user) {
-      hasNavigatedRef.current = true;
-      // Small delay ensures Root Layout is fully mounted on web
-      const timer = setTimeout(() => {
-        try {
-          if (user.isOnboarded) {
-            router.replace('/(tabs)/' as any);
-          } else {
-            router.replace('/onboarding/notification-permission');
+    if (!rootNavigationState?.key) return;
+    // Check auth state from refs (updated via subscription, no re-renders)
+    const checkAuth = () => {
+      if (hasNavigatedRef.current) return;
+      if (isAuthRef.current && userRef.current) {
+        hasNavigatedRef.current = true;
+        const u = userRef.current;
+        setTimeout(() => {
+          try {
+            if (u.isOnboarded) {
+              router.replace('/(tabs)/' as any);
+            } else {
+              router.replace('/onboarding/notification-permission');
+            }
+          } catch {
+            hasNavigatedRef.current = false;
           }
-        } catch {
-          hasNavigatedRef.current = false; // Allow retry if navigation failed
-        }
-      }, 300);
-      return () => clearTimeout(timer);
-    }
-  }, [isAuthenticated, user, rootNavigationState?.key]);
+        }, 300);
+      }
+    };
+    checkAuth();
+    const unsub = useAuthStore.subscribe(checkAuth);
+    return unsub;
+  }, [rootNavigationState?.key]);
 
   const validatePhoneNumber = (phone: string): boolean => {
     const phoneRegex = /^[+]?[1-9][\d]{6,14}$/;
@@ -167,7 +182,8 @@ function SignInScreen() {
     } catch (error: any) {
       clearTimeout(slowHintTimer);
       if (isMounted()) setSlowLoadingMsg('');
-      const errorMessage = error?.message || authError || 'Failed to send OTP. Please try again.';
+      const errorMessage =
+        error?.message || useAuthStore.getState().state.error || 'Failed to send OTP. Please try again.';
 
       if (
         errorMessage.toLowerCase().includes('user not found') ||
@@ -220,7 +236,7 @@ function SignInScreen() {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch {}
     } catch (error: any) {
-      const errorMessage = error?.message || authError || 'Invalid OTP. Please try again.';
+      const errorMessage = error?.message || useAuthStore.getState().state.error || 'Invalid OTP. Please try again.';
       if (!isMounted()) return;
       setErrors((prev) => ({
         ...prev,
@@ -244,7 +260,8 @@ function SignInScreen() {
       setCanResendOTP(false);
       platformAlertSimple('OTP Resent', 'New verification code sent to your phone');
     } catch (error: any) {
-      const errorMessage = error?.message || authError || 'Failed to resend OTP. Please try again.';
+      const errorMessage =
+        error?.message || useAuthStore.getState().state.error || 'Failed to resend OTP. Please try again.';
       if (!isMounted()) return;
       setErrors((prev) => ({ ...prev, otp: errorMessage }));
       platformAlertSimple('Error', errorMessage);

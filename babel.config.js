@@ -1,5 +1,8 @@
 module.exports = function (api) {
   api.cache(true);
+
+  const isWeb = process.env.EXPO_OS === 'web' || process.env.PLATFORM === 'web';
+
   return {
     presets: [
       [
