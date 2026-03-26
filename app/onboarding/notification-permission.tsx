@@ -3,14 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Dedicated screen to request push notification permission
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
+import { View, StyleSheet, Pressable, StatusBar, Platform, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -19,7 +12,8 @@ import * as Notifications from 'expo-notifications';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import analyticsService from '@/services/analyticsService';
-import { useAuthUser, useAuthActions } from '@/stores/selectors';
+import { useAuthUser } from '@/stores/selectors';
+import Constants from 'expo-constants';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
@@ -51,9 +45,7 @@ function NotificationPermissionPage() {
   const router = useRouter();
   useBackButton(() => true); // Block back navigation
   const user = useAuthUser();
-  const actions = useAuthActions();
   const [loading, setLoading] = useState(false);
-  const [permissionStatus, setPermissionStatus] = useState<string | null>(null);
 
   useEffect(() => {
     analyticsService.track('notification_permission_viewed');
@@ -71,7 +63,6 @@ function NotificationPermissionPage() {
     try {
       const { status } = await Notifications.getPermissionsAsync();
       if (!isMounted()) return;
-      setPermissionStatus(status);
 
       // If already granted, skip this screen
       if (status === 'granted') {
@@ -98,8 +89,9 @@ function NotificationPermissionPage() {
         analyticsService.track('notification_permission_responded', { result: 'granted' });
         // Get and save push token (best-effort, don't block navigation)
         try {
+          const projectId = Constants.expoConfig?.extra?.eas?.projectId;
           await Notifications.getExpoPushTokenAsync({
-            projectId: '58b80355-a254-4d4a-80ce-d2bc3272b144',
+            ...(projectId ? { projectId } : {}),
           });
         } catch (tokenError) {
           // silently handle
@@ -191,10 +183,7 @@ function NotificationPermissionPage() {
           accessibilityLabel="Enable notifications"
           accessibilityRole="button"
         >
-          <LinearGradient
-            colors={[Colors.primary[600], Colors.primary[700]]}
-            style={styles.enableButtonGradient}
-          >
+          <LinearGradient colors={[Colors.primary[600], Colors.primary[700]]} style={styles.enableButtonGradient}>
             {loading ? (
               <ActivityIndicator color={colors.background.primary} />
             ) : (
@@ -218,9 +207,7 @@ function NotificationPermissionPage() {
 
         <View style={styles.footer}>
           <Ionicons name="settings-outline" size={14} color={colors.text.tertiary} />
-          <ThemedText style={styles.footerText}>
-            You can change this anytime in Settings
-          </ThemedText>
+          <ThemedText style={styles.footerText}>You can change this anytime in Settings</ThemedText>
         </View>
       </View>
     </View>

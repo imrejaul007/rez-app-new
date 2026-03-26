@@ -70,7 +70,7 @@ function SetPinScreen() {
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <LinearGradient
-        colors={[colors.brand.purple, colors.brand.purpleDeep, colors.brand.purpleDeep]}
+        colors={[Colors.gold, colors.nileBlue, colors.nileBlue]}
         style={StyleSheet.absoluteFill}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -100,7 +100,7 @@ function SetPinScreen() {
               {/* Header */}
               <View style={styles.header}>
                 <View style={styles.iconContainer}>
-                  <LinearGradient colors={[colors.brand.purple, colors.brand.purpleDeep]} style={styles.iconGradient}>
+                  <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.iconGradient}>
                     <Ionicons name="keypad" size={28} color={colors.text.inverse} />
                   </LinearGradient>
                 </View>
@@ -112,7 +112,7 @@ function SetPinScreen() {
 
                 <View style={styles.underlineContainer}>
                   <LinearGradient
-                    colors={[colors.brand.purple, colors.brand.purpleLight]}
+                    colors={[Colors.gold, colors.nileBlue]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.underline}
@@ -172,7 +172,7 @@ function SetPinScreen() {
                   <View
                     style={[
                       styles.primaryButton,
-                      { backgroundColor: isSubmitting ? colors.neutral[300] : colors.brand.purple },
+                      { backgroundColor: isSubmitting ? colors.neutral[300] : colors.nileBlue },
                     ]}
                   >
                     {isSubmitting ? (
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     marginBottom: Spacing.lg,
-    shadowColor: colors.brand.purple,
+    shadowColor: Colors.gold,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
@@ -338,7 +338,7 @@ const styles = StyleSheet.create({
   primaryButtonWrapper: {
     borderRadius: 26,
     overflow: 'hidden',
-    shadowColor: colors.brand.purple,
+    shadowColor: Colors.gold,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.35,
     shadowRadius: 16,

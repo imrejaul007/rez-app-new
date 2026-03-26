@@ -24,7 +24,7 @@ function OTPVerificationScreen() {
   const [isVerifying, setIsVerifying] = useState(false);
 
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [timer, setTimer] = useState(30);
+  const [timer, setTimer] = useState(60); // Match sign-in's 60 seconds
   const [canResend, setCanResend] = useState(false);
   // Use ref instead of state to avoid re-renders that dismiss the keyboard
   const focusedIndexRef = useRef<number | null>(null);
@@ -131,7 +131,7 @@ function OTPVerificationScreen() {
       triggerImpact('Light');
       await actions.sendOTP(phoneNumber);
       if (!isMounted()) return;
-      setTimer(30);
+      setTimer(60);
       if (!isMounted()) return;
       setCanResend(false);
       if (!isMounted()) return;

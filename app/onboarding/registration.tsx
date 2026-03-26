@@ -21,6 +21,7 @@ function RegistrationScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ referralCode?: string }>();
   const [authLoading, setAuthLoading] = useState(false);
+  const [slowLoadingMsg, setSlowLoadingMsg] = useState('');
   const actions = useAuthActions();
 
   const [formData, setFormData] = useState({
@@ -97,16 +98,24 @@ function RegistrationScreen() {
     if (!validateForm()) return;
 
     setAuthLoading(true);
+    const slowHintTimer = setTimeout(() => {
+      if (isMounted()) setSlowLoadingMsg('Waking up server, please wait…');
+    }, 5000);
     try {
       const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
       const emailToSend = formData.email.trim() || undefined;
       await actions.sendOTP(formattedPhone, emailToSend, formData.referralCode || undefined, 'signup');
+
+      clearTimeout(slowHintTimer);
+      if (isMounted()) setSlowLoadingMsg('');
 
       router.push({
         pathname: '/onboarding/otp-verification',
         params: { phoneNumber: formattedPhone },
       });
     } catch (error: any) {
+      clearTimeout(slowHintTimer);
+      if (isMounted()) setSlowLoadingMsg('');
       const errorMessage =
         error?.message || useAuthStore.getState().state.error || 'Failed to send OTP. Please try again.';
 
@@ -260,6 +269,9 @@ function RegistrationScreen() {
                   leftIcon={<Ionicons name="gift-outline" size={20} color={Colors.gold} />}
                 />
               </View>
+
+              {/* Slow network hint */}
+              {slowLoadingMsg ? <Text style={styles.slowHint}>{slowLoadingMsg}</Text> : null}
 
               {/* Submit Button */}
               <Pressable style={styles.primaryButtonWrapper} onPress={handleSubmit} disabled={authLoading}>
@@ -498,6 +510,12 @@ const styles = StyleSheet.create({
   signInHighlight: {
     color: Colors.gold, // Light Mustard,
     fontWeight: '700',
+  },
+  slowHint: {
+    fontSize: Typography.bodySmall.fontSize,
+    color: colors.gray[400],
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
   },
 
   // Existing User

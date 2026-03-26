@@ -11,11 +11,7 @@ export default function OnboardingLayout() {
       <Stack.Screen name="splash" />
       <Stack.Screen name="registration" />
       <Stack.Screen name="otp-verification" />
-      <Stack.Screen name="location-permission" />
       <Stack.Screen name="loading" />
-      <Stack.Screen name="category-selection" />
-      <Stack.Screen name="rewards-intro" />
-      <Stack.Screen name="transactions-preview" />
       <Stack.Screen name="notification-permission" />
       <Stack.Screen name="identity-select" options={{ headerShown: false }} />
       <Stack.Screen name="student-verify" options={{ headerShown: false }} />

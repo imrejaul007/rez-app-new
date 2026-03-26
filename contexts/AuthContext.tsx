@@ -203,8 +203,8 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     return () => { if (timerId) clearTimeout(timerId); };
   }, [state.isAuthenticated, state.token]);
 
-  // Navigation guard: Redirect to sign-in when user is logged out
-  // Single source of truth for all sign-in redirects — no other code should call router.replace('/sign-in')
+  // Navigation guard: Redirect to sign-in (returning users) or splash (new users) when not authenticated
+  // Single source of truth for all unauthenticated redirects — no other code should call router.replace('/sign-in')
   useEffect(() => {
     // Don't navigate during initial loading
     if (state.isLoading) {
@@ -232,7 +232,17 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       const now = Date.now();
       if (now - lastRedirectTimeRef.current < 1000) return;
       lastRedirectTimeRef.current = now;
-      router.replace('/sign-in');
+
+      // New users (no onboarding_completed flag) → splash; returning users → sign-in
+      AsyncStorage.getItem('onboarding_completed').then((onboardingDone) => {
+        if (!onboardingDone) {
+          router.replace('/onboarding/splash');
+        } else {
+          router.replace('/sign-in');
+        }
+      }).catch(() => {
+        router.replace('/sign-in');
+      });
     }
   }, [state.isAuthenticated, state.isLoading, state.error, segments, hasExplicitlyLoggedOut, shouldRedirectToSignIn]);
 

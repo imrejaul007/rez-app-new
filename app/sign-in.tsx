@@ -317,14 +317,14 @@ function SignInScreen() {
     setIsSending(true);
     try {
       const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
-      await actions.login(formattedPhone, formData.otp);
+      const result = await actions.login(formattedPhone, formData.otp);
       // Haptic feedback on successful login
       try {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch {}
-      // Explicit navigation after successful OTP login
-      const currentUser = useAuthStore.getState().state.user;
-      if (currentUser?.isOnboarded) {
+      // Use the returned user directly to avoid reading stale store state
+      const loggedInUser = (result as any) || useAuthStore.getState().state.user;
+      if (loggedInUser?.isOnboarded) {
         router.replace('/(tabs)/');
       } else {
         router.replace('/onboarding/notification-permission');
