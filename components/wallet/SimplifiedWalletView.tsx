@@ -44,7 +44,8 @@ const SimplifiedWalletView: React.FC<SimplifiedWalletViewProps> = ({
   onDetailPress,
   onExpiryPress,
 }) => {
-  const formattedBalance = balance.toLocaleString('en-IN');
+  const safeBalance = typeof balance === 'number' && !isNaN(balance) ? balance : 0;
+  const formattedBalance = safeBalance.toLocaleString('en-IN');
 
   return (
     <View style={styles.container}>
@@ -68,7 +69,7 @@ const SimplifiedWalletView: React.FC<SimplifiedWalletViewProps> = ({
         </View>
 
         <ThemedText style={styles.rupeeEquivalent}>
-          = Rs.{formattedBalance}
+          = Rs.{safeBalance.toLocaleString('en-IN')}
         </ThemedText>
 
         <Pressable

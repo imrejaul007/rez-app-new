@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
   Share as RNShare,
   Linking,
-  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,9 +25,11 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function ReferralSharePage() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 
@@ -87,9 +88,7 @@ function ReferralSharePage() {
 
   const handleShare = async (template: ShareTemplate) => {
     try {
-      const message = template.message
-        .replace(/{CODE}/g, referralCode)
-        .replace(/{LINK}/g, referralLink);
+      const message = template.message.replace(/{CODE}/g, referralCode).replace(/{LINK}/g, referralLink);
 
       switch (template.type) {
         case 'whatsapp': {
@@ -149,11 +148,11 @@ function ReferralSharePage() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <LinearGradient colors={['#7c3aed', '#a78bfa']} style={styles.header}>
+      <LinearGradient colors={['#7c3aed', '#a78bfa']} style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <View style={styles.headerRow}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
           >
@@ -163,7 +162,8 @@ function ReferralSharePage() {
           <View style={{ width: 40 }} />
         </View>
         <Text style={styles.headerSubtitle}>
-          Earn {currencySymbol}{perReferral} for every friend who joins!
+          Earn {currencySymbol}
+          {perReferral} for every friend who joins!
         </Text>
       </LinearGradient>
 
@@ -199,7 +199,9 @@ function ReferralSharePage() {
         <View style={styles.linkSection}>
           <ThemedText style={styles.sectionTitle}>Referral Link</ThemedText>
           <Pressable style={styles.linkContainer} onPress={handleCopyLink}>
-            <Text style={styles.linkText} numberOfLines={1}>{referralLink}</Text>
+            <Text style={styles.linkText} numberOfLines={1}>
+              {referralLink}
+            </Text>
             <Ionicons name="copy-outline" size={18} color={colors.text.tertiary} />
           </Pressable>
         </View>
@@ -261,7 +263,6 @@ const styles = StyleSheet.create({
   },
   loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 56 : 44,
     paddingBottom: Spacing.xl,
     paddingHorizontal: Spacing.lg,
   },

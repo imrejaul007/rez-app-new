@@ -1,16 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { colors } from '@/constants/theme';
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  TextInput,
-  Platform,
-  RefreshControl,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, Dimensions, TextInput, Platform, RefreshControl } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -48,35 +39,38 @@ function ArticlesPage() {
   ];
 
   // Fetch articles from backend
-  const fetchArticles = useCallback(async (isRefreshing = false) => {
-    try {
-      if (!isRefreshing) setLoading(true);
-      setError(undefined);
+  const fetchArticles = useCallback(
+    async (isRefreshing = false) => {
+      try {
+        if (!isRefreshing) setLoading(true);
+        setError(undefined);
 
-      const response = await articlesService.getArticles({
-        page: 1,
-        limit: 50,
-        sortBy: 'newest',
-        isPublished: true,
-        category: selectedCategory === 'all' ? undefined : selectedCategory as any,
-      });
+        const response = await articlesService.getArticles({
+          page: 1,
+          limit: 50,
+          sortBy: 'newest',
+          isPublished: true,
+          category: selectedCategory === 'all' ? undefined : (selectedCategory as any),
+        });
 
-      if (response.success && response.data.articles) {
+        if (response.success && response.data && (response.data as any).articles) {
+          if (!isMounted()) return;
+          setArticles((response.data as any).articles);
+        } else {
+          throw new Error(response.message || 'Failed to fetch articles');
+        }
+      } catch (err) {
         if (!isMounted()) return;
-        setArticles(response.data.articles);
-      } else {
-        throw new Error(response.message || 'Failed to fetch articles');
+        setError('Failed to load articles');
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err) {
-      if (!isMounted()) return;
-      setError('Failed to load articles');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [selectedCategory]);
+    },
+    [selectedCategory],
+  );
 
   // Fetch on mount and when category changes
   useEffect(() => {
@@ -90,30 +84,36 @@ function ArticlesPage() {
   }, [fetchArticles]);
 
   // Filter articles based on search
-  const filteredArticles = useMemo(() => articles.filter((article) => {
-    const matchesSearch = article.title
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase()) ||
-      article.excerpt?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesSearch;
-  }), [articles, searchQuery]);
+  const filteredArticles = useMemo(
+    () =>
+      articles.filter((article) => {
+        const matchesSearch =
+          article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          article.excerpt?.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesSearch;
+      }),
+    [articles, searchQuery],
+  );
 
-  const handleArticlePress = useCallback((article: Article) => {
-    router.push(`/article/${article.id}`);
-  }, [router]);
+  const handleArticlePress = useCallback(
+    (article: Article) => {
+      router.push(`/article/${article.id}`);
+    },
+    [router],
+  );
 
   const handleCreateArticle = useCallback(() => {
     router.push('/article/create');
   }, [router]);
 
-  const renderArticleCard = useCallback(({ item }: { item: Article }) => (
-    <View style={{ width: CARD_WIDTH }}>
-      <ArticleCard
-        article={item}
-        onPress={handleArticlePress}
-      />
-    </View>
-  ), [handleArticlePress]);
+  const renderArticleCard = useCallback(
+    ({ item }: { item: Article }) => (
+      <View style={{ width: CARD_WIDTH }}>
+        <ArticleCard article={item} onPress={handleArticlePress} />
+      </View>
+    ),
+    [handleArticlePress],
+  );
 
   return (
     <View style={styles.container}>
@@ -130,8 +130,7 @@ function ArticlesPage() {
               {/* Back Button */}
               <Pressable
                 style={styles.backButton}
-                onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-               
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               >
                 <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
               </Pressable>
@@ -139,17 +138,11 @@ function ArticlesPage() {
               {/* Title */}
               <View style={styles.headerTitleContainer}>
                 <ThemedText style={styles.headerTitle}>Articles</ThemedText>
-                <ThemedText style={styles.headerSubtitle}>
-                  {filteredArticles.length} articles
-                </ThemedText>
+                <ThemedText style={styles.headerSubtitle}>{filteredArticles.length} articles</ThemedText>
               </View>
 
               {/* Create Button */}
-              <Pressable
-                style={styles.createButton}
-               
-                onPress={handleCreateArticle}
-              >
+              <Pressable style={styles.createButton} onPress={handleCreateArticle}>
                 <Ionicons name="add" size={24} color={colors.text.inverse} />
               </Pressable>
             </View>
@@ -159,8 +152,7 @@ function ArticlesPage() {
             {/* Back Button */}
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
@@ -168,17 +160,11 @@ function ArticlesPage() {
             {/* Title */}
             <View style={styles.headerTitleContainer}>
               <ThemedText style={styles.headerTitle}>Articles</ThemedText>
-              <ThemedText style={styles.headerSubtitle}>
-                {filteredArticles.length} articles
-              </ThemedText>
+              <ThemedText style={styles.headerSubtitle}>{filteredArticles.length} articles</ThemedText>
             </View>
 
             {/* Create Button */}
-            <Pressable
-              style={styles.createButton}
-             
-              onPress={handleCreateArticle}
-            >
+            <Pressable style={styles.createButton} onPress={handleCreateArticle}>
               <Ionicons name="add" size={24} color={colors.text.inverse} />
             </Pressable>
           </View>
@@ -188,12 +174,7 @@ function ArticlesPage() {
       {/* Search Bar with Glassmorphism */}
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
-          <Ionicons
-            name="search-outline"
-            size={20}
-            color={Colors.brand.purpleLight}
-            style={styles.searchIcon}
-          />
+          <Ionicons name="search-outline" size={20} color={Colors.brand.purpleLight} style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
             placeholder="Search articles..."
@@ -202,10 +183,7 @@ function ArticlesPage() {
             onChangeText={setSearchQuery}
           />
           {searchQuery.length > 0 && (
-            <Pressable
-              onPress={() => setSearchQuery('')}
-              style={styles.clearButton}
-            >
+            <Pressable onPress={() => setSearchQuery('')} style={styles.clearButton}>
               <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
             </Pressable>
           )}
@@ -222,12 +200,8 @@ function ArticlesPage() {
         {categories.map((category) => (
           <Pressable
             key={category.id}
-            style={[
-              styles.categoryPill,
-              selectedCategory === category.id && styles.categoryPillActive,
-            ]}
+            style={[styles.categoryPill, selectedCategory === category.id && styles.categoryPillActive]}
             onPress={() => setSelectedCategory(category.id)}
-           
           >
             <Ionicons
               name={category.icon as any}
@@ -235,10 +209,7 @@ function ArticlesPage() {
               color={selectedCategory === category.id ? colors.text.inverse : Colors.brand.purpleLight}
             />
             <ThemedText
-              style={[
-                styles.categoryPillText,
-                selectedCategory === category.id && styles.categoryPillTextActive,
-              ]}
+              style={[styles.categoryPillText, selectedCategory === category.id && styles.categoryPillTextActive]}
             >
               {category.label}
             </ThemedText>
@@ -247,9 +218,7 @@ function ArticlesPage() {
       </ScrollView>
 
       {/* Loading State */}
-      {loading && (
-        <CardGridSkeleton />
-      )}
+      {loading && <CardGridSkeleton />}
 
       {/* Error State */}
       {error && !loading && (
@@ -257,11 +226,7 @@ function ArticlesPage() {
           <Ionicons name="alert-circle-outline" size={64} color={Colors.error} />
           <ThemedText style={styles.errorTitle}>Oops!</ThemedText>
           <ThemedText style={styles.errorMessage}>{error}</ThemedText>
-          <Pressable
-            style={styles.retryButton}
-            onPress={() => fetchArticles()}
-           
-          >
+          <Pressable style={styles.retryButton} onPress={() => fetchArticles()}>
             <LinearGradient
               colors={[Colors.brand.purpleLight, colors.brand.purpleMedium]}
               start={{ x: 0, y: 0 }}
@@ -300,22 +265,15 @@ function ArticlesPage() {
               >
                 <Ionicons name="document-text-outline" size={64} color="#C084FC" />
                 <ThemedText style={styles.emptyTitle}>No Articles Found</ThemedText>
-                <ThemedText style={styles.emptySubtitle}>
-                  Try adjusting your search or filters
-                </ThemedText>
+                <ThemedText style={styles.emptySubtitle}>Try adjusting your search or filters</ThemedText>
               </LinearGradient>
             </View>
           )}
         />
       )}
 
-
       {/* FAB for Create Article */}
-      <Pressable
-        style={styles.fab}
-        onPress={handleCreateArticle}
-       
-      >
+      <Pressable style={styles.fab} onPress={handleCreateArticle}>
         <LinearGradient
           colors={[Colors.brand.purpleLight, colors.brand.purpleMedium, '#C084FC']}
           start={{ x: 0, y: 0 }}

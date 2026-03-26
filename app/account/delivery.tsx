@@ -42,7 +42,7 @@ function DeliverySettingsScreen() {
     deleteAddress: deleteAddressApi,
     setDefaultAddress: setDefaultAddressApi,
     refetch,
-    clearError
+    clearError,
   } = useAddresses();
 
   const [contactlessDelivery, setContactlessDelivery] = useState(false);
@@ -84,16 +84,12 @@ function DeliverySettingsScreen() {
   };
 
   const handleDeleteAddress = async (addressId: string) => {
-    platformAlertDestructive(
-      'Delete Address',
-      'Are you sure you want to delete this address?',
-      async () => {
-        const success = await deleteAddressApi(addressId);
-        if (success) {
-          platformAlertSimple('Success', 'Address deleted successfully');
-        }
+    platformAlertDestructive('Delete Address', 'Are you sure you want to delete this address?', async () => {
+      const success = await deleteAddressApi(addressId);
+      if (success) {
+        platformAlertSimple('Success', 'Address deleted successfully');
       }
-    );
+    });
   };
 
   const toggleContactlessDelivery = async () => {
@@ -123,7 +119,7 @@ function DeliverySettingsScreen() {
   const handleSaveInstructions = async (instructions: string) => {
     setDeliveryInstructions(instructions);
     try {
-      await userSettingsApi.updateDeliveryPreferences({ defaultInstructions: instructions });
+      await userSettingsApi.updateDeliveryPreferences({ deliveryInstructions: instructions });
       platformAlertSimple('Success', 'Delivery instructions updated');
     } catch (e) {
       platformAlertSimple('Error', 'Failed to save instructions. Please try again.');
@@ -135,11 +131,7 @@ function DeliverySettingsScreen() {
       <View style={styles.addressHeader}>
         <View style={styles.addressTypeContainer}>
           <View style={[styles.addressTypeIcon, { backgroundColor: getAddressTypeColor(address.type) }]}>
-            <Ionicons 
-              name={getAddressTypeIcon(address.type)} 
-              size={16} 
-              color={colors.text.inverse} 
-            />
+            <Ionicons name={getAddressTypeIcon(address.type)} size={16} color={colors.text.inverse} />
           </View>
           <View style={styles.addressTitleContainer}>
             <ThemedText style={styles.addressTitle}>{address.title}</ThemedText>
@@ -150,7 +142,7 @@ function DeliverySettingsScreen() {
             )}
           </View>
         </View>
-        
+
         <Pressable
           style={styles.moreButton}
           onPress={() => handleEditAddress(address)}
@@ -163,24 +155,16 @@ function DeliverySettingsScreen() {
       </View>
 
       <View style={styles.addressContent}>
-        <ThemedText style={styles.addressLine}>
-          {address.addressLine1}
-        </ThemedText>
-        {address.addressLine2 && (
-          <ThemedText style={styles.addressLine}>
-            {address.addressLine2}
-          </ThemedText>
-        )}
+        <ThemedText style={styles.addressLine}>{address.addressLine1}</ThemedText>
+        {address.addressLine2 && <ThemedText style={styles.addressLine}>{address.addressLine2}</ThemedText>}
         <ThemedText style={styles.addressLine}>
           {address.city}, {address.state} {address.postalCode}
         </ThemedText>
-        
+
         {address.instructions && (
           <View style={styles.instructionsContainer}>
             <Ionicons name="information-circle" size={14} color={ACCOUNT_COLORS.textSecondary} />
-            <ThemedText style={styles.instructions}>
-              {address.instructions}
-            </ThemedText>
+            <ThemedText style={styles.instructions}>{address.instructions}</ThemedText>
           </View>
         )}
       </View>
@@ -213,28 +197,30 @@ function DeliverySettingsScreen() {
 
   const getAddressTypeIcon = (type: string) => {
     switch (type) {
-      case 'HOME': return 'home';
-      case 'OFFICE': return 'business';
-      default: return 'location';
+      case 'HOME':
+        return 'home';
+      case 'OFFICE':
+        return 'business';
+      default:
+        return 'location';
     }
   };
 
   const getAddressTypeColor = (type: string) => {
     switch (type) {
-      case 'HOME': return ACCOUNT_COLORS.success;
-      case 'OFFICE': return ACCOUNT_COLORS.info;
-      default: return ACCOUNT_COLORS.primary;
+      case 'HOME':
+        return ACCOUNT_COLORS.success;
+      case 'OFFICE':
+        return ACCOUNT_COLORS.info;
+      default:
+        return ACCOUNT_COLORS.primary;
     }
   };
 
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={ACCOUNT_COLORS.primary}
-        translucent={true}
-      />
-      
+      <StatusBar barStyle="light-content" backgroundColor={ACCOUNT_COLORS.primary} translucent={true} />
+
       {/* Modern Header */}
       <LinearGradient
         colors={[ACCOUNT_COLORS.primary, ACCOUNT_COLORS.primaryLight, colors.brand.purpleSoft]}
@@ -252,14 +238,12 @@ function DeliverySettingsScreen() {
               <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
             </View>
           </Pressable>
-          
+
           <View style={styles.headerTitleSection}>
             <ThemedText style={styles.headerTitle}>Delivery Settings</ThemedText>
-            <ThemedText style={styles.headerSubtitle}>
-              Manage addresses and preferences
-            </ThemedText>
+            <ThemedText style={styles.headerSubtitle}>Manage addresses and preferences</ThemedText>
           </View>
-          
+
           <Pressable
             style={styles.actionButton}
             onPress={handleAddAddress}
@@ -336,9 +320,7 @@ function DeliverySettingsScreen() {
                   </Pressable>
                 </View>
               ) : (
-                <View style={styles.addressList}>
-                  {addresses.map(renderAddressCard)}
-                </View>
+                <View style={styles.addressList}>{addresses.map(renderAddressCard)}</View>
               )}
             </View>
           </>
@@ -378,9 +360,7 @@ function DeliverySettingsScreen() {
                     <Ionicons name="notifications" size={20} color={ACCOUNT_COLORS.primary} />
                     <View style={styles.settingText}>
                       <ThemedText style={styles.settingTitle}>Delivery Notifications</ThemedText>
-                      <ThemedText style={styles.settingDescription}>
-                        Get notified about delivery updates
-                      </ThemedText>
+                      <ThemedText style={styles.settingDescription}>Get notified about delivery updates</ThemedText>
                     </View>
                   </View>
                   <Switch
@@ -428,11 +408,7 @@ function DeliverySettingsScreen() {
       </ScrollView>
 
       {/* Add Address Modal */}
-      <AddAddressModal
-        visible={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onAdd={handleAddSubmit}
-      />
+      <AddAddressModal visible={showAddModal} onClose={() => setShowAddModal(false)} onAdd={handleAddSubmit} />
 
       {/* Edit Address Modal */}
       <EditAddressModal
@@ -453,7 +429,7 @@ function DeliverySettingsScreen() {
         onSave={handleSaveInstructions}
       />
     </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({
@@ -562,7 +538,7 @@ const styles = StyleSheet.create({
     color: ACCOUNT_COLORS.primary,
     marginLeft: 4,
   },
-  
+
   // Address Cards
   addressList: {
     gap: 12,
@@ -668,7 +644,7 @@ const styles = StyleSheet.create({
   dangerButtonText: {
     color: ACCOUNT_COLORS.error,
   },
-  
+
   // Settings
   settingsCard: {
     backgroundColor: 'white',
@@ -710,7 +686,7 @@ const styles = StyleSheet.create({
     color: ACCOUNT_COLORS.textSecondary,
     lineHeight: 18,
   },
-  
+
   // Instructions
   instructionsCard: {
     backgroundColor: 'white',
@@ -749,7 +725,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: ACCOUNT_COLORS.primary,
   },
-  
+
   footer: {
     height: 40,
   },

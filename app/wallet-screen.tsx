@@ -59,8 +59,8 @@ import walletApi from '@/services/walletApi';
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Phase 1.3: Simplified wallet view for new/casual users
-import { SimplifiedWalletView } from '@/components/wallet/SimplifiedWalletView';
-import { CoinExpiryBanner } from '@/components/wallet/CoinExpiryBanner';
+import SimplifiedWalletView from '@/components/wallet/SimplifiedWalletView';
+import CoinExpiryBanner from '@/components/wallet/CoinExpiryBanner';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { useHomeTabStore } from '@/stores/homeTabStore';
@@ -595,18 +595,23 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
           {/* Phase 1.3: Simplified wallet view — one-number balance for casual users */}
           <SimplifiedWalletView
-            balance={walletData?.balance?.available ?? 0}
-            expiringCoins={walletData?.expiringCoins?.count ?? 0}
-            onDetailPress={() => {
-              /* scroll to detailed breakdown below */
-            }}
+            balance={walletData?.totalBalance ?? walletData?.availableBalance ?? 0}
+            expiringCoins={
+              expiringAmount > 0
+                ? {
+                    count: expiringAmount,
+                    daysLeft: minDaysLeft,
+                  }
+                : null
+            }
+            onDetailPress={() => setCoinEducationVisible(true)}
           />
 
-          {/* Coin expiry banner if coins expiring soon */}
-          {(walletData?.expiringCoins?.count ?? 0) > 0 && (
+          {/* Coin expiry banner if coins expiring soon (within 7 days) */}
+          {expiringAmount > 0 && minDaysLeft <= 7 && (
             <CoinExpiryBanner
-              expiringCount={walletData.expiringCoins?.count ?? 0}
-              daysLeft={walletData.expiringCoins?.daysLeft ?? 7}
+              expiringCount={expiringAmount}
+              daysLeft={minDaysLeft}
               onPress={() => router.push('/near-u/map')}
             />
           )}

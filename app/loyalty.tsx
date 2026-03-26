@@ -5,15 +5,7 @@ import { colors } from '@/constants/theme';
  */
 
 import React, { useState } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  RefreshControl,
-  Modal,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, RefreshControl, Modal } from 'react-native';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -65,8 +57,11 @@ const LoyaltyPage = () => {
   const [showAllTiersModal, setShowAllTiersModal] = useState(false);
 
   const safeNav = (path: string) => {
-    try { router.push(path as any); }
-    catch { platformAlertSimple('Error', 'Could not open screen. Please try again.'); }
+    try {
+      router.push(path as any);
+    } catch {
+      platformAlertSimple('Error', 'Could not open screen. Please try again.');
+    }
   };
 
   // Handle reward redemption
@@ -95,7 +90,7 @@ const LoyaltyPage = () => {
       const result = await dailyCheckIn();
       platformAlertSimple(
         'Check-in Successful!',
-        `You earned ${result.points} points!\n${result.bonus ? `Bonus: ${result.bonus.points} points - ${result.bonus.message}` : ''}`
+        `You earned ${result.points} points!\n${result.bonus ? `Bonus: ${result.bonus.points} points - ${result.bonus.message}` : ''}`,
       );
     } catch (error) {
       platformAlertSimple('Check-in Failed', error instanceof Error ? error.message : 'Please try again.');
@@ -108,7 +103,7 @@ const LoyaltyPage = () => {
       const result = await claimChallenge(challengeId);
       platformAlertSimple(
         'Challenge Completed!',
-        `You earned ${result.points} points!${result.reward ? `\nBonus: ${result.reward.title}` : ''}`
+        `You earned ${result.points} points!${result.reward ? `\nBonus: ${result.reward.title}` : ''}`,
       );
     } catch (error) {
       platformAlertSimple('Claim Failed', error instanceof Error ? error.message : 'Please try again.');
@@ -153,34 +148,23 @@ const LoyaltyPage = () => {
             <Ionicons name="calendar" size={28} color={canCheckIn ? Colors.brand.purple : colors.text.tertiary} />
             <ThemedText style={styles.actionTitle}>Daily Check-in</ThemedText>
             {checkInStatus && (
-              <ThemedText style={styles.actionSubtitle}>
-                {checkInStatus.streak.currentStreak} day streak
-              </ThemedText>
+              <ThemedText style={styles.actionSubtitle}>{checkInStatus.streak.currentStreak} day streak</ThemedText>
             )}
           </Pressable>
 
-          <Pressable
-            style={styles.actionCard}
-            onPress={() => safeNav('/scratch-card')}
-          >
+          <Pressable style={styles.actionCard} onPress={() => safeNav('/scratch-card')}>
             <Ionicons name="gift" size={28} color={Colors.warning} />
             <ThemedText style={styles.actionTitle}>Scratch Card</ThemedText>
             <ThemedText style={styles.actionSubtitle}>Win points</ThemedText>
           </Pressable>
 
-          <Pressable
-            style={styles.actionCard}
-            onPress={() => safeNav('/referral')}
-          >
+          <Pressable style={styles.actionCard} onPress={() => safeNav('/referral')}>
             <Ionicons name="people" size={28} color={Colors.success} />
             <ThemedText style={styles.actionTitle}>Refer Friend</ThemedText>
             <ThemedText style={styles.actionSubtitle}>200 points</ThemedText>
           </Pressable>
 
-          <Pressable
-            style={styles.actionCard}
-            onPress={() => safeNav('/my-reviews')}
-          >
+          <Pressable style={styles.actionCard} onPress={() => safeNav('/my-reviews')}>
             <Ionicons name="star" size={28} color={Colors.error} />
             <ThemedText style={styles.actionTitle}>Write Review</ThemedText>
             <ThemedText style={styles.actionSubtitle}>50 points</ThemedText>
@@ -198,7 +182,7 @@ const LoyaltyPage = () => {
       <View style={styles.section}>
         <ThemedText style={styles.sectionTitle}>Active Challenges</ThemedText>
 
-        {challenges.map(challenge => (
+        {challenges.map((challenge) => (
           <View key={challenge._id} style={styles.challengeCard}>
             <View style={styles.challengeIcon}>
               <Ionicons name="trophy" size={24} color={Colors.warning} />
@@ -211,10 +195,7 @@ const LoyaltyPage = () => {
               <View style={styles.challengeProgress}>
                 <View style={styles.progressBar}>
                   <View
-                    style={[
-                      styles.progressFill,
-                      { width: `${(challenge.progress / challenge.maxProgress) * 100}%` },
-                    ]}
+                    style={[styles.progressFill, { width: `${(challenge.progress / challenge.maxProgress) * 100}%` }]}
                   />
                 </View>
                 <ThemedText style={styles.progressText}>
@@ -253,7 +234,7 @@ const LoyaltyPage = () => {
 
   // Render featured rewards
   const renderFeaturedRewards = () => {
-    const featuredRewards = rewards.filter(r => r.featured).slice(0, 3);
+    const featuredRewards = rewards.filter((r) => r.featured).slice(0, 3);
     if (featuredRewards.length === 0) return null;
 
     return (
@@ -268,7 +249,7 @@ const LoyaltyPage = () => {
           </Pressable>
         </View>
 
-        {featuredRewards.map(reward => {
+        {featuredRewards.map((reward) => {
           const { canRedeem } = canRedeemReward(reward);
           return (
             <RewardCard
@@ -298,7 +279,7 @@ const LoyaltyPage = () => {
               userPoints={balance?.currentPoints || 0}
               tierColor={tierConfig?.color}
               onSearch={searchRewards}
-              onFilter={category => filterRewards({ category: category || undefined })}
+              onFilter={(category) => filterRewards({ category: category || undefined })}
             />
           </View>
         );
@@ -309,11 +290,7 @@ const LoyaltyPage = () => {
           </View>
         );
       case 'challenges':
-        return (
-          <View style={styles.tabContent}>
-            {renderChallenges()}
-          </View>
-        );
+        return <View style={styles.tabContent}>{renderChallenges()}</View>;
       default:
         return null;
     }
@@ -325,7 +302,10 @@ const LoyaltyPage = () => {
         <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purple} />
         <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Loyalty Rewards</ThemedText>
@@ -346,7 +326,10 @@ const LoyaltyPage = () => {
         <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purple} />
         <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Loyalty Rewards</ThemedText>
@@ -370,7 +353,11 @@ const LoyaltyPage = () => {
         <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purple} />
         <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} accessibilityRole="button">
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              accessibilityRole="button"
+            >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Loyalty Rewards</ThemedText>
@@ -397,7 +384,7 @@ const LoyaltyPage = () => {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
             accessibilityHint="Double tap to return to previous screen"
@@ -405,10 +392,7 @@ const LoyaltyPage = () => {
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Loyalty Rewards</ThemedText>
-          <Pressable
-            style={styles.headerButton}
-            onPress={() => safeNav('/profile')}
-          >
+          <Pressable style={styles.headerButton} onPress={() => safeNav('/profile')}>
             <Ionicons name="stats-chart" size={24} color="white" />
           </Pressable>
         </View>
@@ -439,9 +423,7 @@ const LoyaltyPage = () => {
                 </ThemedText>
               </View>
               <View style={styles.progressBar}>
-                <View
-                  style={[styles.progressFill, { width: `${getTierProgress()}%` }]}
-                />
+                <View style={[styles.progressFill, { width: `${getTierProgress()}%` }]} />
               </View>
             </View>
           )}
@@ -459,11 +441,7 @@ const LoyaltyPage = () => {
             size={20}
             color={activeTab === 'rewards' ? Colors.brand.purple : colors.text.tertiary}
           />
-          <ThemedText
-            style={[styles.tabText, activeTab === 'rewards' && styles.tabTextActive]}
-          >
-            Rewards
-          </ThemedText>
+          <ThemedText style={[styles.tabText, activeTab === 'rewards' && styles.tabTextActive]}>Rewards</ThemedText>
         </Pressable>
 
         <Pressable
@@ -475,11 +453,7 @@ const LoyaltyPage = () => {
             size={20}
             color={activeTab === 'history' ? Colors.brand.purple : colors.text.tertiary}
           />
-          <ThemedText
-            style={[styles.tabText, activeTab === 'history' && styles.tabTextActive]}
-          >
-            History
-          </ThemedText>
+          <ThemedText style={[styles.tabText, activeTab === 'history' && styles.tabTextActive]}>History</ThemedText>
         </Pressable>
 
         <Pressable
@@ -491,9 +465,7 @@ const LoyaltyPage = () => {
             size={20}
             color={activeTab === 'challenges' ? Colors.brand.purple : colors.text.tertiary}
           />
-          <ThemedText
-            style={[styles.tabText, activeTab === 'challenges' && styles.tabTextActive]}
-          >
+          <ThemedText style={[styles.tabText, activeTab === 'challenges' && styles.tabTextActive]}>
             Challenges
           </ThemedText>
         </Pressable>
@@ -574,7 +546,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   header: {
-    paddingTop: 50,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 12 : 50,
     paddingBottom: Spacing.lg,
     paddingHorizontal: Spacing.lg,
   },

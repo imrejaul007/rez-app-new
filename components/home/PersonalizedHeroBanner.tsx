@@ -122,6 +122,7 @@ const StudentHero = memo(function StudentHero({
       <Pressable
         onPress={() => router.push('/try' as any)}
         style={styles.heroCard}
+        android_ripple={{ color: 'rgba(255,255,255,0.15)', borderless: false }}
         accessibilityRole="button"
         accessibilityLabel="Explore student experiences"
       >
@@ -185,6 +186,7 @@ const CorporateHero = memo(function CorporateHero({
       <Pressable
         onPress={() => router.push('/prive' as any)}
         style={styles.heroCard}
+        android_ripple={{ color: 'rgba(255,255,255,0.15)', borderless: false }}
         accessibilityRole="button"
         accessibilityLabel="Explore corporate perks"
       >
@@ -255,6 +257,7 @@ const GeneralHero = memo(function GeneralHero({
       <Pressable
         onPress={() => router.push('/try' as any)}
         style={styles.heroCard}
+        android_ripple={{ color: 'rgba(255,255,255,0.15)', borderless: false }}
         accessibilityRole="button"
         accessibilityLabel="Explore ReZ"
       >

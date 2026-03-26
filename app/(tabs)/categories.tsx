@@ -1,16 +1,7 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  ScrollView,
-  Dimensions,
-  TextInput,
-} from 'react-native';
+import { View, StyleSheet, Pressable, StatusBar, Platform, ScrollView, Dimensions, TextInput } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -32,7 +23,7 @@ interface CategorySection {
 }
 
 // Generate category sections from config
-const CATEGORY_SECTIONS: CategorySection[] = Object.values(CATEGORY_CONFIGS).map(cat => ({
+const CATEGORY_SECTIONS: CategorySection[] = Object.values(CATEGORY_CONFIGS).map((cat) => ({
   id: cat.slug,
   name: cat.name,
   color: cat.primaryColor,
@@ -49,16 +40,19 @@ function CategoriesScreen() {
   };
 
   // Handle subcategory press - navigate to StoreListPage
-  const handleSubcategoryPress = useCallback((subcategory: SubcategoryItem, parentSlug: string) => {
-    router.push({
-      pathname: '/StoreListPage',
-      params: {
-        category: subcategory.slug,
-        parentCategory: parentSlug,
-        title: subcategory.name,
-      },
-    } as any);
-  }, [router]);
+  const handleSubcategoryPress = useCallback(
+    (subcategory: SubcategoryItem, parentSlug: string) => {
+      router.push({
+        pathname: '/StoreListPage',
+        params: {
+          category: subcategory.slug,
+          parentCategory: parentSlug,
+          title: subcategory.name,
+        },
+      } as any);
+    },
+    [router],
+  );
 
   // Render subcategory item
   const renderSubcategoryItem = (item: SubcategoryItem, parentSlug: string, color: string) => {
@@ -68,11 +62,19 @@ function CategoriesScreen() {
         key={item.slug}
         style={styles.gridItem}
         onPress={() => handleSubcategoryPress(item, parentSlug)}
-       
+        android_ripple={{ color: 'rgba(0,0,0,0.08)', borderless: false }}
+        accessibilityRole="button"
+        accessibilityLabel={item.name}
       >
         <View style={[styles.itemCard, { backgroundColor: colors.background.secondary }]}>
           {customIcon ? (
-            <CachedImage source={customIcon} style={styles.itemImage} contentFit="contain" cachePolicy="memory-disk" recyclingKey={item.slug} />
+            <CachedImage
+              source={customIcon}
+              style={styles.itemImage}
+              contentFit="contain"
+              cachePolicy="memory-disk"
+              recyclingKey={item.slug}
+            />
           ) : (
             <View style={[styles.iconContainer, { backgroundColor: color + '20' }]}>
               <Ionicons
@@ -95,7 +97,7 @@ function CategoriesScreen() {
     <View key={section.id} style={styles.sectionContainer}>
       <ThemedText style={styles.sectionTitle}>{section.name}</ThemedText>
       <View style={styles.gridContainer}>
-        {section.subcategories.map(sub => renderSubcategoryItem(sub, section.id, section.color))}
+        {section.subcategories.map((sub) => renderSubcategoryItem(sub, section.id, section.color))}
       </View>
     </View>
   );
@@ -111,7 +113,13 @@ function CategoriesScreen() {
             <ThemedText style={styles.headerTitle}>Categories</ThemedText>
           </View>
           <View style={styles.headerRight}>
-            <Pressable style={styles.headerIcon} onPress={handleWalletPress}>
+            <Pressable
+              style={styles.headerIcon}
+              onPress={handleWalletPress}
+              android_ripple={{ color: 'rgba(0,0,0,0.1)', borderless: true, radius: 20 }}
+              accessibilityRole="button"
+              accessibilityLabel="Open wallet"
+            >
               <Ionicons name="wallet-outline" size={22} color={colors.text.primary} />
             </Pressable>
           </View>
@@ -121,12 +129,15 @@ function CategoriesScreen() {
         <Pressable
           style={styles.searchBar}
           onPress={() => router.push('/search' as any)}
-         
+          android_ripple={{ color: 'rgba(0,0,0,0.06)', borderless: false }}
+          accessibilityRole="search"
+          accessibilityLabel="Search categories"
+          accessibilityHint="Tap to open search"
         >
           <Ionicons name="search" size={20} color={colors.text.tertiary} />
           <TextInput
             style={styles.searchInput}
-            placeholder='Search categories'
+            placeholder="Search categories"
             placeholderTextColor={colors.text.tertiary}
             editable={false}
           />
@@ -140,9 +151,8 @@ function CategoriesScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
-        {CATEGORY_SECTIONS.map(section => renderCategorySection(section))}
+        {CATEGORY_SECTIONS.map((section) => renderCategorySection(section))}
       </ScrollView>
-
     </View>
   );
 }

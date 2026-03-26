@@ -7,12 +7,13 @@ import { Text, ActivityIndicator } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import * as ImagePicker from 'expo-image-picker';
 import profileApi from '@/services/profileApi';
-import { CachedImage } from '@/components/ui/CachedImage';
+import CachedImage from '@/components/ui/CachedImage';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const SEGMENT_BADGES: Record<string, { label: string; icon: string; bg: string; text: string }> = {
-  verified_student:    { label: 'Verified Student',  icon: '🎓', bg: '#DBEAFE', text: '#1D4ED8' },
-  verified_employee:   { label: 'Corporate Member',  icon: '💼', bg: '#EDE9FE', text: '#5B21B6' },
-  verified_defence:    { label: 'Defence Member',    icon: '🎖️', bg: '#FEE2E2', text: '#991B1B' },
+  verified_student: { label: 'Verified Student', icon: '🎓', bg: '#DBEAFE', text: '#1D4ED8' },
+  verified_employee: { label: 'Corporate Member', icon: '💼', bg: '#EDE9FE', text: '#5B21B6' },
+  verified_defence: { label: 'Defence Member', icon: '🎖️', bg: '#FEE2E2', text: '#991B1B' },
   verified_healthcare: { label: 'Healthcare Worker', icon: '⚕️', bg: '#DCFCE7', text: '#166534' },
 };
 import {
@@ -73,6 +74,7 @@ interface UserSettings {
 function AccountProfilePage() {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const user = useAuthUser();
   const { settings: notificationSettings, updateSettings: updateNotificationSettings } = useNotifications();
   const { securitySettings, privacySettings, updateSecuritySettings, updatePrivacySettings } = useSecurity();
@@ -112,7 +114,10 @@ function AccountProfilePage() {
   const handleAvatarPress = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== 'granted') {
-      platformAlertSimple('Permission Required', 'Please allow access to your photo library to change your profile picture.');
+      platformAlertSimple(
+        'Permission Required',
+        'Please allow access to your photo library to change your profile picture.',
+      );
       return;
     }
 
@@ -248,12 +253,12 @@ function AccountProfilePage() {
       {/* Header */}
       <LinearGradient
         colors={[Colors.brand.purple, colors.brand.purpleSoft, '#C4B5FD']}
-        style={styles.header}
+        style={[styles.header, { paddingTop: insets.top + 12 }]}
       >
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
             accessibilityHint="Navigate to previous screen"
@@ -263,9 +268,7 @@ function AccountProfilePage() {
 
           <View style={styles.headerTitleSection}>
             <ThemedText style={styles.headerTitle}>Account Settings</ThemedText>
-            <ThemedText style={styles.headerSubtitle}>
-              Manage your preferences
-            </ThemedText>
+            <ThemedText style={styles.headerSubtitle}>Manage your preferences</ThemedText>
           </View>
 
           <Pressable
@@ -279,13 +282,13 @@ function AccountProfilePage() {
                 setIsEditing(true);
               }
             }}
-            accessibilityLabel={isEditing ? "Save profile" : "Edit profile"}
+            accessibilityLabel={isEditing ? 'Save profile' : 'Edit profile'}
             accessibilityRole="button"
           >
             {savingProfile ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Ionicons name={isEditing ? "checkmark" : "create-outline"} size={22} color="white" />
+              <Ionicons name={isEditing ? 'checkmark' : 'create-outline'} size={22} color="white" />
             )}
           </Pressable>
         </View>
@@ -297,24 +300,34 @@ function AccountProfilePage() {
               <View style={styles.avatar}>
                 {uploadingPhoto ? (
                   <ActivityIndicator color="#FFCD57" />
-                ) : (avatarUri || user.profile?.avatar) ? (
+                ) : avatarUri || user.profile?.avatar ? (
                   <CachedImage
-                    source={{ uri: avatarUri || user.profile?.avatar }}
+                    source={{ uri: avatarUri || user.profile?.avatar || '' }}
                     style={{ width: 64, height: 64, borderRadius: 32 }}
                   />
                 ) : (
                   <ThemedText style={styles.avatarText}>
-                    {user.profile?.firstName?.[0]}{user.profile?.lastName?.[0]}
+                    {user.profile?.firstName?.[0]}
+                    {user.profile?.lastName?.[0]}
                   </ThemedText>
                 )}
               </View>
               {/* Camera overlay */}
-              <View style={{
-                position: 'absolute', bottom: 0, right: 0,
-                width: 22, height: 22, borderRadius: 11,
-                backgroundColor: '#FFCD57', alignItems: 'center', justifyContent: 'center',
-                borderWidth: 2, borderColor: '#1a3a52',
-              }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  width: 22,
+                  height: 22,
+                  borderRadius: 11,
+                  backgroundColor: '#FFCD57',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  borderWidth: 2,
+                  borderColor: '#1a3a52',
+                }}
+              >
                 <Ionicons name="camera" size={11} color="#1a3a52" />
               </View>
             </Pressable>
@@ -345,27 +358,33 @@ function AccountProfilePage() {
                     {user.profile?.firstName} {user.profile?.lastName}
                   </ThemedText>
                   <ThemedText style={styles.userEmail}>{user.email}</ThemedText>
-                  <ThemedText style={styles.userPhone}>
-                    {user.phoneNumber}
-                  </ThemedText>
+                  <ThemedText style={styles.userPhone}>{user.phoneNumber}</ThemedText>
                 </>
               )}
               {/* Verified identity badge */}
-              {(user as any).segment && SEGMENT_BADGES[(user as any).segment] && (() => {
-                const badge = SEGMENT_BADGES[(user as any).segment!];
-                return (
-                  <View style={{
-                    flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 6,
-                    backgroundColor: badge.bg, borderRadius: 20,
-                    paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start',
-                  }}>
-                    <Text style={{ fontSize: 14 }}>{badge.icon}</Text>
-                    <Text style={{ fontSize: 12, fontWeight: '700', color: badge.text }}>
-                      {badge.label}
-                    </Text>
-                  </View>
-                );
-              })()}
+              {(user as any).segment &&
+                SEGMENT_BADGES[(user as any).segment] &&
+                (() => {
+                  const badge = SEGMENT_BADGES[(user as any).segment!];
+                  return (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 4,
+                        marginTop: 6,
+                        backgroundColor: badge.bg,
+                        borderRadius: 20,
+                        paddingHorizontal: 10,
+                        paddingVertical: 4,
+                        alignSelf: 'flex-start',
+                      }}
+                    >
+                      <Text style={{ fontSize: 14 }}>{badge.icon}</Text>
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: badge.text }}>{badge.label}</Text>
+                    </View>
+                  );
+                })()}
             </View>
           </View>
         )}
@@ -375,9 +394,7 @@ function AccountProfilePage() {
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         style={styles.content}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       >
         {/* General Settings */}
         <View style={styles.section}>
@@ -402,7 +419,6 @@ function AccountProfilePage() {
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
-
           </View>
         </View>
 
@@ -417,9 +433,7 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>Push Notifications</ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  Order updates, promotions
-                </ThemedText>
+                <ThemedText style={styles.settingSubtitle}>Order updates, promotions</ThemedText>
               </View>
               <Switch
                 value={notificationSettings?.push.enabled || false}
@@ -441,9 +455,7 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>Email Notifications</ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  Receipts, updates
-                </ThemedText>
+                <ThemedText style={styles.settingSubtitle}>Receipts, updates</ThemedText>
               </View>
               <Switch
                 value={notificationSettings?.email.enabled || false}
@@ -465,9 +477,7 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>SMS Notifications</ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  Delivery alerts, OTP
-                </ThemedText>
+                <ThemedText style={styles.settingSubtitle}>Delivery alerts, OTP</ThemedText>
               </View>
               <Switch
                 value={notificationSettings?.sms.enabled || false}
@@ -500,9 +510,7 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>Profile Visibility</ThemedText>
-                <ThemedText style={styles.settingValue}>
-                  {privacySettings?.profileVisibility || 'FRIENDS'}
-                </ThemedText>
+                <ThemedText style={styles.settingValue}>{privacySettings?.profileVisibility || 'FRIENDS'}</ThemedText>
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
@@ -521,9 +529,7 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>Two-Factor Authentication</ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  Extra security for your account
-                </ThemedText>
+                <ThemedText style={styles.settingSubtitle}>Extra security for your account</ThemedText>
               </View>
               <View style={styles.settingStatus}>
                 <ThemedText style={styles.settingValue}>
@@ -541,12 +547,12 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>Biometric Login</ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  Fingerprint or Face ID
-                </ThemedText>
+                <ThemedText style={styles.settingSubtitle}>Fingerprint or Face ID</ThemedText>
               </View>
               <Switch
-                value={securitySettings?.biometric.fingerprintEnabled || securitySettings?.biometric.faceIdEnabled || false}
+                value={
+                  securitySettings?.biometric.fingerprintEnabled || securitySettings?.biometric.faceIdEnabled || false
+                }
                 onValueChange={async (value) => {
                   const success = await updateSecuritySettings({
                     biometric: {
@@ -554,7 +560,7 @@ function AccountProfilePage() {
                       faceIdEnabled: value,
                       voiceEnabled: securitySettings?.biometric?.voiceEnabled ?? false,
                       availableMethods: securitySettings?.biometric?.availableMethods ?? [],
-                    }
+                    },
                   });
                   if (!success) {
                     platformAlertSimple('Error', 'Failed to update biometric settings');
@@ -562,10 +568,17 @@ function AccountProfilePage() {
                 }}
                 accessibilityLabel={`Biometric login${securitySettings?.biometric.fingerprintEnabled || securitySettings?.biometric.faceIdEnabled ? ', enabled' : ', disabled'}`}
                 accessibilityRole="switch"
-                accessibilityState={{ checked: securitySettings?.biometric.fingerprintEnabled || securitySettings?.biometric.faceIdEnabled || false }}
+                accessibilityState={{
+                  checked:
+                    securitySettings?.biometric.fingerprintEnabled ||
+                    securitySettings?.biometric.faceIdEnabled ||
+                    false,
+                }}
                 accessibilityHint={`Toggle to ${securitySettings?.biometric.fingerprintEnabled ? 'disable' : 'enable'} fingerprint or face ID login`}
                 trackColor={{ false: colors.border.default, true: colors.brand.purpleSoft }}
-                thumbColor={securitySettings?.biometric.fingerprintEnabled ? Colors.brand.purple : colors.background.secondary}
+                thumbColor={
+                  securitySettings?.biometric.fingerprintEnabled ? Colors.brand.purple : colors.background.secondary
+                }
               />
             </View>
           </View>
@@ -582,9 +595,7 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>Animations</ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  Smooth transitions
-                </ThemedText>
+                <ThemedText style={styles.settingSubtitle}>Smooth transitions</ThemedText>
               </View>
               <Switch
                 value={appPreferences?.animations || false}
@@ -611,9 +622,7 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>Sounds</ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  App sounds and alerts
-                </ThemedText>
+                <ThemedText style={styles.settingSubtitle}>App sounds and alerts</ThemedText>
               </View>
               <Switch
                 value={appPreferences?.sounds || false}
@@ -640,9 +649,7 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>Haptic Feedback</ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  Vibration on actions
-                </ThemedText>
+                <ThemedText style={styles.settingSubtitle}>Vibration on actions</ThemedText>
               </View>
               <Switch
                 value={appPreferences?.hapticFeedback || false}
@@ -680,9 +687,7 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>Edit Profile</ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  Update your information
-                </ThemedText>
+                <ThemedText style={styles.settingSubtitle}>Update your information</ThemedText>
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
@@ -701,9 +706,7 @@ function AccountProfilePage() {
               </View>
               <View style={styles.settingInfo}>
                 <ThemedText style={styles.settingTitle}>Change Password</ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  Update your password
-                </ThemedText>
+                <ThemedText style={styles.settingSubtitle}>Update your password</ThemedText>
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
@@ -721,12 +724,8 @@ function AccountProfilePage() {
                 <Ionicons name="trash" size={20} color={Colors.error} />
               </View>
               <View style={styles.settingInfo}>
-                <ThemedText style={[styles.settingTitle, { color: Colors.error }]}>
-                  Delete Account
-                </ThemedText>
-                <ThemedText style={styles.settingSubtitle}>
-                  Permanently delete your account
-                </ThemedText>
+                <ThemedText style={[styles.settingTitle, { color: Colors.error }]}>Delete Account</ThemedText>
+                <ThemedText style={styles.settingSubtitle}>Permanently delete your account</ThemedText>
               </View>
               <Ionicons name="chevron-forward" size={20} color={Colors.error} />
             </Pressable>
@@ -736,7 +735,7 @@ function AccountProfilePage() {
         <View style={{ height: 120 }} />
       </ScrollView>
     </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({
@@ -750,7 +749,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   header: {
-    paddingTop: Platform.OS === 'android' ? 50 : 45,
     paddingBottom: 25,
     paddingHorizontal: Spacing.lg,
   },

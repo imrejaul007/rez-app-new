@@ -6,12 +6,11 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
-  Platform,
   TextInput,
   Dimensions,
   KeyboardAvoidingView,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
@@ -70,6 +69,7 @@ function TableBookingPage() {
   const isMounted = useIsMounted();
   const { storeId } = useLocalSearchParams();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   // ETHAN: crash guard — storeId from route params could be undefined
   if (!storeId) {
@@ -77,7 +77,10 @@ function TableBookingPage() {
       <ThemedView style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <ThemedText style={styles.errorText}>Restaurant not found</ThemedText>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
         </Pressable>
       </ThemedView>
@@ -159,10 +162,7 @@ function TableBookingPage() {
       let currentHour = openHour;
       let currentMinute = openMinute;
 
-      while (
-        currentHour < closeHour ||
-        (currentHour === closeHour && currentMinute < closeMinute)
-      ) {
+      while (currentHour < closeHour || (currentHour === closeHour && currentMinute < closeMinute)) {
         const timeString = `${currentHour.toString().padStart(2, '0')}:${currentMinute.toString().padStart(2, '0')}`;
         const hour12 = currentHour > 12 ? currentHour - 12 : currentHour === 0 ? 12 : currentHour;
         const displayTime = `${hour12}:${currentMinute.toString().padStart(2, '0')} ${currentHour >= 12 ? 'PM' : 'AM'}`;
@@ -170,9 +170,9 @@ function TableBookingPage() {
         // Check if slot is in the past
         const isToday = selectedDate.toDateString() === new Date().toDateString();
         const now = new Date();
-        const isPast = isToday &&
-          (currentHour < now.getHours() ||
-           (currentHour === now.getHours() && currentMinute <= now.getMinutes()));
+        const isPast =
+          isToday &&
+          (currentHour < now.getHours() || (currentHour === now.getHours() && currentMinute <= now.getMinutes()));
 
         slots.push({
           id: timeString,
@@ -219,7 +219,7 @@ function TableBookingPage() {
       weekday: 'long',
       month: 'long',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     };
     return date.toLocaleDateString('en-US', options);
   };
@@ -250,14 +250,14 @@ function TableBookingPage() {
       return;
     }
 
-    const selectedTimeSlot = timeSlots.find(s => s.id === selectedTime);
+    const selectedTimeSlot = timeSlots.find((s) => s.id === selectedTime);
 
     // Show confirmation
     platformAlertConfirm(
       'Confirm Booking',
       `Book a table for ${partySize} ${partySize === 1 ? 'person' : 'people'} on ${formatDate(selectedDate)} at ${selectedTimeSlot?.time}?`,
       handleConfirmBooking,
-      'Confirm'
+      'Confirm',
     );
   };
 
@@ -276,12 +276,12 @@ function TableBookingPage() {
       });
 
       if (response.success && response.data) {
-        const selectedTimeSlot = timeSlots.find(s => s.id === selectedTime);
+        const selectedTimeSlot = timeSlots.find((s) => s.id === selectedTime);
         platformAlertConfirm(
           'Booking Confirmed!',
           `Your table has been booked!\nBooking Number: ${response.data.bookingId || response.data.confirmationCode || 'N/A'}\nDate: ${formatDate(selectedDate)}\nTime: ${selectedTimeSlot?.time}\nParty Size: ${partySize}`,
-          () => router.canGoBack() ? router.back() : router.replace('/(tabs)'),
-          'OK'
+          () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
+          'OK',
         );
       } else {
         platformAlertSimple('Booking Failed', response.message || 'Please try again.');
@@ -300,9 +300,12 @@ function TableBookingPage() {
         <Stack.Screen options={{ headerShown: false }} />
         <LinearGradient
           colors={[Colors.brand.purple, Colors.brand.purple]}
-          style={styles.loadingHeader}
+          style={[styles.loadingHeader, { paddingTop: insets.top + 10 }]}
         >
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
         </LinearGradient>
@@ -319,16 +322,22 @@ function TableBookingPage() {
         <Stack.Screen options={{ headerShown: false }} />
         <LinearGradient
           colors={[Colors.brand.purple, Colors.brand.purple]}
-          style={styles.loadingHeader}
+          style={[styles.loadingHeader, { paddingTop: insets.top + 10 }]}
         >
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
         </LinearGradient>
         <View style={styles.errorContainer}>
           <Ionicons name="restaurant-outline" size={64} color={colors.border.default} />
           <ThemedText style={styles.errorText}>Restaurant not found</ThemedText>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.errorButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.errorButton}
+          >
             <ThemedText style={styles.errorButtonText}>Go Back</ThemedText>
           </Pressable>
         </View>
@@ -337,322 +346,312 @@ function TableBookingPage() {
   }
 
   const maxPartySize = store?.bookingConfig?.maxPartySize || 10;
-  const quickPartySizes = Array.from(
-    { length: Math.min(4, maxPartySize) },
-    (_, i) => (i + 1) * 2
-  ).filter(size => size <= maxPartySize);
+  const quickPartySizes = Array.from({ length: Math.min(4, maxPartySize) }, (_, i) => (i + 1) * 2).filter(
+    (size) => size <= maxPartySize,
+  );
 
   return (
     <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
       {/* SOFIA: KeyboardAvoidingView to prevent TextInput from being hidden by soft keyboard */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoidingView}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardAvoidingView}>
         <ThemedView style={styles.container}>
           <Stack.Screen options={{ headerShown: false }} />
 
-      {/* Header with Purple Gradient */}
-      <LinearGradient
-        colors={[Colors.brand.purple, Colors.brand.purple]}
-        style={styles.header}
-      >
-        <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
-          </Pressable>
-          <ThemedText style={styles.headerTitle}>Book a Table</ThemedText>
-          <View style={{ width: 40 }} />
-        </View>
-
-        <View style={styles.storeInfo}>
-          <ThemedText style={styles.storeName}>{store.name}</ThemedText>
-          <ThemedText style={styles.storeCategory}>{store.category}</ThemedText>
-          {store.bookingConfig && (
-            <View style={styles.bookingInfoBadge}>
-              <Ionicons name="time-outline" size={14} color={colors.text.inverse} />
-              <ThemedText style={styles.bookingInfoText}>
-                {store.bookingConfig.slotDuration || 90} min slots
-              </ThemedText>
-              <ThemedText style={styles.bookingInfoDivider}>•</ThemedText>
-              <Ionicons name="people-outline" size={14} color={colors.text.inverse} />
-              <ThemedText style={styles.bookingInfoText}>
-                Up to {store.bookingConfig.maxPartySize || 10} guests
-              </ThemedText>
-            </View>
-          )}
-        </View>
-      </LinearGradient>
-
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
-        {/* Date Selection */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="calendar" size={20} color={Colors.brand.purple} />
-            <ThemedText style={styles.sectionTitle}>Select Date</ThemedText>
-          </View>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.dateScroll}
-            contentContainerStyle={styles.dateScrollContent}
+          {/* Header with Purple Gradient */}
+          <LinearGradient
+            colors={[Colors.brand.purple, Colors.brand.purple]}
+            style={[styles.header, { paddingTop: insets.top + 10 }]}
           >
-            {availableDates.map((dateItem) => {
-              const isSelected = dateItem.date === selectedDate.toISOString().split('T')[0];
-              const isToday = dateItem.date === new Date().toISOString().split('T')[0];
+            <View style={styles.headerTop}>
+              <Pressable
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                style={styles.backButton}
+              >
+                <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
+              </Pressable>
+              <ThemedText style={styles.headerTitle}>Book a Table</ThemedText>
+              <View style={{ width: 40 }} />
+            </View>
 
-              return (
-                <Pressable
-                  key={dateItem.id}
-                  onPress={() => {
-                    setSelectedDate(dateItem.fullDate);
-                    setSelectedTime(null); // Reset time when date changes
-                  }}
-                  style={[
-                    styles.dateCard,
-                    isSelected && styles.dateCardSelected,
-                  ]}
-                >
-                  {isToday && (
-                    <View style={styles.todayBadge}>
-                      <ThemedText style={styles.todayBadgeText}>Today</ThemedText>
-                    </View>
-                  )}
-                  <ThemedText style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
-                    {dateItem.dayName}
+            <View style={styles.storeInfo}>
+              <ThemedText style={styles.storeName}>{store.name}</ThemedText>
+              <ThemedText style={styles.storeCategory}>{store.category}</ThemedText>
+              {store.bookingConfig && (
+                <View style={styles.bookingInfoBadge}>
+                  <Ionicons name="time-outline" size={14} color={colors.text.inverse} />
+                  <ThemedText style={styles.bookingInfoText}>
+                    {store.bookingConfig.slotDuration || 90} min slots
                   </ThemedText>
-                  <ThemedText style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>
-                    {dateItem.dayNumber}
+                  <ThemedText style={styles.bookingInfoDivider}>•</ThemedText>
+                  <Ionicons name="people-outline" size={14} color={colors.text.inverse} />
+                  <ThemedText style={styles.bookingInfoText}>
+                    Up to {store.bookingConfig.maxPartySize || 10} guests
                   </ThemedText>
-                  <ThemedText style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>
-                    {dateItem.monthName}
-                  </ThemedText>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
+                </View>
+              )}
+            </View>
+          </LinearGradient>
 
-        {/* Time Slots */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="time" size={20} color={Colors.brand.purple} />
-            <ThemedText style={styles.sectionTitle}>Select Time</ThemedText>
-          </View>
-          {timeSlots.length > 0 ? (
-            <View style={styles.timeGrid}>
-              {timeSlots.map((slot) => {
-                const isSelected = selectedTime === slot.id;
-                return (
-                  <Pressable
-                    key={slot.id}
-                    onPress={() => slot.available && setSelectedTime(slot.id)}
-                    disabled={!slot.available}
-                    style={[
-                      styles.timeSlot,
-                      isSelected && styles.timeSlotSelected,
-                      !slot.available && styles.timeSlotDisabled,
-                    ]}
-                  >
-                    <ThemedText
-                      style={[
-                        styles.timeText,
-                        isSelected && styles.timeTextSelected,
-                        !slot.available && styles.timeTextDisabled,
-                      ]}
+          <ScrollView
+            style={styles.content}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{ paddingBottom: 120 }}
+          >
+            {/* Date Selection */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="calendar" size={20} color={Colors.brand.purple} />
+                <ThemedText style={styles.sectionTitle}>Select Date</ThemedText>
+              </View>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.dateScroll}
+                contentContainerStyle={styles.dateScrollContent}
+              >
+                {availableDates.map((dateItem) => {
+                  const isSelected = dateItem.date === selectedDate.toISOString().split('T')[0];
+                  const isToday = dateItem.date === new Date().toISOString().split('T')[0];
+
+                  return (
+                    <Pressable
+                      key={dateItem.id}
+                      onPress={() => {
+                        setSelectedDate(dateItem.fullDate);
+                        setSelectedTime(null); // Reset time when date changes
+                      }}
+                      style={[styles.dateCard, isSelected && styles.dateCardSelected]}
                     >
-                      {slot.time}
-                    </ThemedText>
-                    {slot.available && slot.tablesLeft && slot.tablesLeft <= 3 && (
-                      <ThemedText style={styles.tablesLeftText}>
-                        {slot.tablesLeft} left
+                      {isToday && (
+                        <View style={styles.todayBadge}>
+                          <ThemedText style={styles.todayBadgeText}>Today</ThemedText>
+                        </View>
+                      )}
+                      <ThemedText style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
+                        {dateItem.dayName}
                       </ThemedText>
-                    )}
-                    {!slot.available && (
-                      <ThemedText style={styles.bookedText}>Booked</ThemedText>
-                    )}
-                  </Pressable>
-                );
-              })}
-            </View>
-          ) : (
-            <View style={styles.emptyState}>
-              <Ionicons name="calendar-outline" size={48} color={colors.border.default} />
-              <ThemedText style={styles.emptyStateText}>
-                No time slots available for this date
-              </ThemedText>
-            </View>
-          )}
-        </View>
-
-        {/* Party Size */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="people" size={20} color={Colors.brand.purple} />
-            <ThemedText style={styles.sectionTitle}>Party Size</ThemedText>
-          </View>
-
-          <View style={styles.partySizeContainer}>
-            <Pressable
-              style={styles.partySizeButton}
-              onPress={() => handlePartySizeChange(false)}
-              disabled={partySize <= (store?.bookingConfig?.minPartySize || 1)}
-            >
-              <Ionicons
-                name="remove-circle"
-                size={40}
-                color={partySize <= (store?.bookingConfig?.minPartySize || 1) ? colors.border.default : Colors.brand.purple}
-              />
-            </Pressable>
-
-            <View style={styles.partySizeDisplay}>
-              <ThemedText style={styles.partySizeNumber}>{partySize}</ThemedText>
-              <ThemedText style={styles.partySizeLabel}>
-                {partySize === 1 ? 'Guest' : 'Guests'}
-              </ThemedText>
+                      <ThemedText style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>
+                        {dateItem.dayNumber}
+                      </ThemedText>
+                      <ThemedText style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>
+                        {dateItem.monthName}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
             </View>
 
-            <Pressable
-              style={styles.partySizeButton}
-              onPress={() => handlePartySizeChange(true)}
-              disabled={partySize >= maxPartySize}
-            >
-              <Ionicons
-                name="add-circle"
-                size={40}
-                color={partySize >= maxPartySize ? colors.border.default : Colors.brand.purple}
-              />
-            </Pressable>
-          </View>
+            {/* Time Slots */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="time" size={20} color={Colors.brand.purple} />
+                <ThemedText style={styles.sectionTitle}>Select Time</ThemedText>
+              </View>
+              {timeSlots.length > 0 ? (
+                <View style={styles.timeGrid}>
+                  {timeSlots.map((slot) => {
+                    const isSelected = selectedTime === slot.id;
+                    return (
+                      <Pressable
+                        key={slot.id}
+                        onPress={() => slot.available && setSelectedTime(slot.id)}
+                        disabled={!slot.available}
+                        style={[
+                          styles.timeSlot,
+                          isSelected && styles.timeSlotSelected,
+                          !slot.available && styles.timeSlotDisabled,
+                        ]}
+                      >
+                        <ThemedText
+                          style={[
+                            styles.timeText,
+                            isSelected && styles.timeTextSelected,
+                            !slot.available && styles.timeTextDisabled,
+                          ]}
+                        >
+                          {slot.time}
+                        </ThemedText>
+                        {slot.available && slot.tablesLeft && slot.tablesLeft <= 3 && (
+                          <ThemedText style={styles.tablesLeftText}>{slot.tablesLeft} left</ThemedText>
+                        )}
+                        {!slot.available && <ThemedText style={styles.bookedText}>Booked</ThemedText>}
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ) : (
+                <View style={styles.emptyState}>
+                  <Ionicons name="calendar-outline" size={48} color={colors.border.default} />
+                  <ThemedText style={styles.emptyStateText}>No time slots available for this date</ThemedText>
+                </View>
+              )}
+            </View>
 
-          {quickPartySizes.length > 0 && (
-            <View style={styles.quickSizeContainer}>
-              {quickPartySizes.map((size) => (
+            {/* Party Size */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="people" size={20} color={Colors.brand.purple} />
+                <ThemedText style={styles.sectionTitle}>Party Size</ThemedText>
+              </View>
+
+              <View style={styles.partySizeContainer}>
                 <Pressable
-                  key={size}
-                  onPress={() => setPartySize(size)}
-                  style={[
-                    styles.quickSizeButton,
-                    partySize === size && styles.quickSizeButtonSelected,
-                  ]}
+                  style={styles.partySizeButton}
+                  onPress={() => handlePartySizeChange(false)}
+                  disabled={partySize <= (store?.bookingConfig?.minPartySize || 1)}
                 >
                   <Ionicons
-                    name="people"
-                    size={16}
-                    color={partySize === size ? colors.text.inverse : Colors.brand.purple}
+                    name="remove-circle"
+                    size={40}
+                    color={
+                      partySize <= (store?.bookingConfig?.minPartySize || 1)
+                        ? colors.border.default
+                        : Colors.brand.purple
+                    }
                   />
-                  <ThemedText
-                    style={[
-                      styles.quickSizeText,
-                      partySize === size && styles.quickSizeTextSelected,
-                    ]}
-                  >
-                    {size}
-                  </ThemedText>
                 </Pressable>
-              ))}
-            </View>
-          )}
-        </View>
 
-        {/* Customer Details */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Ionicons name="person" size={20} color={Colors.brand.purple} />
-            <ThemedText style={styles.sectionTitle}>Your Details</ThemedText>
+                <View style={styles.partySizeDisplay}>
+                  <ThemedText style={styles.partySizeNumber}>{partySize}</ThemedText>
+                  <ThemedText style={styles.partySizeLabel}>{partySize === 1 ? 'Guest' : 'Guests'}</ThemedText>
+                </View>
+
+                <Pressable
+                  style={styles.partySizeButton}
+                  onPress={() => handlePartySizeChange(true)}
+                  disabled={partySize >= maxPartySize}
+                >
+                  <Ionicons
+                    name="add-circle"
+                    size={40}
+                    color={partySize >= maxPartySize ? colors.border.default : Colors.brand.purple}
+                  />
+                </Pressable>
+              </View>
+
+              {quickPartySizes.length > 0 && (
+                <View style={styles.quickSizeContainer}>
+                  {quickPartySizes.map((size) => (
+                    <Pressable
+                      key={size}
+                      onPress={() => setPartySize(size)}
+                      style={[styles.quickSizeButton, partySize === size && styles.quickSizeButtonSelected]}
+                    >
+                      <Ionicons
+                        name="people"
+                        size={16}
+                        color={partySize === size ? colors.text.inverse : Colors.brand.purple}
+                      />
+                      <ThemedText style={[styles.quickSizeText, partySize === size && styles.quickSizeTextSelected]}>
+                        {size}
+                      </ThemedText>
+                    </Pressable>
+                  ))}
+                </View>
+              )}
+            </View>
+
+            {/* Customer Details */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="person" size={20} color={Colors.brand.purple} />
+                <ThemedText style={styles.sectionTitle}>Your Details</ThemedText>
+              </View>
+
+              <View style={styles.formContainer}>
+                <View style={styles.inputContainer}>
+                  <Ionicons name="person-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                  <TextInput
+                    style={[styles.input, { color: textColor }]}
+                    placeholder="Full Name *"
+                    placeholderTextColor={colors.neutral[400]}
+                    value={customerName}
+                    onChangeText={setCustomerName}
+                  />
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <Ionicons name="call-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                  <CountryCodePicker
+                    selectedCountry={selectedCountry}
+                    onSelect={setSelectedCountry}
+                    style={styles.countryPicker}
+                  />
+                  <View style={styles.phoneDivider} />
+                  <TextInput
+                    style={[styles.input, { color: textColor }]}
+                    placeholder="Phone Number *"
+                    placeholderTextColor={colors.neutral[400]}
+                    value={customerPhone}
+                    onChangeText={setCustomerPhone}
+                    keyboardType="phone-pad"
+                  />
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                  <TextInput
+                    style={[styles.input, { color: textColor }]}
+                    placeholder="Email (Optional)"
+                    placeholderTextColor={colors.neutral[400]}
+                    value={customerEmail}
+                    onChangeText={setCustomerEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </View>
+
+                <View style={[styles.inputContainer, styles.textAreaContainer]}>
+                  <Ionicons
+                    name="create-outline"
+                    size={20}
+                    color={colors.text.tertiary}
+                    style={[styles.inputIcon, styles.textAreaIcon]}
+                  />
+                  <TextInput
+                    style={[styles.input, styles.textArea, { color: textColor }]}
+                    placeholder="Special Requests (Optional)"
+                    placeholderTextColor={colors.neutral[400]}
+                    value={specialRequests}
+                    onChangeText={setSpecialRequests}
+                    multiline
+                    numberOfLines={4}
+                    textAlignVertical="top"
+                  />
+                </View>
+              </View>
+            </View>
+
+            <View style={{ height: 120 }} />
+          </ScrollView>
+
+          {/* Bottom Fixed Button */}
+          <View style={[styles.bottomContainer, { backgroundColor }]}>
+            <Pressable onPress={handleBooking} style={styles.bookButton} disabled={submitting}>
+              <LinearGradient
+                colors={
+                  submitting ? [colors.text.tertiary, colors.text.tertiary] : [Colors.brand.purple, Colors.brand.purple]
+                }
+                style={styles.bookButtonGradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                {submitting ? (
+                  <>
+                    <ActivityIndicator size="small" color={colors.text.inverse} />
+                    <ThemedText style={styles.bookButtonText}>Confirming...</ThemedText>
+                  </>
+                ) : (
+                  <>
+                    <Ionicons name="checkmark-circle" size={24} color={colors.text.inverse} />
+                    <ThemedText style={styles.bookButtonText}>Confirm Booking</ThemedText>
+                    <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
+                  </>
+                )}
+              </LinearGradient>
+            </Pressable>
           </View>
-
-          <View style={styles.formContainer}>
-            <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-              <TextInput
-                style={[styles.input, { color: textColor }]}
-                placeholder="Full Name *"
-                placeholderTextColor={colors.neutral[400]}
-                value={customerName}
-                onChangeText={setCustomerName}
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Ionicons name="call-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-              <CountryCodePicker
-                selectedCountry={selectedCountry}
-                onSelect={setSelectedCountry}
-                style={styles.countryPicker}
-              />
-              <View style={styles.phoneDivider} />
-              <TextInput
-                style={[styles.input, { color: textColor }]}
-                placeholder="Phone Number *"
-                placeholderTextColor={colors.neutral[400]}
-                value={customerPhone}
-                onChangeText={setCustomerPhone}
-                keyboardType="phone-pad"
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-              <TextInput
-                style={[styles.input, { color: textColor }]}
-                placeholder="Email (Optional)"
-                placeholderTextColor={colors.neutral[400]}
-                value={customerEmail}
-                onChangeText={setCustomerEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
-
-            <View style={[styles.inputContainer, styles.textAreaContainer]}>
-              <Ionicons name="create-outline" size={20} color={colors.text.tertiary} style={[styles.inputIcon, styles.textAreaIcon]} />
-              <TextInput
-                style={[styles.input, styles.textArea, { color: textColor }]}
-                placeholder="Special Requests (Optional)"
-                placeholderTextColor={colors.neutral[400]}
-                value={specialRequests}
-                onChangeText={setSpecialRequests}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
-            </View>
-          </View>
-        </View>
-
-        <View style={{ height: 120 }} />
-      </ScrollView>
-
-      {/* Bottom Fixed Button */}
-      <View style={[styles.bottomContainer, { backgroundColor }]}>
-        <Pressable
-          onPress={handleBooking}
-          style={styles.bookButton}
-         
-          disabled={submitting}
-        >
-          <LinearGradient
-            colors={submitting ? [colors.text.tertiary, colors.text.tertiary] : [Colors.brand.purple, Colors.brand.purple]}
-            style={styles.bookButtonGradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-          >
-            {submitting ? (
-              <>
-                <ActivityIndicator size="small" color={colors.text.inverse} />
-                <ThemedText style={styles.bookButtonText}>Confirming...</ThemedText>
-              </>
-            ) : (
-              <>
-                <Ionicons name="checkmark-circle" size={24} color={colors.text.inverse} />
-                <ThemedText style={styles.bookButtonText}>Confirm Booking</ThemedText>
-                <Ionicons name="arrow-forward" size={20} color={colors.text.inverse} />
-              </>
-            )}
-          </LinearGradient>
-        </Pressable>
-        </View>
         </ThemedView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -672,12 +671,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: Spacing.xl,
     paddingHorizontal: Spacing.lg,
   },
   loadingHeader: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: Spacing.xl,
     paddingHorizontal: Spacing.lg,
   },

@@ -107,7 +107,6 @@ function AdminCampaigns() {
       const storesData = (storeResponse.data as any)?.stores || (storeResponse.data as any)?.data || [];
       if (!isMounted()) return;
       setStores(storesData);
-
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load campaigns. ' + (error.response?.data?.message || error.message));
     } finally {
@@ -128,10 +127,9 @@ function AdminCampaigns() {
 
     setActionLoading(true);
     try {
-      await apiClient.put(
-        `/campaigns/admin/${selectedCampaign.campaignId}/deals/${selectedDealIndex}/link-store`,
-        { storeId }
-      );
+      await apiClient.put(`/campaigns/admin/${selectedCampaign.campaignId}/deals/${selectedDealIndex}/link-store`, {
+        storeId,
+      });
 
       platformAlertSimple('Success', 'Store linked successfully!');
       if (!isMounted()) return;
@@ -147,28 +145,40 @@ function AdminCampaigns() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'cashback': return Colors.success;
-      case 'coins': return Colors.warning;
-      case 'bank': return Colors.info;
-      case 'bill': return Colors.brand.purple;
-      case 'drop': return colors.brand.pink;
-      case 'new-user': return colors.brand.cyan;
-      default: return colors.text.tertiary;
+      case 'cashback':
+        return Colors.success;
+      case 'coins':
+        return Colors.warning;
+      case 'bank':
+        return Colors.info;
+      case 'bill':
+        return Colors.brand.purple;
+      case 'drop':
+        return colors.brand.pink;
+      case 'new-user':
+        return colors.brand.cyan;
+      default:
+        return colors.text.tertiary;
     }
   };
 
   const getRegionLabel = (region: string) => {
     switch (region) {
-      case 'dubai': return 'Dubai';
-      case 'bangalore': return 'Bangalore';
-      case 'all': return 'All Regions';
-      default: return region;
+      case 'dubai':
+        return 'Dubai';
+      case 'bangalore':
+        return 'Bangalore';
+      case 'all':
+        return 'All Regions';
+      default:
+        return region;
     }
   };
 
-  const filteredStores = stores.filter(store =>
-    store.name.toLowerCase().includes(storeSearchQuery.toLowerCase()) ||
-    store.slug.toLowerCase().includes(storeSearchQuery.toLowerCase())
+  const filteredStores = stores.filter(
+    (store) =>
+      store.name.toLowerCase().includes(storeSearchQuery.toLowerCase()) ||
+      store.slug.toLowerCase().includes(storeSearchQuery.toLowerCase()),
   );
 
   const toggleCampaignExpand = (campaignId: string) => {
@@ -180,21 +190,15 @@ function AdminCampaigns() {
       <StatusBar barStyle="light-content" backgroundColor={colors.successScale[400]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[colors.successScale[400], colors.successScale[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[colors.successScale[400], colors.successScale[700]]} style={styles.header}>
         <Pressable
           style={styles.backButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
           <Ionicons name="arrow-back" size={24} color="white" />
         </Pressable>
         <Text style={styles.headerTitle}>Campaign Management</Text>
-        <Pressable
-          style={styles.refreshButton}
-          onPress={loadData}
-        >
+        <Pressable style={styles.refreshButton} onPress={loadData}>
           <Ionicons name="refresh" size={24} color="white" />
         </Pressable>
       </LinearGradient>
@@ -206,7 +210,7 @@ function AdminCampaigns() {
           <Text style={styles.statLabel}>Campaigns</Text>
         </View>
         <View style={styles.statItem}>
-          <Text style={styles.statValue}>{campaigns.filter(c => c.isActive).length}</Text>
+          <Text style={styles.statValue}>{campaigns.filter((c) => c.isActive).length}</Text>
           <Text style={styles.statLabel}>Active</Text>
         </View>
         <View style={styles.statItem}>
@@ -232,16 +236,11 @@ function AdminCampaigns() {
           campaigns.map((campaign) => (
             <View key={campaign._id} style={styles.campaignCard}>
               {/* Campaign Header */}
-              <Pressable
-                style={styles.campaignHeader}
-                onPress={() => toggleCampaignExpand(campaign.campaignId)}
-              >
+              <Pressable style={styles.campaignHeader} onPress={() => toggleCampaignExpand(campaign.campaignId)}>
                 <View style={styles.campaignInfo}>
                   <View style={styles.campaignTitleRow}>
                     <View style={[styles.badgeContainer, { backgroundColor: getTypeColor(campaign.type) + '20' }]}>
-                      <Text style={[styles.badgeText, { color: getTypeColor(campaign.type) }]}>
-                        {campaign.badge}
-                      </Text>
+                      <Text style={[styles.badgeText, { color: getTypeColor(campaign.type) }]}>{campaign.badge}</Text>
                     </View>
                     <Text style={styles.campaignTitle}>{campaign.title}</Text>
                   </View>
@@ -253,7 +252,12 @@ function AdminCampaigns() {
                       </Text>
                     </View>
                     <Text style={styles.regionTag}>{getRegionLabel(campaign.region)}</Text>
-                    <View style={[styles.statusDot, { backgroundColor: campaign.isActive ? colors.successScale[400] : colors.error }]} />
+                    <View
+                      style={[
+                        styles.statusDot,
+                        { backgroundColor: campaign.isActive ? colors.successScale[400] : colors.error },
+                      ]}
+                    />
                     <Text style={styles.statusText}>{campaign.isActive ? 'Active' : 'Inactive'}</Text>
                   </View>
                 </View>
@@ -271,9 +275,7 @@ function AdminCampaigns() {
                   {campaign.deals.map((deal, index) => (
                     <View key={index} style={styles.dealCard}>
                       <View style={styles.dealInfo}>
-                        {deal.image && (
-                          <CachedImage source={deal.image} style={styles.dealImage} />
-                        )}
+                        {deal.image && <CachedImage source={deal.image} style={styles.dealImage} />}
                         <View style={styles.dealDetails}>
                           <Text style={styles.dealStore}>{deal.store}</Text>
                           <Text style={styles.dealValue}>
@@ -287,9 +289,7 @@ function AdminCampaigns() {
                         {deal.storeDetails ? (
                           <View style={styles.linkedStore}>
                             <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
-                            <Text style={styles.linkedStoreText}>
-                              Linked to: {deal.storeDetails.name}
-                            </Text>
+                            <Text style={styles.linkedStoreText}>Linked to: {deal.storeDetails.name}</Text>
                           </View>
                         ) : deal.storeId ? (
                           <View style={styles.linkedStore}>
@@ -303,14 +303,9 @@ function AdminCampaigns() {
                           </View>
                         )}
 
-                        <Pressable
-                          style={styles.linkButton}
-                          onPress={() => openStoreSelector(campaign, index)}
-                        >
+                        <Pressable style={styles.linkButton} onPress={() => openStoreSelector(campaign, index)}>
                           <Ionicons name="link" size={16} color="white" />
-                          <Text style={styles.linkButtonText}>
-                            {deal.storeId ? 'Change' : 'Link Store'}
-                          </Text>
+                          <Text style={styles.linkButtonText}>{deal.storeId ? 'Change' : 'Link Store'}</Text>
                         </Pressable>
                       </View>
                     </View>
@@ -342,9 +337,7 @@ function AdminCampaigns() {
             {selectedCampaign && selectedDealIndex !== null && (
               <View style={styles.selectedDealInfo}>
                 <Text style={styles.selectedDealLabel}>Linking store for:</Text>
-                <Text style={styles.selectedDealName}>
-                  {selectedCampaign.deals[selectedDealIndex]?.store}
-                </Text>
+                <Text style={styles.selectedDealName}>{selectedCampaign.deals[selectedDealIndex]?.store}</Text>
               </View>
             )}
 
@@ -375,17 +368,10 @@ function AdminCampaigns() {
                 </View>
               ) : (
                 filteredStores.map((store) => (
-                  <Pressable
-                    key={store._id}
-                    style={styles.storeItem}
-                    onPress={() => handleLinkStore(store._id)}
-                  >
+                  <Pressable key={store._id} style={styles.storeItem} onPress={() => handleLinkStore(store._id)}>
                     <View style={styles.storeItemInfo}>
                       {store.logo || store.image ? (
-                        <CachedImage
-                          source={store.logo || store.image}
-                          style={styles.storeItemImage}
-                        />
+                        <CachedImage source={store.logo || store.image || ''} style={styles.storeItemImage} />
                       ) : (
                         <View style={styles.storeItemImagePlaceholder}>
                           <Ionicons name="storefront" size={20} color={colors.neutral[400]} />
@@ -394,9 +380,7 @@ function AdminCampaigns() {
                       <View style={styles.storeItemDetails}>
                         <Text style={styles.storeItemName}>{store.name}</Text>
                         <Text style={styles.storeItemSlug}>{store.slug}</Text>
-                        {store.location?.city && (
-                          <Text style={styles.storeItemCity}>{store.location.city}</Text>
-                        )}
+                        {store.location?.city && <Text style={styles.storeItemCity}>{store.location.city}</Text>}
                       </View>
                     </View>
                     <Ionicons name="chevron-forward" size={20} color={colors.neutral[400]} />

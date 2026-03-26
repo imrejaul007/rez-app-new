@@ -17,11 +17,7 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Animated, {
-  useSharedValue,
-  useAnimatedStyle,
-  withTiming,
-  interpolate} from 'react-native-reanimated';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -93,7 +89,9 @@ function PaymentPage() {
   const [showStripeCardModal, setShowStripeCardModal] = useState(false);
 
   // Recharge discount state
-  const [discountInfo, setDiscountInfo] = useState<{ discount: number; payable: number; percentage: number } | null>(null);
+  const [discountInfo, setDiscountInfo] = useState<{ discount: number; payable: number; percentage: number } | null>(
+    null,
+  );
 
   // Form states (UPI, wallet, netbanking)
   const [upiId, setUpiId] = useState('');
@@ -105,7 +103,9 @@ function PaymentPage() {
   const isMounted = useIsMounted();
 
   useEffect(() => {
-    return () => { pollingAbortedRef.current = true; };
+    return () => {
+      pollingAbortedRef.current = true;
+    };
   }, []);
 
   // Animation values
@@ -123,15 +123,18 @@ function PaymentPage() {
 
     // Fetch recharge discount for wallet topups
     if (isWalletRecharge && amount > 0) {
-      paymentService.previewCashback(amount).then(res => {
-        if (res.success && res.data && (res.data.discountAmount || res.data.cashback)) {
-          setDiscountInfo({
-            discount: res.data.discountAmount || res.data.cashback || 0,
-            payable: res.data.payableAmount || (amount - (res.data.discountAmount || res.data.cashback || 0)),
-            percentage: res.data.discountPercentage || res.data.cashbackPercentage || 0
-          });
-        }
-      }).catch(() => {});
+      paymentService
+        .previewCashback(amount)
+        .then((res) => {
+          if (res.success && res.data && (res.data.discountAmount || res.data.cashback)) {
+            setDiscountInfo({
+              discount: res.data.discountAmount || res.data.cashback || 0,
+              payable: res.data.payableAmount || amount - (res.data.discountAmount || res.data.cashback || 0),
+              percentage: res.data.discountPercentage || res.data.cashbackPercentage || 0,
+            });
+          }
+        })
+        .catch(() => {});
     }
   }, [isFinancialService, serviceId, isWalletRecharge, amount]);
 
@@ -172,10 +175,12 @@ function PaymentPage() {
 
   const stepContainerStyle = useAnimatedStyle(() => ({
     opacity: fadeAnim.value,
-    transform: [{ translateY: slideAnim.value }]}));
+    transform: [{ translateY: slideAnim.value }],
+  }));
 
   const progressFillStyle = useAnimatedStyle(() => ({
-    width: `${interpolate(progressAnim.value, [0, 1], [0, 100])}%`}));
+    width: `${interpolate(progressAnim.value, [0, 1], [0, 100])}%`,
+  }));
 
   const loadPaymentMethods = async () => {
     setIsLoading(true);
@@ -213,11 +218,19 @@ function PaymentPage() {
 
   const getSuccessMessage = () => {
     if (isFinancialService) {
-      return `Your ${serviceType === 'bills' ? 'bill payment' :
-               serviceType === 'recharge' ? 'recharge' :
-               serviceType === 'ott' ? 'subscription' :
-               serviceType === 'gold' ? 'gold purchase' :
-               serviceType === 'insurance' ? 'insurance' : 'payment'} of ${displayCurrency}${amount.toLocaleString()} has been processed successfully.`;
+      return `Your ${
+        serviceType === 'bills'
+          ? 'bill payment'
+          : serviceType === 'recharge'
+            ? 'recharge'
+            : serviceType === 'ott'
+              ? 'subscription'
+              : serviceType === 'gold'
+                ? 'gold purchase'
+                : serviceType === 'insurance'
+                  ? 'insurance'
+                  : 'payment'
+      } of ${displayCurrency}${amount.toLocaleString()} has been processed successfully.`;
     }
     // FR-D004 FIX: provide correct success message for mobile recharge flow
     if (isMobileRecharge) {
@@ -253,24 +266,22 @@ function PaymentPage() {
     // (rechargeController.handleRazorpayWebhook) can match the payment
     // back to the correct RechargeTransaction by txnId.
     const purpose = isFinancialService
-      ? 'financial_service' as const
+      ? ('financial_service' as const)
       : isMobileRecharge
-        ? 'other' as const
+        ? ('other' as const)
         : isWalletRecharge
-          ? 'wallet_topup' as const
-          : 'other' as const;
+          ? ('wallet_topup' as const)
+          : ('other' as const);
 
     const rechargeMetadata = isMobileRecharge
       ? { type: 'recharge', rechargeTransactionId, mobile: rechargeMobile }
       : {};
 
-    const response = await paymentService.processPayment(
-      amount,
-      currency,
-      selectedMethod,
-      purpose,
-      { ...(extraMetadata || {}), fiatCurrency, ...rechargeMetadata }
-    );
+    const response = await paymentService.processPayment(amount, currency, selectedMethod, purpose, {
+      ...(extraMetadata || {}),
+      fiatCurrency,
+      ...rechargeMetadata,
+    });
 
     if (!response.success || !response.data) {
       throw new Error(response.error || 'Payment initiation failed');
@@ -286,7 +297,10 @@ function PaymentPage() {
     if (!selectedMethod || isProcessing) return;
 
     if (!STRIPE_KEY) {
-      platformAlertSimple('Configuration Error', 'Card payments are not available at the moment. Please choose a different payment method or contact support.');
+      platformAlertSimple(
+        'Configuration Error',
+        'Card payments are not available at the moment. Please choose a different payment method or contact support.',
+      );
       return;
     }
 
@@ -376,7 +390,8 @@ function PaymentPage() {
             if (status === 'processing') setProcessingStatus('Processing your payment...');
             if (status === 'completed') setProcessingStatus('Payment confirmed!');
           },
-          shouldAbort: () => pollingAbortedRef.current}
+          shouldAbort: () => pollingAbortedRef.current,
+        },
       );
 
       // If component unmounted during polling, don't update state
@@ -390,7 +405,7 @@ function PaymentPage() {
       } else {
         platformAlertSimple(
           'Payment Pending',
-          'Your payment is still being processed. Please check your wallet for updates.'
+          'Your payment is still being processed. Please check your wallet for updates.',
         );
         navigateAfterSuccess();
       }
@@ -421,37 +436,42 @@ function PaymentPage() {
 
   const getMethodIcon = (type: string): keyof typeof Ionicons.glyphMap => {
     switch (type) {
-      case 'card': return 'card-outline';
-      case 'upi': return 'phone-portrait-outline';
-      case 'wallet': return 'wallet-outline';
-      case 'netbanking': return 'business-outline';
-      case 'paypal': return 'globe-outline';
-      default: return 'card-outline';
+      case 'card':
+        return 'card-outline';
+      case 'upi':
+        return 'phone-portrait-outline';
+      case 'wallet':
+        return 'wallet-outline';
+      case 'netbanking':
+        return 'business-outline';
+      case 'paypal':
+        return 'globe-outline';
+      default:
+        return 'card-outline';
     }
   };
 
   const getMethodColor = (type: string) => {
     switch (type) {
-      case 'upi': return colors.nileBlue;
-      case 'card': return Colors.info;
-      case 'wallet': return Colors.gold;
-      case 'netbanking': return Colors.success;
-      case 'paypal': return '#0070BA';
-      default: return colors.text.tertiary;
+      case 'upi':
+        return colors.nileBlue;
+      case 'card':
+        return Colors.info;
+      case 'wallet':
+        return Colors.gold;
+      case 'netbanking':
+        return Colors.success;
+      case 'paypal':
+        return '#0070BA';
+      default:
+        return colors.text.tertiary;
     }
   };
 
   const renderPaymentMethods = () => (
-    <Animated.View
-      style={[
-        styles.stepContainer,
-        stepContainerStyle,
-      ]}
-    >
+    <Animated.View style={[styles.stepContainer, stepContainerStyle]}>
       <ThemedText style={styles.stepTitle}>Choose Payment Method</ThemedText>
-      <ThemedText style={styles.stepSubtitle}>
-        Select your preferred payment method to continue
-      </ThemedText>
+      <ThemedText style={styles.stepSubtitle}>Select your preferred payment method to continue</ThemedText>
 
       <View style={styles.methodsGrid}>
         {paymentMethods.map((method) => {
@@ -464,7 +484,6 @@ function PaymentPage() {
               style={styles.methodCard}
               onPress={() => handleMethodSelect(method)}
               disabled={!method.isAvailable}
-             
               accessibilityLabel={`${method.name}. ${hasFee ? `Fee: ${method.processingFee} percent` : 'No fee'}. ${method.processingTime}`}
               accessibilityRole="button"
             >
@@ -493,9 +512,7 @@ function PaymentPage() {
       {/* Security Footer */}
       <View style={styles.securityRow}>
         <Ionicons name="shield-checkmark" size={14} color={Colors.success} />
-        <ThemedText style={styles.securityText}>
-          256-bit SSL encrypted | Secure payment
-        </ThemedText>
+        <ThemedText style={styles.securityText}>256-bit SSL encrypted | Secure payment</ThemedText>
       </View>
     </Animated.View>
   );
@@ -504,14 +521,7 @@ function PaymentPage() {
     if (!selectedMethod) return null;
 
     return (
-      <Animated.View
-        style={[
-          styles.stepContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]},
-        ]}
-      >
+      <Animated.View style={[styles.stepContainer, stepContainerStyle]}>
         <View style={styles.methodHeader}>
           <View style={[styles.methodIconContainer, { backgroundColor: getMethodColor(selectedMethod.type) }]}>
             <Ionicons name={getMethodIcon(selectedMethod.type)} size={22} color={colors.text.inverse} />
@@ -546,13 +556,11 @@ function PaymentPage() {
               onPress={handleUPIPayment}
               disabled={!upiId || isProcessing}
             >
-              <LinearGradient
-                colors={[colors.nileBlue, '#2A5577'] as const}
-                style={styles.payButtonGradient}
-              >
+              <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.payButtonGradient}>
                 <Ionicons name="shield-checkmark-outline" size={18} color={colors.text.inverse} />
                 <ThemedText style={styles.payButtonText}>
-                  Pay {displayCurrency}{amount.toLocaleString()}
+                  Pay {displayCurrency}
+                  {amount.toLocaleString()}
                 </ThemedText>
               </LinearGradient>
             </Pressable>
@@ -574,17 +582,15 @@ function PaymentPage() {
               onPress={handleStripeCardPayment}
               disabled={isProcessing}
             >
-              <LinearGradient
-                colors={[colors.nileBlue, '#2A5577'] as const}
-                style={styles.payButtonGradient}
-              >
+              <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.payButtonGradient}>
                 {isProcessing ? (
                   <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
                   <>
                     <Ionicons name="card-outline" size={18} color={colors.text.inverse} />
                     <ThemedText style={styles.payButtonText}>
-                      Pay {displayCurrency}{amount.toLocaleString()} with Card
+                      Pay {displayCurrency}
+                      {amount.toLocaleString()} with Card
                     </ThemedText>
                   </>
                 )}
@@ -601,10 +607,7 @@ function PaymentPage() {
               {['paytm', 'phonepe', 'gpay', 'amazonpay'].map((wallet) => (
                 <Pressable
                   key={wallet}
-                  style={[
-                    styles.walletOption,
-                    walletType === wallet && styles.selectedWalletOption,
-                  ]}
+                  style={[styles.walletOption, walletType === wallet && styles.selectedWalletOption]}
                   onPress={() => setWalletType(wallet)}
                   accessibilityLabel={`${wallet.toUpperCase()}${walletType === wallet ? ', selected' : ''}`}
                   accessibilityRole="radio"
@@ -617,19 +620,10 @@ function PaymentPage() {
               ))}
             </View>
 
-            <Pressable
-              style={styles.payButton}
-              onPress={handleWalletPayment}
-              disabled={isProcessing}
-            >
-              <LinearGradient
-                colors={[colors.nileBlue, '#2A5577'] as const}
-                style={styles.payButtonGradient}
-              >
+            <Pressable style={styles.payButton} onPress={handleWalletPayment} disabled={isProcessing}>
+              <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.payButtonGradient}>
                 <Ionicons name="shield-checkmark-outline" size={18} color={colors.text.inverse} />
-                <ThemedText style={styles.payButtonText}>
-                  Pay with {walletType.toUpperCase()}
-                </ThemedText>
+                <ThemedText style={styles.payButtonText}>Pay with {walletType.toUpperCase()}</ThemedText>
               </LinearGradient>
             </Pressable>
           </View>
@@ -648,10 +642,7 @@ function PaymentPage() {
               ].map((bank) => (
                 <Pressable
                   key={bank.code}
-                  style={[
-                    styles.walletOption,
-                    bankCode === bank.code && styles.selectedWalletOption,
-                  ]}
+                  style={[styles.walletOption, bankCode === bank.code && styles.selectedWalletOption]}
                   onPress={() => setBankCode(bank.code)}
                   accessibilityLabel={`${bank.name}${bankCode === bank.code ? ', selected' : ''}`}
                   accessibilityRole="radio"
@@ -669,13 +660,11 @@ function PaymentPage() {
               onPress={() => handleNonCardPayment({ bankCode })}
               disabled={!bankCode || isProcessing}
             >
-              <LinearGradient
-                colors={[colors.nileBlue, '#2A5577'] as const}
-                style={styles.payButtonGradient}
-              >
+              <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.payButtonGradient}>
                 <Ionicons name="shield-checkmark-outline" size={18} color={colors.text.inverse} />
                 <ThemedText style={styles.payButtonText}>
-                  Pay {displayCurrency}{amount.toLocaleString()}
+                  Pay {displayCurrency}
+                  {amount.toLocaleString()}
                 </ThemedText>
               </LinearGradient>
             </Pressable>
@@ -692,18 +681,11 @@ function PaymentPage() {
       </View>
 
       <ThemedText style={styles.processingTitle}>Processing Payment</ThemedText>
-      <ThemedText style={styles.processingSubtitle}>
-        Please wait while we process your payment...
-      </ThemedText>
+      <ThemedText style={styles.processingSubtitle}>Please wait while we process your payment...</ThemedText>
 
       <View style={styles.progressContainer}>
         <View style={styles.progressBar}>
-          <Animated.View
-            style={[
-              styles.progressFill,
-              progressFillStyle,
-            ]}
-          />
+          <Animated.View style={[styles.progressFill, progressFillStyle]} />
         </View>
         <ThemedText style={styles.progressText}>{processingStatus}</ThemedText>
       </View>
@@ -730,11 +712,7 @@ function PaymentPage() {
         </ThemedText>
       </View>
 
-      <Pressable
-        style={styles.retryButtonWrapper}
-        onPress={handleRetryPayment}
-       
-      >
+      <Pressable style={styles.retryButtonWrapper} onPress={handleRetryPayment}>
         <LinearGradient
           colors={[colors.nileBlue, '#2A5577'] as const}
           start={{ x: 0, y: 0 }}
@@ -760,11 +738,7 @@ function PaymentPage() {
   );
 
   // Page header title based on context
-  const headerLabel = isFinancialService
-    ? 'Payment'
-    : isWalletRecharge
-      ? 'Add Money'
-      : 'Payment';
+  const headerLabel = isFinancialService ? 'Payment' : isWalletRecharge ? 'Add Money' : 'Payment';
 
   if (isLoading) {
     return (
@@ -772,16 +746,16 @@ function PaymentPage() {
         {/* SOFIA: SafeAreaView prevents overlap with notch and dynamic island */}
         <ThemedView style={styles.container}>
           <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.headerBg}>
-          <View style={styles.headerContainer}>
-            <Pressable style={styles.backButton} onPress={handleBackPress}>
-              <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
-            </Pressable>
-            <ThemedText style={styles.headerTitle}>{headerLabel}</ThemedText>
-            <View style={styles.placeholder} />
-          </View>
-        </LinearGradient>
-        <FormPageSkeleton />
+          <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.headerBg}>
+            <View style={styles.headerContainer}>
+              <Pressable style={styles.backButton} onPress={handleBackPress}>
+                <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
+              </Pressable>
+              <ThemedText style={styles.headerTitle}>{headerLabel}</ThemedText>
+              <View style={styles.placeholder} />
+            </View>
+          </LinearGradient>
+          <FormPageSkeleton />
         </ThemedView>
       </SafeAreaView>
     );
@@ -790,128 +764,133 @@ function PaymentPage() {
   return (
     <SafeAreaView style={styles.safeContainer} edges={['left', 'right', 'top']}>
       {/* SOFIA: KeyboardAvoidingView prevents TextInput from being hidden by keyboard overlay */}
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardAvoiding}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardAvoiding}>
         <ThemedView style={styles.container}>
           <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-      <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.headerBg}>
-        <View style={styles.headerContainer}>
-          <Pressable
-            style={styles.backButton}
-            onPress={handleBackPress}
-            accessibilityLabel={currentStep === 'details' ? 'Back to payment methods' : 'Back'}
-            accessibilityRole="button"
-          >
-            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
-          </Pressable>
-          <ThemedText style={styles.headerTitle}>{headerLabel}</ThemedText>
-          <View style={styles.placeholder} />
-        </View>
-
-        <View style={styles.amountSection}>
-          {isFinancialService && financialService && (
-            <View style={styles.serviceInfo}>
-              <ThemedText style={styles.serviceName}>{financialService.name}</ThemedText>
-              <ThemedText style={styles.serviceType}>
-                {serviceType === 'bills' ? 'Bill Payment' :
-                 serviceType === 'recharge' ? 'Mobile Recharge' :
-                 serviceType === 'ott' ? 'OTT Subscription' :
-                 serviceType === 'gold' ? 'Digital Gold' :
-                 serviceType === 'insurance' ? 'Insurance' :
-                 'Financial Service'}
-              </ThemedText>
-            </View>
-          )}
-          {isWalletRecharge && (
-            <ThemedText style={styles.amountContextLabel}>Wallet Recharge</ThemedText>
-          )}
-          <ThemedText style={styles.amountLabel}>
-            {isWalletRecharge ? 'Recharge Amount' : 'Amount to Pay'}
-          </ThemedText>
-          <ThemedText style={styles.amountValue}>
-            {displayCurrency}{amount.toLocaleString()}
-          </ThemedText>
-          {isWalletRecharge && discountInfo && discountInfo.discount > 0 && (
-            <View style={styles.discountBadge}>
-              <Ionicons name="pricetag-outline" size={14} color={Colors.success} />
-              <ThemedText style={styles.discountText}>
-                {discountInfo.percentage}% off — You pay {regionCurrency}{discountInfo.payable.toLocaleString()}
-              </ThemedText>
-            </View>
-          )}
-          {isFinancialService && financialService?.cashback && (
-            <ThemedText style={styles.cashbackInfo}>
-              Get {financialService.cashback.percentage}% cashback
-            </ThemedText>
-          )}
-          {isWalletRecharge && (
-            <View style={styles.walletRechargeNote}>
-              <Ionicons name="wallet-outline" size={14} color="rgba(255,255,255,0.7)" />
-              <ThemedText style={styles.walletRechargeText}>
-                {amount.toLocaleString()} {BRAND.CURRENCY_CODE} will be added to your wallet
-              </ThemedText>
-            </View>
-          )}
-        </View>
-      </LinearGradient>
-
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-        bounces={true}
-        alwaysBounceVertical={false}
-      >
-        {currentStep === 'methods' && renderPaymentMethods()}
-        {currentStep === 'details' && renderPaymentDetails()}
-        {currentStep === 'processing' && renderProcessing()}
-        {currentStep === 'failed' && renderPaymentFailed()}
-      </ScrollView>
-
-      {/* Stripe Card Payment Modal */}
-      <Modal
-        visible={showStripeCardModal}
-        transparent
-        animationType="slide"
-        onRequestClose={handleStripeCardCancel}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <ThemedText style={styles.modalTitle}>Card Payment</ThemedText>
-              <Pressable onPress={handleStripeCardCancel} style={styles.modalClose}>
-                <Ionicons name="close" size={22} color={colors.text.tertiary} />
-              </Pressable>
-            </View>
-            {stripeClientSecret && (
-              <Elements
-                stripe={stripePromise}
-                options={{
-                  clientSecret: stripeClientSecret,
-                  appearance: {
-                    theme: 'stripe',
-                    variables: {
-                      colorPrimary: colors.nileBlue,
-                      colorBackground: colors.background.primary,
-                      colorText: colors.text.primary,
-                      colorDanger: Colors.error,
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                      borderRadius: '12px'}}}}
+          <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.headerBg}>
+            <View style={styles.headerContainer}>
+              <Pressable
+                style={styles.backButton}
+                onPress={handleBackPress}
+                accessibilityLabel={currentStep === 'details' ? 'Back to payment methods' : 'Back'}
+                accessibilityRole="button"
               >
-                <StripeCardForm
-                  clientSecret={stripeClientSecret}
-                  amount={discountInfo?.payable ?? amount}
-                  onSuccess={handleStripeCardSuccess}
-                  onError={handleStripeCardError}
-                  onCancel={handleStripeCardCancel}
-                />
-              </Elements>
-            )}
-          </View>
-          </View>
-        </Modal>
+                <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
+              </Pressable>
+              <ThemedText style={styles.headerTitle}>{headerLabel}</ThemedText>
+              <View style={styles.placeholder} />
+            </View>
+
+            <View style={styles.amountSection}>
+              {isFinancialService && financialService && (
+                <View style={styles.serviceInfo}>
+                  <ThemedText style={styles.serviceName}>{financialService.name}</ThemedText>
+                  <ThemedText style={styles.serviceType}>
+                    {serviceType === 'bills'
+                      ? 'Bill Payment'
+                      : serviceType === 'recharge'
+                        ? 'Mobile Recharge'
+                        : serviceType === 'ott'
+                          ? 'OTT Subscription'
+                          : serviceType === 'gold'
+                            ? 'Digital Gold'
+                            : serviceType === 'insurance'
+                              ? 'Insurance'
+                              : 'Financial Service'}
+                  </ThemedText>
+                </View>
+              )}
+              {isWalletRecharge && <ThemedText style={styles.amountContextLabel}>Wallet Recharge</ThemedText>}
+              <ThemedText style={styles.amountLabel}>
+                {isWalletRecharge ? 'Recharge Amount' : 'Amount to Pay'}
+              </ThemedText>
+              <ThemedText style={styles.amountValue}>
+                {displayCurrency}
+                {amount.toLocaleString()}
+              </ThemedText>
+              {isWalletRecharge && discountInfo && discountInfo.discount > 0 && (
+                <View style={styles.discountBadge}>
+                  <Ionicons name="pricetag-outline" size={14} color={Colors.success} />
+                  <ThemedText style={styles.discountText}>
+                    {discountInfo.percentage}% off — You pay {regionCurrency}
+                    {discountInfo.payable.toLocaleString()}
+                  </ThemedText>
+                </View>
+              )}
+              {isFinancialService && financialService?.cashback && (
+                <ThemedText style={styles.cashbackInfo}>
+                  Get {financialService.cashback.percentage}% cashback
+                </ThemedText>
+              )}
+              {isWalletRecharge && (
+                <View style={styles.walletRechargeNote}>
+                  <Ionicons name="wallet-outline" size={14} color="rgba(255,255,255,0.7)" />
+                  <ThemedText style={styles.walletRechargeText}>
+                    {amount.toLocaleString()} {BRAND.CURRENCY_CODE} will be added to your wallet
+                  </ThemedText>
+                </View>
+              )}
+            </View>
+          </LinearGradient>
+
+          <ScrollView
+            style={styles.content}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            bounces={true}
+            alwaysBounceVertical={false}
+          >
+            {currentStep === 'methods' && renderPaymentMethods()}
+            {currentStep === 'details' && renderPaymentDetails()}
+            {currentStep === 'processing' && renderProcessing()}
+            {currentStep === 'failed' && renderPaymentFailed()}
+          </ScrollView>
+
+          {/* Stripe Card Payment Modal */}
+          <Modal
+            visible={showStripeCardModal}
+            transparent
+            animationType="slide"
+            onRequestClose={handleStripeCardCancel}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                <View style={styles.modalHeader}>
+                  <ThemedText style={styles.modalTitle}>Card Payment</ThemedText>
+                  <Pressable onPress={handleStripeCardCancel} style={styles.modalClose}>
+                    <Ionicons name="close" size={22} color={colors.text.tertiary} />
+                  </Pressable>
+                </View>
+                {stripeClientSecret && (
+                  <Elements
+                    stripe={stripePromise}
+                    options={{
+                      clientSecret: stripeClientSecret,
+                      appearance: {
+                        theme: 'stripe',
+                        variables: {
+                          colorPrimary: colors.nileBlue,
+                          colorBackground: colors.background.primary,
+                          colorText: colors.text.primary,
+                          colorDanger: Colors.error,
+                          fontFamily: 'system-ui, -apple-system, sans-serif',
+                          borderRadius: '12px',
+                        },
+                      },
+                    }}
+                  >
+                    <StripeCardForm
+                      clientSecret={stripeClientSecret}
+                      amount={discountInfo?.payable ?? amount}
+                      onSuccess={handleStripeCardSuccess}
+                      onError={handleStripeCardError}
+                      onCancel={handleStripeCardCancel}
+                    />
+                  </Elements>
+                )}
+              </View>
+            </View>
+          </Modal>
         </ThemedView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -930,7 +909,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary},
+    backgroundColor: colors.background.secondary,
+  },
   headerBg: {
     paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 40,
     paddingBottom: Spacing.xl,
@@ -940,52 +920,63 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.15,
     shadowRadius: 8,
-    elevation: 8},
+    elevation: 8,
+  },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
-    marginBottom: Spacing.base},
+    marginBottom: Spacing.base,
+  },
   backButton: {
     width: 36,
     height: 36,
     borderRadius: 18,
     backgroundColor: 'rgba(255,255,255,0.2)',
     alignItems: 'center',
-    justifyContent: 'center'},
+    justifyContent: 'center',
+  },
   headerTitle: {
     color: colors.text.inverse,
     ...Typography.h4,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
   placeholder: {
-    width: 36},
+    width: 36,
+  },
   amountSection: {
     alignItems: 'center',
-    paddingHorizontal: Spacing.lg},
+    paddingHorizontal: Spacing.lg,
+  },
   amountContextLabel: {
     color: 'rgba(255,255,255,0.7)',
     ...Typography.bodySmall,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    marginBottom: Spacing.xs},
+    marginBottom: Spacing.xs,
+  },
   amountLabel: {
     color: 'rgba(255,255,255,0.75)',
     fontSize: 13,
-    marginBottom: Spacing.xs},
+    marginBottom: Spacing.xs,
+  },
   amountValue: {
     color: colors.text.inverse,
     fontSize: 32,
     fontWeight: '900',
-    letterSpacing: -0.5},
+    letterSpacing: -0.5,
+  },
   content: {
     flex: 1,
     paddingHorizontal: Spacing.base,
-    paddingTop: Spacing.md},
+    paddingTop: Spacing.md,
+  },
   scrollContent: {
     paddingBottom: 100,
-    flexGrow: 1},
+    flexGrow: 1,
+  },
   stepContainer: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
@@ -994,18 +985,22 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     ...Shadows.medium,
     borderWidth: 1,
-    borderColor: colors.border.light},
+    borderColor: colors.border.light,
+  },
   stepTitle: {
     ...Typography.h4,
     fontWeight: '700',
     color: colors.text.primary,
-    marginBottom: Spacing.xs},
+    marginBottom: Spacing.xs,
+  },
   stepSubtitle: {
     fontSize: 13,
     color: colors.text.tertiary,
-    marginBottom: Spacing.base},
+    marginBottom: Spacing.base,
+  },
   methodsGrid: {
-    gap: 10},
+    gap: 10,
+  },
   methodCard: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1014,44 +1009,56 @@ const styles = StyleSheet.create({
     padding: 14,
     borderWidth: 1.5,
     borderColor: colors.border.default,
-    ...Shadows.subtle},
+    ...Shadows.subtle,
+  },
   methodIconContainer: {
     width: 44,
     height: 44,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 14},
+    marginRight: 14,
+  },
   methodInfo: {
-    flex: 1},
+    flex: 1,
+  },
   methodName: {
     fontSize: 15,
     fontWeight: '700',
     color: colors.text.primary,
-    marginBottom: Spacing.xs},
+    marginBottom: Spacing.xs,
+  },
   methodDetails: {
     flexDirection: 'row',
     gap: 10,
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   feeBadge: {
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
-    borderRadius: 6},
+    borderRadius: 6,
+  },
   feeBadgeFree: {
-    backgroundColor: Colors.successScale[50]},
+    backgroundColor: Colors.successScale[50],
+  },
   feeBadgeWarning: {
-    backgroundColor: Colors.warningScale[50]},
+    backgroundColor: Colors.warningScale[50],
+  },
   feeText: {
     fontSize: 11,
-    fontWeight: '600'},
+    fontWeight: '600',
+  },
   feeTextFree: {
-    color: Colors.success},
+    color: Colors.success,
+  },
   feeTextWarning: {
-    color: colors.brand.amberDeep},
+    color: colors.brand.amberDeep,
+  },
   methodTime: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
-    fontWeight: '500'},
+    fontWeight: '500',
+  },
   securityRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1060,35 +1067,43 @@ const styles = StyleSheet.create({
     marginTop: Spacing.base,
     paddingTop: 14,
     borderTopWidth: 1,
-    borderTopColor: colors.border.light},
+    borderTopColor: colors.border.light,
+  },
   securityText: {
     ...Typography.caption,
     color: colors.text.tertiary,
-    fontWeight: '500'},
+    fontWeight: '500',
+  },
   methodHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.lg,
     paddingBottom: Spacing.base,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.light},
+    borderBottomColor: colors.border.light,
+  },
   methodHeaderInfo: {
-    marginLeft: 14},
+    marginLeft: 14,
+  },
   methodHeaderName: {
     ...Typography.bodyLarge,
     fontWeight: '700',
     color: colors.text.primary,
-    marginBottom: 2},
+    marginBottom: 2,
+  },
   methodHeaderGateway: {
     fontSize: 13,
-    color: colors.text.tertiary},
+    color: colors.text.tertiary,
+  },
   formContainer: {
-    gap: 14},
+    gap: 14,
+  },
   formLabel: {
     fontSize: 13,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: 6},
+    marginBottom: 6,
+  },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1096,14 +1111,17 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     borderWidth: 1.5,
     borderColor: colors.border.default,
-    paddingHorizontal: 14},
+    paddingHorizontal: 14,
+  },
   inputIcon: {
-    marginRight: 10},
+    marginRight: 10,
+  },
   textInput: {
     flex: 1,
     paddingVertical: 14,
     fontSize: 15,
-    color: colors.text.primary},
+    color: colors.text.primary,
+  },
   stripeInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1112,16 +1130,19 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     padding: Spacing.base,
     borderWidth: 1,
-    borderColor: '#A7F3D0'},
+    borderColor: '#A7F3D0',
+  },
   stripeInfoText: {
     flex: 1,
     fontSize: 13,
     color: '#065F46',
-    lineHeight: 18},
+    lineHeight: 18,
+  },
   walletGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10},
+    gap: 10,
+  },
   walletOption: {
     flex: 1,
     minWidth: '45%',
@@ -1130,93 +1151,114 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     padding: 14,
     borderWidth: 1.5,
-    borderColor: colors.border.default},
+    borderColor: colors.border.default,
+  },
   selectedWalletOption: {
     borderColor: colors.nileBlue,
-    backgroundColor: '#F0F4F8'},
+    backgroundColor: '#F0F4F8',
+  },
   walletIcon: {
     width: 36,
     height: 36,
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 6},
+    marginBottom: 6,
+  },
   walletText: {
     ...Typography.caption,
     fontWeight: '600',
-    color: colors.text.primary},
+    color: colors.text.primary,
+  },
   payButton: {
-    marginTop: 6},
+    marginTop: 6,
+  },
   payButtonGradient: {
     flexDirection: 'row',
     gap: 8,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.base,
     alignItems: 'center',
-    justifyContent: 'center'},
+    justifyContent: 'center',
+  },
   payButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
   disabledButton: {
-    opacity: 0.5},
+    opacity: 0.5,
+  },
   processingContainer: {
     alignItems: 'center',
-    paddingVertical: 40},
+    paddingVertical: 40,
+  },
   processingIcon: {
-    marginBottom: Spacing.lg},
+    marginBottom: Spacing.lg,
+  },
   processingTitle: {
     fontSize: 22,
     fontWeight: '700',
     color: colors.text.primary,
-    marginBottom: Spacing.sm},
+    marginBottom: Spacing.sm,
+  },
   processingSubtitle: {
     ...Typography.body,
     color: colors.text.tertiary,
     textAlign: 'center',
-    marginBottom: 30},
+    marginBottom: 30,
+  },
   progressContainer: {
     width: '100%',
     alignItems: 'center',
-    paddingHorizontal: Spacing.xl},
+    paddingHorizontal: Spacing.xl,
+  },
   progressBar: {
     width: '100%',
     height: 6,
     backgroundColor: colors.border.default,
     borderRadius: 3,
     overflow: 'hidden',
-    marginBottom: Spacing.md},
+    marginBottom: Spacing.md,
+  },
   progressFill: {
     height: '100%',
     backgroundColor: colors.nileBlue,
-    borderRadius: 3},
+    borderRadius: 3,
+  },
   progressText: {
     fontSize: 13,
-    color: colors.text.tertiary},
+    color: colors.text.tertiary,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   loadingText: {
     marginTop: Spacing.md,
     fontSize: 14,
-    color: colors.text.tertiary},
+    color: colors.text.tertiary,
+  },
   serviceInfo: {
     alignItems: 'center',
     marginBottom: Spacing.md,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(255, 255, 255, 0.2)'},
+    borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+  },
   serviceName: {
     color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '600',
-    marginBottom: 4},
+    marginBottom: 4,
+  },
   serviceType: {
     color: 'rgba(255,255,255,0.7)',
     fontSize: 12,
     textTransform: 'uppercase',
-    letterSpacing: 0.5},
+    letterSpacing: 0.5,
+  },
   discountBadge: {
     flexDirection: 'row' as const,
     alignItems: 'center' as const,
@@ -1225,37 +1267,44 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(16, 185, 129, 0.15)',
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
-    borderRadius: BorderRadius.sm},
+    borderRadius: BorderRadius.sm,
+  },
   discountText: {
     color: Colors.success,
     fontSize: 13,
-    fontWeight: '600'},
+    fontWeight: '600',
+  },
   cashbackInfo: {
     color: 'rgba(255,255,255,0.7)',
     fontSize: 12,
     marginTop: Spacing.sm,
-    fontWeight: '500'},
+    fontWeight: '500',
+  },
   walletRechargeNote: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    marginTop: Spacing.sm},
+    marginTop: Spacing.sm,
+  },
   walletRechargeText: {
     color: 'rgba(255,255,255,0.7)',
     fontSize: 12,
-    fontWeight: '500'},
+    fontWeight: '500',
+  },
   // Stripe Card Modal
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'flex-end'},
+    justifyContent: 'flex-end',
+  },
   modalContent: {
     backgroundColor: colors.background.primary,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: Spacing.lg,
     paddingBottom: Platform.OS === 'ios' ? 40 : 20,
-    maxHeight: '80%'},
+    maxHeight: '80%',
+  },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -1263,29 +1312,35 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.base,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border.light},
+    borderBottomColor: colors.border.light,
+  },
   modalTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.text.primary},
+    color: colors.text.primary,
+  },
   modalClose: {
     width: 32,
     height: 32,
     borderRadius: BorderRadius.lg,
     backgroundColor: colors.background.secondary,
     alignItems: 'center',
-    justifyContent: 'center'},
+    justifyContent: 'center',
+  },
   // Payment Failed
   failedContainer: {
     alignItems: 'center',
-    paddingVertical: Spacing['2xl']},
+    paddingVertical: Spacing['2xl'],
+  },
   failedIconCircle: {
-    marginBottom: Spacing.base},
+    marginBottom: Spacing.base,
+  },
   failedTitle: {
     fontSize: 22,
     fontWeight: '700',
     color: colors.text.primary,
-    marginBottom: Spacing.base},
+    marginBottom: Spacing.base,
+  },
   failedErrorBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1296,33 +1351,41 @@ const styles = StyleSheet.create({
     marginBottom: 28,
     borderWidth: 1,
     borderColor: Colors.errorScale[200],
-    width: '100%'},
+    width: '100%',
+  },
   failedErrorText: {
     flex: 1,
     fontSize: 13,
     color: Colors.error,
-    lineHeight: 18},
+    lineHeight: 18,
+  },
   retryButtonWrapper: {
     width: '100%',
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
-    marginBottom: 14},
+    marginBottom: 14,
+  },
   retryButton: {
     flexDirection: 'row',
     gap: 8,
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.base,
     alignItems: 'center',
-    justifyContent: 'center'},
+    justifyContent: 'center',
+  },
   retryButtonText: {
     color: colors.text.inverse,
     fontSize: 16,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
   changMethodButton: {
-    paddingVertical: 10},
+    paddingVertical: 10,
+  },
   changeMethodText: {
     fontSize: 14,
     color: colors.text.tertiary,
-    fontWeight: '600'}});
+    fontWeight: '600',
+  },
+});
 
 export default withErrorBoundary(PaymentPage, 'Payment');

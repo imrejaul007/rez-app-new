@@ -1,6 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Linking } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CachedImage from '@/components/ui/CachedImage';
 import { router, useLocalSearchParams, Stack, useNavigation } from 'expo-router';
 import ordersService, { Order } from '@/services/ordersApi';
@@ -69,7 +70,7 @@ function OrderDetailsScreen() {
       'Cancel Order',
       'Are you sure you want to cancel this order?',
       'Yes, Cancel',
-      confirmCancelOrder
+      confirmCancelOrder,
     );
   };
 
@@ -153,7 +154,7 @@ function OrderDetailsScreen() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.container}>
+      <SafeAreaView style={styles.container} edges={['top']}>
         {/* Custom Header with Back Button */}
         <View style={styles.customHeader}>
           <Pressable style={styles.backButton} onPress={handleBackPress}>
@@ -170,11 +171,25 @@ function OrderDetailsScreen() {
               <Text style={styles.orderNumber}>Order #{order.orderNumber}</Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
                 {(order as any).fulfillmentType && (order as any).fulfillmentType !== 'delivery' && (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#f0f6fa', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6, gap: 4 }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      backgroundColor: '#f0f6fa',
+                      paddingHorizontal: 8,
+                      paddingVertical: 3,
+                      borderRadius: 6,
+                      gap: 4,
+                    }}
+                  >
                     <Text style={{ fontSize: 11, fontWeight: '600', color: colors.nileBlue }}>
-                      {(order as any).fulfillmentType === 'pickup' ? '🛍 Pickup' :
-                       (order as any).fulfillmentType === 'drive_thru' ? '🚗 Drive-Thru' :
-                       (order as any).fulfillmentType === 'dine_in' ? '🍽 Dine-In' : ''}
+                      {(order as any).fulfillmentType === 'pickup'
+                        ? '🛍 Pickup'
+                        : (order as any).fulfillmentType === 'drive_thru'
+                          ? '🚗 Drive-Thru'
+                          : (order as any).fulfillmentType === 'dine_in'
+                            ? '🍽 Dine-In'
+                            : ''}
                     </Text>
                   </View>
                 )}
@@ -186,329 +201,365 @@ function OrderDetailsScreen() {
             <Text style={styles.orderDate}>{formatDate(order.createdAt)}</Text>
           </View>
 
-      {/* Order Items */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Items Ordered</Text>
-        {order.items.map((item, index) => {
-          // Use mapped item properties directly (from dataMappers)
-          const productImage = item.image;
-          const productName = item.name || 'Product';
-          const storeName = item.store?.name || 'Store';
+          {/* Order Items */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Items Ordered</Text>
+            {order.items.map((item, index) => {
+              // Use mapped item properties directly (from dataMappers)
+              const productImage = item.image;
+              const productName = item.name || 'Product';
+              const storeName = item.store?.name || 'Store';
+              // Prefer a stable ID; fall back to composite key to avoid duplicate-key warnings
+              const itemKey = (item as any).id || (item as any)._id || `${productName}-${index}`;
 
-          return (
-            <View key={index} style={styles.itemCard}>
-              <CachedImage
-                source={{ uri: productImage }}
-                style={styles.itemImage}
-                cachePolicy="memory-disk"
-              />
-              <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{productName}</Text>
-                <Text style={styles.storeName}>{storeName}</Text>
-                {item.variant && (
-                  <Text style={styles.variantText}>Variant: {item.variant.name}</Text>
-                )}
-                <View style={styles.itemFooter}>
-                  <Text style={styles.itemQuantity}>Qty: {item.quantity}</Text>
-                  <Text style={styles.itemPrice}>{currencySymbol}{item.price || 0} each</Text>
+              return (
+                <View key={itemKey} style={styles.itemCard}>
+                  <CachedImage source={{ uri: productImage }} style={styles.itemImage} cachePolicy="memory-disk" />
+                  <View style={styles.itemInfo}>
+                    <Text style={styles.itemName}>{productName}</Text>
+                    <Text style={styles.storeName}>{storeName}</Text>
+                    {item.variant && <Text style={styles.variantText}>Variant: {item.variant.name}</Text>}
+                    <View style={styles.itemFooter}>
+                      <Text style={styles.itemQuantity}>Qty: {item.quantity}</Text>
+                      <Text style={styles.itemPrice}>
+                        {currencySymbol}
+                        {item.price || 0} each
+                      </Text>
+                    </View>
+                  </View>
+                  <Text style={styles.itemTotal}>
+                    {currencySymbol}
+                    {item.subtotal || 0}
+                  </Text>
                 </View>
-              </View>
-              <Text style={styles.itemTotal}>{currencySymbol}{item.subtotal || 0}</Text>
-            </View>
-          );
-        })}
-      </View>
-
-      {/* Order Summary */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Order Summary</Text>
-        <View style={styles.summaryCard}>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Subtotal</Text>
-            <Text style={styles.summaryValue}>
-              {currencySymbol}{(order.totals?.subtotal || order.summary?.subtotal || 0).toFixed(2)}
-            </Text>
+              );
+            })}
           </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>
-              {(order as any).fulfillmentType === 'pickup' || (order as any).fulfillmentType === 'drive_thru' || (order as any).fulfillmentType === 'dine_in' ? 'Service Fee' : 'Delivery'}
-            </Text>
-            {(() => {
-              const deliveryFee = order.totals?.delivery || order.summary?.shipping || 0;
-              const subtotal = order.totals?.subtotal || order.summary?.subtotal || 0;
-              const FREE_DELIVERY_THRESHOLD = 500;
-              // Count unique stores from items
-              const uniqueStores = new Set(order.items?.map((i: any) => i.store?.id || i.store).filter(Boolean) || []);
-              const wouldBeDeliveryFee = uniqueStores.size > 0 ? uniqueStores.size * 50 : 50;
 
-              if (deliveryFee === 0 && subtotal >= FREE_DELIVERY_THRESHOLD) {
-                // Free delivery - show crossed out original price + FREE
+          {/* Order Summary */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Order Summary</Text>
+            <View style={styles.summaryCard}>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Subtotal</Text>
+                <Text style={styles.summaryValue}>
+                  {currencySymbol}
+                  {(order.totals?.subtotal || order.summary?.subtotal || 0).toFixed(2)}
+                </Text>
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>
+                  {(order as any).fulfillmentType === 'pickup' ||
+                  (order as any).fulfillmentType === 'drive_thru' ||
+                  (order as any).fulfillmentType === 'dine_in'
+                    ? 'Service Fee'
+                    : 'Delivery'}
+                </Text>
+                {(() => {
+                  const deliveryFee = order.totals?.delivery || order.summary?.shipping || 0;
+                  const subtotal = order.totals?.subtotal || order.summary?.subtotal || 0;
+                  const FREE_DELIVERY_THRESHOLD = 500;
+                  // Count unique stores from items
+                  const uniqueStores = new Set(
+                    order.items?.map((i: any) => i.store?.id || i.store).filter(Boolean) || [],
+                  );
+                  const wouldBeDeliveryFee = uniqueStores.size > 0 ? uniqueStores.size * 50 : 50;
+
+                  if (deliveryFee === 0 && subtotal >= FREE_DELIVERY_THRESHOLD) {
+                    // Free delivery - show crossed out original price + FREE
+                    return (
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <Text
+                          style={[
+                            styles.summaryValue,
+                            { textDecorationLine: 'line-through', color: colors.neutral[400], fontSize: 12 },
+                          ]}
+                        >
+                          {currencySymbol}
+                          {wouldBeDeliveryFee}
+                        </Text>
+                        <Text style={[styles.summaryValue, { color: colors.success, fontWeight: '600' }]}>FREE</Text>
+                      </View>
+                    );
+                  } else if (deliveryFee > 0) {
+                    return (
+                      <Text style={styles.summaryValue}>
+                        {currencySymbol}
+                        {deliveryFee.toFixed(2)}
+                      </Text>
+                    );
+                  } else {
+                    return <Text style={[styles.summaryValue, { color: colors.success }]}>FREE</Text>;
+                  }
+                })()}
+              </View>
+              <View style={styles.summaryRow}>
+                <Text style={styles.summaryLabel}>Tax</Text>
+                <Text style={styles.summaryValue}>
+                  {currencySymbol}
+                  {(order.totals?.tax || order.summary?.tax || 0).toFixed(2)}
+                </Text>
+              </View>
+              {(order.totals?.discount || order.summary?.discount || 0) > 0 && (
+                <View style={styles.summaryRow}>
+                  <Text style={[styles.summaryLabel, styles.discountLabel]}>Discount</Text>
+                  <Text style={[styles.summaryValue, styles.discountValue]}>
+                    -{currencySymbol}
+                    {(order.totals?.discount || order.summary?.discount || 0).toFixed(2)}
+                  </Text>
+                </View>
+              )}
+              {/* Lock Fee Discount from order totals */}
+              {(order.totals?.lockFeeDiscount || 0) > 0 && (
+                <View style={styles.summaryRow}>
+                  <Text style={[styles.summaryLabel, { color: colors.nileBlue }]}>Lock Fee Already Paid</Text>
+                  <Text style={[styles.summaryValue, { color: colors.nileBlue }]}>
+                    -{currencySymbol}
+                    {order.totals.lockFeeDiscount.toFixed(2)}
+                  </Text>
+                </View>
+              )}
+              {/* Deal Redemption Discount */}
+              {order.redemption && order.redemption.discount > 0 && (
+                <View style={styles.summaryRow}>
+                  <Text style={[styles.summaryLabel, styles.discountLabel]}>Deal ({order.redemption.code})</Text>
+                  <Text style={[styles.summaryValue, styles.discountValue]}>
+                    -{currencySymbol}
+                    {order.redemption.discount.toFixed(2)}
+                  </Text>
+                </View>
+              )}
+              {/* Coins Used at Checkout */}
+              {(() => {
+                const coinsUsed = order.payment?.coinsUsed;
+                const totalCoins =
+                  coinsUsed?.totalCoinsValue ||
+                  (coinsUsed?.rezCoins || 0) + (coinsUsed?.promoCoins || 0) + (coinsUsed?.storePromoCoins || 0);
+                if (totalCoins <= 0) return null;
                 return (
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    <Text style={[styles.summaryValue, { textDecorationLine: 'line-through', color: colors.neutral[400], fontSize: 12 }]}>
-                      {currencySymbol}{wouldBeDeliveryFee}
+                  <View style={styles.summaryRow}>
+                    <Text style={[styles.summaryLabel, { color: colors.brand.purple }]}>Coins Used</Text>
+                    <Text style={[styles.summaryValue, { color: colors.brand.purple }]}>
+                      -{currencySymbol}
+                      {totalCoins.toFixed(2)}
                     </Text>
-                    <Text style={[styles.summaryValue, { color: colors.success, fontWeight: '600' }]}>FREE</Text>
                   </View>
                 );
-              } else if (deliveryFee > 0) {
-                return <Text style={styles.summaryValue}>{currencySymbol}{deliveryFee.toFixed(2)}</Text>;
-              } else {
-                return <Text style={[styles.summaryValue, { color: colors.success }]}>FREE</Text>;
-              }
-            })()}
-          </View>
-          <View style={styles.summaryRow}>
-            <Text style={styles.summaryLabel}>Tax</Text>
-            <Text style={styles.summaryValue}>
-              {currencySymbol}{(order.totals?.tax || order.summary?.tax || 0).toFixed(2)}
-            </Text>
-          </View>
-          {(order.totals?.discount || order.summary?.discount || 0) > 0 && (
-            <View style={styles.summaryRow}>
-              <Text style={[styles.summaryLabel, styles.discountLabel]}>Discount</Text>
-              <Text style={[styles.summaryValue, styles.discountValue]}>
-                -{currencySymbol}{(order.totals?.discount || order.summary?.discount || 0).toFixed(2)}
-              </Text>
-            </View>
-          )}
-          {/* Lock Fee Discount from order totals */}
-          {(order.totals?.lockFeeDiscount || 0) > 0 && (
-            <View style={styles.summaryRow}>
-              <Text style={[styles.summaryLabel, { color: colors.nileBlue }]}>Lock Fee Already Paid</Text>
-              <Text style={[styles.summaryValue, { color: colors.nileBlue }]}>
-                -{currencySymbol}{(order.totals.lockFeeDiscount).toFixed(2)}
-              </Text>
-            </View>
-          )}
-          {/* Deal Redemption Discount */}
-          {order.redemption && order.redemption.discount > 0 && (
-            <View style={styles.summaryRow}>
-              <Text style={[styles.summaryLabel, styles.discountLabel]}>
-                Deal ({order.redemption.code})
-              </Text>
-              <Text style={[styles.summaryValue, styles.discountValue]}>
-                -{currencySymbol}{(order.redemption.discount).toFixed(2)}
-              </Text>
-            </View>
-          )}
-          {/* Coins Used at Checkout */}
-          {(() => {
-            const coinsUsed = order.payment?.coinsUsed;
-            const totalCoins = coinsUsed?.totalCoinsValue || (coinsUsed?.rezCoins || 0) + (coinsUsed?.promoCoins || 0) + (coinsUsed?.storePromoCoins || 0);
-            if (totalCoins <= 0) return null;
-            return (
-              <View style={styles.summaryRow}>
-                <Text style={[styles.summaryLabel, { color: colors.brand.purple }]}>Coins Used</Text>
-                <Text style={[styles.summaryValue, { color: colors.brand.purple }]}>
-                  -{currencySymbol}{totalCoins.toFixed(2)}
+              })()}
+              {/* Cashback - show "after delivery" if not yet delivered */}
+              {(order.totals?.cashback || 0) > 0 && (
+                <View style={styles.summaryRow}>
+                  <Text style={[styles.summaryLabel, { color: colors.warningScale[700] }]}>
+                    {order.status === 'delivered' ? 'Cashback Earned' : 'Cashback (after delivery)'}
+                  </Text>
+                  <Text style={[styles.summaryValue, { color: colors.warningScale[700] }]}>
+                    +{currencySymbol}
+                    {order.totals.cashback.toFixed(2)}
+                  </Text>
+                </View>
+              )}
+              <View style={[styles.summaryRow, styles.totalRow]}>
+                <Text style={styles.totalLabel}>Total</Text>
+                <Text style={styles.totalValue}>
+                  {currencySymbol}
+                  {(order.totals?.total || order.summary?.total || 0).toFixed(2)}
                 </Text>
               </View>
-            );
-          })()}
-          {/* Cashback - show "after delivery" if not yet delivered */}
-          {(order.totals?.cashback || 0) > 0 && (
-            <View style={styles.summaryRow}>
-              <Text style={[styles.summaryLabel, { color: colors.warningScale[700] }]}>
-                {order.status === 'delivered' ? 'Cashback Earned' : 'Cashback (after delivery)'}
+            </View>
+          </View>
+
+          {/* Shipping Address */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Delivery Address</Text>
+            <View style={styles.addressCard}>
+              {order.delivery?.address ? (
+                <>
+                  <Text style={styles.addressName}>{order.delivery.address.name}</Text>
+                  <Text style={styles.addressText}>{order.delivery.address.addressLine1}</Text>
+                  {order.delivery.address.addressLine2 && (
+                    <Text style={styles.addressText}>{order.delivery.address.addressLine2}</Text>
+                  )}
+                  {order.delivery.address.landmark && (
+                    <Text style={styles.addressText}>Landmark: {order.delivery.address.landmark}</Text>
+                  )}
+                  <Text style={styles.addressText}>
+                    {order.delivery.address.city}, {order.delivery.address.state}
+                  </Text>
+                  <Text style={styles.addressText}>{order.delivery.address.pincode}</Text>
+                  {order.delivery.address.phone && (
+                    <Text style={styles.addressPhone}>Phone: {order.delivery.address.phone}</Text>
+                  )}
+                </>
+              ) : (
+                <Text style={styles.addressText}>No delivery address available</Text>
+              )}
+            </View>
+          </View>
+
+          {/* Payment Status */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Payment Status</Text>
+            <View style={styles.paymentCard}>
+              <Text
+                style={[
+                  styles.paymentStatus,
+                  {
+                    color:
+                      (order.payment?.status || order.paymentStatus) === 'paid'
+                        ? colors.lightMustard
+                        : (order.payment?.status || order.paymentStatus) === 'failed'
+                          ? '#ef4444'
+                          : colors.warningScale[400],
+                  },
+                ]}
+              >
+                {(order.payment?.status || order.paymentStatus || 'pending').toUpperCase()}
               </Text>
-              <Text style={[styles.summaryValue, { color: colors.warningScale[700] }]}>
-                +{currencySymbol}{(order.totals.cashback).toFixed(2)}
-              </Text>
+              <Text style={styles.paymentMethod}>Method: {(order.payment?.method || 'N/A').toUpperCase()}</Text>
+            </View>
+          </View>
+
+          {/* Order Timeline */}
+          {order.timeline && order.timeline.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Order Timeline</Text>
+              <View style={styles.timelineCard}>
+                {order.timeline.map((event, index) => (
+                  <View key={event.timestamp || `timeline-${index}`} style={styles.timelineItem}>
+                    <View style={styles.timelineDot} />
+                    {index < order.timeline.length - 1 && <View style={styles.timelineLine} />}
+                    <View style={styles.timelineContent}>
+                      <Text style={styles.timelineStatus}>{event.status}</Text>
+                      <Text style={styles.timelineMessage}>{event.message}</Text>
+                      <Text style={styles.timelineDate}>{formatDate(event.timestamp)}</Text>
+                    </View>
+                  </View>
+                ))}
+              </View>
             </View>
           )}
-          <View style={[styles.summaryRow, styles.totalRow]}>
-            <Text style={styles.totalLabel}>Total</Text>
-            <Text style={styles.totalValue}>
-              {currencySymbol}{(order.totals?.total || order.summary?.total || 0).toFixed(2)}
-            </Text>
-          </View>
-        </View>
-      </View>
 
-      {/* Shipping Address */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Delivery Address</Text>
-        <View style={styles.addressCard}>
-          {order.delivery?.address ? (
-            <>
-              <Text style={styles.addressName}>{order.delivery.address.name}</Text>
-              <Text style={styles.addressText}>{order.delivery.address.addressLine1}</Text>
-              {order.delivery.address.addressLine2 && (
-                <Text style={styles.addressText}>{order.delivery.address.addressLine2}</Text>
-              )}
-              {order.delivery.address.landmark && (
-                <Text style={styles.addressText}>Landmark: {order.delivery.address.landmark}</Text>
-              )}
-              <Text style={styles.addressText}>
-                {order.delivery.address.city}, {order.delivery.address.state}
-              </Text>
-              <Text style={styles.addressText}>{order.delivery.address.pincode}</Text>
-              {order.delivery.address.phone && (
-                <Text style={styles.addressPhone}>Phone: {order.delivery.address.phone}</Text>
-              )}
-            </>
-          ) : (
-            <Text style={styles.addressText}>No delivery address available</Text>
-          )}
-        </View>
-      </View>
-
-      {/* Payment Status */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Payment Status</Text>
-        <View style={styles.paymentCard}>
-          <Text
-            style={[
-              styles.paymentStatus,
-              {
-                color:
-                  (order.payment?.status || order.paymentStatus) === 'paid'
-                    ? colors.lightMustard
-                    : (order.payment?.status || order.paymentStatus) === 'failed'
-                    ? '#ef4444'
-                    : colors.warningScale[400],
-              },
-            ]}
-          >
-            {(order.payment?.status || order.paymentStatus || 'pending').toUpperCase()}
-          </Text>
-          <Text style={styles.paymentMethod}>
-            Method: {(order.payment?.method || 'N/A').toUpperCase()}
-          </Text>
-        </View>
-      </View>
-
-      {/* Order Timeline */}
-      {order.timeline && order.timeline.length > 0 && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Order Timeline</Text>
-          <View style={styles.timelineCard}>
-            {order.timeline.map((event, index) => (
-              <View key={index} style={styles.timelineItem}>
-                <View style={styles.timelineDot} />
-                {index < order.timeline.length - 1 && <View style={styles.timelineLine} />}
-                <View style={styles.timelineContent}>
-                  <Text style={styles.timelineStatus}>{event.status}</Text>
-                  <Text style={styles.timelineMessage}>{event.message}</Text>
-                  <Text style={styles.timelineDate}>{formatDate(event.timestamp)}</Text>
+          {/* Fulfillment Details */}
+          {(order as any).fulfillmentType &&
+            (order as any).fulfillmentType !== 'delivery' &&
+            (order as any).fulfillmentDetails && (
+              <View style={styles.section}>
+                <Text style={styles.sectionTitle}>
+                  {(order as any).fulfillmentType === 'pickup'
+                    ? 'Pickup Details'
+                    : (order as any).fulfillmentType === 'drive_thru'
+                      ? 'Drive-Thru Details'
+                      : (order as any).fulfillmentType === 'dine_in'
+                        ? 'Dine-In Details'
+                        : 'Fulfillment Details'}
+                </Text>
+                <View style={styles.trackingCard}>
+                  {(order as any).fulfillmentDetails.tableNumber && (
+                    <View style={styles.trackingRow}>
+                      <Text style={styles.trackingLabel}>Table Number</Text>
+                      <Text style={styles.trackingValue}>{(order as any).fulfillmentDetails.tableNumber}</Text>
+                    </View>
+                  )}
+                  {(order as any).fulfillmentDetails.vehicleInfo && (
+                    <View style={styles.trackingRow}>
+                      <Text style={styles.trackingLabel}>Vehicle</Text>
+                      <Text style={styles.trackingValue}>{(order as any).fulfillmentDetails.vehicleInfo}</Text>
+                    </View>
+                  )}
+                  {(order as any).fulfillmentDetails.pickupInstructions && (
+                    <View style={styles.trackingRow}>
+                      <Text style={styles.trackingLabel}>Instructions</Text>
+                      <Text style={styles.trackingValue}>{(order as any).fulfillmentDetails.pickupInstructions}</Text>
+                    </View>
+                  )}
                 </View>
               </View>
-            ))}
-          </View>
-        </View>
-      )}
+            )}
 
-      {/* Fulfillment Details */}
-      {(order as any).fulfillmentType && (order as any).fulfillmentType !== 'delivery' && (order as any).fulfillmentDetails && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            {(order as any).fulfillmentType === 'pickup' ? 'Pickup Details' :
-             (order as any).fulfillmentType === 'drive_thru' ? 'Drive-Thru Details' :
-             (order as any).fulfillmentType === 'dine_in' ? 'Dine-In Details' : 'Fulfillment Details'}
-          </Text>
-          <View style={styles.trackingCard}>
-            {(order as any).fulfillmentDetails.tableNumber && (
-              <View style={styles.trackingRow}>
-                <Text style={styles.trackingLabel}>Table Number</Text>
-                <Text style={styles.trackingValue}>{(order as any).fulfillmentDetails.tableNumber}</Text>
+          {/* Tracking Info */}
+          {order.tracking && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Tracking Information</Text>
+              <View style={styles.trackingCard}>
+                <View style={styles.trackingRow}>
+                  <Text style={styles.trackingLabel}>Tracking Number</Text>
+                  <Text style={styles.trackingValue}>{order.tracking.number}</Text>
+                </View>
+                <View style={styles.trackingRow}>
+                  <Text style={styles.trackingLabel}>Carrier</Text>
+                  <Text style={styles.trackingValue}>{order.tracking.carrier}</Text>
+                </View>
+                {order.tracking.estimatedDelivery && (
+                  <View style={styles.trackingRow}>
+                    <Text style={styles.trackingLabel}>Estimated Delivery</Text>
+                    <Text style={styles.trackingValue}>{formatDate(order.tracking.estimatedDelivery)}</Text>
+                  </View>
+                )}
+                {order.tracking.url && (
+                  <Pressable
+                    style={styles.trackButton}
+                    onPress={() => Linking.openURL(order.tracking!.url!).catch(() => {})}
+                    accessibilityLabel="Track package on carrier website"
+                    accessibilityRole="button"
+                  >
+                    <Text style={styles.trackButtonText}>Track Package</Text>
+                  </Pressable>
+                )}
               </View>
-            )}
-            {(order as any).fulfillmentDetails.vehicleInfo && (
-              <View style={styles.trackingRow}>
-                <Text style={styles.trackingLabel}>Vehicle</Text>
-                <Text style={styles.trackingValue}>{(order as any).fulfillmentDetails.vehicleInfo}</Text>
-              </View>
-            )}
-            {(order as any).fulfillmentDetails.pickupInstructions && (
-              <View style={styles.trackingRow}>
-                <Text style={styles.trackingLabel}>Instructions</Text>
-                <Text style={styles.trackingValue}>{(order as any).fulfillmentDetails.pickupInstructions}</Text>
-              </View>
-            )}
-          </View>
-        </View>
-      )}
+            </View>
+          )}
 
-      {/* Tracking Info */}
-      {order.tracking && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Tracking Information</Text>
-          <View style={styles.trackingCard}>
-            <View style={styles.trackingRow}>
-              <Text style={styles.trackingLabel}>Tracking Number</Text>
-              <Text style={styles.trackingValue}>{order.tracking.number}</Text>
-            </View>
-            <View style={styles.trackingRow}>
-              <Text style={styles.trackingLabel}>Carrier</Text>
-              <Text style={styles.trackingValue}>{order.tracking.carrier}</Text>
-            </View>
-            {order.tracking.estimatedDelivery && (
-              <View style={styles.trackingRow}>
-                <Text style={styles.trackingLabel}>Estimated Delivery</Text>
-                <Text style={styles.trackingValue}>
-                  {formatDate(order.tracking.estimatedDelivery)}
-                </Text>
+          {/* Action Buttons */}
+          <View style={styles.actions}>
+            {(order.status === 'delivered' || order.status === 'cancelled') && (
+              <View style={styles.reorderContainer}>
+                <ReorderButton
+                  orderId={order.id}
+                  orderNumber={order.orderNumber}
+                  variant="primary"
+                  size="large"
+                  fullWidth
+                  onSuccess={() => router.push('/cart')}
+                />
               </View>
             )}
-            {order.tracking.url && (
-              <Pressable style={styles.trackButton}>
-                <Text style={styles.trackButtonText}>Track Package</Text>
+
+            {canCancelOrder(order.status) && (
+              <Pressable
+                style={[styles.actionButton, styles.cancelButton]}
+                onPress={handleCancelOrder}
+                disabled={cancelling}
+              >
+                {cancelling ? (
+                  <ActivityIndicator color={colors.background.primary} />
+                ) : (
+                  <Text style={styles.cancelButtonText}>Cancel Order</Text>
+                )}
               </Pressable>
             )}
-          </View>
-        </View>
-      )}
-
-      {/* Action Buttons */}
-      <View style={styles.actions}>
-        {(order.status === 'delivered' || order.status === 'cancelled') && (
-          <View style={styles.reorderContainer}>
-            <ReorderButton
-              orderId={order.id}
-              orderNumber={order.orderNumber}
-              variant="primary"
-              size="large"
-              fullWidth
-              onSuccess={() => router.push('/cart')}
-            />
-          </View>
-        )}
-
-        {canCancelOrder(order.status) && (
-          <Pressable
-            style={[styles.actionButton, styles.cancelButton]}
-            onPress={handleCancelOrder}
-            disabled={cancelling}
-          >
-            {cancelling ? (
-              <ActivityIndicator color={colors.background.primary} />
-            ) : (
-              <Text style={styles.cancelButtonText}>Cancel Order</Text>
+            {order.status === 'delivered' && (
+              <Pressable
+                style={[styles.actionButton, { backgroundColor: colors.warningScale[400] }]}
+                onPress={() =>
+                  router.push({
+                    pathname: '/support/create-ticket' as any,
+                    params: {
+                      category: 'order',
+                      subject: `Issue with Order #${order.orderNumber}`,
+                      relatedOrderId: order.id,
+                    },
+                  })
+                }
+              >
+                <Text style={styles.actionButtonText}>Report Issue</Text>
+              </Pressable>
             )}
-          </Pressable>
-        )}
-        {order.status === 'delivered' && (
-          <Pressable
-            style={[styles.actionButton, { backgroundColor: colors.warningScale[400] }]}
-            onPress={() => router.push({
-              pathname: '/support/create-ticket' as any,
-              params: {
-                category: 'order',
-                subject: `Issue with Order #${order.orderNumber}`,
-                relatedOrderId: order.id,
-              },
-            })}
-          >
-            <Text style={styles.actionButtonText}>Report Issue</Text>
-          </Pressable>
-        )}
-        <Pressable style={styles.actionButton} onPress={() => router.push('/')}>
-          <Text style={styles.actionButtonText}>Continue Shopping</Text>
-        </Pressable>
-      </View>
-    </ScrollView>
-      </View>
+            <Pressable style={styles.actionButton} onPress={() => router.push('/')}>
+              <Text style={styles.actionButtonText}>Continue Shopping</Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 }

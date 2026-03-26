@@ -1,15 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Reviews Page - Standalone store reviews page
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  RefreshControl,
-  Platform,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, ActivityIndicator, RefreshControl, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { ReviewsListSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
@@ -72,60 +64,63 @@ function ReviewsPage() {
   const [hasMore, setHasMore] = useState(true);
 
   // Fetch reviews
-  const fetchReviews = useCallback(async (isRefresh = false, pageNum = 1) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else if (pageNum === 1) {
-        setLoading(true);
-      } else {
-        setLoadingMore(true);
-      }
-      if (pageNum === 1) setError(null);
-
-      const response = await reviewsApi.getTargetReviews('store', storeId, {
-        limit: 20,
-        page: pageNum,
-      });
-
-      if (response.success && response.data) {
-        const newReviews = response.data.reviews || [];
-        if (pageNum === 1) {
-          setReviews(newReviews);
+  const fetchReviews = useCallback(
+    async (isRefresh = false, pageNum = 1) => {
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else if (pageNum === 1) {
+          setLoading(true);
         } else {
-          if (!isMounted()) return;
-          setReviews(prev => [...prev, ...newReviews]);
+          setLoadingMore(true);
         }
-        if (!isMounted()) return;
-        setStats(response.data.stats || null);
-        if (!isMounted()) return;
-        setPage(pageNum);
-        if (!isMounted()) return;
-        setHasMore(newReviews.length >= 20);
+        if (pageNum === 1) setError(null);
 
-        if (newReviews.length > 0 && !storeName) {
+        const response = await reviewsApi.getTargetReviews('store', storeId, {
+          limit: 20,
+          page: pageNum,
+        });
+
+        if (response.success && response.data) {
+          const newReviews = response.data.reviews || [];
+          if (pageNum === 1) {
+            setReviews(newReviews);
+          } else {
+            if (!isMounted()) return;
+            setReviews((prev) => [...prev, ...newReviews]);
+          }
           if (!isMounted()) return;
-          setStoreName('Store Reviews');
+          setStats(response.data.stats || null);
+          if (!isMounted()) return;
+          setPage(pageNum);
+          if (!isMounted()) return;
+          setHasMore(newReviews.length >= 20);
+
+          if (newReviews.length > 0 && !storeName) {
+            if (!isMounted()) return;
+            setStoreName('Store Reviews');
+          }
+        } else {
+          if (pageNum === 1) setError(response.error || 'Failed to load reviews');
+          if (!isMounted()) return;
+          setHasMore(false);
         }
-      } else {
-        if (pageNum === 1) setError(response.error || 'Failed to load reviews');
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Failed to load reviews';
+        if (pageNum === 1) setError(errorMessage);
         if (!isMounted()) return;
         setHasMore(false);
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load reviews';
-      if (pageNum === 1) setError(errorMessage);
-      if (!isMounted()) return;
-      setHasMore(false);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [storeId]);
+    },
+    [storeId],
+  );
 
   const handleLoadMore = useCallback(() => {
     if (!loadingMore && hasMore && !loading) {
@@ -142,7 +137,7 @@ function ReviewsPage() {
 
   // Filter and sort reviews
   const filteredAndSortedReviews = reviews
-    .filter(review => filterRating === null || review.rating === filterRating)
+    .filter((review) => filterRating === null || review.rating === filterRating)
     .sort((a, b) => {
       switch (sortBy) {
         case 'helpful':
@@ -187,11 +182,12 @@ function ReviewsPage() {
         <View style={styles.reviewHeader}>
           <View style={styles.userInfo}>
             {review.userId.profile.avatar ? (
-              <CachedImage source={review.userId.profile.avatar} style={styles.userAvatar} />
+              <CachedImage source={{ uri: review.userId.profile.avatar }} style={styles.userAvatar} />
             ) : (
               <View style={[styles.userAvatar, styles.userAvatarPlaceholder]}>
                 <ThemedText style={styles.userAvatarText}>
-                  {review.userId.profile.firstName[0]}{review.userId.profile.lastName[0]}
+                  {review.userId.profile.firstName[0]}
+                  {review.userId.profile.lastName[0]}
                 </ThemedText>
               </View>
             )}
@@ -214,13 +210,13 @@ function ReviewsPage() {
         <ThemedText style={styles.reviewComment}>{review.comment}</ThemedText>
 
         {review.images && review.images.length > 0 && (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.reviewImages}
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.reviewImages}>
             {review.images.map((image, index) => (
-              <CachedImage key={index} source={image} style={styles.reviewImage} />
+              <CachedImage
+                key={index}
+                source={{ uri: typeof image === 'string' ? image : (image as any)?.uri || '' }}
+                style={styles.reviewImage}
+              />
             ))}
           </ScrollView>
         )}
@@ -252,7 +248,10 @@ function ReviewsPage() {
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.container}>
           <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.gradientHeader}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.headerBackButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.headerBackButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.gradientHeaderTitle}>Reviews</ThemedText>
@@ -277,7 +276,10 @@ function ReviewsPage() {
       <View style={styles.container}>
         {/* Gradient Header */}
         <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.gradientHeader}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.headerBackButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.headerBackButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.gradientHeaderTitle}>Reviews</ThemedText>
@@ -286,95 +288,101 @@ function ReviewsPage() {
           </Pressable>
         </LinearGradient>
 
-      <FlashList
-        data={filteredAndSortedReviews}
-        keyExtractor={(item) => item._id}
-        renderItem={renderReviewItem}
-        contentContainerStyle={{ paddingBottom: 120 }}
-        estimatedItemSize={120}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={() => fetchReviews(true, 1)} tintColor={Colors.brand.purple} />
-        }
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.3}
-        ListHeaderComponent={
-          <>
-            {/* Rating Summary */}
-            {stats && (
-              <View style={styles.summaryCard}>
-                <View style={styles.summaryLeft}>
-                  <ThemedText style={styles.averageRating}>{stats.averageRating.toFixed(1)}</ThemedText>
-                  {renderStars(Math.round(stats.averageRating), 20)}
-                  <ThemedText style={styles.totalReviews}>
-                    {stats.totalReviews} {stats.totalReviews === 1 ? 'review' : 'reviews'}
-                  </ThemedText>
-                </View>
-                <View style={styles.summaryRight}>
-                  {[5, 4, 3, 2, 1].map((rating) => {
-                    const count = stats.ratingDistribution[rating as keyof typeof stats.ratingDistribution] || 0;
-                    const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0;
-                    return (
-                      <View key={rating} style={styles.ratingRow}>
-                        <ThemedText style={styles.ratingLabel}>{rating}</ThemedText>
-                        <Ionicons name="star" size={14} color={colors.warningScale[400]} />
-                        <View style={styles.ratingBar}>
-                          <View style={[styles.ratingBarFill, { width: `${percentage}%` }]} />
+        <FlashList
+          data={filteredAndSortedReviews}
+          keyExtractor={(item) => item._id}
+          renderItem={renderReviewItem}
+          contentContainerStyle={{ paddingBottom: 120 }}
+          estimatedItemSize={120}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={() => fetchReviews(true, 1)}
+              tintColor={Colors.brand.purple}
+            />
+          }
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.3}
+          ListHeaderComponent={
+            <>
+              {/* Rating Summary */}
+              {stats && (
+                <View style={styles.summaryCard}>
+                  <View style={styles.summaryLeft}>
+                    <ThemedText style={styles.averageRating}>{stats.averageRating.toFixed(1)}</ThemedText>
+                    {renderStars(Math.round(stats.averageRating), 20)}
+                    <ThemedText style={styles.totalReviews}>
+                      {stats.totalReviews} {stats.totalReviews === 1 ? 'review' : 'reviews'}
+                    </ThemedText>
+                  </View>
+                  <View style={styles.summaryRight}>
+                    {[5, 4, 3, 2, 1].map((rating) => {
+                      const count = stats.ratingDistribution[rating as keyof typeof stats.ratingDistribution] || 0;
+                      const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0;
+                      return (
+                        <View key={rating} style={styles.ratingRow}>
+                          <ThemedText style={styles.ratingLabel}>{rating}</ThemedText>
+                          <Ionicons name="star" size={14} color={colors.warningScale[400]} />
+                          <View style={styles.ratingBar}>
+                            <View style={[styles.ratingBarFill, { width: `${percentage}%` }]} />
+                          </View>
+                          <ThemedText style={styles.ratingCount}>{count}</ThemedText>
                         </View>
-                        <ThemedText style={styles.ratingCount}>{count}</ThemedText>
-                      </View>
-                    );
-                  })}
+                      );
+                    })}
+                  </View>
                 </View>
-              </View>
-            )}
+              )}
 
-            {/* Filter and Sort */}
-            <View style={styles.filtersContainer}>
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <Pressable
-                  style={[styles.filterChip, filterRating === null && styles.filterChipActive]}
-                  onPress={() => setFilterRating(null)}
-                >
-                  <ThemedText style={[styles.filterText, filterRating === null && styles.filterTextActive]}>
-                    All
-                  </ThemedText>
-                </Pressable>
-                {[5, 4, 3, 2, 1].map((rating) => (
+              {/* Filter and Sort */}
+              <View style={styles.filtersContainer}>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <Pressable
-                    key={rating}
-                    style={[styles.filterChip, filterRating === rating && styles.filterChipActive]}
-                    onPress={() => setFilterRating(rating)}
+                    style={[styles.filterChip, filterRating === null && styles.filterChipActive]}
+                    onPress={() => setFilterRating(null)}
                   >
-                    <Ionicons name="star" size={14} color={filterRating === rating ? colors.text.inverse : Colors.warning} />
-                    <ThemedText style={[styles.filterText, filterRating === rating && styles.filterTextActive]}>
-                      {rating}
+                    <ThemedText style={[styles.filterText, filterRating === null && styles.filterTextActive]}>
+                      All
                     </ThemedText>
                   </Pressable>
-                ))}
-              </ScrollView>
+                  {[5, 4, 3, 2, 1].map((rating) => (
+                    <Pressable
+                      key={rating}
+                      style={[styles.filterChip, filterRating === rating && styles.filterChipActive]}
+                      onPress={() => setFilterRating(rating)}
+                    >
+                      <Ionicons
+                        name="star"
+                        size={14}
+                        color={filterRating === rating ? colors.text.inverse : Colors.warning}
+                      />
+                      <ThemedText style={[styles.filterText, filterRating === rating && styles.filterTextActive]}>
+                        {rating}
+                      </ThemedText>
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
+            </>
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyContainer}>
+              <View style={styles.emptyIconContainer}>
+                <Ionicons name="star-outline" size={64} color={Colors.brand.purpleLight} />
+              </View>
+              <ThemedText style={styles.emptyTitle}>No reviews yet</ThemedText>
+              <ThemedText style={styles.emptySubtitle}>Be the first to share your experience!</ThemedText>
             </View>
-          </>
-        }
-        ListEmptyComponent={
-          <View style={styles.emptyContainer}>
-            <View style={styles.emptyIconContainer}>
-              <Ionicons name="star-outline" size={64} color={Colors.brand.purpleLight} />
-            </View>
-            <ThemedText style={styles.emptyTitle}>No reviews yet</ThemedText>
-            <ThemedText style={styles.emptySubtitle}>
-              Be the first to share your experience!
-            </ThemedText>
-          </View>
-        }
-        ListFooterComponent={
-          loadingMore ? (
-            <View style={{ paddingVertical: 20, alignItems: 'center' }}>
-              <ActivityIndicator size="small" color={Colors.brand.purpleLight} />
-            </View>
-          ) : null
-        }
-      />
-    </View>
+          }
+          ListFooterComponent={
+            loadingMore ? (
+              <View style={{ paddingVertical: 20, alignItems: 'center' }}>
+                <ActivityIndicator size="small" color={Colors.brand.purpleLight} />
+              </View>
+            ) : null
+          }
+        />
+      </View>
     </>
   );
 }

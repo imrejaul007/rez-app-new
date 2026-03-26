@@ -49,7 +49,7 @@ const renderContent = (content: string) => {
               <Text style={markdownStyles.listText}>{parseBoldText(item)}</Text>
             </View>
           ))}
-        </View>
+        </View>,
       );
       listItems = [];
     }
@@ -63,7 +63,11 @@ const renderContent = (content: string) => {
 
     return parts.map((part, idx) => {
       if (idx % 2 === 1) {
-        return <Text key={idx} style={markdownStyles.bold}>{part}</Text>;
+        return (
+          <Text key={idx} style={markdownStyles.bold}>
+            {part}
+          </Text>
+        );
       }
       return part;
     });
@@ -84,7 +88,9 @@ const renderContent = (content: string) => {
       flushList();
       const text = trimmedLine.substring(2);
       elements.push(
-        <Text key={index} style={markdownStyles.h1}>{text}</Text>
+        <Text key={index} style={markdownStyles.h1}>
+          {text}
+        </Text>,
       );
       return;
     }
@@ -94,7 +100,9 @@ const renderContent = (content: string) => {
       flushList();
       const text = trimmedLine.substring(3);
       elements.push(
-        <Text key={index} style={markdownStyles.h2}>{text}</Text>
+        <Text key={index} style={markdownStyles.h2}>
+          {text}
+        </Text>,
       );
       return;
     }
@@ -104,7 +112,9 @@ const renderContent = (content: string) => {
       flushList();
       const text = trimmedLine.substring(4);
       elements.push(
-        <Text key={index} style={markdownStyles.h3}>{text}</Text>
+        <Text key={index} style={markdownStyles.h3}>
+          {text}
+        </Text>,
       );
       return;
     }
@@ -128,7 +138,7 @@ const renderContent = (content: string) => {
     elements.push(
       <Text key={index} style={markdownStyles.paragraph}>
         {parseBoldText(trimmedLine)}
-      </Text>
+      </Text>,
     );
   });
 
@@ -244,12 +254,12 @@ function ArticleDetailScreen() {
   const handleLike = useCallback(() => {
     const newLikedState = !isLiked;
     setIsLiked(newLikedState);
-    setLikesCount(prev => newLikedState ? prev + 1 : Math.max(0, prev - 1));
+    setLikesCount((prev) => (newLikedState ? prev + 1 : Math.max(0, prev - 1)));
   }, [isLiked]);
 
   // Handle bookmark toggle
   const handleBookmark = useCallback(() => {
-    setIsBookmarked(prev => !prev);
+    setIsBookmarked((prev) => !prev);
   }, []);
 
   // Handle share
@@ -266,18 +276,24 @@ function ArticleDetailScreen() {
   }, [article]);
 
   // Navigate to product
-  const handleProductPress = useCallback((product: DiscoverProduct) => {
-    router.push(`/product-page?cardId=${product._id}&cardType=product&source=article`);
-  }, [router]);
+  const handleProductPress = useCallback(
+    (product: DiscoverProduct) => {
+      router.push(`/product-page?cardId=${product._id}&cardType=product&source=article`);
+    },
+    [router],
+  );
 
   // Add to cart
-  const handleAddToCart = useCallback(async (product: DiscoverProduct) => {
-    try {
-      await addItem({ productId: product._id, quantity: 1 });
-    } catch (error) {
-      // silently handle
-    }
-  }, [addItem]);
+  const handleAddToCart = useCallback(
+    async (product: DiscoverProduct) => {
+      try {
+        await addItem({ productId: product._id, quantity: 1 } as any);
+      } catch (error) {
+        // silently handle
+      }
+    },
+    [addItem],
+  );
 
   // Format count
   const formatCount = (num: number): string => {
@@ -345,7 +361,10 @@ function ArticleDetailScreen() {
         <StatusBar barStyle="dark-content" />
         <Ionicons name="alert-circle-outline" size={64} color={colors.text.tertiary} />
         <Text style={styles.errorText}>{error || 'Article not found'}</Text>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Text style={styles.backButtonText}>Go Back</Text>
         </Pressable>
       </View>
@@ -360,29 +379,20 @@ function ArticleDetailScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Pressable
           style={styles.headerButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-         
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
 
         <View style={styles.headerActions}>
-          <Pressable
-            style={styles.headerButton}
-            onPress={handleBookmark}
-           
-          >
+          <Pressable style={styles.headerButton} onPress={handleBookmark}>
             <Ionicons
-              name={isBookmarked ? "bookmark" : "bookmark-outline"}
+              name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
               size={22}
               color={isBookmarked ? Colors.gold : colors.text.primary}
             />
           </Pressable>
-          <Pressable
-            style={styles.headerButton}
-            onPress={handleShare}
-           
-          >
+          <Pressable style={styles.headerButton} onPress={handleShare}>
             <Ionicons name="share-outline" size={22} color={colors.text.primary} />
           </Pressable>
         </View>
@@ -415,10 +425,7 @@ function ArticleDetailScreen() {
               />
             )}
             {/* Gradient overlay */}
-            <LinearGradient
-              colors={['transparent', 'rgba(0,0,0,0.4)']}
-              style={styles.imageGradient}
-            />
+            <LinearGradient colors={['transparent', 'rgba(0,0,0,0.4)']} style={styles.imageGradient} />
           </View>
         )}
 
@@ -442,16 +449,10 @@ function ArticleDetailScreen() {
 
           {/* Author & Date Row */}
           <View style={styles.authorRow}>
-            {getAuthorInfo.avatar && (
-              <CachedImage source={getAuthorInfo.avatar} style={styles.authorAvatar} />
-            )}
+            {getAuthorInfo.avatar && <CachedImage source={getAuthorInfo.avatar} style={styles.authorAvatar} />}
             <View style={styles.authorInfo}>
-              {getAuthorInfo.name ? (
-                <Text style={styles.authorName}>{getAuthorInfo.name}</Text>
-              ) : null}
-              <Text style={styles.dateText}>
-                {formatDate(article.publishedAt || article.createdAt)}
-              </Text>
+              {getAuthorInfo.name ? <Text style={styles.authorName}>{getAuthorInfo.name}</Text> : null}
+              <Text style={styles.dateText}>{formatDate(article.publishedAt || article.createdAt)}</Text>
             </View>
           </View>
 
@@ -459,7 +460,7 @@ function ArticleDetailScreen() {
           <View style={styles.statsRow}>
             <Pressable style={styles.statItem} onPress={handleLike}>
               <Ionicons
-                name={isLiked ? "heart" : "heart-outline"}
+                name={isLiked ? 'heart' : 'heart-outline'}
                 size={20}
                 color={isLiked ? colors.error : colors.text.tertiary}
               />
@@ -479,9 +480,7 @@ function ArticleDetailScreen() {
           <View style={styles.divider} />
 
           {/* Article Body - Rendered Markdown */}
-          <View style={styles.articleBody}>
-            {renderedContent}
-          </View>
+          <View style={styles.articleBody}>{renderedContent}</View>
 
           {/* Tags */}
           {article.tags && article.tags.length > 0 && (
@@ -515,10 +514,9 @@ function ArticleDetailScreen() {
                     key={product._id || index}
                     style={styles.productCard}
                     onPress={() => handleProductPress(product)}
-                   
                   >
                     <CachedImage
-                      source={product.image || product.images?.[0]}
+                      source={product.image || product.images?.[0] || ''}
                       style={styles.productImage}
                       contentFit="cover"
                     />
@@ -528,27 +526,23 @@ function ArticleDetailScreen() {
                       </Text>
                       <View style={styles.productPriceRow}>
                         <Text style={styles.productPrice}>
-                          {currencySymbol}{product.salePrice || product.price}
+                          {currencySymbol}
+                          {product.salePrice || product.price}
                         </Text>
                         {product.salePrice && product.price > product.salePrice && (
                           <Text style={styles.productOriginalPrice}>
-                            {currencySymbol}{product.price}
+                            {currencySymbol}
+                            {product.price}
                           </Text>
                         )}
                       </View>
                       {product.cashbackPercent && product.cashbackPercent > 0 && (
                         <View style={styles.cashbackBadge}>
-                          <Text style={styles.cashbackText}>
-                            {product.cashbackPercent}% Cashback
-                          </Text>
+                          <Text style={styles.cashbackText}>{product.cashbackPercent}% Cashback</Text>
                         </View>
                       )}
                     </View>
-                    <Pressable
-                      style={styles.addToCartButton}
-                      onPress={() => handleAddToCart(product)}
-                     
-                    >
+                    <Pressable style={styles.addToCartButton} onPress={() => handleAddToCart(product)}>
                       <Ionicons name="add" size={20} color={colors.text.inverse} />
                     </Pressable>
                   </Pressable>

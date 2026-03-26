@@ -130,21 +130,12 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   const insets = useSafeAreaInsets();
   const [imageError, setImageError] = useState(false);
 
-  // Get active home tab from context (with fallback for when context is not available)
-  let isRezMallActive = false;
-  let isCashStoreActive = false;
-  let isPriveActive = false;
-  try {
-    const homeTabContext = useHomeTab();
-    isRezMallActive = homeTabContext.isRezMallActive;
-    isCashStoreActive = homeTabContext.isCashStoreActive;
-    isPriveActive = homeTabContext.isPriveActive;
-  } catch {
-    // Context not available, use default tabs
-    isRezMallActive = false;
-    isCashStoreActive = false;
-    isPriveActive = false;
-  }
+  // Get active home tab from Zustand store (never throws — safe to call unconditionally).
+  // Previously wrapped in try/catch which violated React rules of hooks.
+  const homeTabContext = useHomeTab();
+  const isRezMallActive = homeTabContext.isRezMallActive ?? false;
+  const isCashStoreActive = homeTabContext.isCashStoreActive ?? false;
+  const isPriveActive = homeTabContext.isPriveActive ?? false;
 
   // Hide bottom navigation on auth/onboarding pages and payment sub-flows
   const hidePages = [
@@ -337,7 +328,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
         key={tab.name}
         style={isCashStoreActive ? styles.cashStoreTab : styles.tab}
         onPress={() => handleTabPress(tab.route)}
-
+        android_ripple={{ color: 'rgba(0,0,0,0.08)', borderless: true, radius: 28 }}
         accessibilityLabel={`${tab.name} tab`}
         accessibilityRole="tab"
         accessibilityState={{ selected: tab.isActive }}
@@ -511,7 +502,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
         <Pressable
           style={styles.floatingButton}
           onPress={() => handleTabPress(centerTab.route)}
-         
+          android_ripple={{ color: 'rgba(0,0,0,0.1)', borderless: true, radius: 32 }}
           accessibilityLabel={`${centerTab.name} tab`}
           accessibilityRole="tab"
         >

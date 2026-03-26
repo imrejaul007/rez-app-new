@@ -111,65 +111,68 @@ function BillHistoryPage() {
   // Load bills from API with pagination
   // CONS-012: Each call increments a generation counter; results are discarded
   // if a newer request has been started before this one resolves.
-  const loadBills = useCallback(async (pageNum: number, append: boolean) => {
-    const myGen = ++requestGenRef.current; // capture generation at call time
+  const loadBills = useCallback(
+    async (pageNum: number, append: boolean) => {
+      const myGen = ++requestGenRef.current; // capture generation at call time
 
-    try {
-      if (pageNum === 1) setIsLoading(true);
-      else setLoadingMore(true);
+      try {
+        if (pageNum === 1) setIsLoading(true);
+        else setLoadingMore(true);
 
-      const params: any = { page: pageNum, limit: 20 };
-      if (activeFilter !== 'all') params.status = activeFilter;
+        const params: any = { page: pageNum, limit: 20 };
+        if (activeFilter !== 'all') params.status = activeFilter;
 
-      const response = await billUploadService.getBillHistory(params);
+        const response = await billUploadService.getBillHistory(params);
 
-      // Discard response if a newer request was started (race condition guard)
-      if (myGen !== requestGenRef.current) return;
-      if (!isMounted()) return;
+        // Discard response if a newer request was started (race condition guard)
+        if (myGen !== requestGenRef.current) return;
+        if (!isMounted()) return;
 
-      if (response.success && response.data) {
-        const data = response.data as any;
-        const newBills = Array.isArray(data) ? data : (data.bills || []);
-        if (append) {
-          setBills(prev => [...prev, ...newBills]);
-        } else {
-          setBills(newBills);
+        if (response.success && response.data) {
+          const data = response.data as any;
+          const newBills = Array.isArray(data) ? data : data.bills || [];
+          if (append) {
+            setBills((prev) => [...prev, ...newBills]);
+          } else {
+            setBills(newBills);
+          }
+          setPage(pageNum);
+          const pagination = data?.pagination;
+          setHasMore(pagination ? pagination.page < pagination.pages : newBills.length >= 20);
+
+          // Update stats from response if available, or compute from first page
+          if (data?.stats) {
+            setStats(data.stats);
+          } else if (pageNum === 1 && activeFilter === 'all') {
+            const total = pagination?.total || newBills.length;
+            const pending = newBills.filter(
+              (b: Bill) => b.verificationStatus === 'pending' || b.verificationStatus === 'processing',
+            ).length;
+            const totalCashback = newBills
+              .filter((b: Bill) => b.verificationStatus === 'approved' && b.cashbackAmount)
+              .reduce((sum: number, b: Bill) => sum + (b.cashbackAmount || 0), 0);
+            setStats({ total, pending, totalCashback });
+          }
         }
-        setPage(pageNum);
-        const pagination = data?.pagination;
-        setHasMore(pagination ? (pagination.page < pagination.pages) : newBills.length >= 20);
-
-        // Update stats from response if available, or compute from first page
-        if (data?.stats) {
-          setStats(data.stats);
-        } else if (pageNum === 1 && activeFilter === 'all') {
-          const total = pagination?.total || newBills.length;
-          const pending = newBills.filter((b: Bill) =>
-            b.verificationStatus === 'pending' || b.verificationStatus === 'processing'
-          ).length;
-          const totalCashback = newBills
-            .filter((b: Bill) => b.verificationStatus === 'approved' && b.cashbackAmount)
-            .reduce((sum: number, b: Bill) => sum + (b.cashbackAmount || 0), 0);
-          setStats({ total, pending, totalCashback });
+      } catch (error) {
+        // Only log if this response is still relevant
+        if (myGen === requestGenRef.current && isMounted()) {
+          // Non-critical — user can pull-to-refresh
+          errorReporter.captureError(
+            error instanceof Error ? error : new Error('Failed to load bill history'),
+            { context: 'BillHistoryPage.loadBills', metadata: { page: pageNum, filter: activeFilter } },
+            'warning',
+          );
         }
+      } finally {
+        if (myGen !== requestGenRef.current || !isMounted()) return;
+        setIsLoading(false);
+        setIsRefreshing(false);
+        setLoadingMore(false);
       }
-    } catch (error) {
-      // Only log if this response is still relevant
-      if (myGen === requestGenRef.current && isMounted()) {
-        // Non-critical — user can pull-to-refresh
-        errorReporter.captureError(
-          error instanceof Error ? error : new Error('Failed to load bill history'),
-          { context: 'BillHistoryPage.loadBills', page: pageNum, filter: activeFilter },
-          'warning'
-        );
-      }
-    } finally {
-      if (myGen !== requestGenRef.current || !isMounted()) return;
-      setIsLoading(false);
-      setIsRefreshing(false);
-      setLoadingMore(false);
-    }
-  }, [activeFilter, isMounted]);
+    },
+    [activeFilter, isMounted],
+  );
 
   // Load bills on mount and when filter changes
   useEffect(() => {
@@ -249,7 +252,7 @@ function BillHistoryPage() {
         setShowDetailModal(false);
         router?.push && router.push('/bill-upload');
       },
-      'Upload New Photo'
+      'Upload New Photo',
     );
   };
 
@@ -262,18 +265,14 @@ function BillHistoryPage() {
         {(['all', 'pending', 'approved', 'rejected'] as FilterStatus[]).map((filter) => (
           <Pressable
             key={filter}
-            style={[
-              styles.filterButton,
-              activeFilter === filter && styles.filterButtonActive,
-            ]}
-            onPress={() => { setPage(1); setHasMore(true); setActiveFilter(filter); }}
+            style={[styles.filterButton, activeFilter === filter && styles.filterButtonActive]}
+            onPress={() => {
+              setPage(1);
+              setHasMore(true);
+              setActiveFilter(filter);
+            }}
           >
-            <Text
-              style={[
-                styles.filterButtonText,
-                activeFilter === filter && styles.filterButtonTextActive,
-              ]}
-            >
+            <Text style={[styles.filterButtonText, activeFilter === filter && styles.filterButtonTextActive]}>
               {filter.charAt(0).toUpperCase() + filter.slice(1)}
             </Text>
           </Pressable>
@@ -283,88 +282,74 @@ function BillHistoryPage() {
   );
 
   // Render bill card
-  const renderBillCard = useCallback(({ item: bill }: { item: Bill }) => (
-    <Pressable
-      style={styles.billCard}
-      onPress={() => viewBillDetail(bill)}
-    >
-      <CachedImage
-        source={bill.billImage.thumbnailUrl || bill.billImage.url}
-        style={styles.billThumbnail}
-      />
+  const renderBillCard = useCallback(
+    ({ item: bill }: { item: Bill }) => (
+      <Pressable style={styles.billCard} onPress={() => viewBillDetail(bill)}>
+        <CachedImage source={bill.billImage.thumbnailUrl || bill.billImage.url} style={styles.billThumbnail} />
 
-      <View style={styles.billInfo}>
-        <View style={styles.billHeader}>
-          <Text style={styles.merchantName}>{bill.merchant.name}</Text>
-          <View
-            style={[
-              styles.statusBadge,
-              { backgroundColor: getStatusColor(bill.verificationStatus) + '20' },
-            ]}
-          >
-            <Ionicons
-              name={getStatusIcon(bill.verificationStatus)}
-              size={14}
-              color={getStatusColor(bill.verificationStatus)}
-            />
-            <Text
-              style={[
-                styles.statusText,
-                { color: getStatusColor(bill.verificationStatus) },
-              ]}
-            >
-              {bill.verificationStatus.charAt(0).toUpperCase() + bill.verificationStatus.slice(1)}
-            </Text>
+        <View style={styles.billInfo}>
+          <View style={styles.billHeader}>
+            <Text style={styles.merchantName}>{bill.merchant.name}</Text>
+            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(bill.verificationStatus) + '20' }]}>
+              <Ionicons
+                name={getStatusIcon(bill.verificationStatus)}
+                size={14}
+                color={getStatusColor(bill.verificationStatus)}
+              />
+              <Text style={[styles.statusText, { color: getStatusColor(bill.verificationStatus) }]}>
+                {bill.verificationStatus.charAt(0).toUpperCase() + bill.verificationStatus.slice(1)}
+              </Text>
+            </View>
           </View>
-        </View>
 
-        <View style={styles.billDetails}>
-          <View style={styles.billDetailRow}>
-            <Text style={styles.billDetailLabel}>Amount:</Text>
-            <Text style={styles.billDetailValue}>{formatCurrency(bill.amount)}</Text>
-          </View>
-          <View style={styles.billDetailRow}>
-            <Text style={styles.billDetailLabel}>Date:</Text>
-            <Text style={styles.billDetailValue}>{formatDate(bill.billDate)}</Text>
-          </View>
-          {bill.billNumber && (
+          <View style={styles.billDetails}>
             <View style={styles.billDetailRow}>
-              <Text style={styles.billDetailLabel}>Bill #:</Text>
-              <Text style={styles.billDetailValue}>{bill.billNumber}</Text>
+              <Text style={styles.billDetailLabel}>Amount:</Text>
+              <Text style={styles.billDetailValue}>{formatCurrency(bill.amount)}</Text>
+            </View>
+            <View style={styles.billDetailRow}>
+              <Text style={styles.billDetailLabel}>Date:</Text>
+              <Text style={styles.billDetailValue}>{formatDate(bill.billDate)}</Text>
+            </View>
+            {bill.billNumber && (
+              <View style={styles.billDetailRow}>
+                <Text style={styles.billDetailLabel}>Bill #:</Text>
+                <Text style={styles.billDetailValue}>{bill.billNumber}</Text>
+              </View>
+            )}
+          </View>
+
+          {bill.verificationStatus === 'approved' && bill.cashbackAmount && (
+            <View style={styles.cashbackContainer}>
+              <Ionicons name="gift" size={16} color={colors.successScale[400]} />
+              <Text style={styles.cashbackText}>Cashback: {formatCurrency(bill.cashbackAmount)}</Text>
+              {bill.cashbackStatus === 'credited' && (
+                <View style={styles.creditedBadge}>
+                  <Text style={styles.creditedText}>Credited</Text>
+                </View>
+              )}
+            </View>
+          )}
+
+          {bill.verificationStatus === 'rejected' && bill.rejectionReason && (
+            <View style={styles.rejectionContainer}>
+              <Text style={styles.rejectionReason}>{bill.rejectionReason}</Text>
+              {bill.resubmissionCount !== undefined && bill.resubmissionCount > 0 && (
+                <Text style={styles.resubmissionCounter}>
+                  Resubmitted: {bill.resubmissionCount}/3 times
+                  {bill.resubmissionCount < 3 &&
+                    ` • ${3 - bill.resubmissionCount} attempt${3 - bill.resubmissionCount === 1 ? '' : 's'} remaining`}
+                </Text>
+              )}
             </View>
           )}
         </View>
 
-        {bill.verificationStatus === 'approved' && bill.cashbackAmount && (
-          <View style={styles.cashbackContainer}>
-            <Ionicons name="gift" size={16} color={colors.successScale[400]} />
-            <Text style={styles.cashbackText}>
-              Cashback: {formatCurrency(bill.cashbackAmount)}
-            </Text>
-            {bill.cashbackStatus === 'credited' && (
-              <View style={styles.creditedBadge}>
-                <Text style={styles.creditedText}>Credited</Text>
-              </View>
-            )}
-          </View>
-        )}
-
-        {bill.verificationStatus === 'rejected' && bill.rejectionReason && (
-          <View style={styles.rejectionContainer}>
-            <Text style={styles.rejectionReason}>{bill.rejectionReason}</Text>
-            {bill.resubmissionCount !== undefined && bill.resubmissionCount > 0 && (
-              <Text style={styles.resubmissionCounter}>
-                Resubmitted: {bill.resubmissionCount}/3 times
-                {bill.resubmissionCount < 3 && ` • ${3 - bill.resubmissionCount} attempt${3 - bill.resubmissionCount === 1 ? '' : 's'} remaining`}
-              </Text>
-            )}
-          </View>
-        )}
-      </View>
-
-      <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-    </Pressable>
-  ), []);
+        <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+      </Pressable>
+    ),
+    [],
+  );
 
   // Render list footer (loading more indicator)
   const renderListFooter = useCallback(() => {
@@ -398,11 +383,7 @@ function BillHistoryPage() {
 
             <ScrollView style={styles.modalBody}>
               {/* Bill Image */}
-              <CachedImage
-                source={selectedBill.billImage.url}
-                style={styles.fullBillImage}
-                contentFit="contain"
-              />
+              <CachedImage source={selectedBill.billImage.url} style={styles.fullBillImage} contentFit="contain" />
 
               {/* Status */}
               <View style={styles.detailSection}>
@@ -418,14 +399,8 @@ function BillHistoryPage() {
                     size={24}
                     color={getStatusColor(selectedBill.verificationStatus)}
                   />
-                  <Text
-                    style={[
-                      styles.statusTextLarge,
-                      { color: getStatusColor(selectedBill.verificationStatus) },
-                    ]}
-                  >
-                    {selectedBill.verificationStatus.charAt(0).toUpperCase() +
-                     selectedBill.verificationStatus.slice(1)}
+                  <Text style={[styles.statusTextLarge, { color: getStatusColor(selectedBill.verificationStatus) }]}>
+                    {selectedBill.verificationStatus.charAt(0).toUpperCase() + selectedBill.verificationStatus.slice(1)}
                   </Text>
                 </View>
               </View>
@@ -463,9 +438,7 @@ function BillHistoryPage() {
                   <Text style={styles.detailSectionTitle}>Cashback</Text>
                   <View style={styles.cashbackDetailContainer}>
                     <Ionicons name="gift" size={32} color={colors.successScale[400]} />
-                    <Text style={styles.cashbackDetailAmount}>
-                      {formatCurrency(selectedBill.cashbackAmount)}
-                    </Text>
+                    <Text style={styles.cashbackDetailAmount}>{formatCurrency(selectedBill.cashbackAmount)}</Text>
                     <Text style={styles.cashbackDetailStatus}>
                       {selectedBill.cashbackStatus === 'credited' ? 'Credited to Wallet' : 'Processing'}
                     </Text>
@@ -479,9 +452,7 @@ function BillHistoryPage() {
                   <Text style={styles.detailSectionTitle}>Rejection Reason</Text>
                   <View style={styles.rejectionDetailContainer}>
                     <Ionicons name="alert-circle" size={24} color={colors.error} />
-                    <Text style={styles.rejectionDetailText}>
-                      {selectedBill.rejectionReason}
-                    </Text>
+                    <Text style={styles.rejectionDetailText}>{selectedBill.rejectionReason}</Text>
                   </View>
                   {selectedBill.resubmissionCount !== undefined && selectedBill.resubmissionCount > 0 && (
                     <View style={styles.resubmissionDetailContainer}>
@@ -490,12 +461,11 @@ function BillHistoryPage() {
                       </Text>
                       {selectedBill.resubmissionCount < 3 ? (
                         <Text style={styles.resubmissionDetailSubtext}>
-                          You have {3 - selectedBill.resubmissionCount} attempt{3 - selectedBill.resubmissionCount === 1 ? '' : 's'} remaining
+                          You have {3 - selectedBill.resubmissionCount} attempt
+                          {3 - selectedBill.resubmissionCount === 1 ? '' : 's'} remaining
                         </Text>
                       ) : (
-                        <Text style={styles.resubmissionLimitText}>
-                          Maximum resubmission limit reached
-                        </Text>
+                        <Text style={styles.resubmissionLimitText}>Maximum resubmission limit reached</Text>
                       )}
                     </View>
                   )}
@@ -515,9 +485,7 @@ function BillHistoryPage() {
                   {selectedBill.extractedData.amount && (
                     <View style={styles.detailRow}>
                       <Text style={styles.detailLabel}>Detected Amount:</Text>
-                      <Text style={styles.detailValue}>
-                        {formatCurrency(selectedBill.extractedData.amount)}
-                      </Text>
+                      <Text style={styles.detailValue}>{formatCurrency(selectedBill.extractedData.amount)}</Text>
                     </View>
                   )}
                   {selectedBill.extractedData.date && (
@@ -531,10 +499,7 @@ function BillHistoryPage() {
 
               {/* Actions */}
               {selectedBill.verificationStatus === 'rejected' && (
-                <Pressable
-                  style={styles.resubmitButton}
-                  onPress={() => resubmitBill(selectedBill._id)}
-                >
+                <Pressable style={styles.resubmitButton} onPress={() => resubmitBill(selectedBill._id)}>
                   <Ionicons name="refresh" size={20} color={colors.text.inverse} />
                   <Text style={styles.resubmitButtonText}>Resubmit Bill</Text>
                 </Pressable>
@@ -551,13 +516,8 @@ function BillHistoryPage() {
     <View style={styles.emptyState}>
       <Ionicons name="receipt-outline" size={80} color={colors.border.default} />
       <Text style={styles.emptyStateTitle}>No Bills Yet</Text>
-      <Text style={styles.emptyStateText}>
-        Upload your bills to start earning cashback on offline purchases
-      </Text>
-      <Pressable
-        style={styles.uploadButton}
-        onPress={() => router?.push && router.push('/bill-upload')}
-      >
+      <Text style={styles.emptyStateText}>Upload your bills to start earning cashback on offline purchases</Text>
+      <Pressable style={styles.uploadButton} onPress={() => router?.push && router.push('/bill-upload')}>
         <Ionicons name="add" size={20} color={colors.text.inverse} />
         <Text style={styles.uploadButtonText}>Upload Bill</Text>
       </Pressable>
@@ -617,13 +577,7 @@ function BillHistoryPage() {
           renderItem={renderBillCard}
           keyExtractor={(item) => item._id}
           contentContainerStyle={{ paddingBottom: 120 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={isRefreshing}
-              onRefresh={onRefresh}
-              tintColor="#FF6B35"
-            />
-          }
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor="#FF6B35" />}
           onEndReached={loadMore}
           onEndReachedThreshold={0.3}
           estimatedItemSize={100}

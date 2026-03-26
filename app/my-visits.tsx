@@ -1,15 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  RefreshControl,
-  ActivityIndicator,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { useRouter, Stack, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -64,9 +56,13 @@ function MyVisitsPage() {
           'Please sign in to view your visits',
           [
             { text: 'Go to Login', onPress: () => router.push('/sign-in') },
-            { text: 'Cancel', style: 'cancel', onPress: () => router.canGoBack() ? router.back() : router.replace('/(tabs)') }
+            {
+              text: 'Cancel',
+              style: 'cancel',
+              onPress: () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
+            },
           ],
-          'warning'
+          'warning',
         );
         return;
       }
@@ -77,7 +73,7 @@ function MyVisitsPage() {
         return;
       }
       loadVisits();
-    }, [isAuthenticated, isLoading])
+    }, [isAuthenticated, isLoading]),
   );
 
   const loadVisits = async (force = false) => {
@@ -100,7 +96,7 @@ function MyVisitsPage() {
           store: {
             id: visit.storeId?._id || visit.storeId?.id || visit.storeId,
             name: visit.storeId?.name || 'Unknown Store',
-            logo: visit.storeId?.images?.[0] || visit.storeId?.logo
+            logo: visit.storeId?.images?.[0] || visit.storeId?.logo,
           },
           status: visit.status,
           visitType: visit.visitType || (visit.visitTime ? 'scheduled' : 'queue'),
@@ -151,11 +147,11 @@ function MyVisitsPage() {
             } catch (error) {
               showAlert('Error', 'Unable to cancel visit. Please try again.', undefined, 'error');
             }
-          }
+          },
         },
-        { text: 'No', style: 'cancel' }
+        { text: 'No', style: 'cancel' },
       ],
-      'warning'
+      'warning',
     );
   };
 
@@ -194,7 +190,7 @@ function MyVisitsPage() {
     return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -213,8 +209,8 @@ function MyVisitsPage() {
     }
   };
 
-  const upcomingVisits = visits.filter(v => v.status === 'pending' || v.status === 'checked_in');
-  const pastVisits = visits.filter(v => v.status === 'completed' || v.status === 'cancelled');
+  const upcomingVisits = visits.filter((v) => v.status === 'pending' || v.status === 'checked_in');
+  const pastVisits = visits.filter((v) => v.status === 'completed' || v.status === 'cancelled');
   const displayedVisits = activeTab === 'upcoming' ? upcomingVisits : pastVisits;
 
   if (loading) {
@@ -229,173 +225,194 @@ function MyVisitsPage() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.container}>
-      {/* Header */}
-      <LinearGradient colors={[colors.brand.green, colors.brand.teal]} style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </Pressable>
-        <Text style={styles.headerTitle}>My Visits</Text>
-        <Pressable onPress={loadVisits} style={styles.refreshButton}>
-          <Ionicons name="refresh" size={22} color="white" />
-        </Pressable>
-      </LinearGradient>
-
-      {/* Tabs */}
-      <View style={styles.tabsContainer}>
-        <Pressable
-          style={[styles.tab, activeTab === 'upcoming' && styles.activeTab]}
-          onPress={() => setActiveTab('upcoming')}
-        >
-          <Text style={[styles.tabText, activeTab === 'upcoming' && styles.activeTabText]}>
-            Upcoming ({upcomingVisits.length})
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[styles.tab, activeTab === 'past' && styles.activeTab]}
-          onPress={() => setActiveTab('past')}
-        >
-          <Text style={[styles.tabText, activeTab === 'past' && styles.activeTabText]}>
-            Past ({pastVisits.length})
-          </Text>
-        </Pressable>
-      </View>
-
-      {/* Error State */}
-      {error && !loading && (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, paddingTop: 40 }}>
-          <Ionicons name="cloud-offline-outline" size={64} color={colors.error} />
-          <Text style={{ fontSize: 18, fontWeight: '700', color: colors.deepNavy, marginTop: 16, textAlign: 'center' }}>Something went wrong</Text>
-          <Text style={{ fontSize: 14, color: colors.midGray, marginTop: 8, textAlign: 'center' }}>{error}</Text>
+      <SafeAreaView style={styles.container} edges={['top']}>
+        {/* Header */}
+        <LinearGradient colors={[colors.brand.green, colors.brand.teal]} style={styles.header}>
           <Pressable
-            onPress={() => { setError(null); loadVisits(); }}
-            style={{ marginTop: 20, backgroundColor: '#667eea', paddingHorizontal: 24, paddingVertical: 12, borderRadius: 12 }}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
           >
-            <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>Try Again</Text>
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </Pressable>
+          <Text style={styles.headerTitle}>My Visits</Text>
+          <Pressable onPress={loadVisits} style={styles.refreshButton}>
+            <Ionicons name="refresh" size={22} color="white" />
+          </Pressable>
+        </LinearGradient>
+
+        {/* Tabs */}
+        <View style={styles.tabsContainer}>
+          <Pressable
+            style={[styles.tab, activeTab === 'upcoming' && styles.activeTab]}
+            onPress={() => setActiveTab('upcoming')}
+          >
+            <Text style={[styles.tabText, activeTab === 'upcoming' && styles.activeTabText]}>
+              Upcoming ({upcomingVisits.length})
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[styles.tab, activeTab === 'past' && styles.activeTab]}
+            onPress={() => setActiveTab('past')}
+          >
+            <Text style={[styles.tabText, activeTab === 'past' && styles.activeTabText]}>
+              Past ({pastVisits.length})
+            </Text>
           </Pressable>
         </View>
-      )}
 
-      {/* Visits List */}
-      {!error && (
-      <ScrollView
-        style={styles.scrollView}
-        contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            colors={[colors.brand.green]}
-            tintColor={colors.brand.green}
-          />
-        }
-      >
-        {displayedVisits.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Ionicons name="calendar-outline" size={80} color={colors.neutral[200]} />
-            <Text style={styles.emptyTitle}>
-              {activeTab === 'upcoming' ? 'No Upcoming Visits' : 'No Past Visits'}
+        {/* Error State */}
+        {error && !loading && (
+          <View
+            style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 20, paddingTop: 40 }}
+          >
+            <Ionicons name="cloud-offline-outline" size={64} color={colors.error} />
+            <Text
+              style={{ fontSize: 18, fontWeight: '700', color: colors.deepNavy, marginTop: 16, textAlign: 'center' }}
+            >
+              Something went wrong
             </Text>
-            <Text style={styles.emptyText}>
-              {activeTab === 'upcoming'
-                ? 'You haven\'t scheduled any store visits yet'
-                : 'Your visit history will appear here'}
-            </Text>
-            <Pressable style={styles.browseButton} onPress={() => router.push('/(tabs)')}>
-              <Ionicons name="search" size={20} color={colors.background.primary} />
-              <Text style={styles.browseButtonText}>Browse Stores</Text>
+            <Text style={{ fontSize: 14, color: colors.midGray, marginTop: 8, textAlign: 'center' }}>{error}</Text>
+            <Pressable
+              onPress={() => {
+                setError(null);
+                loadVisits();
+              }}
+              style={{
+                marginTop: 20,
+                backgroundColor: '#667eea',
+                paddingHorizontal: 24,
+                paddingVertical: 12,
+                borderRadius: 12,
+              }}
+            >
+              <Text style={{ color: 'white', fontWeight: '600', fontSize: 14 }}>Try Again</Text>
             </Pressable>
           </View>
-        ) : (
-          displayedVisits.map((visit) => (
-            <Pressable key={visit.id} onPress={() => router.push(`/store-visit?storeId=${visit.store.id}`)}>
-              <View style={styles.visitCard}>
-                {/* Store Info */}
-                <View style={styles.storeHeader}>
-                  <View style={styles.storeIconContainer}>
-                    <Ionicons name="storefront" size={24} color={colors.brand.green} />
-                  </View>
-                  <View style={styles.storeInfo}>
-                    <Text style={styles.storeName}>{visit.store.name}</Text>
-                    <Text style={styles.visitNumber}>#{visit.visitNumber}</Text>
-                  </View>
-                  <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(visit.status)}20` }]}>
-                    <Ionicons name={getStatusIcon(visit.status)} size={16} color={getStatusColor(visit.status)} />
-                    <Text style={[styles.statusText, { color: getStatusColor(visit.status) }]}>
-                      {getStatusLabel(visit.status)}
-                    </Text>
-                  </View>
-                </View>
+        )}
 
-                {/* Visit Type Indicator */}
-                <View style={styles.visitTypeBadgeRow}>
-                  <View style={[
-                    styles.visitTypeBadge,
-                    { backgroundColor: visit.visitType === 'scheduled' ? colors.indigoMist : colors.tint.orange }
-                  ]}>
-                    <Ionicons
-                      name={visit.visitType === 'scheduled' ? 'calendar' : 'people'}
-                      size={14}
-                      color={visit.visitType === 'scheduled' ? '#667eea' : colors.warningScale[400]}
-                    />
-                    <Text style={[
-                      styles.visitTypeBadgeText,
-                      { color: visit.visitType === 'scheduled' ? '#667eea' : colors.warningScale[400] }
-                    ]}>
-                      {visit.visitType === 'scheduled' ? 'Scheduled Visit' : 'Queue Visit'}
-                    </Text>
-                    {visit.visitType === 'queue' && visit.queueNumber != null && (
-                      <View style={styles.queueNumberBadge}>
-                        <Text style={styles.queueNumberText}>#{visit.queueNumber}</Text>
+        {/* Visits List */}
+        {!error && (
+          <ScrollView
+            style={styles.scrollView}
+            contentContainerStyle={styles.scrollContent}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={[colors.brand.green]}
+                tintColor={colors.brand.green}
+              />
+            }
+          >
+            {displayedVisits.length === 0 ? (
+              <View style={styles.emptyContainer}>
+                <Ionicons name="calendar-outline" size={80} color={colors.neutral[200]} />
+                <Text style={styles.emptyTitle}>
+                  {activeTab === 'upcoming' ? 'No Upcoming Visits' : 'No Past Visits'}
+                </Text>
+                <Text style={styles.emptyText}>
+                  {activeTab === 'upcoming'
+                    ? "You haven't scheduled any store visits yet"
+                    : 'Your visit history will appear here'}
+                </Text>
+                <Pressable style={styles.browseButton} onPress={() => router.push('/(tabs)')}>
+                  <Ionicons name="search" size={20} color={colors.background.primary} />
+                  <Text style={styles.browseButtonText}>Browse Stores</Text>
+                </Pressable>
+              </View>
+            ) : (
+              displayedVisits.map((visit) => (
+                <Pressable key={visit.id} onPress={() => router.push(`/store-visit?storeId=${visit.store.id}`)}>
+                  <View style={styles.visitCard}>
+                    {/* Store Info */}
+                    <View style={styles.storeHeader}>
+                      <View style={styles.storeIconContainer}>
+                        <Ionicons name="storefront" size={24} color={colors.brand.green} />
+                      </View>
+                      <View style={styles.storeInfo}>
+                        <Text style={styles.storeName}>{visit.store.name}</Text>
+                        <Text style={styles.visitNumber}>#{visit.visitNumber}</Text>
+                      </View>
+                      <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(visit.status)}20` }]}>
+                        <Ionicons name={getStatusIcon(visit.status)} size={16} color={getStatusColor(visit.status)} />
+                        <Text style={[styles.statusText, { color: getStatusColor(visit.status) }]}>
+                          {getStatusLabel(visit.status)}
+                        </Text>
+                      </View>
+                    </View>
+
+                    {/* Visit Type Indicator */}
+                    <View style={styles.visitTypeBadgeRow}>
+                      <View
+                        style={[
+                          styles.visitTypeBadge,
+                          { backgroundColor: visit.visitType === 'scheduled' ? colors.indigoMist : colors.tint.orange },
+                        ]}
+                      >
+                        <Ionicons
+                          name={visit.visitType === 'scheduled' ? 'calendar' : 'people'}
+                          size={14}
+                          color={visit.visitType === 'scheduled' ? '#667eea' : colors.warningScale[400]}
+                        />
+                        <Text
+                          style={[
+                            styles.visitTypeBadgeText,
+                            { color: visit.visitType === 'scheduled' ? '#667eea' : colors.warningScale[400] },
+                          ]}
+                        >
+                          {visit.visitType === 'scheduled' ? 'Scheduled Visit' : 'Queue Visit'}
+                        </Text>
+                        {visit.visitType === 'queue' && visit.queueNumber != null && (
+                          <View style={styles.queueNumberBadge}>
+                            <Text style={styles.queueNumberText}>#{visit.queueNumber}</Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+
+                    {/* Visit Details */}
+                    <View style={styles.detailsContainer}>
+                      <View style={styles.detailRow}>
+                        <Ionicons name="calendar-outline" size={18} color={colors.neutral[500]} />
+                        <Text style={styles.detailText}>{formatDate(visit.visitDate)}</Text>
+                      </View>
+                      {visit.visitTime && (
+                        <View style={styles.detailRow}>
+                          <Ionicons name="time-outline" size={18} color={colors.neutral[500]} />
+                          <Text style={styles.detailText}>{visit.visitTime}</Text>
+                        </View>
+                      )}
+                    </View>
+
+                    {/* Actions */}
+                    {(visit.status === 'pending' || visit.status === 'checked_in') && (
+                      <View style={styles.actionsContainer}>
+                        <View style={styles.actionsRow}>
+                          {visit.status === 'pending' && (
+                            <Pressable
+                              style={styles.rescheduleButton}
+                              onPress={() =>
+                                router.push(`/store-visit?storeId=${visit.store.id}&rescheduleVisitId=${visit.id}`)
+                              }
+                            >
+                              <Ionicons name="calendar-outline" size={18} color="#667eea" />
+                              <Text style={styles.rescheduleButtonText}>Reschedule</Text>
+                            </Pressable>
+                          )}
+                          <Pressable style={styles.cancelButton} onPress={() => handleCancelVisit(visit.id)}>
+                            <Ionicons name="close-circle-outline" size={18} color={colors.error} />
+                            <Text style={styles.cancelButtonText}>Cancel Visit</Text>
+                          </Pressable>
+                        </View>
                       </View>
                     )}
                   </View>
-                </View>
-
-                {/* Visit Details */}
-                <View style={styles.detailsContainer}>
-                  <View style={styles.detailRow}>
-                    <Ionicons name="calendar-outline" size={18} color={colors.neutral[500]} />
-                    <Text style={styles.detailText}>{formatDate(visit.visitDate)}</Text>
-                  </View>
-                  {visit.visitTime && (
-                    <View style={styles.detailRow}>
-                      <Ionicons name="time-outline" size={18} color={colors.neutral[500]} />
-                      <Text style={styles.detailText}>{visit.visitTime}</Text>
-                    </View>
-                  )}
-                </View>
-
-                {/* Actions */}
-                {(visit.status === 'pending' || visit.status === 'checked_in') && (
-                  <View style={styles.actionsContainer}>
-                    <View style={styles.actionsRow}>
-                      {visit.status === 'pending' && (
-                        <Pressable
-                          style={styles.rescheduleButton}
-                          onPress={() => router.push(`/store-visit?storeId=${visit.store.id}&rescheduleVisitId=${visit.id}`)}
-                        >
-                          <Ionicons name="calendar-outline" size={18} color="#667eea" />
-                          <Text style={styles.rescheduleButtonText}>Reschedule</Text>
-                        </Pressable>
-                      )}
-                      <Pressable
-                        style={styles.cancelButton}
-                        onPress={() => handleCancelVisit(visit.id)}
-                      >
-                        <Ionicons name="close-circle-outline" size={18} color={colors.error} />
-                        <Text style={styles.cancelButtonText}>Cancel Visit</Text>
-                      </Pressable>
-                    </View>
-                  </View>
-                )}
-              </View>
-            </Pressable>
-          ))
+                </Pressable>
+              ))
+            )}
+          </ScrollView>
         )}
-      </ScrollView>
-      )}
-    </View>
+      </SafeAreaView>
     </>
   );
 }
@@ -408,7 +425,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 50 : 25,
+    paddingTop: 12,
     paddingBottom: 20,
     paddingHorizontal: 16,
   },

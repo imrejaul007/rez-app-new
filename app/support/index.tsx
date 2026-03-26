@@ -17,7 +17,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 function SupportHubPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeTickets, setActiveTickets] = useState<SupportTicket[]>([]);
   const [popularFAQs, setPopularFAQs] = useState<FAQ[]>([]);
@@ -154,11 +154,7 @@ function SupportHubPage() {
 
   const renderQuickAction = (icon: string, label: string, color: string, action: string) => {
     return (
-      <Pressable
-        key={action}
-        style={styles.quickActionCard}
-        onPress={() => handleQuickAction(action)}
-      >
+      <Pressable key={action} style={styles.quickActionCard} onPress={() => handleQuickAction(action)}>
         <View style={[styles.quickActionIcon, { backgroundColor: `${color}20` }]}>
           <Ionicons name={icon as any} size={28} color={color} />
         </View>
@@ -172,11 +168,7 @@ function SupportHubPage() {
     const lastMessage = ticket.messages[ticket.messages.length - 1];
 
     return (
-      <Pressable
-        key={ticket._id}
-        style={styles.ticketCard}
-        onPress={() => handleViewTicket(ticket)}
-      >
+      <Pressable key={ticket._id} style={styles.ticketCard} onPress={() => handleViewTicket(ticket)}>
         <View style={styles.ticketHeader}>
           <View style={styles.ticketTitleRow}>
             <ThemedText style={styles.ticketNumber}>{ticket.ticketNumber}</ThemedText>
@@ -212,11 +204,7 @@ function SupportHubPage() {
 
   const renderFAQCard = (faq: FAQ) => {
     return (
-      <Pressable
-        key={faq._id}
-        style={styles.faqCard}
-        onPress={() => handleViewFAQ(faq)}
-      >
+      <Pressable key={faq._id} style={styles.faqCard} onPress={() => handleViewFAQ(faq)}>
         <View style={styles.faqIcon}>
           <Ionicons name="help-circle" size={24} color={Colors.secondary[500]} />
         </View>
@@ -243,157 +231,148 @@ function SupportHubPage() {
 
         {/* Header */}
         <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
-        <View style={styles.headerContent}>
-          <Pressable onPress={handleBackPress} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
+          <View style={styles.headerContent}>
+            <Pressable onPress={handleBackPress} style={styles.backButton}>
+              <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
+            </Pressable>
+            <ThemedText style={styles.headerTitle}>Support</ThemedText>
+            <View style={styles.placeholder} />
+          </View>
+
+          <ThemedText style={styles.headerSubtitle}>How can we help you today?</ThemedText>
+        </LinearGradient>
+
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={{ paddingBottom: 120 }}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+        >
+          {/* Quick Actions */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Quick Actions</ThemedText>
+            <View style={styles.quickActionsGrid}>
+              {renderQuickAction('cube-outline', 'Order Issue', Colors.error, 'order-issue')}
+              {renderQuickAction('location-outline', 'Track Order', Colors.secondary[500], 'track-order')}
+              {renderQuickAction('card-outline', 'Payment Help', Colors.primary[500], 'payment-help')}
+              {renderQuickAction('person-outline', 'Account Help', Colors.warning, 'account-help')}
+            </View>
+          </View>
+
+          {/* Get Help */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Get Help</ThemedText>
+            <View style={styles.helpOptionsGrid}>
+              <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/call')}>
+                <View style={[styles.helpOptionIcon, { backgroundColor: `${Colors.primary[500]}20` }]}>
+                  <Ionicons name="call" size={24} color={Colors.primary[500]} />
+                </View>
+                <ThemedText style={styles.helpOptionLabel}>Call Support</ThemedText>
+                <ThemedText style={styles.helpOptionDesc}>Talk to us directly</ThemedText>
+              </Pressable>
+              <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/feedback')}>
+                <View style={[styles.helpOptionIcon, { backgroundColor: `${Colors.secondary[500]}20` }]}>
+                  <Ionicons name="chatbox" size={24} color={Colors.secondary[500]} />
+                </View>
+                <ThemedText style={styles.helpOptionLabel}>Feedback</ThemedText>
+                <ThemedText style={styles.helpOptionDesc}>Share your thoughts</ThemedText>
+              </Pressable>
+              <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/report-fraud')}>
+                <View style={[styles.helpOptionIcon, { backgroundColor: `${Colors.error}20` }]}>
+                  <Ionicons name="warning" size={24} color={Colors.error} />
+                </View>
+                <ThemedText style={styles.helpOptionLabel}>Report Fraud</ThemedText>
+                <ThemedText style={styles.helpOptionDesc}>Suspicious activity</ThemedText>
+              </Pressable>
+            </View>
+          </View>
+
+          {/* Active Tickets Summary */}
+          {summary.total > 0 && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <ThemedText style={styles.sectionTitle}>Your Tickets</ThemedText>
+                <Pressable onPress={handleViewAllTickets}>
+                  <ThemedText style={styles.viewAllText}>View All</ThemedText>
+                </Pressable>
+              </View>
+
+              <View style={styles.summaryCards}>
+                <View style={styles.summaryCard}>
+                  <ThemedText style={styles.summaryValue}>{summary.total}</ThemedText>
+                  <ThemedText style={styles.summaryLabel}>Total</ThemedText>
+                </View>
+                <View style={styles.summaryCard}>
+                  <ThemedText style={styles.summaryValue}>{summary.byStatus['open'] || 0}</ThemedText>
+                  <ThemedText style={styles.summaryLabel}>Open</ThemedText>
+                </View>
+                <View style={styles.summaryCard}>
+                  <ThemedText style={styles.summaryValue}>{summary.byStatus['resolved'] || 0}</ThemedText>
+                  <ThemedText style={styles.summaryLabel}>Resolved</ThemedText>
+                </View>
+              </View>
+            </View>
+          )}
+
+          {/* Active Tickets */}
+          {activeTickets.length > 0 && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Active Tickets</ThemedText>
+              {activeTickets.map(renderTicketCard)}
+            </View>
+          )}
+
+          {/* Create Ticket Button */}
+          <Pressable style={styles.createTicketButton} onPress={handleCreateTicket}>
+            <LinearGradient colors={Gradients.nileBlue} style={styles.createTicketGradient}>
+              <Ionicons name="add-circle" size={24} color={colors.background.primary} />
+              <ThemedText style={styles.createTicketText}>Create New Ticket</ThemedText>
+            </LinearGradient>
           </Pressable>
-          <ThemedText style={styles.headerTitle}>Support</ThemedText>
-          <View style={styles.placeholder} />
-        </View>
 
-        <ThemedText style={styles.headerSubtitle}>
-          How can we help you today?
-        </ThemedText>
-      </LinearGradient>
-
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={{ paddingBottom: 120 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
-      >
-        {/* Quick Actions */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Quick Actions</ThemedText>
-          <View style={styles.quickActionsGrid}>
-            {renderQuickAction('cube-outline', 'Order Issue', Colors.error, 'order-issue')}
-            {renderQuickAction('location-outline', 'Track Order', Colors.secondary[500], 'track-order')}
-            {renderQuickAction('card-outline', 'Payment Help', Colors.primary[500], 'payment-help')}
-            {renderQuickAction('person-outline', 'Account Help', Colors.warning, 'account-help')}
-          </View>
-        </View>
-
-        {/* Get Help */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Get Help</ThemedText>
-          <View style={styles.helpOptionsGrid}>
-            <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/call')}>
-              <View style={[styles.helpOptionIcon, { backgroundColor: `${Colors.primary[500]}20` }]}>
-                <Ionicons name="call" size={24} color={Colors.primary[500]} />
+          {/* Popular FAQs */}
+          {popularFAQs.length > 0 && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <ThemedText style={styles.sectionTitle}>Popular FAQs</ThemedText>
+                <Pressable onPress={handleViewAllFAQs}>
+                  <ThemedText style={styles.viewAllText}>View All</ThemedText>
+                </Pressable>
               </View>
-              <ThemedText style={styles.helpOptionLabel}>Call Support</ThemedText>
-              <ThemedText style={styles.helpOptionDesc}>Talk to us directly</ThemedText>
-            </Pressable>
-            <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/feedback')}>
-              <View style={[styles.helpOptionIcon, { backgroundColor: `${Colors.secondary[500]}20` }]}>
-                <Ionicons name="chatbox" size={24} color={Colors.secondary[500]} />
-              </View>
-              <ThemedText style={styles.helpOptionLabel}>Feedback</ThemedText>
-              <ThemedText style={styles.helpOptionDesc}>Share your thoughts</ThemedText>
-            </Pressable>
-            <Pressable style={styles.helpOptionCard} onPress={() => router.push('/support/report-fraud')}>
-              <View style={[styles.helpOptionIcon, { backgroundColor: `${Colors.error}20` }]}>
-                <Ionicons name="warning" size={24} color={Colors.error} />
-              </View>
-              <ThemedText style={styles.helpOptionLabel}>Report Fraud</ThemedText>
-              <ThemedText style={styles.helpOptionDesc}>Suspicious activity</ThemedText>
-            </Pressable>
-          </View>
-        </View>
-
-        {/* Active Tickets Summary */}
-        {summary.total > 0 && (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <ThemedText style={styles.sectionTitle}>Your Tickets</ThemedText>
-              <Pressable onPress={handleViewAllTickets}>
-                <ThemedText style={styles.viewAllText}>View All</ThemedText>
-              </Pressable>
+              {popularFAQs.map(renderFAQCard)}
             </View>
+          )}
 
-            <View style={styles.summaryCards}>
-              <View style={styles.summaryCard}>
-                <ThemedText style={styles.summaryValue}>{summary.total}</ThemedText>
-                <ThemedText style={styles.summaryLabel}>Total</ThemedText>
+          {/* Contact Options */}
+          {!loading && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Other Ways to Reach Us</ThemedText>
+              <View style={styles.contactCard}>
+                <Ionicons name="mail-outline" size={24} color={Colors.secondary[600]} />
+                <View style={styles.contactContent}>
+                  <ThemedText style={styles.contactTitle}>Email Support</ThemedText>
+                  <ThemedText style={styles.contactValue}>support@rezapp.com</ThemedText>
+                </View>
               </View>
-              <View style={styles.summaryCard}>
-                <ThemedText style={styles.summaryValue}>
-                  {summary.byStatus['open'] || 0}
-                </ThemedText>
-                <ThemedText style={styles.summaryLabel}>Open</ThemedText>
+              <View style={styles.contactCard}>
+                <Ionicons name="call-outline" size={24} color={Colors.secondary[600]} />
+                <View style={styles.contactContent}>
+                  <ThemedText style={styles.contactTitle}>Phone Support</ThemedText>
+                  <ThemedText style={styles.contactValue}>1800-123-4567</ThemedText>
+                </View>
               </View>
-              <View style={styles.summaryCard}>
-                <ThemedText style={styles.summaryValue}>
-                  {summary.byStatus['resolved'] || 0}
-                </ThemedText>
-                <ThemedText style={styles.summaryLabel}>Resolved</ThemedText>
+              <View style={styles.contactCard}>
+                <Ionicons name="time-outline" size={24} color={Colors.secondary[600]} />
+                <View style={styles.contactContent}>
+                  <ThemedText style={styles.contactTitle}>Support Hours</ThemedText>
+                  <ThemedText style={styles.contactValue}>Mon-Sat, 9 AM - 6 PM</ThemedText>
+                </View>
               </View>
             </View>
-          </View>
-        )}
+          )}
 
-        {/* Active Tickets */}
-        {activeTickets.length > 0 && (
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Active Tickets</ThemedText>
-            {activeTickets.map(renderTicketCard)}
-          </View>
-        )}
-
-        {/* Create Ticket Button */}
-        <Pressable style={styles.createTicketButton} onPress={handleCreateTicket}>
-          <LinearGradient
-            colors={Gradients.nileBlue}
-            style={styles.createTicketGradient}
-          >
-            <Ionicons name="add-circle" size={24} color={colors.background.primary} />
-            <ThemedText style={styles.createTicketText}>Create New Ticket</ThemedText>
-          </LinearGradient>
-        </Pressable>
-
-        {/* Popular FAQs */}
-        {popularFAQs.length > 0 && (
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <ThemedText style={styles.sectionTitle}>Popular FAQs</ThemedText>
-              <Pressable onPress={handleViewAllFAQs}>
-                <ThemedText style={styles.viewAllText}>View All</ThemedText>
-              </Pressable>
-            </View>
-            {popularFAQs.map(renderFAQCard)}
-          </View>
-        )}
-
-        {/* Contact Options */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Other Ways to Reach Us</ThemedText>
-          <View style={styles.contactCard}>
-            <Ionicons name="mail-outline" size={24} color={Colors.secondary[600]} />
-            <View style={styles.contactContent}>
-              <ThemedText style={styles.contactTitle}>Email Support</ThemedText>
-              <ThemedText style={styles.contactValue}>support@rezapp.com</ThemedText>
-            </View>
-          </View>
-          <View style={styles.contactCard}>
-            <Ionicons name="call-outline" size={24} color={Colors.secondary[600]} />
-            <View style={styles.contactContent}>
-              <ThemedText style={styles.contactTitle}>Phone Support</ThemedText>
-              <ThemedText style={styles.contactValue}>1800-123-4567</ThemedText>
-            </View>
-          </View>
-          <View style={styles.contactCard}>
-            <Ionicons name="time-outline" size={24} color={Colors.secondary[600]} />
-            <View style={styles.contactContent}>
-              <ThemedText style={styles.contactTitle}>Support Hours</ThemedText>
-              <ThemedText style={styles.contactValue}>Mon-Sat, 9 AM - 6 PM</ThemedText>
-            </View>
-          </View>
-        </View>
-
-        {loading && (
-          <SectionListSkeleton />
-        )}
-      </ScrollView>
-    </View>
+          {loading && <SectionListSkeleton />}
+        </ScrollView>
+      </View>
     </>
   );
 }

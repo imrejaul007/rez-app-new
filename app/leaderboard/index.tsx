@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Display top users by coins with ranking and filters with real-time updates
 
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  StatusBar,
-  ActivityIndicator,
-  RefreshControl
-} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, StatusBar, ActivityIndicator, RefreshControl } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -60,30 +52,22 @@ function LeaderboardPage() {
     isUpdating,
     lastUpdate,
     hasRecentRankUp,
-  } = useLeaderboardRealtime(
-    leaderboardData?.entries || [],
-    user?.id,
-    {
-      onRankUp: (userId, newRank, oldRank) => {
-        if (userId === user?.id) {
-          triggerCelebration(`You ranked up from #${oldRank} to #${newRank}!`);
-          scrollToUserPosition();
-        }
-      },
-      onPointsEarned: (userId, points, source) => {
-        if (userId === user?.id) {
-
-        }
-      },
-      onLeaderboardUpdate: () => {
-        // Pulse animation on update
-        pulseAnim.value = withSequence(
-          withTiming(1.05, { duration: 200 }),
-          withTiming(1, { duration: 200 }),
-        );
-      },
-    }
-  );
+  } = useLeaderboardRealtime(leaderboardData?.entries || [], user?.id, {
+    onRankUp: (userId, newRank, oldRank) => {
+      if (userId === user?.id) {
+        triggerCelebration(`You ranked up from #${oldRank} to #${newRank}!`);
+        scrollToUserPosition();
+      }
+    },
+    onPointsEarned: (userId, points, source) => {
+      if (userId === user?.id) {
+      }
+    },
+    onLeaderboardUpdate: () => {
+      // Pulse animation on update
+      pulseAnim.value = withSequence(withTiming(1.05, { duration: 200 }), withTiming(1, { duration: 200 }));
+    },
+  });
 
   useEffect(() => {
     fetchLeaderboard();
@@ -124,7 +108,7 @@ function LeaderboardPage() {
     celebrationAnim.value = withSequence(
       withTiming(1, { duration: 300 }),
       withTiming(1, { duration: 2500 }),
-      withTiming(0, { duration: 300 })
+      withTiming(0, { duration: 300 }),
     );
     // Hide celebration after animation completes
     setTimeout(() => setShowCelebration(false), 3100);
@@ -195,26 +179,14 @@ function LeaderboardPage() {
       >
         {/* Rank */}
         <View style={styles.rankContainer}>
-          {isTopThree ? (
-            renderMedal(entry.rank)
-          ) : (
-            <ThemedText style={styles.rankText}>#{entry.rank}</ThemedText>
-          )}
+          {isTopThree ? renderMedal(entry.rank) : <ThemedText style={styles.rankText}>#{entry.rank}</ThemedText>}
         </View>
 
         {/* Avatar */}
         <View style={[styles.avatar, isTopThree && styles.topThreeAvatar]}>
-          {entry.avatar ? (
-            <View style={styles.avatarPlaceholder}>
-              <ThemedText style={styles.avatarText}>
-                {entry.fullName.charAt(0).toUpperCase()}
-              </ThemedText>
-            </View>
-          ) : (
-            <View style={styles.avatarPlaceholder}>
-              <Ionicons name="person" size={24} color={colors.text.tertiary} />
-            </View>
-          )}
+          <View style={styles.avatarPlaceholder}>
+            <ThemedText style={styles.avatarText}>{entry.fullName?.charAt(0)?.toUpperCase() || '?'}</ThemedText>
+          </View>
         </View>
 
         {/* User Info */}
@@ -258,12 +230,7 @@ function LeaderboardPage() {
       accessibilityState={{ selected: selectedPeriod === period }}
       accessibilityHint={`Double tap to view ${label.toLowerCase()} rankings`}
     >
-      <ThemedText
-        style={[
-          styles.periodButtonText,
-          selectedPeriod === period && styles.periodButtonTextActive,
-        ]}
-      >
+      <ThemedText style={[styles.periodButtonText, selectedPeriod === period && styles.periodButtonTextActive]}>
         {label}
       </ThemedText>
     </Pressable>
@@ -277,7 +244,7 @@ function LeaderboardPage() {
       <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
             accessibilityLabel="Go back"
             accessibilityRole="button"
@@ -295,9 +262,7 @@ function LeaderboardPage() {
             )}
           </View>
           <View style={styles.headerRight}>
-            {isUpdating && (
-              <ActivityIndicator size="small" color={colors.text.inverse} />
-            )}
+            {isUpdating && <ActivityIndicator size="small" color={colors.text.inverse} />}
           </View>
         </View>
 
@@ -320,9 +285,7 @@ function LeaderboardPage() {
           ref={scrollViewRef}
           style={styles.scrollView}
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
         >
           {/* User Rank Card */}
           {displayUserRank && (
@@ -334,18 +297,14 @@ function LeaderboardPage() {
 
           {/* Leaderboard List */}
           <View style={styles.leaderboardSection}>
-            <ThemedText style={styles.sectionTitle}>
-              Top {displayEntries.length || 50} Users
-            </ThemedText>
+            <ThemedText style={styles.sectionTitle}>Top {displayEntries.length || 50} Users</ThemedText>
             {displayEntries.map((entry, index) => renderLeaderboardEntry(entry, index))}
 
             {leaderboardData?.entries.length === 0 && (
               <View style={styles.emptyState}>
                 <Ionicons name="trophy-outline" size={64} color={colors.border.default} />
                 <ThemedText style={styles.emptyText}>No leaderboard data yet</ThemedText>
-                <ThemedText style={styles.emptySubtext}>
-                  Start earning coins to appear on the leaderboard!
-                </ThemedText>
+                <ThemedText style={styles.emptySubtext}>Start earning coins to appear on the leaderboard!</ThemedText>
               </View>
             )}
           </View>
@@ -354,8 +313,7 @@ function LeaderboardPage() {
           <View style={styles.infoCard}>
             <Ionicons name="information-circle" size={24} color={Colors.brand.purpleLight} />
             <ThemedText style={styles.infoText}>
-              Rankings update every hour. Earn coins through purchases, games, and challenges to
-              climb the leaderboard!
+              Rankings update every hour. Earn coins through purchases, games, and challenges to climb the leaderboard!
             </ThemedText>
           </View>
         </ScrollView>
@@ -363,16 +321,8 @@ function LeaderboardPage() {
 
       {/* Celebration Overlay */}
       {showCelebration && (
-        <Animated.View
-          style={[
-            styles.celebrationOverlay,
-            celebrationStyle,
-          ]}
-        >
-          <LinearGradient
-            colors={[colors.brand.goldBright, '#FFA500']}
-            style={styles.celebrationCard}
-          >
+        <Animated.View style={[styles.celebrationOverlay, celebrationStyle]}>
+          <LinearGradient colors={[colors.brand.goldBright, '#FFA500']} style={styles.celebrationCard}>
             <Ionicons name="trophy" size={48} color={colors.text.inverse} />
             <ThemedText style={styles.celebrationText}>{celebrationMessage}</ThemedText>
           </LinearGradient>

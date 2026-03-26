@@ -1,14 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Bank Offers Listing Page
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  Dimensions,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, RefreshControl, Dimensions } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -123,7 +116,10 @@ function BankOffersListScreen() {
       <SafeAreaView style={styles.errorContainer}>
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.header}>
-          <Pressable style={styles.headerBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.headerBtn}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Bank Offers</ThemedText>
@@ -147,7 +143,10 @@ function BankOffersListScreen() {
       <SafeAreaView style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.header}>
-          <Pressable style={styles.headerBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.headerBtn}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Bank Offers</ThemedText>
@@ -158,9 +157,7 @@ function BankOffersListScreen() {
             <Ionicons name="card-outline" size={48} color={colors.text.tertiary} />
           </View>
           <ThemedText style={styles.emptyTitle}>No Bank Offers Available</ThemedText>
-          <ThemedText style={styles.emptySubtext}>
-            Check back soon for exciting bank and card offers!
-          </ThemedText>
+          <ThemedText style={styles.emptySubtext}>Check back soon for exciting bank and card offers!</ThemedText>
           <Pressable style={styles.retryButton} onPress={fetchOffers}>
             <Ionicons name="refresh" size={18} color={colors.text.inverse} />
             <ThemedText style={styles.retryButtonText}>Refresh</ThemedText>
@@ -177,7 +174,10 @@ function BankOffersListScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.headerBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.headerBtn}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Bank Offers</ThemedText>
@@ -201,24 +201,12 @@ function BankOffersListScreen() {
             : null;
 
           return (
-            <Pressable
-              key={offerId}
-              style={styles.card}
-             
-              onPress={() => handleOfferPress(offer)}
-            >
+            <Pressable key={offerId} style={styles.card} onPress={() => handleOfferPress(offer)}>
               {/* Card Top: Bank Logo + Discount */}
-              <LinearGradient
-                colors={['#1E40AF', Colors.info]}
-                style={styles.cardGradient}
-              >
+              <LinearGradient colors={['#1E40AF', Colors.info]} style={styles.cardGradient}>
                 <View style={styles.cardGradientContent}>
                   {offer.bankLogo ? (
-                    <CachedImage
-                      source={offer.bankLogo}
-                      style={styles.bankLogo}
-                      contentFit="contain"
-                    />
+                    <CachedImage source={offer.bankLogo} style={styles.bankLogo} contentFit="contain" />
                   ) : (
                     <View style={styles.bankLogoPlaceholder}>
                       <Ionicons name="card" size={24} color={colors.text.inverse} />
@@ -228,14 +216,10 @@ function BankOffersListScreen() {
                     <ThemedText style={styles.bankName} numberOfLines={1}>
                       {offer.bankName}
                     </ThemedText>
-                    {offer.cardNetwork && (
-                      <ThemedText style={styles.cardNetwork}>{offer.cardNetwork}</ThemedText>
-                    )}
+                    {offer.cardNetwork && <ThemedText style={styles.cardNetwork}>{offer.cardNetwork}</ThemedText>}
                   </View>
                   <View style={styles.discountBadge}>
-                    <ThemedText style={styles.discountText}>
-                      {offer.discountPercentage}%
-                    </ThemedText>
+                    <ThemedText style={styles.discountText}>{offer.discountPercentage}%</ThemedText>
                     <ThemedText style={styles.discountLabel}>OFF</ThemedText>
                   </View>
                 </View>
@@ -274,9 +258,7 @@ function BankOffersListScreen() {
                   {offer.validUntil ? (
                     <View style={styles.validityRow}>
                       <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
-                      <ThemedText style={styles.validityText}>
-                        Valid till {formatDate(offer.validUntil)}
-                      </ThemedText>
+                      <ThemedText style={styles.validityText}>Valid till {formatDate(offer.validUntil)}</ThemedText>
                     </View>
                   ) : (
                     <View />
@@ -339,8 +321,8 @@ const styles = StyleSheet.create({
   },
   retryButtonText: {
     color: colors.text.inverse,
-    fontWeight: '600',
     ...Typography.body,
+    fontWeight: '600',
   },
 
   // Header

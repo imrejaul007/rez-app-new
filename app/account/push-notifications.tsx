@@ -8,7 +8,10 @@ import {
   Switch,
   Pressable,
   ActivityIndicator,
+  Platform,
+  StatusBar,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FormPageSkeleton } from '@/components/skeletons';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -33,6 +36,7 @@ interface PushNotifications {
 function PushNotificationsScreen() {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState<PushNotifications | null>(null);
@@ -95,7 +99,10 @@ function PushNotificationsScreen() {
         setTimeout(() => setShowSuccessMessage(false), 2000);
       }
     } catch (error) {
-      platformAlertSimple('Error', 'Failed to update push notification settings. Please check your connection and try again.');
+      platformAlertSimple(
+        'Error',
+        'Failed to update push notification settings. Please check your connection and try again.',
+      );
       if (!isMounted()) return;
       setSettings(settings);
     } finally {
@@ -108,12 +115,10 @@ function PushNotificationsScreen() {
     title: string,
     value: boolean,
     onValueChange: (value: boolean) => void,
-    disabled?: boolean
+    disabled?: boolean,
   ) => (
     <View style={styles.settingItem}>
-      <Text style={[styles.settingTitle, disabled && styles.disabledText]}>
-        {title}
-      </Text>
+      <Text style={[styles.settingTitle, disabled && styles.disabledText]}>{title}</Text>
       <Switch
         value={value}
         onValueChange={onValueChange}
@@ -121,7 +126,11 @@ function PushNotificationsScreen() {
         accessibilityLabel={`${title}${value ? ', enabled' : ', disabled'}${disabled ? ', unavailable' : ''}`}
         accessibilityRole="switch"
         accessibilityState={{ checked: value, disabled: disabled || saving }}
-        accessibilityHint={disabled ? 'Enable push notifications first' : `Toggle to ${value ? 'disable' : 'enable'} ${title.toLowerCase()}`}
+        accessibilityHint={
+          disabled
+            ? 'Enable push notifications first'
+            : `Toggle to ${value ? 'disable' : 'enable'} ${title.toLowerCase()}`
+        }
         trackColor={{ false: colors.border.default, true: Colors.info }}
         thumbColor={value ? colors.background.primary : colors.background.secondary}
       />
@@ -139,10 +148,7 @@ function PushNotificationsScreen() {
   if (!settings) {
     return (
       <View style={styles.errorContainer}>
-        <Text
-          style={styles.errorText}
-          accessibilityRole="alert"
-        >
+        <Text style={styles.errorText} accessibilityRole="alert">
           Failed to load settings
         </Text>
         <Pressable
@@ -161,9 +167,9 @@ function PushNotificationsScreen() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={[styles.header, { paddingTop: insets.top + Spacing.sm }]}>
         <Pressable
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
@@ -171,77 +177,80 @@ function PushNotificationsScreen() {
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
-        <Text style={styles.headerTitle} accessibilityRole="header">Push Notifications</Text>
+        <Text style={styles.headerTitle} accessibilityRole="header">
+          Push Notifications
+        </Text>
         <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }]}
+      >
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Ionicons name="notifications" size={24} color={Colors.info} />
             <Text style={styles.sectionTitle}>Push Notification Settings</Text>
           </View>
 
-          {renderSettingItem(
-            'Enable Push Notifications',
-            settings.enabled,
-            (value) => updateSettings({ enabled: value })
+          {renderSettingItem('Enable Push Notifications', settings.enabled, (value) =>
+            updateSettings({ enabled: value }),
           )}
 
           {renderSettingItem(
             'Order Updates',
             settings.orderUpdates,
             (value) => updateSettings({ orderUpdates: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Delivery Updates',
             settings.deliveryUpdates,
             (value) => updateSettings({ deliveryUpdates: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Payment Updates',
             settings.paymentUpdates,
             (value) => updateSettings({ paymentUpdates: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Promotions & Offers',
             settings.promotions,
             (value) => updateSettings({ promotions: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Price Alerts',
             settings.priceAlerts,
             (value) => updateSettings({ priceAlerts: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Recommendations',
             settings.recommendations,
             (value) => updateSettings({ recommendations: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Security Alerts',
             settings.securityAlerts,
             (value) => updateSettings({ securityAlerts: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
 
           {renderSettingItem(
             'Chat Messages',
             settings.chatMessages,
             (value) => updateSettings({ chatMessages: value }),
-            !settings.enabled
+            !settings.enabled,
           )}
         </View>
       </ScrollView>

@@ -12,6 +12,7 @@ import {
   Platform,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -25,7 +26,12 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const CATEGORIES = [
   { id: 'payment', label: 'Cashback Not Received', icon: 'wallet-outline' },
-  { id: 'cashback-amount', label: 'Wrong Cashback Amount', icon: 'calculator-outline', subject: 'Wrong cashback amount' },
+  {
+    id: 'cashback-amount',
+    label: 'Wrong Cashback Amount',
+    icon: 'calculator-outline',
+    subject: 'Wrong cashback amount',
+  },
   { id: 'order', label: 'Visit Not Counted', icon: 'location-outline', subject: 'Visit not counted' },
   { id: 'product', label: 'Merchant Denied Offer', icon: 'storefront-outline', subject: 'Merchant denied offer' },
   { id: 'refund', label: 'Refund Not Processed', icon: 'return-down-back-outline' },
@@ -38,12 +44,16 @@ const CATEGORIES = [
 
 /** Self-resolution tips shown before ticket creation — reduces ticket volume */
 const SELF_RESOLUTION_TIPS: Record<string, string> = {
-  'Cashback Not Received': 'Cashback is credited within 2 hours after bill verification. If your transaction was recent, please wait a bit longer.',
-  'Wrong Cashback Amount': 'Cashback is calculated based on the eligible bill amount after excluding taxes and delivery charges. Check your transaction details.',
+  'Cashback Not Received':
+    'Cashback is credited within 2 hours after bill verification. If your transaction was recent, please wait a bit longer.',
+  'Wrong Cashback Amount':
+    'Cashback is calculated based on the eligible bill amount after excluding taxes and delivery charges. Check your transaction details.',
   'Visit Not Counted': 'Visit rewards are updated after cashback verification. This usually takes up to 4 hours.',
   'Refund Not Processed': 'Refunds are processed within 24 hours. Your wallet balance will be updated automatically.',
-  'Referral Reward Missing': 'Referral rewards are credited once your friend completes their first verified transaction.',
-  'Wallet Balance Issue': 'Your wallet balance syncs every few minutes. Try pulling down to refresh your wallet screen.',
+  'Referral Reward Missing':
+    'Referral rewards are credited once your friend completes their first verified transaction.',
+  'Wallet Balance Issue':
+    'Your wallet balance syncs every few minutes. Try pulling down to refresh your wallet screen.',
   'App Technical Problem': 'Try closing and reopening the app, or updating to the latest version from the app store.',
 };
 
@@ -95,9 +105,11 @@ function CreateTicketPage() {
         priority: selectedPriority as any,
         message: message.trim(),
         idempotencyKey,
-        ...(params.relatedOrderId ? {
-          relatedEntity: { type: 'order' as const, id: params.relatedOrderId },
-        } : {}),
+        ...(params.relatedOrderId
+          ? {
+              relatedEntity: { type: 'order' as const, id: params.relatedOrderId },
+            }
+          : {}),
       });
 
       if (response.success && response.data?.ticket) {
@@ -117,13 +129,20 @@ function CreateTicketPage() {
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.container}>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={0}
+      >
         <StatusBar barStyle="light-content" translucent />
 
         {/* Header */}
         <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>New Ticket</ThemedText>
@@ -155,13 +174,10 @@ function CreateTicketPage() {
           <View style={styles.section}>
             <ThemedText style={styles.label}>Category *</ThemedText>
             <View style={styles.categoriesGrid}>
-              {CATEGORIES.map(cat => (
+              {CATEGORIES.map((cat) => (
                 <Pressable
                   key={cat.id}
-                  style={[
-                    styles.categoryCard,
-                    selectedCategory === cat.id && styles.categoryCardSelected,
-                  ]}
+                  style={[styles.categoryCard, selectedCategory === cat.id && styles.categoryCardSelected]}
                   onPress={() => {
                     setSelectedCategory(cat.id);
                     setSelectedLabel(cat.label);
@@ -179,10 +195,7 @@ function CreateTicketPage() {
                     color={selectedCategory === cat.id ? Colors.secondary[600] : Colors.gray[500]}
                   />
                   <ThemedText
-                    style={[
-                      styles.categoryLabel,
-                      selectedCategory === cat.id && styles.categoryLabelSelected,
-                    ]}
+                    style={[styles.categoryLabel, selectedCategory === cat.id && styles.categoryLabelSelected]}
                   >
                     {cat.label}
                   </ThemedText>
@@ -200,7 +213,10 @@ function CreateTicketPage() {
               </View>
               <ThemedText style={styles.selfResolutionText}>{selfResolutionTip}</ThemedText>
               <View style={styles.selfResolutionActions}>
-                <Pressable style={styles.selfResWaitBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+                <Pressable
+                  style={styles.selfResWaitBtn}
+                  onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                >
                   <ThemedText style={styles.selfResWaitText}>Wait</ThemedText>
                 </Pressable>
                 <Pressable style={styles.selfResRaiseBtn} onPress={() => setSelfResolutionDismissed(true)}>
@@ -214,7 +230,7 @@ function CreateTicketPage() {
           <View style={styles.section}>
             <ThemedText style={styles.label}>Priority</ThemedText>
             <View style={styles.priorityRow}>
-              {PRIORITIES.map(pri => (
+              {PRIORITIES.map((pri) => (
                 <Pressable
                   key={pri.id}
                   style={[
@@ -281,7 +297,7 @@ function CreateTicketPage() {
             </ThemedText>
           </View>
         </ScrollView>
-      </View>
+      </KeyboardAvoidingView>
     </>
   );
 }

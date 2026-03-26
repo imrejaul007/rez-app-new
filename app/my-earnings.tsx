@@ -22,6 +22,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAuthLoading, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import { useSafeNavigation } from '@/hooks/useSafeNavigation';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { HeaderBackButton } from '@/components/navigation/SafeBackButton';
 import { platformAlert } from '@/utils/platformAlert';
 import earningsApi, {
@@ -53,14 +54,38 @@ const PERIOD_OPTIONS: { label: string; value: EarningsPeriod }[] = [
 // Breakdown category config
 const BREAKDOWN_CATEGORIES = [
   { key: 'videos' as const, label: 'Videos', icon: 'videocam', color: colors.brand.pink, bgColor: '#EC489920' },
-  { key: 'projects' as const, label: 'Projects', icon: 'briefcase', color: colors.brand.purpleLight, bgColor: '#8B5CF620' },
+  {
+    key: 'projects' as const,
+    label: 'Projects',
+    icon: 'briefcase',
+    color: colors.brand.purpleLight,
+    bgColor: '#8B5CF620',
+  },
   { key: 'referrals' as const, label: 'Referrals', icon: 'people', color: Colors.success, bgColor: '#10B98120' },
   { key: 'cashback' as const, label: 'Cashback', icon: 'cash', color: colors.warningScale[400], bgColor: '#F59E0B20' },
-  { key: 'socialMedia' as const, label: 'Social Media', icon: 'share-social', color: colors.infoScale[400], bgColor: '#3B82F620' },
+  {
+    key: 'socialMedia' as const,
+    label: 'Social Media',
+    icon: 'share-social',
+    color: colors.infoScale[400],
+    bgColor: '#3B82F620',
+  },
   { key: 'games' as const, label: 'Games', icon: 'game-controller', color: Colors.success, bgColor: '#10B98120' },
-  { key: 'dailyCheckIn' as const, label: 'Daily Check-in', icon: 'calendar', color: colors.brand.cyan, bgColor: '#06B6D420' },
+  {
+    key: 'dailyCheckIn' as const,
+    label: 'Daily Check-in',
+    icon: 'calendar',
+    color: colors.brand.cyan,
+    bgColor: '#06B6D420',
+  },
   { key: 'events' as const, label: 'Events', icon: 'ticket', color: colors.brand.purple, bgColor: '#7C3AED20' },
-  { key: 'socialImpact' as const, label: 'Social Impact', icon: 'heart', color: colors.brand.pink, bgColor: '#EC489920' },
+  {
+    key: 'socialImpact' as const,
+    label: 'Social Impact',
+    icon: 'heart',
+    color: colors.brand.pink,
+    bgColor: '#EC489920',
+  },
   { key: 'bonus' as const, label: 'Bonus', icon: 'gift', color: Colors.error, bgColor: '#EF444420' },
 ] as const;
 
@@ -80,6 +105,7 @@ const SOURCE_DISPLAY: Record<string, { icon: string; color: string }> = {
 const MyEarningsPage = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
   const { goBack } = useSafeNavigation();
@@ -96,44 +122,47 @@ const MyEarningsPage = () => {
     goBack('/profile' as any);
   }, [goBack]);
 
-  const fetchEarnings = useCallback(async (period?: EarningsPeriod) => {
-    try {
-      if (!refreshing) setLoading(true);
-      setError(null);
+  const fetchEarnings = useCallback(
+    async (period?: EarningsPeriod) => {
+      try {
+        if (!refreshing) setLoading(true);
+        setError(null);
 
-      if (authLoading) return;
+        if (authLoading) return;
 
-      if (!isAuthenticated) {
-        setData(null);
-        setLoading(false);
-        return;
-      }
+        if (!isAuthenticated) {
+          setData(null);
+          setLoading(false);
+          return;
+        }
 
-      const response = await earningsApi.getConsolidatedSummary({
-        period: period || selectedPeriod,
-      });
-
-      if (response?.data) {
-        if (!isMounted()) return;
-        setData(response.data);
-        analyticsService.track('my_earnings_viewed', {
+        const response = await earningsApi.getConsolidatedSummary({
           period: period || selectedPeriod,
-          total_earned: response.data.totalEarned,
-          available_balance: response.data.availableBalance,
-          pending_earnings: response.data.pendingEarnings,
-          transaction_count: response.data.statistics?.transactionCount,
         });
+
+        if (response?.data) {
+          if (!isMounted()) return;
+          setData(response.data);
+          analyticsService.track('my_earnings_viewed', {
+            period: period || selectedPeriod,
+            total_earned: response.data.totalEarned,
+            available_balance: response.data.availableBalance,
+            pending_earnings: response.data.pendingEarnings,
+            transaction_count: response.data.statistics?.transactionCount,
+          });
+        }
+      } catch (err) {
+        if (!isMounted()) return;
+        setError('Failed to load earnings. Please try again.');
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err) {
-      if (!isMounted()) return;
-      setError('Failed to load earnings. Please try again.');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [authLoading, isAuthenticated, selectedPeriod, refreshing]);
+    },
+    [authLoading, isAuthenticated, selectedPeriod, refreshing],
+  );
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -142,14 +171,17 @@ const MyEarningsPage = () => {
   }, [authLoading, isAuthenticated]);
 
   // Refetch when period changes
-  const handlePeriodChange = useCallback((period: EarningsPeriod) => {
-    analyticsService.track('period_filter_changed', {
-      previous_period: selectedPeriod,
-      new_period: period,
-    });
-    setSelectedPeriod(period);
-    fetchEarnings(period);
-  }, [fetchEarnings, selectedPeriod]);
+  const handlePeriodChange = useCallback(
+    (period: EarningsPeriod) => {
+      analyticsService.track('period_filter_changed', {
+        previous_period: selectedPeriod,
+        new_period: period,
+      });
+      setSelectedPeriod(period);
+      fetchEarnings(period);
+    },
+    [fetchEarnings, selectedPeriod],
+  );
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
@@ -188,8 +220,9 @@ const MyEarningsPage = () => {
       // Generate CSV
       const csvHeader = 'Date,Category,Source,Description,Amount,Status\n';
       const csvRows = allTransactions
-        .map((t) =>
-          `${new Date(t.createdAt).toLocaleDateString()},${t.category || t.source},"${t.description}",${t.amount},completed`
+        .map(
+          (t) =>
+            `${new Date(t.createdAt).toLocaleDateString()},${t.category || t.source},"${t.description}",${t.amount},completed`,
         )
         .join('\n');
       const csvContent = csvHeader + csvRows;
@@ -271,9 +304,16 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.brand.pink} />
-        <LinearGradient colors={[colors.brand.pink, colors.deepPink]} style={styles.header}>
+        <LinearGradient
+          colors={[colors.brand.pink, colors.deepPink]}
+          style={[styles.header, { paddingTop: insets.top + 12 }]}
+        >
           <View style={styles.headerContent}>
-            <HeaderBackButton onPress={handleBackPress} iconColor={colors.background.primary} style={styles.backButton} />
+            <HeaderBackButton
+              onPress={handleBackPress}
+              iconColor={colors.background.primary}
+              style={styles.backButton}
+            />
             <Text style={styles.headerTitle}>My Earnings</Text>
             <View style={styles.headerRight} />
           </View>
@@ -301,7 +341,10 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
       <StatusBar barStyle="light-content" backgroundColor={colors.brand.pink} />
 
       {/* Header */}
-      <LinearGradient colors={[colors.brand.pink, colors.deepPink]} style={styles.header}>
+      <LinearGradient
+        colors={[colors.brand.pink, colors.deepPink]}
+        style={[styles.header, { paddingTop: insets.top + 12 }]}
+      >
         <View style={styles.headerContent}>
           <HeaderBackButton onPress={handleBackPress} iconColor={colors.background.primary} style={styles.backButton} />
           <Text style={styles.headerTitle}>My Earnings</Text>
@@ -314,10 +357,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             >
               <Ionicons name="download-outline" size={22} color={colors.text.inverse} />
             </Pressable>
-            <Pressable
-              style={styles.headerIconButton}
-              onPress={() => router.push('/earnings-history' as any)}
-            >
+            <Pressable style={styles.headerIconButton} onPress={() => router.push('/earnings-history' as any)}>
               <Ionicons name="time-outline" size={22} color={colors.text.inverse} />
             </Pressable>
           </View>
@@ -333,18 +373,10 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
           {PERIOD_OPTIONS.map((option) => (
             <Pressable
               key={option.value}
-              style={[
-                styles.periodChip,
-                selectedPeriod === option.value && styles.periodChipActive,
-              ]}
+              style={[styles.periodChip, selectedPeriod === option.value && styles.periodChipActive]}
               onPress={() => handlePeriodChange(option.value)}
             >
-              <Text
-                style={[
-                  styles.periodChipText,
-                  selectedPeriod === option.value && styles.periodChipTextActive,
-                ]}
-              >
+              <Text style={[styles.periodChipText, selectedPeriod === option.value && styles.periodChipTextActive]}>
                 {option.label}
               </Text>
             </Pressable>
@@ -359,10 +391,13 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
           accessibilityRole="summary"
         >
           <Text style={styles.totalLabel}>
-            {selectedPeriod === 'all' ? 'Total Lifetime Earnings' : `Earnings (${PERIOD_OPTIONS.find(p => p.value === selectedPeriod)?.label})`}
+            {selectedPeriod === 'all'
+              ? 'Total Lifetime Earnings'
+              : `Earnings (${PERIOD_OPTIONS.find((p) => p.value === selectedPeriod)?.label})`}
           </Text>
           <Text style={styles.totalAmount}>
-            {currencySymbol}{formatAmount(data.totalEarned)}
+            {currencySymbol}
+            {formatAmount(data.totalEarned)}
           </Text>
 
           <View style={styles.balanceRow}>
@@ -370,7 +405,10 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
               <Ionicons name="wallet-outline" size={20} color="rgba(255,255,255,0.8)" />
               <View style={styles.balanceInfo}>
                 <Text style={styles.balanceLabel}>Available</Text>
-                <Text style={styles.balanceValue}>{currencySymbol}{formatAmount(data.availableBalance)}</Text>
+                <Text style={styles.balanceValue}>
+                  {currencySymbol}
+                  {formatAmount(data.availableBalance)}
+                </Text>
               </View>
             </View>
 
@@ -378,7 +416,10 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
               <Ionicons name="time-outline" size={20} color="rgba(255,255,255,0.8)" />
               <View style={styles.balanceInfo}>
                 <Text style={styles.balanceLabel}>Pending</Text>
-                <Text style={styles.balanceValue}>{currencySymbol}{formatAmount(data.pendingEarnings)}</Text>
+                <Text style={styles.balanceValue}>
+                  {currencySymbol}
+                  {formatAmount(data.pendingEarnings)}
+                </Text>
               </View>
             </View>
           </View>
@@ -403,10 +444,7 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
             <Text style={styles.zeroStateDescription}>
               Complete projects, refer friends, share on social media, play games, and shop to earn coins.
             </Text>
-            <Pressable
-              style={styles.zeroStateCta}
-              onPress={() => router.push('/playandearn' as any)}
-            >
+            <Pressable style={styles.zeroStateCta} onPress={() => router.push('/playandearn' as any)}>
               <Text style={styles.zeroStateCtaText}>Explore Earning Opportunities</Text>
               <Ionicons name="arrow-forward" size={16} color={colors.brand.pink} />
             </Pressable>
@@ -420,7 +458,8 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>Earnings Breakdown</Text>
                 <Text style={styles.breakdownTotal}>
-                  Total: {currencySymbol}{formatAmount(data.breakdown.total)}
+                  Total: {currencySymbol}
+                  {formatAmount(data.breakdown.total)}
                 </Text>
               </View>
 
@@ -434,7 +473,8 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
                       </View>
                       <Text style={styles.breakdownLabel}>{cat.label}</Text>
                       <Text style={styles.breakdownValue}>
-                        {currencySymbol}{formatAmount(item.amount)}
+                        {currencySymbol}
+                        {formatAmount(item.amount)}
                       </Text>
                       <Text style={styles.breakdownPercentage}>
                         {getPercentage(item.amount, data.breakdown.total)}%
@@ -497,7 +537,8 @@ ${allTransactions.map((t, i) => `${i + 1}. ${new Date(t.createdAt).toLocaleDateS
                       </View>
                       <View style={styles.transactionRight}>
                         <Text style={styles.transactionAmount}>
-                          +{currencySymbol}{formatAmount(transaction.amount)}
+                          +{currencySymbol}
+                          {formatAmount(transaction.amount)}
                         </Text>
                         <View style={styles.statusBadge}>
                           <Text style={styles.statusText}>Completed</Text>
@@ -521,7 +562,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
   },
   header: {
-    paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: Spacing.base,
   },

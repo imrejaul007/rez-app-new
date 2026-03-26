@@ -6,12 +6,13 @@ import {
   ScrollView,
   Pressable,
   ActivityIndicator,
-  Platform,
   TextInput,
   Text,
   KeyboardAvoidingView,
   Dimensions,
+  Platform,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
@@ -86,7 +87,13 @@ function CancellationPolicyBadge({
     : null;
 
   const deadlineText = deadline
-    ? deadline.toLocaleString('en-IN', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
+    ? deadline.toLocaleString('en-IN', {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit',
+      })
     : `${freeCancellationHours} hours before`;
 
   let policyText = '';
@@ -109,21 +116,21 @@ function CancellationPolicyBadge({
   }
 
   return (
-    <View style={{
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      gap: 8,
-      backgroundColor: isFree ? '#f0fdf4' : lateCancellationFee === 'partial' ? '#fffbeb' : '#fef2f2',
-      borderRadius: 12,
-      padding: 12,
-      borderWidth: 1,
-      borderColor: isFree ? '#bbf7d0' : lateCancellationFee === 'partial' ? '#fed7aa' : '#fecaca',
-      marginTop: 12,
-    }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: 8,
+        backgroundColor: isFree ? '#f0fdf4' : lateCancellationFee === 'partial' ? '#fffbeb' : '#fef2f2',
+        borderRadius: 12,
+        padding: 12,
+        borderWidth: 1,
+        borderColor: isFree ? '#bbf7d0' : lateCancellationFee === 'partial' ? '#fed7aa' : '#fecaca',
+        marginTop: 12,
+      }}
+    >
       <Ionicons name={iconName} size={18} color={policyColor} style={{ marginTop: 1, flexShrink: 0 }} />
-      <Text style={{ flex: 1, fontSize: 13, color: policyColor, fontWeight: '500', lineHeight: 18 }}>
-        {policyText}
-      </Text>
+      <Text style={{ flex: 1, fontSize: 13, color: policyColor, fontWeight: '500', lineHeight: 18 }}>{policyText}</Text>
     </View>
   );
 }
@@ -132,6 +139,7 @@ function AppointmentBookingPage() {
   const isMounted = useIsMounted();
   const { storeId } = useLocalSearchParams<{ storeId: string }>();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   // ETHAN: crash guard — storeId from route params could be undefined
   if (!storeId) {
@@ -139,7 +147,10 @@ function AppointmentBookingPage() {
       <ThemedView style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <ThemedText style={styles.errorText}>Store not found</ThemedText>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backToStoreButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backToStoreButton}
+        >
           <ThemedText style={styles.backToStoreText}>Go Back</ThemedText>
         </Pressable>
       </ThemedView>
@@ -197,10 +208,16 @@ function AppointmentBookingPage() {
 
   // Check patch test status for color/tint services
   useEffect(() => {
-    if (selectedService && (selectedService.name?.toLowerCase().includes('colour') || selectedService.name?.toLowerCase().includes('color') || selectedService.name?.toLowerCase().includes('tint'))) {
+    if (
+      selectedService &&
+      (selectedService.name?.toLowerCase().includes('colour') ||
+        selectedService.name?.toLowerCase().includes('color') ||
+        selectedService.name?.toLowerCase().includes('tint'))
+    ) {
       // ETHAN: crash guard — API call without error handling could crash; added try/catch
-      apiClient.get('/consumer/patch-tests/check?category=hair_colour')
-        .then(res => {
+      apiClient
+        .get('/consumer/patch-tests/check?category=hair_colour')
+        .then((res) => {
           if (res?.success && res?.data) {
             setPatchTestStatus(res.data?.data ?? null);
           }
@@ -268,7 +285,7 @@ function AppointmentBookingPage() {
     // If store has working hours, use them
     if (store?.hours && store.hours.length > 0) {
       const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
-      const todayHours = store.hours.find(h => h?.day?.toLowerCase() === dayName.toLowerCase());
+      const todayHours = store.hours.find((h) => h?.day?.toLowerCase() === dayName.toLowerCase());
 
       if (todayHours && !todayHours.closed) {
         // ETHAN: crash guard — parseInt could return NaN; guard with fallback
@@ -310,7 +327,7 @@ function AppointmentBookingPage() {
     return date.toLocaleDateString('en-US', {
       weekday: 'long',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -384,7 +401,7 @@ Free cancellation available 24 hours before appointment.
           'Confirm Appointment',
           summary,
           () => handlePaymentGate(servicePrice),
-          'Proceed to Payment'
+          'Proceed to Payment',
         );
       } else {
         // No upfront payment — show standard confirmation
@@ -397,12 +414,7 @@ Duration: ${selectedService?.duration ? formatDuration(selectedService.duration)
 Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
         `.trim();
 
-        platformAlertConfirm(
-          'Confirm Appointment',
-          summary,
-          () => submitBooking({}),
-          'Confirm'
-        );
+        platformAlertConfirm('Confirm Appointment', summary, () => submitBooking({}), 'Confirm');
       }
     } catch (error) {
       platformAlertSimple('Error', 'Failed to process booking');
@@ -490,8 +502,8 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
         platformAlertConfirm(
           'Appointment Confirmed!',
           successMessage,
-          () => router.canGoBack() ? router.back() : router.replace('/(tabs)'),
-          'OK'
+          () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
+          'OK',
         );
       } else {
         platformAlertSimple('Booking Failed', response.error || 'Unable to create appointment. Please try again.');
@@ -518,7 +530,10 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
       <ThemedView style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <ThemedText style={styles.errorText}>Store not found</ThemedText>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backToStoreButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backToStoreButton}
+        >
           <ThemedText style={styles.backToStoreText}>Go Back</ThemedText>
         </Pressable>
       </ThemedView>
@@ -535,450 +550,459 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
         <Stack.Screen options={{ headerShown: false }} />
 
         {/* Header with Purple Gradient */}
-      <LinearGradient
-        colors={[colors.brand.purpleLight, colors.brand.purple]}
-        style={styles.header}
-      >
-        <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
-            <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
-          </Pressable>
-          <ThemedText style={styles.headerTitle}>Book Appointment</ThemedText>
-          <View style={{ width: 40 }} />
-        </View>
-
-        <View style={styles.storeInfo}>
-          {/* ETHAN: crash guard — store.name could be undefined */}
-          <ThemedText style={styles.storeName}>{store?.name ?? 'Store'}</ThemedText>
-          {store?.category?.name && (
-            <ThemedText style={styles.storeCategory}>{store.category.name}</ThemedText>
-          )}
-        </View>
-      </LinearGradient>
-
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {/* Service Selection */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Select Service</ThemedText>
-
-          {servicesLoading ? (
-            <ActivityIndicator color={colors.brand.purpleLight} style={{ marginVertical: Spacing.xl }} />
-          ) : services.length > 0 ? (
-            <View style={styles.servicesGrid}>
-              {services.map((service) => {
-                const isSelected = selectedService?.id === service.id;
-                const iconName = getServiceIcon(service.name);
-
-                return (
-                  <Pressable
-                    key={service.id}
-                    onPress={() => {
-                      setSelectedService(service);
-                      setSelectedTime(null); // Reset time when service changes
-                    }}
-                    style={[
-                      styles.serviceCard,
-                      isSelected && styles.serviceCardSelected,
-                    ]}
-                  >
-                    <View style={[
-                      styles.serviceIconContainer,
-                      isSelected && styles.serviceIconContainerSelected,
-                    ]}>
-                      <Ionicons
-                        name={iconName}
-                        size={28}
-                        color={isSelected ? colors.background.primary : colors.brand.purpleLight}
-                      />
-                    </View>
-                    <ThemedText
-                      style={[
-                        styles.serviceName,
-                        isSelected && styles.serviceNameSelected,
-                      ]}
-                      numberOfLines={2}
-                    >
-                      {service.name}
-                    </ThemedText>
-                    {service.duration && (
-                      <ThemedText
-                        style={[
-                          styles.serviceDuration,
-                          isSelected && styles.serviceDurationSelected,
-                        ]}
-                      >
-                        {formatDuration(service.duration)}
-                      </ThemedText>
-                    )}
-                    <ThemedText
-                      style={[
-                        styles.servicePrice,
-                        isSelected && styles.servicePriceSelected,
-                      ]}
-                    >
-                      {currencySymbol}{service.price}
-                    </ThemedText>
-                  </Pressable>
-                );
-              })}
-            </View>
-          ) : (
-            <ThemedText style={styles.noDataText}>No services available</ThemedText>
-          )}
-        </View>
-
-        {/* Dynamic Pricing Badge */}
-        {selectedService && selectedService.pricingRule && (
-          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: selectedService.discount > 0 ? '#f0fdf4' : '#fff7ed', padding: 10, borderRadius: 8, marginBottom: 12 }}>
-            <Ionicons name={selectedService.discount > 0 ? 'pricetag' : 'trending-up'} size={16} color={selectedService.discount > 0 ? '#16a34a' : '#d97706'} />
-            <Text style={{ marginLeft: 8, fontSize: 13, color: selectedService.discount > 0 ? '#16a34a' : '#d97706', fontWeight: '500' }}>
-              {selectedService.pricingRule.label}
-              {selectedService.discount > 0 ? ` · Save ${currencySymbol}${selectedService.discount}` : ` · +${currencySymbol}${selectedService.surcharge}`}
-            </Text>
-          </View>
-        )}
-
-        {/* Date Selection */}
-        {selectedService && (
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Select Date</ThemedText>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              style={styles.dateScroll}
-              contentContainerStyle={styles.dateScrollContent}
+        <LinearGradient
+          colors={[colors.brand.purpleLight, colors.brand.purple]}
+          style={[styles.header, { paddingTop: insets.top + 10 }]}
+        >
+          <View style={styles.headerTop}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
             >
-              {nextDays.map((date, index) => {
-                const isSelected = date.toDateString() === selectedDate.toDateString();
-                const isToday = index === 0;
-
-                return (
-                  <Pressable
-                    key={index}
-                    onPress={() => {
-                      setSelectedDate(date);
-                      setSelectedTime(null); // Reset time when date changes
-                    }}
-                    style={[
-                      styles.dateCard,
-                      isSelected && styles.dateCardSelected,
-                    ]}
-                  >
-                    {isToday && (
-                      <View style={styles.todayBadge}>
-                        <ThemedText style={styles.todayBadgeText}>Today</ThemedText>
-                      </View>
-                    )}
-                    <ThemedText
-                      style={[
-                        styles.dateDay,
-                        isSelected && styles.dateTextSelected
-                      ]}
-                    >
-                      {date.toLocaleDateString('en-US', { weekday: 'short' })}
-                    </ThemedText>
-                    <ThemedText
-                      style={[
-                        styles.dateNumber,
-                        isSelected && styles.dateTextSelected
-                      ]}
-                    >
-                      {date.getDate()}
-                    </ThemedText>
-                    <ThemedText
-                      style={[
-                        styles.dateMonth,
-                        isSelected && styles.dateTextSelected
-                      ]}
-                    >
-                      {date.toLocaleDateString('en-US', { month: 'short' })}
-                    </ThemedText>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
+              <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
+            </Pressable>
+            <ThemedText style={styles.headerTitle}>Book Appointment</ThemedText>
+            <View style={{ width: 40 }} />
           </View>
-        )}
 
-        {/* Time Slot Selection */}
-        {selectedService && (
+          <View style={styles.storeInfo}>
+            {/* ETHAN: crash guard — store.name could be undefined */}
+            <ThemedText style={styles.storeName}>{store?.name ?? 'Store'}</ThemedText>
+            {store?.category?.name && <ThemedText style={styles.storeCategory}>{store.category.name}</ThemedText>}
+          </View>
+        </LinearGradient>
+
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          {/* Service Selection */}
           <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Select Time</ThemedText>
-            <View style={styles.timeGrid}>
-              {timeSlots.map((slot) => {
-                const isSelected = selectedTime?.id === slot.id;
-                return (
-                  <Pressable
-                    key={slot.id}
-                    onPress={() => slot.available && setSelectedTime(slot)}
-                    disabled={!slot.available}
-                    style={[
-                      styles.timeSlot,
-                      isSelected && styles.timeSlotSelected,
-                      !slot.available && styles.timeSlotDisabled,
-                    ]}
-                  >
-                    <ThemedText
-                      style={[
-                        styles.timeText,
-                        isSelected && styles.timeTextSelected,
-                        !slot.available && styles.timeTextDisabled,
-                      ]}
-                    >
-                      {slot.displayTime}
-                    </ThemedText>
-                  </Pressable>
-                );
-              })}
-            </View>
+            <ThemedText style={styles.sectionTitle}>Select Service</ThemedText>
 
-            {/* Waitlist button when all slots are full */}
-            {timeSlots.length > 0 && timeSlots.every((s) => !s.available) && (
-              <Pressable
-                style={{
-                  backgroundColor: colors.secondary[600],
-                  padding: 14,
-                  borderRadius: 12,
-                  marginTop: 16,
-                  alignItems: 'center',
-                }}
-                onPress={() => router.push(`/waitlist/${storeId}`)}
-                accessibilityRole="button"
-                accessibilityLabel="Join waitlist for this store"
-              >
-                <ThemedText style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>
-                  No slots available — Join Waitlist
-                </ThemedText>
-                <ThemedText style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 2 }}>
-                  We'll notify you when a slot opens
-                </ThemedText>
-              </Pressable>
+            {servicesLoading ? (
+              <ActivityIndicator color={colors.brand.purpleLight} style={{ marginVertical: Spacing.xl }} />
+            ) : services.length > 0 ? (
+              <View style={styles.servicesGrid}>
+                {services.map((service) => {
+                  const isSelected = selectedService?.id === service.id;
+                  const iconName = getServiceIcon(service.name);
+
+                  return (
+                    <Pressable
+                      key={service.id}
+                      onPress={() => {
+                        setSelectedService(service);
+                        setSelectedTime(null); // Reset time when service changes
+                      }}
+                      style={[styles.serviceCard, isSelected && styles.serviceCardSelected]}
+                    >
+                      <View style={[styles.serviceIconContainer, isSelected && styles.serviceIconContainerSelected]}>
+                        <Ionicons
+                          name={iconName}
+                          size={28}
+                          color={isSelected ? colors.background.primary : colors.brand.purpleLight}
+                        />
+                      </View>
+                      <ThemedText
+                        style={[styles.serviceName, isSelected && styles.serviceNameSelected]}
+                        numberOfLines={2}
+                      >
+                        {service.name}
+                      </ThemedText>
+                      {service.duration && (
+                        <ThemedText style={[styles.serviceDuration, isSelected && styles.serviceDurationSelected]}>
+                          {formatDuration(service.duration)}
+                        </ThemedText>
+                      )}
+                      <ThemedText style={[styles.servicePrice, isSelected && styles.servicePriceSelected]}>
+                        {currencySymbol}
+                        {service.price}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            ) : (
+              <ThemedText style={styles.noDataText}>No services available</ThemedText>
             )}
           </View>
-        )}
 
-        {/* Customer Details Form */}
-        {selectedService && selectedTime && (
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Your Details</ThemedText>
-
-            <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-              <TextInput
-                style={[styles.input, { color: textColor }]}
-                placeholder="Full Name *"
-                placeholderTextColor={colors.text.tertiary}
-                value={customerName}
-                onChangeText={setCustomerName}
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Ionicons name="call-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-              <TextInput
-                style={[styles.input, { color: textColor }]}
-                placeholder="Phone Number *"
-                placeholderTextColor={colors.text.tertiary}
-                value={customerPhone}
-                onChangeText={setCustomerPhone}
-                keyboardType="phone-pad"
-              />
-            </View>
-
-            <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-              <TextInput
-                style={[styles.input, { color: textColor }]}
-                placeholder="Email (Optional)"
-                placeholderTextColor={colors.text.tertiary}
-                value={customerEmail}
-                onChangeText={setCustomerEmail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
-
-            <View style={[styles.inputContainer, styles.textAreaContainer]}>
-              <Ionicons name="document-text-outline" size={20} color={colors.text.tertiary} style={styles.inputIconTop} />
-              <TextInput
-                style={[styles.input, styles.textArea, { color: textColor }]}
-                placeholder="Special Instructions (Optional)"
-                placeholderTextColor={colors.text.tertiary}
-                value={specialInstructions}
-                onChangeText={setSpecialInstructions}
-                multiline
-                numberOfLines={4}
-                textAlignVertical="top"
-              />
-            </View>
-          </View>
-        )}
-
-        {/* Group Booking Toggle */}
-        {selectedService && selectedTime && (
-          <View style={styles.groupBookingToggleContainer}>
-            <View>
-              <ThemedText style={styles.groupBookingTitle}>Book for a group</ThemedText>
-              <ThemedText style={styles.groupBookingSubtitle}>Add friends to book together</ThemedText>
-            </View>
-            <Pressable
-              onPress={() => setIsGroupBooking(!isGroupBooking)}
-              style={[styles.toggleSwitch, isGroupBooking && styles.toggleSwitchActive]}
+          {/* Dynamic Pricing Badge */}
+          {selectedService && selectedService.pricingRule && (
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: selectedService.discount > 0 ? '#f0fdf4' : '#fff7ed',
+                padding: 10,
+                borderRadius: 8,
+                marginBottom: 12,
+              }}
             >
-              <View style={[styles.toggleKnob, isGroupBooking && styles.toggleKnobActive]} />
-            </Pressable>
-          </View>
-        )}
+              <Ionicons
+                name={selectedService.discount > 0 ? 'pricetag' : 'trending-up'}
+                size={16}
+                color={selectedService.discount > 0 ? '#16a34a' : '#d97706'}
+              />
+              <Text
+                style={{
+                  marginLeft: 8,
+                  fontSize: 13,
+                  color: selectedService.discount > 0 ? '#16a34a' : '#d97706',
+                  fontWeight: '500',
+                }}
+              >
+                {selectedService.pricingRule.label}
+                {selectedService.discount > 0
+                  ? ` · Save ${currencySymbol}${selectedService.discount}`
+                  : ` · +${currencySymbol}${selectedService.surcharge}`}
+              </Text>
+            </View>
+          )}
 
-        {/* Group Members Input */}
-        {isGroupBooking && selectedService && selectedTime && (
-          <View style={styles.groupMembersContainer}>
-            <ThemedText style={styles.groupMembersTitle}>Group Members</ThemedText>
-            {groupFriends.map((friend, idx) => (
-              <View key={idx} style={styles.groupMemberRow}>
+          {/* Date Selection */}
+          {selectedService && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Select Date</ThemedText>
+              <ScrollView
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                style={styles.dateScroll}
+                contentContainerStyle={styles.dateScrollContent}
+              >
+                {nextDays.map((date, index) => {
+                  const isSelected = date.toDateString() === selectedDate.toDateString();
+                  const isToday = index === 0;
+
+                  return (
+                    <Pressable
+                      key={date.toISOString().split('T')[0]}
+                      onPress={() => {
+                        setSelectedDate(date);
+                        setSelectedTime(null); // Reset time when date changes
+                      }}
+                      style={[styles.dateCard, isSelected && styles.dateCardSelected]}
+                    >
+                      {isToday && (
+                        <View style={styles.todayBadge}>
+                          <ThemedText style={styles.todayBadgeText}>Today</ThemedText>
+                        </View>
+                      )}
+                      <ThemedText style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
+                        {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                      </ThemedText>
+                      <ThemedText style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>
+                        {date.getDate()}
+                      </ThemedText>
+                      <ThemedText style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>
+                        {date.toLocaleDateString('en-US', { month: 'short' })}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* Time Slot Selection */}
+          {selectedService && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Select Time</ThemedText>
+              <View style={styles.timeGrid}>
+                {timeSlots.map((slot) => {
+                  const isSelected = selectedTime?.id === slot.id;
+                  return (
+                    <Pressable
+                      key={slot.id}
+                      onPress={() => slot.available && setSelectedTime(slot)}
+                      disabled={!slot.available}
+                      style={[
+                        styles.timeSlot,
+                        isSelected && styles.timeSlotSelected,
+                        !slot.available && styles.timeSlotDisabled,
+                      ]}
+                    >
+                      <ThemedText
+                        style={[
+                          styles.timeText,
+                          isSelected && styles.timeTextSelected,
+                          !slot.available && styles.timeTextDisabled,
+                        ]}
+                      >
+                        {slot.displayTime}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              {/* Waitlist button when all slots are full */}
+              {timeSlots.length > 0 && timeSlots.every((s) => !s.available) && (
+                <Pressable
+                  style={{
+                    backgroundColor: colors.secondary[600],
+                    padding: 14,
+                    borderRadius: 12,
+                    marginTop: 16,
+                    alignItems: 'center',
+                  }}
+                  onPress={() => router.push(`/waitlist/${storeId}`)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Join waitlist for this store"
+                >
+                  <ThemedText style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>
+                    No slots available — Join Waitlist
+                  </ThemedText>
+                  <ThemedText style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 2 }}>
+                    We'll notify you when a slot opens
+                  </ThemedText>
+                </Pressable>
+              )}
+            </View>
+          )}
+
+          {/* Customer Details Form */}
+          {selectedService && selectedTime && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Your Details</ThemedText>
+
+              <View style={styles.inputContainer}>
+                <Ionicons name="person-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
                 <TextInput
-                  value={friend.name}
-                  onChangeText={name => setGroupFriends(prev => prev.map((g, i) => i === idx ? { ...g, name } : g))}
-                  placeholder="Friend's name"
-                  style={[styles.groupMemberInput, { color: textColor }]}
+                  style={[styles.input, { color: textColor }]}
+                  placeholder="Full Name *"
                   placeholderTextColor={colors.text.tertiary}
+                  value={customerName}
+                  onChangeText={setCustomerName}
                 />
+              </View>
+
+              <View style={styles.inputContainer}>
+                <Ionicons name="call-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
                 <TextInput
-                  value={friend.phone}
-                  onChangeText={phone => setGroupFriends(prev => prev.map((g, i) => i === idx ? { ...g, phone } : g))}
-                  placeholder="Phone"
+                  style={[styles.input, { color: textColor }]}
+                  placeholder="Phone Number *"
+                  placeholderTextColor={colors.text.tertiary}
+                  value={customerPhone}
+                  onChangeText={setCustomerPhone}
                   keyboardType="phone-pad"
-                  style={[styles.groupMemberPhone, { color: textColor }]}
-                  placeholderTextColor={colors.text.tertiary}
                 />
               </View>
-            ))}
-            <Pressable
-              style={styles.addMemberButton}
-              onPress={() => setGroupFriends(prev => [...prev, { name: '', phone: '' }])}
+
+              <View style={styles.inputContainer}>
+                <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                <TextInput
+                  style={[styles.input, { color: textColor }]}
+                  placeholder="Email (Optional)"
+                  placeholderTextColor={colors.text.tertiary}
+                  value={customerEmail}
+                  onChangeText={setCustomerEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
+
+              <View style={[styles.inputContainer, styles.textAreaContainer]}>
+                <Ionicons
+                  name="document-text-outline"
+                  size={20}
+                  color={colors.text.tertiary}
+                  style={styles.inputIconTop}
+                />
+                <TextInput
+                  style={[styles.input, styles.textArea, { color: textColor }]}
+                  placeholder="Special Instructions (Optional)"
+                  placeholderTextColor={colors.text.tertiary}
+                  value={specialInstructions}
+                  onChangeText={setSpecialInstructions}
+                  multiline
+                  numberOfLines={4}
+                  textAlignVertical="top"
+                />
+              </View>
+            </View>
+          )}
+
+          {/* Group Booking Toggle */}
+          {selectedService && selectedTime && (
+            <View style={styles.groupBookingToggleContainer}>
+              <View>
+                <ThemedText style={styles.groupBookingTitle}>Book for a group</ThemedText>
+                <ThemedText style={styles.groupBookingSubtitle}>Add friends to book together</ThemedText>
+              </View>
+              <Pressable
+                onPress={() => setIsGroupBooking(!isGroupBooking)}
+                style={[styles.toggleSwitch, isGroupBooking && styles.toggleSwitchActive]}
+              >
+                <View style={[styles.toggleKnob, isGroupBooking && styles.toggleKnobActive]} />
+              </Pressable>
+            </View>
+          )}
+
+          {/* Group Members Input */}
+          {isGroupBooking && selectedService && selectedTime && (
+            <View style={styles.groupMembersContainer}>
+              <ThemedText style={styles.groupMembersTitle}>Group Members</ThemedText>
+              {groupFriends.map((friend, idx) => (
+                <View key={idx} style={styles.groupMemberRow}>
+                  <TextInput
+                    value={friend.name}
+                    onChangeText={(name) =>
+                      setGroupFriends((prev) => prev.map((g, i) => (i === idx ? { ...g, name } : g)))
+                    }
+                    placeholder="Friend's name"
+                    style={[styles.groupMemberInput, { color: textColor }]}
+                    placeholderTextColor={colors.text.tertiary}
+                  />
+                  <TextInput
+                    value={friend.phone}
+                    onChangeText={(phone) =>
+                      setGroupFriends((prev) => prev.map((g, i) => (i === idx ? { ...g, phone } : g)))
+                    }
+                    placeholder="Phone"
+                    keyboardType="phone-pad"
+                    style={[styles.groupMemberPhone, { color: textColor }]}
+                    placeholderTextColor={colors.text.tertiary}
+                  />
+                </View>
+              ))}
+              <Pressable
+                style={styles.addMemberButton}
+                onPress={() => setGroupFriends((prev) => [...prev, { name: '', phone: '' }])}
+              >
+                <Ionicons name="add-circle-outline" size={20} color={colors.brand.purpleLight} />
+                <ThemedText style={styles.addMemberText}>Add another friend</ThemedText>
+              </Pressable>
+            </View>
+          )}
+
+          {/* Booking Summary */}
+          {selectedService && selectedTime && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Booking Summary</ThemedText>
+              <View style={styles.summaryCard}>
+                {/* Deposit Banner */}
+                {selectedService.requiresPaymentUpfront && selectedService.price > 0 && (
+                  <View
+                    style={[
+                      styles.depositBanner,
+                      { backgroundColor: colors.tint.pink, borderColor: colors.brand.purpleLight },
+                    ]}
+                  >
+                    <Ionicons name="card-outline" size={16} color={colors.brand.purpleLight} />
+                    <View style={{ flex: 1, marginLeft: Spacing.xs }}>
+                      <ThemedText style={[styles.depositText, { fontWeight: '600', color: colors.brand.purple }]}>
+                        Payment required at booking · {currencySymbol}
+                        {selectedService.price}
+                      </ThemedText>
+                      <ThemedText
+                        style={[
+                          styles.depositSub,
+                          { color: colors.text.tertiary, marginTop: Spacing.xs, fontSize: 12 },
+                        ]}
+                      >
+                        Full amount charged now · Free cancellation 24h before
+                      </ThemedText>
+                    </View>
+                  </View>
+                )}
+                <View style={styles.summaryRow}>
+                  <ThemedText style={styles.summaryLabel}>Service</ThemedText>
+                  <ThemedText style={styles.summaryValue}>{selectedService.name}</ThemedText>
+                </View>
+                <View style={styles.summaryDivider} />
+                <View style={styles.summaryRow}>
+                  <ThemedText style={styles.summaryLabel}>Date</ThemedText>
+                  <ThemedText style={styles.summaryValue}>
+                    {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </ThemedText>
+                </View>
+                <View style={styles.summaryDivider} />
+                <View style={styles.summaryRow}>
+                  <ThemedText style={styles.summaryLabel}>Time</ThemedText>
+                  <ThemedText style={styles.summaryValue}>{selectedTime.displayTime}</ThemedText>
+                </View>
+                {selectedService.duration && (
+                  <>
+                    <View style={styles.summaryDivider} />
+                    <View style={styles.summaryRow}>
+                      <ThemedText style={styles.summaryLabel}>Duration</ThemedText>
+                      <ThemedText style={styles.summaryValue}>{formatDuration(selectedService.duration)}</ThemedText>
+                    </View>
+                  </>
+                )}
+                <View style={styles.summaryDivider} />
+                <View style={styles.summaryRow}>
+                  <ThemedText style={styles.summaryLabelBold}>Total Price</ThemedText>
+                  <ThemedText style={styles.summaryValueBold}>
+                    {currencySymbol}
+                    {selectedService.price}
+                  </ThemedText>
+                </View>
+
+                {/* Cancellation Policy */}
+                {selectedService && (
+                  <>
+                    <View style={styles.summaryDivider} />
+                    <CancellationPolicyBadge
+                      freeCancellationHours={selectedService.freeCancellationHours ?? 24}
+                      lateCancellationFee={selectedService.lateCancellationFee ?? 'none'}
+                      cancellationFeeAmount={selectedService.cancellationFeeAmount}
+                      selectedDate={selectedDate}
+                    />
+                  </>
+                )}
+              </View>
+            </View>
+          )}
+
+          {/* Patch Test Status for Color Services */}
+          {patchTestStatus !== null && (
+            <View
+              style={[
+                styles.patchTestContainer,
+                {
+                  backgroundColor: patchTestStatus.hasValidTest ? '#f0fdf4' : '#fff7ed',
+                  borderColor: patchTestStatus.hasValidTest ? '#86efac' : '#fed7aa',
+                },
+              ]}
             >
-              <Ionicons name="add-circle-outline" size={20} color={colors.brand.purpleLight} />
-              <ThemedText style={styles.addMemberText}>Add another friend</ThemedText>
+              <Text style={[styles.patchTestTitle, { color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }]}>
+                {patchTestStatus.hasValidTest ? '✓ Patch test on record' : '⚠️ Patch test required'}
+              </Text>
+              <Text style={[styles.patchTestText, { color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }]}>
+                {patchTestStatus.hasValidTest
+                  ? `Last test: ${new Date(patchTestStatus.lastTest.testedAt).toLocaleDateString('en-IN')} — valid until ${new Date(patchTestStatus.lastTest.expiresAt).toLocaleDateString('en-IN')}`
+                  : 'This service requires a patch test 48h before your appointment. The salon will contact you to arrange one.'}
+              </Text>
+            </View>
+          )}
+
+          <View style={{ height: 120 }} />
+        </ScrollView>
+
+        {/* Bottom Fixed Button */}
+        {selectedService && selectedTime && (
+          <View style={[styles.bottomContainer, { backgroundColor }]}>
+            <Pressable onPress={handleConfirmAppointment} style={styles.confirmButton} disabled={submitting}>
+              <LinearGradient
+                colors={[colors.brand.purpleLight, colors.brand.purple]}
+                style={styles.confirmButtonGradient}
+              >
+                {submitting ? (
+                  <ActivityIndicator color={colors.background.primary} />
+                ) : (
+                  <>
+                    <ThemedText style={styles.confirmButtonText}>Confirm Appointment</ThemedText>
+                    <Ionicons name="checkmark-circle" size={24} color={colors.background.primary} />
+                  </>
+                )}
+              </LinearGradient>
             </Pressable>
           </View>
         )}
-
-        {/* Booking Summary */}
-        {selectedService && selectedTime && (
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Booking Summary</ThemedText>
-            <View style={styles.summaryCard}>
-              {/* Deposit Banner */}
-              {selectedService.requiresPaymentUpfront && selectedService.price > 0 && (
-                <View style={[styles.depositBanner, { backgroundColor: colors.tint.pink, borderColor: colors.brand.purpleLight }]}>
-                  <Ionicons name="card-outline" size={16} color={colors.brand.purpleLight} />
-                  <View style={{ flex: 1, marginLeft: Spacing.xs }}>
-                    <ThemedText style={[styles.depositText, { fontWeight: '600', color: colors.brand.purple }]}>
-                      Payment required at booking · {currencySymbol}{selectedService.price}
-                    </ThemedText>
-                    <ThemedText style={[styles.depositSub, { color: colors.text.tertiary, marginTop: Spacing.xs, fontSize: 12 }]}>
-                      Full amount charged now · Free cancellation 24h before
-                    </ThemedText>
-                  </View>
-                </View>
-              )}
-              <View style={styles.summaryRow}>
-                <ThemedText style={styles.summaryLabel}>Service</ThemedText>
-                <ThemedText style={styles.summaryValue}>{selectedService.name}</ThemedText>
-              </View>
-              <View style={styles.summaryDivider} />
-              <View style={styles.summaryRow}>
-                <ThemedText style={styles.summaryLabel}>Date</ThemedText>
-                <ThemedText style={styles.summaryValue}>
-                  {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                </ThemedText>
-              </View>
-              <View style={styles.summaryDivider} />
-              <View style={styles.summaryRow}>
-                <ThemedText style={styles.summaryLabel}>Time</ThemedText>
-                <ThemedText style={styles.summaryValue}>{selectedTime.displayTime}</ThemedText>
-              </View>
-              {selectedService.duration && (
-                <>
-                  <View style={styles.summaryDivider} />
-                  <View style={styles.summaryRow}>
-                    <ThemedText style={styles.summaryLabel}>Duration</ThemedText>
-                    <ThemedText style={styles.summaryValue}>
-                      {formatDuration(selectedService.duration)}
-                    </ThemedText>
-                  </View>
-                </>
-              )}
-              <View style={styles.summaryDivider} />
-              <View style={styles.summaryRow}>
-                <ThemedText style={styles.summaryLabelBold}>Total Price</ThemedText>
-                <ThemedText style={styles.summaryValueBold}>{currencySymbol}{selectedService.price}</ThemedText>
-              </View>
-
-              {/* Cancellation Policy */}
-              {selectedService && (
-                <>
-                  <View style={styles.summaryDivider} />
-                  <CancellationPolicyBadge
-                    freeCancellationHours={selectedService.freeCancellationHours ?? 24}
-                    lateCancellationFee={selectedService.lateCancellationFee ?? 'none'}
-                    cancellationFeeAmount={selectedService.cancellationFeeAmount}
-                    selectedDate={selectedDate}
-                  />
-                </>
-              )}
-            </View>
-          </View>
-        )}
-
-        {/* Patch Test Status for Color Services */}
-        {patchTestStatus !== null && (
-          <View style={[styles.patchTestContainer, {
-            backgroundColor: patchTestStatus.hasValidTest ? '#f0fdf4' : '#fff7ed',
-            borderColor: patchTestStatus.hasValidTest ? '#86efac' : '#fed7aa',
-          }]}>
-            <Text style={[styles.patchTestTitle, { color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }]}>
-              {patchTestStatus.hasValidTest ? '✓ Patch test on record' : '⚠️ Patch test required'}
-            </Text>
-            <Text style={[styles.patchTestText, { color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }]}>
-              {patchTestStatus.hasValidTest
-                ? `Last test: ${new Date(patchTestStatus.lastTest.testedAt).toLocaleDateString('en-IN')} — valid until ${new Date(patchTestStatus.lastTest.expiresAt).toLocaleDateString('en-IN')}`
-                : 'This service requires a patch test 48h before your appointment. The salon will contact you to arrange one.'}
-            </Text>
-          </View>
-        )}
-
-        <View style={{ height: 120 }} />
-      </ScrollView>
-
-      {/* Bottom Fixed Button */}
-      {selectedService && selectedTime && (
-        <View style={[styles.bottomContainer, { backgroundColor }]}>
-          <Pressable
-            onPress={handleConfirmAppointment}
-            style={styles.confirmButton}
-            disabled={submitting}
-          >
-            <LinearGradient
-              colors={[colors.brand.purpleLight, colors.brand.purple]}
-              style={styles.confirmButtonGradient}
-            >
-              {submitting ? (
-                <ActivityIndicator color={colors.background.primary} />
-              ) : (
-                <>
-                  <ThemedText style={styles.confirmButtonText}>Confirm Appointment</ThemedText>
-                  <Ionicons name="checkmark-circle" size={24} color={colors.background.primary} />
-                </>
-              )}
-            </LinearGradient>
-          </Pressable>
-        </View>
-      )}
       </ThemedView>
     </Animated.View>
   );
@@ -1011,7 +1035,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   header: {
-    paddingTop: Platform.OS === 'ios' ? 50 : 40,
     paddingBottom: Spacing.xl,
     paddingHorizontal: Spacing.lg,
   },

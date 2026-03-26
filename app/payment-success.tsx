@@ -75,6 +75,12 @@ interface OrderDetails {
     discount: number;
     dealTitle?: string;
   };
+  fulfillmentType?: 'delivery' | 'pickup' | 'drive_thru' | 'dine_in';
+  fulfillmentDetails?: {
+    storeAddress?: string;
+    tableNumber?: string | number;
+    [key: string]: any;
+  };
   createdAt: string;
 }
 
@@ -98,7 +104,12 @@ function PaymentSuccessPage() {
   const isMounted = useIsMounted();
 
   // Parse multiple order IDs (comma-separated)
-  const orderIds = orderId ? orderId.split(',').map(id => id.trim()).filter(Boolean) : [];
+  const orderIds = orderId
+    ? orderId
+        .split(',')
+        .map((id) => id.trim())
+        .filter(Boolean)
+    : [];
   const isMultiStoreOrder = orderIds.length > 1;
 
   // Fetch order details for all orders
@@ -110,7 +121,7 @@ function PaymentSuccessPage() {
       }
 
       try {
-        const orderPromises = orderIds.map(id => ordersApi.getOrderById(id));
+        const orderPromises = orderIds.map((id) => ordersApi.getOrderById(id));
         const responses = await Promise.all(orderPromises);
 
         const fetchedOrders: OrderDetails[] = [];
@@ -131,10 +142,11 @@ function PaymentSuccessPage() {
               (orderData.store && typeof orderData.store === 'string' ? orderData.store : null) ||
               `Order ${orderData.orderNumber?.slice(-4) || ''}`;
 
-
             // Extract store ID from various possible locations
             const extractedStoreId =
-              (orderData.store && typeof orderData.store === 'object' ? (orderData.store._id || orderData.store.id) : null) ||
+              (orderData.store && typeof orderData.store === 'object'
+                ? orderData.store._id || orderData.store.id
+                : null) ||
               (typeof orderData.store === 'string' ? orderData.store : null) ||
               orderData.storeId ||
               orderData.items?.[0]?.store?.id ||
@@ -149,7 +161,12 @@ function PaymentSuccessPage() {
               items: orderData.items || [],
               totals: {
                 subtotal: orderData.totals?.subtotal || orderData.summary?.subtotal || 0,
-                delivery: orderData.totals?.delivery || orderData.totals?.shipping || orderData.delivery?.deliveryFee || orderData.summary?.shipping || 0,
+                delivery:
+                  orderData.totals?.delivery ||
+                  orderData.totals?.shipping ||
+                  orderData.delivery?.deliveryFee ||
+                  orderData.summary?.shipping ||
+                  0,
                 tax: orderData.totals?.tax || orderData.summary?.tax || 0,
                 discount: orderData.totals?.discount || orderData.summary?.discount || 0,
                 lockFeeDiscount: orderData.totals?.lockFeeDiscount || 0,
@@ -169,6 +186,8 @@ function PaymentSuccessPage() {
                 },
               },
               delivery: orderData.delivery || undefined,
+              fulfillmentType: orderData.fulfillmentType || orderData.fulfillment?.type || undefined,
+              fulfillmentDetails: orderData.fulfillmentDetails || orderData.fulfillment?.details || undefined,
               createdAt: orderData.createdAt || new Date().toISOString(),
             });
           } else {
@@ -226,16 +245,14 @@ function PaymentSuccessPage() {
           const totalCashback = fetchedOrders.reduce((s, o) => s + (o.totals?.cashback || 0), 0);
           const totalCoinsEarned: number = fetchedOrders.reduce(
             (s, o) => s + ((o as any).rewards?.coinsEarned ?? 0),
-            0
+            0,
           );
           setTimeout(async () => {
             if (!isMounted()) return;
             // SS-D001 FIX: verify reward was actually credited before celebrating
             if (totalCoinsEarned > 0) {
-              showCoinsEarned(
-                totalCoinsEarned,
-                `${BRAND.COIN_NAME} earned from your purchase`,
-                () => router.push('/wallet-screen' as any),
+              showCoinsEarned(totalCoinsEarned, `${BRAND.COIN_NAME} earned from your purchase`, () =>
+                router.push('/wallet-screen' as any),
               );
             } else if (totalCashback > 0) {
               // Attempt a wallet refresh to confirm the backend credited cashback.
@@ -247,10 +264,8 @@ function PaymentSuccessPage() {
               // failed, the wallet balance will be wrong; the socket listener in
               // WalletContext (coins:awarded / wallet:updated) will later correct it.
               // A separate toast is shown to set the right expectation.
-              showCashbackEarned(
-                totalCashback,
-                `${currencySymbol}${totalCashback} cashback added to your wallet`,
-                () => router.push('/wallet-screen' as any),
+              showCashbackEarned(totalCashback, `${currencySymbol}${totalCashback} cashback added to your wallet`, () =>
+                router.push('/wallet-screen' as any),
               );
             }
           }, 1500);
@@ -314,23 +329,33 @@ function PaymentSuccessPage() {
 
   const getPaymentMethodIcon = (method: string) => {
     switch (method) {
-      case 'cod': return 'cash';
-      case 'wallet': return 'diamond';
+      case 'cod':
+        return 'cash';
+      case 'wallet':
+        return 'diamond';
       case 'razorpay':
       case 'card':
-      case 'upi': return 'card';
-      default: return 'checkmark-circle';
+      case 'upi':
+        return 'card';
+      default:
+        return 'checkmark-circle';
     }
   };
 
   const getPaymentMethodLabel = (method: string) => {
     switch (method) {
-      case 'cod': return 'Cash on Delivery';
-      case 'wallet': return `${BRAND.APP_NAME} Wallet`;
-      case 'razorpay': return 'Online Payment';
-      case 'card': return 'Credit/Debit Card';
-      case 'upi': return 'UPI';
-      default: return 'Payment';
+      case 'cod':
+        return 'Cash on Delivery';
+      case 'wallet':
+        return `${BRAND.APP_NAME} Wallet`;
+      case 'razorpay':
+        return 'Online Payment';
+      case 'card':
+        return 'Credit/Debit Card';
+      case 'upi':
+        return 'UPI';
+      default:
+        return 'Payment';
     }
   };
 
@@ -339,8 +364,7 @@ function PaymentSuccessPage() {
     const orderDate = order?.createdAt ? new Date(order.createdAt) : new Date();
     const minDelivery = new Date(orderDate.getTime() + 30 * 60000);
     const maxDelivery = new Date(orderDate.getTime() + 45 * 60000);
-    const formatTime = (date: Date) =>
-      date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    const formatTime = (date: Date) => date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
     return `${formatTime(minDelivery)} - ${formatTime(maxDelivery)}`;
   };
 
@@ -348,30 +372,38 @@ function PaymentSuccessPage() {
   const isCod = method === 'cod';
 
   // Calculate totals across all orders for multi-store
-  const { totalCoinsUsed, totalOrderValue, totalPaidAmount, totalItemCount } = useMemo(() => ({
-    totalCoinsUsed: orders.reduce((sum, o) => sum + (o.payment?.coinsUsed?.totalCoinsValue || 0), 0),
-    totalOrderValue: orders.reduce((sum, o) => sum + (o.totals?.total || 0), 0),
-    totalPaidAmount: orders.reduce((sum, o) => sum + (o.totals?.paidAmount || o.totals?.total || 0), 0),
-    totalItemCount: orders.reduce((sum, o) =>
-      sum + (o.items?.reduce((itemSum, item) => itemSum + (item.quantity || 1), 0) || 0), 0),
-  }), [orders]);
+  const { totalCoinsUsed, totalOrderValue, totalPaidAmount, totalItemCount } = useMemo(
+    () => ({
+      totalCoinsUsed: orders.reduce((sum, o) => sum + (o.payment?.coinsUsed?.totalCoinsValue || 0), 0),
+      totalOrderValue: orders.reduce((sum, o) => sum + (o.totals?.total || 0), 0),
+      totalPaidAmount: orders.reduce((sum, o) => sum + (o.totals?.paidAmount || o.totals?.total || 0), 0),
+      totalItemCount: orders.reduce(
+        (sum, o) => sum + (o.items?.reduce((itemSum, item) => itemSum + (item.quantity || 1), 0) || 0),
+        0,
+      ),
+    }),
+    [orders],
+  );
 
   // For single order, use order values; for multi-store, use aggregated values
-  const coinsUsedValue = isMultiStoreOrder ? totalCoinsUsed : (order?.payment?.coinsUsed?.totalCoinsValue || 0);
-  const orderTotal = isMultiStoreOrder ? totalOrderValue : (order?.totals?.total || 0);
-  const payableAmount = isCod ? orderTotal : (isMultiStoreOrder ? totalPaidAmount : (order?.totals?.paidAmount || orderTotal));
+  const coinsUsedValue = isMultiStoreOrder ? totalCoinsUsed : order?.payment?.coinsUsed?.totalCoinsValue || 0;
+  const orderTotal = isMultiStoreOrder ? totalOrderValue : order?.totals?.total || 0;
+  const payableAmount = isCod
+    ? orderTotal
+    : isMultiStoreOrder
+      ? totalPaidAmount
+      : order?.totals?.paidAmount || orderTotal;
   const totalBeforeCoins = orderTotal + coinsUsedValue;
-  const itemCount = isMultiStoreOrder ? totalItemCount : (order?.items?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 0);
+  const itemCount = isMultiStoreOrder
+    ? totalItemCount
+    : order?.items?.reduce((sum, item) => sum + (item.quantity || 1), 0) || 0;
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Fixed Header - Nuqta Colors */}
-      <LinearGradient
-        colors={[colors.nileBlue, '#0f2a3d']}
-        style={styles.headerGradient}
-      >
+      <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.headerGradient}>
         {/* Success Icon */}
         <View style={styles.iconCircle}>
           <Ionicons name="checkmark" size={32} color={colors.nileBlue} />
@@ -399,16 +431,17 @@ function PaymentSuccessPage() {
               {/* Order Number Card - Show all orders for multi-store */}
               {isMultiStoreOrder ? (
                 <View style={styles.orderNumberCard}>
-                  <ThemedText style={styles.orderNumberLabel}>
-                    {orders.length} Orders Placed
-                  </ThemedText>
+                  <ThemedText style={styles.orderNumberLabel}>{orders.length} Orders Placed</ThemedText>
                   {orders.map((o, index) => (
                     <View key={o.id} style={[styles.multiOrderRow, index > 0 && styles.multiOrderDivider]}>
                       <View style={styles.multiOrderInfo}>
                         <ThemedText style={styles.multiOrderStore}>{o.storeName}</ThemedText>
                         <ThemedText style={styles.orderNumber}>#{o.orderNumber}</ThemedText>
                       </View>
-                      <ThemedText style={styles.multiOrderAmount}>{currencySymbol}{o.totals.total.toLocaleString()}</ThemedText>
+                      <ThemedText style={styles.multiOrderAmount}>
+                        {currencySymbol}
+                        {o.totals.total.toLocaleString()}
+                      </ThemedText>
                     </View>
                   ))}
                 </View>
@@ -440,9 +473,7 @@ function PaymentSuccessPage() {
                   <ThemedText style={styles.detailLabel}>Payment Method</ThemedText>
                   <View style={styles.methodBadge}>
                     <Ionicons name={getPaymentMethodIcon(method)} size={13} color={colors.nileBlue} />
-                    <ThemedText style={styles.methodText}>
-                      {getPaymentMethodLabel(method)}
-                    </ThemedText>
+                    <ThemedText style={styles.methodText}>{getPaymentMethodLabel(method)}</ThemedText>
                   </View>
                 </View>
 
@@ -463,9 +494,11 @@ function PaymentSuccessPage() {
                 <View style={styles.detailRow}>
                   <ThemedText style={styles.detailLabel}>Subtotal</ThemedText>
                   <ThemedText style={styles.detailValue}>
-                    {currencySymbol}{(isMultiStoreOrder
+                    {currencySymbol}
+                    {(isMultiStoreOrder
                       ? orders.reduce((sum, o) => sum + (o.totals?.subtotal || 0), 0)
-                      : (order?.totals?.subtotal || 0)).toLocaleString()}
+                      : order?.totals?.subtotal || 0
+                    ).toLocaleString()}
                   </ThemedText>
                 </View>
 
@@ -473,10 +506,10 @@ function PaymentSuccessPage() {
                 {(() => {
                   const deliveryTotal = isMultiStoreOrder
                     ? orders.reduce((sum, o) => sum + (o.totals?.delivery || 0), 0)
-                    : (order?.totals?.delivery || 0);
+                    : order?.totals?.delivery || 0;
                   const subtotal = isMultiStoreOrder
                     ? orders.reduce((sum, o) => sum + (o.totals?.subtotal || 0), 0)
-                    : (order?.totals?.subtotal || 0);
+                    : order?.totals?.subtotal || 0;
                   const FREE_DELIVERY_THRESHOLD = 500;
                   // Calculate what delivery WOULD have been (₹50 per store)
                   const storeCount = isMultiStoreOrder ? orders.length : 1;
@@ -487,14 +520,23 @@ function PaymentSuccessPage() {
                       <ThemedText style={styles.detailLabel}>Delivery Fee</ThemedText>
                       {deliveryTotal === 0 && subtotal >= FREE_DELIVERY_THRESHOLD ? (
                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                          <ThemedText style={[styles.detailValue, { textDecorationLine: 'line-through', color: colors.text.tertiary, fontSize: 12 }]}>
-                            {currencySymbol}{wouldBeDeliveryFee}
+                          <ThemedText
+                            style={[
+                              styles.detailValue,
+                              { textDecorationLine: 'line-through', color: colors.text.tertiary, fontSize: 12 },
+                            ]}
+                          >
+                            {currencySymbol}
+                            {wouldBeDeliveryFee}
                           </ThemedText>
-                          <ThemedText style={[styles.detailValue, { color: Colors.success, fontWeight: '600' }]}>FREE</ThemedText>
+                          <ThemedText style={[styles.detailValue, { color: Colors.success, fontWeight: '600' }]}>
+                            FREE
+                          </ThemedText>
                         </View>
                       ) : deliveryTotal > 0 ? (
                         <ThemedText style={styles.detailValue}>
-                          {currencySymbol}{deliveryTotal.toLocaleString()}
+                          {currencySymbol}
+                          {deliveryTotal.toLocaleString()}
                         </ThemedText>
                       ) : (
                         <ThemedText style={[styles.detailValue, { color: Colors.success }]}>FREE</ThemedText>
@@ -507,13 +549,14 @@ function PaymentSuccessPage() {
                 {(() => {
                   const taxTotal = isMultiStoreOrder
                     ? orders.reduce((sum, o) => sum + (o.totals?.tax || 0), 0)
-                    : (order?.totals?.tax || 0);
+                    : order?.totals?.tax || 0;
                   if (taxTotal > 0) {
                     return (
                       <View style={styles.detailRow}>
                         <ThemedText style={styles.detailLabel}>Tax</ThemedText>
                         <ThemedText style={styles.detailValue}>
-                          {currencySymbol}{taxTotal.toLocaleString()}
+                          {currencySymbol}
+                          {taxTotal.toLocaleString()}
                         </ThemedText>
                       </View>
                     );
@@ -525,13 +568,14 @@ function PaymentSuccessPage() {
                 {(() => {
                   const discountTotal = isMultiStoreOrder
                     ? orders.reduce((sum, o) => sum + (o.totals?.discount || 0), 0)
-                    : (order?.totals?.discount || 0);
+                    : order?.totals?.discount || 0;
                   if (discountTotal > 0) {
                     return (
                       <View style={styles.detailRow}>
                         <ThemedText style={[styles.detailLabel, { color: Colors.success }]}>Discount</ThemedText>
                         <ThemedText style={[styles.detailValue, { color: Colors.success }]}>
-                          -{currencySymbol}{discountTotal.toLocaleString()}
+                          -{currencySymbol}
+                          {discountTotal.toLocaleString()}
                         </ThemedText>
                       </View>
                     );
@@ -543,7 +587,7 @@ function PaymentSuccessPage() {
                 {(() => {
                   const lockFeeTotal = isMultiStoreOrder
                     ? orders.reduce((sum, o) => sum + (o.totals?.lockFeeDiscount || 0), 0)
-                    : (order?.totals?.lockFeeDiscount || 0);
+                    : order?.totals?.lockFeeDiscount || 0;
                   if (lockFeeTotal > 0) {
                     return (
                       <View style={styles.detailRow}>
@@ -551,7 +595,8 @@ function PaymentSuccessPage() {
                           Lock Fee Already Paid
                         </ThemedText>
                         <ThemedText style={[styles.detailValue, { color: colors.nileBlue }]}>
-                          -{currencySymbol}{lockFeeTotal.toLocaleString()}
+                          -{currencySymbol}
+                          {lockFeeTotal.toLocaleString()}
                         </ThemedText>
                       </View>
                     );
@@ -562,7 +607,7 @@ function PaymentSuccessPage() {
                 {/* Deal Redemption Discount */}
                 {(() => {
                   const redemption = isMultiStoreOrder
-                    ? orders.find(o => o.redemption?.discount)?.redemption
+                    ? orders.find((o) => o.redemption?.discount)?.redemption
                     : order?.redemption;
                   if (redemption && redemption.discount > 0) {
                     return (
@@ -571,7 +616,8 @@ function PaymentSuccessPage() {
                           Deal ({redemption.code})
                         </ThemedText>
                         <ThemedText style={[styles.detailValue, { color: Colors.warning }]}>
-                          -{currencySymbol}{redemption.discount.toLocaleString()}
+                          -{currencySymbol}
+                          {redemption.discount.toLocaleString()}
                         </ThemedText>
                       </View>
                     );
@@ -582,9 +628,12 @@ function PaymentSuccessPage() {
                 {/* Coins Used */}
                 {coinsUsedValue > 0 && (
                   <View style={styles.detailRow}>
-                    <ThemedText style={[styles.detailLabel, { color: Colors.brand.purple }]}>{`${BRAND.COIN_NAME} Used`}</ThemedText>
+                    <ThemedText
+                      style={[styles.detailLabel, { color: Colors.brand.purple }]}
+                    >{`${BRAND.COIN_NAME} Used`}</ThemedText>
                     <ThemedText style={styles.coinsValue}>
-                      -{currencySymbol}{coinsUsedValue.toLocaleString()}
+                      -{currencySymbol}
+                      {coinsUsedValue.toLocaleString()}
                     </ThemedText>
                   </View>
                 )}
@@ -593,13 +642,16 @@ function PaymentSuccessPage() {
                 {(() => {
                   const cashbackTotal = isMultiStoreOrder
                     ? orders.reduce((sum, o) => sum + (o.totals?.cashback || 0), 0)
-                    : (order?.totals?.cashback || 0);
+                    : order?.totals?.cashback || 0;
                   if (cashbackTotal > 0) {
                     return (
                       <View style={styles.detailRow}>
-                        <ThemedText style={[styles.detailLabel, { color: Colors.warning }]}>Cashback (after delivery)</ThemedText>
+                        <ThemedText style={[styles.detailLabel, { color: Colors.warning }]}>
+                          Cashback (after delivery)
+                        </ThemedText>
                         <ThemedText style={[styles.detailValue, { color: Colors.warning }]}>
-                          +{currencySymbol}{cashbackTotal.toLocaleString()}
+                          +{currencySymbol}
+                          {cashbackTotal.toLocaleString()}
                         </ThemedText>
                       </View>
                     );
@@ -612,11 +664,10 @@ function PaymentSuccessPage() {
 
                 {/* Amount */}
                 <View style={styles.detailRow}>
-                  <ThemedText style={styles.detailLabel}>
-                    {isCod ? 'Pay on Delivery' : 'Amount Paid'}
-                  </ThemedText>
+                  <ThemedText style={styles.detailLabel}>{isCod ? 'Pay on Delivery' : 'Amount Paid'}</ThemedText>
                   <ThemedText style={styles.amountValue}>
-                    {currencySymbol}{payableAmount.toLocaleString()}
+                    {currencySymbol}
+                    {payableAmount.toLocaleString()}
                   </ThemedText>
                 </View>
               </View>
@@ -626,10 +677,13 @@ function PaymentSuccessPage() {
                 <View style={styles.deliveryIconWrap}>
                   <Ionicons
                     name={
-                      order?.fulfillmentType === 'pickup' ? 'bag-handle-outline' :
-                      order?.fulfillmentType === 'drive_thru' ? 'car-outline' :
-                      order?.fulfillmentType === 'dine_in' ? 'restaurant-outline' :
-                      'bicycle-outline'
+                      order?.fulfillmentType === 'pickup'
+                        ? 'bag-handle-outline'
+                        : order?.fulfillmentType === 'drive_thru'
+                          ? 'car-outline'
+                          : order?.fulfillmentType === 'dine_in'
+                            ? 'restaurant-outline'
+                            : 'bicycle-outline'
                     }
                     size={18}
                     color={colors.nileBlue}
@@ -637,17 +691,20 @@ function PaymentSuccessPage() {
                 </View>
                 <View style={styles.deliveryInfo}>
                   <ThemedText style={styles.deliveryLabel}>
-                    {order?.fulfillmentType === 'pickup' ? 'Pickup at Store' :
-                     order?.fulfillmentType === 'drive_thru' ? 'Drive-Thru' :
-                     order?.fulfillmentType === 'dine_in' ? 'Dine-In' :
-                     'Estimated Delivery'}
+                    {order?.fulfillmentType === 'pickup'
+                      ? 'Pickup at Store'
+                      : order?.fulfillmentType === 'drive_thru'
+                        ? 'Drive-Thru'
+                        : order?.fulfillmentType === 'dine_in'
+                          ? 'Dine-In'
+                          : 'Estimated Delivery'}
                   </ThemedText>
                   <ThemedText style={styles.deliveryTime}>
                     {order?.fulfillmentType === 'pickup' || order?.fulfillmentType === 'drive_thru'
-                      ? (order?.fulfillmentDetails?.storeAddress || 'Store pickup')
+                      ? order?.fulfillmentDetails?.storeAddress || 'Store pickup'
                       : order?.fulfillmentType === 'dine_in'
-                      ? `Table ${order?.fulfillmentDetails?.tableNumber || ''}`
-                      : getEstimatedDelivery()}
+                        ? `Table ${order?.fulfillmentDetails?.tableNumber || ''}`
+                        : getEstimatedDelivery()}
                   </ThemedText>
                 </View>
               </View>
@@ -655,9 +712,7 @@ function PaymentSuccessPage() {
               {/* Email Notice */}
               <View style={styles.emailNotice}>
                 <Ionicons name="mail-outline" size={14} color={colors.text.tertiary} />
-                <ThemedText style={styles.emailText}>
-                  Confirmation sent to your registered email
-                </ThemedText>
+                <ThemedText style={styles.emailText}>Confirmation sent to your registered email</ThemedText>
               </View>
             </>
           )}
@@ -667,11 +722,14 @@ function PaymentSuccessPage() {
             <Pressable
               style={styles.trackButton}
               onPress={handleTrackOrder}
-             
-              accessibilityLabel={isMultiStoreOrder ? "View all orders" : "Track your order"}
+              accessibilityLabel={isMultiStoreOrder ? 'View all orders' : 'Track your order'}
               accessibilityRole="button"
             >
-              <Ionicons name={isMultiStoreOrder ? "list-outline" : "location-outline"} size={18} color={colors.nileBlue} />
+              <Ionicons
+                name={isMultiStoreOrder ? 'list-outline' : 'location-outline'}
+                size={18}
+                color={colors.nileBlue}
+              />
               <ThemedText style={styles.trackButtonText}>
                 {isMultiStoreOrder ? 'View All Orders' : 'Track Order'}
               </ThemedText>
@@ -683,7 +741,7 @@ function PaymentSuccessPage() {
                 style={styles.reviewButton}
                 onPress={() =>
                   router.push(
-                    `/ReviewPage?storeId=${order.storeId}&storeName=${encodeURIComponent(order.storeName || '')}` as any
+                    `/ReviewPage?storeId=${order.storeId}&storeName=${encodeURIComponent(order.storeName || '')}` as any,
                   )
                 }
                 accessibilityLabel="Rate your experience"
@@ -697,7 +755,6 @@ function PaymentSuccessPage() {
             <Pressable
               style={styles.homeButton}
               onPress={handleGoHome}
-
               accessibilityLabel="Back to home"
               accessibilityRole="button"
             >
@@ -964,7 +1021,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     ...Platform.select({
-      ios: { shadowColor: NUQTA_COLORS.lightMustard, shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
+      ios: {
+        shadowColor: NUQTA_COLORS.lightMustard,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+      },
       android: { elevation: 4 },
       web: { boxShadow: '0 4px 14px rgba(255,205,87,0.3)' },
     }),

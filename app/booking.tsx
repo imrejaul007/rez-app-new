@@ -112,13 +112,16 @@ function BookingPage() {
   const isServiceBooking = bookingType === 'service';
 
   // Check if there's an active deal being applied
-  const activeDeal: ActiveDeal | null = redemptionCode && redemptionId ? {
-    redemptionCode: redemptionCode as string,
-    redemptionId: redemptionId as string,
-    cashback: dealCashback as string | undefined,
-    coins: dealCoins as string | undefined,
-    discount: dealDiscount as string | undefined,
-  } : null;
+  const activeDeal: ActiveDeal | null =
+    redemptionCode && redemptionId
+      ? {
+          redemptionCode: redemptionCode as string,
+          redemptionId: redemptionId as string,
+          cashback: dealCashback as string | undefined,
+          coins: dealCoins as string | undefined,
+          discount: dealDiscount as string | undefined,
+        }
+      : null;
 
   const [store, setStore] = useState<Store | null>(null);
   const [service, setService] = useState<Service | null>(null);
@@ -142,10 +145,21 @@ function BookingPage() {
 
   // Close modals on back press instead of leaving the page
   const handleBackPress = useCallback(() => {
-    if (showConfirmModal) { setShowConfirmModal(false); return true; }
-    if (showSuccessModal) { setShowSuccessModal(false); return true; }
-    if (showAddedToCartModal) { setShowAddedToCartModal(false); return true; }
-    if (submitting) { return true; }
+    if (showConfirmModal) {
+      setShowConfirmModal(false);
+      return true;
+    }
+    if (showSuccessModal) {
+      setShowSuccessModal(false);
+      return true;
+    }
+    if (showAddedToCartModal) {
+      setShowAddedToCartModal(false);
+      return true;
+    }
+    if (submitting) {
+      return true;
+    }
     return false;
   }, [showConfirmModal, showSuccessModal, showAddedToCartModal, submitting]);
   useBackButton(handleBackPress);
@@ -179,7 +193,12 @@ function BookingPage() {
             _id: productData.id || productData._id,
             name: productData.name,
             description: productData.description,
-            price: productData.pricing?.selling || productData.pricing?.original || productData.price?.current || productData.price?.original || 0,
+            price:
+              productData.pricing?.selling ||
+              productData.pricing?.original ||
+              productData.price?.current ||
+              productData.price?.original ||
+              0,
             comparePrice: productData.pricing?.original || productData.pricing?.comparePrice,
             images: productData.images,
             serviceDetails: productData.serviceDetails,
@@ -247,8 +266,7 @@ function BookingPage() {
         const displayTime = `${hour > 12 ? hour - 12 : hour}:${minute.toString().padStart(2, '0')} ${hour >= 12 ? 'PM' : 'AM'}`;
 
         // Simple availability logic
-        const isPast = selectedDate.toDateString() === new Date().toDateString() &&
-                       hour < new Date().getHours();
+        const isPast = selectedDate.toDateString() === new Date().toDateString() && hour < new Date().getHours();
 
         slots.push({
           id: timeString,
@@ -378,7 +396,14 @@ function BookingPage() {
       setShowSuccessModal(true);
 
       // Track booking_complete event
-      try { analytics.trackEvent(ANALYTICS_EVENTS.BOOKING_COMPLETED, { store_id: storeId, date: selectedDate?.toISOString(), time: selectedTime, party_size: parseInt(numberOfPeople) }); } catch {}
+      try {
+        analytics.trackEvent(ANALYTICS_EVENTS.BOOKING_COMPLETED, {
+          store_id: storeId,
+          date: selectedDate?.toISOString(),
+          time: selectedTime,
+          party_size: parseInt(numberOfPeople),
+        });
+      } catch {}
     } catch (error: any) {
       if (!isMounted()) return;
       setSubmitting(false);
@@ -430,7 +455,7 @@ function BookingPage() {
         setErrorMessage('Please select a time slot');
         return;
       }
-      
+
       const duration = service.serviceDetails?.duration || 60;
       const endTime = calculateEndTime(selectedTime24h, duration);
 
@@ -502,7 +527,10 @@ function BookingPage() {
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
           <ThemedText style={styles.errorText}>Store not found</ThemedText>
-          <Pressable style={styles.retryButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.retryButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <ThemedText style={styles.retryText}>Go Back</ThemedText>
           </Pressable>
         </View>
@@ -517,35 +545,29 @@ function BookingPage() {
     <ThemedView style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         {/* Header with Glassmorphism */}
         <LinearGradient
           colors={[Colors.gold, colors.nileBlue]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={[styles.header, { paddingTop: Platform.OS === 'ios' ? insets.top + 10 : 40 }]}
+          style={[styles.header, { paddingTop: insets.top + 10 }]}
         >
           <View style={styles.headerTop}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
-            <ThemedText style={styles.headerTitle}>
-              {isServiceBooking ? 'Book Service' : 'Book a Table'}
-            </ThemedText>
+            <ThemedText style={styles.headerTitle}>{isServiceBooking ? 'Book Service' : 'Book a Table'}</ThemedText>
             <View style={{ width: 44 }} />
           </View>
 
           {/* Store/Service Info Card */}
           <View style={styles.storeCard}>
             <View style={styles.storeIconContainer}>
-              <Ionicons
-                name={isServiceBooking ? 'cut' : 'restaurant'}
-                size={24}
-                color={Colors.gold}
-              />
+              <Ionicons name={isServiceBooking ? 'cut' : 'restaurant'} size={24} color={Colors.gold} />
             </View>
             <View style={styles.storeDetails}>
               {isServiceBooking && service ? (
@@ -553,11 +575,12 @@ function BookingPage() {
                   <ThemedText style={styles.storeName}>{service.name}</ThemedText>
                   <ThemedText style={styles.storeCategory}>{store.name}</ThemedText>
                   <View style={styles.servicePriceRow}>
-                    <ThemedText style={styles.servicePrice}>{currencySymbol}{service.price.toLocaleString()}</ThemedText>
+                    <ThemedText style={styles.servicePrice}>
+                      {currencySymbol}
+                      {service.price.toLocaleString()}
+                    </ThemedText>
                     {service.serviceDetails?.duration && (
-                      <ThemedText style={styles.serviceDuration}>
-                        • {service.serviceDetails.duration} min
-                      </ThemedText>
+                      <ThemedText style={styles.serviceDuration}>• {service.serviceDetails.duration} min</ThemedText>
                     )}
                   </View>
                 </>
@@ -636,22 +659,18 @@ function BookingPage() {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.dateScrollContent}
             >
-              {nextDays.map((date, index) => {
+              {nextDays.map((date) => {
                 const isSelected = date.toDateString() === selectedDate.toDateString();
                 const isToday = date.toDateString() === new Date().toDateString();
                 return (
                   <Pressable
-                    key={index}
+                    key={date.toISOString().split('T')[0]}
                     onPress={() => {
                       setSelectedDate(date);
                       setSelectedTime(null);
                       setSelectedTime24h(null);
                     }}
-                    style={[
-                      styles.dateCard,
-                      isSelected && styles.dateCardSelected,
-                    ]}
-                   
+                    style={[styles.dateCard, isSelected && styles.dateCardSelected]}
                   >
                     <ThemedText style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
                       {date.toLocaleDateString('en-US', { weekday: 'short' })}
@@ -662,9 +681,7 @@ function BookingPage() {
                     <ThemedText style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>
                       {date.toLocaleDateString('en-US', { month: 'short' })}
                     </ThemedText>
-                    {isToday && (
-                      <View style={[styles.todayDot, isSelected && styles.todayDotSelected]} />
-                    )}
+                    {isToday && <View style={[styles.todayDot, isSelected && styles.todayDotSelected]} />}
                   </Pressable>
                 );
               })}
@@ -695,7 +712,6 @@ function BookingPage() {
                       isSelected && styles.timeSlotSelected,
                       !slot.available && styles.timeSlotDisabled,
                     ]}
-                   
                   >
                     <ThemedText
                       style={[
@@ -724,17 +740,10 @@ function BookingPage() {
                   <Pressable
                     key={num}
                     onPress={() => setNumberOfPeople(num.toString())}
-                    style={[
-                      styles.peopleButton,
-                      numberOfPeople === num.toString() && styles.peopleButtonSelected,
-                    ]}
-                   
+                    style={[styles.peopleButton, numberOfPeople === num.toString() && styles.peopleButtonSelected]}
                   >
                     <ThemedText
-                      style={[
-                        styles.peopleText,
-                        numberOfPeople === num.toString() && styles.peopleTextSelected,
-                      ]}
+                      style={[styles.peopleText, numberOfPeople === num.toString() && styles.peopleTextSelected]}
                     >
                       {num}
                     </ThemedText>
@@ -788,7 +797,12 @@ function BookingPage() {
             </View>
 
             <View style={[styles.inputContainer, styles.textAreaContainer]}>
-              <Ionicons name="chatbubble" size={18} color={colors.text.tertiary} style={[styles.inputIcon, { marginTop: 14 }]} />
+              <Ionicons
+                name="chatbubble"
+                size={18}
+                color={colors.text.tertiary}
+                style={[styles.inputIcon, { marginTop: 14 }]}
+              />
               <TextInput
                 style={[styles.input, styles.textArea, { color: textColor }]}
                 placeholder="Special Requests (Optional)"
@@ -825,7 +839,7 @@ function BookingPage() {
                 <View style={styles.summaryRow}>
                   <ThemedText style={styles.summaryLabel}>Time</ThemedText>
                   <ThemedText style={styles.summaryValue}>
-                    {selectedTime || timeSlots.find(s => s.id === selectedTime24h)?.time}
+                    {selectedTime || timeSlots.find((s) => s.id === selectedTime24h)?.time}
                   </ThemedText>
                 </View>
 
@@ -833,9 +847,7 @@ function BookingPage() {
                 {isServiceBooking && service?.serviceDetails?.duration && (
                   <View style={styles.summaryRow}>
                     <ThemedText style={styles.summaryLabel}>Duration</ThemedText>
-                    <ThemedText style={styles.summaryValue}>
-                      {service.serviceDetails.duration} min
-                    </ThemedText>
+                    <ThemedText style={styles.summaryValue}>{service.serviceDetails.duration} min</ThemedText>
                   </View>
                 )}
 
@@ -853,7 +865,10 @@ function BookingPage() {
                 {isServiceBooking && service && (
                   <View style={[styles.summaryRow, styles.summaryRowTotal]}>
                     <ThemedText style={styles.summaryLabelTotal}>Total</ThemedText>
-                    <ThemedText style={styles.summaryValueTotal}>{currencySymbol}{service.price.toLocaleString()}</ThemedText>
+                    <ThemedText style={styles.summaryValueTotal}>
+                      {currencySymbol}
+                      {service.price.toLocaleString()}
+                    </ThemedText>
                   </View>
                 )}
               </View>
@@ -876,12 +891,7 @@ function BookingPage() {
         <View style={[styles.bottomContainer, { paddingBottom: insets.bottom + 80 }]}>
           {isServiceBooking ? (
             /* Add to Cart Button for Service Booking */
-            <Pressable
-              onPress={handleAddToCart}
-              style={styles.bookButton}
-             
-              disabled={addingToCart}
-            >
+            <Pressable onPress={handleAddToCart} style={styles.bookButton} disabled={addingToCart}>
               <LinearGradient
                 colors={[Colors.gold, colors.nileBlue]}
                 start={{ x: 0, y: 0 }}
@@ -902,12 +912,7 @@ function BookingPage() {
             </Pressable>
           ) : (
             /* Confirm Booking Button for Table Booking */
-            <Pressable
-              onPress={handleBooking}
-              style={styles.bookButton}
-             
-              disabled={submitting}
-            >
+            <Pressable onPress={handleBooking} style={styles.bookButton} disabled={submitting}>
               <LinearGradient
                 colors={[Colors.gold, colors.nileBlue]}
                 start={{ x: 0, y: 0 }}
@@ -944,7 +949,8 @@ function BookingPage() {
             </View>
             <ThemedText style={styles.modalTitle}>Confirm Booking</ThemedText>
             <ThemedText style={styles.modalMessage}>
-              Book a table for {numberOfPeople} {parseInt(numberOfPeople) === 1 ? 'person' : 'people'} on {formatDate(selectedDate)} at {timeSlots.find(s => s.id === selectedTime)?.time}?
+              Book a table for {numberOfPeople} {parseInt(numberOfPeople) === 1 ? 'person' : 'people'} on{' '}
+              {formatDate(selectedDate)} at {timeSlots.find((s) => s.id === selectedTime)?.time}?
             </ThemedText>
 
             <View style={styles.modalDetails}>
@@ -963,16 +969,10 @@ function BookingPage() {
             </View>
 
             <View style={styles.modalActions}>
-              <Pressable
-                style={styles.modalCancelButton}
-                onPress={() => setShowConfirmModal(false)}
-              >
+              <Pressable style={styles.modalCancelButton} onPress={() => setShowConfirmModal(false)}>
                 <ThemedText style={styles.modalCancelText}>Cancel</ThemedText>
               </Pressable>
-              <Pressable
-                style={styles.modalConfirmButton}
-                onPress={confirmBooking}
-              >
+              <Pressable style={styles.modalConfirmButton} onPress={confirmBooking}>
                 <LinearGradient
                   colors={[Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
@@ -988,12 +988,7 @@ function BookingPage() {
       </Modal>
 
       {/* Success Modal */}
-      <Modal
-        visible={showSuccessModal}
-        transparent
-        animationType="fade"
-        onRequestClose={handleSuccessClose}
-      >
+      <Modal visible={showSuccessModal} transparent animationType="fade" onRequestClose={handleSuccessClose}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={[styles.modalIconContainer, styles.successIconContainer]}>
@@ -1011,7 +1006,9 @@ function BookingPage() {
               </View>
               <View style={styles.successDetailRow}>
                 <ThemedText style={styles.successLabel}>Time</ThemedText>
-                <ThemedText style={styles.successValue}>{timeSlots.find(s => s.id === selectedTime)?.time}</ThemedText>
+                <ThemedText style={styles.successValue}>
+                  {timeSlots.find((s) => s.id === selectedTime)?.time}
+                </ThemedText>
               </View>
               <View style={styles.successDetailRow}>
                 <ThemedText style={styles.successLabel}>Guests</ThemedText>
@@ -1019,10 +1016,7 @@ function BookingPage() {
               </View>
             </View>
 
-            <Pressable
-              style={styles.successButton}
-              onPress={handleSuccessClose}
-            >
+            <Pressable style={styles.successButton} onPress={handleSuccessClose}>
               <LinearGradient
                 colors={[Colors.gold, colors.nileBlue]}
                 start={{ x: 0, y: 0 }}
@@ -1066,29 +1060,24 @@ function BookingPage() {
                 <View style={styles.successDetailRow}>
                   <ThemedText style={styles.successLabel}>Time</ThemedText>
                   <ThemedText style={styles.successValue}>
-                    {timeSlots.find(s => s.id === selectedTime)?.time}
+                    {timeSlots.find((s) => s.id === selectedTime)?.time}
                   </ThemedText>
                 </View>
                 <View style={[styles.successDetailRow, { borderBottomWidth: 0 }]}>
                   <ThemedText style={styles.successLabel}>Price</ThemedText>
                   <ThemedText style={[styles.successValue, { color: Colors.gold, fontWeight: '700' }]}>
-                    {currencySymbol}{service.price.toLocaleString()}
+                    {currencySymbol}
+                    {service.price.toLocaleString()}
                   </ThemedText>
                 </View>
               </View>
             )}
 
             <View style={styles.modalActions}>
-              <Pressable
-                style={styles.modalCancelButton}
-                onPress={handleContinueShopping}
-              >
+              <Pressable style={styles.modalCancelButton} onPress={handleContinueShopping}>
                 <ThemedText style={styles.modalCancelText}>Continue</ThemedText>
               </Pressable>
-              <Pressable
-                style={styles.modalConfirmButton}
-                onPress={handleViewCart}
-              >
+              <Pressable style={styles.modalConfirmButton} onPress={handleViewCart}>
                 <LinearGradient
                   colors={[Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}

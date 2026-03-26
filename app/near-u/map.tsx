@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  Text,
-  StatusBar,
-} from 'react-native';
+import { View, StyleSheet, Pressable, ActivityIndicator, Text, StatusBar } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -76,7 +69,7 @@ function StoreMapScreen() {
           location.coords.latitude,
           location.coords.longitude,
           5, // 5km radius
-          20 // limit to 20 stores
+          20, // limit to 20 stores
         );
 
         if (isMounted()) {
@@ -99,23 +92,29 @@ function StoreMapScreen() {
     fetchNearbyStores();
   }, [location, isMounted]);
 
-  const handleMarkerPress = useCallback((store: NearbyStore) => {
-    if (mapRef && store.address?.coordinates) {
-      mapRef.animateToRegion({
-        latitude: store.address.coordinates[0],
-        longitude: store.address.coordinates[1],
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      });
-    }
-  }, [mapRef]);
+  const handleMarkerPress = useCallback(
+    (store: NearbyStore) => {
+      if (mapRef && store.address?.coordinates) {
+        mapRef.animateToRegion({
+          latitude: store.address.coordinates[0],
+          longitude: store.address.coordinates[1],
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        });
+      }
+    },
+    [mapRef],
+  );
 
-  const handleNavigateToStore = useCallback((storeId: string) => {
-    router.push({
-      pathname: '/store/[id]',
-      params: { id: storeId },
-    });
-  }, [router]);
+  const handleNavigateToStore = useCallback(
+    (storeId: string) => {
+      router.push({
+        pathname: '/store/[id]',
+        params: { id: storeId },
+      });
+    },
+    [router],
+  );
 
   const initialRegion = location
     ? {
@@ -131,7 +130,9 @@ function StoreMapScreen() {
         longitudeDelta: 0.0421,
       };
 
-  if (!locationPermission) {
+  // locationPermission === null means the permission request hasn't resolved yet (still loading)
+  // locationPermission === false means the user explicitly denied permission
+  if (locationPermission === false) {
     return (
       <View style={[styles.container, styles.centerContent]}>
         <Stack.Screen
@@ -145,9 +146,7 @@ function StoreMapScreen() {
         />
         <Ionicons name="location-outline" size={48} color={colors.secondary[600]} />
         <Text style={styles.errorTitle}>Location Access Denied</Text>
-        <Text style={styles.errorText}>
-          Please enable location permissions to see nearby stores.
-        </Text>
+        <Text style={styles.errorText}>Please enable location permissions to see nearby stores.</Text>
         <Pressable
           style={styles.retryButton}
           onPress={() => {
@@ -158,7 +157,7 @@ function StoreMapScreen() {
               if (status === 'granted') {
                 Location.getCurrentPositionAsync({
                   accuracy: Location.Accuracy.High,
-                }).then(loc => {
+                }).then((loc) => {
                   if (isMounted()) {
                     setLocation(loc);
                     setLocationPermission(true);
@@ -166,6 +165,7 @@ function StoreMapScreen() {
                 });
               } else {
                 if (isMounted()) {
+                  setLocationPermission(false);
                   setLoading(false);
                 }
               }
@@ -208,24 +208,15 @@ function StoreMapScreen() {
           headerRight: () => (
             <Pressable
               onPress={() => router.push('/near-u')}
-              style={({ pressed }) => [
-                styles.headerButton,
-                pressed && { opacity: 0.6 },
-              ]}
+              style={({ pressed }) => [styles.headerButton, pressed && { opacity: 0.6 }]}
             >
               <Ionicons name="list" size={24} color="#fff" />
             </Pressable>
           ),
         }}
       />
-      <MapView
-        ref={setMapRef}
-        style={styles.map}
-        initialRegion={initialRegion}
-        showsUserLocation
-        followsUserLocation
-      >
-        {stores.map(store => {
+      <MapView ref={setMapRef} style={styles.map} initialRegion={initialRegion} showsUserLocation followsUserLocation>
+        {stores.map((store) => {
           const coords = store.address?.coordinates;
           if (!coords) return null;
           return (
@@ -245,14 +236,10 @@ function StoreMapScreen() {
               <Callout tooltip onPress={() => handleNavigateToStore(store.id)}>
                 <View style={styles.callout}>
                   <Text style={styles.storeName}>{store.name}</Text>
-                  {store.category?.name && (
-                    <Text style={styles.category}>{store.category.name}</Text>
-                  )}
+                  {store.category?.name && <Text style={styles.category}>{store.category.name}</Text>}
                   {store.distance && (
                     <Text style={styles.distance}>
-                      {typeof store.distance === 'number'
-                        ? `${store.distance.toFixed(1)} km away`
-                        : store.distance}
+                      {typeof store.distance === 'number' ? `${store.distance.toFixed(1)} km away` : store.distance}
                     </Text>
                   )}
                   <Text style={styles.tapHint}>Tap to view details</Text>

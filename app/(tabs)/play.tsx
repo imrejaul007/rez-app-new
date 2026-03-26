@@ -1,10 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { Suspense } from 'react';
 import { View, ScrollView, StyleSheet, RefreshControl, Pressable, Platform } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -63,7 +60,7 @@ function PlayScreen() {
         page: 1,
         limit: 6,
         sortBy: 'newest',
-        isPublished: true
+        isPublished: true,
       });
 
       if (response.success && response.data) {
@@ -94,10 +91,7 @@ function PlayScreen() {
   const handleRefresh = React.useCallback(async () => {
     try {
       // Refresh both videos and articles — use allSettled so one failure doesn't block the other
-      await Promise.allSettled([
-        actions.refreshVideos(),
-        fetchArticles()
-      ]);
+      await Promise.allSettled([actions.refreshVideos(), fetchArticles()]);
 
       if (state.allVideos.length > 0) {
         await preloadVideos(state.allVideos.slice(0, 5), 0);
@@ -107,24 +101,36 @@ function PlayScreen() {
     }
   }, [actions, fetchArticles, preloadVideos, state.allVideos]);
 
-  const handleVideoPress = React.useCallback((video: UGCVideoItem) => {
-    actions.navigateToDetail(video);
-  }, [actions]);
+  const handleVideoPress = React.useCallback(
+    (video: UGCVideoItem) => {
+      actions.navigateToDetail(video);
+    },
+    [actions],
+  );
 
-  const handleCategoryPress = React.useCallback((category: CategoryTab) => {
-    actions.setActiveCategory(category.type);
-  }, [actions]);
+  const handleCategoryPress = React.useCallback(
+    (category: CategoryTab) => {
+      actions.setActiveCategory(category.type);
+    },
+    [actions],
+  );
 
-  const handleLikeVideo = React.useCallback(async (videoId: string) => {
-    const success = await actions.likeVideo(videoId);
-    if (!success) {
-      platformAlertSimple('Error', 'Failed to like video. Please try again.');
-    }
-  }, [actions]);
+  const handleLikeVideo = React.useCallback(
+    async (videoId: string) => {
+      const success = await actions.likeVideo(videoId);
+      if (!success) {
+        platformAlertSimple('Error', 'Failed to like video. Please try again.');
+      }
+    },
+    [actions],
+  );
 
-  const handleShareVideo = React.useCallback(async (video: UGCVideoItem) => {
-    await actions.shareVideo(video);
-  }, [actions]);
+  const handleShareVideo = React.useCallback(
+    async (video: UGCVideoItem) => {
+      await actions.shareVideo(video);
+    },
+    [actions],
+  );
 
   const handleLoadMore = React.useCallback(() => {
     actions.loadMoreVideos();
@@ -134,19 +140,19 @@ function PlayScreen() {
     router.push('/products-videos');
   }, [router]);
 
-  const handleArticlePress = React.useCallback((article: Article) => {
-    router.push(`/article/${article.id}`);
-  }, [router]);
+  const handleArticlePress = React.useCallback(
+    (article: Article) => {
+      router.push(`/article/${article.id}`);
+    },
+    [router],
+  );
 
   const handleArticlesViewAllPress = React.useCallback(() => {
     router.push('/articles');
   }, [router]);
 
   const handleRetry = React.useCallback(async () => {
-    await Promise.allSettled([
-      actions.refreshVideos(),
-      fetchArticles()
-    ]);
+    await Promise.allSettled([actions.refreshVideos(), fetchArticles()]);
   }, [actions, fetchArticles]);
 
   const handleRetryArticles = React.useCallback(async () => {
@@ -160,7 +166,7 @@ function PlayScreen() {
         'Sign In Required',
         'Please sign in to upload videos and share your content.',
         () => router.push('/sign-in'),
-        'Sign In'
+        'Sign In',
       );
       return;
     }
@@ -168,6 +174,21 @@ function PlayScreen() {
     // Navigate to upload screen
     router.push('/ugc/upload');
   }, [isAuthenticated, router]);
+
+  // Declared before the useEffect that depends on it to avoid TS2448
+  // "block-scoped variable used before its declaration".
+  const getCurrentVideos = React.useCallback(() => {
+    switch (state.activeCategory) {
+      case 'trending_me':
+        return state.trendingVideos;
+      case 'trending_her':
+        return state.trendingVideos;
+      case 'article':
+        return state.articleVideos;
+      default:
+        return state.allVideos;
+    }
+  }, [state.activeCategory, state.trendingVideos, state.articleVideos, state.allVideos]);
 
   React.useEffect(() => {
     const preloadCurrentVideos = async () => {
@@ -182,19 +203,6 @@ function PlayScreen() {
     }
   }, [state.loading, state.allVideos, state.activeCategory, preloadVideos, getCurrentVideos]);
 
-  const getCurrentVideos = () => {
-    switch (state.activeCategory) {
-      case 'trending_me':
-        return state.trendingVideos;
-      case 'trending_her':
-        return state.trendingVideos;
-      case 'article':
-        return state.articleVideos;
-      default:
-        return state.allVideos;
-    }
-  };
-
   // Show full-screen error on initial load failure
   if (state.error && !state.refreshing && state.allVideos.length === 0) {
     return (
@@ -204,10 +212,7 @@ function PlayScreen() {
           onCategoryPress={handleCategoryPress}
           activeCategory={state.activeCategory}
         />
-        <ErrorState
-          error={state.error}
-          onRetry={handleRetry}
-        />
+        <ErrorState error={state.error} onRetry={handleRetry} />
       </View>
     );
   }
@@ -249,13 +254,25 @@ function PlayScreen() {
       <View style={styles.content}>
         {/* Quick Actions */}
         <View style={styles.quickActionsRow}>
-          <Pressable style={styles.quickActionButton} onPress={() => router.push('/social/reels')}>
+          <Pressable
+            style={styles.quickActionButton}
+            onPress={() => router.push('/social/reels')}
+            android_ripple={{ color: 'rgba(255,255,255,0.2)', borderless: false }}
+            accessibilityRole="button"
+            accessibilityLabel="Watch reels"
+          >
             <LinearGradient colors={[colors.brand.pink, colors.deepPink]} style={styles.quickActionGradient}>
               <Ionicons name="videocam" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.quickActionText}>Reels</ThemedText>
             </LinearGradient>
           </Pressable>
-          <Pressable style={styles.quickActionButton} onPress={() => router.push('/social/upload')}>
+          <Pressable
+            style={styles.quickActionButton}
+            onPress={() => router.push('/social/upload')}
+            android_ripple={{ color: 'rgba(255,255,255,0.2)', borderless: false }}
+            accessibilityRole="button"
+            accessibilityLabel="Create content"
+          >
             <LinearGradient colors={[colors.brand.purpleLight, colors.brand.purple]} style={styles.quickActionGradient}>
               <Ionicons name="add-circle" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.quickActionText}>Create</ThemedText>
@@ -268,15 +285,13 @@ function PlayScreen() {
           <Pressable
             style={styles.errorBanner}
             onPress={handleRetry}
-           
+            android_ripple={{ color: 'rgba(0,0,0,0.06)', borderless: false }}
             accessibilityLabel={`Error loading content: ${state.error}`}
             accessibilityRole="button"
             accessibilityHint="Double tap to retry loading content"
           >
             <Ionicons name="alert-circle" size={20} color={Colors.errorScale[700]} />
-            <ThemedText style={styles.errorBannerText}>
-              {state.error}
-            </ThemedText>
+            <ThemedText style={styles.errorBannerText}>{state.error}</ThemedText>
             <Ionicons name="refresh" size={18} color={Colors.errorScale[700]} />
           </Pressable>
         )}
@@ -307,12 +322,12 @@ function PlayScreen() {
             <Pressable
               style={styles.sectionErrorButton}
               onPress={handleRetryArticles}
-
+              android_ripple={{ color: 'rgba(0,0,0,0.06)', borderless: false }}
+              accessibilityRole="button"
+              accessibilityLabel="Retry loading articles"
             >
               <Ionicons name="refresh-circle" size={24} color={Colors.error} />
-              <ThemedText style={styles.sectionErrorText}>
-                Failed to load articles. Tap to retry.
-              </ThemedText>
+              <ThemedText style={styles.sectionErrorText}>Failed to load articles. Tap to retry.</ThemedText>
             </Pressable>
           </View>
         ) : articles.length > 0 ? (
@@ -346,54 +361,44 @@ function PlayScreen() {
 
         {/* Empty state when no content */}
         {!state.loading &&
-         !articlesLoading &&
-         state.merchantVideos.length === 0 &&
-         articles.length === 0 &&
-         state.ugcVideos.length === 0 && (
-          <View style={styles.emptyContainer}>
-            <Ionicons name="play-circle-outline" size={80} color={PLAY_PAGE_COLORS.textSecondary} />
-            <ThemedText style={styles.emptyText}>No Videos Yet</ThemedText>
-            <ThemedText style={styles.emptySubtext}>
-              Check back soon for fresh content!
-            </ThemedText>
-            <Pressable
-              style={styles.emptyButton}
-              onPress={handleUploadPress}
-             
-              accessibilityLabel="Be the first to upload"
-              accessibilityRole="button"
-              accessibilityHint="Double tap to upload the first video to this section"
-            >
-              {/* MEERA: design token — hardcoded '#00A85C' (green) -> colors.success (mustard-to-navy gradient fits brand better) */}
-              <LinearGradient
-                colors={[Colors.primary[500], colors.success, colors.nileBlue]}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.emptyButtonGradient}
+          !articlesLoading &&
+          state.merchantVideos.length === 0 &&
+          articles.length === 0 &&
+          state.ugcVideos.length === 0 && (
+            <View style={styles.emptyContainer}>
+              <Ionicons name="play-circle-outline" size={80} color={PLAY_PAGE_COLORS.textSecondary} />
+              <ThemedText style={styles.emptyText}>No Videos Yet</ThemedText>
+              <ThemedText style={styles.emptySubtext}>Check back soon for fresh content!</ThemedText>
+              <Pressable
+                style={styles.emptyButton}
+                onPress={handleUploadPress}
+                android_ripple={{ color: 'rgba(255,255,255,0.2)', borderless: false }}
+                accessibilityLabel="Be the first to upload"
+                accessibilityRole="button"
+                accessibilityHint="Double tap to upload the first video to this section"
               >
-                <Ionicons name="add-circle-outline" size={20} color={colors.text.inverse} />
-                <ThemedText style={styles.emptyButtonText}>
-                  Be the First to Upload
-                </ThemedText>
-              </LinearGradient>
-            </Pressable>
-          </View>
-        )}
-
+                {/* MEERA: design token — hardcoded '#00A85C' (green) -> colors.success (mustard-to-navy gradient fits brand better) */}
+                <LinearGradient
+                  colors={[Colors.primary[500], colors.success, colors.nileBlue]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 1 }}
+                  style={styles.emptyButtonGradient}
+                >
+                  <Ionicons name="add-circle-outline" size={20} color={colors.text.inverse} />
+                  <ThemedText style={styles.emptyButtonText}>Be the First to Upload</ThemedText>
+                </LinearGradient>
+              </Pressable>
+            </View>
+          )}
       </View>
 
       {/* Upload FAB Button */}
       {showFAB && (
-        <Animated.View
-          style={[
-            styles.fabContainer,
-            fabAnimStyle,
-          ]}
-        >
+        <Animated.View style={[styles.fabContainer, fabAnimStyle]}>
           <Pressable
-           
             onPress={handleUploadPress}
             style={styles.fab}
+            android_ripple={{ color: 'rgba(255,255,255,0.2)', borderless: true, radius: 30 }}
             accessibilityLabel="Upload video"
             accessibilityRole="button"
             accessibilityHint="Double tap to upload a video and share your content"
@@ -416,7 +421,8 @@ function PlayScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: PLAY_PAGE_COLORS.background },
+    backgroundColor: PLAY_PAGE_COLORS.background,
+  },
   content: {
     flex: 1,
     paddingBottom: Spacing['5xl'] + Spacing['4xl'] + Spacing.sm, // ~120
@@ -425,22 +431,26 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.md,
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   quickActionButton: {
     flex: 1,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
-    ...Shadows.md },
+    ...Shadows.md,
+  },
   quickActionGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: Spacing.md + 2,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   quickActionText: {
     color: colors.text.inverse,
     fontSize: Typography.body.fontSize + 1,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   errorBanner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -451,18 +461,22 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.base,
     marginBottom: Spacing.base,
     borderRadius: BorderRadius.md,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   errorBannerText: {
     flex: 1,
     color: Colors.errorScale[700],
     fontSize: Typography.body.fontSize,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   sectionLoading: {
     paddingVertical: Spacing['3xl'],
-    paddingHorizontal: Spacing.base },
+    paddingHorizontal: Spacing.base,
+  },
   sectionError: {
     paddingVertical: Spacing.xl,
-    paddingHorizontal: Spacing.base },
+    paddingHorizontal: Spacing.base,
+  },
   sectionErrorButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -472,16 +486,19 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     gap: Spacing.sm,
     borderWidth: 1,
-    borderColor: Colors.errorScale[100] },
+    borderColor: Colors.errorScale[100],
+  },
   sectionErrorText: {
     color: Colors.error,
     fontSize: Typography.body.fontSize,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   fabContainer: {
     position: 'absolute',
     bottom: 100,
     right: Spacing.lg,
-    zIndex: 999 },
+    zIndex: 999,
+  },
   fab: {
     width: 60,
     height: 60,
@@ -491,53 +508,67 @@ const styles = StyleSheet.create({
         shadowColor: Colors.primary[500],
         shadowOffset: {
           width: 0,
-          height: 4 },
+          height: 4,
+        },
         shadowOpacity: 0.4,
-        shadowRadius: 8 },
+        shadowRadius: 8,
+      },
       android: {
-        elevation: 8 } }) },
+        elevation: 8,
+      },
+    }),
+  },
   fabGradient: {
     width: 60,
     height: 60,
     borderRadius: 30,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   emptyContainer: {
     paddingVertical: Spacing['5xl'] + Spacing.base,
     paddingHorizontal: Spacing.lg,
     alignItems: 'center',
-    justifyContent: 'center' },
+    justifyContent: 'center',
+  },
   emptyText: {
     fontSize: Typography.h3.fontSize,
     fontWeight: '700',
     color: PLAY_PAGE_COLORS.text,
     marginTop: Spacing.base,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   emptySubtext: {
     fontSize: Typography.body.fontSize,
     color: PLAY_PAGE_COLORS.textSecondary,
     textAlign: 'center',
     opacity: 0.7,
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   emptyButton: {
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
     shadowColor: Colors.primary[500],
     shadowOffset: {
       width: 0,
-      height: 4 },
+      height: 4,
+    },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 5 },
+    elevation: 5,
+  },
   emptyButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md + 2,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   emptyButtonText: {
     color: colors.text.inverse,
     fontSize: Typography.bodyLarge.fontSize,
-    fontWeight: '600' } });
+    fontWeight: '600',
+  },
+});
 
 export default withErrorBoundary(PlayScreen, '(tabs)Play');

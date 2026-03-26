@@ -1,15 +1,7 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  ActivityIndicator,
-  Linking,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Linking } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -63,7 +55,7 @@ function ProductDetailScreen() {
     return date.toLocaleDateString('en-IN', {
       day: '2-digit',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
@@ -121,7 +113,10 @@ function ProductDetailScreen() {
   };
 
   const handleScheduleInstallation = () => {
-    platformAlertSimple('Schedule Installation', 'This feature will allow you to schedule product installation. Coming soon!');
+    platformAlertSimple(
+      'Schedule Installation',
+      'This feature will allow you to schedule product installation. Coming soon!',
+    );
   };
 
   const handleRenewAMC = () => {
@@ -164,7 +159,7 @@ function ProductDetailScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
@@ -172,23 +167,17 @@ function ProductDetailScreen() {
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
-        <Text
-          style={styles.headerTitle}
-          accessibilityRole="header"
-        >
+        <Text style={styles.headerTitle} accessibilityRole="header">
           Product Details
         </Text>
         <View style={{ width: 40 }} />
       </View>
 
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+      <ScrollView style={styles.content} contentContainerStyle={{ paddingBottom: 120 }}>
         {/* Product Image */}
         <View style={styles.imageContainer}>
           <CachedImage
-            source={product.product?.images?.[0] || undefined}
+            source={product.product?.images?.[0] || ''}
             style={styles.productImage}
             contentFit="cover"
             accessibilityLabel={`${product.product?.name || 'Product'} image`}
@@ -200,34 +189,31 @@ function ProductDetailScreen() {
           style={styles.section}
           accessibilityLabel={`Product information. ${product.product?.name || 'Unknown Product'}. ${product.product?.description || 'No description available'}`}
         >
-          <Text style={styles.productName}>
-            {product.product?.name || 'Unknown Product'}
-          </Text>
-          <Text style={styles.productDescription}>
-            {product.product?.description || 'No description available'}
-          </Text>
-          
+          <Text style={styles.productName}>{product.product?.name || 'Unknown Product'}</Text>
+          <Text style={styles.productDescription}>{product.product?.description || 'No description available'}</Text>
+
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Purchase Date:</Text>
             <Text style={styles.infoValue}>{formatDate(product.purchaseDate)}</Text>
           </View>
-          
+
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Quantity:</Text>
             <Text style={styles.infoValue}>{product.quantity}</Text>
           </View>
-          
+
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Total Price:</Text>
-            <Text style={styles.infoValue}>{currencySymbol}{product.totalPrice}</Text>
+            <Text style={styles.infoValue}>
+              {currencySymbol}
+              {product.totalPrice}
+            </Text>
           </View>
 
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Status:</Text>
             <View style={[styles.statusBadge, { backgroundColor: getStatusColor(product.status) }]}>
-              <Text style={styles.statusText}>
-                {product.status?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}
-              </Text>
+              <Text style={styles.statusText}>{product.status?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}</Text>
             </View>
           </View>
         </View>
@@ -238,7 +224,7 @@ function ProductDetailScreen() {
           accessibilityLabel={`Warranty information. ${product.warranty?.hasWarranty ? `Status: ${product.warrantyStatus?.replace('_', ' ') || 'Unknown'}. ${product.warrantyDaysRemaining !== undefined ? `${product.warrantyDaysRemaining} days remaining` : ''}` : 'No warranty information available'}`}
         >
           <Text style={styles.sectionTitle}>Warranty Information</Text>
-          
+
           {product.warranty?.hasWarranty ? (
             <View>
               <View style={styles.infoRow}>
@@ -247,14 +233,14 @@ function ProductDetailScreen() {
                   {product.warrantyStatus?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}
                 </Text>
               </View>
-              
+
               {product.warrantyDaysRemaining !== undefined && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Days Remaining:</Text>
                   <Text style={styles.infoValue}>{product.warrantyDaysRemaining} days</Text>
                 </View>
               )}
-              
+
               {product.warranty?.endDate && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Warranty Expires:</Text>
@@ -273,25 +259,30 @@ function ProductDetailScreen() {
           accessibilityLabel={`AMC information. ${product.amc?.hasAMC ? `Status: ${product.isAMCExpiringSoon ? 'Expiring soon' : 'Active'}. ${product.amcDaysRemaining !== undefined ? `${product.amcDaysRemaining} days remaining` : ''}` : 'No AMC information available'}`}
         >
           <Text style={styles.sectionTitle}>AMC Information</Text>
-          
+
           {product.amc?.hasAMC ? (
             <View>
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>AMC Status:</Text>
-                <Text style={[styles.infoValue, { 
-                  color: product.isAMCExpiringSoon ? Colors.warning : Colors.success
-                }]}>
+                <Text
+                  style={[
+                    styles.infoValue,
+                    {
+                      color: product.isAMCExpiringSoon ? Colors.warning : Colors.success,
+                    },
+                  ]}
+                >
                   {product.isAMCExpiringSoon ? 'EXPIRING SOON' : 'ACTIVE'}
                 </Text>
               </View>
-              
+
               {product.amcDaysRemaining !== undefined && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Days Remaining:</Text>
                   <Text style={styles.infoValue}>{product.amcDaysRemaining} days</Text>
                 </View>
               )}
-              
+
               {product.amc?.endDate && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>AMC Expires:</Text>
@@ -307,21 +298,21 @@ function ProductDetailScreen() {
         {/* Registration Information */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Registration Information</Text>
-          
+
           {product.registration?.isRegistered ? (
             <View>
               <View style={styles.infoRow}>
                 <Text style={styles.infoLabel}>Registration Status:</Text>
                 <Text style={[styles.infoValue, { color: Colors.success }]}>REGISTERED</Text>
               </View>
-              
+
               {product.registration?.serialNumber && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Serial Number:</Text>
                   <Text style={styles.infoValue}>{product.registration.serialNumber}</Text>
                 </View>
               )}
-              
+
               {product.registration?.registrationNumber && (
                 <View style={styles.infoRow}>
                   <Text style={styles.infoLabel}>Registration Number:</Text>

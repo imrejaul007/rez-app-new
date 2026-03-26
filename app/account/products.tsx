@@ -1,15 +1,7 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  ActivityIndicator,
-  ScrollView,
-} from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, ScrollView } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
 import { CardGridSkeleton } from '@/components/skeletons';
@@ -101,149 +93,111 @@ function ProductsScreen() {
     return date.toLocaleDateString('en-IN', {
       day: '2-digit',
       month: 'short',
-      year: 'numeric'
+      year: 'numeric',
     });
   };
 
-  const renderFilterButton = (
-    filter: 'all' | 'active' | 'warranty_expired',
-    label: string
-  ) => (
+  const renderFilterButton = (filter: 'all' | 'active' | 'warranty_expired', label: string) => (
     <Pressable
-      style={[
-        styles.filterButton,
-        selectedFilter === filter && styles.filterButtonActive,
-      ]}
+      style={[styles.filterButton, selectedFilter === filter && styles.filterButtonActive]}
       onPress={() => setSelectedFilter(filter)}
       accessibilityLabel={`${label} products${selectedFilter === filter ? ', selected' : ''}`}
       accessibilityRole="tab"
       accessibilityState={{ selected: selectedFilter === filter }}
       accessibilityHint="Double tap to filter products by this category"
     >
-      <Text
-        style={[
-          styles.filterButtonText,
-          selectedFilter === filter && styles.filterButtonTextActive,
-        ]}
-      >
-        {label}
-      </Text>
+      <Text style={[styles.filterButtonText, selectedFilter === filter && styles.filterButtonTextActive]}>{label}</Text>
     </Pressable>
   );
 
-  const renderProductCard = useCallback(({ item }: { item: UserProduct }) => {
-    // Safely access nested properties
-    const productName = item.product?.name || 'Unknown Product';
-    const productImages = item.product?.images || [];
-    const productImage = productImages.length > 0 ? productImages[0] : undefined;
+  const renderProductCard = useCallback(
+    ({ item }: { item: UserProduct }) => {
+      // Safely access nested properties
+      const productName = item.product?.name || 'Unknown Product';
+      const productImages = item.product?.images || [];
+      const productImage = productImages.length > 0 ? productImages[0] : undefined;
 
-    const warrantyInfo = item.warranty?.hasWarranty && item.warrantyStatus
-      ? `Warranty: ${item.warrantyStatus === 'active' ? `${item.warrantyDaysRemaining || 0} days left` : item.warrantyStatus.replace('_', ' ')}`
-      : '';
-    const amcInfo = item.amc?.hasAMC ? `AMC: ${item.amcDaysRemaining || 0} days remaining` : '';
-    const statusInfo = `Status: ${item.status?.replace('_', ' ') || 'unknown'}`;
+      const warrantyInfo =
+        item.warranty?.hasWarranty && item.warrantyStatus
+          ? `Warranty: ${item.warrantyStatus === 'active' ? `${item.warrantyDaysRemaining || 0} days left` : item.warrantyStatus.replace('_', ' ')}`
+          : '';
+      const amcInfo = item.amc?.hasAMC ? `AMC: ${item.amcDaysRemaining || 0} days remaining` : '';
+      const statusInfo = `Status: ${item.status?.replace('_', ' ') || 'unknown'}`;
 
-    return (
-      <Pressable
-        style={styles.productCard}
-        onPress={() => router.push(`/account/product-detail?id=${item._id}`)}
-        accessibilityLabel={`${productName}. Purchased ${formatDate(item.purchaseDate)}. ${warrantyInfo ? warrantyInfo + '. ' : ''}${amcInfo ? amcInfo + '. ' : ''}${statusInfo}`}
-        accessibilityRole="button"
-        accessibilityHint="Double tap to view full product details, warranty, and service options"
-      >
-        {/* Product Image */}
-        <CachedImage
-          source={productImage}
-          style={styles.productImage}
-          accessibilityLabel={`${productName} image`}
-        />
+      return (
+        <Pressable
+          style={styles.productCard}
+          onPress={() => router.push(`/account/product-detail?id=${item._id}`)}
+          accessibilityLabel={`${productName}. Purchased ${formatDate(item.purchaseDate)}. ${warrantyInfo ? warrantyInfo + '. ' : ''}${amcInfo ? amcInfo + '. ' : ''}${statusInfo}`}
+          accessibilityRole="button"
+          accessibilityHint="Double tap to view full product details, warranty, and service options"
+        >
+          {/* Product Image */}
+          <CachedImage
+            source={productImage || ''}
+            style={styles.productImage}
+            accessibilityLabel={`${productName} image`}
+          />
 
-        <View style={styles.productInfo}>
-          {/* Product Name */}
-          <Text style={styles.productName} numberOfLines={2}>
-            {productName}
-          </Text>
-
-          {/* Purchase Date */}
-          <Text style={styles.productDate}>
-            Purchased: {formatDate(item.purchaseDate)}
-          </Text>
-
-          {/* Warranty Info */}
-          {item.warranty?.hasWarranty && (
-            <View style={styles.warrantyInfo}>
-              <Ionicons
-                name="shield-checkmark"
-                size={16}
-                color={getWarrantyStatusColor(item.warrantyStatus)}
-              />
-              <Text
-                style={[
-                  styles.warrantyText,
-                  { color: getWarrantyStatusColor(item.warrantyStatus) },
-                ]}
-              >
-                {item.warrantyStatus === 'active' &&
-                  `Warranty: ${item.warrantyDaysRemaining || 0} days left`}
-                {item.warrantyStatus === 'expiring_soon' &&
-                  `Expiring soon: ${item.warrantyDaysRemaining || 0} days`}
-                {item.warrantyStatus === 'expired' && 'Warranty expired'}
-                {item.warrantyStatus === 'no_warranty' && 'No warranty'}
-              </Text>
-            </View>
-          )}
-
-          {/* AMC Info */}
-          {item.amc?.hasAMC && (
-            <View style={styles.amcInfo}>
-              <Ionicons
-                name="construct"
-                size={16}
-                color={item.isAMCExpiringSoon ? Colors.warning : Colors.success}
-              />
-              <Text
-                style={[
-                  styles.amcText,
-                  { color: item.isAMCExpiringSoon ? Colors.warning : Colors.success },
-                ]}
-              >
-                {item.isAMCExpiringSoon
-                  ? `AMC expiring: ${item.amcDaysRemaining || 0} days`
-                  : `AMC active: ${item.amcDaysRemaining || 0} days`}
-              </Text>
-            </View>
-          )}
-
-          {/* Status Badge */}
-          <View
-            style={[
-              styles.statusBadge,
-              { backgroundColor: getStatusColor(item.status) },
-            ]}
-          >
-            <Text style={styles.statusText}>
-              {item.status?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}
+          <View style={styles.productInfo}>
+            {/* Product Name */}
+            <Text style={styles.productName} numberOfLines={2}>
+              {productName}
             </Text>
-          </View>
-        </View>
 
-        {/* Arrow Icon */}
-        <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
-      </Pressable>
-    );
-  }, [router]);
+            {/* Purchase Date */}
+            <Text style={styles.productDate}>Purchased: {formatDate(item.purchaseDate)}</Text>
+
+            {/* Warranty Info */}
+            {item.warranty?.hasWarranty && (
+              <View style={styles.warrantyInfo}>
+                <Ionicons name="shield-checkmark" size={16} color={getWarrantyStatusColor(item.warrantyStatus)} />
+                <Text style={[styles.warrantyText, { color: getWarrantyStatusColor(item.warrantyStatus) }]}>
+                  {item.warrantyStatus === 'active' && `Warranty: ${item.warrantyDaysRemaining || 0} days left`}
+                  {item.warrantyStatus === 'expiring_soon' && `Expiring soon: ${item.warrantyDaysRemaining || 0} days`}
+                  {item.warrantyStatus === 'expired' && 'Warranty expired'}
+                  {item.warrantyStatus === 'no_warranty' && 'No warranty'}
+                </Text>
+              </View>
+            )}
+
+            {/* AMC Info */}
+            {item.amc?.hasAMC && (
+              <View style={styles.amcInfo}>
+                <Ionicons name="construct" size={16} color={item.isAMCExpiringSoon ? Colors.warning : Colors.success} />
+                <Text style={[styles.amcText, { color: item.isAMCExpiringSoon ? Colors.warning : Colors.success }]}>
+                  {item.isAMCExpiringSoon
+                    ? `AMC expiring: ${item.amcDaysRemaining || 0} days`
+                    : `AMC active: ${item.amcDaysRemaining || 0} days`}
+                </Text>
+              </View>
+            )}
+
+            {/* Status Badge */}
+            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
+              <Text style={styles.statusText}>{item.status?.replace('_', ' ').toUpperCase() || 'UNKNOWN'}</Text>
+            </View>
+          </View>
+
+          {/* Arrow Icon */}
+          <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
+        </Pressable>
+      );
+    },
+    [router],
+  );
 
   const renderEmptyState = () => (
     <View
       style={styles.emptyState}
-      accessibilityLabel={`No products found. ${selectedFilter === 'all' ? 'You haven\'t purchased any products yet' : `No ${selectedFilter.replace('_', ' ')} products found`}`}
+      accessibilityLabel={`No products found. ${selectedFilter === 'all' ? "You haven't purchased any products yet" : `No ${selectedFilter.replace('_', ' ')} products found`}`}
       accessibilityRole="text"
     >
       <Ionicons name="cube-outline" size={64} color={colors.border.default} />
       <Text style={styles.emptyStateTitle}>No Products Found</Text>
       <Text style={styles.emptyStateText}>
         {selectedFilter === 'all'
-          ? 'You haven\'t purchased any products yet. Start shopping to see your products here!'
+          ? "You haven't purchased any products yet. Start shopping to see your products here!"
           : `No ${selectedFilter.replace('_', ' ')} products found.`}
       </Text>
       {selectedFilter === 'all' && (
@@ -261,11 +215,7 @@ function ProductsScreen() {
   );
 
   const renderErrorState = () => (
-    <View
-      style={styles.errorState}
-      accessibilityLabel={`Error loading products. ${error}`}
-      accessibilityRole="alert"
-    >
+    <View style={styles.errorState} accessibilityLabel={`Error loading products. ${error}`} accessibilityRole="alert">
       <Ionicons name="alert-circle" size={64} color={Colors.error} />
       <Text style={styles.errorStateTitle}>Error Loading Products</Text>
       <Text style={styles.errorStateText}>{error}</Text>
@@ -290,7 +240,7 @@ function ProductsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
@@ -298,10 +248,7 @@ function ProductsScreen() {
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
-        <Text
-          style={styles.headerTitle}
-          accessibilityRole="header"
-        >
+        <Text style={styles.headerTitle} accessibilityRole="header">
           My Products
         </Text>
         <View style={{ width: 40 }} />
@@ -325,9 +272,7 @@ function ProductsScreen() {
           renderItem={renderProductCard}
           keyExtractor={(item) => item._id}
           contentContainerStyle={styles.listContainer}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           ListEmptyComponent={renderEmptyState}
           estimatedItemSize={100}
         />

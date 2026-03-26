@@ -172,8 +172,8 @@ function prefetchOtherTabs() {
   import('@/services/homepageDataService')
     .then((m) => {
       const service = m.default;
-      if (service && typeof service.getCachedSections === 'function') {
-        const sections = service.getCachedSections?.();
+      if (service && typeof (service as any).getCachedSections === 'function') {
+        const sections = (service as any).getCachedSections?.();
         if (sections) {
           const imageUrls: string[] = [];
           for (const section of sections) {
@@ -295,7 +295,7 @@ function HomeScreen() {
   const activeHomeTab = useActiveHomeTab();
   const setActiveHomeTab = useSetActiveHomeTab();
   const registerScrollToTop = useRegisterScrollToTop();
-  const navTimerRef = React.useRef<ReturnType<typeof setTimeout>>();
+  const navTimerRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const [refreshing, setRefreshing] = React.useState(false);
   const [showDetailedLocation, setShowDetailedLocation] = React.useState(false);
   // On web, InteractionManager resolves synchronously — start as true to avoid an extra re-render
@@ -719,7 +719,7 @@ function HomeScreen() {
           state: selectedLocation.state,
           pincode: selectedLocation.pincode,
           neighbourhood: selectedLocation.neighbourhood,
-        });
+        } as any);
         if (!isMounted()) return;
         setIsLocationModalVisible(false);
       } catch (error) {
@@ -887,7 +887,12 @@ function HomeScreen() {
         }
       >
         {/* Header - Dynamic gradient based on active tab */}
-        <LinearGradient colors={gradientColors} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} style={viewStyles.header}>
+        <LinearGradient
+          colors={gradientColors as any}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+          style={viewStyles.header}
+        >
           <View style={viewStyles.headerTop}>
             {/* Modern Location Pill - Tap to expand details */}
             <Pressable
@@ -1224,6 +1229,9 @@ function HomeScreen() {
               <Pressable
                 onPress={() => router.push('/smart-spending')}
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                android_ripple={{ color: 'rgba(0,0,0,0.06)', borderless: false }}
+                accessibilityRole="button"
+                accessibilityLabel={`${streakCount}-day streak. Tap to view smart spending.`}
               >
                 <StreakFireIcon streakDays={streakCount} size="small" />
                 <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text.primary }}>
@@ -1231,15 +1239,15 @@ function HomeScreen() {
                 </Text>
               </Pressable>
             )}
-            <Pressable onPress={() => router.push('/rez-score')} style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
               <RezScoreCard
                 score={0}
-                tier="beginner"
+                tier="Beginner"
                 trend="stable"
                 percentile={0}
                 onPress={() => router.push('/rez-score')}
               />
-            </Pressable>
+            </View>
           </View>
         )}
 
@@ -1311,7 +1319,7 @@ function HomeScreen() {
           <ProfileMenuModal
             visible={isModalVisible}
             onClose={hideModal}
-            user={profileUser || authUser}
+            user={(profileUser || authUser) as any}
             menuSections={profileMenuSections}
             onMenuItemPress={handleMenuItemPress}
           />

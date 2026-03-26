@@ -1,21 +1,11 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback, useMemo, useRef, useLayoutEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  StatusBar,
-} from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
 
-import {
-  SearchCategory,
-  SearchResult,
-  SearchSuggestion,
-  SearchViewMode,
-} from '@/types/search.types';
+import { SearchCategory, SearchResult, SearchSuggestion, SearchViewMode } from '@/types/search.types';
 import { LandingSkeleton, ResultsSkeleton } from '@/components/search/SearchSkeleton';
 import FilterModal from '@/components/search/FilterModal';
 import type { FilterState } from '@/components/search/FilterModal';
@@ -41,7 +31,17 @@ function SearchPage() {
   const initialQuery = (params.q as string) || '';
 
   // Use the search page hook
-  const { state: searchState, groupedProducts, matchingStores, searchSummary, trendingSearches, popularStores, popularProducts, didYouMeanSuggestions, actions } = useSearchPage();
+  const {
+    state: searchState,
+    groupedProducts,
+    matchingStores,
+    searchSummary,
+    trendingSearches,
+    popularStores,
+    popularProducts,
+    didYouMeanSuggestions,
+    actions,
+  } = useSearchPage();
 
   // Get user location for distance calculation
   const { currentLocation } = useCurrentLocation();
@@ -51,7 +51,10 @@ function SearchPage() {
   const currencySymbol = getCurrencySymbol();
 
   // Use debounced search hook
-  const { debouncedValue: debouncedQuery, setValue: setSearchQuery } = useDebouncedSearch(initialQuery, { delay: 350, minLength: 2 });
+  const { debouncedValue: debouncedQuery, setValue: setSearchQuery } = useDebouncedSearch(initialQuery, {
+    delay: 350,
+    minLength: 2,
+  });
 
   const [viewMode, setViewMode] = useState<SearchViewMode>(initialQuery ? 'results' : 'categories');
   const [inputFocused, setInputFocused] = useState(false);
@@ -70,7 +73,10 @@ function SearchPage() {
 
   // Load recent searches
   useEffect(() => {
-    searchHistoryService.getRecentSearches().then(setRecentSearches).catch(() => {});
+    searchHistoryService
+      .getRecentSearches()
+      .then(setRecentSearches)
+      .catch(() => {});
   }, []);
 
   // Prepare user location for search (memoized to avoid recreation)
@@ -158,8 +164,8 @@ function SearchPage() {
       params: {
         slug: category.slug,
         name: category.name,
-        categoryId: category.id
-      }
+        categoryId: category.id,
+      },
     });
   };
 
@@ -173,7 +179,7 @@ function SearchPage() {
     } else {
       router.push({
         pathname: '/product-page' as any,
-        params: { cardId: resultId, cardType: 'product' }
+        params: { cardId: resultId, cardType: 'product' },
       });
     }
   };
@@ -182,7 +188,7 @@ function SearchPage() {
     if (seller.productId) {
       router.push({
         pathname: '/product-page' as any,
-        params: { cardId: seller.productId, cardType: 'product', storeId: seller.storeId }
+        params: { cardId: seller.productId, cardType: 'product', storeId: seller.storeId },
       });
     } else if (seller.storeId) {
       router.push(`/MainStorePage?storeId=${seller.storeId}`);
@@ -272,7 +278,7 @@ function SearchPage() {
   const sortedGroupedProducts = useMemo(() => {
     if (!groupedProducts || groupedProducts.length === 0) return groupedProducts;
 
-    return groupedProducts.map(productGroup => {
+    return groupedProducts.map((productGroup) => {
       const sortedSellers = [...productGroup.sellers].sort((a, b) => {
         switch (currentSort) {
           case 'price_low':
@@ -291,8 +297,10 @@ function SearchPage() {
             return b.reviewCount - a.reviewCount;
           case 'best_value':
           default: {
-            const scoreA = (a.price.current * 0.4) - (a.cashback.amount * 0.3) - (a.rating * 100 * 0.2) + ((a.distance || 999) * 0.1);
-            const scoreB = (b.price.current * 0.4) - (b.cashback.amount * 0.3) - (b.rating * 100 * 0.2) + ((b.distance || 999) * 0.1);
+            const scoreA =
+              a.price.current * 0.4 - a.cashback.amount * 0.3 - a.rating * 100 * 0.2 + (a.distance || 999) * 0.1;
+            const scoreB =
+              b.price.current * 0.4 - b.cashback.amount * 0.3 - b.rating * 100 * 0.2 + (b.distance || 999) * 0.1;
             return scoreA - scoreB;
           }
         }
@@ -311,9 +319,7 @@ function SearchPage() {
     }
 
     if (searchState.loading && !searchState.sections.length) {
-      return searchState.isSearching || viewMode === 'results'
-        ? <ResultsSkeleton />
-        : <LandingSkeleton />;
+      return searchState.isSearching || viewMode === 'results' ? <ResultsSkeleton /> : <LandingSkeleton />;
     }
 
     switch (viewMode) {
@@ -332,7 +338,12 @@ function SearchPage() {
         if (searchState.query.trim().length < 2) {
           return <SearchHintView />;
         }
-        if ((sortedGroupedProducts.length === 0 && matchingStores.length === 0 && searchState.results.length === 0) && !searchState.loading) {
+        if (
+          sortedGroupedProducts.length === 0 &&
+          matchingStores.length === 0 &&
+          searchState.results.length === 0 &&
+          !searchState.loading
+        ) {
           return (
             <SearchEmptyState
               query={searchState.query}
@@ -373,9 +384,12 @@ function SearchPage() {
             onViewAll={handleViewAll}
             onRecentSearchPress={handleRecentSearchPress}
             onRemoveSearch={(id) => {
-              searchHistoryService.removeSearch(id).then(() => {
-                setRecentSearches(prev => prev.filter(s => s.id !== id));
-              }).catch(() => {});
+              searchHistoryService
+                .removeSearch(id)
+                .then(() => {
+                  setRecentSearches((prev) => prev.filter((s) => s.id !== id));
+                })
+                .catch(() => {});
             }}
             onClearAllSearches={() => {
               actions.clearSearchHistory();
@@ -389,8 +403,7 @@ function SearchPage() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={NUQTA.nileBlue} />
+    <SafeAreaView style={styles.container} edges={['top']}>
       <SearchHeader
         query={searchState.query}
         inputFocused={inputFocused}
@@ -404,11 +417,7 @@ function SearchPage() {
         onOpenFilters={handleOpenFilters}
       />
       {searchState.error && searchState.sections.length > 0 && (
-        <View
-          style={styles.errorBanner}
-          accessibilityLabel={`Warning: ${searchState.error}`}
-          accessibilityRole="alert"
-        >
+        <View style={styles.errorBanner} accessibilityLabel={`Warning: ${searchState.error}`} accessibilityRole="alert">
           <Ionicons name="warning-outline" size={16} color={NUQTA.lightMustard} accessibilityLabel="Warning icon" />
           <Text style={styles.errorBannerText}>{searchState.error}</Text>
         </View>
@@ -421,9 +430,10 @@ function SearchPage() {
         onClose={() => setShowFilterModal(false)}
         onApplyFilters={handleApplyFilters}
         currentFilters={currentFilters}
-        categories={searchState.sections.length > 0
-          ? searchState.sections.flatMap(s => s.categories).map(c => ({ id: c.id, name: c.name }))
-          : undefined
+        categories={
+          searchState.sections.length > 0
+            ? searchState.sections.flatMap((s) => s.categories).map((c) => ({ id: c.id, name: c.name }))
+            : undefined
         }
       />
     </SafeAreaView>

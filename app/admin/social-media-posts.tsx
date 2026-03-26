@@ -70,7 +70,9 @@ function AdminSocialMediaPosts() {
     rejected: 0,
     credited: 0,
   });
-  const [selectedStatus, setSelectedStatus] = useState<'all' | 'pending' | 'approved' | 'rejected' | 'credited'>('pending');
+  const [selectedStatus, setSelectedStatus] = useState<'all' | 'pending' | 'approved' | 'rejected' | 'credited'>(
+    'pending',
+  );
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -128,14 +130,13 @@ function AdminSocialMediaPosts() {
         setPosts(postsData);
       } else {
         if (!isMounted()) return;
-        setPosts(prev => [...prev, ...postsData]);
+        setPosts((prev) => [...prev, ...postsData]);
       }
 
       if (!isMounted()) return;
       setPage(pageNum);
       if (!isMounted()) return;
       setHasMore(pagination?.hasNextPage ?? postsData.length >= 20);
-
     } catch (error: any) {
       platformAlertSimple('Error', 'Failed to load posts. ' + (error.response?.data?.message || error.message));
     } finally {
@@ -155,9 +156,8 @@ function AdminSocialMediaPosts() {
   const handleApprove = async (postId: string) => {
     setActionLoading(postId);
     try {
-
       await apiClient.patch(`/social-media/posts/${postId}/status`, {
-        status: 'approved'
+        status: 'approved',
       });
 
       platformAlertConfirm('Success', 'Post approved successfully!', loadPosts, 'OK');
@@ -184,10 +184,9 @@ function AdminSocialMediaPosts() {
 
     setActionLoading(selectedPost._id);
     try {
-
       await apiClient.patch(`/social-media/posts/${selectedPost._id}/status`, {
         status: 'rejected',
-        rejectionReason: rejectionReason.trim()
+        rejectionReason: rejectionReason.trim(),
       });
 
       if (!isMounted()) return;
@@ -213,50 +212,67 @@ function AdminSocialMediaPosts() {
       async () => {
         setActionLoading(postId);
         try {
-
           await apiClient.patch(`/social-media/posts/${postId}/status`, {
-            status: 'credited'
+            status: 'credited',
           });
 
           platformAlertConfirm('Success', `${currencySymbol}${cashbackAmount} credited successfully!`, loadPosts, 'OK');
         } catch (error: any) {
-          platformAlertSimple('Error', 'Failed to credit cashback. ' + (error.response?.data?.message || error.message));
+          platformAlertSimple(
+            'Error',
+            'Failed to credit cashback. ' + (error.response?.data?.message || error.message),
+          );
         } finally {
           if (!isMounted()) return;
           setActionLoading(null);
         }
       },
-      'Credit'
+      'Credit',
     );
   };
 
   const getStatusColor = (status: SocialPost['status']) => {
     switch (status) {
-      case 'approved': return Colors.success;
-      case 'pending': return Colors.warning;
-      case 'rejected': return Colors.error;
-      case 'credited': return Colors.brand.purple;
-      default: return colors.text.tertiary;
+      case 'approved':
+        return Colors.success;
+      case 'pending':
+        return Colors.warning;
+      case 'rejected':
+        return Colors.error;
+      case 'credited':
+        return Colors.brand.purple;
+      default:
+        return colors.text.tertiary;
     }
   };
 
   const getPlatformIcon = (platform: string) => {
     switch (platform) {
-      case 'instagram': return 'logo-instagram';
-      case 'facebook': return 'logo-facebook';
-      case 'twitter': return 'logo-twitter';
-      case 'tiktok': return 'musical-notes';
-      default: return 'link';
+      case 'instagram':
+        return 'logo-instagram';
+      case 'facebook':
+        return 'logo-facebook';
+      case 'twitter':
+        return 'logo-twitter';
+      case 'tiktok':
+        return 'musical-notes';
+      default:
+        return 'link';
     }
   };
 
   const getPlatformColor = (platform: string) => {
     switch (platform) {
-      case 'instagram': return '#E4405F';
-      case 'facebook': return '#1877F2';
-      case 'twitter': return '#1DA1F2';
-      case 'tiktok': return '#000000';
-      default: return colors.neutral[500];
+      case 'instagram':
+        return '#E4405F';
+      case 'facebook':
+        return '#1877F2';
+      case 'twitter':
+        return '#1DA1F2';
+      case 'tiktok':
+        return '#000000';
+      default:
+        return colors.neutral[500];
     }
   };
 
@@ -267,7 +283,7 @@ function AdminSocialMediaPosts() {
       day: 'numeric',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   };
 
@@ -284,7 +300,7 @@ function AdminSocialMediaPosts() {
       >
         <Pressable
           style={styles.backButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           accessibilityLabel="Go back"
           accessibilityRole="button"
           accessibilityHint="Returns to previous screen"
@@ -294,7 +310,7 @@ function AdminSocialMediaPosts() {
         <Text style={styles.headerTitle}>Social Media Posts</Text>
         <Pressable
           style={styles.refreshButton}
-          onPress={loadPosts}
+          onPress={() => loadPosts()}
           accessibilityLabel="Refresh posts"
           accessibilityRole="button"
           accessibilityHint="Double tap to reload all social media posts"
@@ -309,11 +325,7 @@ function AdminSocialMediaPosts() {
         accessibilityRole="summary"
         accessibilityLabel={`Post statistics: ${stats.total} total, ${stats.pending} pending, ${stats.approved} approved, ${stats.credited} credited, ${stats.rejected} rejected`}
       >
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          accessibilityLabel="Filter posts by status"
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} accessibilityLabel="Filter posts by status">
           <Pressable
             style={[styles.statCard, selectedStatus === 'all' && styles.statCardActive]}
             onPress={() => setSelectedStatus('all')}
@@ -322,12 +334,8 @@ function AdminSocialMediaPosts() {
             accessibilityHint="Double tap to show all posts"
             accessibilityState={{ selected: selectedStatus === 'all' }}
           >
-            <Text style={[styles.statValue, selectedStatus === 'all' && styles.statValueActive]}>
-              {stats.total}
-            </Text>
-            <Text style={[styles.statLabel, selectedStatus === 'all' && styles.statLabelActive]}>
-              Total
-            </Text>
+            <Text style={[styles.statValue, selectedStatus === 'all' && styles.statValueActive]}>{stats.total}</Text>
+            <Text style={[styles.statLabel, selectedStatus === 'all' && styles.statLabelActive]}>Total</Text>
           </Pressable>
 
           <Pressable
@@ -341,9 +349,7 @@ function AdminSocialMediaPosts() {
             <Text style={[styles.statValue, selectedStatus === 'pending' && styles.statValueActive]}>
               {stats.pending}
             </Text>
-            <Text style={[styles.statLabel, selectedStatus === 'pending' && styles.statLabelActive]}>
-              Pending
-            </Text>
+            <Text style={[styles.statLabel, selectedStatus === 'pending' && styles.statLabelActive]}>Pending</Text>
           </Pressable>
 
           <Pressable
@@ -357,9 +363,7 @@ function AdminSocialMediaPosts() {
             <Text style={[styles.statValue, selectedStatus === 'approved' && styles.statValueActive]}>
               {stats.approved}
             </Text>
-            <Text style={[styles.statLabel, selectedStatus === 'approved' && styles.statLabelActive]}>
-              Approved
-            </Text>
+            <Text style={[styles.statLabel, selectedStatus === 'approved' && styles.statLabelActive]}>Approved</Text>
           </Pressable>
 
           <Pressable
@@ -373,9 +377,7 @@ function AdminSocialMediaPosts() {
             <Text style={[styles.statValue, selectedStatus === 'credited' && styles.statValueActive]}>
               {stats.credited}
             </Text>
-            <Text style={[styles.statLabel, selectedStatus === 'credited' && styles.statLabelActive]}>
-              Credited
-            </Text>
+            <Text style={[styles.statLabel, selectedStatus === 'credited' && styles.statLabelActive]}>Credited</Text>
           </Pressable>
 
           <Pressable
@@ -389,9 +391,7 @@ function AdminSocialMediaPosts() {
             <Text style={[styles.statValue, selectedStatus === 'rejected' && styles.statValueActive]}>
               {stats.rejected}
             </Text>
-            <Text style={[styles.statLabel, selectedStatus === 'rejected' && styles.statLabelActive]}>
-              Rejected
-            </Text>
+            <Text style={[styles.statLabel, selectedStatus === 'rejected' && styles.statLabelActive]}>Rejected</Text>
           </Pressable>
         </ScrollView>
       </View>
@@ -410,11 +410,7 @@ function AdminSocialMediaPosts() {
         scrollEventThrottle={400}
       >
         {loading ? (
-          <View
-            style={styles.loadingContainer}
-            accessibilityLabel="Loading posts"
-            accessibilityRole="progressbar"
-          >
+          <View style={styles.loadingContainer} accessibilityLabel="Loading posts" accessibilityRole="progressbar">
             <ActivityIndicator size="large" color={Colors.brand.purple} />
             <Text style={styles.loadingText}>Loading posts...</Text>
           </View>
@@ -439,14 +435,8 @@ function AdminSocialMediaPosts() {
               accessibilityLabel={`${post.platform} post from ${post.user.name}, status: ${post.status}, cashback: ${post.cashbackAmount} rupees`}
             >
               {/* Post Header */}
-              <View
-                style={styles.postHeader}
-                accessibilityRole="header"
-              >
-                <View
-                  style={styles.postPlatform}
-                  accessibilityLabel={`Platform: ${post.platform}`}
-                >
+              <View style={styles.postHeader} accessibilityRole="header">
+                <View style={styles.postPlatform} accessibilityLabel={`Platform: ${post.platform}`}>
                   <Ionicons
                     name={getPlatformIcon(post.platform) as any}
                     size={20}
@@ -457,10 +447,7 @@ function AdminSocialMediaPosts() {
                   </Text>
                 </View>
                 <View
-                  style={[
-                    styles.postStatus,
-                    { backgroundColor: getStatusColor(post.status) + '20' }
-                  ]}
+                  style={[styles.postStatus, { backgroundColor: getStatusColor(post.status) + '20' }]}
                   accessibilityRole="text"
                   accessibilityLabel={`Status: ${post.status}`}
                 >
@@ -492,7 +479,8 @@ function AdminSocialMediaPosts() {
                 >
                   <Ionicons name="receipt" size={16} color={Colors.brand.purple} />
                   <Text style={styles.orderText}>
-                    Order #{post.order.orderNumber} • {currencySymbol}{post.order.totals.total}
+                    Order #{post.order.orderNumber} • {currencySymbol}
+                    {post.order.totals.total}
                   </Text>
                 </View>
               )}
@@ -500,7 +488,13 @@ function AdminSocialMediaPosts() {
               {/* Post URL */}
               <Pressable
                 style={styles.postUrlContainer}
-                onPress={() => { try { Linking.openURL(post.postUrl); } catch (e) { catchAndWarn(e, 'SocialMediaPosts/openURL'); } }}
+                onPress={() => {
+                  try {
+                    Linking.openURL(post.postUrl);
+                  } catch (e) {
+                    catchAndWarn(e, 'SocialMediaPosts/openURL');
+                  }
+                }}
                 accessibilityRole="link"
                 accessibilityLabel={`Open post URL: ${post.postUrl}`}
                 accessibilityHint="Double tap to open in browser"
@@ -525,7 +519,8 @@ function AdminSocialMediaPosts() {
                 <View style={styles.metaRow}>
                   <Text style={styles.metaLabel}>Cashback:</Text>
                   <Text style={[styles.metaValue, { color: colors.successScale[400], fontWeight: '700' }]}>
-                    {currencySymbol}{post.cashbackAmount}
+                    {currencySymbol}
+                    {post.cashbackAmount}
                   </Text>
                 </View>
                 {post.submissionIp && (
@@ -550,11 +545,7 @@ function AdminSocialMediaPosts() {
 
               {/* Actions */}
               {post.status === 'pending' && (
-                <View
-                  style={styles.actions}
-                  accessibilityRole="toolbar"
-                  accessibilityLabel="Post review actions"
-                >
+                <View style={styles.actions} accessibilityRole="toolbar" accessibilityLabel="Post review actions">
                   <Pressable
                     style={[styles.actionButton, styles.approveButton]}
                     onPress={() => handleApprove(post._id)}
@@ -590,11 +581,7 @@ function AdminSocialMediaPosts() {
               )}
 
               {post.status === 'approved' && (
-                <View
-                  style={styles.actions}
-                  accessibilityRole="toolbar"
-                  accessibilityLabel="Cashback credit action"
-                >
+                <View style={styles.actions} accessibilityRole="toolbar" accessibilityLabel="Cashback credit action">
                   <Pressable
                     style={[styles.actionButton, styles.creditButton]}
                     onPress={() => handleCredit(post._id, post.cashbackAmount)}
@@ -610,7 +597,8 @@ function AdminSocialMediaPosts() {
                       <>
                         <Ionicons name="cash" size={18} color="white" />
                         <Text style={styles.actionButtonText}>
-                          Credit {currencySymbol}{post.cashbackAmount}
+                          Credit {currencySymbol}
+                          {post.cashbackAmount}
                         </Text>
                       </>
                     )}
@@ -636,19 +624,9 @@ function AdminSocialMediaPosts() {
         accessibilityViewIsModal
         accessibilityLabel="Reject post modal"
       >
-        <View
-          style={styles.modalOverlay}
-          accessibilityRole="none"
-        >
-          <View
-            style={styles.modalContent}
-            accessibilityRole="none"
-            accessibilityLabel="Reject post form"
-          >
-            <View
-              style={styles.modalHeader}
-              accessibilityRole="header"
-            >
+        <View style={styles.modalOverlay} accessibilityRole="none">
+          <View style={styles.modalContent} accessibilityRole="none" accessibilityLabel="Reject post form">
+            <View style={styles.modalHeader} accessibilityRole="header">
               <Text style={styles.modalTitle}>Reject Post</Text>
               <Pressable
                 onPress={() => setRejectionModalVisible(false)}
@@ -660,10 +638,7 @@ function AdminSocialMediaPosts() {
               </Pressable>
             </View>
 
-            <Text
-              style={styles.modalLabel}
-              accessibilityRole="text"
-            >
+            <Text style={styles.modalLabel} accessibilityRole="text">
               Rejection Reason
             </Text>
             <TextInput
@@ -699,7 +674,7 @@ function AdminSocialMediaPosts() {
         </View>
       </Modal>
     </SafeAreaView>
-);
+  );
 }
 
 const styles = StyleSheet.create({

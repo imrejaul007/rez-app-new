@@ -1,15 +1,7 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  RefreshControl,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, RefreshControl, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -58,22 +50,24 @@ function NotificationHistoryScreen() {
       const response = await notificationService.getNotifications({ limit: PAGE_LIMIT, page: pageNum });
 
       if (response.success && response.data) {
-        const transformedNotifications: NotificationHistoryItem[] = response.data.notifications.map((notification: any) => ({
-          id: notification._id,
-          title: notification.title,
-          message: notification.message,
-          type: getNotificationTypeFromChannels(notification.deliveryChannels),
-          timestamp: notification.createdAt,
-          read: notification.isRead,
-          category: notification.category
-        }));
+        const transformedNotifications: NotificationHistoryItem[] = response.data.notifications.map(
+          (notification: any) => ({
+            id: notification._id,
+            title: notification.title,
+            message: notification.message,
+            type: getNotificationTypeFromChannels(notification.deliveryChannels),
+            timestamp: notification.createdAt,
+            read: notification.isRead,
+            category: notification.category,
+          }),
+        );
 
         if (pageNum === 1) {
           if (!isMounted()) return;
           setNotifications(transformedNotifications);
         } else {
           if (!isMounted()) return;
-          setNotifications(prev => [...prev, ...transformedNotifications]);
+          setNotifications((prev) => [...prev, ...transformedNotifications]);
         }
 
         if (!isMounted()) return;
@@ -132,7 +126,7 @@ function NotificationHistoryScreen() {
       return date.toLocaleDateString('en-IN', {
         day: '2-digit',
         month: 'short',
-        year: 'numeric'
+        year: 'numeric',
       });
     }
   };
@@ -187,15 +181,13 @@ function NotificationHistoryScreen() {
   const markNotificationAsRead = async (notificationId: string) => {
     try {
       await notificationService.markAsRead([notificationId]);
-      
+
       // Update local state
       if (!isMounted()) return;
-      setNotifications(prev => 
-        prev.map(notification => 
-          notification.id === notificationId 
-            ? { ...notification, read: true }
-            : notification
-        )
+      setNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === notificationId ? { ...notification, read: true } : notification,
+        ),
       );
     } catch (error) {
       // silently handle
@@ -206,12 +198,10 @@ function NotificationHistoryScreen() {
     try {
       setMarkingAllAsRead(true);
       await notificationService.markAsRead();
-      
+
       // Update local state
       if (!isMounted()) return;
-      setNotifications(prev => 
-        prev.map(notification => ({ ...notification, read: true }))
-      );
+      setNotifications((prev) => prev.map((notification) => ({ ...notification, read: true })));
     } catch (error) {
       // silently handle
     } finally {
@@ -220,51 +210,46 @@ function NotificationHistoryScreen() {
     }
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const renderNotificationItem = useCallback(({ item }: { item: NotificationHistoryItem }) => (
-    <Pressable
-      style={styles.notificationItem}
-      onPress={() => !item.read && markNotificationAsRead(item.id)}
-      accessibilityLabel={`${item.read ? 'Read' : 'Unread'} notification from ${item.category}: ${item.title}. ${item.message}. ${formatDate(item.timestamp)}`}
-      accessibilityRole="button"
-      accessibilityHint={!item.read ? "Double tap to mark as read" : "Notification already read"}
-      accessibilityState={{ disabled: item.read }}
-    >
-      <View style={styles.notificationIcon}>
-        <Ionicons 
-          name={getNotificationIcon(item.type) as any} 
-          size={20} 
-          color={getNotificationColor(item.type)} 
-        />
-      </View>
-      
-      <View style={styles.notificationContent}>
-        <View style={styles.notificationHeader}>
-          <Text style={[styles.notificationTitle, !item.read && styles.unreadTitle]}>
-            {item.title}
-          </Text>
-          <Text style={styles.notificationTime}>
-            {formatDate(item.timestamp)}
-          </Text>
+  const renderNotificationItem = useCallback(
+    ({ item }: { item: NotificationHistoryItem }) => (
+      <Pressable
+        style={styles.notificationItem}
+        onPress={() => !item.read && markNotificationAsRead(item.id)}
+        accessibilityLabel={`${item.read ? 'Read' : 'Unread'} notification from ${item.category}: ${item.title}. ${item.message}. ${formatDate(item.timestamp)}`}
+        accessibilityRole="button"
+        accessibilityHint={!item.read ? 'Double tap to mark as read' : 'Notification already read'}
+        accessibilityState={{ disabled: item.read }}
+      >
+        <View style={styles.notificationIcon}>
+          <Ionicons name={getNotificationIcon(item.type) as any} size={20} color={getNotificationColor(item.type)} />
         </View>
-        
-        <Text style={styles.notificationMessage} numberOfLines={2}>
-          {item.message}
-        </Text>
-        
-        <View style={styles.notificationFooter}>
-          <View style={[styles.categoryBadge, { backgroundColor: `${getCategoryColor(item.category)}20` }]}>
-            <Text style={[styles.categoryText, { color: getCategoryColor(item.category) }]}>
-              {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
-            </Text>
+
+        <View style={styles.notificationContent}>
+          <View style={styles.notificationHeader}>
+            <Text style={[styles.notificationTitle, !item.read && styles.unreadTitle]}>{item.title}</Text>
+            <Text style={styles.notificationTime}>{formatDate(item.timestamp)}</Text>
           </View>
-          
-          {!item.read && <View style={styles.unreadDot} />}
+
+          <Text style={styles.notificationMessage} numberOfLines={2}>
+            {item.message}
+          </Text>
+
+          <View style={styles.notificationFooter}>
+            <View style={[styles.categoryBadge, { backgroundColor: `${getCategoryColor(item.category)}20` }]}>
+              <Text style={[styles.categoryText, { color: getCategoryColor(item.category) }]}>
+                {item.category.charAt(0).toUpperCase() + item.category.slice(1)}
+              </Text>
+            </View>
+
+            {!item.read && <View style={styles.unreadDot} />}
+          </View>
         </View>
-      </View>
-    </Pressable>
-  ), [markNotificationAsRead]);
+      </Pressable>
+    ),
+    [markNotificationAsRead],
+  );
 
   if (loading) {
     return <NotificationListSkeleton />;
@@ -275,7 +260,7 @@ function NotificationHistoryScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
@@ -285,9 +270,7 @@ function NotificationHistoryScreen() {
         </Pressable>
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>Notification History</Text>
-          {unreadCount > 0 && (
-            <Text style={styles.unreadCount}>{unreadCount} unread</Text>
-          )}
+          {unreadCount > 0 && <Text style={styles.unreadCount}>{unreadCount} unread</Text>}
         </View>
         {unreadCount > 0 && (
           <Pressable
@@ -312,10 +295,8 @@ function NotificationHistoryScreen() {
         data={notifications}
         renderItem={renderNotificationItem}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }]}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
+        contentContainerStyle={{ ...styles.scrollContent, paddingBottom: 120 } as any}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.3}
         estimatedItemSize={80}
@@ -327,9 +308,7 @@ function NotificationHistoryScreen() {
           >
             <Ionicons name="notifications-off" size={64} color={colors.border.default} />
             <Text style={styles.emptyTitle}>No Notifications</Text>
-            <Text style={styles.emptyText}>
-              You haven't received any notifications yet.
-            </Text>
+            <Text style={styles.emptyText}>You haven't received any notifications yet.</Text>
           </View>
         }
         ListFooterComponent={
@@ -338,7 +317,14 @@ function NotificationHistoryScreen() {
               <ActivityIndicator size="small" color={Colors.info} />
             </View>
           ) : !hasMore && notifications.length > 0 ? (
-            <Text style={{ textAlign: 'center', color: colors.text.tertiary, ...Typography.bodySmall, paddingVertical: Spacing.base }}>
+            <Text
+              style={{
+                textAlign: 'center',
+                color: colors.text.tertiary,
+                ...Typography.bodySmall,
+                paddingVertical: Spacing.base,
+              }}
+            >
               No more notifications
             </Text>
           ) : null

@@ -96,7 +96,7 @@ function RootLayout() {
       }
 
       // Check version (requires expo-constants)
-      const currentVersion = Constants.expoConfig?.version || '1.0.0';
+      const currentVersion = (Constants as any).expoConfig?.version || '1.0.0';
       if (data?.forceUpdate && compareVersions(currentVersion, data.minVersion) < 0) {
         router.replace('/update-required');
       }

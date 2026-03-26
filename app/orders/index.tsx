@@ -1,16 +1,8 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback, useRef, memo } from 'react';
 import { useFocusEffect } from 'expo-router';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  TextInput,
-  ScrollView,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, TextInput, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import CachedImage from '@/components/ui/CachedImage';
 import { FlashList } from '@shopify/flash-list';
 import { router, Stack } from 'expo-router';
@@ -119,7 +111,12 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
 
   const renderActions = () => {
     const status = item.status;
-    const actions: { label: string; icon: string; onPress: () => void; variant?: 'primary' | 'secondary' | 'danger' }[] = [];
+    const actions: {
+      label: string;
+      icon: string;
+      onPress: () => void;
+      variant?: 'primary' | 'secondary' | 'danger';
+    }[] = [];
 
     if (['placed', 'confirmed'].includes(status)) {
       actions.push({
@@ -143,10 +140,11 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
       actions.push({
         label: 'Report Issue',
         icon: 'alert-circle-outline',
-        onPress: () => router.push({
-          pathname: '/support/create-ticket',
-          params: { category: 'order', subject: `Issue with Order #${item.orderNumber}`, relatedOrderId: item.id },
-        }),
+        onPress: () =>
+          router.push({
+            pathname: '/support/create-ticket',
+            params: { category: 'order', subject: `Issue with Order #${item.orderNumber}`, relatedOrderId: item.id },
+          }),
         variant: 'secondary',
       });
     }
@@ -173,16 +171,20 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
               name={action.icon as any}
               size={14}
               color={
-                action.variant === 'primary' ? Colors.secondary[600] :
-                action.variant === 'danger' ? '#E74C3C' :
-                Colors.gray[600]
+                action.variant === 'primary'
+                  ? Colors.secondary[600]
+                  : action.variant === 'danger'
+                    ? '#E74C3C'
+                    : Colors.gray[600]
               }
             />
-            <Text style={[
-              styles.quickActionText,
-              action.variant === 'primary' && { color: Colors.secondary[600] },
-              action.variant === 'danger' && { color: '#E74C3C' },
-            ]}>
+            <Text
+              style={[
+                styles.quickActionText,
+                action.variant === 'primary' && { color: Colors.secondary[600] },
+                action.variant === 'danger' && { color: '#E74C3C' },
+              ]}
+            >
               {action.label}
             </Text>
           </Pressable>
@@ -192,11 +194,7 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
   };
 
   return (
-    <Pressable
-      style={styles.orderCard}
-      onPress={() => onPress(item.id)}
-     
-    >
+    <Pressable style={styles.orderCard} onPress={() => onPress(item.id)}>
       <View style={styles.orderHeader}>
         <View style={styles.orderInfo}>
           <Text style={styles.orderNumber}>#{item.orderNumber}</Text>
@@ -206,9 +204,13 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
           {(item as any).fulfillmentType && (item as any).fulfillmentType !== 'delivery' && (
             <View style={styles.fulfillmentBadge}>
               <Text style={styles.fulfillmentText}>
-                {(item as any).fulfillmentType === 'pickup' ? '🛍 Pickup' :
-                 (item as any).fulfillmentType === 'drive_thru' ? '🚗 Drive-Thru' :
-                 (item as any).fulfillmentType === 'dine_in' ? '🍽 Dine-In' : ''}
+                {(item as any).fulfillmentType === 'pickup'
+                  ? '🛍 Pickup'
+                  : (item as any).fulfillmentType === 'drive_thru'
+                    ? '🚗 Drive-Thru'
+                    : (item as any).fulfillmentType === 'dine_in'
+                      ? '🍽 Dine-In'
+                      : ''}
               </Text>
             </View>
           )}
@@ -222,16 +224,21 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
         {item.items.slice(0, 3).map((orderItem, index) => {
           const itemName = orderItem.name || orderItem.product?.name || 'Product';
           const itemImage = orderItem.image || orderItem.product?.images?.[0]?.url || orderItem.product?.image;
-          const itemTotal = orderItem.subtotal || orderItem.totalPrice || (orderItem.price * orderItem.quantity) || 0;
+          const itemTotal = orderItem.subtotal || orderItem.totalPrice || orderItem.price * orderItem.quantity || 0;
 
           return (
             <View key={index} style={styles.itemRow}>
               <CachedImage source={itemImage} style={styles.itemImage} />
               <View style={styles.itemInfo}>
-                <Text style={styles.itemName} numberOfLines={1}>{itemName}</Text>
+                <Text style={styles.itemName} numberOfLines={1}>
+                  {itemName}
+                </Text>
                 <Text style={styles.itemQuantity}>Qty: {orderItem.quantity}</Text>
               </View>
-              <Text style={styles.itemPrice}>{currencySymbol}{Number(itemTotal).toFixed(2)}</Text>
+              <Text style={styles.itemPrice}>
+                {currencySymbol}
+                {Number(itemTotal).toFixed(2)}
+              </Text>
             </View>
           );
         })}
@@ -246,7 +253,8 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
         <View style={styles.totalSection}>
           <Text style={styles.totalLabel}>Total Amount</Text>
           <Text style={styles.totalAmount}>
-            {currencySymbol}{Number(item.totals?.total || item.summary?.total || 0).toFixed(2)}
+            {currencySymbol}
+            {Number(item.totals?.total || item.summary?.total || 0).toFixed(2)}
           </Text>
         </View>
         <View style={styles.paymentStatus}>
@@ -280,7 +288,7 @@ const OrderCard = memo(({ item, currencySymbol, onPress, onRefresh }: OrderCardP
 
 const OrderSkeleton = () => (
   <View style={styles.skeletonContainer}>
-    {[1, 2, 3, 4].map(i => (
+    {[1, 2, 3, 4].map((i) => (
       <View key={i} style={styles.orderCard}>
         <View style={styles.orderHeader}>
           <View style={{ flex: 1 }}>
@@ -289,7 +297,7 @@ const OrderSkeleton = () => (
           </View>
           <SkeletonLoader width={80} height={26} borderRadius={6} />
         </View>
-        {[1, 2].map(j => (
+        {[1, 2].map((j) => (
           <View key={j} style={[styles.itemRow, { marginBottom: 8 }]}>
             <SkeletonLoader width={50} height={50} borderRadius={8} />
             <View style={{ flex: 1, marginLeft: 12 }}>
@@ -347,7 +355,7 @@ function OrdersListScreen() {
   useFocusEffect(
     useCallback(() => {
       loadOrders(1, false);
-    }, [activeFilter, sortOrder, searchQuery])
+    }, [activeFilter, sortOrder, searchQuery]),
   );
 
   // Debounced search
@@ -387,9 +395,9 @@ function OrdersListScreen() {
         } else {
           // Deduplicate on append
           if (!isMounted()) return;
-          setOrders(prev => {
-            const ids = new Set(prev.map(o => o.id));
-            return [...prev, ...mappedOrders.filter(o => !ids.has(o.id))];
+          setOrders((prev) => {
+            const ids = new Set(prev.map((o) => o.id));
+            return [...prev, ...mappedOrders.filter((o) => !ids.has(o.id))];
           });
         }
 
@@ -432,18 +440,16 @@ function OrdersListScreen() {
   };
 
   const toggleSort = () => {
-    setSortOrder(prev => prev === 'newest' ? 'oldest' : 'newest');
+    setSortOrder((prev) => (prev === 'newest' ? 'oldest' : 'newest'));
     setPage(1);
   };
 
-  const renderOrderItem = useCallback(({ item }: { item: Order }) => (
-    <OrderCard
-      item={item}
-      currencySymbol={currencySymbol}
-      onPress={handleOrderPress}
-      onRefresh={handleRefresh}
-    />
-  ), [currencySymbol, handleOrderPress, handleRefresh]);
+  const renderOrderItem = useCallback(
+    ({ item }: { item: Order }) => (
+      <OrderCard item={item} currencySymbol={currencySymbol} onPress={handleOrderPress} onRefresh={handleRefresh} />
+    ),
+    [currencySymbol, handleOrderPress, handleRefresh],
+  );
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
@@ -474,21 +480,20 @@ function OrdersListScreen() {
   };
 
   const renderListHeader = () => (
-    <>
-      {orders.length > 0 && !searchQuery && activeFilter === 'all' && (
-        <ReorderSuggestions />
-      )}
-    </>
+    <>{orders.length > 0 && !searchQuery && activeFilter === 'all' && <ReorderSuggestions />}</>
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top']}>
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Gradient Header */}
       <LinearGradient colors={Gradients.nileBlue as any} style={styles.gradientHeader}>
         <View style={styles.headerContent}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>My Orders</Text>
@@ -516,24 +521,14 @@ function OrdersListScreen() {
         </View>
 
         <View style={styles.filterRow}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterChips}
-          >
-            {FILTERS.map(f => (
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterChips}>
+            {FILTERS.map((f) => (
               <Pressable
                 key={f.key}
-                style={[
-                  styles.filterChip,
-                  activeFilter === f.key && styles.filterChipActive,
-                ]}
+                style={[styles.filterChip, activeFilter === f.key && styles.filterChipActive]}
                 onPress={() => handleFilterChange(f.key)}
               >
-                <Text style={[
-                  styles.filterChipText,
-                  activeFilter === f.key && styles.filterChipTextActive,
-                ]}>
+                <Text style={[styles.filterChipText, activeFilter === f.key && styles.filterChipTextActive]}>
                   {f.label}
                 </Text>
               </Pressable>
@@ -566,7 +561,7 @@ function OrdersListScreen() {
         <FlashList
           data={orders}
           renderItem={renderOrderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={orders.length === 0 ? styles.emptyListContent : styles.listContent}
           ListHeaderComponent={renderListHeader}
           ListEmptyComponent={renderEmptyState}
@@ -584,7 +579,7 @@ function OrdersListScreen() {
           estimatedItemSize={120}
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -607,7 +602,7 @@ const styles = StyleSheet.create({
 
   // Header
   gradientHeader: {
-    paddingTop: Platform.OS === 'web' ? Spacing.base : 54,
+    paddingTop: Spacing.base,
     paddingBottom: Spacing.base,
     paddingHorizontal: Spacing.base,
   },
@@ -658,7 +653,6 @@ const styles = StyleSheet.create({
   filterChips: {
     flexDirection: 'row',
     gap: Spacing.sm,
-    flex: 1,
     paddingRight: Spacing.sm,
   },
   filterChip: {

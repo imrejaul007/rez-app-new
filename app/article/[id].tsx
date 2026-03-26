@@ -1,13 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useCallback, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  Platform,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, Dimensions, Platform } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -47,9 +40,9 @@ function ArticleDetailPage() {
 
       const response = await articlesService.getArticleById(id as string);
 
-      if (response.success && response.data.article) {
+      if (response.success && response.data && (response.data as any).article) {
         if (!isMounted()) return;
-        setArticle(response.data.article as any);
+        setArticle((response.data as any).article as any);
       } else {
         if (!isMounted()) return;
         setError('Article not found');
@@ -76,8 +69,7 @@ function ArticleDetailPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
@@ -104,8 +96,7 @@ function ArticleDetailPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
@@ -122,7 +113,7 @@ function ArticleDetailPage() {
           </ThemedText>
           <Pressable
             style={styles.backToListButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <LinearGradient
               colors={[colors.brand.purpleLight, colors.brand.purpleMedium]}
@@ -144,13 +135,9 @@ function ArticleDetailPage() {
       {/* Floating Back Button */}
       <Pressable
         style={styles.floatingBackButton}
-        onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-       
+        onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
       >
-        <LinearGradient
-          colors={['rgba(0, 0, 0, 0.6)', 'rgba(0, 0, 0, 0.4)']}
-          style={styles.floatingBackGradient}
-        >
+        <LinearGradient colors={['rgba(0, 0, 0, 0.6)', 'rgba(0, 0, 0, 0.4)']} style={styles.floatingBackGradient}>
           <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </LinearGradient>
       </Pressable>
@@ -164,15 +151,8 @@ function ArticleDetailPage() {
         {/* Hero Cover Image */}
         {article?.coverImage && (
           <View style={styles.heroImageContainer}>
-            <CachedImage
-              source={article.coverImage}
-              style={styles.heroImage}
-              contentFit="cover"
-            />
-            <LinearGradient
-              colors={['transparent', 'rgba(0, 0, 0, 0.7)']}
-              style={styles.heroGradient}
-            />
+            <CachedImage source={article.coverImage} style={styles.heroImage} contentFit="cover" />
+            <LinearGradient colors={['transparent', 'rgba(0, 0, 0, 0.7)']} style={styles.heroGradient} />
           </View>
         )}
 
@@ -200,24 +180,17 @@ function ArticleDetailPage() {
             <View style={styles.authorSection}>
               <View style={styles.authorContainer}>
                 {article.author.avatar ? (
-                  <CachedImage
-                    source={article.author.avatar}
-                    style={styles.authorAvatar}
-                  />
+                  <CachedImage source={article.author.avatar} style={styles.authorAvatar} />
                 ) : (
                   <View style={[styles.authorAvatar, styles.avatarPlaceholder]}>
                     <Ionicons name="person" size={20} color={Colors.brand.purpleLight} />
                   </View>
                 )}
                 <View style={styles.authorInfo}>
-                  <ThemedText style={styles.authorName}>
-                    {article.author.name}
-                  </ThemedText>
+                  <ThemedText style={styles.authorName}>{article.author.name}</ThemedText>
                   <View style={styles.metaRow}>
                     <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
-                    <ThemedText style={styles.metaText}>
-                      {article.readTime || '5 min read'}
-                    </ThemedText>
+                    <ThemedText style={styles.metaText}>{article.readTime || '5 min read'}</ThemedText>
                     <ThemedText style={styles.metaDot}>•</ThemedText>
                     <Ionicons name="eye-outline" size={14} color={colors.text.tertiary} />
                     <ThemedText style={styles.metaText}>{article.viewCount}</ThemedText>
@@ -246,9 +219,7 @@ function ArticleDetailPage() {
           {/* Article Content with Markdown Rendering */}
           {article?.content && (
             <View style={styles.contentSection}>
-              <Markdown style={markdownStyles}>
-                {article.content}
-              </Markdown>
+              <Markdown style={markdownStyles}>{article.content}</Markdown>
             </View>
           )}
 
@@ -261,9 +232,7 @@ function ArticleDetailPage() {
                 {article.tags.map((tag, index) => (
                   <Pressable key={index} style={styles.tag}>
                     <Ionicons name="pricetag" size={14} color={Colors.brand.purpleLight} />
-                    <ThemedText style={styles.tagText}>
-                      {tag.replace(/-/g, ' ')}
-                    </ThemedText>
+                    <ThemedText style={styles.tagText}>{tag.replace(/-/g, ' ')}</ThemedText>
                   </Pressable>
                 ))}
               </View>

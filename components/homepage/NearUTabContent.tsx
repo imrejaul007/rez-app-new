@@ -525,11 +525,20 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
                 paddingHorizontal: 10,
                 paddingVertical: 6,
               }}
+              android_ripple={{ color: 'rgba(255,255,255,0.2)', borderless: false }}
+              accessibilityRole="button"
+              accessibilityLabel="Switch to REZ Mall"
             >
               <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>Mall</Text>
             </Pressable>
           )}
-          <Pressable onPress={() => setBannerDismissed(true)} style={{ padding: 4 }}>
+          <Pressable
+            onPress={() => setBannerDismissed(true)}
+            style={{ padding: 4 }}
+            accessibilityRole="button"
+            accessibilityLabel="Dismiss banner"
+            hitSlop={8}
+          >
             <Ionicons name="close" size={16} color="#94a3b8" />
           </Pressable>
         </View>
@@ -692,6 +701,10 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
             style={studentCollapsibleStyles.header}
             onPress={() => setExploreMoreExpanded((v) => !v)}
             android_ripple={{ color: 'rgba(0,0,0,0.06)' }}
+            accessibilityRole="button"
+            accessibilityLabel="Explore more categories"
+            accessibilityState={{ expanded: exploreMoreExpanded }}
+            accessibilityHint={exploreMoreExpanded ? 'Tap to collapse' : 'Tap to expand more categories'}
           >
             <View style={studentCollapsibleStyles.headerLeft}>
               <Text style={studentCollapsibleStyles.headerIcon}>🗂️</Text>

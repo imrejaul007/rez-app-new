@@ -22,7 +22,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useAuthLoading, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
-import { CachedImage } from '@/components/ui/CachedImage';
+import CachedImage from '@/components/ui/CachedImage';
 import { platformAlert } from '@/utils/platformAlert';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -47,8 +47,15 @@ import { useWalletContext } from '@/contexts/WalletContext';
 
 // ── Valid bill types for deep link param validation (CONS-014) ─────────────
 const VALID_BILL_TYPES = [
-  'electricity', 'mobile_prepaid', 'mobile_postpaid', 'broadband',
-  'dth', 'gas', 'fastag', 'insurance', 'education_fee',
+  'electricity',
+  'mobile_prepaid',
+  'mobile_postpaid',
+  'broadband',
+  'dth',
+  'gas',
+  'fastag',
+  'insurance',
+  'education_fee',
 ];
 
 type PageStep = 'types' | 'providers' | 'input' | 'bill';
@@ -88,7 +95,7 @@ function BillPaymentPage() {
 
   // CONS-017: Coin redemption state
   const [coinsToRedeem, setCoinsToRedeem] = useState(0);
-  const promoCoinsAvailable = walletData?.coins?.find(c => c.type === 'promo')?.amount ?? 0;
+  const promoCoinsAvailable = walletData?.coins?.find((c) => c.type === 'promo')?.amount ?? 0;
 
   // UI state
   const [selectedType, setSelectedType] = useState(initialType);
@@ -129,7 +136,7 @@ function BillPaymentPage() {
       errorReporter.captureError(
         billTypesError instanceof Error ? billTypesError : new Error('Failed to fetch bill types'),
         { context: 'BillPaymentPage.fetchBillTypes' },
-        'warning'
+        'warning',
       );
     } else {
       setError(null);
@@ -164,7 +171,7 @@ function BillPaymentPage() {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to fetch bill providers'),
           { context: 'BillPaymentPage.fetchProviders' },
-          'warning'
+          'warning',
         );
         if (!isMounted()) return;
         setProviders([]);
@@ -172,38 +179,43 @@ function BillPaymentPage() {
         if (!cancelled) setLoadingProviders(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [selectedType]);
 
   // Fetch payment history
-  const loadHistory = useCallback(async (page: number, append = false) => {
-    if (authLoading || !isAuthenticated) return;
-    try {
-      if (page === 1) setLoadingHistory(true);
-      else setLoadingMoreHistory(true);
-      const res = await getPaymentHistory(page, 10);
-      if (res.success && res.data) {
-        if (append) {
-          setRecentPayments((prev) => [...prev, ...res.data!.payments]);
-        } else {
-          setRecentPayments(res.data.payments);
+  const loadHistory = useCallback(
+    async (page: number, append = false) => {
+      if (authLoading || !isAuthenticated) return;
+      try {
+        if (page === 1) setLoadingHistory(true);
+        else setLoadingMoreHistory(true);
+        const res = await getPaymentHistory(page, 10);
+        if (res.success && res.data) {
+          if (append) {
+            setRecentPayments((prev) => [...prev, ...res.data!.payments]);
+          } else {
+            setRecentPayments(res.data.payments);
+          }
+          setHasMoreHistory(res.data.pagination.hasNextPage);
+          setHistoryPage(page);
         }
-        setHasMoreHistory(res.data.pagination.hasNextPage);
-        setHistoryPage(page);
+      } catch (err) {
+        errorReporter.captureError(
+          err instanceof Error ? err : new Error('Failed to fetch payment history'),
+          { context: 'BillPaymentPage.loadHistory' },
+          'info',
+        );
+      } finally {
+        if (!isMounted()) return;
+        setLoadingHistory(false);
+        if (!isMounted()) return;
+        setLoadingMoreHistory(false);
       }
-    } catch (err) {
-      errorReporter.captureError(
-        err instanceof Error ? err : new Error('Failed to fetch payment history'),
-        { context: 'BillPaymentPage.loadHistory' },
-        'info'
-      );
-    } finally {
-      if (!isMounted()) return;
-      setLoadingHistory(false);
-      if (!isMounted()) return;
-      setLoadingMoreHistory(false);
-    }
-  }, [authLoading, isAuthenticated]);
+    },
+    [authLoading, isAuthenticated],
+  );
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -248,8 +260,8 @@ function BillPaymentPage() {
     // All attempts exhausted
     errorReporter.captureError(
       lastErr ?? new Error('Failed to fetch bill details'),
-      { context: 'BillPaymentPage.handleFetchBill', attempts: MAX_ATTEMPTS },
-      'warning'
+      { context: 'BillPaymentPage.handleFetchBill', metadata: { attempts: MAX_ATTEMPTS } },
+      'warning',
     );
     if (isMounted()) {
       platformAlert('Error', 'Failed to fetch bill after 3 attempts. Please check your connection and try again.');
@@ -262,13 +274,11 @@ function BillPaymentPage() {
 
     // CONS-017: Client-side redemption cap validation
     if (coinsToRedeem > 0) {
-      const maxRedeemable = Math.floor(
-        fetchedBill.amount * ((selectedProvider.maxRedemptionPercent ?? 0) / 100)
-      );
+      const maxRedeemable = Math.floor(fetchedBill.amount * ((selectedProvider.maxRedemptionPercent ?? 0) / 100));
       if (coinsToRedeem > maxRedeemable) {
         platformAlert(
           'Redemption Cap Exceeded',
-          `Maximum ${maxRedeemable} coins can be used for this bill (${selectedProvider.maxRedemptionPercent}% of ₹${fetchedBill.amount}).`
+          `Maximum ${maxRedeemable} coins can be used for this bill (${selectedProvider.maxRedemptionPercent}% of ₹${fetchedBill.amount}).`,
         );
         return;
       }
@@ -282,10 +292,20 @@ function BillPaymentPage() {
     try {
       errorReporter.captureError(
         new Error('bill_payment_initiated'),
-        { context: 'analytics', billType: selectedProvider.type, provider: selectedProvider.code, amount: fetchedBill.amount, coinsToRedeem },
-        'info'
+        {
+          context: 'analytics',
+          metadata: {
+            billType: selectedProvider.type,
+            provider: selectedProvider.code,
+            amount: fetchedBill.amount,
+            coinsToRedeem,
+          },
+        },
+        'info',
       );
-    } catch { /* non-critical */ }
+    } catch {
+      /* non-critical */
+    }
 
     try {
       setLoadingPay(true);
@@ -297,7 +317,11 @@ function BillPaymentPage() {
           `bill_${selectedProvider._id}_${Date.now()}`,
           fetchedBill.amount,
           'INR',
-          { billType: selectedProvider.type, providerCode: selectedProvider.code, customerNumber: consumerNumber.trim() }
+          {
+            billType: selectedProvider.type,
+            providerCode: selectedProvider.code,
+            customerNumber: consumerNumber.trim(),
+          },
         );
 
         // Step 2 — Open Razorpay checkout
@@ -312,12 +336,7 @@ function BillPaymentPage() {
       }
 
       // Step 3 — Confirm payment with backend BBPS
-      const res = await payBill(
-        selectedProvider._id,
-        consumerNumber.trim(),
-        fetchedBill.amount,
-        razorpayPaymentId
-      );
+      const res = await payBill(selectedProvider._id, consumerNumber.trim(), fetchedBill.amount, razorpayPaymentId);
 
       if (res.success && res.data) {
         const { payment, promoCoinsEarned } = res.data;
@@ -326,10 +345,15 @@ function BillPaymentPage() {
         try {
           errorReporter.captureError(
             new Error('bill_payment_completed'),
-            { context: 'analytics', billType: selectedProvider.type, amount: fetchedBill.amount, coinsEarned: promoCoinsEarned },
-            'info'
+            {
+              context: 'analytics',
+              metadata: { billType: selectedProvider.type, amount: fetchedBill.amount, coinsEarned: promoCoinsEarned },
+            },
+            'info',
           );
-        } catch { /* non-critical */ }
+        } catch {
+          /* non-critical */
+        }
 
         // CONS-018: Poll for webhook confirmation if status is 'processing'
         if (payment?.status === 'processing' && payment?._id) {
@@ -348,21 +372,24 @@ function BillPaymentPage() {
                   platformAlert('Payment Failed', 'Payment was not completed. Please contact support.');
                 }
               }
-            } catch { /* polling error — stop after max attempts */ }
-            if (pollCount >= 10) { // Stop after 10 polls (30s)
+            } catch {
+              /* polling error — stop after max attempts */
+            }
+            if (pollCount >= 10) {
+              // Stop after 10 polls (30s)
               if (pollIntervalRef.current) clearInterval(pollIntervalRef.current);
               if (isMounted()) setPaymentPolling(false);
             }
           }, 3000);
         }
 
-        const coinsEarnedMsg = promoCoinsEarned > 0
-          ? ` You earned ${promoCoinsEarned} promo coins!`
-          : '';
+        const coinsEarnedMsg = promoCoinsEarned > 0 ? ` You earned ${promoCoinsEarned} promo coins!` : '';
         platformAlert('Success', `Bill payment submitted!${coinsEarnedMsg}`);
 
         // CONS-004: Refresh wallet balance after earning promo coins
-        refreshWallet().catch(() => { /* non-blocking */ });
+        refreshWallet().catch(() => {
+          /* non-blocking */
+        });
 
         if (!isMounted()) return;
         setFetchedBill(null);
@@ -375,17 +402,19 @@ function BillPaymentPage() {
         try {
           errorReporter.captureError(
             new Error('bill_payment_failed'),
-            { context: 'analytics', billType: selectedProvider.type, error: res.message },
-            'info'
+            { context: 'analytics', metadata: { billType: selectedProvider.type, error: res.message } },
+            'info',
           );
-        } catch { /* non-critical */ }
+        } catch {
+          /* non-critical */
+        }
         platformAlert('Error', res.message || 'Payment failed');
       }
     } catch (err) {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Bill payment failed'),
         { context: 'BillPaymentPage.handlePayBill' },
-        'warning'
+        'warning',
       );
       // CONS-006: Never let async errors go uncaught — always show user-friendly message
       platformAlert('Payment Failed', 'No charge was made. Please try again.');
@@ -394,8 +423,14 @@ function BillPaymentPage() {
       setLoadingPay(false);
     }
   }, [
-    fetchedBill, selectedProvider, consumerNumber, currencySymbol,
-    loadHistory, coinsToRedeem, promoCoinsAvailable, refreshWallet,
+    fetchedBill,
+    selectedProvider,
+    consumerNumber,
+    currencySymbol,
+    loadHistory,
+    coinsToRedeem,
+    promoCoinsAvailable,
+    refreshWallet,
   ]);
 
   const handleLoadMoreHistory = useCallback(() => {
@@ -412,7 +447,7 @@ function BillPaymentPage() {
       const found = billTypes.find((t) => t.id === typeId);
       return found || { icon: 'receipt-outline', color: Colors.gold, label: typeId };
     },
-    [billTypes]
+    [billTypes],
   );
 
   // ============================================
@@ -434,13 +469,11 @@ function BillPaymentPage() {
             <Ionicons name={type.icon as any} size={24} color={type.color} />
           </View>
           <Text style={styles.billTypeName}>{type.label}</Text>
-          {type.providerCount > 0 && (
-            <Text style={styles.billTypeCount}>{type.providerCount}</Text>
-          )}
+          {type.providerCount > 0 && <Text style={styles.billTypeCount}>{type.providerCount}</Text>}
         </Pressable>
       );
     },
-    [selectedType]
+    [selectedType],
   );
 
   const renderProviderCard = useCallback(
@@ -457,43 +490,29 @@ function BillPaymentPage() {
           }}
         >
           {provider.logo ? (
-            <CachedImage
-              source={{ uri: provider.logo }}
-              style={styles.providerLogo}
-              contentFit="contain"
-            />
+            <CachedImage source={{ uri: provider.logo }} style={styles.providerLogo} contentFit="contain" />
           ) : (
             <View style={styles.providerIcon}>
-              <Ionicons
-                name={getBillTypeMeta(provider.type).icon as any}
-                size={20}
-                color={Colors.gold}
-              />
+              <Ionicons name={getBillTypeMeta(provider.type).icon as any} size={20} color={Colors.gold} />
             </View>
           )}
           <View style={{ flex: 1 }}>
             <Text style={styles.providerName}>{provider.name}</Text>
             <View style={{ flexDirection: 'row', gap: Spacing.sm, flexWrap: 'wrap' }}>
               {provider.cashbackPercent > 0 && (
-                <Text style={styles.providerCashback}>
-                  {provider.cashbackPercent}% cashback
-                </Text>
+                <Text style={styles.providerCashback}>{provider.cashbackPercent}% cashback</Text>
               )}
               {/* CONS-005: Show max redemption cap so users know upfront */}
               {(provider.maxRedemptionPercent ?? 0) > 0 && (
-                <Text style={styles.providerCoinCap}>
-                  up to {provider.maxRedemptionPercent}% coins
-                </Text>
+                <Text style={styles.providerCoinCap}>up to {provider.maxRedemptionPercent}% coins</Text>
               )}
             </View>
           </View>
-          {isActive && (
-            <Ionicons name="checkmark-circle" size={20} color={Colors.gold} />
-          )}
+          {isActive && <Ionicons name="checkmark-circle" size={20} color={Colors.gold} />}
         </Pressable>
       );
     },
-    [selectedProvider, getBillTypeMeta]
+    [selectedProvider, getBillTypeMeta],
   );
 
   const renderRecentPayment = useCallback(
@@ -513,12 +532,11 @@ function BillPaymentPage() {
           </View>
           <View style={styles.recentAmount}>
             <Text style={styles.recentAmountText}>
-              {currencySymbol}{item.amount.toLocaleString()}
+              {currencySymbol}
+              {item.amount.toLocaleString()}
             </Text>
             <View style={[styles.recentStatus, isPaid && styles.recentStatusPaid]}>
-              <Text
-                style={[styles.recentStatusText, isPaid && styles.recentStatusTextPaid]}
-              >
+              <Text style={[styles.recentStatusText, isPaid && styles.recentStatusTextPaid]}>
                 {isPaid ? 'Paid' : item.status === 'failed' ? 'Failed' : 'Pending'}
               </Text>
             </View>
@@ -526,7 +544,7 @@ function BillPaymentPage() {
         </Pressable>
       );
     },
-    [currencySymbol, getBillTypeMeta]
+    [currencySymbol, getBillTypeMeta],
   );
 
   const renderHistoryFooter = useCallback(() => {
@@ -579,9 +597,7 @@ function BillPaymentPage() {
               <Text style={styles.emptySubtitle}>Please check back later</Text>
             </View>
           ) : (
-            <View style={styles.billTypesGrid}>
-              {billTypes.map(renderBillTypeCard)}
-            </View>
+            <View style={styles.billTypesGrid}>{billTypes.map(renderBillTypeCard)}</View>
           )}
         </View>
 
@@ -597,20 +613,16 @@ function BillPaymentPage() {
               <View style={styles.emptyState}>
                 <View style={styles.emptyIcon}>
                   <Ionicons
-                    name={typeMeta?.icon as any || 'business-outline'}
+                    name={(typeMeta?.icon as any) || 'business-outline'}
                     size={28}
                     color={colors.text.secondary}
                   />
                 </View>
                 <Text style={styles.emptyTitle}>No Providers Found</Text>
-                <Text style={styles.emptySubtitle}>
-                  No providers available for {typeMeta?.label || selectedType}
-                </Text>
+                <Text style={styles.emptySubtitle}>No providers available for {typeMeta?.label || selectedType}</Text>
               </View>
             ) : (
-              <View style={styles.providersList}>
-                {providers.map(renderProviderCard)}
-              </View>
+              <View style={styles.providersList}>{providers.map(renderProviderCard)}</View>
             )}
           </View>
         )}
@@ -624,24 +636,14 @@ function BillPaymentPage() {
             <View style={styles.inputContainer}>
               <TextInput
                 style={styles.input}
-                placeholder={
-                  selectedProvider.requiredFields?.[0]?.placeholder ||
-                  'Enter your consumer number'
-                }
+                placeholder={selectedProvider.requiredFields?.[0]?.placeholder || 'Enter your consumer number'}
                 placeholderTextColor={colors.text.secondary}
                 value={consumerNumber}
                 onChangeText={setConsumerNumber}
-                keyboardType={
-                  selectedProvider.requiredFields?.[0]?.type === 'number'
-                    ? 'numeric'
-                    : 'default'
-                }
+                keyboardType={selectedProvider.requiredFields?.[0]?.type === 'number' ? 'numeric' : 'default'}
               />
               <Pressable
-                style={[
-                  styles.fetchButton,
-                  (!consumerNumber.trim() || loadingBill) && styles.fetchButtonDisabled,
-                ]}
+                style={[styles.fetchButton, (!consumerNumber.trim() || loadingBill) && styles.fetchButtonDisabled]}
                 onPress={handleFetchBill}
                 disabled={!consumerNumber.trim() || loadingBill}
               >
@@ -674,22 +676,22 @@ function BillPaymentPage() {
               {fetchedBill.dueDate && (
                 <View style={styles.billRow}>
                   <Text style={styles.billLabel}>Due Date</Text>
-                  <Text style={styles.billValue}>
-                    {new Date(fetchedBill.dueDate).toLocaleDateString()}
-                  </Text>
+                  <Text style={styles.billValue}>{new Date(fetchedBill.dueDate).toLocaleDateString()}</Text>
                 </View>
               )}
               <View style={styles.billRow}>
                 <Text style={styles.billLabel}>Bill Amount</Text>
                 <Text style={styles.billAmount}>
-                  {currencySymbol}{fetchedBill.amount?.toLocaleString()}
+                  {currencySymbol}
+                  {fetchedBill.amount?.toLocaleString()}
                 </Text>
               </View>
               {(fetchedBill.cashbackAmount ?? 0) > 0 && (
                 <View style={styles.billRow}>
                   <Text style={styles.billLabel}>Cashback</Text>
                   <Text style={styles.billCashback}>
-                    + {currencySymbol}{fetchedBill.cashbackAmount!.toLocaleString()} ({fetchedBill.cashbackPercent}%)
+                    + {currencySymbol}
+                    {fetchedBill.cashbackAmount!.toLocaleString()} ({fetchedBill.cashbackPercent}%)
                   </Text>
                 </View>
               )}
@@ -714,9 +716,7 @@ function BillPaymentPage() {
               {(walletData?.pendingRewards ?? 0) > 0 && (
                 <View style={styles.pendingCoinsRow}>
                   <Ionicons name="time-outline" size={14} color={colors.text.secondary} />
-                  <Text style={styles.pendingCoinsText}>
-                    {walletData!.pendingRewards} coins arriving soon
-                  </Text>
+                  <Text style={styles.pendingCoinsText}>{walletData!.pendingRewards} coins arriving soon</Text>
                 </View>
               )}
 
@@ -727,14 +727,12 @@ function BillPaymentPage() {
                     <Text style={styles.billLabel}>Use Promo Coins</Text>
                     <Text style={styles.coinCapText}>
                       Max {selectedProvider.maxRedemptionPercent}% of bill (
-                      {Math.floor((fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100))} coins)
+                      {Math.floor((fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100))}{' '}
+                      coins)
                     </Text>
                   </View>
                   <View style={styles.coinInputRow}>
-                    <Pressable
-                      style={styles.coinAdjBtn}
-                      onPress={() => setCoinsToRedeem(c => Math.max(0, c - 5))}
-                    >
+                    <Pressable style={styles.coinAdjBtn} onPress={() => setCoinsToRedeem((c) => Math.max(0, c - 5))}>
                       <Ionicons name="remove" size={16} color={colors.text.primary} />
                     </Pressable>
                     <TextInput
@@ -744,7 +742,7 @@ function BillPaymentPage() {
                       onChangeText={(v) => {
                         const num = parseInt(v, 10) || 0;
                         const maxRedeemable = Math.floor(
-                          (fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100)
+                          (fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100),
                         );
                         setCoinsToRedeem(Math.min(num, Math.min(promoCoinsAvailable, maxRedeemable)));
                       }}
@@ -753,9 +751,9 @@ function BillPaymentPage() {
                       style={styles.coinAdjBtn}
                       onPress={() => {
                         const maxRedeemable = Math.floor(
-                          (fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100)
+                          (fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100),
                         );
-                        setCoinsToRedeem(c => Math.min(c + 5, Math.min(promoCoinsAvailable, maxRedeemable)));
+                        setCoinsToRedeem((c) => Math.min(c + 5, Math.min(promoCoinsAvailable, maxRedeemable)));
                       }}
                     >
                       <Ionicons name="add" size={16} color={colors.text.primary} />
@@ -764,7 +762,7 @@ function BillPaymentPage() {
                       style={styles.coinMaxBtn}
                       onPress={() => {
                         const maxRedeemable = Math.floor(
-                          (fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100)
+                          (fetchedBill.amount ?? 0) * ((selectedProvider.maxRedemptionPercent ?? 0) / 100),
                         );
                         setCoinsToRedeem(Math.min(promoCoinsAvailable, maxRedeemable));
                       }}
@@ -772,9 +770,7 @@ function BillPaymentPage() {
                       <Text style={styles.coinMaxBtnText}>Use Max</Text>
                     </Pressable>
                   </View>
-                  <Text style={styles.coinBalanceText}>
-                    Available: {promoCoinsAvailable} coins
-                  </Text>
+                  <Text style={styles.coinBalanceText}>Available: {promoCoinsAvailable} coins</Text>
                 </View>
               )}
 
@@ -782,7 +778,8 @@ function BillPaymentPage() {
               <View style={styles.billRow}>
                 <Text style={styles.billTotalLabel}>You Pay</Text>
                 <Text style={styles.billTotal}>
-                  {currencySymbol}{Math.max(0, (fetchedBill.amount ?? 0) - coinsToRedeem).toLocaleString()}
+                  {currencySymbol}
+                  {Math.max(0, (fetchedBill.amount ?? 0) - coinsToRedeem).toLocaleString()}
                 </Text>
               </View>
               {coinsToRedeem > 0 && (
@@ -809,9 +806,7 @@ function BillPaymentPage() {
                 <Ionicons name="time-outline" size={32} color={colors.text.secondary} />
               </View>
               <Text style={styles.emptyTitle}>No Payments Yet</Text>
-              <Text style={styles.emptySubtitle}>
-                Your bill payment history will appear here
-              </Text>
+              <Text style={styles.emptySubtitle}>Your bill payment history will appear here</Text>
             </View>
           )}
         </View>
@@ -845,13 +840,16 @@ function BillPaymentPage() {
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Bill Payments</Text>
           <View style={{ width: 32 }} />
         </View>
-        <ErrorState error={error} onRetry={fetchBillTypes} title="Failed to Load Bill Types" />
+        <ErrorState error={error} onRetry={refetchBillTypes} title="Failed to Load Bill Types" />
       </SafeAreaView>
     );
   }
@@ -862,7 +860,10 @@ function BillPaymentPage() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Bill Payments</Text>
@@ -903,7 +904,8 @@ function BillPaymentPage() {
             ) : (
               <>
                 <Text style={styles.payButtonText}>
-                  Pay {currencySymbol}{Math.max(0, (fetchedBill.amount ?? 0) - coinsToRedeem).toLocaleString()}
+                  Pay {currencySymbol}
+                  {Math.max(0, (fetchedBill.amount ?? 0) - coinsToRedeem).toLocaleString()}
                 </Text>
                 <Ionicons name="arrow-forward" size={20} color={colors.background.primary} />
               </>

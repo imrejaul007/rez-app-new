@@ -46,9 +46,10 @@ function MyReviewsPage() {
   const [hasMore, setHasMore] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
 
-  const filteredReviews = useMemo(() => activeFilter === 'all'
-    ? reviews
-    : reviews.filter(r => r.moderationStatus === activeFilter), [reviews, activeFilter]);
+  const filteredReviews = useMemo(
+    () => (activeFilter === 'all' ? reviews : reviews.filter((r) => r.moderationStatus === activeFilter)),
+    [reviews, activeFilter],
+  );
 
   useEffect(() => {
     loadReviews();
@@ -71,7 +72,7 @@ function MyReviewsPage() {
           setReviews(response.data.reviews || []);
         } else {
           if (!isMounted()) return;
-          setReviews(prev => [...prev, ...(response.data?.reviews || [])]);
+          setReviews((prev) => [...prev, ...(response.data?.reviews || [])]);
         }
 
         if (!isMounted()) return;
@@ -97,7 +98,7 @@ function MyReviewsPage() {
 
   const handleLoadMore = () => {
     if (!loading && hasMore) {
-      setPage(prev => prev + 1);
+      setPage((prev) => prev + 1);
       loadReviews();
     }
   };
@@ -107,7 +108,7 @@ function MyReviewsPage() {
     return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     });
   };
 
@@ -115,12 +116,7 @@ function MyReviewsPage() {
     return (
       <View style={styles.starsContainer}>
         {[1, 2, 3, 4, 5].map((star) => (
-          <Ionicons
-            key={star}
-            name={star <= rating ? 'star' : 'star-outline'}
-            size={16}
-            color={Colors.warning}
-          />
+          <Ionicons key={star} name={star <= rating ? 'star' : 'star-outline'} size={16} color={Colors.warning} />
         ))}
       </View>
     );
@@ -158,12 +154,8 @@ function MyReviewsPage() {
 
   const renderReviewCard = (review: UserReview) => {
     // Handle store data - might be populated object or just ID
-    const storeName = typeof review.store === 'object' && review.store?.name
-      ? review.store.name
-      : 'Store';
-    const storeLogo = typeof review.store === 'object' && review.store?.logo
-      ? review.store.logo
-      : null;
+    const storeName = typeof review.store === 'object' && review.store?.name ? review.store.name : 'Store';
+    const storeLogo = typeof review.store === 'object' && review.store?.logo ? review.store.logo : null;
     const isPending = review.moderationStatus === 'pending';
     const isRejected = review.moderationStatus === 'rejected';
 
@@ -176,7 +168,7 @@ function MyReviewsPage() {
         <View style={styles.reviewHeader}>
           <View style={styles.storeInfo}>
             {storeLogo ? (
-              <CachedImage source={storeLogo} style={styles.storeLogo} />
+              <CachedImage source={{ uri: storeLogo }} style={styles.storeLogo} />
             ) : (
               <View style={[styles.storeLogo, styles.storeLogoPlaceholder]}>
                 <Ionicons name="storefront" size={20} color={colors.brand.green} />
@@ -191,9 +183,7 @@ function MyReviewsPage() {
         </View>
 
         {/* Review Content */}
-        {review.comment && (
-          <Text style={styles.reviewComment}>{review.comment}</Text>
-        )}
+        {review.comment && <Text style={styles.reviewComment}>{review.comment}</Text>}
 
         {/* Rejection Reason */}
         {isRejected && review.moderationReason && (
@@ -209,7 +199,7 @@ function MyReviewsPage() {
             {review.images.map((image, index) => (
               <CachedImage
                 key={index}
-                source={image}
+                source={{ uri: typeof image === 'string' ? image : (image as any)?.uri || '' }}
                 style={styles.reviewImage}
               />
             ))}
@@ -262,13 +252,19 @@ function MyReviewsPage() {
             onPress={() => {
               if (!isPending) return;
               const storeId = typeof review.store === 'object' ? review.store._id : review.store;
-              router.push(`/ReviewPage?storeId=${storeId}&storeName=${encodeURIComponent(storeName)}&fromStore=true` as any);
+              router.push(
+                `/ReviewPage?storeId=${storeId}&storeName=${encodeURIComponent(storeName)}&fromStore=true` as any,
+              );
             }}
             accessibilityLabel="Edit review"
             accessibilityRole="button"
             accessibilityHint={isPending ? 'Opens editor to modify your review' : 'Only pending reviews can be edited'}
           >
-            <Ionicons name="create-outline" size={16} color={isPending ? colors.text.tertiary : colors.border.default} />
+            <Ionicons
+              name="create-outline"
+              size={16}
+              color={isPending ? colors.text.tertiary : colors.border.default}
+            />
             <Text style={[styles.actionButtonText, !isPending && { color: colors.border.default }]}>Edit</Text>
           </Pressable>
         </View>
@@ -286,7 +282,7 @@ function MyReviewsPage() {
         <View style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
             accessibilityHint="Returns to previous screen"
@@ -300,9 +296,8 @@ function MyReviewsPage() {
         {/* Filter Tabs */}
         <View style={styles.filterTabs}>
           {FILTER_TABS.map((tab) => {
-            const count = tab.key === 'all'
-              ? reviews.length
-              : reviews.filter(r => r.moderationStatus === tab.key).length;
+            const count =
+              tab.key === 'all' ? reviews.length : reviews.filter((r) => r.moderationStatus === tab.key).length;
             const isActive = activeFilter === tab.key;
             return (
               <Pressable
@@ -391,9 +386,7 @@ function MyReviewsPage() {
                 <View style={styles.centerContainer}>
                   <Ionicons name="filter-outline" size={48} color={colors.border.default} />
                   <Text style={styles.emptyTitle}>No {activeFilter} reviews</Text>
-                  <Text style={styles.emptyText}>
-                    You don't have any {activeFilter} reviews yet.
-                  </Text>
+                  <Text style={styles.emptyText}>You don't have any {activeFilter} reviews yet.</Text>
                 </View>
               )
             }

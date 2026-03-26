@@ -4,16 +4,8 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Shows user's service bookings with travel-specific enhancements
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  ActivityIndicator,
-  StatusBar,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, ActivityIndicator, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { useSharedValue, withTiming, useAnimatedStyle, Easing } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
@@ -92,30 +84,32 @@ const MyBookingsPage = () => {
 
         if (activeTab === 'courses') {
           // ED-02: Filter education-related bookings
-          filteredBookings = filteredBookings.filter(booking => {
+          filteredBookings = filteredBookings.filter((booking) => {
             const sType = (booking as any).serviceType?.toLowerCase() || '';
             const catSlug = booking.serviceCategory?.slug?.toLowerCase() || '';
-            return EDUCATION_KEYWORDS.some(kw => sType.includes(kw) || catSlug.includes(kw));
+            return EDUCATION_KEYWORDS.some((kw) => sType.includes(kw) || catSlug.includes(kw));
           });
           filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
         } else if (activeTab === 'upcoming') {
           // SS-008 FIX: Removed isMounted() guard inside .filter() — it returns undefined (falsy),
           // incorrectly excluding all bookings when the check fires.
-          filteredBookings = filteredBookings.filter(booking => {
+          filteredBookings = filteredBookings.filter((booking) => {
             const bookingDate = new Date(booking.bookingDate);
             bookingDate.setHours(0, 0, 0, 0);
             const isFuture = bookingDate >= today;
-            const isActive = booking.status !== 'completed' && booking.status !== 'cancelled' && booking.status !== 'no_show';
+            const isActive =
+              booking.status !== 'completed' && booking.status !== 'cancelled' && booking.status !== 'no_show';
             return isFuture && isActive;
           });
           filteredBookings.sort((a, b) => new Date(a.bookingDate).getTime() - new Date(b.bookingDate).getTime());
         } else {
           // SS-008 FIX: Same — removed erroneous isMounted() early-return inside filter
-          filteredBookings = filteredBookings.filter(booking => {
+          filteredBookings = filteredBookings.filter((booking) => {
             const bookingDate = new Date(booking.bookingDate);
             bookingDate.setHours(0, 0, 0, 0);
             const isPast = bookingDate < today;
-            const isCompleted = booking.status === 'completed' || booking.status === 'cancelled' || booking.status === 'no_show';
+            const isCompleted =
+              booking.status === 'completed' || booking.status === 'cancelled' || booking.status === 'no_show';
             return isPast || isCompleted;
           });
           filteredBookings.sort((a, b) => new Date(b.bookingDate).getTime() - new Date(a.bookingDate).getTime());
@@ -141,7 +135,7 @@ const MyBookingsPage = () => {
   useFocusEffect(
     useCallback(() => {
       fetchBookings();
-    }, [fetchBookings])
+    }, [fetchBookings]),
   );
 
   useEffect(() => {
@@ -159,99 +153,112 @@ const MyBookingsPage = () => {
     fetchBookingsRef.current = fetchBookings;
   });
 
-  const handleCancelBooking = useCallback(async (bookingId: string) => {
-    // SS-D002 FIX: If a cancel is already in-flight for this booking, ignore the
-    // duplicate tap — prevents race where two PATCH requests race each other.
-    if (cancellingIds.has(bookingId)) return;
+  const handleCancelBooking = useCallback(
+    async (bookingId: string) => {
+      // SS-D002 FIX: If a cancel is already in-flight for this booking, ignore the
+      // duplicate tap — prevents race where two PATCH requests race each other.
+      if (cancellingIds.has(bookingId)) return;
 
-    platformAlertDestructive(
-      'Cancel Booking',
-      'Are you sure you want to cancel this booking?',
-      'Yes, Cancel',
-      async () => {
-        // SS-D002 FIX: Lock this booking's Cancel button immediately so that:
-        //  (a) a background refresh arriving mid-cancel cannot re-render the
-        //      button in its enabled state and
-        //  (b) a double-tap cannot create two simultaneous cancel requests.
-        setCancellingIds(prev => new Set(prev).add(bookingId));
+      platformAlertDestructive(
+        'Cancel Booking',
+        'Are you sure you want to cancel this booking?',
+        'Yes, Cancel',
+        async () => {
+          // SS-D002 FIX: Lock this booking's Cancel button immediately so that:
+          //  (a) a background refresh arriving mid-cancel cannot re-render the
+          //      button in its enabled state and
+          //  (b) a double-tap cannot create two simultaneous cancel requests.
+          setCancellingIds((prev) => new Set(prev).add(bookingId));
 
-        // SS-D002 FIX: Optimistic local state update — immediately show the
-        // booking as 'cancelled' so the user sees instant feedback while the
-        // API call is in-flight.  If the call fails we revert.
-        let previousBookings: ServiceBooking[] = [];
-        setBookings(prev => {
-          previousBookings = prev;
-          return prev.map(b =>
-            b._id === bookingId ? { ...b, status: 'cancelled' as any } : b
-          );
-        });
-
-        try {
-          const response = await serviceBookingApi.cancelBooking(bookingId);
-          if (response.success) {
-            // SS-D002 FIX: Replace optimistic entry with authoritative server
-            // data so any server-side fields (refund amount, cancelledAt, etc.)
-            // are reflected without requiring a full list refresh.
-            if (response.data) {
-              setBookings(prev =>
-                prev.map(b => (b._id === bookingId ? response.data! : b))
-              );
-            }
-            platformAlertSimple('Success', 'Booking cancelled successfully');
-            // Full refresh in the background to sync other fields (e.g. cashback reversal)
-            fetchBookingsRef.current();
-          } else {
-            // SS-D002 FIX: Revert optimistic update on API failure so the
-            // booking does not appear cancelled when it actually still is active.
-            setBookings(previousBookings);
-            platformAlertSimple('Error', response.error || 'Failed to cancel booking');
-          }
-        } catch (error) {
-          // SS-D002 FIX: Revert on network / unexpected error too.
-          setBookings(previousBookings);
-          platformAlertSimple('Error', 'Failed to cancel booking');
-        } finally {
-          // SS-D002 FIX: Always release the lock so the button re-enables on error.
-          setCancellingIds(prev => {
-            const next = new Set(prev);
-            next.delete(bookingId);
-            return next;
+          // SS-D002 FIX: Optimistic local state update — immediately show the
+          // booking as 'cancelled' so the user sees instant feedback while the
+          // API call is in-flight.  If the call fails we revert.
+          let previousBookings: ServiceBooking[] = [];
+          setBookings((prev) => {
+            previousBookings = prev;
+            return prev.map((b) => (b._id === bookingId ? { ...b, status: 'cancelled' as any } : b));
           });
-        }
-      }
-    );
-  }, [cancellingIds]);
+
+          try {
+            const response = await serviceBookingApi.cancelBooking(bookingId);
+            if (response.success) {
+              // SS-D002 FIX: Replace optimistic entry with authoritative server
+              // data so any server-side fields (refund amount, cancelledAt, etc.)
+              // are reflected without requiring a full list refresh.
+              if (response.data) {
+                setBookings((prev) => prev.map((b) => (b._id === bookingId ? response.data! : b)));
+              }
+              platformAlertSimple('Success', 'Booking cancelled successfully');
+              // Full refresh in the background to sync other fields (e.g. cashback reversal)
+              fetchBookingsRef.current();
+            } else {
+              // SS-D002 FIX: Revert optimistic update on API failure so the
+              // booking does not appear cancelled when it actually still is active.
+              setBookings(previousBookings);
+              platformAlertSimple('Error', response.error || 'Failed to cancel booking');
+            }
+          } catch (error) {
+            // SS-D002 FIX: Revert on network / unexpected error too.
+            setBookings(previousBookings);
+            platformAlertSimple('Error', 'Failed to cancel booking');
+          } finally {
+            // SS-D002 FIX: Always release the lock so the button re-enables on error.
+            setCancellingIds((prev) => {
+              const next = new Set(prev);
+              next.delete(bookingId);
+              return next;
+            });
+          }
+        },
+      );
+    },
+    [cancellingIds],
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return colors.nileBlue;
-      case 'pending': return Colors.warning;
-      case 'completed': return Colors.info;
+      case 'confirmed':
+        return colors.nileBlue;
+      case 'pending':
+        return Colors.warning;
+      case 'completed':
+        return Colors.info;
       case 'cancelled':
-      case 'no_show': return Colors.error;
+      case 'no_show':
+        return Colors.error;
       case 'assigned':
-      case 'in_progress': return Colors.brand.purple;
-      default: return colors.text.tertiary;
+      case 'in_progress':
+        return Colors.brand.purple;
+      default:
+        return colors.text.tertiary;
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'Confirmed';
-      case 'pending': return 'Pending';
-      case 'completed': return 'Completed';
-      case 'cancelled': return 'Cancelled';
-      case 'no_show': return 'No Show';
-      case 'assigned': return 'Assigned';
-      case 'in_progress': return 'In Progress';
-      default: return status;
+      case 'confirmed':
+        return 'Confirmed';
+      case 'pending':
+        return 'Pending';
+      case 'completed':
+        return 'Completed';
+      case 'cancelled':
+        return 'Cancelled';
+      case 'no_show':
+        return 'No Show';
+      case 'assigned':
+        return 'Assigned';
+      case 'in_progress':
+        return 'In Progress';
+      default:
+        return status;
     }
   };
 
   const formatTime = (timeStr: string): string => {
     if (!timeStr) return '';
     // ETHAN: crash guard — split could return incomplete array; parseInt could return NaN
-    const parts = timeStr.split(':').map(x => parseInt(x, 10));
+    const parts = timeStr.split(':').map((x) => parseInt(x, 10));
     const hours = !isNaN(parts[0]) ? parts[0] : 0;
     const minutes = !isNaN(parts[1]) ? parts[1] : 0;
     const ampm = hours >= 12 ? 'PM' : 'AM';
@@ -269,203 +276,106 @@ const MyBookingsPage = () => {
     });
   };
 
-  const renderTravelBooking = useCallback(({ item }: { item: ServiceBooking }) => {
-    // SS-D002 FIX: canCancel also checks that no cancel is in-flight for this item
-    const isCancelling = cancellingIds.has(item._id);
-    const canCancel = (item.status === 'confirmed' || item.status === 'pending') && !isCancelling;
-    const bookingDate = new Date(item.bookingDate);
-    const isUpcoming = bookingDate > new Date();
-    const route = item.travelDetails?.route;
-    const categorySlug = item.serviceCategory?.slug || '';
-    const categoryIcon = CATEGORY_ICONS[categorySlug] || 'airplane';
-    const cashbackAmount = item.pricing?.cashbackEarned || 0;
+  const renderTravelBooking = useCallback(
+    ({ item }: { item: ServiceBooking }) => {
+      // SS-D002 FIX: canCancel also checks that no cancel is in-flight for this item
+      const isCancelling = cancellingIds.has(item._id);
+      const canCancel = (item.status === 'confirmed' || item.status === 'pending') && !isCancelling;
+      const bookingDate = new Date(item.bookingDate);
+      const isUpcoming = bookingDate > new Date();
+      const route = item.travelDetails?.route;
+      const categorySlug = item.serviceCategory?.slug || '';
+      const categoryIcon = CATEGORY_ICONS[categorySlug] || 'airplane';
+      const cashbackAmount = item.pricing?.cashbackEarned || 0;
 
-    return (
-      <Pressable
-        style={styles.bookingCard}
-        onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as any)}
-       
-      >
-        {/* Header with category icon */}
-        <View style={styles.cardHeader}>
-          <View style={styles.travelHeaderLeft}>
-            <View style={[styles.categoryIcon, { backgroundColor: '#F0F9FF' }]}>
-              <Ionicons name={categoryIcon as any} size={20} color={colors.nileBlue} />
-            </View>
-            <View style={styles.serviceInfo}>
-              <Text style={styles.serviceName} numberOfLines={1}>
-                {item.service?.name || item.serviceCategory?.name || 'Travel'}
-              </Text>
-              {route ? (
-                <View style={styles.routeBadge}>
-                  <Text style={styles.routeText}>
-                    {route.fromCode || route.from} → {route.toCode || route.to}
-                  </Text>
-                </View>
-              ) : (
-                <Text style={styles.storeName} numberOfLines={1}>
-                  {item.store?.name || ''}
+      return (
+        <Pressable
+          style={styles.bookingCard}
+          onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as any)}
+        >
+          {/* Header with category icon */}
+          <View style={styles.cardHeader}>
+            <View style={styles.travelHeaderLeft}>
+              <View style={[styles.categoryIcon, { backgroundColor: '#F0F9FF' }]}>
+                <Ionicons name={categoryIcon as any} size={20} color={colors.nileBlue} />
+              </View>
+              <View style={styles.serviceInfo}>
+                <Text style={styles.serviceName} numberOfLines={1}>
+                  {item.service?.name || item.serviceCategory?.name || 'Travel'}
                 </Text>
+                {route ? (
+                  <View style={styles.routeBadge}>
+                    <Text style={styles.routeText}>
+                      {route.fromCode || route.from} → {route.toCode || route.to}
+                    </Text>
+                  </View>
+                ) : (
+                  <Text style={styles.storeName} numberOfLines={1}>
+                    {item.store?.name || ''}
+                  </Text>
+                )}
+              </View>
+            </View>
+            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '15' }]}>
+              <View style={[styles.statusDot, { backgroundColor: getStatusColor(item.status) }]} />
+              <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+                {getStatusText(item.status)}
+              </Text>
+            </View>
+          </View>
+
+          {/* Booking Details */}
+          <View style={styles.bookingDetails}>
+            <View style={styles.detailRow}>
+              <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
+              <Text style={styles.detailText}>{formatDate(item.bookingDate)}</Text>
+            </View>
+            {item.travelDetails?.class && (
+              <View style={styles.detailRow}>
+                <Ionicons name="star-outline" size={16} color={colors.text.tertiary} />
+                <Text style={styles.detailText}>{item.travelDetails.class}</Text>
+              </View>
+            )}
+            {item.travelDetails?.passengers && (
+              <View style={styles.detailRow}>
+                <Ionicons name="people-outline" size={16} color={colors.text.tertiary} />
+                <Text style={styles.detailText}>
+                  {item.travelDetails.passengers.adults} Adult{item.travelDetails.passengers.adults !== 1 ? 's' : ''}
+                  {(item.travelDetails.passengers.children || 0) > 0
+                    ? `, ${item.travelDetails.passengers.children} Child`
+                    : ''}
+                </Text>
+              </View>
+            )}
+            {item.pnr && (
+              <View style={styles.detailRow}>
+                <Ionicons name="document-text-outline" size={16} color={colors.text.tertiary} />
+                <Text style={styles.detailText}>PNR: {item.pnr}</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Footer: price + cashback + cancel */}
+          <View style={styles.cardFooter}>
+            <View style={styles.footerLeft}>
+              <View style={styles.priceContainer}>
+                <Text style={styles.priceLabel}>Total</Text>
+                <Text style={styles.priceValue}>
+                  {currencySymbol}
+                  {(item.pricing?.total || item.pricing?.basePrice || 0).toLocaleString()}
+                </Text>
+              </View>
+              {cashbackAmount > 0 && item.cashbackStatus && (
+                <CashbackStatusBadge
+                  status={item.cashbackStatus}
+                  amount={cashbackAmount}
+                  verificationDays={item.verificationDays}
+                  creditedAt={item.cashbackCreditedAt}
+                  currencySymbol={currencySymbol}
+                  compact
+                />
               )}
             </View>
-          </View>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '15' }]}>
-            <View style={[styles.statusDot, { backgroundColor: getStatusColor(item.status) }]} />
-            <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
-              {getStatusText(item.status)}
-            </Text>
-          </View>
-        </View>
-
-        {/* Booking Details */}
-        <View style={styles.bookingDetails}>
-          <View style={styles.detailRow}>
-            <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
-            <Text style={styles.detailText}>{formatDate(item.bookingDate)}</Text>
-          </View>
-          {item.travelDetails?.class && (
-            <View style={styles.detailRow}>
-              <Ionicons name="star-outline" size={16} color={colors.text.tertiary} />
-              <Text style={styles.detailText}>{item.travelDetails.class}</Text>
-            </View>
-          )}
-          {item.travelDetails?.passengers && (
-            <View style={styles.detailRow}>
-              <Ionicons name="people-outline" size={16} color={colors.text.tertiary} />
-              <Text style={styles.detailText}>
-                {item.travelDetails.passengers.adults} Adult{item.travelDetails.passengers.adults !== 1 ? 's' : ''}
-                {(item.travelDetails.passengers.children || 0) > 0 ? `, ${item.travelDetails.passengers.children} Child` : ''}
-              </Text>
-            </View>
-          )}
-          {item.pnr && (
-            <View style={styles.detailRow}>
-              <Ionicons name="document-text-outline" size={16} color={colors.text.tertiary} />
-              <Text style={styles.detailText}>PNR: {item.pnr}</Text>
-            </View>
-          )}
-        </View>
-
-        {/* Footer: price + cashback + cancel */}
-        <View style={styles.cardFooter}>
-          <View style={styles.footerLeft}>
-            <View style={styles.priceContainer}>
-              <Text style={styles.priceLabel}>Total</Text>
-              <Text style={styles.priceValue}>
-                {currencySymbol}{(item.pricing?.total || item.pricing?.basePrice || 0).toLocaleString()}
-              </Text>
-            </View>
-            {cashbackAmount > 0 && item.cashbackStatus && (
-              <CashbackStatusBadge
-                status={item.cashbackStatus}
-                amount={cashbackAmount}
-                verificationDays={item.verificationDays}
-                creditedAt={item.cashbackCreditedAt}
-                currencySymbol={currencySymbol}
-                compact
-              />
-            )}
-          </View>
-          {/* SS-D002 FIX: disable button while cancel API call is in-flight */}
-          {(canCancel || isCancelling) && isUpcoming && (
-            <Pressable
-              style={[styles.cancelButton, isCancelling && { opacity: 0.5 }]}
-              disabled={isCancelling}
-              onPress={(e) => {
-                e.stopPropagation();
-                handleCancelBooking(item._id);
-              }}
-            >
-              <Text style={styles.cancelButtonText}>
-                {isCancelling ? 'Cancelling…' : 'Cancel'}
-              </Text>
-            </Pressable>
-          )}
-        </View>
-
-        {/* Booking Number */}
-        {item.bookingNumber && (
-          <View style={styles.bookingNumberContainer}>
-            <Text style={styles.bookingNumberLabel}>Booking #</Text>
-            <Text style={styles.bookingNumber}>{item.bookingNumber}</Text>
-          </View>
-        )}
-      </Pressable>
-    );
-  }, [router, currencySymbol, handleCancelBooking, cancellingIds]);
-
-  const renderStandardBooking = useCallback(({ item }: { item: ServiceBooking }) => {
-    // SS-D002 FIX: canCancel also checks that no cancel is in-flight for this item
-    const isCancelling = cancellingIds.has(item._id);
-    const canCancel = (item.status === 'confirmed' || item.status === 'pending') && !isCancelling;
-    const bookingDate = new Date(item.bookingDate);
-    const isUpcoming = bookingDate > new Date();
-
-    return (
-      <Pressable
-        style={styles.bookingCard}
-        onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as any)}
-       
-      >
-        {/* Header */}
-        <View style={styles.cardHeader}>
-          <View style={styles.serviceInfo}>
-            <Text style={styles.serviceName} numberOfLines={1}>
-              {item.service?.name || 'Service'}
-            </Text>
-            <Text style={styles.storeName} numberOfLines={1}>
-              {item.store?.name || 'Store'}
-            </Text>
-          </View>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '15' }]}>
-            <View style={[styles.statusDot, { backgroundColor: getStatusColor(item.status) }]} />
-            <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
-              {getStatusText(item.status)}
-            </Text>
-          </View>
-        </View>
-
-        {/* Booking Details */}
-        <View style={styles.bookingDetails}>
-          <View style={styles.detailRow}>
-            <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
-            <Text style={styles.detailText}>{formatDate(item.bookingDate)}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
-            <Text style={styles.detailText}>
-              {formatTime(item.timeSlot?.start)} - {formatTime(item.timeSlot?.end)}
-            </Text>
-          </View>
-          {item.duration > 0 && (
-            <View style={styles.detailRow}>
-              <Ionicons name="hourglass-outline" size={16} color={colors.text.tertiary} />
-              <Text style={styles.detailText}>{item.duration} minutes</Text>
-            </View>
-          )}
-        </View>
-
-        {/* Footer */}
-        <View style={styles.cardFooter}>
-          <View style={styles.priceContainer}>
-            <Text style={styles.priceLabel}>Total</Text>
-            <Text style={styles.priceValue}>
-              {currencySymbol}{(item.pricing?.total || item.pricing?.basePrice || 0).toLocaleString()}
-            </Text>
-          </View>
-          <View style={styles.footerActions}>
-            {canCancel && isUpcoming && (
-              <Pressable
-                style={styles.rescheduleButton}
-                onPress={(e) => {
-                  e.stopPropagation();
-                  router.push(`/booking/reschedule/${item._id}` as any);
-                }}
-              >
-                <Ionicons name="calendar-outline" size={14} color={colors.nileBlue} />
-                <Text style={styles.rescheduleButtonText}>Reschedule</Text>
-              </Pressable>
-            )}
             {/* SS-D002 FIX: disable button while cancel API call is in-flight */}
             {(canCancel || isCancelling) && isUpcoming && (
               <Pressable
@@ -476,37 +386,145 @@ const MyBookingsPage = () => {
                   handleCancelBooking(item._id);
                 }}
               >
-                <Text style={styles.cancelButtonText}>
-                  {isCancelling ? 'Cancelling…' : 'Cancel'}
-                </Text>
+                <Text style={styles.cancelButtonText}>{isCancelling ? 'Cancelling…' : 'Cancel'}</Text>
               </Pressable>
             )}
           </View>
-        </View>
 
-        {/* Booking Number */}
-        {item.bookingNumber && (
-          <View style={styles.bookingNumberContainer}>
-            <Text style={styles.bookingNumberLabel}>Booking #</Text>
-            <Text style={styles.bookingNumber}>{item.bookingNumber}</Text>
+          {/* Booking Number */}
+          {item.bookingNumber && (
+            <View style={styles.bookingNumberContainer}>
+              <Text style={styles.bookingNumberLabel}>Booking #</Text>
+              <Text style={styles.bookingNumber}>{item.bookingNumber}</Text>
+            </View>
+          )}
+        </Pressable>
+      );
+    },
+    [router, currencySymbol, handleCancelBooking, cancellingIds],
+  );
+
+  const renderStandardBooking = useCallback(
+    ({ item }: { item: ServiceBooking }) => {
+      // SS-D002 FIX: canCancel also checks that no cancel is in-flight for this item
+      const isCancelling = cancellingIds.has(item._id);
+      const canCancel = (item.status === 'confirmed' || item.status === 'pending') && !isCancelling;
+      const bookingDate = new Date(item.bookingDate);
+      const isUpcoming = bookingDate > new Date();
+
+      return (
+        <Pressable
+          style={styles.bookingCard}
+          onPress={() => router.push(`/booking-detail?bookingId=${item._id}` as any)}
+        >
+          {/* Header */}
+          <View style={styles.cardHeader}>
+            <View style={styles.serviceInfo}>
+              <Text style={styles.serviceName} numberOfLines={1}>
+                {item.service?.name || 'Service'}
+              </Text>
+              <Text style={styles.storeName} numberOfLines={1}>
+                {item.store?.name || 'Store'}
+              </Text>
+            </View>
+            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) + '15' }]}>
+              <View style={[styles.statusDot, { backgroundColor: getStatusColor(item.status) }]} />
+              <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+                {getStatusText(item.status)}
+              </Text>
+            </View>
           </View>
-        )}
-      </Pressable>
-    );
-  }, [router, currencySymbol, handleCancelBooking, cancellingIds]);
 
-  const renderBooking = useCallback(({ item }: { item: ServiceBooking }) => {
-    if (isTravelBooking(item)) {
-      return renderTravelBooking({ item });
-    }
-    return renderStandardBooking({ item });
-  }, [renderTravelBooking, renderStandardBooking]);
+          {/* Booking Details */}
+          <View style={styles.bookingDetails}>
+            <View style={styles.detailRow}>
+              <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
+              <Text style={styles.detailText}>{formatDate(item.bookingDate)}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Ionicons name="time-outline" size={16} color={colors.text.tertiary} />
+              <Text style={styles.detailText}>
+                {formatTime(item.timeSlot?.start)} - {formatTime(item.timeSlot?.end)}
+              </Text>
+            </View>
+            {item.duration > 0 && (
+              <View style={styles.detailRow}>
+                <Ionicons name="hourglass-outline" size={16} color={colors.text.tertiary} />
+                <Text style={styles.detailText}>{item.duration} minutes</Text>
+              </View>
+            )}
+          </View>
+
+          {/* Footer */}
+          <View style={styles.cardFooter}>
+            <View style={styles.priceContainer}>
+              <Text style={styles.priceLabel}>Total</Text>
+              <Text style={styles.priceValue}>
+                {currencySymbol}
+                {(item.pricing?.total || item.pricing?.basePrice || 0).toLocaleString()}
+              </Text>
+            </View>
+            <View style={styles.footerActions}>
+              {canCancel && isUpcoming && (
+                <Pressable
+                  style={styles.rescheduleButton}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    router.push(`/booking/reschedule/${item._id}` as any);
+                  }}
+                >
+                  <Ionicons name="calendar-outline" size={14} color={colors.nileBlue} />
+                  <Text style={styles.rescheduleButtonText}>Reschedule</Text>
+                </Pressable>
+              )}
+              {/* SS-D002 FIX: disable button while cancel API call is in-flight */}
+              {(canCancel || isCancelling) && isUpcoming && (
+                <Pressable
+                  style={[styles.cancelButton, isCancelling && { opacity: 0.5 }]}
+                  disabled={isCancelling}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleCancelBooking(item._id);
+                  }}
+                >
+                  <Text style={styles.cancelButtonText}>{isCancelling ? 'Cancelling…' : 'Cancel'}</Text>
+                </Pressable>
+              )}
+            </View>
+          </View>
+
+          {/* Booking Number */}
+          {item.bookingNumber && (
+            <View style={styles.bookingNumberContainer}>
+              <Text style={styles.bookingNumberLabel}>Booking #</Text>
+              <Text style={styles.bookingNumber}>{item.bookingNumber}</Text>
+            </View>
+          )}
+        </Pressable>
+      );
+    },
+    [router, currencySymbol, handleCancelBooking, cancellingIds],
+  );
+
+  const renderBooking = useCallback(
+    ({ item }: { item: ServiceBooking }) => {
+      if (isTravelBooking(item)) {
+        return renderTravelBooking({ item });
+      }
+      return renderStandardBooking({ item });
+    },
+    [renderTravelBooking, renderStandardBooking],
+  );
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
       <Ionicons name="calendar-outline" size={80} color={colors.border.default} />
       <Text style={styles.emptyTitle}>
-        {activeTab === 'upcoming' ? 'No Upcoming Bookings' : activeTab === 'courses' ? 'No Courses' : 'No Past Bookings'}
+        {activeTab === 'upcoming'
+          ? 'No Upcoming Bookings'
+          : activeTab === 'courses'
+            ? 'No Courses'
+            : 'No Past Bookings'}
       </Text>
       <Text style={styles.emptyText}>
         {activeTab === 'upcoming'
@@ -516,10 +534,7 @@ const MyBookingsPage = () => {
             : 'Your completed bookings will appear here'}
       </Text>
       {(activeTab === 'upcoming' || activeTab === 'courses') && (
-        <Pressable
-          style={styles.browseButton}
-          onPress={() => router.push('/(tabs)' as any)}
-        >
+        <Pressable style={styles.browseButton} onPress={() => router.push('/(tabs)' as any)}>
           <Ionicons name={activeTab === 'courses' ? 'book-outline' : 'search'} size={20} color={colors.text.inverse} />
           <Text style={styles.browseButtonText}>{activeTab === 'courses' ? 'Explore Courses' : 'Browse Services'}</Text>
         </Pressable>
@@ -536,75 +551,72 @@ const MyBookingsPage = () => {
   }
 
   return (
-    <Animated.View style={[styles.container, fadeAnimStyle]}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+    <SafeAreaView style={styles.container} edges={['top']}>
+      <Animated.View style={[{ flex: 1 }, fadeAnimStyle]}>
+        {/* Header */}
+        <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.header}>
+          <View style={styles.headerContent}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
+            </Pressable>
+            <Text style={styles.headerTitle}>My Bookings</Text>
+            <View style={styles.headerRight} />
+          </View>
 
-      {/* Header */}
-      <LinearGradient colors={[colors.nileBlue, '#0f2a3d']} style={styles.header}>
-        <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
-          </Pressable>
-          <Text style={styles.headerTitle}>My Bookings</Text>
-          <View style={styles.headerRight} />
-        </View>
+          {/* Tabs */}
+          <View style={styles.tabsContainer}>
+            <Pressable
+              style={[styles.tab, activeTab === 'upcoming' && styles.activeTab]}
+              onPress={() => setActiveTab('upcoming')}
+            >
+              <Text style={[styles.tabText, activeTab === 'upcoming' && styles.activeTabText]}>Upcoming</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.tab, activeTab === 'past' && styles.activeTab]}
+              onPress={() => setActiveTab('past')}
+            >
+              <Text style={[styles.tabText, activeTab === 'past' && styles.activeTabText]}>Past</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.tab, activeTab === 'courses' && styles.activeTab]}
+              onPress={() => setActiveTab('courses')}
+            >
+              <Text style={[styles.tabText, activeTab === 'courses' && styles.activeTabText]}>Courses</Text>
+            </Pressable>
+          </View>
+        </LinearGradient>
 
-        {/* Tabs */}
-        <View style={styles.tabsContainer}>
-          <Pressable
-            style={[styles.tab, activeTab === 'upcoming' && styles.activeTab]}
-            onPress={() => setActiveTab('upcoming')}
-          >
-            <Text style={[styles.tabText, activeTab === 'upcoming' && styles.activeTabText]}>
-              Upcoming
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[styles.tab, activeTab === 'past' && styles.activeTab]}
-            onPress={() => setActiveTab('past')}
-          >
-            <Text style={[styles.tabText, activeTab === 'past' && styles.activeTabText]}>
-              Past
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[styles.tab, activeTab === 'courses' && styles.activeTab]}
-            onPress={() => setActiveTab('courses')}
-          >
-            <Text style={[styles.tabText, activeTab === 'courses' && styles.activeTabText]}>
-              Courses
-            </Text>
-          </Pressable>
-        </View>
-      </LinearGradient>
+        {/* Error Banner */}
+        {errorMessage && (
+          <View style={styles.errorBanner}>
+            <Ionicons name="alert-circle" size={20} color={Colors.error} />
+            <Text style={styles.errorBannerText}>{errorMessage}</Text>
+          </View>
+        )}
 
-      {/* Error Banner */}
-      {errorMessage && (
-        <View style={styles.errorBanner}>
-          <Ionicons name="alert-circle" size={20} color={Colors.error} />
-          <Text style={styles.errorBannerText}>{errorMessage}</Text>
-        </View>
-      )}
-
-      {/* Bookings List */}
-      <FlashList
-        data={bookings}
-        renderItem={renderBooking}
-        keyExtractor={(item) => item._id}
-        contentContainerStyle={styles.listContainer}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.nileBlue}
-            colors={[colors.nileBlue]}
-          />
-        }
-        ListEmptyComponent={renderEmptyState}
-        showsVerticalScrollIndicator={false}
-        estimatedItemSize={120}
-      />
-    </Animated.View>
+        {/* Bookings List */}
+        <FlashList
+          data={bookings}
+          renderItem={renderBooking}
+          keyExtractor={(item) => item._id}
+          contentContainerStyle={styles.listContainer}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={colors.nileBlue}
+              colors={[colors.nileBlue]}
+            />
+          }
+          ListEmptyComponent={renderEmptyState}
+          showsVerticalScrollIndicator={false}
+          estimatedItemSize={120}
+        />
+      </Animated.View>
+    </SafeAreaView>
   );
 };
 
@@ -614,7 +626,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
   },
   header: {
-    paddingTop: 50,
+    paddingTop: Spacing.base,
     paddingBottom: Spacing.base,
     paddingHorizontal: Spacing.base,
   },

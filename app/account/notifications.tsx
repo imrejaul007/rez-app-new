@@ -1,14 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Switch,
-  Pressable,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Switch, Pressable, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import notificationService from '../../services/notificationService';
@@ -71,7 +63,7 @@ function NotificationsScreen() {
   const [saving, setSaving] = useState(false);
   const [settings, setSettings] = useState<NotificationSettings | null>(null);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
-  const successTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const successTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Cleanup success timer on unmount
   useEffect(() => {
@@ -163,10 +155,15 @@ function NotificationsScreen() {
         if (!isMounted()) return;
         setShowSuccessMessage(true);
         clearTimeout(successTimerRef.current);
-        successTimerRef.current = setTimeout(() => { if (isMounted()) setShowSuccessMessage(false); }, 2000);
+        successTimerRef.current = setTimeout(() => {
+          if (isMounted()) setShowSuccessMessage(false);
+        }, 2000);
       }
     } catch (error) {
-      platformAlertSimple('Error', 'Failed to update push notification settings. Please check your connection and try again.');
+      platformAlertSimple(
+        'Error',
+        'Failed to update push notification settings. Please check your connection and try again.',
+      );
       // Revert to previous state
       if (!isMounted()) return;
       setSettings(settings);
@@ -194,10 +191,15 @@ function NotificationsScreen() {
         if (!isMounted()) return;
         setShowSuccessMessage(true);
         clearTimeout(successTimerRef.current);
-        successTimerRef.current = setTimeout(() => { if (isMounted()) setShowSuccessMessage(false); }, 2000);
+        successTimerRef.current = setTimeout(() => {
+          if (isMounted()) setShowSuccessMessage(false);
+        }, 2000);
       }
     } catch (error) {
-      platformAlertSimple('Error', 'Failed to update email notification settings. Please check your connection and try again.');
+      platformAlertSimple(
+        'Error',
+        'Failed to update email notification settings. Please check your connection and try again.',
+      );
       if (!isMounted()) return;
       setSettings(settings);
     } finally {
@@ -224,10 +226,15 @@ function NotificationsScreen() {
         if (!isMounted()) return;
         setShowSuccessMessage(true);
         clearTimeout(successTimerRef.current);
-        successTimerRef.current = setTimeout(() => { if (isMounted()) setShowSuccessMessage(false); }, 2000);
+        successTimerRef.current = setTimeout(() => {
+          if (isMounted()) setShowSuccessMessage(false);
+        }, 2000);
       }
     } catch (error) {
-      platformAlertSimple('Error', 'Failed to update SMS notification settings. Please check your connection and try again.');
+      platformAlertSimple(
+        'Error',
+        'Failed to update SMS notification settings. Please check your connection and try again.',
+      );
       if (!isMounted()) return;
       setSettings(settings);
     } finally {
@@ -254,10 +261,15 @@ function NotificationsScreen() {
         if (!isMounted()) return;
         setShowSuccessMessage(true);
         clearTimeout(successTimerRef.current);
-        successTimerRef.current = setTimeout(() => { if (isMounted()) setShowSuccessMessage(false); }, 2000);
+        successTimerRef.current = setTimeout(() => {
+          if (isMounted()) setShowSuccessMessage(false);
+        }, 2000);
       }
     } catch (error) {
-      platformAlertSimple('Error', 'Failed to update in-app notification settings. Please check your connection and try again.');
+      platformAlertSimple(
+        'Error',
+        'Failed to update in-app notification settings. Please check your connection and try again.',
+      );
       if (!isMounted()) return;
       setSettings(settings);
     } finally {
@@ -270,12 +282,10 @@ function NotificationsScreen() {
     title: string,
     value: boolean,
     onValueChange: (value: boolean) => void,
-    disabled?: boolean
+    disabled?: boolean,
   ) => (
     <View style={styles.settingItem}>
-      <Text style={[styles.settingTitle, disabled && styles.disabledText]}>
-        {title}
-      </Text>
+      <Text style={[styles.settingTitle, disabled && styles.disabledText]}>{title}</Text>
       <Switch
         value={value}
         onValueChange={onValueChange}
@@ -307,10 +317,7 @@ function NotificationsScreen() {
   if (!settings) {
     return (
       <View style={styles.errorContainer}>
-        <Text
-          style={styles.errorText}
-          accessibilityRole="alert"
-        >
+        <Text style={styles.errorText} accessibilityRole="alert">
           Failed to load settings
         </Text>
         <Pressable
@@ -331,7 +338,7 @@ function NotificationsScreen() {
       {/* Header */}
       <View style={styles.header}>
         <Pressable
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
           accessibilityLabel="Go back"
           accessibilityRole="button"
@@ -339,7 +346,9 @@ function NotificationsScreen() {
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
-        <Text style={styles.headerTitle} accessibilityRole="header">Notification Settings</Text>
+        <Text style={styles.headerTitle} accessibilityRole="header">
+          Notification Settings
+        </Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -433,7 +442,7 @@ function NotificationsScreen() {
         </View>
       )}
     </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({

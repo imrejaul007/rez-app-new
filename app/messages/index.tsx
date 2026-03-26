@@ -12,6 +12,7 @@ import {
   Platform,
   SafeAreaView,
   TextInput,
+  RefreshControl,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -43,53 +44,56 @@ function MessagesIndexPage() {
   const [totalUnread, setTotalUnread] = useState(0);
 
   // Load conversations
-  const loadConversations = useCallback(async (page: number = 1, append: boolean = false) => {
-    if (page === 1) {
-      setLoading(true);
-    }
-    setError(null);
+  const loadConversations = useCallback(
+    async (page: number = 1, append: boolean = false) => {
+      if (page === 1) {
+        setLoading(true);
+      }
+      setError(null);
 
-    try {
-      const filter: ConversationFilter = {
-        page,
-        limit: 20,
-        search: searchQuery || undefined,
-        status: activeFilter === 'all' ? undefined : activeFilter as any,
-      };
+      try {
+        const filter: ConversationFilter = {
+          page,
+          limit: 20,
+          search: searchQuery || undefined,
+          status: activeFilter === 'all' ? undefined : (activeFilter as any),
+        };
 
-      const response = await storeMessagingService.getConversations(filter);
+        const response = await storeMessagingService.getConversations(filter);
 
-      if (response.success && response.data) {
-        const newConversations = response.data.conversations;
+        if (response.success && response.data) {
+          const newConversations = response.data.conversations;
 
-        if (append) {
+          if (append) {
+            if (!isMounted()) return;
+            setConversations((prev) => [...prev, ...newConversations]);
+          } else {
+            if (!isMounted()) return;
+            setConversations(newConversations);
+          }
+
           if (!isMounted()) return;
-          setConversations(prev => [...prev, ...newConversations]);
+          setHasMore(response.data.pagination.current < response.data.pagination.pages);
+          if (!isMounted()) return;
+          setCurrentPage(page);
+          if (!isMounted()) return;
+          setTotalUnread(response.data.summary.unreadCount);
         } else {
           if (!isMounted()) return;
-          setConversations(newConversations);
+          setError(response.error || 'Failed to load conversations');
         }
-
+      } catch (err) {
         if (!isMounted()) return;
-        setHasMore(response.data.pagination.current < response.data.pagination.pages);
+        setError(err instanceof Error ? err.message : 'Failed to load conversations');
+      } finally {
         if (!isMounted()) return;
-        setCurrentPage(page);
+        setLoading(false);
         if (!isMounted()) return;
-        setTotalUnread(response.data.summary.unreadCount);
-      } else {
-        if (!isMounted()) return;
-        setError(response.error || 'Failed to load conversations');
+        setRefreshing(false);
       }
-    } catch (err) {
-      if (!isMounted()) return;
-      setError(err instanceof Error ? err.message : 'Failed to load conversations');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [searchQuery, activeFilter]);
+    },
+    [searchQuery, activeFilter],
+  );
 
   // Initial load
   useEffect(() => {
@@ -102,8 +106,8 @@ function MessagesIndexPage() {
 
     const handleMessageReceived = (payload: any) => {
       // Update conversation with new message
-      setConversations(prev =>
-        prev.map(conv => {
+      setConversations((prev) =>
+        prev.map((conv) => {
           if (conv.id === payload.conversationId) {
             return {
               ...conv,
@@ -113,23 +117,21 @@ function MessagesIndexPage() {
             };
           }
           return conv;
-        })
+        }),
       );
       // Update unread count
-      setTotalUnread(prev => prev + 1);
+      setTotalUnread((prev) => prev + 1);
     };
 
     const handleConversationCreated = (payload: any) => {
       // Add new conversation to list
-      setConversations(prev => [payload.conversation, ...prev]);
+      setConversations((prev) => [payload.conversation, ...prev]);
     };
 
     const handleConversationUpdated = (payload: any) => {
       // Update existing conversation
-      setConversations(prev =>
-        prev.map(conv =>
-          conv.id === payload.conversation.id ? payload.conversation : conv
-        )
+      setConversations((prev) =>
+        prev.map((conv) => (conv.id === payload.conversation.id ? payload.conversation : conv)),
       );
     };
 
@@ -192,9 +194,7 @@ function MessagesIndexPage() {
         <Ionicons name="chatbubbles-outline" size={64} color={colors.text.tertiary} />
         <ThemedText style={styles.emptyText}>No messages yet</ThemedText>
         <ThemedText style={styles.emptySubtext}>
-          {searchQuery
-            ? 'No conversations match your search'
-            : 'Your conversations with stores will appear here'}
+          {searchQuery ? 'No conversations match your search' : 'Your conversations with stores will appear here'}
         </ThemedText>
       </View>
     );
@@ -202,17 +202,10 @@ function MessagesIndexPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={PROFILE_COLORS.primary}
-        translucent={false}
-      />
+      <StatusBar barStyle="light-content" backgroundColor={PROFILE_COLORS.primary} translucent={false} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[PROFILE_COLORS.primary, PROFILE_COLORS.primaryLight]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[PROFILE_COLORS.primary, PROFILE_COLORS.primaryLight]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable style={styles.headerButton} onPress={handleBackPress}>
             <Ionicons name="arrow-back" size={24} color="white" />
@@ -222,9 +215,7 @@ function MessagesIndexPage() {
             <ThemedText style={styles.headerTitle}>Messages</ThemedText>
             {totalUnread > 0 && (
               <View style={styles.headerBadge}>
-                <ThemedText style={styles.headerBadgeText}>
-                  {totalUnread > 99 ? '99+' : totalUnread}
-                </ThemedText>
+                <ThemedText style={styles.headerBadgeText}>{totalUnread > 99 ? '99+' : totalUnread}</ThemedText>
               </View>
             )}
           </View>
@@ -256,9 +247,7 @@ function MessagesIndexPage() {
           style={[styles.filterTab, activeFilter === 'all' && styles.filterTabActive]}
           onPress={() => handleFilterChange('all')}
         >
-          <ThemedText
-            style={[styles.filterTabText, activeFilter === 'all' && styles.filterTabTextActive]}
-          >
+          <ThemedText style={[styles.filterTabText, activeFilter === 'all' && styles.filterTabTextActive]}>
             All
           </ThemedText>
         </Pressable>
@@ -267,9 +256,7 @@ function MessagesIndexPage() {
           style={[styles.filterTab, activeFilter === 'active' && styles.filterTabActive]}
           onPress={() => handleFilterChange('active')}
         >
-          <ThemedText
-            style={[styles.filterTabText, activeFilter === 'active' && styles.filterTabTextActive]}
-          >
+          <ThemedText style={[styles.filterTabText, activeFilter === 'active' && styles.filterTabTextActive]}>
             Active
           </ThemedText>
         </Pressable>
@@ -278,9 +265,7 @@ function MessagesIndexPage() {
           style={[styles.filterTab, activeFilter === 'archived' && styles.filterTabActive]}
           onPress={() => handleFilterChange('archived')}
         >
-          <ThemedText
-            style={[styles.filterTabText, activeFilter === 'archived' && styles.filterTabTextActive]}
-          >
+          <ThemedText style={[styles.filterTabText, activeFilter === 'archived' && styles.filterTabTextActive]}>
             Archived
           </ThemedText>
         </Pressable>
@@ -305,7 +290,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
   },
   header: {
-    paddingTop: Platform.OS === 'android' ? 40 : 20,
+    paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 24) + 8 : 20,
     paddingBottom: 16,
     paddingHorizontal: 16,
   },

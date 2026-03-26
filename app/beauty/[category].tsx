@@ -6,15 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, RefreshControl } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -27,16 +19,18 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-
 // Category configuration with API tags
-const categoryConfig: Record<string, {
-  title: string;
-  icon: string;
-  gradientColors: [string, string];
-  tags: string[];
-  type: 'store' | 'product';
-  subtitle: string;
-}> = {
+const categoryConfig: Record<
+  string,
+  {
+    title: string;
+    icon: string;
+    gradientColors: [string, string];
+    tags: string[];
+    type: 'store' | 'product';
+    subtitle: string;
+  }
+> = {
   salon: {
     title: 'Salons',
     icon: '💇‍♀️',
@@ -147,9 +141,7 @@ const BeautyCategoryPage: React.FC = () => {
     type: product.brand?.name || product.category?.name || 'Product',
     rating: product.ratings?.average || 4.5,
     distance: 'Online',
-    cashback: product.cashback?.percentage
-      ? `${product.cashback.percentage}%`
-      : '10%',
+    cashback: product.cashback?.percentage ? `${product.cashback.percentage}%` : '10%',
     price: product.pricing?.salePrice
       ? `${currencySymbol}${product.pricing.salePrice.toLocaleString()}`
       : product.pricing?.basePrice
@@ -298,18 +290,18 @@ const BeautyCategoryPage: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient
-        colors={config.gradientColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.header}
-      >
+      <LinearGradient colors={config.gradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle}>{config.icon} {config.title}</Text>
+            <Text style={styles.headerTitle}>
+              {config.icon} {config.title}
+            </Text>
             <Text style={styles.headerSubtitle}>{config.subtitle}</Text>
           </View>
           <Pressable style={styles.searchButton} onPress={handleSearch}>
@@ -343,10 +335,7 @@ const BeautyCategoryPage: React.FC = () => {
             <Pressable
               key={filter.id}
               onPress={() => setSelectedFilter(filter.id)}
-              style={[
-                styles.filterChip,
-                selectedFilter === filter.id && { backgroundColor: config.gradientColors[0] }
-              ]}
+              style={[styles.filterChip, selectedFilter === filter.id && { backgroundColor: config.gradientColors[0] }]}
             >
               {filter.icon && (
                 <Ionicons
@@ -355,10 +344,7 @@ const BeautyCategoryPage: React.FC = () => {
                   color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
                 />
               )}
-              <Text style={[
-                styles.filterChipText,
-                selectedFilter === filter.id && styles.filterChipTextActive
-              ]}>
+              <Text style={[styles.filterChipText, selectedFilter === filter.id && styles.filterChipTextActive]}>
                 {filter.label}
               </Text>
             </Pressable>
@@ -370,11 +356,7 @@ const BeautyCategoryPage: React.FC = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            colors={[config.gradientColors[0]]}
-          />
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[config.gradientColors[0]]} />
         }
       >
         {/* Error State */}
@@ -409,12 +391,7 @@ const BeautyCategoryPage: React.FC = () => {
         {filteredItems.length > 0 && (
           <View style={styles.itemsList}>
             {filteredItems.map((item) => (
-              <Pressable
-                key={item.id}
-                style={styles.itemCard}
-                onPress={() => handleItemPress(item)}
-               
-              >
+              <Pressable key={item.id} style={styles.itemCard} onPress={() => handleItemPress(item)}>
                 <CachedImage source={item.image} style={styles.itemImage} />
 
                 {/* Cashback Badge */}
@@ -432,7 +409,9 @@ const BeautyCategoryPage: React.FC = () => {
 
                 <View style={styles.itemInfo}>
                   <View style={styles.itemHeader}>
-                    <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
+                    <Text style={styles.itemName} numberOfLines={1}>
+                      {item.name}
+                    </Text>
                     <View style={styles.typeBadge}>
                       <Text style={styles.typeText}>{item.type}</Text>
                     </View>
@@ -442,9 +421,7 @@ const BeautyCategoryPage: React.FC = () => {
                     <View style={styles.ratingContainer}>
                       <Ionicons name="star" size={14} color={Colors.warning} />
                       <Text style={styles.ratingText}>{item.rating.toFixed(1)}</Text>
-                      {item.reviewCount > 0 && (
-                        <Text style={styles.reviewCount}>({item.reviewCount})</Text>
-                      )}
+                      {(item.reviewCount ?? 0) > 0 && <Text style={styles.reviewCount}>({item.reviewCount})</Text>}
                     </View>
                     <View style={styles.metaItem}>
                       <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
@@ -454,18 +431,14 @@ const BeautyCategoryPage: React.FC = () => {
 
                   <View style={styles.itemFooter}>
                     <View>
-                      <Text style={styles.priceLabel}>
-                        {config.type === 'store' ? 'Starting from' : 'Price'}
-                      </Text>
+                      <Text style={styles.priceLabel}>{config.type === 'store' ? 'Starting from' : 'Price'}</Text>
                       <Text style={styles.priceText}>{item.price}</Text>
                     </View>
                     <Pressable
                       style={[styles.bookButton, { backgroundColor: config.gradientColors[0] }]}
                       onPress={() => handleBookPress(item)}
                     >
-                      <Text style={styles.bookButtonText}>
-                        {config.type === 'store' ? 'Book' : 'Buy'}
-                      </Text>
+                      <Text style={styles.bookButtonText}>{config.type === 'store' ? 'Book' : 'Buy'}</Text>
                     </Pressable>
                   </View>
                 </View>

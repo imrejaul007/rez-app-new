@@ -3,20 +3,12 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Comprehensive settings management across 8 categories
 
 import React, { useState } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Switch,
-  RefreshControl,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Switch, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
+import { FormPageSkeleton } from '@/components/skeletons';
 import { useUserSettings } from '@/hooks/useUserSettings';
 import { platformAlertSimple, platformAlertDestructive } from '@/utils/platformAlert';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -58,7 +50,7 @@ function SettingsPage() {
         if (success) {
           platformAlertSimple('Success', 'Settings reset to defaults');
         }
-      }
+      },
     );
   };
 
@@ -70,25 +62,21 @@ function SettingsPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               accessibilityLabel="Go back"
               accessibilityRole="button"
               accessibilityHint="Navigate to previous screen"
             >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
-            <ThemedText style={styles.headerTitle} accessibilityRole="header">Settings</ThemedText>
+            <ThemedText style={styles.headerTitle} accessibilityRole="header">
+              Settings
+            </ThemedText>
             <View style={styles.placeholder} />
           </View>
         </LinearGradient>
         <View style={styles.loadingContainer}>
-          <ThemedText
-            style={styles.loadingText}
-            accessibilityRole="progressbar"
-            accessibilityLabel="Loading settings"
-          >
-            Loading settings...
-          </ThemedText>
+          <FormPageSkeleton />
         </View>
       </View>
     );
@@ -103,7 +91,7 @@ function SettingsPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityLabel="Go back"
             accessibilityRole="button"
             accessibilityHint="Navigate to previous screen"
@@ -111,7 +99,9 @@ function SettingsPage() {
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
 
-          <ThemedText style={styles.headerTitle} accessibilityRole="header">Settings</ThemedText>
+          <ThemedText style={styles.headerTitle} accessibilityRole="header">
+            Settings
+          </ThemedText>
 
           <Pressable
             style={styles.resetButton}
@@ -135,7 +125,6 @@ function SettingsPage() {
           <Pressable
             style={styles.sectionHeader}
             onPress={() => toggleSection('general')}
-           
             accessibilityLabel={`General settings${expandedSection === 'general' ? ', expanded' : ', collapsed'}`}
             accessibilityRole="button"
             accessibilityState={{ expanded: expandedSection === 'general' }}
@@ -157,7 +146,6 @@ function SettingsPage() {
               <Pressable
                 style={styles.settingRow}
                 onPress={() => router.push('/account/language')}
-               
                 accessibilityLabel={`Language and Region. Current setting: ${settings.general.language.toUpperCase()}, ${settings.general.currency}`}
                 accessibilityRole="button"
                 accessibilityHint="Double tap to change language and region settings"
@@ -184,11 +172,10 @@ function SettingsPage() {
                 </View>
                 <View style={styles.toggleGroup}>
                   <Pressable
-                    style={[
-                      styles.toggleButton,
-                      settings.general.timeFormat === '12h' && styles.toggleButtonActive,
-                    ]}
-                    onPress={() => { updateGeneralSettings({ timeFormat: '12h' }); }}
+                    style={[styles.toggleButton, settings.general.timeFormat === '12h' && styles.toggleButtonActive]}
+                    onPress={() => {
+                      updateGeneralSettings({ timeFormat: '12h' });
+                    }}
                     accessibilityLabel={`12 hour format${settings.general.timeFormat === '12h' ? ', selected' : ''}`}
                     accessibilityRole="button"
                     accessibilityState={{ selected: settings.general.timeFormat === '12h' }}
@@ -204,11 +191,10 @@ function SettingsPage() {
                     </ThemedText>
                   </Pressable>
                   <Pressable
-                    style={[
-                      styles.toggleButton,
-                      settings.general.timeFormat === '24h' && styles.toggleButtonActive,
-                    ]}
-                    onPress={() => { updateGeneralSettings({ timeFormat: '24h' }); }}
+                    style={[styles.toggleButton, settings.general.timeFormat === '24h' && styles.toggleButtonActive]}
+                    onPress={() => {
+                      updateGeneralSettings({ timeFormat: '24h' });
+                    }}
                     accessibilityLabel={`24 hour format${settings.general.timeFormat === '24h' ? ', selected' : ''}`}
                     accessibilityRole="button"
                     accessibilityState={{ selected: settings.general.timeFormat === '24h' }}
@@ -234,7 +220,6 @@ function SettingsPage() {
           <Pressable
             style={styles.sectionHeader}
             onPress={() => toggleSection('notifications')}
-           
             accessibilityLabel={`Notifications section${expandedSection === 'notifications' ? ', expanded' : ', collapsed'}`}
             accessibilityRole="button"
             accessibilityState={{ expanded: expandedSection === 'notifications' }}
@@ -392,7 +377,6 @@ function SettingsPage() {
           <Pressable
             style={styles.sectionHeader}
             onPress={() => toggleSection('privacy')}
-           
             accessibilityLabel={`Privacy settings${expandedSection === 'privacy' ? ', expanded' : ', collapsed'}`}
             accessibilityRole="button"
             accessibilityState={{ expanded: expandedSection === 'privacy' }}
@@ -420,7 +404,9 @@ function SettingsPage() {
                 <ThemedText style={styles.settingLabel}>Show Activity</ThemedText>
                 <Switch
                   value={settings.privacy.showActivity}
-                  onValueChange={(value) => { updatePrivacy({ showActivity: value }); }}
+                  onValueChange={(value) => {
+                    updatePrivacy({ showActivity: value });
+                  }}
                   accessibilityLabel={`Show activity${settings.privacy.showActivity ? ', enabled' : ', disabled'}`}
                   accessibilityRole="switch"
                   accessibilityState={{ checked: settings.privacy.showActivity }}
@@ -433,7 +419,9 @@ function SettingsPage() {
                 <ThemedText style={styles.settingLabel}>Allow Messaging</ThemedText>
                 <Switch
                   value={settings.privacy.allowMessaging}
-                  onValueChange={(value) => { updatePrivacy({ allowMessaging: value }); }}
+                  onValueChange={(value) => {
+                    updatePrivacy({ allowMessaging: value });
+                  }}
                   accessibilityLabel={`Allow messaging${settings.privacy.allowMessaging ? ', enabled' : ', disabled'}`}
                   accessibilityRole="switch"
                   accessibilityState={{ checked: settings.privacy.allowMessaging }}
@@ -488,7 +476,6 @@ function SettingsPage() {
           <Pressable
             style={styles.sectionHeader}
             onPress={() => toggleSection('security')}
-           
             accessibilityLabel={`Security settings${expandedSection === 'security' ? ', expanded' : ', collapsed'}`}
             accessibilityRole="button"
             accessibilityState={{ expanded: expandedSection === 'security' }}
@@ -528,7 +515,9 @@ function SettingsPage() {
                 <ThemedText style={styles.settingLabel}>Login Alerts</ThemedText>
                 <Switch
                   value={settings.security.loginAlerts}
-                  onValueChange={(value) => { updateSecurity({ loginAlerts: value }); }}
+                  onValueChange={(value) => {
+                    updateSecurity({ loginAlerts: value });
+                  }}
                   accessibilityLabel={`Login alerts${settings.security.loginAlerts ? ', enabled' : ', disabled'}`}
                   accessibilityRole="switch"
                   accessibilityState={{ checked: settings.security.loginAlerts }}
@@ -565,7 +554,6 @@ function SettingsPage() {
           <Pressable
             style={styles.sectionHeader}
             onPress={() => toggleSection('preferences')}
-           
             accessibilityLabel={`App preferences${expandedSection === 'preferences' ? ', expanded' : ', collapsed'}`}
             accessibilityRole="button"
             accessibilityState={{ expanded: expandedSection === 'preferences' }}
@@ -588,7 +576,9 @@ function SettingsPage() {
                 <ThemedText style={styles.settingLabel}>Animations</ThemedText>
                 <Switch
                   value={settings.preferences.animations}
-                  onValueChange={(value) => { updateAppPreferences({ animations: value }); }}
+                  onValueChange={(value) => {
+                    updateAppPreferences({ animations: value });
+                  }}
                   accessibilityLabel={`Animations${settings.preferences.animations ? ', enabled' : ', disabled'}`}
                   accessibilityRole="switch"
                   accessibilityState={{ checked: settings.preferences.animations }}
@@ -601,7 +591,9 @@ function SettingsPage() {
                 <ThemedText style={styles.settingLabel}>Sounds</ThemedText>
                 <Switch
                   value={settings.preferences.sounds}
-                  onValueChange={(value) => { updateAppPreferences({ sounds: value }); }}
+                  onValueChange={(value) => {
+                    updateAppPreferences({ sounds: value });
+                  }}
                   accessibilityLabel={`Sounds${settings.preferences.sounds ? ', enabled' : ', disabled'}`}
                   accessibilityRole="switch"
                   accessibilityState={{ checked: settings.preferences.sounds }}
@@ -614,7 +606,9 @@ function SettingsPage() {
                 <ThemedText style={styles.settingLabel}>Haptic Feedback</ThemedText>
                 <Switch
                   value={settings.preferences.hapticFeedback}
-                  onValueChange={(value) => { updateAppPreferences({ hapticFeedback: value }); }}
+                  onValueChange={(value) => {
+                    updateAppPreferences({ hapticFeedback: value });
+                  }}
                   accessibilityLabel={`Haptic feedback${settings.preferences.hapticFeedback ? ', enabled' : ', disabled'}`}
                   accessibilityRole="switch"
                   accessibilityState={{ checked: settings.preferences.hapticFeedback }}
@@ -627,7 +621,9 @@ function SettingsPage() {
                 <ThemedText style={styles.settingLabel}>Data Saver</ThemedText>
                 <Switch
                   value={settings.preferences.dataSaver}
-                  onValueChange={(value) => { updateAppPreferences({ dataSaver: value }); }}
+                  onValueChange={(value) => {
+                    updateAppPreferences({ dataSaver: value });
+                  }}
                   accessibilityLabel={`Data saver mode${settings.preferences.dataSaver ? ', enabled' : ', disabled'}`}
                   accessibilityRole="switch"
                   accessibilityState={{ checked: settings.preferences.dataSaver }}
@@ -640,7 +636,9 @@ function SettingsPage() {
                 <ThemedText style={styles.settingLabel}>High Quality Images</ThemedText>
                 <Switch
                   value={settings.preferences.highQualityImages}
-                  onValueChange={(value) => { updateAppPreferences({ highQualityImages: value }); }}
+                  onValueChange={(value) => {
+                    updateAppPreferences({ highQualityImages: value });
+                  }}
                   accessibilityLabel={`High quality images${settings.preferences.highQualityImages ? ', enabled' : ', disabled'}`}
                   accessibilityRole="switch"
                   accessibilityState={{ checked: settings.preferences.highQualityImages }}
@@ -664,7 +662,6 @@ function SettingsPage() {
             <Pressable
               style={styles.settingRow}
               onPress={() => router.push('/legal/about')}
-             
               accessibilityLabel={`About ${BRAND.APP_NAME}`}
               accessibilityRole="button"
             >
@@ -678,7 +675,6 @@ function SettingsPage() {
             <Pressable
               style={styles.settingRow}
               onPress={() => router.push('/legal/terms')}
-             
               accessibilityLabel="Terms and Conditions"
               accessibilityRole="button"
             >
@@ -691,7 +687,6 @@ function SettingsPage() {
             <Pressable
               style={styles.settingRow}
               onPress={() => router.push('/legal/privacy')}
-             
               accessibilityLabel="Privacy Policy"
               accessibilityRole="button"
             >
@@ -704,7 +699,6 @@ function SettingsPage() {
             <Pressable
               style={styles.settingRow}
               onPress={() => router.push('/legal/refund-policy')}
-             
               accessibilityLabel="Refund Policy"
               accessibilityRole="button"
             >
@@ -728,7 +722,6 @@ function SettingsPage() {
             <Pressable
               style={styles.settingRow}
               onPress={() => router.push('/dev/test-pages')}
-             
               accessibilityLabel="Test All Pages"
               accessibilityRole="button"
             >

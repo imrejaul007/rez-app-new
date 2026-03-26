@@ -1,15 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Bank Offer Detail Page
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  Dimensions,
-  Share,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, ActivityIndicator, Dimensions, Share } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -79,7 +71,7 @@ function BankOfferDetailScreen() {
         message: `Check out this bank offer: ${offer?.offerTitle || offer?.bankName} - ${offer?.discountPercentage}% discount!`,
       });
     } catch (err) {
-      logger.error('[BankOfferDetail] Share error:', err);
+      logger.error('[BankOfferDetail] Share error:', err instanceof Error ? err : undefined);
     }
   };
 
@@ -98,7 +90,10 @@ function BankOfferDetailScreen() {
         <Stack.Screen options={{ headerShown: false }} />
         <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
         <ThemedText style={styles.errorText}>{error || 'Offer not found'}</ThemedText>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
         </Pressable>
       </SafeAreaView>
@@ -116,7 +111,10 @@ function BankOfferDetailScreen() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.headerBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.headerBtn}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Bank Offer</ThemedText>
@@ -131,10 +129,7 @@ function BankOfferDetailScreen() {
         contentContainerStyle={{ paddingBottom: 120 }}
       >
         {/* Bank Logo & Info */}
-        <LinearGradient
-          colors={['#1E40AF', colors.infoScale[400]]}
-          style={styles.bannerGradient}
-        >
+        <LinearGradient colors={['#1E40AF', colors.infoScale[400]]} style={styles.bannerGradient}>
           {offer.bankLogo ? (
             <CachedImage source={offer.bankLogo} style={styles.bankLogo} contentFit="contain" />
           ) : (
@@ -151,9 +146,7 @@ function BankOfferDetailScreen() {
         {/* Offer Title */}
         <View style={styles.section}>
           <ThemedText style={styles.offerTitle}>{offer.offerTitle}</ThemedText>
-          {offer.offerDescription && (
-            <ThemedText style={styles.offerDesc}>{offer.offerDescription}</ThemedText>
-          )}
+          {offer.offerDescription && <ThemedText style={styles.offerDesc}>{offer.offerDescription}</ThemedText>}
         </View>
 
         {/* Card Type & Status */}
@@ -161,7 +154,9 @@ function BankOfferDetailScreen() {
           <View style={[styles.chip, { backgroundColor: colors.tint.blue }]}>
             <Ionicons name="card-outline" size={14} color={Colors.info} />
             <ThemedText style={[styles.chipText, { color: colors.infoScale[400] }]}>
-              {offer.cardType === 'all' ? 'All Cards' : `${offer.cardType?.charAt(0).toUpperCase()}${offer.cardType?.slice(1)} Card`}
+              {offer.cardType === 'all'
+                ? 'All Cards'
+                : `${offer.cardType?.charAt(0).toUpperCase()}${offer.cardType?.slice(1)} Card`}
             </ThemedText>
           </View>
           {offer.cardNetwork && (
@@ -259,7 +254,10 @@ function BankOfferDetailScreen() {
               if (offer.promoCode) {
                 platformAlertSimple('Promo Code', `Use code: ${offer.promoCode} at checkout to avail this offer.`);
               } else {
-                platformAlertSimple('Bank Offer', 'This offer will be automatically applied when you pay with an eligible card.');
+                platformAlertSimple(
+                  'Bank Offer',
+                  'This offer will be automatically applied when you pay with an eligible card.',
+                );
               }
             }}
           >
@@ -276,34 +274,124 @@ function BankOfferDetailScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.secondary },
-  errorContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.secondary, gap: Spacing.md },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+    gap: Spacing.md,
+  },
   errorText: { ...Typography.bodyLarge, color: colors.text.tertiary },
-  backButton: { paddingHorizontal: Spacing.lg, paddingVertical: 10, backgroundColor: Colors.info, borderRadius: BorderRadius.sm, marginTop: Spacing.sm },
+  backButton: {
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 10,
+    backgroundColor: Colors.info,
+    borderRadius: BorderRadius.sm,
+    marginTop: Spacing.sm,
+  },
   backButtonText: { color: colors.text.inverse, fontWeight: '600' },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingVertical: Spacing.md },
-  headerBtn: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+  },
+  headerBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: colors.background.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   headerTitle: { ...Typography.h4, fontWeight: '600' },
   scroll: { flex: 1 },
-  bannerGradient: { marginHorizontal: Spacing.base, borderRadius: BorderRadius.lg, padding: Spacing.xl, alignItems: 'center', marginBottom: Spacing.base },
-  bankLogo: { width: 80, height: 80, borderRadius: BorderRadius.lg, backgroundColor: colors.background.primary, marginBottom: Spacing.md },
-  bankLogoPlaceholder: { width: 80, height: 80, borderRadius: BorderRadius.lg, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.md },
+  bannerGradient: {
+    marginHorizontal: Spacing.base,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.xl,
+    alignItems: 'center',
+    marginBottom: Spacing.base,
+  },
+  bankLogo: {
+    width: 80,
+    height: 80,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: colors.background.primary,
+    marginBottom: Spacing.md,
+  },
+  bankLogoPlaceholder: {
+    width: 80,
+    height: 80,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
   bankName: { fontSize: 22, fontWeight: '700', color: colors.text.inverse, marginBottom: Spacing.sm },
-  discountBadge: { backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: Spacing.base, paddingVertical: 6, borderRadius: BorderRadius.xl },
+  discountBadge: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 6,
+    borderRadius: BorderRadius.xl,
+  },
   discountText: { color: colors.text.inverse, ...Typography.h4, fontWeight: '700' },
   section: { paddingHorizontal: Spacing.base, marginBottom: Spacing.base },
   offerTitle: { ...Typography.h3, fontWeight: '700', color: colors.text.primary, marginBottom: Spacing.xs },
   offerDesc: { ...Typography.body, color: colors.text.tertiary, lineHeight: 20 },
-  chipRow: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: Spacing.base, gap: Spacing.sm, marginBottom: Spacing.base },
-  chip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 5, borderRadius: BorderRadius.md, gap: Spacing.xs },
+  chipRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: Spacing.base,
+    gap: Spacing.sm,
+    marginBottom: Spacing.base,
+  },
+  chip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: BorderRadius.md,
+    gap: Spacing.xs,
+  },
   chipText: { ...Typography.bodySmall, fontWeight: '600' },
-  detailsGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: Spacing.base, gap: Spacing.sm, marginBottom: Spacing.base },
-  detailCard: { flex: 1, minWidth: (width - 48) / 2, backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, padding: 14, borderWidth: 1, borderColor: colors.border.default },
+  detailsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: Spacing.base,
+    gap: Spacing.sm,
+    marginBottom: Spacing.base,
+  },
+  detailCard: {
+    flex: 1,
+    minWidth: (width - 48) / 2,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    padding: 14,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   detailLabel: { ...Typography.bodySmall, color: colors.text.tertiary, marginBottom: Spacing.xs },
   detailValue: { ...Typography.h4, fontWeight: '700', color: colors.text.primary },
   promoSection: { paddingHorizontal: Spacing.base, marginBottom: Spacing.base },
   promoLabel: { ...Typography.bodySmall, fontSize: 13, color: colors.text.tertiary, marginBottom: 6 },
-  promoBox: { backgroundColor: Colors.warningScale[50], borderWidth: 1, borderColor: colors.warningScale[200], borderRadius: 10, padding: 14, alignItems: 'center', borderStyle: 'dashed' },
+  promoBox: {
+    backgroundColor: Colors.warningScale[50],
+    borderWidth: 1,
+    borderColor: colors.warningScale[200],
+    borderRadius: 10,
+    padding: 14,
+    alignItems: 'center',
+    borderStyle: 'dashed',
+  },
   promoCode: { ...Typography.h3, fontWeight: '700', color: Colors.warning, letterSpacing: 2 },
   sectionTitle: { ...Typography.bodyLarge, fontWeight: '600', color: colors.text.primary, marginBottom: Spacing.sm },
   validityRow: { gap: Spacing.sm },
@@ -313,9 +401,21 @@ const styles = StyleSheet.create({
   termItem: { flexDirection: 'row', gap: 6, marginBottom: Spacing.xs },
   termBullet: { color: colors.text.tertiary, ...Typography.body },
   termText: { ...Typography.bodySmall, fontSize: 13, color: colors.text.tertiary, flex: 1, lineHeight: 18 },
-  bottomBar: { paddingHorizontal: Spacing.base, paddingVertical: Spacing.md, backgroundColor: colors.background.primary, borderTopWidth: 1, borderTopColor: colors.border.default },
+  bottomBar: {
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.md,
+    backgroundColor: colors.background.primary,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.default,
+  },
   ctaButton: { borderRadius: BorderRadius.md, overflow: 'hidden' },
-  ctaGradient: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 14, gap: Spacing.sm },
+  ctaGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 14,
+    gap: Spacing.sm,
+  },
   ctaText: { color: colors.text.inverse, ...Typography.bodyLarge, fontWeight: '700' },
 });
 

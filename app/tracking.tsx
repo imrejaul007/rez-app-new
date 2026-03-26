@@ -4,14 +4,13 @@ import {
   View,
   StyleSheet,
   Pressable,
-  StatusBar,
   Platform,
-  SafeAreaView,
   RefreshControl,
   Dimensions,
   Animated,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -59,48 +58,49 @@ interface TrackingOrder {
 const mapOrderToTracking = (order: Order): TrackingOrder => {
   // Map backend status to tracking status
   const statusMap: Record<string, 'PREPARING' | 'ON_THE_WAY' | 'DELIVERED' | 'CANCELLED'> = {
-    'placed': 'PREPARING',
-    'pending': 'PREPARING',
-    'confirmed': 'PREPARING',
-    'preparing': 'PREPARING',
-    'processing': 'PREPARING',
-    'ready': 'PREPARING',
-    'dispatched': 'ON_THE_WAY',
-    'shipped': 'ON_THE_WAY',
-    'out_for_delivery': 'ON_THE_WAY',
-    'delivered': 'DELIVERED',
-    'cancelled': 'CANCELLED',
-    'refunded': 'CANCELLED',
+    placed: 'PREPARING',
+    pending: 'PREPARING',
+    confirmed: 'PREPARING',
+    preparing: 'PREPARING',
+    processing: 'PREPARING',
+    ready: 'PREPARING',
+    dispatched: 'ON_THE_WAY',
+    shipped: 'ON_THE_WAY',
+    out_for_delivery: 'ON_THE_WAY',
+    delivered: 'DELIVERED',
+    cancelled: 'CANCELLED',
+    refunded: 'CANCELLED',
   };
 
   const trackingStatus = statusMap[order.status] || 'PREPARING';
 
   // Map status to color - using Nuqta palette
   const colorMap = {
-    'PREPARING': colors.lightMustard,    // Light Mustard
-    'ON_THE_WAY': colors.nileBlue,   // Nile Blue
-    'DELIVERED': colors.nileBlue,    // Nile Blue
-    'CANCELLED': colors.error,
+    PREPARING: colors.lightMustard, // Light Mustard
+    ON_THE_WAY: colors.nileBlue, // Nile Blue
+    DELIVERED: colors.nileBlue, // Nile Blue
+    CANCELLED: colors.error,
   };
 
   // Calculate progress dynamically based on actual status index
   const dynamicProgress = getOrderProgress(order.status);
 
   // Create tracking steps from order timeline
-  const steps: OrderStatus[] = order.timeline?.map((event, index) => ({
-    step: index + 1,
-    title: event.status.charAt(0).toUpperCase() + event.status.slice(1).replace('_', ' '),
-    description: event.message,
-    timestamp: new Date(event.timestamp).toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-    }),
-    isCompleted: true,
-    isActive: index === order.timeline.length - 1,
-  })) || [];
+  const steps: OrderStatus[] =
+    order.timeline?.map((event, index) => ({
+      step: index + 1,
+      title: event.status.charAt(0).toUpperCase() + event.status.slice(1).replace('_', ' '),
+      description: event.message,
+      timestamp: new Date(event.timestamp).toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
+      isCompleted: true,
+      isActive: index === order.timeline.length - 1,
+    })) || [];
 
   // Get item names
-  const items = order.items?.map(item => item.product?.name || 'Product') || [];
+  const items = order.items?.map((item) => item.product?.name || 'Product') || [];
 
   // Format address - use delivery.address from backend
   const addr = order.delivery?.address || order.shippingAddress;
@@ -119,11 +119,11 @@ const mapOrderToTracking = (order: Order): TrackingOrder => {
   let totalAmount = order.totals?.total || order.summary?.total || 0;
   if (totalAmount === 0 && order.totals) {
     // Recalculate: subtotal + tax + delivery - discount
-    totalAmount = (order.totals.subtotal || 0) +
-                  (order.totals.tax || 0) +
-                  (order.totals.delivery || 0) -
-                  (order.totals.discount || 0);
-
+    totalAmount =
+      (order.totals.subtotal || 0) +
+      (order.totals.tax || 0) +
+      (order.totals.delivery || 0) -
+      (order.totals.discount || 0);
   }
 
   return {
@@ -170,20 +170,28 @@ function OrderTrackingScreen() {
     if (!lastUpdate) return;
 
     // Update the specific order in-place
-    setOrders(prev =>
-      prev.map(o =>
+    setOrders((prev) =>
+      prev.map((o) =>
         o.id === lastUpdate.orderId
           ? {
               ...o,
-              status: lastUpdate.newStatus === 'delivered' || lastUpdate.newStatus === 'cancelled' || lastUpdate.newStatus === 'refunded' || lastUpdate.newStatus === 'returned'
-                ? (lastUpdate.newStatus === 'delivered' ? 'DELIVERED' as const : 'CANCELLED' as const)
-                : lastUpdate.newStatus === 'dispatched' || lastUpdate.newStatus === 'out_for_delivery' || lastUpdate.newStatus === 'shipped'
-                  ? 'ON_THE_WAY' as const
-                  : 'PREPARING' as const,
+              status:
+                lastUpdate.newStatus === 'delivered' ||
+                lastUpdate.newStatus === 'cancelled' ||
+                lastUpdate.newStatus === 'refunded' ||
+                lastUpdate.newStatus === 'returned'
+                  ? lastUpdate.newStatus === 'delivered'
+                    ? ('DELIVERED' as const)
+                    : ('CANCELLED' as const)
+                  : lastUpdate.newStatus === 'dispatched' ||
+                      lastUpdate.newStatus === 'out_for_delivery' ||
+                      lastUpdate.newStatus === 'shipped'
+                    ? ('ON_THE_WAY' as const)
+                    : ('PREPARING' as const),
               progress: getOrderProgress(lastUpdate.newStatus),
             }
-          : o
-      )
+          : o,
+      ),
     );
 
     // Update counts from socket if available
@@ -207,60 +215,63 @@ function OrderTrackingScreen() {
   }, []);
 
   // Load orders for the selected tab (server-side filtered)
-  const loadOrders = useCallback(async (isRefresh: boolean = false, loadMore: boolean = false) => {
-    if (!isRefresh && !loadMore) {
-      setLoading(true);
-    }
-    if (loadMore) {
-      setLoadingMore(true);
-    }
-    setError(null);
-
-    try {
-      const statusGroup = selectedTab === 'active' ? 'active' : 'past';
-      const cursor = loadMore ? nextCursorRef.current : undefined;
-
-      const response = await ordersApi.getOrders({
-        statusGroup,
-        limit: 15,
-        cursor: cursor || undefined,
-      });
-
-      if (response.success && response.data?.orders) {
-        const mapped = response.data.orders.map(mapOrderToTracking);
-
-        if (loadMore) {
-          if (!isMounted()) return;
-          setOrders(prev => [...prev, ...mapped]);
-        } else {
-          if (!isMounted()) return;
-          setOrders(mapped);
-        }
-
-        nextCursorRef.current = response.data.nextCursor || null;
-        hasMoreRef.current = response.data.hasMore || false;
-
-        // Update counts from response if available
-        if (response.data.counts) {
-          if (!isMounted()) return;
-          setCounts(response.data.counts);
-        }
-      } else {
-        throw new Error(response.message || 'Failed to fetch orders');
+  const loadOrders = useCallback(
+    async (isRefresh: boolean = false, loadMore: boolean = false) => {
+      if (!isRefresh && !loadMore) {
+        setLoading(true);
       }
-    } catch (err: any) {
-      const errorMsg = err.response?.data?.message || err.message || 'Failed to load orders';
-      if (!isMounted()) return;
-      setError(errorMsg);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [selectedTab]);
+      if (loadMore) {
+        setLoadingMore(true);
+      }
+      setError(null);
+
+      try {
+        const statusGroup = selectedTab === 'active' ? 'active' : 'past';
+        const cursor = loadMore ? nextCursorRef.current : undefined;
+
+        const response = await ordersApi.getOrders({
+          statusGroup,
+          limit: 15,
+          cursor: cursor || undefined,
+        });
+
+        if (response.success && response.data?.orders) {
+          const mapped = response.data.orders.map(mapOrderToTracking);
+
+          if (loadMore) {
+            if (!isMounted()) return;
+            setOrders((prev) => [...prev, ...mapped]);
+          } else {
+            if (!isMounted()) return;
+            setOrders(mapped);
+          }
+
+          nextCursorRef.current = response.data.nextCursor || null;
+          hasMoreRef.current = response.data.hasMore || false;
+
+          // Update counts from response if available
+          if (response.data.counts) {
+            if (!isMounted()) return;
+            setCounts(response.data.counts);
+          }
+        } else {
+          throw new Error(response.message || 'Failed to fetch orders');
+        }
+      } catch (err: any) {
+        const errorMsg = err.response?.data?.message || err.message || 'Failed to load orders';
+        if (!isMounted()) return;
+        setError(errorMsg);
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setIsRefreshing(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
+      }
+    },
+    [selectedTab],
+  );
 
   // Load on mount and when tab changes
   useEffect(() => {
@@ -287,22 +298,29 @@ function OrderTrackingScreen() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'PREPARING': return 'restaurant';
-      case 'ON_THE_WAY': return 'car-sport';
-      case 'DELIVERED': return 'checkmark-circle';
-      case 'CANCELLED': return 'close-circle';
-      default: return 'time';
+      case 'PREPARING':
+        return 'restaurant';
+      case 'ON_THE_WAY':
+        return 'car-sport';
+      case 'DELIVERED':
+        return 'checkmark-circle';
+      case 'CANCELLED':
+        return 'close-circle';
+      default:
+        return 'time';
     }
   };
 
   const renderModernTrackingStep = (step: OrderStatus, isLast: boolean, progress: number) => (
     <View key={step.step} style={styles.modernStep}>
       <View style={styles.stepLeftColumn}>
-        <View style={[
-          styles.modernStepCircle,
-          step.isCompleted && styles.stepCompleted,
-          step.isActive && styles.stepActive,
-        ]}>
+        <View
+          style={[
+            styles.modernStepCircle,
+            step.isCompleted && styles.stepCompleted,
+            step.isActive && styles.stepActive,
+          ]}
+        >
           {step.isCompleted ? (
             <Ionicons name="checkmark" size={14} color="white" />
           ) : step.isActive ? (
@@ -315,254 +333,256 @@ function OrderTrackingScreen() {
             <View style={styles.inactiveStepDot} />
           )}
         </View>
-        {!isLast && (
-          <View style={[
-            styles.modernStepLine,
-            step.isCompleted && styles.stepLineCompleted,
-          ]} />
-        )}
+        {!isLast && <View style={[styles.modernStepLine, step.isCompleted && styles.stepLineCompleted]} />}
       </View>
-      
+
       <View style={styles.stepRightColumn}>
         <View style={styles.stepTextContainer}>
-          <ThemedText style={[
-            styles.modernStepTitle,
-            step.isActive && styles.stepActiveTitle,
-            step.isCompleted && styles.stepCompletedTitle,
-          ]}>
+          <ThemedText
+            style={[
+              styles.modernStepTitle,
+              step.isActive && styles.stepActiveTitle,
+              step.isCompleted && styles.stepCompletedTitle,
+            ]}
+          >
             {step.title}
           </ThemedText>
-          <ThemedText style={styles.modernStepDescription}>
-            {step.description}
-          </ThemedText>
-          {step.timestamp && (
-            <ThemedText style={styles.modernStepTimestamp}>
-              {step.timestamp}
-            </ThemedText>
-          )}
+          <ThemedText style={styles.modernStepDescription}>{step.description}</ThemedText>
+          {step.timestamp && <ThemedText style={styles.modernStepTimestamp}>{step.timestamp}</ThemedText>}
         </View>
       </View>
     </View>
   );
 
-  const renderModernOrderCard = useCallback(({ item: order }: { item: TrackingOrder }) => (
-    <View
-      key={order.id}
-      style={styles.modernOrderCard}
-      accessibilityLabel={`Order ${order.orderNumber}. Status: ${order.status}. ${order.merchantName}. Amount: ${order.totalAmount} rupees. ${order.estimatedDelivery}`}
-      accessibilityRole="summary"
-    >
-      {/* Status Header with Progress */}
-      <LinearGradient
-        colors={[order.statusColor + '15', order.statusColor + '05']}
-        style={styles.orderStatusHeader}
+  const renderModernOrderCard = useCallback(
+    ({ item: order }: { item: TrackingOrder }) => (
+      <View
+        key={order.id}
+        style={styles.modernOrderCard}
+        accessibilityLabel={`Order ${order.orderNumber}. Status: ${order.status}. ${order.merchantName}. Amount: ${order.totalAmount} rupees. ${order.estimatedDelivery}`}
+        accessibilityRole="summary"
       >
-        <View style={styles.statusHeaderContent}>
-          <View style={styles.statusLeft}>
-            <View style={[styles.modernStatusIcon, { backgroundColor: order.statusColor + '20' }]}>
-              <Ionicons
-                name={getStatusIcon(order.status) as any}
-                size={18}
-                color={order.statusColor}
+        {/* Status Header with Progress */}
+        <LinearGradient colors={[order.statusColor + '15', order.statusColor + '05']} style={styles.orderStatusHeader}>
+          <View style={styles.statusHeaderContent}>
+            <View style={styles.statusLeft}>
+              <View style={[styles.modernStatusIcon, { backgroundColor: order.statusColor + '20' }]}>
+                <Ionicons name={getStatusIcon(order.status) as any} size={18} color={order.statusColor} />
+              </View>
+              <View style={styles.statusLeftText}>
+                <ThemedText style={styles.orderNumberLarge} numberOfLines={1} ellipsizeMode="middle">
+                  #{order.orderNumber}
+                </ThemedText>
+                <ThemedText style={[styles.statusTextLarge, { color: order.statusColor }]}>
+                  {order.status.replace('_', ' ')}
+                </ThemedText>
+              </View>
+            </View>
+
+            <View style={styles.statusRight}>
+              <ThemedText style={styles.estimatedTime} numberOfLines={1}>
+                {order.estimatedDelivery}
+              </ThemedText>
+              <ThemedText style={styles.estimatedLabel}>Estimated</ThemedText>
+            </View>
+          </View>
+
+          {/* Progress Bar */}
+          <View style={styles.progressContainer}>
+            <View style={styles.progressBackground}>
+              <LinearGradient
+                colors={[order.statusColor, order.statusColor + '80']}
+                style={[styles.progressBar, { width: `${order.progress}%` }]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
               />
             </View>
-            <View style={styles.statusLeftText}>
-              <ThemedText style={styles.orderNumberLarge} numberOfLines={1} ellipsizeMode="middle">
-                #{order.orderNumber}
-              </ThemedText>
-              <ThemedText style={[styles.statusTextLarge, { color: order.statusColor }]}>
-                {order.status.replace('_', ' ')}
-              </ThemedText>
-            </View>
+            <ThemedText style={styles.progressText}>{order.progress}% Complete</ThemedText>
           </View>
-          
-          <View style={styles.statusRight}>
-            <ThemedText style={styles.estimatedTime} numberOfLines={1}>
-              {order.estimatedDelivery}
+        </LinearGradient>
+
+        {/* Merchant Info */}
+        <View style={styles.merchantSection}>
+          <View style={styles.merchantAvatar}>
+            <ThemedText style={styles.merchantInitial}>{order.merchantName.charAt(0)}</ThemedText>
+          </View>
+          <View style={styles.merchantInfo}>
+            <ThemedText style={styles.merchantName} numberOfLines={1}>
+              {order.merchantName}
             </ThemedText>
-            <ThemedText style={styles.estimatedLabel}>Estimated</ThemedText>
+            <ThemedText style={styles.orderItems} numberOfLines={1}>
+              {order.items.slice(0, 2).join(' • ')}
+              {order.items.length > 2 ? ` +${order.items.length - 2} more` : ''}
+            </ThemedText>
           </View>
+          <ThemedText style={styles.orderAmount}>
+            {currencySymbol}
+            {order.totalAmount.toLocaleString()}
+          </ThemedText>
         </View>
-        
-        {/* Progress Bar */}
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBackground}>
-            <LinearGradient
-              colors={[order.statusColor, order.statusColor + '80']}
-              style={[styles.progressBar, { width: `${order.progress}%` }]}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-            />
-          </View>
-          <ThemedText style={styles.progressText}>{order.progress}% Complete</ThemedText>
-        </View>
-      </LinearGradient>
 
-      {/* Merchant Info */}
-      <View style={styles.merchantSection}>
-        <View style={styles.merchantAvatar}>
-          <ThemedText style={styles.merchantInitial}>
-            {order.merchantName.charAt(0)}
-          </ThemedText>
-        </View>
-        <View style={styles.merchantInfo}>
-          <ThemedText style={styles.merchantName} numberOfLines={1}>
-            {order.merchantName}
-          </ThemedText>
-          <ThemedText style={styles.orderItems} numberOfLines={1}>
-            {order.items.slice(0, 2).join(' • ')}{order.items.length > 2 ? ` +${order.items.length - 2} more` : ''}
-          </ThemedText>
-        </View>
-        <ThemedText style={styles.orderAmount}>{currencySymbol}{order.totalAmount.toLocaleString()}</ThemedText>
-      </View>
-
-      {/* Delivery Person Info (if on the way) */}
-      {order.status === 'ON_THE_WAY' && order.deliveryPersonName && (
-        <View style={styles.deliveryPersonCard}>
-          <View style={styles.deliveryPersonLeft}>
-            <View style={styles.deliveryPersonAvatar}>
-              <Ionicons name="person" size={18} color={colors.nileBlue} />
+        {/* Delivery Person Info (if on the way) */}
+        {order.status === 'ON_THE_WAY' && order.deliveryPersonName && (
+          <View style={styles.deliveryPersonCard}>
+            <View style={styles.deliveryPersonLeft}>
+              <View style={styles.deliveryPersonAvatar}>
+                <Ionicons name="person" size={18} color={colors.nileBlue} />
+              </View>
+              <View>
+                <ThemedText style={styles.deliveryPersonName}>{order.deliveryPersonName}</ThemedText>
+                <ThemedText style={styles.deliveryPersonRole}>Delivery Partner</ThemedText>
+              </View>
             </View>
-            <View>
-              <ThemedText style={styles.deliveryPersonName}>
-                {order.deliveryPersonName}
+            <Pressable
+              style={styles.callButton}
+              accessibilityLabel={`Call delivery partner ${order.deliveryPersonName}`}
+              accessibilityRole="button"
+              accessibilityHint="Double tap to call delivery partner"
+            >
+              <Ionicons name="call" size={18} color="white" />
+            </Pressable>
+          </View>
+        )}
+
+        {/* Modern Tracking Steps */}
+        <View style={styles.modernTrackingContainer}>
+          <ThemedText style={styles.trackingHeader}>Order Journey</ThemedText>
+          <View style={styles.modernTrackingSteps}>
+            {order.trackingSteps.map((step, index) =>
+              renderModernTrackingStep(step, index === order.trackingSteps.length - 1, order.progress),
+            )}
+          </View>
+        </View>
+
+        {/* Fulfillment type badge */}
+        {order.fulfillmentType && order.fulfillmentType !== 'delivery' && (
+          <View style={{ flexDirection: 'row', paddingHorizontal: 16, marginBottom: 8 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                backgroundColor: '#f0f6fa',
+                paddingHorizontal: 10,
+                paddingVertical: 4,
+                borderRadius: 8,
+                gap: 4,
+              }}
+            >
+              <Ionicons
+                name={
+                  order.fulfillmentType === 'pickup'
+                    ? 'bag-handle-outline'
+                    : order.fulfillmentType === 'drive_thru'
+                      ? 'car-outline'
+                      : order.fulfillmentType === 'dine_in'
+                        ? 'restaurant-outline'
+                        : 'bicycle-outline'
+                }
+                size={14}
+                color={colors.nileBlue}
+              />
+              <ThemedText style={{ fontSize: 12, fontWeight: '600', color: colors.nileBlue }}>
+                {order.fulfillmentType === 'pickup'
+                  ? 'Pickup'
+                  : order.fulfillmentType === 'drive_thru'
+                    ? 'Drive-Thru'
+                    : order.fulfillmentType === 'dine_in'
+                      ? 'Dine-In'
+                      : 'Delivery'}
               </ThemedText>
-              <ThemedText style={styles.deliveryPersonRole}>Delivery Partner</ThemedText>
             </View>
           </View>
-          <Pressable
-            style={styles.callButton}
-            accessibilityLabel={`Call delivery partner ${order.deliveryPersonName}`}
-            accessibilityRole="button"
-            accessibilityHint="Double tap to call delivery partner"
-          >
-            <Ionicons name="call" size={18} color="white" />
-          </Pressable>
-        </View>
-      )}
+        )}
 
-      {/* Modern Tracking Steps */}
-      <View style={styles.modernTrackingContainer}>
-        <ThemedText style={styles.trackingHeader}>Order Journey</ThemedText>
-        <View style={styles.modernTrackingSteps}>
-          {order.trackingSteps.map((step, index) => 
-            renderModernTrackingStep(step, index === order.trackingSteps.length - 1, order.progress)
+        {/* Action Buttons */}
+        <View style={styles.actionButtons}>
+          <Pressable
+            style={styles.secondaryButton}
+            onPress={() => router.push(`/orders/${order.id}` as any)}
+            accessibilityLabel={`View details for order ${order.orderNumber}`}
+            accessibilityRole="button"
+            accessibilityHint="Double tap to view full order details"
+          >
+            <Ionicons name="receipt-outline" size={16} color={colors.nileBlue} />
+            <ThemedText style={styles.secondaryButtonText}>View Details</ThemedText>
+          </Pressable>
+
+          {(order.status === 'ON_THE_WAY' || order.status === 'PREPARING') && (
+            <Pressable
+              style={styles.primaryButton}
+              onPress={() => {
+                const ft = order.fulfillmentType;
+                if (ft === 'pickup') {
+                  router.push(`/pickup-tracking?orderId=${order.id}` as any);
+                } else if (ft === 'drive_thru') {
+                  router.push(`/drivethru-tracking?orderId=${order.id}` as any);
+                } else if (ft === 'dine_in') {
+                  router.push(`/dinein-tracking?orderId=${order.id}` as any);
+                } else {
+                  router.push(`/orders/${order.id}/tracking` as any);
+                }
+              }}
+              accessibilityLabel={`Track order ${order.orderNumber}`}
+              accessibilityRole="button"
+              accessibilityHint="Double tap to track order in real-time"
+            >
+              <Ionicons name="location" size={16} color="white" />
+              <ThemedText style={styles.primaryButtonText}>Track Order</ThemedText>
+            </Pressable>
+          )}
+
+          {order.status === 'DELIVERED' && (
+            <Pressable
+              style={styles.shareButton}
+              onPress={() => router.push(`/social-media?orderId=${order.id}` as any)}
+              accessibilityLabel={`Share order ${order.orderNumber} on social media and earn 5 percent cashback`}
+              accessibilityRole="button"
+              accessibilityHint="Double tap to share and earn rewards"
+            >
+              <Ionicons name="gift" size={16} color={Colors.gold} />
+              <ThemedText style={styles.shareButtonText}>Share & Earn 5%</ThemedText>
+            </Pressable>
           )}
         </View>
       </View>
-
-      {/* Fulfillment type badge */}
-      {order.fulfillmentType && order.fulfillmentType !== 'delivery' && (
-        <View style={{ flexDirection: 'row', paddingHorizontal: 16, marginBottom: 8 }}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: '#f0f6fa', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8, gap: 4 }}>
-            <Ionicons
-              name={order.fulfillmentType === 'pickup' ? 'bag-handle-outline' : order.fulfillmentType === 'drive_thru' ? 'car-outline' : order.fulfillmentType === 'dine_in' ? 'restaurant-outline' : 'bicycle-outline'}
-              size={14}
-              color={colors.nileBlue}
-            />
-            <ThemedText style={{ fontSize: 12, fontWeight: '600', color: colors.nileBlue }}>
-              {order.fulfillmentType === 'pickup' ? 'Pickup' : order.fulfillmentType === 'drive_thru' ? 'Drive-Thru' : order.fulfillmentType === 'dine_in' ? 'Dine-In' : 'Delivery'}
-            </ThemedText>
-          </View>
-        </View>
-      )}
-
-      {/* Action Buttons */}
-      <View style={styles.actionButtons}>
-        <Pressable
-          style={styles.secondaryButton}
-          onPress={() => router.push(`/orders/${order.id}` as any)}
-          accessibilityLabel={`View details for order ${order.orderNumber}`}
-          accessibilityRole="button"
-          accessibilityHint="Double tap to view full order details"
-        >
-          <Ionicons name="receipt-outline" size={16} color={colors.nileBlue} />
-          <ThemedText style={styles.secondaryButtonText}>View Details</ThemedText>
-        </Pressable>
-
-        {(order.status === 'ON_THE_WAY' || order.status === 'PREPARING') && (
-          <Pressable
-            style={styles.primaryButton}
-            onPress={() => {
-              const ft = order.fulfillmentType;
-              if (ft === 'pickup') {
-                router.push(`/pickup-tracking?orderId=${order.id}` as any);
-              } else if (ft === 'drive_thru') {
-                router.push(`/drivethru-tracking?orderId=${order.id}` as any);
-              } else if (ft === 'dine_in') {
-                router.push(`/dinein-tracking?orderId=${order.id}` as any);
-              } else {
-                router.push(`/orders/${order.id}/tracking` as any);
-              }
-            }}
-            accessibilityLabel={`Track order ${order.orderNumber}`}
-            accessibilityRole="button"
-            accessibilityHint="Double tap to track order in real-time"
-          >
-            <Ionicons name="location" size={16} color="white" />
-            <ThemedText style={styles.primaryButtonText}>Track Order</ThemedText>
-          </Pressable>
-        )}
-
-        {order.status === 'DELIVERED' && (
-          <Pressable
-            style={styles.shareButton}
-            onPress={() => router.push(`/social-media?orderId=${order.id}` as any)}
-            accessibilityLabel={`Share order ${order.orderNumber} on social media and earn 5 percent cashback`}
-            accessibilityRole="button"
-            accessibilityHint="Double tap to share and earn rewards"
-          >
-            <Ionicons name="gift" size={16} color={Colors.gold} />
-            <ThemedText style={styles.shareButtonText}>Share & Earn 5%</ThemedText>
-          </Pressable>
-        )}
-      </View>
-    </View>
-  ), []);
+    ),
+    [],
+  );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor="transparent"
-        translucent
-      />
-
+    <SafeAreaView style={styles.container} edges={['top']}>
       {/* Modern Header */}
-      <View
-        style={styles.modernHeader}
-      >
+      <View style={styles.modernHeader}>
         <View style={styles.headerContent}>
-            <Pressable
-              style={styles.modernBackButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-              accessibilityLabel="Go back"
-              accessibilityRole="button"
-              accessibilityHint="Navigate to previous screen"
-            >
-              <Ionicons name="arrow-back" size={22} color="white" />
-            </Pressable>
-            
-            <View style={styles.headerCenter}>
-              <ThemedText style={styles.headerTitle}>Order Tracking</ThemedText>
-              <ThemedText style={styles.headerSubtitle}>
-                {selectedTab === 'active'
-                  ? `${counts.active} active order${counts.active !== 1 ? 's' : ''}`
-                  : `${counts.past} past order${counts.past !== 1 ? 's' : ''}`
-                }
-              </ThemedText>
-            </View>
-            
-            <Pressable
-              style={styles.modernRefreshButton}
-              onPress={handleRefresh}
-              accessibilityLabel="Refresh orders"
-              accessibilityRole="button"
-              accessibilityHint="Double tap to refresh order list"
-            >
-              <Ionicons name="refresh" size={22} color="white" />
-            </Pressable>
+          <Pressable
+            style={styles.modernBackButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
+            accessibilityHint="Navigate to previous screen"
+          >
+            <Ionicons name="arrow-back" size={22} color="white" />
+          </Pressable>
+
+          <View style={styles.headerCenter}>
+            <ThemedText style={styles.headerTitle}>Order Tracking</ThemedText>
+            <ThemedText style={styles.headerSubtitle}>
+              {selectedTab === 'active'
+                ? `${counts.active} active order${counts.active !== 1 ? 's' : ''}`
+                : `${counts.past} past order${counts.past !== 1 ? 's' : ''}`}
+            </ThemedText>
           </View>
+
+          <Pressable
+            style={styles.modernRefreshButton}
+            onPress={handleRefresh}
+            accessibilityLabel="Refresh orders"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to refresh order list"
+          >
+            <Ionicons name="refresh" size={22} color="white" />
+          </Pressable>
+        </View>
       </View>
 
       {/* Tab Selector */}
@@ -575,10 +595,7 @@ function OrderTrackingScreen() {
           accessibilityState={{ selected: selectedTab === 'active' }}
           accessibilityHint="Double tap to view active orders"
         >
-          <ThemedText style={[
-            styles.tabText,
-            selectedTab === 'active' && styles.activeTabText
-          ]}>
+          <ThemedText style={[styles.tabText, selectedTab === 'active' && styles.activeTabText]}>
             Active Orders
           </ThemedText>
         </Pressable>
@@ -591,10 +608,7 @@ function OrderTrackingScreen() {
           accessibilityState={{ selected: selectedTab === 'delivered' }}
           accessibilityHint="Double tap to view past orders"
         >
-          <ThemedText style={[
-            styles.tabText,
-            selectedTab === 'delivered' && styles.activeTabText
-          ]}>
+          <ThemedText style={[styles.tabText, selectedTab === 'delivered' && styles.activeTabText]}>
             Past Orders
           </ThemedText>
         </Pressable>
@@ -630,10 +644,7 @@ function OrderTrackingScreen() {
           onEndReachedThreshold={0.3}
           ListEmptyComponent={
             <View style={styles.modernEmptyState}>
-              <LinearGradient
-                colors={[colors.lavenderMist, colors.linen]}
-                style={styles.emptyIconContainer}
-              >
+              <LinearGradient colors={[colors.lavenderMist, colors.linen]} style={styles.emptyIconContainer}>
                 <Ionicons
                   name={selectedTab === 'active' ? 'receipt-outline' : 'checkmark-done-circle-outline'}
                   size={48}
@@ -693,7 +704,7 @@ const styles = StyleSheet.create({
 
   // Modern Header
   modernHeader: {
-    paddingTop: Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 25,
+    paddingTop: 14,
     paddingBottom: 18,
     paddingHorizontal: 16,
     backgroundColor: COLORS.primary,
