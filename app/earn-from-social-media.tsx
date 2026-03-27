@@ -105,6 +105,10 @@ function EarnFromSocialMediaPage() {
   // Earnings + submissions state
   const [earnings, setEarnings] = useState<EarningsData | null>(null);
   const [pastSubmissions, setPastSubmissions] = useState<SocialPost[]>([]);
+  const [todayShareCount, setTodayShareCount] = useState(0);
+
+  // Backend enforces 50 submissions per day — show a warning banner as user approaches the cap
+  const DAILY_SHARE_LIMIT = 50;
 
   // New state for multi-platform + media
   const [selectedPlatform, setSelectedPlatform] = useState<PlatformType>('instagram');
@@ -113,7 +117,9 @@ function EarnFromSocialMediaPage() {
   const isMountedRef = useRef(true);
 
   useEffect(() => {
-    return () => { isMountedRef.current = false; };
+    return () => {
+      isMountedRef.current = false;
+    };
   }, []);
 
   // Extract product context from params (for direct product links)
@@ -188,9 +194,7 @@ function EarnFromSocialMediaPage() {
 
       // Normalize delivered orders
       if (ordersResponse.success && ordersResponse.data?.orders) {
-        const deliveredOrders = ordersResponse.data.orders.filter(
-          (order) => order.status === 'delivered'
-        );
+        const deliveredOrders = ordersResponse.data.orders.filter((order) => order.status === 'delivered');
         deliveredOrders.forEach((order) => items.push(normalizeOrder(order)));
       }
 
@@ -243,6 +247,14 @@ function EarnFromSocialMediaPage() {
           }
         });
         setPastSubmissions(postsResponse.posts);
+
+        // Count posts submitted today to show daily-limit warning
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0);
+        const todayCount = postsResponse.posts.filter((p: SocialPost) => {
+          return p.createdAt && new Date(p.createdAt) >= todayStart;
+        }).length;
+        setTodayShareCount(todayCount);
       }
       setOrderSubmissions(submissionsMap);
     } catch (err) {
@@ -298,7 +310,12 @@ function EarnFromSocialMediaPage() {
       const ImagePicker = await getImagePicker();
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        showAlert('Permission Required', 'Please grant access to your photo library to upload media.', undefined, 'error');
+        showAlert(
+          'Permission Required',
+          'Please grant access to your photo library to upload media.',
+          undefined,
+          'error',
+        );
         return;
       }
 
@@ -320,7 +337,7 @@ function EarnFromSocialMediaPage() {
 
   // Remove a selected media item
   const handleRemoveMedia = (index: number) => {
-    setSelectedMedia(prev => prev.filter((_, i) => i !== index));
+    setSelectedMedia((prev) => prev.filter((_, i) => i !== index));
   };
 
   // Handle URL submission
@@ -340,7 +357,12 @@ function EarnFromSocialMediaPage() {
 
       const validation = validators.validatePostUrl(selectedPlatform, urlInput.trim());
       if (!validation.isValid) {
-        showAlert('Invalid URL', validation.error || `Please enter a valid ${PLATFORM_CONFIG[selectedPlatform].label} post URL`, undefined, 'error');
+        showAlert(
+          'Invalid URL',
+          validation.error || `Please enter a valid ${PLATFORM_CONFIG[selectedPlatform].label} post URL`,
+          undefined,
+          'error',
+        );
         return;
       }
 
@@ -368,9 +390,9 @@ function EarnFromSocialMediaPage() {
       setUploadProgress(100);
 
       const postId = response?.post?.id || (response as any)?.id || 'unknown';
-      setOrderSubmissions(prev => ({
+      setOrderSubmissions((prev) => ({
         ...prev,
-        [selectedOrder.orderId]: { status: 'pending', postId }
+        [selectedOrder.orderId]: { status: 'pending', postId },
       }));
 
       setCurrentStep('success');
@@ -379,9 +401,9 @@ function EarnFromSocialMediaPage() {
       // If 409 (already submitted), treat as success — post already exists
       const msg = err.message || '';
       if (msg.includes('already been submitted') || msg.includes('already submitted')) {
-        setOrderSubmissions(prev => ({
+        setOrderSubmissions((prev) => ({
           ...prev,
-          [selectedOrder.orderId]: { status: 'pending', postId: 'existing' }
+          [selectedOrder.orderId]: { status: 'pending', postId: 'existing' },
         }));
         setCurrentStep('success');
       } else {
@@ -436,9 +458,9 @@ function EarnFromSocialMediaPage() {
       setUploadProgress(100);
 
       const postId = response?.post?.id || (response as any)?.id || 'unknown';
-      setOrderSubmissions(prev => ({
+      setOrderSubmissions((prev) => ({
         ...prev,
-        [selectedOrder.orderId]: { status: 'pending', postId }
+        [selectedOrder.orderId]: { status: 'pending', postId },
       }));
 
       setCurrentStep('success');
@@ -446,9 +468,9 @@ function EarnFromSocialMediaPage() {
       clearInterval(progressInterval);
       const msg = err.message || '';
       if (msg.includes('already been submitted') || msg.includes('already submitted')) {
-        setOrderSubmissions(prev => ({
+        setOrderSubmissions((prev) => ({
           ...prev,
-          [selectedOrder.orderId]: { status: 'pending', postId: 'existing' }
+          [selectedOrder.orderId]: { status: 'pending', postId: 'existing' },
         }));
         setCurrentStep('success');
       } else {
@@ -492,9 +514,7 @@ function EarnFromSocialMediaPage() {
       style={styles.ordersContainer}
       showsVerticalScrollIndicator={false}
       contentContainerStyle={{ paddingBottom: 120 }}
-      refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.nileBlue]} />
-      }
+      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.nileBlue]} />}
     >
       {/* Earnings Summary Card — only show if user has any activity */}
       {earnings && earnings.postsSubmitted > 0 && (
@@ -507,12 +527,16 @@ function EarnFromSocialMediaPage() {
             </View>
             <View style={styles.earningsStatDivider} />
             <View style={styles.earningsStat}>
-              <ThemedText style={[styles.earningsStatValue, { color: colors.brand.amberDeep }]}>{earnings.pendingAmount}</ThemedText>
+              <ThemedText style={[styles.earningsStatValue, { color: colors.brand.amberDeep }]}>
+                {earnings.pendingAmount}
+              </ThemedText>
               <ThemedText style={styles.earningsStatLabel}>Pending</ThemedText>
             </View>
             <View style={styles.earningsStatDivider} />
             <View style={styles.earningsStat}>
-              <ThemedText style={[styles.earningsStatValue, { color: '#047857' }]}>{earnings.creditedAmount}</ThemedText>
+              <ThemedText style={[styles.earningsStatValue, { color: '#047857' }]}>
+                {earnings.creditedAmount}
+              </ThemedText>
               <ThemedText style={styles.earningsStatLabel}>Credited</ThemedText>
             </View>
           </View>
@@ -569,6 +593,32 @@ function EarnFromSocialMediaPage() {
         </View>
       </View>
 
+      {/* Daily share limit warning banner */}
+      {!loading && todayShareCount >= Math.floor(DAILY_SHARE_LIMIT * 0.8) && (
+        <View
+          style={[
+            styles.limitBanner,
+            todayShareCount >= DAILY_SHARE_LIMIT ? styles.limitBannerFull : styles.limitBannerWarn,
+          ]}
+        >
+          <Ionicons
+            name={todayShareCount >= DAILY_SHARE_LIMIT ? 'ban-outline' : 'warning-outline'}
+            size={16}
+            color={todayShareCount >= DAILY_SHARE_LIMIT ? colors.error || '#D32F2F' : colors.warning || '#F57C00'}
+          />
+          <ThemedText
+            style={[
+              styles.limitBannerText,
+              todayShareCount >= DAILY_SHARE_LIMIT ? styles.limitBannerTextFull : styles.limitBannerTextWarn,
+            ]}
+          >
+            {todayShareCount >= DAILY_SHARE_LIMIT
+              ? `Daily limit reached (${DAILY_SHARE_LIMIT}/${DAILY_SHARE_LIMIT}). Resets at midnight.`
+              : `${todayShareCount}/${DAILY_SHARE_LIMIT} shares submitted today — limit resets at midnight.`}
+          </ThemedText>
+        </View>
+      )}
+
       {loading ? (
         <CardGridSkeleton />
       ) : shareableOrders.length === 0 ? (
@@ -578,19 +628,13 @@ function EarnFromSocialMediaPage() {
           <ThemedText style={styles.emptyDescription}>
             Complete orders or pay in store to earn coins by sharing on social media!
           </ThemedText>
-          <Pressable
-            style={styles.shopNowButton}
-            onPress={() => router.push('/')}
-           
-          >
+          <Pressable style={styles.shopNowButton} onPress={() => router.push('/')}>
             <ThemedText style={styles.shopNowText}>Shop Now</ThemedText>
           </Pressable>
         </View>
       ) : (
         <View style={styles.ordersList}>
-          <ThemedText style={styles.ordersTitle}>
-            Your Completed Orders ({shareableOrders.length})
-          </ThemedText>
+          <ThemedText style={styles.ordersTitle}>Your Completed Orders ({shareableOrders.length})</ThemedText>
           {shareableOrders.map((order) => {
             const submission = orderSubmissions[order.id];
             return (
@@ -608,9 +652,7 @@ function EarnFromSocialMediaPage() {
       {/* Past Submissions */}
       {pastSubmissions.length > 0 && (
         <View style={styles.submissionsSection}>
-          <ThemedText style={styles.ordersTitle}>
-            Past Submissions ({pastSubmissions.length})
-          </ThemedText>
+          <ThemedText style={styles.ordersTitle}>Past Submissions ({pastSubmissions.length})</ThemedText>
           {pastSubmissions.slice(0, 5).map((post) => {
             const statusColors: Record<string, string> = {
               pending: colors.brand.amberDeep,
@@ -657,20 +699,28 @@ function EarnFromSocialMediaPage() {
                   </View>
                 </View>
                 <View style={styles.submissionRight}>
-                  <View style={[styles.submissionStatusBadge, { backgroundColor: statusBgColors[post.status] || colors.background.secondary }]}>
+                  <View
+                    style={[
+                      styles.submissionStatusBadge,
+                      { backgroundColor: statusBgColors[post.status] || colors.background.secondary },
+                    ]}
+                  >
                     <Ionicons
                       name={(statusIcons[post.status] || 'help-circle-outline') as any}
                       size={12}
                       color={statusColors[post.status] || colors.text.tertiary}
                     />
-                    <ThemedText style={[styles.submissionStatusText, { color: statusColors[post.status] || colors.text.tertiary }]}>
+                    <ThemedText
+                      style={[
+                        styles.submissionStatusText,
+                        { color: statusColors[post.status] || colors.text.tertiary },
+                      ]}
+                    >
                       {statusLabels[post.status] || post.status}
                     </ThemedText>
                   </View>
                   {post.cashbackAmount > 0 && (
-                    <ThemedText style={styles.submissionCoins}>
-                      {post.cashbackAmount} coins
-                    </ThemedText>
+                    <ThemedText style={styles.submissionCoins}>{post.cashbackAmount} coins</ThemedText>
                   )}
                 </View>
               </View>
@@ -728,7 +778,6 @@ function EarnFromSocialMediaPage() {
                 key={platform}
                 style={[styles.platformButton, isSelected && styles.platformButtonSelected]}
                 onPress={() => setSelectedPlatform(platform)}
-               
               >
                 <Ionicons
                   name={config.icon as any}
@@ -751,7 +800,6 @@ function EarnFromSocialMediaPage() {
           <Pressable
             style={[styles.modeCard, submissionMode === 'url' && styles.modeCardSelected]}
             onPress={() => setSubmissionMode('url')}
-           
           >
             <Ionicons
               name="link-outline"
@@ -761,15 +809,12 @@ function EarnFromSocialMediaPage() {
             <ThemedText style={[styles.modeTitle, submissionMode === 'url' && styles.modeTitleSelected]}>
               Paste Post URL
             </ThemedText>
-            <ThemedText style={styles.modeDescription}>
-              Share the link to your social media post
-            </ThemedText>
+            <ThemedText style={styles.modeDescription}>Share the link to your social media post</ThemedText>
           </Pressable>
 
           <Pressable
             style={[styles.modeCard, submissionMode === 'media' && styles.modeCardSelected]}
             onPress={() => setSubmissionMode('media')}
-           
           >
             <Ionicons
               name="images-outline"
@@ -779,19 +824,13 @@ function EarnFromSocialMediaPage() {
             <ThemedText style={[styles.modeTitle, submissionMode === 'media' && styles.modeTitleSelected]}>
               Upload Photo/Video
             </ThemedText>
-            <ThemedText style={styles.modeDescription}>
-              Upload screenshot or screen recording as proof
-            </ThemedText>
+            <ThemedText style={styles.modeDescription}>Upload screenshot or screen recording as proof</ThemedText>
           </Pressable>
         </View>
       </View>
 
       {/* Continue Button */}
-      <Pressable
-        style={styles.continueButton}
-        onPress={handlePlatformContinue}
-       
-      >
+      <Pressable style={styles.continueButton} onPress={handlePlatformContinue}>
         <LinearGradient
           colors={EarnSocialData.ui.gradients.primary as any}
           style={styles.continueButtonGradient}
@@ -855,12 +894,7 @@ function EarnFromSocialMediaPage() {
         </View>
 
         {/* Submit Button */}
-        <Pressable
-          style={styles.uploadButton}
-          onPress={handleSubmitUrl}
-         
-          disabled={submitting}
-        >
+        <Pressable style={styles.uploadButton} onPress={handleSubmitUrl} disabled={submitting}>
           <LinearGradient
             colors={EarnSocialData.ui.gradients.primary as any}
             style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as any]}
@@ -910,20 +944,14 @@ function EarnFromSocialMediaPage() {
 
         {/* Media Upload Area */}
         <View style={styles.sectionContainer}>
-          <ThemedText style={styles.sectionTitle}>
-            Upload Proof ({selectedMedia.length}/5)
-          </ThemedText>
+          <ThemedText style={styles.sectionTitle}>Upload Proof ({selectedMedia.length}/5)</ThemedText>
           <ThemedText style={styles.sectionSubtext}>
             Upload a screenshot or screen recording of your {platformConfig.label} post
           </ThemedText>
 
           {/* Pick Button */}
           {selectedMedia.length < 5 && (
-            <Pressable
-              style={styles.pickMediaButton}
-              onPress={handlePickMedia}
-             
-            >
+            <Pressable style={styles.pickMediaButton} onPress={handlePickMedia}>
               <Ionicons name="add-circle-outline" size={32} color={colors.nileBlue} />
               <ThemedText style={styles.pickMediaText}>Pick from Gallery</ThemedText>
             </Pressable>
@@ -957,11 +985,14 @@ function EarnFromSocialMediaPage() {
         <Pressable
           style={[styles.uploadButton, selectedMedia.length === 0 && styles.buttonDisabled]}
           onPress={handleSubmitMedia}
-         
           disabled={submitting || selectedMedia.length === 0}
         >
           <LinearGradient
-            colors={selectedMedia.length > 0 ? EarnSocialData.ui.gradients.primary as any : [colors.neutral[300], colors.neutral[400]]}
+            colors={
+              selectedMedia.length > 0
+                ? (EarnSocialData.ui.gradients.primary as any)
+                : [colors.neutral[300], colors.neutral[400]]
+            }
             style={[styles.uploadButtonGradient, { pointerEvents: 'none' } as any]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
@@ -1011,7 +1042,6 @@ function EarnFromSocialMediaPage() {
           setUrlInput('');
           setSelectedMedia([]);
         }}
-       
       >
         <ThemedText style={styles.doneButtonText}>Done</ThemedText>
       </Pressable>
@@ -1027,19 +1057,11 @@ function EarnFromSocialMediaPage() {
       <ThemedText style={styles.errorTitle}>Upload Failed</ThemedText>
       <ThemedText style={styles.errorDescription}>{error}</ThemedText>
       <View style={styles.errorActions}>
-        <Pressable
-          style={styles.retryButton}
-          onPress={handleRetry}
-         
-        >
+        <Pressable style={styles.retryButton} onPress={handleRetry}>
           <Ionicons name="refresh-outline" size={20} color={colors.text.inverse} />
           <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
         </Pressable>
-        <Pressable
-          style={styles.cancelButton}
-          onPress={handleGoBack}
-         
-        >
+        <Pressable style={styles.cancelButton} onPress={handleGoBack}>
           <ThemedText style={styles.cancelButtonText}>Go Back</ThemedText>
         </Pressable>
       </View>
@@ -1081,7 +1103,6 @@ function EarnFromSocialMediaPage() {
           <Pressable
             style={styles.backButton}
             onPress={handleGoBack}
-           
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <Ionicons name="arrow-back" size={24} color="white" />
@@ -1443,6 +1464,38 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.text.primary,
     marginBottom: Spacing.base,
+  },
+
+  // Daily share limit banner
+  limitBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    marginHorizontal: Spacing.lg,
+    marginBottom: Spacing.base,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+  },
+  limitBannerWarn: {
+    backgroundColor: '#FFF8E1',
+    borderWidth: 1,
+    borderColor: '#FFE082',
+  },
+  limitBannerFull: {
+    backgroundColor: '#FFEBEE',
+    borderWidth: 1,
+    borderColor: '#FFCDD2',
+  },
+  limitBannerText: {
+    flex: 1,
+    ...Typography.bodySmall,
+  },
+  limitBannerTextWarn: {
+    color: '#E65100',
+  },
+  limitBannerTextFull: {
+    color: '#B71C1C',
   },
 
   // Platform Header

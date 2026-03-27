@@ -214,6 +214,13 @@ export const useSearchPage = () => {
   const performGroupedSearch = useCallback(async (query: string, userLocation?: { latitude: number; longitude: number }, filters?: FilterState) => {
     if (!query.trim()) return;
 
+    // Cancel any in-flight request for an older query
+    if (searchAbortRef.current) {
+      searchAbortRef.current.abort();
+    }
+    searchAbortRef.current = new AbortController();
+    const { signal } = searchAbortRef.current;
+
     setState(prev => ({
       ...prev,
       isSearching: true,
@@ -241,10 +248,15 @@ export const useSearchPage = () => {
 
       const response = await searchService.searchProductsGrouped(params);
 
-      if (response.success && response.data) {
-        const { groupedProducts: products, summary, matchingStores: stores } = response.data;
+      // Bail out if a newer request already started
+      if (signal.aborted) return;
 
-        setGroupedProducts(products || []);
+      if (response.success && response.data) {
+        const products = response.data.groupedProducts ?? [];
+        const summary = response.data.summary ?? null;
+        const stores = response.data.matchingStores ?? [];
+
+        setGroupedProducts(products);
         setSearchSummary(summary);
         setMatchingStores(stores || []);
 
@@ -283,6 +295,8 @@ export const useSearchPage = () => {
         throw new Error('Failed to fetch grouped products');
       }
     } catch (error) {
+      // Ignore errors from aborted requests — a newer search is already running
+      if (signal.aborted) return;
       setState(prev => ({
         ...prev,
         isSearching: false,
@@ -361,6 +375,9 @@ export const useSearchPage = () => {
       }));
     }
   }, [actions, searchHookState, mapProductToSearchResult, mapStoreToSearchResult]);
+
+  // Abort controller ref — cancel stale in-flight grouped search requests
+  const searchAbortRef = useRef<AbortController | null>(null);
 
   // Debounce ref for suggestions
   const suggestionsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -495,10 +512,11 @@ export const useSearchPage = () => {
     apiClient.post('/search/history', { query, type: 'general', resultCount, region: currentRegion }).catch(() => {});
   }, [currentRegion]);
 
-  // Clear suggestions timeout on unmount
+  // Clear suggestions timeout and abort any in-flight search on unmount
   useEffect(() => {
     return () => {
       if (suggestionsTimeoutRef.current) clearTimeout(suggestionsTimeoutRef.current);
+      if (searchAbortRef.current) searchAbortRef.current.abort();
     };
   }, []);
 

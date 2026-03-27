@@ -65,6 +65,7 @@ import { useHomepage, useHomepageNavigation } from '@/hooks/useHomepage';
 import { useLoyaltySection } from '@/hooks/useLoyaltySection';
 import { PersonalizedHeroBanner } from '@/components/home/PersonalizedHeroBanner';
 import * as insightsApi from '@/services/insightsApi';
+import streakApi from '@/services/streakApi';
 import HeroCard from '@/components/homepage/HeroCard';
 import CoinExpiryBanner from '@/components/wallet/CoinExpiryBanner';
 
@@ -425,16 +426,32 @@ function HomeScreen() {
     };
   }, [authUser?.id]);
 
-  // CARLOS: retention — streak count must come from real backend data.
-  // TODO: replace with a real API call (e.g. GET /users/streak) that returns
-  //   { streakCount: number, lastActiveDate: string } tracked server-side.
-  // Until that API exists we show nothing to avoid displaying fabricated numbers.
+  // Fetch real streak data from backend (GET /api/gamification/streaks)
   React.useEffect(() => {
     if (!authUser) return;
-    // Streak data not yet available from backend — do not show a fake inflated value.
-    setStreakCount(0);
-    setStreakDisplay(null);
-  }, [authUser]);
+    let cancelled = false;
+
+    streakApi
+      .getStreakStatus('login')
+      .then((result) => {
+        if (cancelled) return;
+        const count = result.data?.current ?? 0;
+        setStreakCount(count);
+        if (count > 0) {
+          const emoji = count >= 30 ? '🔥' : count >= 7 ? '⚡' : '✨';
+          setStreakDisplay({ emoji, text: `${count}d` });
+        } else {
+          setStreakDisplay(null);
+        }
+      })
+      .catch(() => {
+        // Fail silently — streak pill stays hidden if API is unreachable
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [authUser?.id]);
 
   const animatedHeight = useSharedValue(0);
   const animatedOpacity = useSharedValue(0);
