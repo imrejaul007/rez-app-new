@@ -69,19 +69,19 @@ interface PastChallenge {
 // API helpers (lazy import pattern matching the codebase)
 // ---------------------------------------------------------------------------
 async function fetchCurrentChallenges(): Promise<WeeklyChallenge[]> {
-  const { default: apiService } = await import('@/services/api');
+  const { default: apiService } = await import('@/services/apiClient');
   const res = await apiService.get('/api/challenges/weekly/current');
   return res.data?.data ?? res.data ?? [];
 }
 
 async function fetchPastChallenges(): Promise<PastChallenge[]> {
-  const { default: apiService } = await import('@/services/api');
+  const { default: apiService } = await import('@/services/apiClient');
   const res = await apiService.get('/api/challenges/weekly/history?limit=5');
   return res.data?.data ?? res.data ?? [];
 }
 
 async function claimChallenge(progressId: string): Promise<{ coins: number }> {
-  const { default: apiService } = await import('@/services/api');
+  const { default: apiService } = await import('@/services/apiClient');
   const res = await apiService.post(`/api/challenges/weekly/${progressId}/claim`);
   return res.data?.data ?? res.data;
 }

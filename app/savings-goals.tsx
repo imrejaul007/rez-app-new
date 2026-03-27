@@ -61,19 +61,19 @@ interface PastGoal {
 // API helpers
 // ---------------------------------------------------------------------------
 async function fetchCurrentGoal(): Promise<SavingsGoal | null> {
-  const { default: apiService } = await import('@/services/api');
+  const { default: apiService } = await import('@/services/apiClient');
   const res = await apiService.get('/api/goals/current');
   return res.data?.data ?? null;
 }
 
 async function fetchGoalHistory(): Promise<PastGoal[]> {
-  const { default: apiService } = await import('@/services/api');
+  const { default: apiService } = await import('@/services/apiClient');
   const res = await apiService.get('/api/goals/history?limit=6');
   return res.data?.data ?? [];
 }
 
 async function saveGoal(targetAmount: number): Promise<SavingsGoal> {
-  const { default: apiService } = await import('@/services/api');
+  const { default: apiService } = await import('@/services/apiClient');
   const res = await apiService.post('/api/goals', { targetAmount });
   return res.data?.data ?? res.data;
 }
