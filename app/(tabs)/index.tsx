@@ -1061,7 +1061,7 @@ function HomeScreen() {
               savingsThisMonth={walletData?.savingsInsights?.thisMonth ?? 0}
               unlockAmount={580}
               missedAmount={missedSavings?.totalMissedThisMonth ?? 0}
-              expiringCoins={walletData?.promoCoinBalance ?? 0}
+              expiringCoins={(walletData as any)?.promoCoinBalance ?? 0}
               onScanPay={handleSearchPress}
               onViewWallet={handleCoinPress}
               onClaimPress={() => router.push('/offers' as any)}
@@ -1069,15 +1069,17 @@ function HomeScreen() {
           )}
 
           {/* CoinExpiryBanner — shown when wallet has expiring promo coins (near-u tab only) */}
-          {activeTab === 'near-u' && walletData?.promoCoinBalance > 0 && walletData?.promoCoinDaysLeft != null && (
-            <View style={{ paddingHorizontal: spacing.base, paddingBottom: spacing.sm }}>
-              <CoinExpiryBanner
-                expiringCount={walletData.promoCoinBalance}
-                daysLeft={walletData.promoCoinDaysLeft}
-                onPress={handleCoinPress}
-              />
-            </View>
-          )}
+          {activeTab === 'near-u' &&
+            (walletData as any)?.promoCoinBalance > 0 &&
+            (walletData as any)?.promoCoinDaysLeft != null && (
+              <View style={{ paddingHorizontal: spacing.base, paddingBottom: spacing.sm }}>
+                <CoinExpiryBanner
+                  expiringCount={(walletData as any).promoCoinBalance}
+                  daysLeft={(walletData as any).promoCoinDaysLeft}
+                  onPress={handleCoinPress}
+                />
+              </View>
+            )}
 
           {/* Mall Hero Banner */}
           {activeTab === 'mall' && (
