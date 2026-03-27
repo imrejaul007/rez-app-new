@@ -840,7 +840,7 @@ function HomeScreen() {
   }
 
   return (
-    <ReAnimated.View style={viewStyles.mainContainer} entering={FadeIn.duration(250)} pointerEvents="box-none">
+    <ReAnimated.View style={viewStyles.mainContainer} entering={FadeIn.duration(250)}>
       <ReAnimated.ScrollView
         ref={scrollViewRef}
         style={viewStyles.container}
