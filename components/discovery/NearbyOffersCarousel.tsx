@@ -171,7 +171,7 @@ const NearbyOffersCarousel: React.FC<NearbyOffersCarouselProps> = ({
   title = 'Save near you',
   showUrgencyTags = false,
 }) => {
-  if (!offers.length) return null;
+  if (!offers || !offers.length) return null;
 
   return (
     <View style={styles.wrapper}>

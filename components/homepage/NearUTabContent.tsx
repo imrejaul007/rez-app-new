@@ -230,7 +230,14 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
 
       {/* ── Section 6: NearbyOffersCarousel (Near U only) — with urgency tags ─ */}
       <LazySection sectionId="nearby-offers-carousel" scrollY={scrollY} height={240}
-        renderSection={() => <NearbyOffersCarousel showUrgencyTags />} />
+        renderSection={() => (
+          <NearbyOffersCarousel
+            offers={[]}
+            onOfferPress={() => {}}
+            onSeeAllPress={() => router.push('/near-u/map' as any)}
+            showUrgencyTags
+          />
+        )} />
 
       {/* ── Section 7-11: Student persona sections ─────────────────────────── */}
       {isStudent && (
