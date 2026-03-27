@@ -25,6 +25,9 @@ interface RewardsBreakdownCardProps {
   onReviewPress: () => void;
   onSharePress: () => void;
   currencySymbol?: string;
+  // Confirmed (immediately credited) coins — cashback + purchase coins only.
+  // Anything from reviews/shares is pending admin approval, not yet "earned".
+  confirmedEarned?: number;
 }
 
 const COIN_IMAGE = BRAND.COIN_IMAGE;
@@ -37,7 +40,11 @@ function RewardsBreakdownCard({
   onReviewPress,
   onSharePress,
   currencySymbol = '',
+  confirmedEarned,
 }: RewardsBreakdownCardProps) {
+  // Amount that is confirmed in wallet vs still pending admin approval
+  const displayEarned = confirmedEarned ?? totalEarned;
+  const pendingEarned = totalEarned - displayEarned;
   const progressAnim = useSharedValue(0);
   const fadeAnim = useSharedValue(0);
   const fadeStyle = useAnimatedStyle(() => ({ opacity: fadeAnim.value }));
@@ -125,8 +132,11 @@ function RewardsBreakdownCard({
           <Text style={styles.headerTitle}>Your Rewards</Text>
         </View>
         <View style={styles.headerRight}>
-          <Text style={styles.totalEarnedValue}>{totalEarned}</Text>
+          <Text style={styles.totalEarnedValue}>{displayEarned}</Text>
           <Text style={styles.totalEarnedLabel}>{BRAND.CURRENCY_CODE} earned</Text>
+          {pendingEarned > 0 && (
+            <Text style={styles.pendingLabel}>+{pendingEarned} pending</Text>
+          )}
         </View>
       </View>
 
@@ -136,7 +146,8 @@ function RewardsBreakdownCard({
           <Animated.View style={[styles.progressBarFill, progressWidthStyle]} />
         </View>
         <Text style={styles.progressText}>
-          {totalEarned} of {totalPossible} {BRAND.CURRENCY_CODE} earned
+          {displayEarned} of {totalPossible} {BRAND.CURRENCY_CODE} earned
+          {pendingEarned > 0 ? ` · ${pendingEarned} pending approval` : ''}
         </Text>
       </View>
 
@@ -252,6 +263,11 @@ const styles = StyleSheet.create({
   totalEarnedLabel: {
     ...typography.caption,
     color: 'rgba(255, 255, 255, 0.8)',
+  },
+  pendingLabel: {
+    ...typography.caption,
+    color: 'rgba(255, 220, 100, 0.9)',
+    marginTop: 2,
   },
   // Progress
   progressSection: {

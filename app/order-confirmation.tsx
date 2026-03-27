@@ -3,22 +3,15 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Shows order success, summary, and next actions
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  Modal
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, Modal } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -91,7 +84,6 @@ function OrderConfirmationPage() {
 
   const loadOrderDetails = async () => {
     try {
-
       setLoading(true);
       setError(null);
 
@@ -117,16 +109,13 @@ function OrderConfirmationPage() {
   };
 
   // Cross-platform alert function (works on both mobile and web)
-  const showAlert = (
-    title: string,
-    message: string,
-    isSuccess: boolean = true
-  ) => {
+  const showAlert = (title: string, message: string, isSuccess: boolean = true) => {
     setModalContent({
       title,
       message,
       icon: isSuccess ? 'checkmark-circle' : 'alert-circle',
-      iconColor: isSuccess ? colors.success : colors.warningScale[400] });
+      iconColor: isSuccess ? colors.success : colors.warningScale[400],
+    });
     setModalVisible(true);
   };
 
@@ -164,7 +153,8 @@ function OrderConfirmationPage() {
     storeName: storeData?.name || 'Store',
     cashbackEarned: order?.totals?.cashback || 0,
     orderTotal: order?.totals?.total || 0,
-    reviewAllowed: isImmediateExperience || isOrderCompleted });
+    reviewAllowed: isImmediateExperience || isOrderCompleted,
+  });
 
   // Deep-link parameter validation guard
   if (!orderId || typeof orderId !== 'string') {
@@ -179,7 +169,8 @@ function OrderConfirmationPage() {
       month: 'short',
       year: 'numeric',
       hour: '2-digit',
-      minute: '2-digit' });
+      minute: '2-digit',
+    });
   };
 
   const getPaymentMethodDisplay = (method: string) => {
@@ -188,7 +179,8 @@ function OrderConfirmationPage() {
       card: 'Card',
       upi: 'UPI',
       cod: 'Cash on Delivery',
-      netbanking: 'Net Banking' };
+      netbanking: 'Net Banking',
+    };
     return methods[method] || method;
   };
 
@@ -202,7 +194,8 @@ function OrderConfirmationPage() {
     return deliveryDate.toLocaleDateString('en-IN', {
       weekday: 'long',
       day: 'numeric',
-      month: 'short' });
+      month: 'short',
+    });
   };
 
   if (loading) {
@@ -248,19 +241,12 @@ function OrderConfirmationPage() {
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Success Animation */}
-        <Animated.View
-          style={[
-            styles.successSection,
-            successAnimStyle,
-          ]}
-        >
+        <Animated.View style={[styles.successSection, successAnimStyle]}>
           <View style={styles.successIconContainer}>
             <Ionicons name="checkmark-circle" size={80} color={Colors.success} />
           </View>
           <ThemedText style={styles.successTitle}>Order Placed Successfully!</ThemedText>
-          <ThemedText style={styles.successSubtitle}>
-            Thank you for your purchase
-          </ThemedText>
+          <ThemedText style={styles.successSubtitle}>Thank you for your purchase</ThemedText>
         </Animated.View>
 
         {/* Order Details Card */}
@@ -280,9 +266,7 @@ function OrderConfirmationPage() {
 
             <View style={styles.infoRow}>
               <ThemedText style={styles.infoLabel}>Payment Method</ThemedText>
-              <ThemedText style={styles.infoValue}>
-                {getPaymentMethodDisplay(order.payment.method)}
-              </ThemedText>
+              <ThemedText style={styles.infoValue}>{getPaymentMethodDisplay(order.payment.method)}</ThemedText>
             </View>
 
             <View style={styles.infoRow}>
@@ -301,29 +285,51 @@ function OrderConfirmationPage() {
           {/* Fulfillment type badge */}
           {(order as any).fulfillmentType && (order as any).fulfillmentType !== 'delivery' && (
             <View style={{ flexDirection: 'row', marginBottom: 12 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.secondary, paddingHorizontal: 10, paddingVertical: 5, borderRadius: BorderRadius.sm, gap: 5 }}>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: colors.background.secondary,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                  borderRadius: BorderRadius.sm,
+                  gap: 5,
+                }}
+              >
                 <Ionicons
                   name={
-                    (order as any).fulfillmentType === 'pickup' ? 'bag-handle-outline' :
-                    (order as any).fulfillmentType === 'drive_thru' ? 'car-outline' :
-                    (order as any).fulfillmentType === 'dine_in' ? 'restaurant-outline' : 'bicycle-outline'
+                    (order as any).fulfillmentType === 'pickup'
+                      ? 'bag-handle-outline'
+                      : (order as any).fulfillmentType === 'drive_thru'
+                        ? 'car-outline'
+                        : (order as any).fulfillmentType === 'dine_in'
+                          ? 'restaurant-outline'
+                          : 'bicycle-outline'
                   }
-                  size={14} color={colors.nileBlue}
+                  size={14}
+                  color={colors.nileBlue}
                 />
                 <ThemedText style={{ ...Typography.bodySmall, fontWeight: '600', color: colors.nileBlue }}>
-                  {(order as any).fulfillmentType === 'pickup' ? 'Store Pickup' :
-                   (order as any).fulfillmentType === 'drive_thru' ? 'Drive-Thru' :
-                   (order as any).fulfillmentType === 'dine_in' ? 'Dine-In' : 'Delivery'}
+                  {(order as any).fulfillmentType === 'pickup'
+                    ? 'Store Pickup'
+                    : (order as any).fulfillmentType === 'drive_thru'
+                      ? 'Drive-Thru'
+                      : (order as any).fulfillmentType === 'dine_in'
+                        ? 'Dine-In'
+                        : 'Delivery'}
                 </ThemedText>
               </View>
             </View>
           )}
 
           <ThemedText style={styles.cardTitle}>
-            {(order as any).fulfillmentType === 'pickup' ? 'Pickup Information' :
-             (order as any).fulfillmentType === 'drive_thru' ? 'Drive-Thru Information' :
-             (order as any).fulfillmentType === 'dine_in' ? 'Dine-In Information' :
-             'Delivery Information'}
+            {(order as any).fulfillmentType === 'pickup'
+              ? 'Pickup Information'
+              : (order as any).fulfillmentType === 'drive_thru'
+                ? 'Drive-Thru Information'
+                : (order as any).fulfillmentType === 'dine_in'
+                  ? 'Dine-In Information'
+                  : 'Delivery Information'}
           </ThemedText>
 
           {/* Dine-in: show table number */}
@@ -333,7 +339,9 @@ function OrderConfirmationPage() {
                 <Ionicons name="restaurant" size={24} color={colors.nileBlue} />
               </View>
               <View style={styles.deliveryDetails}>
-                <ThemedText style={styles.deliveryAddress}>Table {(order as any).fulfillmentDetails.tableNumber}</ThemedText>
+                <ThemedText style={styles.deliveryAddress}>
+                  Table {(order as any).fulfillmentDetails.tableNumber}
+                </ThemedText>
                 <ThemedText style={styles.deliveryAddressText}>Order from your table</ThemedText>
               </View>
             </View>
@@ -350,7 +358,9 @@ function OrderConfirmationPage() {
                   {(order as any).fulfillmentDetails?.storeAddress || 'Store Address'}
                 </ThemedText>
                 {(order as any).fulfillmentDetails?.vehicleInfo && (
-                  <ThemedText style={styles.deliveryAddressText}>Vehicle: {(order as any).fulfillmentDetails.vehicleInfo}</ThemedText>
+                  <ThemedText style={styles.deliveryAddressText}>
+                    Vehicle: {(order as any).fulfillmentDetails.vehicleInfo}
+                  </ThemedText>
                 )}
               </View>
             </View>
@@ -363,9 +373,7 @@ function OrderConfirmationPage() {
                 <Ionicons name="location" size={24} color={Colors.brand.purpleLight} />
               </View>
               <View style={styles.deliveryDetails}>
-                <ThemedText style={styles.deliveryAddress}>
-                  {order.delivery?.address?.name}
-                </ThemedText>
+                <ThemedText style={styles.deliveryAddress}>{order.delivery?.address?.name}</ThemedText>
                 <ThemedText style={styles.deliveryAddressText}>
                   {order.delivery?.address?.addressLine1}
                   {order.delivery?.address?.addressLine2 ? `, ${order.delivery.address.addressLine2}` : ''}
@@ -373,9 +381,7 @@ function OrderConfirmationPage() {
                 <ThemedText style={styles.deliveryAddressText}>
                   {order.delivery?.address?.city}, {order.delivery?.address?.state} - {order.delivery?.address?.pincode}
                 </ThemedText>
-                <ThemedText style={styles.deliveryPhone}>
-                  {order.delivery?.address?.phone}
-                </ThemedText>
+                <ThemedText style={styles.deliveryPhone}>{order.delivery?.address?.phone}</ThemedText>
               </View>
             </View>
           )}
@@ -383,10 +389,13 @@ function OrderConfirmationPage() {
           <View style={styles.estimatedDelivery}>
             <Ionicons name="time-outline" size={20} color={Colors.gold} />
             <ThemedText style={styles.estimatedDeliveryText}>
-              {(order as any).fulfillmentType === 'pickup' ? 'Estimated Ready Time' :
-               (order as any).fulfillmentType === 'drive_thru' ? 'Estimated Wait' :
-               (order as any).fulfillmentType === 'dine_in' ? 'Preparing your order' :
-               `Estimated Delivery: ${getEstimatedDelivery()}`}
+              {(order as any).fulfillmentType === 'pickup'
+                ? 'Estimated Ready Time'
+                : (order as any).fulfillmentType === 'drive_thru'
+                  ? 'Estimated Wait'
+                  : (order as any).fulfillmentType === 'dine_in'
+                    ? 'Preparing your order'
+                    : `Estimated Delivery: ${getEstimatedDelivery()}`}
             </ThemedText>
           </View>
         </Animated.View>
@@ -399,14 +408,13 @@ function OrderConfirmationPage() {
             <View key={index} style={styles.orderItem}>
               <View style={styles.itemInfo}>
                 <ThemedText style={styles.itemName}>{item.product?.name || 'Product'}</ThemedText>
-                {item.variant && (
-                  <ThemedText style={styles.itemVariant}>
-                    Variant: {item.variant.name}
-                  </ThemedText>
-                )}
+                {item.variant && <ThemedText style={styles.itemVariant}>Variant: {item.variant.name}</ThemedText>}
                 <ThemedText style={styles.itemQuantity}>Qty: {item.quantity}</ThemedText>
               </View>
-              <ThemedText style={styles.itemPrice}>{currencySymbol}{item.totalPrice}</ThemedText>
+              <ThemedText style={styles.itemPrice}>
+                {currencySymbol}
+                {item.totalPrice}
+              </ThemedText>
             </View>
           ))}
         </Animated.View>
@@ -418,53 +426,67 @@ function OrderConfirmationPage() {
           <View style={styles.summaryRows}>
             <View style={styles.summaryRow}>
               <ThemedText style={styles.summaryLabel}>Subtotal</ThemedText>
-              <ThemedText style={styles.summaryValue}>{currencySymbol}{order.totals.subtotal}</ThemedText>
+              <ThemedText style={styles.summaryValue}>
+                {currencySymbol}
+                {order.totals.subtotal}
+              </ThemedText>
             </View>
 
             {order.totals.delivery > 0 && (
               <View style={styles.summaryRow}>
                 <ThemedText style={styles.summaryLabel}>Delivery Fee</ThemedText>
-                <ThemedText style={styles.summaryValue}>{currencySymbol}{order.totals.delivery}</ThemedText>
+                <ThemedText style={styles.summaryValue}>
+                  {currencySymbol}
+                  {order.totals.delivery}
+                </ThemedText>
               </View>
             )}
 
             {order.totals.tax > 0 && (
               <View style={styles.summaryRow}>
                 <ThemedText style={styles.summaryLabel}>Tax</ThemedText>
-                <ThemedText style={styles.summaryValue}>{currencySymbol}{order.totals.tax}</ThemedText>
+                <ThemedText style={styles.summaryValue}>
+                  {currencySymbol}
+                  {order.totals.tax}
+                </ThemedText>
               </View>
             )}
 
             {order.totals.discount > 0 && (
               <View style={styles.summaryRow}>
-                <ThemedText style={[styles.summaryLabel, { color: Colors.success }]}>
-                  Discount
-                </ThemedText>
+                <ThemedText style={[styles.summaryLabel, { color: Colors.success }]}>Discount</ThemedText>
                 <ThemedText style={[styles.summaryValue, { color: Colors.success }]}>
-                  -{currencySymbol}{order.totals.discount}
+                  -{currencySymbol}
+                  {order.totals.discount}
                 </ThemedText>
               </View>
             )}
 
-            {(order.payment as any)?.coinsUsed && ((order.payment as any).coinsUsed.wasilCoins > 0 || (order.payment as any).coinsUsed.promoCoins > 0 || (order.payment as any).coinsUsed.storePromoCoins > 0) && (
-              <View style={styles.summaryRow}>
-                <ThemedText style={[styles.summaryLabel, { color: Colors.brand.purpleLight }]}>
-                  💎 Coins Used
-                  {(order.payment as any).coinsUsed.storePromoCoins > 0 && ' (includes Store Promo)'}
-                </ThemedText>
-                <ThemedText style={[styles.summaryValue, { color: Colors.brand.purpleLight }]}>
-                  -{currencySymbol}{(order.payment as any).coinsUsed.totalCoinsValue || 0}
-                </ThemedText>
-              </View>
-            )}
+            {(order.payment as any)?.coinsUsed &&
+              ((order.payment as any).coinsUsed.wasilCoins > 0 ||
+                (order.payment as any).coinsUsed.promoCoins > 0 ||
+                (order.payment as any).coinsUsed.storePromoCoins > 0) && (
+                <View style={styles.summaryRow}>
+                  <ThemedText style={[styles.summaryLabel, { color: Colors.brand.purpleLight }]}>
+                    💎 Coins Used
+                    {(order.payment as any).coinsUsed.storePromoCoins > 0 && ' (includes Store Promo)'}
+                  </ThemedText>
+                  <ThemedText style={[styles.summaryValue, { color: Colors.brand.purpleLight }]}>
+                    -{currencySymbol}
+                    {(order.payment as any).coinsUsed.totalCoinsValue || 0}
+                  </ThemedText>
+                </View>
+              )}
 
             <View style={styles.divider} />
 
             <View style={styles.summaryRow}>
               <ThemedText style={styles.totalLabel}>Total Paid</ThemedText>
-              <ThemedText style={styles.totalValue}>{currencySymbol}{order.totals.total}</ThemedText>
+              <ThemedText style={styles.totalValue}>
+                {currencySymbol}
+                {order.totals.total}
+              </ThemedText>
             </View>
-
           </View>
         </Animated.View>
 
@@ -478,6 +500,7 @@ function OrderConfirmationPage() {
             onReviewPress={rewards.handleReview}
             onSharePress={rewards.handleShare}
             currencySymbol={currencySymbol}
+            confirmedEarned={order?.totals?.cashback || 0}
           />
         </Animated.View>
 
@@ -486,19 +509,11 @@ function OrderConfirmationPage() {
 
       {/* Action Buttons */}
       <View style={styles.actionButtons}>
-        <Pressable
-          style={styles.secondaryButton}
-          onPress={handleContinueShopping}
-         
-        >
+        <Pressable style={styles.secondaryButton} onPress={handleContinueShopping}>
           <ThemedText style={styles.secondaryButtonText}>Continue Shopping</ThemedText>
         </Pressable>
 
-        <Pressable
-          style={styles.primaryButton}
-          onPress={handleTrackOrder}
-         
-        >
+        <Pressable style={styles.primaryButton} onPress={handleTrackOrder}>
           <Ionicons name="location" size={20} color="white" />
           <ThemedText style={styles.primaryButtonText}>Track Order</ThemedText>
         </Pressable>
@@ -511,25 +526,14 @@ function OrderConfirmationPage() {
         animationType="fade"
         onRequestClose={() => setModalVisible(false)}
       >
-        <Pressable
-          style={styles.modalOverlay}
-          onPress={() => setModalVisible(false)}
-        >
+        <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
           <Pressable style={styles.modalContent} onPress={(e) => e.stopPropagation()}>
             <View style={styles.modalIconContainer}>
-              <Ionicons
-                name={modalContent.icon}
-                size={48}
-                color={modalContent.iconColor}
-              />
+              <Ionicons name={modalContent.icon} size={48} color={modalContent.iconColor} />
             </View>
             <ThemedText style={styles.modalTitle}>{modalContent.title}</ThemedText>
             <ThemedText style={styles.modalMessage}>{modalContent.message}</ThemedText>
-            <Pressable
-              style={styles.modalButton}
-              onPress={() => setModalVisible(false)}
-             
-            >
+            <Pressable style={styles.modalButton} onPress={() => setModalVisible(false)}>
               <ThemedText style={styles.modalButtonText}>Got it!</ThemedText>
             </Pressable>
           </Pressable>
@@ -544,190 +548,236 @@ function OrderConfirmationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   headerGradient: {
     paddingTop: Platform.OS === 'android' ? 40 : 50,
     paddingBottom: 20,
-    paddingHorizontal: 20 },
+    paddingHorizontal: 20,
+  },
   headerContent: {
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   headerTitle: {
     ...Typography.h3,
     fontWeight: '600',
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
   content: {
     flex: 1,
-    padding: 16 },
+    padding: 16,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   loadingText: {
     marginTop: Spacing.base,
     ...Typography.bodyLarge,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.lg },
+    padding: Spacing.lg,
+  },
   errorTitle: {
     ...Typography.h2,
     fontWeight: '600',
     color: colors.text.primary,
     marginTop: Spacing.base,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   errorMessage: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
     textAlign: 'center',
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   successSection: {
     alignItems: 'center',
     paddingVertical: Spacing['2xl'],
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   successIconContainer: {
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   successTitle: {
     ...Typography.h2,
     fontWeight: '700',
     color: colors.text.primary,
     marginBottom: Spacing.sm,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   successSubtitle: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   card: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   cardTitle: {
     ...Typography.h4,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   orderInfo: {
-    gap: 12 },
+    gap: 12,
+  },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   infoLabel: {
     ...Typography.body,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   infoValue: {
     ...Typography.body,
     fontWeight: '500',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   statusBadge: {
     paddingHorizontal: 12,
     paddingVertical: 4,
-    borderRadius: 12 },
+    borderRadius: 12,
+  },
   paidBadge: {
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   statusText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: Colors.success },
+    color: Colors.success,
+  },
   deliveryInfo: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 16 },
+    marginBottom: 16,
+  },
   deliveryIconContainer: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
     backgroundColor: colors.background.secondary,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   deliveryDetails: {
-    flex: 1 },
+    flex: 1,
+  },
   deliveryAddress: {
     ...Typography.bodyLarge,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   deliveryAddressText: {
     ...Typography.body,
     color: colors.text.tertiary,
-    lineHeight: 20 },
+    lineHeight: 20,
+  },
   deliveryPhone: {
     ...Typography.body,
     color: colors.text.tertiary,
-    marginTop: Spacing.xs },
+    marginTop: Spacing.xs,
+  },
   estimatedDelivery: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     backgroundColor: colors.linen,
     padding: 12,
-    borderRadius: 8 },
+    borderRadius: 8,
+  },
   estimatedDeliveryText: {
     ...Typography.body,
     fontWeight: '500',
-    color: Colors.gold },
+    color: Colors.gold,
+  },
   orderItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.background.secondary },
+    borderBottomColor: colors.background.secondary,
+  },
   itemInfo: {
-    flex: 1 },
+    flex: 1,
+  },
   itemName: {
     ...Typography.body,
     fontWeight: '500',
     color: colors.text.primary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   itemVariant: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
-    marginBottom: 2 },
+    marginBottom: 2,
+  },
   itemQuantity: {
     ...Typography.bodySmall,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   itemPrice: {
     ...Typography.body,
     fontWeight: '600',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   summaryRows: {
-    gap: 12 },
+    gap: 12,
+  },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   summaryLabel: {
     ...Typography.body,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   summaryValue: {
     ...Typography.body,
     fontWeight: '500',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   divider: {
     height: 1,
     backgroundColor: colors.border.default,
-    marginVertical: Spacing.sm },
+    marginVertical: Spacing.sm,
+  },
   totalLabel: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   totalValue: {
     ...Typography.h4,
     fontWeight: '700',
-    color: Colors.brand.purpleLight },
+    color: Colors.brand.purpleLight,
+  },
   bottomSpacing: {
-    height: 100 },
+    height: 100,
+  },
   actionButtons: {
     flexDirection: 'row',
     gap: Spacing.md,
     padding: Spacing.base,
     backgroundColor: colors.background.primary,
     borderTopWidth: 1,
-    borderTopColor: colors.border.default },
+    borderTopColor: colors.border.default,
+  },
   secondaryButton: {
     flex: 1,
     backgroundColor: colors.background.primary,
@@ -736,11 +786,13 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     paddingVertical: Spacing.base,
     alignItems: 'center',
-    justifyContent: 'center' },
+    justifyContent: 'center',
+  },
   secondaryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: Colors.brand.purpleLight },
+    color: Colors.brand.purpleLight,
+  },
   primaryButton: {
     flex: 1,
     backgroundColor: Colors.brand.purpleLight,
@@ -749,18 +801,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   primaryButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
   // Cross-platform modal styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20 },
+    padding: 20,
+  },
   modalContent: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.xl,
@@ -770,37 +825,47 @@ const styles = StyleSheet.create({
     width: '100%',
     ...Platform.select({
       web: {
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' },
+        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+      },
       default: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 25 },
         shadowOpacity: 0.25,
         shadowRadius: 50,
-        elevation: 25 } }) },
+        elevation: 25,
+      },
+    }),
+  },
   modalIconContainer: {
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   modalTitle: {
     ...Typography.h3,
     fontWeight: '700',
     color: colors.text.primary,
     textAlign: 'center',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   modalMessage: {
     ...Typography.body,
     color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 20,
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   modalButton: {
     backgroundColor: Colors.brand.purpleLight,
     paddingHorizontal: Spacing['2xl'],
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
     minWidth: 120,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   modalButtonText: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: colors.text.inverse } });
+    color: colors.text.inverse,
+  },
+});
 
 export default withErrorBoundary(OrderConfirmationPage, 'OrderConfirmation');

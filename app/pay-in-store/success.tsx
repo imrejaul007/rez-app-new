@@ -11,20 +11,14 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import React, { useEffect, useState } from 'react';
 import { catchSilent } from '@/utils/catchAndReport';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  Platform
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Platform } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSequence,
   withSpring,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -49,7 +43,11 @@ function PaymentSuccessScreen() {
   // Parse rewards - handle both old and new format
   let rawRewards: any = {};
   if (rewardsParam) {
-    try { rawRewards = JSON.parse(rewardsParam); } catch { rawRewards = {}; }
+    try {
+      rawRewards = JSON.parse(rewardsParam);
+    } catch {
+      rawRewards = {};
+    }
   }
   const rewards: PaymentRewards = {
     cashbackEarned: rawRewards.cashbackEarned || rawRewards.cashback || 0,
@@ -59,7 +57,9 @@ function PaymentSuccessScreen() {
     loyaltyProgress: rawRewards.loyaltyProgress || {
       currentVisits: 0,
       nextMilestone: 5,
-      milestoneReward: 'Bonus 50 Coins' } };
+      milestoneReward: 'Bonus 50 Coins',
+    },
+  };
 
   // Cashback breakdown (base, subscription multiplier, privé multiplier)
   const cashbackBreakdown = rawRewards.cashbackBreakdown || null;
@@ -101,7 +101,11 @@ function PaymentSuccessScreen() {
   useEffect(() => {
     // Trigger haptic feedback
     if (Platform.OS !== 'web') {
-      try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch (e) { catchSilent(e, 'PayInStoreSuccess/haptics'); }
+      try {
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      } catch (e) {
+        catchSilent(e, 'PayInStoreSuccess/haptics');
+      }
     }
 
     // Run animations
@@ -113,10 +117,8 @@ function PaymentSuccessScreen() {
     const popupTimer = setTimeout(() => {
       // Show coins earned popup if any coins were earned
       if (rewards.coinsEarned > 0) {
-        showCoinsEarned(
-          rewards.coinsEarned,
-          `${BRAND.COIN_NAME} earned from purchase`,
-          () => router.push('/wallet-screen')
+        showCoinsEarned(rewards.coinsEarned, `${BRAND.COIN_NAME} earned from purchase`, () =>
+          router.push('/wallet-screen'),
         );
       }
       // Show cashback popup if any cashback was earned (after coins popup)
@@ -124,7 +126,7 @@ function PaymentSuccessScreen() {
         showCashbackEarned(
           rewards.cashbackEarned,
           `${currencySymbol}${rewards.cashbackEarned} added to your wallet`,
-          () => router.push('/wallet-screen')
+          () => router.push('/wallet-screen'),
         );
       }
     }, 1500); // Show popup 1.5s after screen loads
@@ -137,7 +139,8 @@ function PaymentSuccessScreen() {
   const handleViewReceipt = () => {
     router.push({
       pathname: '/transactions/[id]',
-      params: { id: paymentId } });
+      params: { id: paymentId },
+    });
   };
 
   const handleBackToHome = () => {
@@ -148,21 +151,26 @@ function PaymentSuccessScreen() {
   const [savingsStreak, setSavingsStreak] = useState<number>(0);
   useEffect(() => {
     const timer = setTimeout(() => {
-      import('@/services/gamificationApi').then(mod => {
-        mod.default.getStreakStatus().then((res: any) => {
-          if (res?.success && res.data) {
-            setSavingsStreak(res.data.currentStreak || res.data.savings?.currentStreak || 0);
-          }
-        }).catch(() => {});
-      }).catch(() => {});
+      import('@/services/gamificationApi')
+        .then((mod) => {
+          mod.default
+            .getStreakStatus()
+            .then((res: any) => {
+              if (res?.success && res.data) {
+                setSavingsStreak(res.data.currentStreak || res.data.savings?.currentStreak || 0);
+              }
+            })
+            .catch(() => {});
+        })
+        .catch(() => {});
     }, 800);
     return () => clearTimeout(timer);
   }, []);
 
   const getStreakTier = (days: number) => {
-    if (days >= 60) return { name: 'Smart Saver Elite', icon: '💎', multiplier: 1.20 };
+    if (days >= 60) return { name: 'Smart Saver Elite', icon: '💎', multiplier: 1.2 };
     if (days >= 21) return { name: 'Gold Saver', icon: '🥇', multiplier: 1.15 };
-    if (days >= 7) return { name: 'Silver Saver', icon: '🥈', multiplier: 1.10 };
+    if (days >= 7) return { name: 'Silver Saver', icon: '🥈', multiplier: 1.1 };
     if (days >= 1) return { name: 'Bronze Saver', icon: '🥉', multiplier: 1.05 };
     return null;
   };
@@ -170,11 +178,10 @@ function PaymentSuccessScreen() {
   const loyaltyProgress = rewards.loyaltyProgress || {
     currentVisits: 0,
     nextMilestone: 5,
-    milestoneReward: 'Bonus 50 Coins' };
+    milestoneReward: 'Bonus 50 Coins',
+  };
   const progressPercent =
-    loyaltyProgress.nextMilestone > 0
-      ? (loyaltyProgress.currentVisits / loyaltyProgress.nextMilestone) * 100
-      : 0;
+    loyaltyProgress.nextMilestone > 0 ? (loyaltyProgress.currentVisits / loyaltyProgress.nextMilestone) * 100 : 0;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -184,9 +191,7 @@ function PaymentSuccessScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Success Animation */}
-        <Animated.View
-          style={[styles.successIconContainer, checkmarkStyle]}
-        >
+        <Animated.View style={[styles.successIconContainer, checkmarkStyle]}>
           <LinearGradient
             colors={[colors.successScale[400], colors.successScale[600]]}
             style={styles.successIconGradient}
@@ -201,14 +206,17 @@ function PaymentSuccessScreen() {
         <Animated.View style={[styles.successTextContainer, contentStyle]}>
           <Text style={styles.successTitle}>Payment Successful!</Text>
           <Text style={styles.successSubtitle}>
-            Paid {currencySymbol}{billAmount.toFixed(0)} to {storeName}
+            Paid {currencySymbol}
+            {billAmount.toFixed(0)} to {storeName}
           </Text>
           {coinsRedeemed > 0 && (
             <View style={{ alignItems: 'center' }}>
               <Text style={styles.coinsUsedText}>
                 Used {coinsRedeemed} {BRAND.COIN_NAME}
               </Text>
-              <Animated.Text style={[{ fontSize: 16, fontWeight: '800', color: '#ef4444', marginTop: 2 }, contentStyle]}>
+              <Animated.Text
+                style={[{ fontSize: 16, fontWeight: '800', color: '#ef4444', marginTop: 2 }, contentStyle]}
+              >
                 -{coinsRedeemed} 🔥
               </Animated.Text>
             </View>
@@ -251,14 +259,23 @@ function PaymentSuccessScreen() {
             {cashbackBreakdown.basePercent > 0 && (
               <View style={styles.cashbackRow}>
                 <Text style={styles.cashbackLabel}>Base cashback ({cashbackBreakdown.basePercent}%)</Text>
-                <Text style={styles.cashbackValue}>{currencySymbol}{(billAmount * cashbackBreakdown.basePercent / 100).toFixed(2)}</Text>
+                <Text style={styles.cashbackValue}>
+                  {currencySymbol}
+                  {((billAmount * cashbackBreakdown.basePercent) / 100).toFixed(2)}
+                </Text>
               </View>
             )}
             {cashbackBreakdown.subscriptionMultiplier > 1 && (
               <View style={styles.cashbackRow}>
-                <Text style={styles.cashbackLabel}>Subscription bonus ({cashbackBreakdown.subscriptionMultiplier}x)</Text>
+                <Text style={styles.cashbackLabel}>
+                  Subscription bonus ({cashbackBreakdown.subscriptionMultiplier}x)
+                </Text>
                 <Text style={[styles.cashbackValue, { color: colors.primary[600] }]}>
-                  +{currencySymbol}{(billAmount * cashbackBreakdown.basePercent / 100 * (cashbackBreakdown.subscriptionMultiplier - 1)).toFixed(2)}
+                  +{currencySymbol}
+                  {(
+                    ((billAmount * cashbackBreakdown.basePercent) / 100) *
+                    (cashbackBreakdown.subscriptionMultiplier - 1)
+                  ).toFixed(2)}
                 </Text>
               </View>
             )}
@@ -266,24 +283,26 @@ function PaymentSuccessScreen() {
               <View style={styles.cashbackRow}>
                 <Text style={styles.cashbackLabel}>Privé bonus ({cashbackBreakdown.priveMultiplier}x)</Text>
                 <Text style={[styles.cashbackValue, { color: colors.secondary[600] }]}>
-                  +{currencySymbol}{(billAmount * cashbackBreakdown.basePercent / 100 * (cashbackBreakdown.priveMultiplier - 1)).toFixed(2)}
+                  +{currencySymbol}
+                  {(
+                    ((billAmount * cashbackBreakdown.basePercent) / 100) *
+                    (cashbackBreakdown.priveMultiplier - 1)
+                  ).toFixed(2)}
                 </Text>
               </View>
             )}
             <View style={[styles.cashbackRow, styles.cashbackTotalRow]}>
               <Text style={styles.cashbackTotalLabel}>Total cashback</Text>
-              <Text style={styles.cashbackTotalValue}>{currencySymbol}{rewards.cashbackEarned.toFixed(2)}</Text>
+              <Text style={styles.cashbackTotalValue}>
+                {currencySymbol}
+                {rewards.cashbackEarned.toFixed(2)}
+              </Text>
             </View>
           </Animated.View>
         )}
 
         {/* Rewards Breakdown Card */}
-        <Animated.View
-          style={[
-            { width: '100%', marginBottom: spacing.lg },
-            rewardsStyle,
-          ]}
-        >
+        <Animated.View style={[{ width: '100%', marginBottom: spacing.lg }, rewardsStyle]}>
           <RewardsBreakdownCard
             totalEarned={postRewards.totalEarned}
             totalPossible={postRewards.totalPossible}
@@ -292,38 +311,44 @@ function PaymentSuccessScreen() {
             onReviewPress={postRewards.handleReview}
             onSharePress={postRewards.handleShare}
             currencySymbol={currencySymbol}
+            confirmedEarned={rewards.cashbackEarned}
           />
         </Animated.View>
 
         {/* Savings Streak */}
-        {savingsStreak >= 1 && (() => {
-          const tier = getStreakTier(savingsStreak);
-          const milestoneText =
-            savingsStreak < 7 ? `${7 - savingsStreak} more days to Silver Saver` :
-            savingsStreak < 21 ? `${21 - savingsStreak} more days to Gold Saver` :
-            savingsStreak < 60 ? `${60 - savingsStreak} more days to Elite` : null;
-          return (
-            <View style={{ backgroundColor: '#FFF8E1', borderRadius: 14, padding: 14, marginTop: 10 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
-                <Text style={{ fontSize: 28 }}>🔥</Text>
-                <View style={{ flex: 1 }}>
-                  <Text style={{ fontSize: 15, fontWeight: '700', color: '#5D4037' }}>
-                    Day {savingsStreak} Savings Streak!
-                  </Text>
-                  {tier && (
-                    <Text style={{ fontSize: 13, color: '#795548', marginTop: 2 }}>
-                      {tier.icon} {tier.name}
-                      {tier.multiplier > 1 && ` · +${Math.round((tier.multiplier - 1) * 100)}% coin bonus`}
+        {savingsStreak >= 1 &&
+          (() => {
+            const tier = getStreakTier(savingsStreak);
+            const milestoneText =
+              savingsStreak < 7
+                ? `${7 - savingsStreak} more days to Silver Saver`
+                : savingsStreak < 21
+                  ? `${21 - savingsStreak} more days to Gold Saver`
+                  : savingsStreak < 60
+                    ? `${60 - savingsStreak} more days to Elite`
+                    : null;
+            return (
+              <View style={{ backgroundColor: '#FFF8E1', borderRadius: 14, padding: 14, marginTop: 10 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
+                  <Text style={{ fontSize: 28 }}>🔥</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, fontWeight: '700', color: '#5D4037' }}>
+                      Day {savingsStreak} Savings Streak!
                     </Text>
-                  )}
-                  {milestoneText && (
-                    <Text style={{ fontSize: 12, color: '#9e9e9e', marginTop: 2 }}>{milestoneText}</Text>
-                  )}
+                    {tier && (
+                      <Text style={{ fontSize: 13, color: '#795548', marginTop: 2 }}>
+                        {tier.icon} {tier.name}
+                        {tier.multiplier > 1 && ` · +${Math.round((tier.multiplier - 1) * 100)}% coin bonus`}
+                      </Text>
+                    )}
+                    {milestoneText && (
+                      <Text style={{ fontSize: 12, color: '#9e9e9e', marginTop: 2 }}>{milestoneText}</Text>
+                    )}
+                  </View>
                 </View>
               </View>
-            </View>
-          );
-        })()}
+            );
+          })()}
 
         {/* Loyalty Progress */}
         {loyaltyProgress.nextMilestone > 0 && (
@@ -345,9 +370,7 @@ function PaymentSuccessScreen() {
             {loyaltyProgress.milestoneReward && (
               <View style={styles.milestoneContainer}>
                 <Ionicons name="gift" size={16} color={colors.secondary[500]} />
-                <Text style={styles.milestoneText}>
-                  Next reward: {loyaltyProgress.milestoneReward}
-                </Text>
+                <Text style={styles.milestoneText}>Next reward: {loyaltyProgress.milestoneReward}</Text>
               </View>
             )}
           </Animated.View>
@@ -381,145 +404,180 @@ function PaymentSuccessScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   content: {
-    flex: 1 },
+    flex: 1,
+  },
   contentContainer: {
     padding: spacing.md,
     alignItems: 'center',
-    paddingBottom: 120 },
+    paddingBottom: 120,
+  },
   successIconContainer: {
     marginTop: spacing.xl,
-    marginBottom: spacing.lg },
+    marginBottom: spacing.lg,
+  },
   successIconGradient: {
     width: 120,
     height: 120,
     borderRadius: 60,
     justifyContent: 'center',
     alignItems: 'center',
-    ...shadows.lg },
+    ...shadows.lg,
+  },
   successTextContainer: {
     alignItems: 'center',
-    marginBottom: spacing.xl },
+    marginBottom: spacing.xl,
+  },
   successTitle: {
     ...typography.h2,
     color: colors.text.primary,
-    marginBottom: spacing.xs },
+    marginBottom: spacing.xs,
+  },
   successSubtitle: {
     ...typography.body,
     color: colors.text.secondary,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   coinsUsedText: {
     ...typography.bodySmall,
     color: colors.primary[600],
-    marginTop: spacing.xs },
+    marginTop: spacing.xs,
+  },
   transactionId: {
     ...typography.caption,
     color: colors.text.tertiary,
-    marginTop: spacing.sm },
+    marginTop: spacing.sm,
+  },
   firstVisitCard: {
     width: '100%',
-    marginBottom: spacing.lg },
+    marginBottom: spacing.lg,
+  },
   firstVisitGradient: {
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     borderWidth: 1,
-    borderColor: colors.warningScale[400] },
+    borderColor: colors.warningScale[400],
+  },
   firstVisitContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm },
+    gap: spacing.sm,
+  },
   firstVisitEmoji: {
-    fontSize: 28 },
+    fontSize: 28,
+  },
   firstVisitTextContainer: {
-    flex: 1 },
+    flex: 1,
+  },
   firstVisitTitle: {
     fontSize: 16,
     fontWeight: '700',
     color: colors.brand.amberDark,
-    marginBottom: 2 },
+    marginBottom: 2,
+  },
   firstVisitSubtitle: {
     fontSize: 13,
     color: colors.brand.amberDeep,
-    lineHeight: 18 },
+    lineHeight: 18,
+  },
   firstVisitBadge: {
     backgroundColor: colors.warningScale[400],
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 20 },
+    borderRadius: 20,
+  },
   firstVisitBadgeText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.background.primary },
+    color: colors.background.primary,
+  },
   cashbackBreakdownCard: {
     width: '100%',
     backgroundColor: colors.background.primary,
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     marginBottom: spacing.lg,
-    ...shadows.sm },
+    ...shadows.sm,
+  },
   cashbackBreakdownHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.md,
-    gap: spacing.sm },
+    gap: spacing.sm,
+  },
   cashbackBreakdownTitle: {
     ...typography.button,
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   cashbackRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: spacing.xs },
+    paddingVertical: spacing.xs,
+  },
   cashbackLabel: {
     ...typography.bodySmall,
-    color: colors.text.secondary },
+    color: colors.text.secondary,
+  },
   cashbackValue: {
     ...typography.bodySmall,
     fontWeight: '600',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   cashbackTotalRow: {
     borderTopWidth: 1,
     borderTopColor: colors.border.light,
     marginTop: spacing.sm,
-    paddingTop: spacing.sm },
+    paddingTop: spacing.sm,
+  },
   cashbackTotalLabel: {
     ...typography.button,
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   cashbackTotalValue: {
     ...typography.button,
-    color: colors.successScale[600] },
+    color: colors.successScale[600],
+  },
   loyaltyCard: {
     width: '100%',
     backgroundColor: colors.background.primary,
     borderRadius: borderRadius.lg,
     padding: spacing.lg,
     marginBottom: spacing.lg,
-    ...shadows.sm },
+    ...shadows.sm,
+  },
   loyaltyHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: spacing.md,
-    gap: spacing.sm },
+    gap: spacing.sm,
+  },
   loyaltyTitle: {
     ...typography.button,
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   progressContainer: {
-    marginBottom: spacing.sm },
+    marginBottom: spacing.sm,
+  },
   progressBar: {
     height: 8,
     backgroundColor: colors.neutral[200],
     borderRadius: 4,
     marginBottom: spacing.xs,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   progressFill: {
     height: '100%',
     backgroundColor: colors.warningScale[500],
-    borderRadius: 4 },
+    borderRadius: 4,
+  },
   progressText: {
     ...typography.caption,
     color: colors.text.secondary,
-    textAlign: 'right' },
+    textAlign: 'right',
+  },
   milestoneContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -527,10 +585,12 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
     backgroundColor: colors.secondary[50],
     borderRadius: borderRadius.md,
-    gap: spacing.xs },
+    gap: spacing.xs,
+  },
   milestoneText: {
     ...typography.bodySmall,
-    color: colors.secondary[700] },
+    color: colors.secondary[700],
+  },
   bottomActions: {
     flexDirection: 'row',
     padding: spacing.md,
@@ -539,7 +599,8 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.border.light,
     gap: spacing.md,
-    ...shadows.lg },
+    ...shadows.lg,
+  },
   receiptButton: {
     flex: 1,
     flexDirection: 'row',
@@ -549,20 +610,26 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.lg,
     borderWidth: 2,
     borderColor: colors.primary[500],
-    gap: spacing.sm },
+    gap: spacing.sm,
+  },
   receiptButtonText: {
     ...typography.button,
-    color: colors.primary[500] },
+    color: colors.primary[500],
+  },
   homeButton: {
     flex: 1,
     borderRadius: borderRadius.lg,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   homeButtonGradient: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.md },
+    paddingVertical: spacing.md,
+  },
   homeButtonText: {
     ...typography.button,
-    color: colors.background.primary } });
+    color: colors.background.primary,
+  },
+});
 
 export default withErrorBoundary(PaymentSuccessScreen, 'PayInStoreSuccess');

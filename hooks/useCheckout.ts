@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 import { router, useFocusEffect } from 'expo-router';
 import { useQueryClient } from '@tanstack/react-query';
@@ -28,7 +28,7 @@ import storesApi from '@/services/storesApi';
 import { createRazorpayPayment } from '@/services/razorpayApi';
 import { mapBackendCartToFrontend, mapFrontendCheckoutToBackendOrder } from '@/utils/dataMappers';
 import { showToast } from '@/components/common/ToastManager';
-import { useCartActions, useCartState, useGetCurrencySymbol, useWalletData, useRawWalletData, useRefreshWallet, useIsAuthenticated, useAuthLoading } from '@/stores/selectors';
+import { useCartActions, useCartState, useGetCurrencySymbol, useWalletData, useRawWalletData, useRefreshWallet, useIsAuthenticated, useAuthLoading, useUserId } from '@/stores/selectors';
 import {
   TAX_RATE,
   PLATFORM_FEE,
@@ -151,6 +151,7 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
   const refreshSharedWallet = useRefreshWallet();
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
+  const userId = useUserId();
   const queryClient = useQueryClient();
   // Refs to access latest wallet data inside async callbacks (avoids stale closure)
   const walletDataRef = useRef(walletData);
@@ -158,16 +159,41 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
   walletDataRef.current = walletData;
   walletRawDataRef.current = walletRawData;
 
-  // OG-001 FIX: One idempotency key per checkout session mount.
-  // Generated once here; reused for every retry of the SAME user intent.
-  // Prevents the backend from processing the same order twice if the
-  // app comes back online and fires a second createOrder call.
-  const orderIdempotencyKeyRef = useRef(
-    `order-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
-  );
-  const walletIdempotencyKeyRef = useRef(
-    `wallet-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`
-  );
+  // OG-001 FIX: Stable idempotency keys derived from userId + cart fingerprint.
+  // Using useMemo (rather than useRef with a random value) means:
+  //   • Same user + same cart items → same key, even across component remounts
+  //   • Cart changes (add/remove item) → new key, new order intent
+  // This prevents both duplicate orders on retry AND loss of idempotency
+  // protection when the checkout screen remounts mid-session.
+  const cartFingerprint = useMemo(() => {
+    const items = cartState?.items ?? [];
+    // Sort by productId for determinism; include quantity in fingerprint
+    const sorted = [...items]
+      .sort((a, b) => String(a.productId || a.id || '').localeCompare(String(b.productId || b.id || '')))
+      .map((i) => `${i.productId || i.id}:${i.quantity}`)
+      .join(',');
+    return sorted || 'empty';
+  }, [cartState?.items]);
+
+  const orderIdempotencyKeyRef = useRef('');
+  const walletIdempotencyKeyRef = useRef('');
+
+  // Regenerate keys whenever cart fingerprint or user changes
+  const prevCartFingerprintRef = useRef('');
+  const prevUserIdRef = useRef('');
+  if (
+    cartFingerprint !== prevCartFingerprintRef.current ||
+    userId !== prevUserIdRef.current
+  ) {
+    prevCartFingerprintRef.current = cartFingerprint;
+    prevUserIdRef.current = userId || '';
+    // Deterministic prefix (user+cart) + wall-clock epoch bucket (15-min window)
+    // so the same intent within 15 min maps to the same key, preventing duplicates.
+    const epochBucket = Math.floor(Date.now() / (15 * 60 * 1000));
+    const base = `${userId || 'anon'}-${cartFingerprint}-${epochBucket}`;
+    orderIdempotencyKeyRef.current = `order-${base}`;
+    walletIdempotencyKeyRef.current = `wallet-${base}`;
+  }
 
   // OG-002 FIX: Track in-flight submission to prevent double-tap / reconnect
   // re-submission while a payment request is still in flight.

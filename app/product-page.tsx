@@ -556,6 +556,12 @@ function StorePage() {
 
   const handleBuyPress = useCallback(async () => {
     try {
+      // Auth guard — redirect to sign-in if not logged in
+      if (!isAuthenticated) {
+        router.push('/sign-in' as any);
+        return;
+      }
+
       if (!cardData?.id && !cardData?._id) {
         showAlert('Error', 'Product information not available', [{ text: 'OK' }], 'error');
         return;
@@ -585,6 +591,8 @@ function StorePage() {
       showAlert('Error', 'Unable to add to cart. Please try again.', [{ text: 'OK' }], 'error');
     }
   }, [
+    isAuthenticated,
+    router,
     cardData?.id,
     cardData?._id,
     cardData?.selectedVariant,

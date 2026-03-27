@@ -155,10 +155,23 @@ function PaymentPage() {
     }
   };
 
+  // PAYMENT TIMEOUT: If the processing screen is shown for more than 30s
+  // without resolving, move to the failed state so the user is never stuck.
   useEffect(() => {
-    if (currentStep === 'processing') {
-      animateProgress();
-    }
+    if (currentStep !== 'processing') return;
+    animateProgress();
+    const timeoutId = setTimeout(() => {
+      if (!isMounted()) return;
+      // Only trigger if still on processing screen (not already resolved)
+      setCurrentStep((prev) => {
+        if (prev === 'processing') {
+          setPaymentError('Payment timed out. Please check your payment method and try again.');
+          return 'failed';
+        }
+        return prev;
+      });
+    }, 30_000);
+    return () => clearTimeout(timeoutId);
   }, [currentStep]);
 
   const animateEntrance = () => {
@@ -187,7 +200,10 @@ function PaymentPage() {
     try {
       const response = await paymentService.getPaymentMethods(currency, fiatCurrency);
       if (response.success && response.data) {
-        setPaymentMethods(response.data);
+        // FIX: Hide card (Stripe) payment option when STRIPE_KEY is not configured —
+        // previously the tile appeared and tapping it showed a cryptic error.
+        const filtered = STRIPE_KEY ? response.data : response.data.filter((m) => m.type !== 'card');
+        setPaymentMethods(filtered);
       }
     } catch (error) {
       platformAlertSimple('Error', 'Failed to load payment methods. Please try again.');
