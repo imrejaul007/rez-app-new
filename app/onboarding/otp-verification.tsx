@@ -26,6 +26,9 @@ function OTPVerificationScreen() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [timer, setTimer] = useState(60); // Match sign-in's 60 seconds
   const [canResend, setCanResend] = useState(false);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const [resendMessage, setResendMessage] = useState('');
+  const [otpError, setOtpError] = useState('');
   // Use ref instead of state to avoid re-renders that dismiss the keyboard
   const focusedIndexRef = useRef<number | null>(null);
 
@@ -68,6 +71,7 @@ function OTPVerificationScreen() {
     const newOtp = [...otp];
     newOtp[index] = value.slice(-1); // Take only the last character
     setOtp(newOtp);
+    setOtpError('');
 
     if (value && index < 5) {
       inputRefs.current[index + 1]?.focus();
@@ -108,14 +112,23 @@ function OTPVerificationScreen() {
 
       if (!isMounted()) return;
 
-      // Always prompt to set a PIN after OTP login (new users go to set-pin,
-      // which then continues to notification-permission or tabs).
-      router.replace('/onboarding/set-pin');
+      if (freshUser?.isOnboarded) {
+        router.replace('/(tabs)/' as any);
+      } else {
+        router.replace('/onboarding/set-pin');
+      }
     } catch (error: any) {
-      const errorMessage =
-        error?.message || useAuthStore.getState().state.error || 'Invalid OTP. Please check and try again.';
-      platformAlertSimple("That code didn't match", errorMessage);
+      const msg = error?.message || useAuthStore.getState().state.error || '';
       if (!isMounted()) return;
+      if (msg.includes('Network') || msg.includes('network')) {
+        setOtpError('No internet connection. Check your network and try again.');
+      } else if (msg.includes('expired')) {
+        setOtpError('OTP expired. Please request a new one.');
+      } else if (msg.includes('attempt') || msg.includes('locked') || msg.includes('blocked')) {
+        setOtpError('Too many attempts. Please wait and try again.');
+      } else {
+        setOtpError(msg || 'Invalid OTP. Please check and try again.');
+      }
       setOtp(['', '', '', '', '', '']);
       inputRefs.current[0]?.focus();
       actions.clearError();
@@ -136,7 +149,7 @@ function OTPVerificationScreen() {
       setCanResend(false);
       if (!isMounted()) return;
       setTimerKey((k) => k + 1); // Restart interval cleanly
-      platformAlertSimple('Success', 'OTP has been resent to your phone number');
+      setResendMessage('OTP has been resent to your phone number.');
     } catch (error: any) {
       const errorMessage =
         error?.message || useAuthStore.getState().state.error || 'Failed to resend OTP. Please try again.';
@@ -147,7 +160,7 @@ function OTPVerificationScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         {/* Background */}
         <LinearGradient
           colors={[colors.background.secondary, '#EDF2F7', colors.background.secondary]}
@@ -208,7 +221,7 @@ function OTPVerificationScreen() {
                     key={index}
                     style={[
                       styles.otpInputWrapper,
-                      /* focused style handled by TextInput focus state */
+                      focusedIndex === index && styles.otpInputWrapperFocused,
                       digit && styles.otpInputWrapperFilled,
                     ]}
                   >
@@ -221,6 +234,7 @@ function OTPVerificationScreen() {
                       onChangeText={(value) => handleOTPChange(value, index)}
                       onKeyPress={({ nativeEvent }) => handleKeyPress(nativeEvent.key, index)}
                       onFocus={() => {
+                        setFocusedIndex(index);
                         focusedIndexRef.current = index;
                       }}
                       onBlur={() => {
@@ -230,6 +244,7 @@ function OTPVerificationScreen() {
                       maxLength={index === 0 ? 6 : 1}
                       textAlign="center"
                       selectTextOnFocus
+                      autoFocus={index === 0}
                       textContentType={index === 0 ? 'oneTimeCode' : 'none'}
                       autoComplete={index === 0 ? 'sms-otp' : 'off'}
                       accessibilityLabel={`OTP digit ${index + 1} of 6`}
@@ -237,6 +252,9 @@ function OTPVerificationScreen() {
                   </View>
                 ))}
               </View>
+
+              {/* OTP Error */}
+              {otpError ? <Text style={styles.errorText}>{otpError}</Text> : null}
 
               {/* Resend Section */}
               <View style={styles.resendContainer}>
@@ -252,6 +270,9 @@ function OTPVerificationScreen() {
                   </Pressable>
                 )}
               </View>
+
+              {/* Resend inline message */}
+              {resendMessage ? <Text style={styles.resendMessageText}>{resendMessage}</Text> : null}
 
               {/* Submit Button */}
               <Pressable
@@ -480,6 +501,21 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: Colors.gold,
     fontWeight: '700',
+  },
+
+  // Inline messages
+  errorText: {
+    color: Colors.error,
+    fontSize: Typography.bodySmall.fontSize,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+    marginTop: -Spacing.sm,
+  },
+  resendMessageText: {
+    color: Colors.success,
+    fontSize: Typography.bodySmall.fontSize,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
   },
 
   // Primary Button

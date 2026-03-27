@@ -133,6 +133,9 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   const isCancelledRef = useRef(false);
   const lastRedirectTimeRef = useRef(0);
 
+  // Ref to track current token — prevents stale closure in proactive refresh setTimeout
+  const tokenRef = useRef(state.token);
+
   // Set up API client callbacks
   useEffect(() => {
     // Set refresh token callback
@@ -180,6 +183,9 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     return () => { isCancelledRef.current = true; };
   }, [hasExplicitlyLoggedOut]);
 
+  // Keep tokenRef in sync with state.token to avoid stale closures in setTimeout callbacks
+  useEffect(() => { tokenRef.current = state.token; }, [state.token]);
+
   // Proactive token refresh: refresh 2 minutes before expiry instead of waiting for 401
   useEffect(() => {
     if (!state.isAuthenticated || !state.token) return;
@@ -192,8 +198,8 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       const refreshInMs = Math.max(0, (secsLeft - 120) * 1000);
 
       return setTimeout(async () => {
-        // Double-check token is still expiring soon (state may have changed)
-        if (state.token && isTokenExpiringSoon(state.token, 3)) {
+        // Double-check token is still expiring soon — use tokenRef to avoid stale closure
+        if (tokenRef.current && isTokenExpiringSoon(tokenRef.current, 3)) {
           await tryRefreshToken();
         }
       }, refreshInMs);
@@ -389,6 +395,11 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
   const logout = async () => {
     try {
+      // Disconnect socket to release server-side resources immediately on logout
+      try {
+        const { default: realTimeService } = await import('@/services/realTimeService');
+        realTimeService?.disconnect?.();
+      } catch {}
 
       // Call backend logout (invalidate token) - but don't fail if it errors
       try {
@@ -503,7 +514,8 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   const completeOnboarding = async (data: Partial<User>) => {
     try {
 
-      if (!state.user?.id) {
+      const userId = state.user?.id || useAuthStore.getState().state?.user?.id;
+      if (!userId) {
         throw new Error('User not authenticated');
       }
 
@@ -751,17 +763,14 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         }
       } catch (error: any) {
         // Don't immediately logout on refresh failure - could be network issue
-        // Only logout if it's a 401/403 (invalid refresh token)
+        // Only logout if the error message indicates an invalid/expired token.
+        // Note: errors here are plain Error objects (not axios-style with response.status),
+        // so we check the message string instead of error?.response?.status.
         const errorMessage = error?.message?.toLowerCase() || '';
-        const isInvalidToken = error?.response?.status === 401 ||
-                              error?.response?.status === 403 ||
-                              errorMessage.includes('token expired') ||
-                              errorMessage.includes('invalid token') ||
-                              errorMessage.includes('token has been revoked') ||
-                              errorMessage.includes('session expired') ||
-                              errorMessage.includes('refresh token') ||
-                              errorMessage === '401' ||
-                              errorMessage === '403';
+        const isInvalidToken = errorMessage.includes('token expired') ||
+                              errorMessage.includes('invalid') ||
+                              errorMessage.includes('Token refresh failed'.toLowerCase()) ||
+                              errorMessage.includes('unauthorized');
 
         if (isInvalidToken) {
           // Clear all stored auth data.

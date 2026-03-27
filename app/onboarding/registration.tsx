@@ -1,6 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
 import { View, Text, Pressable, StyleSheet, Platform, TextInput, KeyboardAvoidingView, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import analyticsService from '@/services/analyticsService';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -102,7 +103,8 @@ function RegistrationScreen() {
       if (isMounted()) setSlowLoadingMsg('Waking up server, please wait…');
     }, 5000);
     try {
-      const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
+      const cleanPhone = formData.phoneNumber.replace(/^0+/, '');
+      const formattedPhone = `${selectedCountry.dialCode}${cleanPhone}`;
       const emailToSend = formData.email.trim() || undefined;
       await actions.sendOTP(formattedPhone, emailToSend, formData.referralCode || undefined, 'signup');
 
@@ -149,7 +151,7 @@ function RegistrationScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       {/* Background */}
       <LinearGradient colors={[colors.linen, '#EDF2F7', colors.linen]} style={StyleSheet.absoluteFill} />
 
@@ -159,7 +161,7 @@ function RegistrationScreen() {
         <View style={[styles.circle, styles.circleGold]} />
       </View>
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
           contentContainerStyle={styles.content}
           keyboardShouldPersistTaps="handled"
@@ -274,7 +276,11 @@ function RegistrationScreen() {
               {slowLoadingMsg ? <Text style={styles.slowHint}>{slowLoadingMsg}</Text> : null}
 
               {/* Submit Button */}
-              <Pressable style={styles.primaryButtonWrapper} onPress={handleSubmit} disabled={authLoading}>
+              <Pressable
+                style={styles.primaryButtonWrapper}
+                onPress={handleSubmit}
+                disabled={authLoading || !formData.phoneNumber.trim()}
+              >
                 <LinearGradient
                   colors={authLoading ? [colors.border.default, colors.border.default] : [Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
@@ -296,7 +302,7 @@ function RegistrationScreen() {
           )}
         </ScrollView>
       </KeyboardAvoidingView>
-    </View>
+    </SafeAreaView>
   );
 }
 

@@ -2,6 +2,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useEffect } from 'react';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import { View, StyleSheet, StatusBar, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -118,27 +119,19 @@ function IdentitySelectPage() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="light-content" />
       <LinearGradient
         colors={[colors.secondary[700], colors.secondary[900] || colors.secondary[800]]}
         style={styles.header}
       >
         <View style={styles.headerContent}>
-          <ThemedText style={styles.headerTitle}>
-            How do you want to save?
-          </ThemedText>
-          <ThemedText style={styles.headerSubtitle}>
-            Choose your identity to unlock personalized deals
-          </ThemedText>
+          <ThemedText style={styles.headerTitle}>How do you want to save?</ThemedText>
+          <ThemedText style={styles.headerSubtitle}>Choose your identity to unlock personalized deals</ThemedText>
         </View>
       </LinearGradient>
 
-      <ScrollView
-        style={styles.body}
-        contentContainerStyle={styles.bodyContent}
-        showsVerticalScrollIndicator={false}
-      >
+      <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} showsVerticalScrollIndicator={false}>
         {IDENTITIES.map((identity) => (
           <IdentityCard
             key={identity.id}
@@ -155,7 +148,7 @@ function IdentitySelectPage() {
           <ThemedText style={styles.skipText}>Skip for now</ThemedText>
         </Pressable>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -165,7 +158,6 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
   },
   header: {
-    paddingTop: 60,
     paddingBottom: spacing['2xl'],
     paddingHorizontal: spacing.xl,
   },

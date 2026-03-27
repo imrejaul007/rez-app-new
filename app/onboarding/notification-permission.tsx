@@ -4,6 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Pressable, StatusBar, Platform, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -116,7 +117,7 @@ function NotificationPermissionPage() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background.secondary} />
 
       <View style={styles.content}>
@@ -210,7 +211,7 @@ function NotificationPermissionPage() {
           <ThemedText style={styles.footerText}>You can change this anytime in Settings</ThemedText>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

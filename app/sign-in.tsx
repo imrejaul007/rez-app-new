@@ -27,6 +27,7 @@ import { colors } from '@/constants/theme';
 import { BRAND } from '@/constants/brand';
 import { useIsMounted } from '@/hooks/useIsMounted';
 import * as Haptics from 'expo-haptics';
+import apiClient from '@/services/apiClient';
 
 // Rez Design System Colors
 
@@ -161,10 +162,7 @@ function SignInScreen() {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       } catch {}
 
-      platformAlertSimple(
-        'OTP Sent',
-        `Verification code sent to ${formattedPhone}${__DEV__ ? '\n\nFor demo, use: 123456' : ''}`,
-      );
+      platformAlertSimple('OTP Sent', `Verification code sent to ${formattedPhone}`);
     } catch (error: any) {
       clearTimeout(slowHintTimer);
       if (isMounted()) setSlowLoadingMsg('');
@@ -223,12 +221,9 @@ function SignInScreen() {
 
       // Check if this phone number has a PIN set — if so, show PIN screen instead of OTP
       try {
-        const apiBase = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
-        const hasPinResp = await fetch(
-          `${apiBase}/user/auth/has-pin?phoneNumber=${encodeURIComponent(formattedPhone)}`,
-        );
-        const hasPinData = await hasPinResp.json();
-        if (hasPinData.success && hasPinData.hasPin) {
+        const response = await apiClient.get(`/user/auth/has-pin?phoneNumber=${encodeURIComponent(formattedPhone)}`);
+        const hasPinSet = response.data?.hasPin ?? false;
+        if (hasPinSet) {
           if (!isMounted()) return;
           setStep('pin');
           return;
@@ -252,19 +247,16 @@ function SignInScreen() {
     setIsSending(true);
     try {
       const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
-      const apiBase = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
-      const response = await fetch(`${apiBase}/user/auth/verify-pin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phoneNumber: formattedPhone, pin: formData.pin }),
+      const response = await apiClient.post('/user/auth/verify-pin', {
+        phoneNumber: formattedPhone,
+        pin: formData.pin,
       });
-      const data = await response.json();
 
-      if (data.success) {
+      if (response.success) {
         // Normalise user: backend returns _id, frontend expects id
-        const rawUser = data.data.user;
+        const rawUser = response.data.user;
         const user = { ...rawUser, id: rawUser._id || rawUser.id };
-        await actions.loginWithTokens(data.data.tokens, user);
+        await actions.loginWithTokens(response.data.tokens, user);
         try {
           await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
         } catch {}
@@ -276,9 +268,9 @@ function SignInScreen() {
         }
       } else {
         if (!isMounted()) return;
-        setErrors((prev) => ({ ...prev, pin: data.message || 'Incorrect PIN' }));
-        if (data.attemptsLeft !== undefined && data.attemptsLeft <= 2) {
-          platformAlertSimple('PIN Error', `${data.message} (${data.attemptsLeft} attempts left)`);
+        setErrors((prev) => ({ ...prev, pin: response.message || 'Incorrect PIN' }));
+        if (response.data?.attemptsLeft !== undefined && response.data.attemptsLeft <= 2) {
+          platformAlertSimple('PIN Error', `${response.message} (${response.data.attemptsLeft} attempts left)`);
         }
       }
     } catch (err) {
@@ -722,7 +714,7 @@ function SignInScreen() {
         <View style={[styles.circle, styles.circleGreenTiny]} />
       </View>
 
-      <KeyboardAvoidingView style={styles.keyboardContainer} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      <KeyboardAvoidingView style={styles.keyboardContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <ScrollView
           contentContainerStyle={styles.scrollContainer}
           keyboardShouldPersistTaps="always"

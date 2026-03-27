@@ -229,7 +229,6 @@ export async function clearAuthData(): Promise<void> {
     STORAGE_KEYS.REFRESH_TOKEN,
     STORAGE_KEYS.USER,
   ]);
-  await AsyncStorage.removeItem('onboarding_completed');
 
   if (isWeb) {
     // Clear localStorage on web

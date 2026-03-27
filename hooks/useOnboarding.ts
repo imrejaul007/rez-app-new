@@ -70,9 +70,10 @@ export const useOnboarding = () => {
 
   const saveProgress = async () => {
     try {
+      const { otp, ...safeUserData } = state.userData;
       await Promise.all([
         AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_PROGRESS, state.currentStep.toString()),
-        AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(state.userData)),
+        AsyncStorage.setItem(STORAGE_KEYS.USER_DATA, JSON.stringify(safeUserData)),
         AsyncStorage.setItem(STORAGE_KEYS.ONBOARDING_COMPLETED, state.isCompleted.toString()),
       ]);
     } catch (_error) {

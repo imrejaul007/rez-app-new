@@ -1,6 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, StatusBar, Pressable, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import Animated, { FadeInDown } from 'react-native-reanimated';
@@ -135,7 +136,7 @@ function VerificationSuccessPage() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
       <StatusBar barStyle="dark-content" />
 
       {showCoinRain && <CoinRainOverlay visible={showCoinRain} onComplete={() => setShowCoinRain(false)} />}
@@ -242,7 +243,7 @@ function VerificationSuccessPage() {
           </Pressable>
         </Animated.View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

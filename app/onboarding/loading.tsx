@@ -15,15 +15,10 @@ function OnboardingLoadingScreen() {
   }, []);
 
   const handleLoadingComplete = () => {
-    navigationDebugger.logNavigation('loading', 'category-selection', 'loading-completed');
-    router.replace('/onboarding/category-selection' as any);
+    navigationDebugger.logNavigation('loading', 'identity-select', 'loading-completed');
+    router.replace('/onboarding/identity-select' as any);
   };
 
-  return (
-    <LoadingScreen 
-      duration={5000} 
-      onComplete={handleLoadingComplete} 
-    />
-  );
+  return <LoadingScreen duration={5000} onComplete={handleLoadingComplete} />;
 }
 export default withErrorBoundary(OnboardingLoadingScreen, 'OnboardingLoading');

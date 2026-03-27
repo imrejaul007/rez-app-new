@@ -23,8 +23,8 @@ function SetPinScreen() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Determine where to navigate after PIN setup (or skip)
-  const user = useAuthStore.getState().state.user;
-  const nextRoute = user?.isOnboarded ? '/(tabs)/' : '/onboarding/notification-permission';
+  const isOnboarded = useAuthStore((s) => s.state?.user?.isOnboarded ?? false);
+  const nextRoute = isOnboarded ? '/(tabs)/' : '/onboarding/notification-permission';
 
   const handleSetPin = async () => {
     // Validate
