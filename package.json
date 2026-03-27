@@ -46,7 +46,7 @@
     "@shopify/flash-list": "1.7.6",
     "@stripe/react-stripe-js": "^5.2.0",
     "@stripe/stripe-js": "^8.0.0",
-    "@stripe/stripe-react-native": "0.45.0",
+    "@stripe/stripe-react-native": "0.50.0",
     "@tanstack/react-query": "^5.90.21",
     "buffer": "^6.0.3",
     "expo": "~53.0.26",
