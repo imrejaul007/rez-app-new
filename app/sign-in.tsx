@@ -162,7 +162,8 @@ function SignInScreen() {
         await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       } catch {}
 
-      platformAlertSimple('OTP Sent', `Verification code sent to ${formattedPhone}`);
+      // Removed blocking alert — the UI change to OTP step is the confirmation
+      // platformAlertSimple was obscuring the step transition, making users think nothing happened
     } catch (error: any) {
       clearTimeout(slowHintTimer);
       if (isMounted()) setSlowLoadingMsg('');
