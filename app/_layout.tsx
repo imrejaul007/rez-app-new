@@ -21,11 +21,8 @@ initSentry();
   const missingRecommended = Object.entries(RECOMMENDED_CONFIGS).filter(([key]) => !process.env[key]);
   if (missing.length > 0) {
     const msg = `Missing required env vars: ${missing.map(([k, v]) => `${k} (${v})`).join(', ')}`;
-    if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production') {
-      throw new Error(`[Config] FATAL: ${msg}`);
-    } else {
-      console.error(`[Config] WARNING: ${msg}`);
-    }
+    // Never throw on missing env — crashes the app before anything renders
+    console.error(`[Config] WARNING: ${msg}`);
   }
   if (missingRecommended.length > 0 && __DEV__) {
     console.warn(

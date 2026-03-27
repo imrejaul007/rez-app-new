@@ -347,10 +347,8 @@ export const MonitoringHelpers = {
   startTransaction: (name: string, op: string) => {
     if (!PerformanceConfig.enabled || !Sentry) return null;
 
-    return Sentry.startTransaction({
-      name,
-      op,
-    });
+    // Sentry v6+ removed startTransaction — use startInactiveSpan instead
+    return (Sentry as any).startInactiveSpan?.({ name, op }) ?? null;
   },
 
   /**
