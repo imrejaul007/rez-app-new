@@ -20,19 +20,8 @@ const _debugFlagsOn =
   (process.env.EXPO_PUBLIC_LOG_LEVEL || '').toLowerCase() === 'debug';
 
 if (_isProduction && _debugFlagsOn) {
-  // Use stderr so the warning is visible even when stdout is piped.
-  process.stderr.write(
-    '\n' +
-    '╔══════════════════════════════════════════════════════════════╗\n' +
-    '║  WARNING: Debug flags are ENABLED in a production build!    ║\n' +
-    '║  Set all of the following to their safe production values   ║\n' +
-    '║  before publishing to the App Store / Play Store:           ║\n' +
-    '║    EXPO_PUBLIC_DEBUG_MODE=false                             ║\n' +
-    '║    EXPO_PUBLIC_SHOW_DEV_TOOLS=false                         ║\n' +
-    '║    EXPO_PUBLIC_LOG_LEVEL=error  (or warn)                   ║\n' +
-    '╚══════════════════════════════════════════════════════════════╝\n' +
-    '\n'
-  );
+  // Log to stdout (not stderr) — EAS treats stderr output as config failure
+  console.log('[WARNING] Debug flags are ENABLED in a production build. Set EXPO_PUBLIC_DEBUG_MODE=false before App Store release.');
 }
 // ──────────────────────────────────────────────────────────────────────────────
 
@@ -164,14 +153,16 @@ module.exports = {
           photosPermission: `Allow ${BRAND_NAME} to access your photos for profile pictures and bill uploads`,
         },
       ],
-      [
+      // Stripe plugin — only include if the package is installed
+      ...((() => {
+        try { require.resolve('@stripe/stripe-react-native'); return true; } catch { return false; }
+      })() ? [[
         '@stripe/stripe-react-native',
         {
-          // TODO: Update merchantIdentifier to match your production Apple Pay merchant ID
-        merchantIdentifier: 'merchant.com.rez.app', // Stripe/Apple Pay merchant identifier
+          merchantIdentifier: 'merchant.com.rez.app',
           enableGooglePay: true,
         },
-      ],
+      ]] : []),
       // Firebase plugin — only apply when google-services.json exists (prevents Android crash)
       ...(hasFirebaseConfig
         ? [

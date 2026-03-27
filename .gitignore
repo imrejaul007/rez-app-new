@@ -78,3 +78,5 @@ IMPLEMENTATION_COMPLETE.txt
 test-store-search.js
 tests.bak/
 coverage/
+dist-crash-test/
+*.bak
