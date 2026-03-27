@@ -406,7 +406,7 @@ const DealDetailPage: React.FC = () => {
   // Handle paid deal purchase (kept for backward compatibility, but now redirects to handleRedeem)
   const handlePurchase = async () => {
     // The unified redeem endpoint now handles both free and paid deals
-    // Just call handleRedeem which will detect it's a paid deal and redirect to Stripe
+    // Just call handleRedeem which will detect it's a paid deal and route to Razorpay payment
     handleRedeem();
   };
 
