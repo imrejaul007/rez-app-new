@@ -132,6 +132,9 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
   const pendingRefreshCallbacks = useRef<Array<(success: boolean) => void>>([]);
   const isCancelledRef = useRef(false);
   const lastRedirectTimeRef = useRef(0);
+  // Always tracks the LATEST segments so async navigation callbacks can re-check
+  // the current route before firing router.replace (prevents stale-closure resets)
+  const currentSegmentsRef = useRef(segments);
 
   // Ref to track current token — prevents stale closure in proactive refresh setTimeout
   const tokenRef = useRef(state.token);
@@ -185,6 +188,12 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
   // Keep tokenRef in sync with state.token to avoid stale closures in setTimeout callbacks
   useEffect(() => { tokenRef.current = state.token; }, [state.token]);
+
+  // Keep currentSegmentsRef in sync so async navigation callbacks can re-check
+  // the live route before calling router.replace (fixes the race where an async
+  // redirect fires AFTER the user has already arrived at sign-in and progressed
+  // to the OTP step, which would remount sign-in and reset all local state)
+  useEffect(() => { currentSegmentsRef.current = segments; }, [segments]);
 
   // Proactive token refresh: refresh 2 minutes before expiry instead of waiting for 401
   useEffect(() => {
@@ -241,16 +250,26 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
       // New users (no onboarding_completed flag) → splash; returning users → sign-in
       AsyncStorage.getItem('onboarding_completed').then((onboardingDone) => {
+        // Re-check the CURRENT route at callback time — the user may have already
+        // navigated to sign-in or onboarding while this async read was in flight.
+        // Without this guard, router.replace('/sign-in') would remount the sign-in
+        // component and reset all local state (including the OTP step) even when
+        // the user is already on sign-in and actively entering their OTP.
+        const liveRoute = currentSegmentsRef.current.join('/');
+        if (liveRoute === 'sign-in' || liveRoute.startsWith('onboarding/')) return;
+
         if (!onboardingDone) {
           router.replace('/onboarding/splash');
         } else {
           router.replace('/sign-in');
         }
       }).catch(() => {
+        const liveRoute = currentSegmentsRef.current.join('/');
+        if (liveRoute === 'sign-in' || liveRoute.startsWith('onboarding/')) return;
         router.replace('/sign-in');
       });
     }
-  }, [state.isAuthenticated, state.isLoading, state.error, segments, hasExplicitlyLoggedOut, shouldRedirectToSignIn]);
+  }, [state.isAuthenticated, state.isLoading, segments, hasExplicitlyLoggedOut, shouldRedirectToSignIn]);
 
   // Set analytics user properties when user changes
   useEffect(() => {
