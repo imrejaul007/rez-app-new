@@ -309,23 +309,15 @@ function PaymentPage() {
       });
   };
 
-  const openWebRazorpayCheckout = (orderData: any) => {
-    platformAlertConfirm(
-      'Payment Method',
-      'Razorpay web checkout will open in your browser.',
-      () => {
-        const t = setTimeout(() => {
-          navTimeoutsRef.current.delete(t);
-          const mockData = {
-            razorpay_order_id: orderData.razorpayOrderId,
-            razorpay_payment_id: 'pay_mock_' + Date.now(),
-            razorpay_signature: 'mock_signature_' + Date.now(),
-          };
-          handlePaymentSuccess(mockData);
-        }, 2000);
-        navTimeoutsRef.current.add(t);
-      },
-      'Continue (Mock)',
+  const openWebRazorpayCheckout = (_orderData: any) => {
+    // Native Razorpay SDK is unavailable (web/Expo Go environment).
+    // Payments require the native app — do NOT simulate or mock payment data,
+    // as a mock signature would either bypass backend verification (security risk)
+    // or produce a broken UX with a rejected payment. Show a clear error instead.
+    setIsProcessing(false);
+    platformAlertSimple(
+      'Payment Not Available',
+      'Payments are only supported on the native iOS/Android app. Please use the ReZ app to complete your purchase.',
     );
   };
 
