@@ -68,11 +68,10 @@ import DailyCheckInStrip from '@/components/homepage/DailyCheckInStrip';
 import CampusLeaderboardTeaser from '@/components/homepage/CampusLeaderboardTeaser';
 import VisitStreakCard from '@/components/homepage/VisitStreakCard';
 import TryBeforeYouBuyCard from '@/components/homepage/TryBeforeYouBuyCard';
-import NearbyOffersCarousel from '@/components/homepage/NearbyOffersCarousel';
-import StoriesRow from '@/components/homepage/StoriesRow';
-import PersonalizedHeroBanner from '@/components/homepage/PersonalizedHeroBanner';
-import RezScoreCard from '@/components/homepage/RezScoreCard';
-import FlashDealCountdown from '@/components/homepage/FlashDealCountdown';
+import NearbyOffersCarousel from '@/components/discovery/NearbyOffersCarousel';
+import StoriesRow from '@/components/whats-new/StoriesRow';
+import PersonalizedHeroBanner from '@/components/home/PersonalizedHeroBanner';
+import RezScoreCard from '@/components/gamification/RezScoreCard';
 
 import { useHomePersona } from '@/hooks/useHomePersona';
 import { useWalletStore } from '@/stores/walletStore';
@@ -209,7 +208,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
 
       {/* ── Section 1: TimeAwareContextPill (Near U only) ──────────────────── */}
       <LazySection sectionId="time-aware-context-pill" scrollY={scrollY} height={56}
-        renderSection={() => <TimeAwareContextPill persona={persona} />} />
+        renderSection={() => <TimeAwareContextPill persona={isStudent ? 'student' : isEmployee ? 'employee' : 'general'} />} />
 
       {/* ── Section 2: DailyCheckInStrip (Near U only) ─────────────────────── */}
       <LazySection sectionId="daily-check-in-strip" scrollY={scrollY} height={80}
@@ -298,13 +297,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
       {/* ── Section 17: PersonalizedHeroBanner ─────────────────────────────── */}
       {/* Banner card rendered for Student only; tiles rendered for ALL personas */}
       <LazySection sectionId="personalized-hero-banner" scrollY={scrollY} height={isStudent ? 420 : 200}
-        renderSection={() => (
-          <PersonalizedHeroBanner
-            persona={persona}
-            showBannerCard={isStudent}
-            showTiles
-          />
-        )} />
+        renderSection={() => <PersonalizedHeroBanner />} />
 
       {/* ── Section 18: StreakFireIcon + RezScoreCard row (Near U only) ─────── */}
       <LazySection sectionId="rez-score-row" scrollY={scrollY} height={160}
@@ -324,14 +317,9 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
         <QuickReorderSection />
       )}
 
-      {/* ── Section 21: BonusZoneHighlight + FlashDealCountdown (Always) ───── */}
+      {/* ── Section 21: BonusZoneHighlight (Always) ───── */}
       <LazySection sectionId="bonus-zone" scrollY={scrollY} height={260}
-        renderSection={() => (
-          <>
-            <BonusZoneHighlight />
-            <FlashDealCountdown />
-          </>
-        )} />
+        renderSection={() => <BonusZoneHighlight />} />
 
       {/* ── Section 22: TrendingNearYou (Always) ────────────────────────────── */}
       <LazySection sectionId="trending-near-you" scrollY={scrollY} height={300}
