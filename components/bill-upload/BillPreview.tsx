@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   required: {
-    color: Colors.error,
+    color: colors.error,
   },
   uploadOptionsContainer: {
     flexDirection: 'row',
@@ -217,7 +217,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     ...Typography.bodySmall,
-    color: Colors.error,
+    color: colors.error,
     marginTop: 6,
   },
   qualityBadge: {

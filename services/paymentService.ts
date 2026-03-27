@@ -7,7 +7,7 @@ export interface PaymentMethod {
   id: string;
   name: string;
   type: 'upi' | 'card' | 'wallet' | 'netbanking';
-  gateway: string; // 'stripe' | 'razorpay' | 'paypal'
+  gateway: string; // 'razorpay' | 'paypal'
   icon: string;
   isAvailable: boolean;
   processingFee?: number;
@@ -18,7 +18,7 @@ export interface PaymentMethod {
 export interface PaymentRequest {
   amount: number;
   currency: string;
-  paymentMethod: string; // gateway name: 'stripe' | 'razorpay' | 'paypal'
+  paymentMethod: string; // gateway name: 'razorpay' | 'paypal'
   paymentMethodType: string; // method type: 'card' | 'upi' | 'wallet' | 'netbanking'
   purpose?: 'wallet_topup' | 'order_payment' | 'event_booking' | 'financial_service' | 'other';
   paymentMethodId?: string;
@@ -268,8 +268,8 @@ class PaymentService {
   }
 
   /**
-   * Confirm payment after Stripe.js confirmCardPayment succeeds
-   * This tells the backend to verify with Stripe and credit the wallet
+   * Confirm payment after payment gateway processing succeeds
+   * This tells the backend to verify the payment and credit the wallet
    */
   async confirmPayment(paymentIntentId: string): Promise<ApiResponse<{ status: string }>> {
     try {

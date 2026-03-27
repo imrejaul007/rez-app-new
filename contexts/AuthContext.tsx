@@ -455,6 +455,9 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       // Clear from AsyncStorage and localStorage (web)
       await authStorage.clearAuthData();
 
+      // Clear onboarding flag so new/different users go through onboarding.
+      await AsyncStorage.removeItem('onboarding_completed');
+
       // Clear auth token from API client
       authService.setAuthToken(null);
       apiClient.setAuthToken(null);

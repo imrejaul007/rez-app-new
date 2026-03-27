@@ -26,10 +26,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { useCheckinState } from './useCheckinState';
-import { CheckinCalendar } from './CheckinCalendar';
-import { CheckinStreak } from './CheckinStreak';
-import { AffiliateStatsSection, PostersGrid, SubmissionsList, StreakBonusesSection, ProTips } from './CheckinRewards';
+import { useCheckinState } from '@/components/daily-checkin/useCheckinState';
+import { CheckinCalendar } from '@/components/daily-checkin/CheckinCalendar';
+import { CheckinStreak } from '@/components/daily-checkin/CheckinStreak';
+import {
+  AffiliateStatsSection,
+  PostersGrid,
+  SubmissionsList,
+  StreakBonusesSection,
+  ProTips,
+} from '@/components/daily-checkin/CheckinRewards';
 
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';

@@ -760,7 +760,8 @@ export function CartProvider({ children }: CartProviderProps) {
           const response = await cartService.addToCart(requestData);
 
           if (response.success && response.data) {
-            // Only reload if backend sync succeeds
+            // Reset dedup window so loadCart always fetches the freshly updated cart.
+            _cartLastLoad = 0;
             await loadCart();
           }
         } catch (apiError) {
@@ -910,6 +911,9 @@ export function CartProvider({ children }: CartProviderProps) {
 
   const clearCart = async () => {
     try {
+      // Reset module-level dedup state so the next loadCart call always fetches fresh data.
+      _cartLastLoad = 0;
+      _cartPending = null;
 
       // Invalidate cache on cart clear
       await (await getCacheService()).invalidateByEvent({ type: 'cart:clear' });

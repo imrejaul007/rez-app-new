@@ -118,7 +118,7 @@ export interface DealRedemption {
   purchaseAmount?: number;
   purchaseCurrency?: 'INR' | 'AED' | 'USD';
   purchaseTransactionId?: string;
-  purchasePaymentMethod?: 'razorpay' | 'stripe' | 'wallet' | 'cod';
+  purchasePaymentMethod?: 'razorpay' | 'wallet' | 'cod';
   purchasedAt?: string;
 }
 
@@ -464,7 +464,7 @@ class CampaignsService {
   }
 
   /**
-   * Verify Stripe payment for paid deal
+   * Verify payment for paid deal
    */
   async verifyDealPayment(params: {
     sessionId: string;

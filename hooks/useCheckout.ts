@@ -25,7 +25,7 @@ import walletApi, { BackendBrandedCoin } from '@/services/walletApi';
 import couponService from '@/services/couponApi';
 import addressApi from '@/services/addressApi';
 import storesApi from '@/services/storesApi';
-import { createRazorpayPayment } from '@/services/razorpayApi';
+import { createRazorpayPayment, razorpayApi } from '@/services/razorpayApi';
 import { mapBackendCartToFrontend, mapFrontendCheckoutToBackendOrder } from '@/utils/dataMappers';
 import { showToast } from '@/components/common/ToastManager';
 import { useCartActions, useCartState, useGetCurrencySymbol, useWalletData, useRawWalletData, useRefreshWallet, useIsAuthenticated, useAuthLoading, useUserId } from '@/stores/selectors';
@@ -1913,7 +1913,17 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
           } : { name: 'Customer', phone: '', addressLine1: '', city: '', state: '', pincode: '' },
           paymentMethod: 'cod',
           specialInstructions: state.selectedAddress?.instructions || '',
-          couponCode: isMultiStore ? undefined : state.appliedPromoCode?.code,
+          couponCode: (() => {
+            if (isMultiStore && state.appliedPromoCode?.code) {
+              // Warn once per checkout session — coupon cannot be split across stores.
+              showToast({
+                message: `Promo code "${state.appliedPromoCode.code}" can't be applied to multi-store orders and will not be used.`,
+                type: 'warning',
+              });
+              return undefined;
+            }
+            return state.appliedPromoCode?.code;
+          })(),
           storeId: storeGroup.storeId,
           fulfillmentType: state.fulfillment.selectedType,
           fulfillmentDetails: {
@@ -2143,6 +2153,11 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
         },
         userInfo,
         onSuccess: async (paymentResponse) => {
+          // Persist the Razorpay payment ID immediately so it can be used for
+          // a refund if order creation subsequently fails (charged but order lost).
+          const razorpayPaymentId = paymentResponse.paymentId;
+          saveDraft({ paymentMethod: 'razorpay' });
+          (useCheckoutDraftStore.getState() as any).saveDraft?.({ razorpayPaymentId });
 
           try {
             // Auto-apply card offer if card payment was used
@@ -2294,6 +2309,14 @@ export const useCheckout = (retryOrderId?: string): UseCheckoutReturn => {
             );
           } catch (error) {
             devLog.error('❌ [Checkout] Post-payment error:', error);
+            // Payment was charged but order creation failed — attempt server-side refund.
+            try {
+              await razorpayApi.requestRefund({ paymentId: razorpayPaymentId });
+              devLog.log('✅ [Checkout] Refund requested for payment:', razorpayPaymentId);
+            } catch (refundErr) {
+              // Log but don't throw — user already sees the order-failure error.
+              devLog.error('⚠️ [Checkout] Refund request failed:', refundErr);
+            }
             showToast({
               message: error instanceof Error ? error.message : 'Order creation failed',
               type: 'error',

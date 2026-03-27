@@ -322,9 +322,6 @@ export const initialCheckoutState: CheckoutPageState = {
 
 // Mock API Functions
 export const initializeCheckout = async (): Promise<CheckoutInitResponse> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
   return {
     items: checkoutItems,
     store: checkoutStore,
@@ -375,28 +372,35 @@ export const processPayment = async (
   amount: number,
   orderDetails: any
 ): Promise<PaymentProcessResponse> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 2000));
-  
-  // Simulate payment success/failure
-  const isSuccess = Math.random() > 0.1; // 90% success rate
-  
-  if (isSuccess) {
-    return {
-      success: true,
-      transactionId: `TXN${Date.now()}`,
-      orderId: `ORD${Date.now()}`,
-      paymentMethod,
-      amount,
-    };
-  } else {
-    return {
-      success: false,
-      error: 'Payment failed. Please try again.',
-      paymentMethod,
-      amount,
-    };
+  if (__DEV__) {
+    // DEV-only: simulate API delay and random failure to test error paths.
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    const isSuccess = Math.random() > 0.1; // 90% success rate
+    if (isSuccess) {
+      return {
+        success: true,
+        transactionId: `TXN${Date.now()}`,
+        orderId: `ORD${Date.now()}`,
+        paymentMethod,
+        amount,
+      };
+    } else {
+      return {
+        success: false,
+        error: 'Payment failed. Please try again.',
+        paymentMethod,
+        amount,
+      };
+    }
   }
+  // Production: this mock should never be reached — real payment flows use
+  // the Razorpay / wallet / COD paths in useCheckout.ts.
+  return {
+    success: false,
+    error: 'processPayment mock called in production — use the real payment service.',
+    paymentMethod,
+    amount,
+  };
 };
 
 export const addUPIPaymentMethod = async (upiId: string): Promise<PaymentMethod> => {

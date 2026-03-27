@@ -44,6 +44,7 @@ import { useAppServices } from '@/hooks/useAppServices';
 import AppProviders from '@/utils/setup/AppProviders';
 import logger, { installProductionConsoleGuard } from '@/utils/logger';
 import { colors } from '@/constants/theme';
+import { getActiveDraft } from '@/stores/checkoutDraftStore';
 
 const FONT_TIMEOUT_MS = 5000;
 
@@ -160,9 +161,17 @@ function RootLayout() {
       .catch(() => {});
 
     // Reload when the app returns to the foreground after going to background,
-    // but only if an update was already downloaded.
+    // but only if an update was already downloaded. Skip if a payment is in
+    // progress to avoid interrupting the Razorpay / wallet flow mid-transaction.
     const subscription = AppState.addEventListener('change', (nextState: AppStateStatus) => {
       if (nextState === 'active' && updateReadyRef.current) {
+        const activeDraft = getActiveDraft();
+        const paymentInProgress = activeDraft?.paymentMethod != null;
+        if (paymentInProgress) {
+          // Leave updateReadyRef.current = true so we retry on the next foreground
+          logger.debug('[OTA] Skipping reload — payment in progress', undefined, 'OTA');
+          return;
+        }
         updateReadyRef.current = false;
         Updates.reloadAsync();
       }

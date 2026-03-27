@@ -15,7 +15,7 @@ import {
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
+import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { VALIDATION_CONFIG } from '@/utils/billValidation';
 import CashbackCalculator from '@/components/bills/CashbackCalculator';

@@ -221,7 +221,7 @@ export const lockDealApi = {
   },
 
   /**
-   * Initiate lock — creates Stripe PaymentIntent for deposit
+   * Initiate lock — creates payment intent for deposit
    */
   async initiateLock(dealId: string): Promise<ApiResponse<InitiateLockResponse>> {
     return apiClient.post(`${BASE_URL}/${dealId}/lock`);
@@ -242,7 +242,7 @@ export const lockDealApi = {
   },
 
   /**
-   * Confirm balance payment after Stripe succeeds
+   * Confirm balance payment after payment succeeds
    */
   async confirmBalancePayment(lockId: string, paymentIntentId: string): Promise<ApiResponse<ConfirmBalanceResponse>> {
     return apiClient.post(`${BASE_URL}/${lockId}/confirm-balance`, { paymentIntentId });
