@@ -229,7 +229,9 @@ function SignInScreen() {
       return;
     }
 
-    if (!validatePhoneNumber(formData.phoneNumber)) {
+    const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
+
+    if (!validatePhoneNumber(formattedPhone)) {
       setErrors((prev) => ({ ...prev, phoneNumber: 'Please enter a valid phone number' }));
       return;
     }
@@ -241,8 +243,6 @@ function SignInScreen() {
 
     setIsSending(true);
     try {
-      const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
-
       // Check if this phone number has a PIN set — if so, show PIN screen instead of OTP
       try {
         const response = await apiClient.get<{ hasPin: boolean }>(
