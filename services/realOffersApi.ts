@@ -1696,20 +1696,19 @@ class RealOffersApi {
   }
 
   // ============================================
-  // FLASH SALE PURCHASE METHODS (Stripe)
+  // FLASH SALE PURCHASE METHODS
   // ============================================
 
   /**
-   * Initiate flash sale purchase - creates Stripe checkout session
+   * Initiate flash sale purchase
    */
   async initiateFlashSalePurchase(
     flashSaleId: string,
     quantity: number = 1,
-    options?: { successUrl?: string; cancelUrl?: string }
   ): Promise<ApiResponse<{
     purchaseId: string;
-    stripeSessionId: string;
-    stripeCheckoutUrl: string;
+    razorpayOrderId: string;
+    razorpayKeyId: string;
     amount: number;
     currency: string;
     flashSale: {
@@ -1721,11 +1720,11 @@ class RealOffersApi {
     };
   }>> {
     try {
-      devLog.log('💳 [OFFERS API] Initiating flash sale purchase with Stripe:', flashSaleId);
+      devLog.log('💳 [OFFERS API] Initiating flash sale purchase:', flashSaleId);
       const response = await apiClient.post<{
         purchaseId: string;
-        stripeSessionId: string;
-        stripeCheckoutUrl: string;
+        razorpayOrderId: string;
+        razorpayKeyId: string;
         amount: number;
         currency: string;
         flashSale: {
@@ -1738,8 +1737,6 @@ class RealOffersApi {
       }>('/flash-sales/purchase/initiate', {
         flashSaleId,
         quantity,
-        successUrl: options?.successUrl,
-        cancelUrl: options?.cancelUrl,
       });
 
       if (response.success) {
@@ -1753,11 +1750,13 @@ class RealOffersApi {
   }
 
   /**
-   * Verify flash sale payment - completes the purchase (for Stripe)
+   * Verify flash sale payment (Razorpay)
    */
   async verifyFlashSalePayment(data: {
     purchaseId: string;
-    stripeSessionId: string;
+    razorpayOrderId: string;
+    razorpayPaymentId: string;
+    razorpaySignature: string;
   }): Promise<ApiResponse<{
     voucherCode: string;
     promoCode?: string;

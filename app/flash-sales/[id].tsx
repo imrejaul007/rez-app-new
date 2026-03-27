@@ -3,29 +3,21 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Dynamic route for individual flash sale (Lightning Deal) details
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-  Share,
-  Modal
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, Dimensions, ActivityIndicator, Share, Modal } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Clipboard from 'expo-clipboard';
-import * as WebBrowser from 'expo-web-browser';
+// WebBrowser no longer needed — using Razorpay native checkout instead
 import { CrossPlatformBlurView as BlurView } from '@/components/ui/CrossPlatformBlurView';
 import { ThemedText } from '@/components/ThemedText';
 import realOffersApi from '@/services/realOffersApi';
@@ -80,7 +72,11 @@ function FlashSaleDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState<{ hours: number; minutes: number; seconds: number }>({ hours: 0, minutes: 0, seconds: 0 });
+  const [timeRemaining, setTimeRemaining] = useState<{ hours: number; minutes: number; seconds: number }>({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [copiedCode, setCopiedCode] = useState(false);
   const pulseAnim = useSharedValue(1);
@@ -91,13 +87,12 @@ function FlashSaleDetailPage() {
   // Pulse animation for urgency
   useEffect(() => {
     pulseAnim.value = withRepeat(
-      withSequence(
-        withTiming(1.05, { duration: 800 }),
-        withTiming(1, { duration: 800 })
-      ),
-      -1
+      withSequence(withTiming(1.05, { duration: 800 }), withTiming(1, { duration: 800 })),
+      -1,
     );
-    return () => { pulseAnim.value = 1; };
+    return () => {
+      pulseAnim.value = 1;
+    };
   }, []);
 
   useEffect(() => {
@@ -174,7 +169,7 @@ function FlashSaleDetailPage() {
         'Sign In Required',
         'Please sign in to get this offer',
         () => router.push('/sign-in'),
-        'Sign In'
+        'Sign In',
       );
       return;
     }
@@ -184,46 +179,21 @@ function FlashSaleDetailPage() {
     try {
       setIsProcessingPayment(true);
 
-      // Get current URL for success/cancel redirects
-      const baseUrl = typeof window !== 'undefined' ? window.location.origin : 'http://localhost:8081';
+      // Create Razorpay order via backend
+      const response = await realOffersApi.initiateFlashSalePurchase(flashSale._id, 1);
 
-      // Initiate Stripe checkout
-      const response = await realOffersApi.initiateFlashSalePurchase(
-        flashSale._id,
-        1,
-        {
-          successUrl: `${baseUrl}/flash-sale-success?purchaseId={purchaseId}`,
-          cancelUrl: `${baseUrl}/flash-sales/${flashSale._id}?cancelled=true` }
-      );
-
-      if (response.success && response.data?.stripeCheckoutUrl) {
-        // Redirect to Stripe Checkout
-        if (typeof window !== 'undefined' && window.location) {
-          // Web: Direct redirect
-          window.location.href = response.data.stripeCheckoutUrl;
-        } else {
-          // Native: Use WebBrowser for in-app browser experience
-          const result = await WebBrowser.openBrowserAsync(response.data.stripeCheckoutUrl, {
-            dismissButtonStyle: 'cancel',
-            showTitle: true,
-            enableBarCollapsing: true });
-
-          // If user dismissed or completed, check if we should navigate to success
-          if (result.type === 'cancel' || result.type === 'dismiss') {
-            // User cancelled - they might have completed payment or cancelled
-            // Optionally redirect to check purchases or show message
-            logger.info('WebBrowser closed with result:', result.type);
-          }
-        }
+      if (response.success && response.data?.razorpayOrderId) {
+        const { purchaseId, razorpayOrderId, razorpayKeyId, amount, currency } = response.data;
+        // Navigate to payment-razorpay with flash-sale context
+        router.push(
+          `/payment-razorpay?bookingId=${purchaseId}&bookingType=flash_sale&orderId=${razorpayOrderId}&razorpayKeyId=${razorpayKeyId}&amount=${amount}&currency=${currency}` as any,
+        );
       } else {
         throw new Error(response.message || 'Failed to initiate payment');
       }
     } catch (error: any) {
       logger.error('Error initiating flash sale purchase:', error);
-      platformAlertSimple(
-        'Error',
-        error.message || 'Failed to initiate payment. Please try again.'
-      );
+      platformAlertSimple('Error', error.message || 'Failed to initiate payment. Please try again.');
     } finally {
       if (!isMounted()) return;
       setIsProcessingPayment(false);
@@ -236,7 +206,8 @@ function FlashSaleDetailPage() {
     try {
       await Share.share({
         message: `🔥 Flash Deal Alert!\n\n${flashSale.title}\n\n${flashSale.discountPercentage}% OFF - Only ${flashSale.maxQuantity - flashSale.soldQuantity} left!\n\nUse code: ${flashSale.promoCode || 'No code needed'}`,
-        title: flashSale.title });
+        title: flashSale.title,
+      });
     } catch (error) {
       logger.error('Error sharing flash sale:', error);
     }
@@ -260,13 +231,11 @@ function FlashSaleDetailPage() {
     return { text: 'In Stock', emoji: '✓' };
   };
 
-  const stockPercentage = flashSale
-    ? (flashSale.soldQuantity / flashSale.maxQuantity) * 100
-    : 0;
-  const remainingStock = flashSale
-    ? flashSale.maxQuantity - flashSale.soldQuantity
-    : 0;
-  const isEnded = flashSale?.status === 'ended' || flashSale?.status === 'sold_out' ||
+  const stockPercentage = flashSale ? (flashSale.soldQuantity / flashSale.maxQuantity) * 100 : 0;
+  const remainingStock = flashSale ? flashSale.maxQuantity - flashSale.soldQuantity : 0;
+  const isEnded =
+    flashSale?.status === 'ended' ||
+    flashSale?.status === 'sold_out' ||
     (timeRemaining.hours === 0 && timeRemaining.minutes === 0 && timeRemaining.seconds === 0);
   const urgency = getUrgencyText(stockPercentage);
 
@@ -287,7 +256,10 @@ function FlashSaleDetailPage() {
         <Stack.Screen options={{ headerShown: false }} />
         <View style={styles.container}>
           <SafeAreaView style={styles.errorSafeArea}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.errorBackButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.errorBackButton}
+            >
               <Ionicons name="chevron-back" size={28} color={colors.darkGray} />
             </Pressable>
             <View style={styles.errorContainer}>
@@ -337,7 +309,10 @@ function FlashSaleDetailPage() {
 
             {/* Header Buttons */}
             <SafeAreaView style={styles.headerOverlay} edges={['top']}>
-              <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.headerButton}>
+              <Pressable
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                style={styles.headerButton}
+              >
                 <BlurView intensity={80} tint="light" style={styles.blurButton}>
                   <Ionicons name="chevron-back" size={24} color={colors.darkGray} />
                 </BlurView>
@@ -397,9 +372,7 @@ function FlashSaleDetailPage() {
             <ThemedText style={styles.title}>{flashSale.title}</ThemedText>
 
             {/* Description */}
-            {flashSale.description && (
-              <ThemedText style={styles.description}>{flashSale.description}</ThemedText>
-            )}
+            {flashSale.description && <ThemedText style={styles.description}>{flashSale.description}</ThemedText>}
 
             {/* Price Section */}
             <View style={styles.priceCard}>
@@ -407,10 +380,15 @@ function FlashSaleDetailPage() {
                 <ThemedText style={styles.priceLabel}>Deal Price</ThemedText>
                 <View style={styles.priceRow}>
                   <ThemedText style={styles.discountedPrice}>
-                    {currencySymbol}{flashSale.flashSalePrice || Math.round((flashSale.originalPrice || 0) * (1 - flashSale.discountPercentage / 100))}
+                    {currencySymbol}
+                    {flashSale.flashSalePrice ||
+                      Math.round((flashSale.originalPrice || 0) * (1 - flashSale.discountPercentage / 100))}
                   </ThemedText>
                   {flashSale.originalPrice && (
-                    <ThemedText style={styles.originalPrice}>{currencySymbol}{flashSale.originalPrice}</ThemedText>
+                    <ThemedText style={styles.originalPrice}>
+                      {currencySymbol}
+                      {flashSale.originalPrice}
+                    </ThemedText>
                   )}
                 </View>
               </View>
@@ -450,10 +428,7 @@ function FlashSaleDetailPage() {
             {/* Promo Code */}
             {flashSale.promoCode && (
               <Animated.View style={[styles.promoCodeCard, pulseAnimStyle]}>
-                <LinearGradient
-                  colors={['#FEF9C3', '#FEF08A']}
-                  style={styles.promoCodeGradient}
-                >
+                <LinearGradient colors={['#FEF9C3', '#FEF08A']} style={styles.promoCodeGradient}>
                   <View style={styles.promoCodeLeft}>
                     <View style={styles.promoCodeIcon}>
                       <Ionicons name="ticket" size={24} color="#CA8A04" />
@@ -466,12 +441,11 @@ function FlashSaleDetailPage() {
                   <Pressable
                     style={[styles.copyButton, copiedCode && styles.copyButtonSuccess]}
                     onPress={handleCopyCode}
-                   
                   >
                     <Ionicons
-                      name={copiedCode ? "checkmark" : "copy-outline"}
+                      name={copiedCode ? 'checkmark' : 'copy-outline'}
                       size={18}
-                      color={copiedCode ? "white" : "#CA8A04"}
+                      color={copiedCode ? 'white' : '#CA8A04'}
                     />
                     <ThemedText style={[styles.copyButtonText, copiedCode && styles.copyButtonTextSuccess]}>
                       {copiedCode ? 'Copied!' : 'Copy'}
@@ -503,7 +477,9 @@ function FlashSaleDetailPage() {
             </View>
 
             {/* Terms & Conditions */}
-            {((flashSale.termsAndConditions && flashSale.termsAndConditions.length > 0) || flashSale.minimumPurchase || flashSale.limitPerUser) && (
+            {((flashSale.termsAndConditions && flashSale.termsAndConditions.length > 0) ||
+              flashSale.minimumPurchase ||
+              flashSale.limitPerUser) && (
               <View style={styles.termsCard}>
                 <View style={styles.termsHeader}>
                   <Ionicons name="document-text-outline" size={20} color={colors.midGray} />
@@ -520,16 +496,15 @@ function FlashSaleDetailPage() {
                     <View style={styles.termItem}>
                       <View style={styles.termBullet} />
                       <ThemedText style={styles.termText}>
-                        Minimum purchase: {currencySymbol}{flashSale.minimumPurchase}
+                        Minimum purchase: {currencySymbol}
+                        {flashSale.minimumPurchase}
                       </ThemedText>
                     </View>
                   )}
                   {flashSale.limitPerUser && (
                     <View style={styles.termItem}>
                       <View style={styles.termBullet} />
-                      <ThemedText style={styles.termText}>
-                        Limit {flashSale.limitPerUser} per customer
-                      </ThemedText>
+                      <ThemedText style={styles.termText}>Limit {flashSale.limitPerUser} per customer</ThemedText>
                     </View>
                   )}
                 </View>
@@ -574,17 +549,24 @@ function FlashSaleDetailPage() {
               <View style={styles.bottomLeft}>
                 <ThemedText style={styles.bottomPriceLabel}>Deal Price</ThemedText>
                 <ThemedText style={styles.bottomPrice}>
-                  {currencySymbol}{flashSale.flashSalePrice || Math.round((flashSale.originalPrice || 0) * (1 - flashSale.discountPercentage / 100))}
+                  {currencySymbol}
+                  {flashSale.flashSalePrice ||
+                    Math.round((flashSale.originalPrice || 0) * (1 - flashSale.discountPercentage / 100))}
                 </ThemedText>
               </View>
               <Pressable
                 style={[styles.getOfferButton, (isEnded || isProcessingPayment) && styles.getOfferButtonDisabled]}
                 onPress={handleGetOffer}
                 disabled={isEnded || isProcessingPayment}
-               
               >
                 <LinearGradient
-                  colors={isEnded ? [colors.text.tertiary, colors.text.tertiary] : isProcessingPayment ? [Colors.brand.purple, Colors.brand.purple] : [Colors.error, colors.error]}
+                  colors={
+                    isEnded
+                      ? [colors.text.tertiary, colors.text.tertiary]
+                      : isProcessingPayment
+                        ? [Colors.brand.purple, Colors.brand.purple]
+                        : [Colors.error, colors.error]
+                  }
                   style={styles.getOfferButtonGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
@@ -592,7 +574,7 @@ function FlashSaleDetailPage() {
                   {isProcessingPayment ? (
                     <ActivityIndicator size="small" color="white" />
                   ) : (
-                    <Ionicons name={isEnded ? "time-outline" : "flash"} size={22} color="white" />
+                    <Ionicons name={isEnded ? 'time-outline' : 'flash'} size={22} color="white" />
                   )}
                   <ThemedText style={styles.getOfferButtonText}>
                     {isEnded ? 'Deal Ended' : isProcessingPayment ? 'Processing...' : 'Get This Deal'}
@@ -612,39 +594,31 @@ function FlashSaleDetailPage() {
         >
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
-              <LinearGradient colors={[colors.successScale[400], colors.successScale[700]]} style={styles.modalSuccessIcon}>
+              <LinearGradient
+                colors={[colors.successScale[400], colors.successScale[700]]}
+                style={styles.modalSuccessIcon}
+              >
                 <Ionicons name="checkmark" size={48} color="white" />
               </LinearGradient>
 
               <ThemedText style={styles.modalTitle}>Deal Claimed! 🎉</ThemedText>
-              <ThemedText style={styles.modalMessage}>
-                You're getting {flashSale.discountPercentage}% off!
-              </ThemedText>
+              <ThemedText style={styles.modalMessage}>You're getting {flashSale.discountPercentage}% off!</ThemedText>
 
               {flashSale.promoCode && (
                 <View style={styles.modalCodeContainer}>
                   <ThemedText style={styles.modalCodeLabel}>Your Promo Code</ThemedText>
-                  <Pressable
-                    style={styles.modalCodeBox}
-                    onPress={handleCopyCode}
-                   
-                  >
+                  <Pressable style={styles.modalCodeBox} onPress={handleCopyCode}>
                     <ThemedText style={styles.modalCode}>{flashSale.promoCode}</ThemedText>
                     <View style={styles.modalCopyIcon}>
-                      <Ionicons name={copiedCode ? "checkmark" : "copy"} size={18} color={Colors.brand.purple} />
+                      <Ionicons name={copiedCode ? 'checkmark' : 'copy'} size={18} color={Colors.brand.purple} />
                     </View>
                   </Pressable>
-                  {copiedCode && (
-                    <ThemedText style={styles.modalCopiedText}>Copied to clipboard!</ThemedText>
-                  )}
+                  {copiedCode && <ThemedText style={styles.modalCopiedText}>Copied to clipboard!</ThemedText>}
                 </View>
               )}
 
               <View style={styles.modalButtons}>
-                <Pressable
-                  style={styles.modalButtonSecondary}
-                  onPress={() => setShowSuccessModal(false)}
-                >
+                <Pressable style={styles.modalButtonSecondary} onPress={() => setShowSuccessModal(false)}>
                   <ThemedText style={styles.modalButtonTextSecondary}>Close</ThemedText>
                 </Pressable>
                 {flashSale.stores && flashSale.stores.length > 0 && (
@@ -655,10 +629,7 @@ function FlashSaleDetailPage() {
                       handleStorePress();
                     }}
                   >
-                    <LinearGradient
-                      colors={[colors.error, colors.error]}
-                      style={styles.modalButtonPrimaryGradient}
-                    >
+                    <LinearGradient colors={[colors.error, colors.error]} style={styles.modalButtonPrimaryGradient}>
                       <Ionicons name="storefront-outline" size={18} color="white" />
                       <ThemedText style={styles.modalButtonTextPrimary}>Visit Store</ThemedText>
                     </LinearGradient>
@@ -676,69 +647,85 @@ function FlashSaleDetailPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.tint.warmGray },
+    backgroundColor: colors.tint.warmGray,
+  },
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 120 },
+    paddingBottom: 120,
+  },
   loadingGradient: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    gap: Spacing.base },
+    gap: Spacing.base,
+  },
   loadingText: {
     ...Typography.bodyLarge,
     color: colors.text.inverse,
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
   errorSafeArea: {
     flex: 1,
-    backgroundColor: colors.background.primary },
+    backgroundColor: colors.background.primary,
+  },
   errorBackButton: {
-    padding: Spacing.base },
+    padding: Spacing.base,
+  },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing['3xl'],
-    gap: Spacing.base },
+    gap: Spacing.base,
+  },
   errorTitle: {
     ...Typography.h2,
     fontWeight: '700',
-    color: colors.darkGray },
+    color: colors.darkGray,
+  },
   errorText: {
     ...Typography.bodyLarge,
     color: colors.midGray,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   retryButton: {
     backgroundColor: Colors.error,
     paddingHorizontal: Spacing['2xl'],
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   retryButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
 
   // Hero Section
   heroSection: {
     height: 320,
-    position: 'relative' },
+    position: 'relative',
+  },
   heroImage: {
     width: '100%',
-    height: '100%' },
+    height: '100%',
+  },
   imagePlaceholder: {
     width: '100%',
     height: '100%',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   heroGradient: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 150 },
+    height: 150,
+  },
   headerOverlay: {
     position: 'absolute',
     top: 0,
@@ -747,33 +734,39 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.base,
-    paddingTop: Spacing.sm },
+    paddingTop: Spacing.sm,
+  },
   headerButton: {
     borderRadius: BorderRadius.xl,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   blurButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.8)' },
+    backgroundColor: 'rgba(255,255,255,0.8)',
+  },
   flashBadgeContainer: {
     position: 'absolute',
     top: 100,
-    left: Spacing.base },
+    left: Spacing.base,
+  },
   flashBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.xl,
-    gap: Spacing.xs },
+    gap: Spacing.xs,
+  },
   flashBadgeText: {
     color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '700',
-    letterSpacing: 0.5 },
+    letterSpacing: 0.5,
+  },
   timerOnImage: {
     position: 'absolute',
     bottom: Spacing.lg,
@@ -782,27 +775,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   timerBox: {
     backgroundColor: 'rgba(0,0,0,0.7)',
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
-    minWidth: 70 },
+    minWidth: 70,
+  },
   timerNumber: {
     color: colors.text.inverse,
     ...Typography.h2,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   timerLabel: {
     color: 'rgba(255,255,255,0.7)',
     ...Typography.caption,
     fontWeight: '600',
-    letterSpacing: 1 },
+    letterSpacing: 1,
+  },
   timerSeparator: {
     color: colors.text.inverse,
     ...Typography.h2,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
 
   // Content Card
   contentCard: {
@@ -812,7 +810,8 @@ const styles = StyleSheet.create({
     marginTop: -24,
     padding: Spacing.lg,
     paddingTop: Spacing.xl,
-    gap: Spacing.lg },
+    gap: Spacing.lg,
+  },
   storeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -821,28 +820,34 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   storeLogoSmall: {
     width: 24,
     height: 24,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   storeLogoPlaceholder: {
     backgroundColor: colors.background.primary,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   storeBadgeText: {
     color: Colors.brand.purple,
     ...Typography.body,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   title: {
     fontSize: 26,
     fontWeight: '700',
     color: colors.text.primary,
-    lineHeight: 32 },
+    lineHeight: 32,
+  },
   description: {
     fontSize: 15,
     color: colors.text.tertiary,
-    lineHeight: 22 },
+    lineHeight: 22,
+  },
 
   // Price Card
   priceCard: {
@@ -851,87 +856,109 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: Colors.errorScale[50],
     padding: Spacing.lg,
-    borderRadius: BorderRadius.lg },
+    borderRadius: BorderRadius.lg,
+  },
   priceLeft: {
-    gap: Spacing.xs },
+    gap: Spacing.xs,
+  },
   priceLabel: {
     fontSize: 13,
     color: colors.text.tertiary,
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
   priceRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   discountedPrice: {
     ...Typography.priceLarge,
-    color: Colors.error },
+    color: Colors.error,
+  },
   originalPrice: {
     ...Typography.h4,
     color: colors.text.tertiary,
-    textDecorationLine: 'line-through' },
+    textDecorationLine: 'line-through',
+  },
   discountCircle: {
     width: 70,
     height: 70,
     borderRadius: 35,
     backgroundColor: Colors.error,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   discountNumber: {
     color: colors.text.inverse,
     ...Typography.h3,
-    fontWeight: '800' },
+    fontWeight: '800',
+  },
   discountOff: {
     color: 'rgba(255,255,255,0.9)',
     fontSize: 11,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
 
   // Stock Card
   stockCard: {
     backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   stockHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between' },
+    justifyContent: 'space-between',
+  },
   stockLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   stockEmoji: {
-    ...Typography.h4 },
+    ...Typography.h4,
+  },
   stockTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: colors.neutral[700] },
+    color: colors.neutral[700],
+  },
   stockTitleUrgent: {
-    color: Colors.error },
+    color: Colors.error,
+  },
   stockCount: {
     ...Typography.body,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   stockCountBold: {
     fontWeight: '700',
-    color: colors.neutral[700] },
+    color: colors.neutral[700],
+  },
   progressBarContainer: {
     height: 10,
     backgroundColor: colors.border.default,
     borderRadius: 5,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   progressBar: {
     height: '100%',
-    borderRadius: 5 },
+    borderRadius: 5,
+  },
   stockFooter: {
     flexDirection: 'row',
-    justifyContent: 'space-between' },
+    justifyContent: 'space-between',
+  },
   stockFooterText: {
     ...Typography.bodySmall,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
 
   // Promo Code Card
   promoCodeCard: {
     borderRadius: BorderRadius.lg,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   promoCodeGradient: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -940,26 +967,31 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#FCD34D',
     borderStyle: 'dashed',
-    borderRadius: BorderRadius.lg },
+    borderRadius: BorderRadius.lg,
+  },
   promoCodeLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   promoCodeIcon: {
     width: 44,
     height: 44,
     borderRadius: 22,
     backgroundColor: colors.background.primary,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   promoCodeLabel: {
     ...Typography.bodySmall,
-    color: colors.brand.amberDark },
+    color: colors.brand.amberDark,
+  },
   promoCode: {
     ...Typography.h3,
     fontWeight: '800',
     color: colors.brand.amberDark,
-    letterSpacing: 1 },
+    letterSpacing: 1,
+  },
   copyButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -967,77 +999,95 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     paddingHorizontal: 14,
     paddingVertical: 10,
-    borderRadius: 10 },
+    borderRadius: 10,
+  },
   copyButtonSuccess: {
-    backgroundColor: Colors.success },
+    backgroundColor: Colors.success,
+  },
   copyButtonText: {
     color: '#CA8A04',
     fontWeight: '600',
-    ...Typography.body },
+    ...Typography.body,
+  },
   copyButtonTextSuccess: {
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
 
   // How to Use
   howToUseCard: {
     backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
-    gap: Spacing.base },
+    gap: Spacing.base,
+  },
   sectionTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
-    color: colors.neutral[700] },
+    color: colors.neutral[700],
+  },
   stepsContainer: {
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   stepItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   stepNumber: {
     width: 24,
     height: 24,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.error,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   stepNumberText: {
     color: colors.text.inverse,
     ...Typography.bodySmall,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   stepIcon: {
-    width: 24 },
+    width: 24,
+  },
   stepText: {
     flex: 1,
     ...Typography.body,
-    color: colors.text.secondary },
+    color: colors.text.secondary,
+  },
 
   // Terms Card
   termsCard: {
     backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   termsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   termsList: {
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   termItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 10 },
+    gap: 10,
+  },
   termBullet: {
     width: 6,
     height: 6,
     borderRadius: 3,
     backgroundColor: colors.text.tertiary,
-    marginTop: 7 },
+    marginTop: 7,
+  },
   termText: {
     flex: 1,
     ...Typography.body,
     color: colors.text.tertiary,
-    lineHeight: 20 },
+    lineHeight: 20,
+  },
 
   // Stats Card
   statsCard: {
@@ -1045,10 +1095,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
-    justifyContent: 'space-around' },
+    justifyContent: 'space-around',
+  },
   statItem: {
     alignItems: 'center',
-    gap: Spacing.xs },
+    gap: Spacing.xs,
+  },
   statIconContainer: {
     width: 40,
     height: 40,
@@ -1056,20 +1108,25 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   statNumber: {
     ...Typography.h4,
     fontWeight: '700',
-    color: colors.neutral[700] },
+    color: colors.neutral[700],
+  },
   statLabel: {
     ...Typography.bodySmall,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   statDivider: {
     width: 1,
-    backgroundColor: colors.border.default },
+    backgroundColor: colors.border.default,
+  },
 
   bottomSpacing: {
-    height: 180 },
+    height: 180,
+  },
 
   // Bottom Bar
   bottomBar: {
@@ -1080,40 +1137,49 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     borderTopWidth: 1,
     borderTopColor: colors.border.default,
-    ...Shadows.strong },
+    ...Shadows.strong,
+  },
   bottomSafeArea: {
-    paddingBottom: Spacing.base },
+    paddingBottom: Spacing.base,
+  },
   bottomContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.md },
+    paddingVertical: Spacing.md,
+  },
   bottomLeft: {
-    gap: 2 },
+    gap: 2,
+  },
   bottomPriceLabel: {
     ...Typography.bodySmall,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   bottomPrice: {
     ...Typography.h2,
     fontWeight: '800',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   getOfferButton: {
     flex: 1,
     marginLeft: Spacing.base,
     borderRadius: 14,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   getOfferButtonDisabled: {},
   getOfferButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: Spacing.base,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   getOfferButtonText: {
     color: colors.text.inverse,
     fontSize: 17,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
 
   // Modal
   modalOverlay: {
@@ -1121,39 +1187,46 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   modalContent: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius['2xl'],
     padding: 28,
     alignItems: 'center',
     width: '100%',
-    maxWidth: 360 },
+    maxWidth: 360,
+  },
   modalSuccessIcon: {
     width: 80,
     height: 80,
     borderRadius: BorderRadius['3xl'] + 8,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   modalTitle: {
     ...Typography.h2,
     fontWeight: '700',
     color: colors.text.primary,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   modalMessage: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
     textAlign: 'center',
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   modalCodeContainer: {
     width: '100%',
     marginBottom: Spacing.xl,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   modalCodeLabel: {
     fontSize: 13,
     color: colors.text.tertiary,
-    marginBottom: 10 },
+    marginBottom: 10,
+  },
   modalCodeBox: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1164,48 +1237,59 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: '#FCD34D',
     borderStyle: 'dashed',
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   modalCode: {
     fontSize: 22,
     fontWeight: '800',
     color: colors.brand.amberDark,
-    letterSpacing: 2 },
+    letterSpacing: 2,
+  },
   modalCopyIcon: {
     backgroundColor: colors.background.primary,
     padding: 6,
-    borderRadius: 6 },
+    borderRadius: 6,
+  },
   modalCopiedText: {
     marginTop: Spacing.sm,
     fontSize: 13,
     color: Colors.success,
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
   modalButtons: {
     flexDirection: 'row',
     gap: Spacing.md,
-    width: '100%' },
+    width: '100%',
+  },
   modalButtonSecondary: {
     flex: 1,
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   modalButtonPrimary: {
     flex: 1,
     borderRadius: BorderRadius.md,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   modalButtonPrimaryGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 14,
-    gap: 6 },
+    gap: 6,
+  },
   modalButtonTextSecondary: {
     color: colors.text.secondary,
     ...Typography.bodyLarge,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   modalButtonTextPrimary: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '600' } });
+    fontWeight: '600',
+  },
+});
 
 export default withErrorBoundary(FlashSaleDetailPage, 'FlashSalesId');

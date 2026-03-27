@@ -1,11 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 /**
- * Deal Success Page - Handles Stripe deep link redirect after payment
- * Route: /deal-success?session_id=xxx&campaignId=xxx&dealIndex=xxx
- *
- * This page is used when:
- * 1. User completes Stripe payment in external browser and is redirected back
- * 2. App is opened via deep link with Stripe session info
+ * Deal Success Page - Handles Razorpay payment verification after checkout
+ * Route: /deal-success?razorpay_order_id=xxx&razorpay_payment_id=xxx&razorpay_signature=xxx&redemptionId=xxx
  */
 
 import React, { useState, useEffect } from 'react';
@@ -37,18 +33,16 @@ function DealSuccessPage() {
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
 
-  // Support multiple param naming conventions
   const params = useLocalSearchParams<{
-    session_id?: string;
-    sessionId?: string;
-    campaignId?: string;
-    dealIndex?: string;
+    razorpay_order_id?: string;
+    razorpay_payment_id?: string;
+    razorpay_signature?: string;
     redemptionId?: string;
   }>();
 
-  const sessionId = params.session_id || params.sessionId;
-  const campaignId = params.campaignId;
-  const dealIndex = params.dealIndex;
+  const razorpayOrderId = params.razorpay_order_id;
+  const razorpayPaymentId = params.razorpay_payment_id;
+  const razorpaySignature = params.razorpay_signature;
   const redemptionId = params.redemptionId;
 
   const [isLoading, setIsLoading] = useState(true);
@@ -71,13 +65,13 @@ function DealSuccessPage() {
   }));
 
   useEffect(() => {
-    if (sessionId) {
+    if (razorpayOrderId && razorpayPaymentId && razorpaySignature) {
       verifyPayment();
     } else {
-      setError('Missing payment session information');
+      setError('Missing payment information');
       setIsLoading(false);
     }
-  }, [sessionId]);
+  }, [razorpayOrderId, razorpayPaymentId, razorpaySignature]);
 
   const verifyPayment = async (retryCount = 0): Promise<void> => {
     const maxRetries = 3;
@@ -106,7 +100,9 @@ function DealSuccessPage() {
         };
         message: string;
       }>('/campaigns/deals/verify-payment', {
-        sessionId,
+        razorpayOrderId,
+        razorpayPaymentId,
+        razorpaySignature,
         redemptionId,
       });
 

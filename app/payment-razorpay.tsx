@@ -40,10 +40,13 @@ function PaymentPage() {
   const currencySymbol = getCurrencySymbol();
   const amount = Number(params.amount) || 5000;
   const currency = ((params.currency as string) || 'INR').toUpperCase();
-  const orderId = params.orderId as string;
+  const orderId = params.orderId as string; // For travel/event: order ID; for deals/flash-sales: pre-created Razorpay order ID
   const bookingId = params.bookingId as string;
   const bookingType = params.bookingType as string;
+  const preCreatedKeyId = (params.razorpayKeyId as string) || RAZORPAY_KEY_ID;
   const isTravelPayment = bookingType === 'travel';
+  const isDealPayment = bookingType === 'deal';
+  const isFlashSalePayment = bookingType === 'flash_sale';
 
   // Track navigation timeouts so they can be cancelled on unmount
   const navTimeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
@@ -64,7 +67,7 @@ function PaymentPage() {
 
   // Razorpay state
   const [razorpayOrderId, setRazorpayOrderId] = useState('');
-  const [razorpayKeyId, setRazorpayKeyId] = useState(RAZORPAY_KEY_ID);
+  const [razorpayKeyId, setRazorpayKeyId] = useState(preCreatedKeyId);
 
   // Payment timeout (5 minutes)
   useEffect(() => {
@@ -130,7 +133,7 @@ function PaymentPage() {
       if (response.success && response.data) {
         const methods = response.data.map((method) => ({
           ...method,
-          gateway: paymentGateway,
+          gateway: 'razorpay',
         }));
         if (!isMounted()) return;
         setPaymentMethods(methods);
@@ -173,6 +176,19 @@ function PaymentPage() {
       return { razorpayOrderId, razorpayKeyId };
     }
 
+    // For deals and flash sales, the Razorpay order is pre-created by the backend.
+    // The order ID and key arrive via URL params — skip the create-order API call.
+    if ((isDealPayment || isFlashSalePayment) && orderId) {
+      setPaymentStartedAt(Date.now());
+      setOrderCreated(true);
+      return {
+        razorpayOrderId: orderId,
+        razorpayKeyId: preCreatedKeyId,
+        amount,
+        currency,
+      };
+    }
+
     try {
       setPaymentStartedAt(Date.now());
       let response;
@@ -183,6 +199,7 @@ function PaymentPage() {
           currency,
         });
       } else {
+        // Event payments and generic order payments
         response = await apiClient.post('/payment/create-order', {
           orderId,
           amount,
@@ -255,7 +272,13 @@ function PaymentPage() {
 
   const openNativeRazorpayCheckout = (orderData: any) => {
     const options = {
-      description: isTravelPayment ? 'REZ - Travel Booking' : 'REZ App Payment',
+      description: isDealPayment
+        ? 'REZ - Deal Purchase'
+        : isFlashSalePayment
+          ? 'REZ - Flash Sale Purchase'
+          : isTravelPayment
+            ? 'REZ - Travel Booking'
+            : 'REZ App Payment',
       image: 'https://your-logo-url.com/logo.png',
       currency: orderData.currency,
       key: orderData.razorpayKeyId,
@@ -310,6 +333,35 @@ function PaymentPage() {
 
   const handlePaymentSuccess = async (paymentData: any) => {
     try {
+      // Deals: navigate to deal-success page — it handles Razorpay signature verification
+      if (isDealPayment) {
+        if (!isMounted()) return;
+        setIsProcessing(false);
+        const t = setTimeout(() => {
+          navTimeoutsRef.current.delete(t);
+          router.replace(
+            `/deal-success?razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}&redemptionId=${bookingId}` as any,
+          );
+        }, 500);
+        navTimeoutsRef.current.add(t);
+        return;
+      }
+
+      // Flash sales: navigate to flash-sale-success page — it handles verification
+      if (isFlashSalePayment) {
+        if (!isMounted()) return;
+        setIsProcessing(false);
+        const t = setTimeout(() => {
+          navTimeoutsRef.current.delete(t);
+          router.replace(
+            `/flash-sale-success?purchaseId=${bookingId}&razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}` as any,
+          );
+        }, 500);
+        navTimeoutsRef.current.add(t);
+        return;
+      }
+
+      // Travel and event payments: verify on backend here before navigating
       const isVerified = await verifyRazorpayPaymentOnBackend(paymentData);
 
       if (isVerified) {

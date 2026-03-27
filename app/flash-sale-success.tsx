@@ -1,6 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Flash Sale Success Page
-// Shows voucher code after successful Stripe payment
+// Shows voucher code after successful Razorpay payment
 
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Pressable, Dimensions } from 'react-native';
@@ -32,9 +32,11 @@ function FlashSaleSuccessPage() {
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
-  const { purchaseId, session_id } = useLocalSearchParams<{
+  const { purchaseId, razorpay_order_id, razorpay_payment_id, razorpay_signature } = useLocalSearchParams<{
     purchaseId?: string;
-    session_id?: string;
+    razorpay_order_id?: string;
+    razorpay_payment_id?: string;
+    razorpay_signature?: string;
   }>();
 
   const [isLoading, setIsLoading] = useState(true);
@@ -56,13 +58,13 @@ function FlashSaleSuccessPage() {
   }));
 
   useEffect(() => {
-    if (purchaseId && session_id) {
+    if (purchaseId && razorpay_order_id && razorpay_payment_id && razorpay_signature) {
       verifyPayment();
     } else {
       setError('Missing payment information');
       setIsLoading(false);
     }
-  }, [purchaseId, session_id]);
+  }, [purchaseId, razorpay_order_id, razorpay_payment_id, razorpay_signature]);
 
   const verifyPayment = async () => {
     try {
@@ -71,7 +73,9 @@ function FlashSaleSuccessPage() {
 
       const response = await realOffersApi.verifyFlashSalePayment({
         purchaseId: purchaseId!,
-        stripeSessionId: session_id!,
+        razorpayOrderId: razorpay_order_id!,
+        razorpayPaymentId: razorpay_payment_id!,
+        razorpaySignature: razorpay_signature!,
       });
 
       if (response.success && response.data) {

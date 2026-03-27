@@ -115,11 +115,15 @@ const DealDetailPage: React.FC = () => {
 
   useEffect(() => {
     if (deal && campaign) {
-      apiClient.post('/campaigns/deals/track', {
-        campaignId: campaign._id || campaignId,
-        dealIndex,
-        action: 'view',
-      }).catch(() => { /* silently handle */ });
+      apiClient
+        .post('/campaigns/deals/track', {
+          campaignId: campaign._id || campaignId,
+          dealIndex,
+          action: 'view',
+        })
+        .catch(() => {
+          /* silently handle */
+        });
     }
   }, [deal, campaign, campaignId, dealIndex]);
 
@@ -142,10 +146,11 @@ const DealDetailPage: React.FC = () => {
 
         if (response.success && response.data?.redemptions) {
           // Find if this specific deal is already redeemed
-          const existingRedemption = response.data.redemptions.find(r =>
-            (r.campaignId === campaign.campaignId || r.campaignSnapshot?.title === campaign.title) &&
-            r.dealIndex === dealIndex &&
-            (r.status === 'active' || r.status === 'used')
+          const existingRedemption = response.data.redemptions.find(
+            (r) =>
+              (r.campaignId === campaign.campaignId || r.campaignSnapshot?.title === campaign.title) &&
+              r.dealIndex === dealIndex &&
+              (r.status === 'active' || r.status === 'used'),
           );
 
           if (existingRedemption) {
@@ -180,7 +185,9 @@ const DealDetailPage: React.FC = () => {
           const transformedDeal = {
             ...dealData,
             storeId: dealData.storeId
-              ? (typeof dealData.storeId === 'string' ? dealData.storeId : String(dealData.storeId))
+              ? typeof dealData.storeId === 'string'
+                ? dealData.storeId
+                : String(dealData.storeId)
               : undefined,
           };
           if (!isMounted()) return;
@@ -204,15 +211,18 @@ const DealDetailPage: React.FC = () => {
 
   // Check if deal is paid - ONLY use price field (backend determines paid by price > 0)
   const isPaidDeal = deal && ((deal as any).price || 0) > 0;
-  const dealPrice = deal ? ((deal as any).price || 0) : 0;
-  const dealCurrency = deal ? ((deal as any).currency || 'INR') : 'INR';
+  const dealPrice = deal ? (deal as any).price || 0 : 0;
+  const dealCurrency = deal ? (deal as any).currency || 'INR' : 'INR';
 
   const getCurrencySymbol = (currency: string) => {
     switch (currency) {
-      case 'AED': return 'AED ';
-      case 'USD': return '$';
+      case 'AED':
+        return 'AED ';
+      case 'USD':
+        return '$';
       case 'INR':
-      default: return regionCurrencySymbol;
+      default:
+        return regionCurrencySymbol;
     }
   };
 
@@ -233,7 +243,12 @@ const DealDetailPage: React.FC = () => {
     }
 
     if (!isAuthenticated) {
-      platformAlertConfirm('Sign In Required', 'Please sign in to redeem this deal', () => router.push('/sign-in' as any), 'Sign In');
+      platformAlertConfirm(
+        'Sign In Required',
+        'Please sign in to redeem this deal',
+        () => router.push('/sign-in' as any),
+        'Sign In',
+      );
       return;
     }
 
@@ -245,12 +260,6 @@ const DealDetailPage: React.FC = () => {
 
     setIsRedeeming(true);
     try {
-
-      // Get success/cancel URLs for Stripe (for paid deals)
-      const baseUrl = 'https://rez.app'; // Replace with your app's deep link URL
-      const successUrl = `${baseUrl}/payment-success?campaignId=${campaignId}&dealIndex=${dealIndex}`;
-      const cancelUrl = `${baseUrl}/payment-cancel?campaignId=${campaignId}&dealIndex=${dealIndex}`;
-
       // Use the unified redeem endpoint that handles both free and paid deals
       const response = await apiClient.post<{
         success: boolean;
@@ -264,25 +273,24 @@ const DealDetailPage: React.FC = () => {
           dealSnapshot: any;
           campaignSnapshot: any;
         };
-        // Paid deal response (Stripe checkout)
-        checkoutUrl?: string;
-        sessionId?: string;
+        // Paid deal response (Razorpay)
+        razorpayOrderId?: string;
+        razorpayKeyId?: string;
         redemptionId?: string;
         amount?: number;
         currency?: string;
         message: string;
-      }>(`/campaigns/${campaign.campaignId || campaignId}/deals/${dealIndex}/redeem`, {
-        successUrl,
-        cancelUrl,
-      });
-
+      }>(`/campaigns/${campaign.campaignId || campaignId}/deals/${dealIndex}/redeem`, {});
 
       // Check if API call failed
       if (!response.success) {
         const errorMsg = response.error || response.message || 'Unable to redeem this deal.';
 
         // Check for "already redeemed" error
-        if (errorMsg.toLowerCase().includes('already redeemed') || errorMsg.toLowerCase().includes('already purchased')) {
+        if (
+          errorMsg.toLowerCase().includes('already redeemed') ||
+          errorMsg.toLowerCase().includes('already purchased')
+        ) {
           if (!isMounted()) return;
           setSuccessModalData({
             title: 'Already Redeemed',
@@ -327,23 +335,11 @@ const DealDetailPage: React.FC = () => {
         } as any);
       };
 
-      // Handle paid deal - redirect to Stripe checkout
-      if (response.data?.type === 'paid' && response.data?.checkoutUrl) {
-        router.push({
-          pathname: '/deal-payment' as any,
-          params: {
-            checkoutUrl: response.data.checkoutUrl,
-            sessionId: response.data.sessionId,
-            redemptionId: response.data.redemptionId,
-            amount: response.data.amount,
-            currency: response.data.currency || dealCurrency,
-            campaignId: campaign._id || campaignId,
-            campaignSlug: campaign.campaignId,
-            dealIndex: dealIndex.toString(),
-            dealStore: deal.store || 'Deal',
-            dealImage: deal.image || '',
-          },
-        } as any);
+      // Handle paid deal - redirect to Razorpay payment page
+      if (response.data?.type === 'paid' && response.data?.razorpayOrderId) {
+        router.push(
+          `/payment-razorpay?bookingId=${response.data.redemptionId}&bookingType=deal&orderId=${response.data.razorpayOrderId}&razorpayKeyId=${response.data.razorpayKeyId}&amount=${response.data.amount}&currency=${response.data.currency || dealCurrency}` as any,
+        );
         return;
       }
 
@@ -418,7 +414,11 @@ const DealDetailPage: React.FC = () => {
     if (!deal || !isAuthenticated) return;
     try {
       setIsLiked(!isLiked);
-      await apiClient.post('/campaigns/deals/track', { campaignId: campaign?._id || campaignId, dealIndex, action: 'like' });
+      await apiClient.post('/campaigns/deals/track', {
+        campaignId: campaign?._id || campaignId,
+        dealIndex,
+        action: 'like',
+      });
     } catch (error) {
       if (!isMounted()) return;
       setIsLiked(!isLiked);
@@ -431,7 +431,11 @@ const DealDetailPage: React.FC = () => {
       const shareMessage = `Check out this amazing deal!\n\n${deal.store || 'Store'}\n${campaign.title}\n\n${deal.cashback || deal.coins || deal.bonus || deal.drop || 'Special Offer'}`;
       await Share.share({ message: shareMessage, title: `${deal.store} - ${campaign.title}` });
       if (isAuthenticated) {
-        await apiClient.post('/campaigns/deals/track', { campaignId: campaign._id || campaignId, dealIndex, action: 'share' });
+        await apiClient.post('/campaigns/deals/track', {
+          campaignId: campaign._id || campaignId,
+          dealIndex,
+          action: 'share',
+        });
       }
     } catch (error) {
       // silently handle
@@ -489,11 +493,40 @@ const DealDetailPage: React.FC = () => {
 
   const getDealValueInfo = () => {
     if (!deal) return null;
-    if (deal.cashback) return { type: 'Cashback', value: deal.cashback, icon: 'cash-outline', color: COLORS.green500, bgColor: COLORS.green50 };
-    if (deal.coins) return { type: 'Coins', value: deal.coins, icon: 'diamond-outline', color: COLORS.amber500, bgColor: COLORS.amber50 };
-    if (deal.bonus) return { type: 'Bonus', value: deal.bonus, icon: 'gift-outline', color: COLORS.purple500, bgColor: COLORS.purple50 };
-    if (deal.drop) return { type: 'Drop', value: deal.drop, icon: 'flash-outline', color: COLORS.pink500, bgColor: COLORS.red50 };
-    if (deal.discount) return { type: 'Discount', value: deal.discount, icon: 'pricetag-outline', color: COLORS.blue500, bgColor: COLORS.blue50 };
+    if (deal.cashback)
+      return {
+        type: 'Cashback',
+        value: deal.cashback,
+        icon: 'cash-outline',
+        color: COLORS.green500,
+        bgColor: COLORS.green50,
+      };
+    if (deal.coins)
+      return {
+        type: 'Coins',
+        value: deal.coins,
+        icon: 'diamond-outline',
+        color: COLORS.amber500,
+        bgColor: COLORS.amber50,
+      };
+    if (deal.bonus)
+      return {
+        type: 'Bonus',
+        value: deal.bonus,
+        icon: 'gift-outline',
+        color: COLORS.purple500,
+        bgColor: COLORS.purple50,
+      };
+    if (deal.drop)
+      return { type: 'Drop', value: deal.drop, icon: 'flash-outline', color: COLORS.pink500, bgColor: COLORS.red50 };
+    if (deal.discount)
+      return {
+        type: 'Discount',
+        value: deal.discount,
+        icon: 'pricetag-outline',
+        color: COLORS.blue500,
+        bgColor: COLORS.blue50,
+      };
     return null;
   };
 
@@ -517,7 +550,10 @@ const DealDetailPage: React.FC = () => {
           </View>
           <Text style={styles.errorTitle}>Oops!</Text>
           <Text style={styles.errorText}>{error || 'Deal not found'}</Text>
-          <Pressable style={styles.errorButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.errorButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={18} color={COLORS.white} />
             <Text style={styles.errorButtonText}>Go Back</Text>
           </Pressable>
@@ -534,8 +570,7 @@ const DealDetailPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false} bounces={false}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false} bounces={false}>
         {/* Premium Hero Section */}
         <View style={styles.heroSection}>
           <CachedImage source={deal.image || FALLBACK_DEAL_IMAGE} style={styles.heroImage} contentFit="cover" />
@@ -560,13 +595,20 @@ const DealDetailPage: React.FC = () => {
           )}
 
           {/* Navigation */}
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backBtn}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={22} color={COLORS.white} />
           </Pressable>
 
           <View style={styles.headerActions}>
             <Pressable style={styles.actionBtn} onPress={handleLike}>
-              <Ionicons name={isLiked ? "heart" : "heart-outline"} size={22} color={isLiked ? COLORS.red500 : COLORS.white} />
+              <Ionicons
+                name={isLiked ? 'heart' : 'heart-outline'}
+                size={22}
+                color={isLiked ? COLORS.red500 : COLORS.white}
+              />
             </Pressable>
             <Pressable style={styles.actionBtn} onPress={handleShare}>
               <Ionicons name="share-outline" size={22} color={COLORS.white} />
@@ -630,15 +672,23 @@ const DealDetailPage: React.FC = () => {
           </View>
           <View style={styles.countdownGrid}>
             <View style={[styles.countdownItem, isExpiringSoon && styles.countdownItemUrgent]}>
-              <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>{daysRemaining}</Text>
+              <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>
+                {daysRemaining}
+              </Text>
               <Text style={styles.countdownLabel}>Days</Text>
             </View>
-            <View style={styles.countdownSeparator}><Text style={styles.countdownColon}>:</Text></View>
+            <View style={styles.countdownSeparator}>
+              <Text style={styles.countdownColon}>:</Text>
+            </View>
             <View style={[styles.countdownItem, isExpiringSoon && styles.countdownItemUrgent]}>
-              <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>{hoursRemaining}</Text>
+              <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>
+                {hoursRemaining}
+              </Text>
               <Text style={styles.countdownLabel}>Hours</Text>
             </View>
-            <View style={styles.countdownSeparator}><Text style={styles.countdownColon}>:</Text></View>
+            <View style={styles.countdownSeparator}>
+              <Text style={styles.countdownColon}>:</Text>
+            </View>
             <View style={[styles.countdownItem, isExpiringSoon && styles.countdownItemUrgent]}>
               <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>00</Text>
               <Text style={styles.countdownLabel}>Mins</Text>
@@ -656,9 +706,24 @@ const DealDetailPage: React.FC = () => {
           </View>
           <View style={styles.stepsContainer}>
             {[
-              { step: 1, title: 'Tap "Redeem Deal"', desc: 'Click the button below to activate your offer', icon: 'finger-print-outline' },
-              { step: 2, title: 'Get Your Code', desc: 'Receive a unique redemption code instantly', icon: 'qr-code-outline' },
-              { step: 3, title: 'Visit Store', desc: 'Show the code at checkout to claim your reward', icon: 'storefront-outline' },
+              {
+                step: 1,
+                title: 'Tap "Redeem Deal"',
+                desc: 'Click the button below to activate your offer',
+                icon: 'finger-print-outline',
+              },
+              {
+                step: 2,
+                title: 'Get Your Code',
+                desc: 'Receive a unique redemption code instantly',
+                icon: 'qr-code-outline',
+              },
+              {
+                step: 3,
+                title: 'Visit Store',
+                desc: 'Show the code at checkout to claim your reward',
+                icon: 'storefront-outline',
+              },
             ].map((item, idx) => (
               <View key={idx} style={styles.stepItem}>
                 <View style={styles.stepNumber}>
@@ -716,7 +781,8 @@ const DealDetailPage: React.FC = () => {
           </View>
           <View style={styles.aboutCard}>
             <Text style={styles.aboutText}>
-              {campaign.description || `Get amazing savings at ${deal.store || 'this store'}! This exclusive deal is part of the ${campaign.title} campaign. Don't miss this limited-time opportunity to save on your purchase.`}
+              {campaign.description ||
+                `Get amazing savings at ${deal.store || 'this store'}! This exclusive deal is part of the ${campaign.title} campaign. Don't miss this limited-time opportunity to save on your purchase.`}
             </Text>
           </View>
         </View>
@@ -769,14 +835,20 @@ const DealDetailPage: React.FC = () => {
               {campaign.minOrderValue && (
                 <View style={styles.detailCard}>
                   <Ionicons name="cart-outline" size={24} color={COLORS.blue500} />
-                  <Text style={styles.detailValue}>{regionCurrencySymbol}{campaign.minOrderValue}</Text>
+                  <Text style={styles.detailValue}>
+                    {regionCurrencySymbol}
+                    {campaign.minOrderValue}
+                  </Text>
                   <Text style={styles.detailLabel}>Minimum Order</Text>
                 </View>
               )}
               {campaign.maxBenefit && (
                 <View style={styles.detailCard}>
                   <Ionicons name="trending-up-outline" size={24} color={COLORS.green500} />
-                  <Text style={styles.detailValue}>{regionCurrencySymbol}{campaign.maxBenefit}</Text>
+                  <Text style={styles.detailValue}>
+                    {regionCurrencySymbol}
+                    {campaign.maxBenefit}
+                  </Text>
                   <Text style={styles.detailLabel}>Max Benefit</Text>
                 </View>
               )}
@@ -854,7 +926,10 @@ const DealDetailPage: React.FC = () => {
           {isPaidDeal && !alreadyRedeemed && (
             <View style={styles.priceRow}>
               <Text style={styles.priceLabel}>Deal Price</Text>
-              <Text style={styles.priceValue}>{getCurrencySymbol(dealCurrency)}{dealPrice}</Text>
+              <Text style={styles.priceValue}>
+                {getCurrencySymbol(dealCurrency)}
+                {dealPrice}
+              </Text>
             </View>
           )}
           <View style={styles.ctaContent}>
@@ -866,32 +941,27 @@ const DealDetailPage: React.FC = () => {
                 alreadyRedeemed && styles.redeemButtonRedeemed,
               ]}
               onPress={
-                alreadyRedeemed
-                  ? () => router.push('/my-deals' as any)
-                  : isPaidDeal
-                  ? handlePurchase
-                  : handleRedeem
+                alreadyRedeemed ? () => router.push('/my-deals' as any) : isPaidDeal ? handlePurchase : handleRedeem
               }
               disabled={isRedeeming || isPurchasing || (deal as any)?.isSoldOut}
-             
             >
               <LinearGradient
                 colors={
                   (deal as any)?.isSoldOut
                     ? [COLORS.gray400, COLORS.gray400]
-                    : (isRedeeming || isPurchasing)
-                    ? [COLORS.gray400, COLORS.gray400]
-                    : alreadyRedeemed
-                    ? [COLORS.blue500, colors.brand.blue]
-                    : isPaidDeal
-                    ? [COLORS.amber500, COLORS.amber600]
-                    : [COLORS.green500, COLORS.emerald500]
+                    : isRedeeming || isPurchasing
+                      ? [COLORS.gray400, COLORS.gray400]
+                      : alreadyRedeemed
+                        ? [COLORS.blue500, colors.brand.blue]
+                        : isPaidDeal
+                          ? [COLORS.amber500, COLORS.amber600]
+                          : [COLORS.green500, COLORS.emerald500]
                 }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.redeemButtonGradient}
               >
-                {(isRedeeming || isPurchasing) ? (
+                {isRedeeming || isPurchasing ? (
                   <ActivityIndicator color={COLORS.white} size="small" />
                 ) : (deal as any)?.isSoldOut ? (
                   <>
@@ -906,7 +976,10 @@ const DealDetailPage: React.FC = () => {
                 ) : isPaidDeal ? (
                   <>
                     <Ionicons name="cart" size={22} color={COLORS.white} />
-                    <Text style={styles.redeemButtonText}>Buy Deal • {getCurrencySymbol(dealCurrency)}{dealPrice}</Text>
+                    <Text style={styles.redeemButtonText}>
+                      Buy Deal • {getCurrencySymbol(dealCurrency)}
+                      {dealPrice}
+                    </Text>
                   </>
                 ) : (
                   <>
@@ -918,7 +991,11 @@ const DealDetailPage: React.FC = () => {
             </Pressable>
             {storeId && (
               <Pressable style={styles.visitButton} onPress={handleVisitStore}>
-                <Ionicons name="storefront-outline" size={22} color={alreadyRedeemed ? COLORS.blue500 : isPaidDeal ? COLORS.amber500 : COLORS.green500} />
+                <Ionicons
+                  name="storefront-outline"
+                  size={22}
+                  color={alreadyRedeemed ? COLORS.blue500 : isPaidDeal ? COLORS.amber500 : COLORS.green500}
+                />
               </Pressable>
             )}
           </View>
@@ -936,10 +1013,7 @@ const DealDetailPage: React.FC = () => {
           <View style={styles.modalContent}>
             {/* Success Icon */}
             <View style={styles.modalIconContainer}>
-              <LinearGradient
-                colors={[COLORS.green500, COLORS.emerald500]}
-                style={styles.modalIconGradient}
-              >
+              <LinearGradient colors={[COLORS.green500, COLORS.emerald500]} style={styles.modalIconGradient}>
                 <Ionicons name="checkmark" size={40} color={COLORS.white} />
               </LinearGradient>
             </View>
@@ -970,10 +1044,7 @@ const DealDetailPage: React.FC = () => {
                     router.push('/my-deals' as any);
                   }}
                 >
-                  <LinearGradient
-                    colors={[COLORS.green500, COLORS.emerald500]}
-                    style={styles.modalPrimaryBtnGradient}
-                  >
+                  <LinearGradient colors={[COLORS.green500, COLORS.emerald500]} style={styles.modalPrimaryBtnGradient}>
                     <Ionicons name="gift-outline" size={18} color={COLORS.white} />
                     <Text style={styles.modalPrimaryBtnText}>View My Deals</Text>
                   </LinearGradient>
@@ -1006,10 +1077,7 @@ const DealDetailPage: React.FC = () => {
                 </Pressable>
               )}
 
-              <Pressable
-                style={styles.modalCloseBtn}
-                onPress={() => setShowSuccessModal(false)}
-              >
+              <Pressable style={styles.modalCloseBtn} onPress={() => setShowSuccessModal(false)}>
                 <Text style={styles.modalCloseBtnText}>Close</Text>
               </Pressable>
             </View>
