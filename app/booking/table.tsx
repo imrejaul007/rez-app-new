@@ -179,7 +179,7 @@ function TableBookingPage() {
           id: timeString,
           time: displayTime,
           available: !isPast,
-          tablesLeft: Math.floor(Math.random() * 5) + 1, // Mock data
+          tablesLeft: undefined, // TODO: fetch real table availability from API
         });
 
         // Add slot duration
@@ -205,7 +205,7 @@ function TableBookingPage() {
           id: timeString,
           time: displayTime,
           available: !isPast,
-          tablesLeft: Math.floor(Math.random() * 5) + 1,
+          tablesLeft: undefined, // TODO: fetch real table availability from API
         });
       }
     }

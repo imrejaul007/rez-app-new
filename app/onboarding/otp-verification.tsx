@@ -264,7 +264,15 @@ function OTPVerificationScreen() {
                     <Text style={styles.timerText}>Resend in {timer}s</Text>
                   </View>
                 ) : (
-                  <Pressable onPress={handleResendOTP} disabled={!canResend || isVerifying} style={styles.resendButton}>
+                  <Pressable
+                    onPress={handleResendOTP}
+                    disabled={!canResend || isVerifying}
+                    style={styles.resendButton}
+                    accessibilityLabel="Resend OTP"
+                    accessibilityRole="button"
+                    accessibilityHint="Double tap to send a new verification code to your phone"
+                    hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                  >
                     <Ionicons name="refresh-outline" size={18} color={Colors.gold} />
                     <Text style={styles.resendText}>Resend OTP</Text>
                   </Pressable>
@@ -279,6 +287,13 @@ function OTPVerificationScreen() {
                 style={styles.primaryButtonWrapper}
                 onPress={() => handleSubmit()}
                 disabled={isVerifying || !otp.every((digit) => digit.length === 1)}
+                accessibilityLabel={isVerifying ? 'Verifying OTP' : 'Verify and continue'}
+                accessibilityRole="button"
+                accessibilityState={{
+                  disabled: isVerifying || !otp.every((digit) => digit.length === 1),
+                  busy: isVerifying,
+                }}
+                accessibilityHint="Double tap to verify your OTP and continue registration"
               >
                 <LinearGradient
                   colors={

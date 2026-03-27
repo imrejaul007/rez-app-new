@@ -572,416 +572,422 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
           </View>
         </LinearGradient>
 
-        <ScrollView
-          style={styles.content}
-          showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.scrollContent}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
         >
-          {/* Service Selection */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Select Service</ThemedText>
-
-            {servicesLoading ? (
-              <ActivityIndicator color={colors.brand.purpleLight} style={{ marginVertical: Spacing.xl }} />
-            ) : services.length > 0 ? (
-              <View style={styles.servicesGrid}>
-                {services.map((service) => {
-                  const isSelected = selectedService?.id === service.id;
-                  const iconName = getServiceIcon(service.name);
-
-                  return (
-                    <Pressable
-                      key={service.id}
-                      onPress={() => {
-                        setSelectedService(service);
-                        setSelectedTime(null); // Reset time when service changes
-                      }}
-                      style={[styles.serviceCard, isSelected && styles.serviceCardSelected]}
-                    >
-                      <View style={[styles.serviceIconContainer, isSelected && styles.serviceIconContainerSelected]}>
-                        <Ionicons
-                          name={iconName}
-                          size={28}
-                          color={isSelected ? colors.background.primary : colors.brand.purpleLight}
-                        />
-                      </View>
-                      <ThemedText
-                        style={[styles.serviceName, isSelected && styles.serviceNameSelected]}
-                        numberOfLines={2}
-                      >
-                        {service.name}
-                      </ThemedText>
-                      {service.duration && (
-                        <ThemedText style={[styles.serviceDuration, isSelected && styles.serviceDurationSelected]}>
-                          {formatDuration(service.duration)}
-                        </ThemedText>
-                      )}
-                      <ThemedText style={[styles.servicePrice, isSelected && styles.servicePriceSelected]}>
-                        {currencySymbol}
-                        {service.price}
-                      </ThemedText>
-                    </Pressable>
-                  );
-                })}
-              </View>
-            ) : (
-              <ThemedText style={styles.noDataText}>No services available</ThemedText>
-            )}
-          </View>
-
-          {/* Dynamic Pricing Badge */}
-          {selectedService && (selectedService as any).pricingRule && (
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                backgroundColor: (selectedService as any).discount > 0 ? '#f0fdf4' : '#fff7ed',
-                padding: 10,
-                borderRadius: 8,
-                marginBottom: 12,
-              }}
-            >
-              <Ionicons
-                name={(selectedService as any).discount > 0 ? 'pricetag' : 'trending-up'}
-                size={16}
-                color={(selectedService as any).discount > 0 ? '#16a34a' : '#d97706'}
-              />
-              <Text
-                style={{
-                  marginLeft: 8,
-                  fontSize: 13,
-                  color: (selectedService as any).discount > 0 ? '#16a34a' : '#d97706',
-                  fontWeight: '500',
-                }}
-              >
-                {(selectedService as any).pricingRule.label}
-                {(selectedService as any).discount > 0
-                  ? ` · Save ${currencySymbol}${(selectedService as any).discount}`
-                  : ` · +${currencySymbol}${(selectedService as any).surcharge}`}
-              </Text>
-            </View>
-          )}
-
-          {/* Date Selection */}
-          {selectedService && (
+          <ScrollView
+            style={styles.content}
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+          >
+            {/* Service Selection */}
             <View style={styles.section}>
-              <ThemedText style={styles.sectionTitle}>Select Date</ThemedText>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                style={styles.dateScroll}
-                contentContainerStyle={styles.dateScrollContent}
-              >
-                {nextDays.map((date, index) => {
-                  const isSelected = date.toDateString() === selectedDate.toDateString();
-                  const isToday = index === 0;
+              <ThemedText style={styles.sectionTitle}>Select Service</ThemedText>
 
-                  return (
-                    <Pressable
-                      key={date.toISOString().split('T')[0]}
-                      onPress={() => {
-                        setSelectedDate(date);
-                        setSelectedTime(null); // Reset time when date changes
-                      }}
-                      style={[styles.dateCard, isSelected && styles.dateCardSelected]}
-                    >
-                      {isToday && (
-                        <View style={styles.todayBadge}>
-                          <ThemedText style={styles.todayBadgeText}>Today</ThemedText>
+              {servicesLoading ? (
+                <ActivityIndicator color={colors.brand.purpleLight} style={{ marginVertical: Spacing.xl }} />
+              ) : services.length > 0 ? (
+                <View style={styles.servicesGrid}>
+                  {services.map((service) => {
+                    const isSelected = selectedService?.id === service.id;
+                    const iconName = getServiceIcon(service.name);
+
+                    return (
+                      <Pressable
+                        key={service.id}
+                        onPress={() => {
+                          setSelectedService(service);
+                          setSelectedTime(null); // Reset time when service changes
+                        }}
+                        style={[styles.serviceCard, isSelected && styles.serviceCardSelected]}
+                      >
+                        <View style={[styles.serviceIconContainer, isSelected && styles.serviceIconContainerSelected]}>
+                          <Ionicons
+                            name={iconName}
+                            size={28}
+                            color={isSelected ? colors.background.primary : colors.brand.purpleLight}
+                          />
                         </View>
-                      )}
-                      <ThemedText style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
-                        {date.toLocaleDateString('en-US', { weekday: 'short' })}
-                      </ThemedText>
-                      <ThemedText style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>
-                        {date.getDate()}
-                      </ThemedText>
-                      <ThemedText style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>
-                        {date.toLocaleDateString('en-US', { month: 'short' })}
-                      </ThemedText>
-                    </Pressable>
-                  );
-                })}
-              </ScrollView>
-            </View>
-          )}
-
-          {/* Time Slot Selection */}
-          {selectedService && (
-            <View style={styles.section}>
-              <ThemedText style={styles.sectionTitle}>Select Time</ThemedText>
-              <View style={styles.timeGrid}>
-                {timeSlots.map((slot) => {
-                  const isSelected = selectedTime?.id === slot.id;
-                  return (
-                    <Pressable
-                      key={slot.id}
-                      onPress={() => slot.available && setSelectedTime(slot)}
-                      disabled={!slot.available}
-                      style={[
-                        styles.timeSlot,
-                        isSelected && styles.timeSlotSelected,
-                        !slot.available && styles.timeSlotDisabled,
-                      ]}
-                    >
-                      <ThemedText
-                        style={[
-                          styles.timeText,
-                          isSelected && styles.timeTextSelected,
-                          !slot.available && styles.timeTextDisabled,
-                        ]}
-                      >
-                        {slot.displayTime}
-                      </ThemedText>
-                    </Pressable>
-                  );
-                })}
-              </View>
-
-              {/* Waitlist button when all slots are full */}
-              {timeSlots.length > 0 && timeSlots.every((s) => !s.available) && (
-                <Pressable
-                  style={{
-                    backgroundColor: colors.secondary[600],
-                    padding: 14,
-                    borderRadius: 12,
-                    marginTop: 16,
-                    alignItems: 'center',
-                  }}
-                  onPress={() => router.push(`/waitlist/${storeId}`)}
-                  accessibilityRole="button"
-                  accessibilityLabel="Join waitlist for this store"
-                >
-                  <ThemedText style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>
-                    No slots available — Join Waitlist
-                  </ThemedText>
-                  <ThemedText style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 2 }}>
-                    We'll notify you when a slot opens
-                  </ThemedText>
-                </Pressable>
+                        <ThemedText
+                          style={[styles.serviceName, isSelected && styles.serviceNameSelected]}
+                          numberOfLines={2}
+                        >
+                          {service.name}
+                        </ThemedText>
+                        {service.duration && (
+                          <ThemedText style={[styles.serviceDuration, isSelected && styles.serviceDurationSelected]}>
+                            {formatDuration(service.duration)}
+                          </ThemedText>
+                        )}
+                        <ThemedText style={[styles.servicePrice, isSelected && styles.servicePriceSelected]}>
+                          {currencySymbol}
+                          {service.price}
+                        </ThemedText>
+                      </Pressable>
+                    );
+                  })}
+                </View>
+              ) : (
+                <ThemedText style={styles.noDataText}>No services available</ThemedText>
               )}
             </View>
-          )}
 
-          {/* Customer Details Form */}
-          {selectedService && selectedTime && (
-            <View style={styles.section}>
-              <ThemedText style={styles.sectionTitle}>Your Details</ThemedText>
-
-              <View style={styles.inputContainer}>
-                <Ionicons name="person-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-                <TextInput
-                  style={[styles.input, { color: textColor }]}
-                  placeholder="Full Name *"
-                  placeholderTextColor={colors.text.tertiary}
-                  value={customerName}
-                  onChangeText={setCustomerName}
-                />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <Ionicons name="call-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-                <TextInput
-                  style={[styles.input, { color: textColor }]}
-                  placeholder="Phone Number *"
-                  placeholderTextColor={colors.text.tertiary}
-                  value={customerPhone}
-                  onChangeText={setCustomerPhone}
-                  keyboardType="phone-pad"
-                />
-              </View>
-
-              <View style={styles.inputContainer}>
-                <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
-                <TextInput
-                  style={[styles.input, { color: textColor }]}
-                  placeholder="Email (Optional)"
-                  placeholderTextColor={colors.text.tertiary}
-                  value={customerEmail}
-                  onChangeText={setCustomerEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                />
-              </View>
-
-              <View style={[styles.inputContainer, styles.textAreaContainer]}>
+            {/* Dynamic Pricing Badge */}
+            {selectedService && (selectedService as any).pricingRule && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  backgroundColor: (selectedService as any).discount > 0 ? '#f0fdf4' : '#fff7ed',
+                  padding: 10,
+                  borderRadius: 8,
+                  marginBottom: 12,
+                }}
+              >
                 <Ionicons
-                  name="document-text-outline"
-                  size={20}
-                  color={colors.text.tertiary}
-                  style={styles.inputIconTop}
+                  name={(selectedService as any).discount > 0 ? 'pricetag' : 'trending-up'}
+                  size={16}
+                  color={(selectedService as any).discount > 0 ? '#16a34a' : '#d97706'}
                 />
-                <TextInput
-                  style={[styles.input, styles.textArea, { color: textColor }]}
-                  placeholder="Special Instructions (Optional)"
-                  placeholderTextColor={colors.text.tertiary}
-                  value={specialInstructions}
-                  onChangeText={setSpecialInstructions}
-                  multiline
-                  numberOfLines={4}
-                  textAlignVertical="top"
-                />
+                <Text
+                  style={{
+                    marginLeft: 8,
+                    fontSize: 13,
+                    color: (selectedService as any).discount > 0 ? '#16a34a' : '#d97706',
+                    fontWeight: '500',
+                  }}
+                >
+                  {(selectedService as any).pricingRule.label}
+                  {(selectedService as any).discount > 0
+                    ? ` · Save ${currencySymbol}${(selectedService as any).discount}`
+                    : ` · +${currencySymbol}${(selectedService as any).surcharge}`}
+                </Text>
               </View>
-            </View>
-          )}
+            )}
 
-          {/* Group Booking Toggle */}
-          {selectedService && selectedTime && (
-            <View style={styles.groupBookingToggleContainer}>
-              <View>
-                <ThemedText style={styles.groupBookingTitle}>Book for a group</ThemedText>
-                <ThemedText style={styles.groupBookingSubtitle}>Add friends to book together</ThemedText>
+            {/* Date Selection */}
+            {selectedService && (
+              <View style={styles.section}>
+                <ThemedText style={styles.sectionTitle}>Select Date</ThemedText>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.dateScroll}
+                  contentContainerStyle={styles.dateScrollContent}
+                >
+                  {nextDays.map((date, index) => {
+                    const isSelected = date.toDateString() === selectedDate.toDateString();
+                    const isToday = index === 0;
+
+                    return (
+                      <Pressable
+                        key={date.toISOString().split('T')[0]}
+                        onPress={() => {
+                          setSelectedDate(date);
+                          setSelectedTime(null); // Reset time when date changes
+                        }}
+                        style={[styles.dateCard, isSelected && styles.dateCardSelected]}
+                      >
+                        {isToday && (
+                          <View style={styles.todayBadge}>
+                            <ThemedText style={styles.todayBadgeText}>Today</ThemedText>
+                          </View>
+                        )}
+                        <ThemedText style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
+                          {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                        </ThemedText>
+                        <ThemedText style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>
+                          {date.getDate()}
+                        </ThemedText>
+                        <ThemedText style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>
+                          {date.toLocaleDateString('en-US', { month: 'short' })}
+                        </ThemedText>
+                      </Pressable>
+                    );
+                  })}
+                </ScrollView>
               </View>
-              <Pressable
-                onPress={() => setIsGroupBooking(!isGroupBooking)}
-                style={[styles.toggleSwitch, isGroupBooking && styles.toggleSwitchActive]}
-              >
-                <View style={[styles.toggleKnob, isGroupBooking && styles.toggleKnobActive]} />
-              </Pressable>
-            </View>
-          )}
+            )}
 
-          {/* Group Members Input */}
-          {isGroupBooking && selectedService && selectedTime && (
-            <View style={styles.groupMembersContainer}>
-              <ThemedText style={styles.groupMembersTitle}>Group Members</ThemedText>
-              {groupFriends.map((friend, idx) => (
-                <View key={idx} style={styles.groupMemberRow}>
-                  <TextInput
-                    value={friend.name}
-                    onChangeText={(name) =>
-                      setGroupFriends((prev) => prev.map((g, i) => (i === idx ? { ...g, name } : g)))
-                    }
-                    placeholder="Friend's name"
-                    style={[styles.groupMemberInput, { color: textColor }]}
-                    placeholderTextColor={colors.text.tertiary}
-                  />
-                  <TextInput
-                    value={friend.phone}
-                    onChangeText={(phone) =>
-                      setGroupFriends((prev) => prev.map((g, i) => (i === idx ? { ...g, phone } : g)))
-                    }
-                    placeholder="Phone"
-                    keyboardType="phone-pad"
-                    style={[styles.groupMemberPhone, { color: textColor }]}
-                    placeholderTextColor={colors.text.tertiary}
-                  />
-                </View>
-              ))}
-              <Pressable
-                style={styles.addMemberButton}
-                onPress={() => setGroupFriends((prev) => [...prev, { name: '', phone: '' }])}
-              >
-                <Ionicons name="add-circle-outline" size={20} color={colors.brand.purpleLight} />
-                <ThemedText style={styles.addMemberText}>Add another friend</ThemedText>
-              </Pressable>
-            </View>
-          )}
-
-          {/* Booking Summary */}
-          {selectedService && selectedTime && (
-            <View style={styles.section}>
-              <ThemedText style={styles.sectionTitle}>Booking Summary</ThemedText>
-              <View style={styles.summaryCard}>
-                {/* Deposit Banner */}
-                {(selectedService as any).requiresPaymentUpfront && selectedService.price > 0 && (
-                  <View
-                    style={[
-                      styles.depositBanner,
-                      { backgroundColor: colors.tint.pink, borderColor: colors.brand.purpleLight },
-                    ]}
-                  >
-                    <Ionicons name="card-outline" size={16} color={colors.brand.purpleLight} />
-                    <View style={{ flex: 1, marginLeft: Spacing.xs }}>
-                      <ThemedText style={[styles.depositText, { fontWeight: '600', color: colors.brand.purple }]}>
-                        Payment required at booking · {currencySymbol}
-                        {selectedService.price}
-                      </ThemedText>
-                      <ThemedText
+            {/* Time Slot Selection */}
+            {selectedService && (
+              <View style={styles.section}>
+                <ThemedText style={styles.sectionTitle}>Select Time</ThemedText>
+                <View style={styles.timeGrid}>
+                  {timeSlots.map((slot) => {
+                    const isSelected = selectedTime?.id === slot.id;
+                    return (
+                      <Pressable
+                        key={slot.id}
+                        onPress={() => slot.available && setSelectedTime(slot)}
+                        disabled={!slot.available}
                         style={[
-                          styles.depositSub,
-                          { color: colors.text.tertiary, marginTop: Spacing.xs, fontSize: 12 },
+                          styles.timeSlot,
+                          isSelected && styles.timeSlotSelected,
+                          !slot.available && styles.timeSlotDisabled,
                         ]}
                       >
-                        Full amount charged now · Free cancellation 24h before
-                      </ThemedText>
-                    </View>
-                  </View>
-                )}
-                <View style={styles.summaryRow}>
-                  <ThemedText style={styles.summaryLabel}>Service</ThemedText>
-                  <ThemedText style={styles.summaryValue}>{selectedService.name}</ThemedText>
-                </View>
-                <View style={styles.summaryDivider} />
-                <View style={styles.summaryRow}>
-                  <ThemedText style={styles.summaryLabel}>Date</ThemedText>
-                  <ThemedText style={styles.summaryValue}>
-                    {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                  </ThemedText>
-                </View>
-                <View style={styles.summaryDivider} />
-                <View style={styles.summaryRow}>
-                  <ThemedText style={styles.summaryLabel}>Time</ThemedText>
-                  <ThemedText style={styles.summaryValue}>{selectedTime.displayTime}</ThemedText>
-                </View>
-                {selectedService.duration && (
-                  <>
-                    <View style={styles.summaryDivider} />
-                    <View style={styles.summaryRow}>
-                      <ThemedText style={styles.summaryLabel}>Duration</ThemedText>
-                      <ThemedText style={styles.summaryValue}>{formatDuration(selectedService.duration)}</ThemedText>
-                    </View>
-                  </>
-                )}
-                <View style={styles.summaryDivider} />
-                <View style={styles.summaryRow}>
-                  <ThemedText style={styles.summaryLabelBold}>Total Price</ThemedText>
-                  <ThemedText style={styles.summaryValueBold}>
-                    {currencySymbol}
-                    {selectedService.price}
-                  </ThemedText>
+                        <ThemedText
+                          style={[
+                            styles.timeText,
+                            isSelected && styles.timeTextSelected,
+                            !slot.available && styles.timeTextDisabled,
+                          ]}
+                        >
+                          {slot.displayTime}
+                        </ThemedText>
+                      </Pressable>
+                    );
+                  })}
                 </View>
 
-                {/* Cancellation Policy */}
-                {selectedService && (
-                  <>
-                    <View style={styles.summaryDivider} />
-                    <CancellationPolicyBadge
-                      freeCancellationHours={selectedService.freeCancellationHours ?? 24}
-                      lateCancellationFee={selectedService.lateCancellationFee ?? 'none'}
-                      cancellationFeeAmount={selectedService.cancellationFeeAmount}
-                      selectedDate={selectedDate}
-                    />
-                  </>
+                {/* Waitlist button when all slots are full */}
+                {timeSlots.length > 0 && timeSlots.every((s) => !s.available) && (
+                  <Pressable
+                    style={{
+                      backgroundColor: colors.secondary[600],
+                      padding: 14,
+                      borderRadius: 12,
+                      marginTop: 16,
+                      alignItems: 'center',
+                    }}
+                    onPress={() => router.push(`/waitlist/${storeId}`)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Join waitlist for this store"
+                  >
+                    <ThemedText style={{ color: '#fff', fontWeight: '600', fontSize: 15 }}>
+                      No slots available — Join Waitlist
+                    </ThemedText>
+                    <ThemedText style={{ color: 'rgba(255,255,255,0.8)', fontSize: 12, marginTop: 2 }}>
+                      We'll notify you when a slot opens
+                    </ThemedText>
+                  </Pressable>
                 )}
               </View>
-            </View>
-          )}
+            )}
 
-          {/* Patch Test Status for Color Services */}
-          {patchTestStatus !== null && (
-            <View
-              style={[
-                styles.patchTestContainer,
-                {
-                  backgroundColor: patchTestStatus.hasValidTest ? '#f0fdf4' : '#fff7ed',
-                  borderColor: patchTestStatus.hasValidTest ? '#86efac' : '#fed7aa',
-                },
-              ]}
-            >
-              <Text style={[styles.patchTestTitle, { color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }]}>
-                {patchTestStatus.hasValidTest ? '✓ Patch test on record' : '⚠️ Patch test required'}
-              </Text>
-              <Text style={[styles.patchTestText, { color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }]}>
-                {patchTestStatus.hasValidTest
-                  ? `Last test: ${new Date(patchTestStatus.lastTest.testedAt).toLocaleDateString('en-IN')} — valid until ${new Date(patchTestStatus.lastTest.expiresAt).toLocaleDateString('en-IN')}`
-                  : 'This service requires a patch test 48h before your appointment. The salon will contact you to arrange one.'}
-              </Text>
-            </View>
-          )}
+            {/* Customer Details Form */}
+            {selectedService && selectedTime && (
+              <View style={styles.section}>
+                <ThemedText style={styles.sectionTitle}>Your Details</ThemedText>
 
-          <View style={{ height: 120 }} />
-        </ScrollView>
+                <View style={styles.inputContainer}>
+                  <Ionicons name="person-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                  <TextInput
+                    style={[styles.input, { color: textColor }]}
+                    placeholder="Full Name *"
+                    placeholderTextColor={colors.text.tertiary}
+                    value={customerName}
+                    onChangeText={setCustomerName}
+                  />
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <Ionicons name="call-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                  <TextInput
+                    style={[styles.input, { color: textColor }]}
+                    placeholder="Phone Number *"
+                    placeholderTextColor={colors.text.tertiary}
+                    value={customerPhone}
+                    onChangeText={setCustomerPhone}
+                    keyboardType="phone-pad"
+                  />
+                </View>
+
+                <View style={styles.inputContainer}>
+                  <Ionicons name="mail-outline" size={20} color={colors.text.tertiary} style={styles.inputIcon} />
+                  <TextInput
+                    style={[styles.input, { color: textColor }]}
+                    placeholder="Email (Optional)"
+                    placeholderTextColor={colors.text.tertiary}
+                    value={customerEmail}
+                    onChangeText={setCustomerEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </View>
+
+                <View style={[styles.inputContainer, styles.textAreaContainer]}>
+                  <Ionicons
+                    name="document-text-outline"
+                    size={20}
+                    color={colors.text.tertiary}
+                    style={styles.inputIconTop}
+                  />
+                  <TextInput
+                    style={[styles.input, styles.textArea, { color: textColor }]}
+                    placeholder="Special Instructions (Optional)"
+                    placeholderTextColor={colors.text.tertiary}
+                    value={specialInstructions}
+                    onChangeText={setSpecialInstructions}
+                    multiline
+                    numberOfLines={4}
+                    textAlignVertical="top"
+                  />
+                </View>
+              </View>
+            )}
+
+            {/* Group Booking Toggle */}
+            {selectedService && selectedTime && (
+              <View style={styles.groupBookingToggleContainer}>
+                <View>
+                  <ThemedText style={styles.groupBookingTitle}>Book for a group</ThemedText>
+                  <ThemedText style={styles.groupBookingSubtitle}>Add friends to book together</ThemedText>
+                </View>
+                <Pressable
+                  onPress={() => setIsGroupBooking(!isGroupBooking)}
+                  style={[styles.toggleSwitch, isGroupBooking && styles.toggleSwitchActive]}
+                >
+                  <View style={[styles.toggleKnob, isGroupBooking && styles.toggleKnobActive]} />
+                </Pressable>
+              </View>
+            )}
+
+            {/* Group Members Input */}
+            {isGroupBooking && selectedService && selectedTime && (
+              <View style={styles.groupMembersContainer}>
+                <ThemedText style={styles.groupMembersTitle}>Group Members</ThemedText>
+                {groupFriends.map((friend, idx) => (
+                  <View key={idx} style={styles.groupMemberRow}>
+                    <TextInput
+                      value={friend.name}
+                      onChangeText={(name) =>
+                        setGroupFriends((prev) => prev.map((g, i) => (i === idx ? { ...g, name } : g)))
+                      }
+                      placeholder="Friend's name"
+                      style={[styles.groupMemberInput, { color: textColor }]}
+                      placeholderTextColor={colors.text.tertiary}
+                    />
+                    <TextInput
+                      value={friend.phone}
+                      onChangeText={(phone) =>
+                        setGroupFriends((prev) => prev.map((g, i) => (i === idx ? { ...g, phone } : g)))
+                      }
+                      placeholder="Phone"
+                      keyboardType="phone-pad"
+                      style={[styles.groupMemberPhone, { color: textColor }]}
+                      placeholderTextColor={colors.text.tertiary}
+                    />
+                  </View>
+                ))}
+                <Pressable
+                  style={styles.addMemberButton}
+                  onPress={() => setGroupFriends((prev) => [...prev, { name: '', phone: '' }])}
+                >
+                  <Ionicons name="add-circle-outline" size={20} color={colors.brand.purpleLight} />
+                  <ThemedText style={styles.addMemberText}>Add another friend</ThemedText>
+                </Pressable>
+              </View>
+            )}
+
+            {/* Booking Summary */}
+            {selectedService && selectedTime && (
+              <View style={styles.section}>
+                <ThemedText style={styles.sectionTitle}>Booking Summary</ThemedText>
+                <View style={styles.summaryCard}>
+                  {/* Deposit Banner */}
+                  {(selectedService as any).requiresPaymentUpfront && selectedService.price > 0 && (
+                    <View
+                      style={[
+                        styles.depositBanner,
+                        { backgroundColor: colors.tint.pink, borderColor: colors.brand.purpleLight },
+                      ]}
+                    >
+                      <Ionicons name="card-outline" size={16} color={colors.brand.purpleLight} />
+                      <View style={{ flex: 1, marginLeft: Spacing.xs }}>
+                        <ThemedText style={[styles.depositText, { fontWeight: '600', color: colors.brand.purple }]}>
+                          Payment required at booking · {currencySymbol}
+                          {selectedService.price}
+                        </ThemedText>
+                        <ThemedText
+                          style={[
+                            styles.depositSub,
+                            { color: colors.text.tertiary, marginTop: Spacing.xs, fontSize: 12 },
+                          ]}
+                        >
+                          Full amount charged now · Free cancellation 24h before
+                        </ThemedText>
+                      </View>
+                    </View>
+                  )}
+                  <View style={styles.summaryRow}>
+                    <ThemedText style={styles.summaryLabel}>Service</ThemedText>
+                    <ThemedText style={styles.summaryValue}>{selectedService.name}</ThemedText>
+                  </View>
+                  <View style={styles.summaryDivider} />
+                  <View style={styles.summaryRow}>
+                    <ThemedText style={styles.summaryLabel}>Date</ThemedText>
+                    <ThemedText style={styles.summaryValue}>
+                      {selectedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    </ThemedText>
+                  </View>
+                  <View style={styles.summaryDivider} />
+                  <View style={styles.summaryRow}>
+                    <ThemedText style={styles.summaryLabel}>Time</ThemedText>
+                    <ThemedText style={styles.summaryValue}>{selectedTime.displayTime}</ThemedText>
+                  </View>
+                  {selectedService.duration && (
+                    <>
+                      <View style={styles.summaryDivider} />
+                      <View style={styles.summaryRow}>
+                        <ThemedText style={styles.summaryLabel}>Duration</ThemedText>
+                        <ThemedText style={styles.summaryValue}>{formatDuration(selectedService.duration)}</ThemedText>
+                      </View>
+                    </>
+                  )}
+                  <View style={styles.summaryDivider} />
+                  <View style={styles.summaryRow}>
+                    <ThemedText style={styles.summaryLabelBold}>Total Price</ThemedText>
+                    <ThemedText style={styles.summaryValueBold}>
+                      {currencySymbol}
+                      {selectedService.price}
+                    </ThemedText>
+                  </View>
+
+                  {/* Cancellation Policy */}
+                  {selectedService && (
+                    <>
+                      <View style={styles.summaryDivider} />
+                      <CancellationPolicyBadge
+                        freeCancellationHours={selectedService.freeCancellationHours ?? 24}
+                        lateCancellationFee={selectedService.lateCancellationFee ?? 'none'}
+                        cancellationFeeAmount={selectedService.cancellationFeeAmount}
+                        selectedDate={selectedDate}
+                      />
+                    </>
+                  )}
+                </View>
+              </View>
+            )}
+
+            {/* Patch Test Status for Color Services */}
+            {patchTestStatus !== null && (
+              <View
+                style={[
+                  styles.patchTestContainer,
+                  {
+                    backgroundColor: patchTestStatus.hasValidTest ? '#f0fdf4' : '#fff7ed',
+                    borderColor: patchTestStatus.hasValidTest ? '#86efac' : '#fed7aa',
+                  },
+                ]}
+              >
+                <Text style={[styles.patchTestTitle, { color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }]}>
+                  {patchTestStatus.hasValidTest ? '✓ Patch test on record' : '⚠️ Patch test required'}
+                </Text>
+                <Text style={[styles.patchTestText, { color: patchTestStatus.hasValidTest ? '#166534' : '#9a3412' }]}>
+                  {patchTestStatus.hasValidTest
+                    ? `Last test: ${new Date(patchTestStatus.lastTest.testedAt).toLocaleDateString('en-IN')} — valid until ${new Date(patchTestStatus.lastTest.expiresAt).toLocaleDateString('en-IN')}`
+                    : 'This service requires a patch test 48h before your appointment. The salon will contact you to arrange one.'}
+                </Text>
+              </View>
+            )}
+
+            <View style={{ height: 120 }} />
+          </ScrollView>
+        </KeyboardAvoidingView>
 
         {/* Bottom Fixed Button */}
         {selectedService && selectedTime && (

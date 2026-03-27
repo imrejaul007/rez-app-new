@@ -742,7 +742,13 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             }}
           >
             <Text style={{ fontSize: 16, fontWeight: '700', color: colors.text.primary }}>Your Savings Breakdown</Text>
-            <Pressable onPress={() => setCoinEducationVisible(true)} hitSlop={8}>
+            <Pressable
+              onPress={() => setCoinEducationVisible(true)}
+              hitSlop={8}
+              accessibilityLabel="Learn about coin types"
+              accessibilityRole="button"
+              accessibilityHint="Double tap to view explanation of different coin types"
+            >
               <Ionicons name="help-circle-outline" size={20} color={colors.neutral[400]} />
             </Pressable>
           </View>

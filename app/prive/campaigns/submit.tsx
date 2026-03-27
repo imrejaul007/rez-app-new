@@ -17,6 +17,8 @@ import {
   ActivityIndicator,
   ScrollView,
   Image,
+  KeyboardAvoidingView,
+  Platform as RNPlatform,
 } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -109,106 +111,100 @@ function CampaignSubmitScreen() {
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Progress Indicator */}
-        <View style={styles.progressContainer}>
-          <ProgressStep number={1} label="Select Platform" active={!selectedPlatform} />
-          <View style={styles.progressLine} />
-          <ProgressStep number={2} label="Add URL" active={!!selectedPlatform} />
-          <View style={styles.progressLine} />
-          <ProgressStep number={3} label="Add Screenshot" active={!!postUrl} />
-          <View style={styles.progressLine} />
-          <ProgressStep number={4} label="Submit" active={isValid} />
-        </View>
+      <KeyboardAvoidingView
+        behavior={RNPlatform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={RNPlatform.OS === 'ios' ? 88 : 0}
+      >
+        <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+          {/* Progress Indicator */}
+          <View style={styles.progressContainer}>
+            <ProgressStep number={1} label="Select Platform" active={!selectedPlatform} />
+            <View style={styles.progressLine} />
+            <ProgressStep number={2} label="Add URL" active={!!selectedPlatform} />
+            <View style={styles.progressLine} />
+            <ProgressStep number={3} label="Add Screenshot" active={!!postUrl} />
+            <View style={styles.progressLine} />
+            <ProgressStep number={4} label="Submit" active={isValid} />
+          </View>
 
-        {/* Step 1: Select Platform */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Choose Platform</Text>
-          <View style={styles.platformGrid}>
-            {PLATFORM_OPTIONS.map((platform) => (
-              <Pressable
-                key={platform.id}
-                onPress={() => setSelectedPlatform(platform.id)}
-                style={[
-                  styles.platformButton,
-                  selectedPlatform === platform.id && styles.platformButtonActive,
-                ]}
-              >
-                <Ionicons
-                  name={platform.icon as any}
-                  size={32}
-                  color={
-                    selectedPlatform === platform.id ? Colors.primary : Colors.textSecondary
-                  }
-                />
-                <Text
-                  style={[
-                    styles.platformLabel,
-                    selectedPlatform === platform.id && styles.platformLabelActive,
-                  ]}
+          {/* Step 1: Select Platform */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Choose Platform</Text>
+            <View style={styles.platformGrid}>
+              {PLATFORM_OPTIONS.map((platform) => (
+                <Pressable
+                  key={platform.id}
+                  onPress={() => setSelectedPlatform(platform.id)}
+                  style={[styles.platformButton, selectedPlatform === platform.id && styles.platformButtonActive]}
                 >
-                  {platform.label}
+                  <Ionicons
+                    name={platform.icon as any}
+                    size={32}
+                    color={selectedPlatform === platform.id ? Colors.primary : Colors.textSecondary}
+                  />
+                  <Text style={[styles.platformLabel, selectedPlatform === platform.id && styles.platformLabelActive]}>
+                    {platform.label}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          {/* Step 2: Enter URL */}
+          {selectedPlatform && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Post URL</Text>
+              <View style={styles.inputContainer}>
+                <Ionicons name="link" size={20} color={Colors.primary} />
+                <TextInput
+                  style={styles.input}
+                  placeholder={`Enter your ${PLATFORM_OPTIONS.find((p) => p.id === selectedPlatform)?.label} post URL`}
+                  placeholderTextColor={Colors.textSecondary}
+                  value={postUrl}
+                  onChangeText={handleUrlChange}
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  editable={!submitMutation.isPending}
+                />
+              </View>
+              {errors.postUrl && <Text style={styles.errorText}>{errors.postUrl}</Text>}
+              <Text style={styles.helperText}>Must start with https://</Text>
+            </View>
+          )}
+
+          {/* Step 3: Upload Screenshot */}
+          {postUrl && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Screenshot (Optional)</Text>
+              <Pressable style={styles.uploadPlaceholder}>
+                <Ionicons name="image" size={32} color={Colors.textSecondary} />
+                <Text style={styles.uploadPlaceholderText}>Tap to add screenshot</Text>
+                <Text style={styles.uploadPlaceholderSubtext}>
+                  {screenshotUrl ? 'Screenshot added' : 'Show the post on your profile'}
                 </Text>
               </Pressable>
-            ))}
-          </View>
-        </View>
-
-        {/* Step 2: Enter URL */}
-        {selectedPlatform && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Post URL</Text>
-            <View style={styles.inputContainer}>
-              <Ionicons name="link" size={20} color={Colors.primary} />
-              <TextInput
-                style={styles.input}
-                placeholder={`Enter your ${PLATFORM_OPTIONS.find((p) => p.id === selectedPlatform)?.label} post URL`}
-                placeholderTextColor={Colors.textSecondary}
-                value={postUrl}
-                onChangeText={handleUrlChange}
-                autoCapitalize="none"
-                autoComplete="off"
-                editable={!submitMutation.isPending}
-              />
             </View>
-            {errors.postUrl && (
-              <Text style={styles.errorText}>{errors.postUrl}</Text>
-            )}
-            <Text style={styles.helperText}>Must start with https://</Text>
-          </View>
-        )}
+          )}
 
-        {/* Step 3: Upload Screenshot */}
-        {postUrl && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Screenshot (Optional)</Text>
-            <Pressable style={styles.uploadPlaceholder}>
-              <Ionicons name="image" size={32} color={Colors.textSecondary} />
-              <Text style={styles.uploadPlaceholderText}>Tap to add screenshot</Text>
-              <Text style={styles.uploadPlaceholderSubtext}>
-                {screenshotUrl ? 'Screenshot added' : 'Show the post on your profile'}
-              </Text>
-            </Pressable>
+          {/* Hints */}
+          <View style={styles.hintsSection}>
+            <Text style={styles.hintsTitle}>Submission Tips</Text>
+            <View style={styles.hintItem}>
+              <Ionicons name="checkmark-circle" size={16} color={Colors.primary} />
+              <Text style={styles.hintText}>Public post so our team can see it</Text>
+            </View>
+            <View style={styles.hintItem}>
+              <Ionicons name="checkmark-circle" size={16} color={Colors.primary} />
+              <Text style={styles.hintText}>Use the required hashtag</Text>
+            </View>
+            <View style={styles.hintItem}>
+              <Ionicons name="checkmark-circle" size={16} color={Colors.primary} />
+              <Text style={styles.hintText}>Write an engaging caption</Text>
+            </View>
           </View>
-        )}
-
-        {/* Hints */}
-        <View style={styles.hintsSection}>
-          <Text style={styles.hintsTitle}>Submission Tips</Text>
-          <View style={styles.hintItem}>
-            <Ionicons name="checkmark-circle" size={16} color={Colors.primary} />
-            <Text style={styles.hintText}>Public post so our team can see it</Text>
-          </View>
-          <View style={styles.hintItem}>
-            <Ionicons name="checkmark-circle" size={16} color={Colors.primary} />
-            <Text style={styles.hintText}>Use the required hashtag</Text>
-          </View>
-          <View style={styles.hintItem}>
-            <Ionicons name="checkmark-circle" size={16} color={Colors.primary} />
-            <Text style={styles.hintText}>Write an engaging caption</Text>
-          </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* Submit Button */}
       <View style={styles.footer}>
@@ -257,20 +253,8 @@ interface ProgressStepProps {
 function ProgressStep({ number, label, active }: ProgressStepProps) {
   return (
     <View style={styles.progressStep}>
-      <View
-        style={[
-          styles.progressStepNumber,
-          active && styles.progressStepNumberActive,
-        ]}
-      >
-        <Text
-          style={[
-            styles.progressStepNumberText,
-            active && styles.progressStepNumberTextActive,
-          ]}
-        >
-          {number}
-        </Text>
+      <View style={[styles.progressStepNumber, active && styles.progressStepNumberActive]}>
+        <Text style={[styles.progressStepNumberText, active && styles.progressStepNumberTextActive]}>{number}</Text>
       </View>
       <Text style={styles.progressStepLabel}>{label}</Text>
     </View>

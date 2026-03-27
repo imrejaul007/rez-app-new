@@ -3,7 +3,17 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Multi-step wizard for subscription cancellation with retention attempts
 
 import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, StatusBar, TextInput, ActivityIndicator } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  StatusBar,
+  TextInput,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -127,7 +137,10 @@ function CancelFeedbackPage() {
   const handleAcceptOffer = () => {
     if (selectedReason === 'too_expensive') {
       // Apply discount
-      platformAlertSimple('Discount Applied!', 'Your 20% discount has been applied for the next 3 months. Thank you for staying with us!');
+      platformAlertSimple(
+        'Discount Applied!',
+        'Your 20% discount has been applied for the next 3 months. Thank you for staying with us!',
+      );
       router.push('/subscription/manage');
     } else if (selectedReason === 'not_using_enough') {
       // Show usage tips
@@ -145,7 +158,10 @@ function CancelFeedbackPage() {
   // Handle pause option
   const handlePauseSubscription = async () => {
     try {
-      platformAlertSimple('Subscription Paused', 'Your subscription has been paused for 1 month. You can resume anytime!');
+      platformAlertSimple(
+        'Subscription Paused',
+        'Your subscription has been paused for 1 month. You can resume anytime!',
+      );
       router.push('/subscription/manage');
     } catch (error: any) {
       platformAlertSimple('Error', error.message || 'Failed to pause subscription');
@@ -170,9 +186,10 @@ function CancelFeedbackPage() {
       await subscriptionAPI.cancelSubscription(cancelRequest);
       await actions.loadSubscription(true);
 
-      const accessMessage = cancellationType === 'immediate'
-        ? 'You will lose access to premium features immediately.'
-        : `You will keep access to premium features until ${new Date(state.currentSubscription?.endDate || '').toLocaleDateString()}`;
+      const accessMessage =
+        cancellationType === 'immediate'
+          ? 'You will lose access to premium features immediately.'
+          : `You will keep access to premium features until ${new Date(state.currentSubscription?.endDate || '').toLocaleDateString()}`;
 
       platformAlertSimple('Subscription Cancelled', `Your subscription has been cancelled. ${accessMessage}`);
       router.push('/subscription/manage');
@@ -194,19 +211,14 @@ function CancelFeedbackPage() {
       <View style={styles.stepHeader}>
         <Ionicons name="sad-outline" size={64} color={Colors.error} />
         <ThemedText style={styles.stepTitle}>We're sorry to see you go</ThemedText>
-        <ThemedText style={styles.stepSubtitle}>
-          Help us improve by sharing why you're cancelling
-        </ThemedText>
+        <ThemedText style={styles.stepSubtitle}>Help us improve by sharing why you're cancelling</ThemedText>
       </View>
 
       <View style={styles.reasonsContainer}>
         {CANCELLATION_REASONS.map((reason) => (
           <Pressable
             key={reason.value}
-            style={[
-              styles.reasonOption,
-              selectedReason === reason.value && styles.reasonOptionSelected,
-            ]}
+            style={[styles.reasonOption, selectedReason === reason.value && styles.reasonOptionSelected]}
             onPress={() => handleReasonSelect(reason.value)}
             accessibilityLabel={`Reason: ${reason.label}. ${selectedReason === reason.value ? 'Selected' : ''}`}
             accessibilityRole="radio"
@@ -267,9 +279,7 @@ function CancelFeedbackPage() {
           <View style={styles.stepHeader}>
             <Ionicons name="bulb-outline" size={64} color={Colors.warning} />
             <ThemedText style={styles.stepTitle}>Tell Us What You Need</ThemedText>
-            <ThemedText style={styles.stepSubtitle}>
-              Your feedback helps us build better features
-            </ThemedText>
+            <ThemedText style={styles.stepSubtitle}>Your feedback helps us build better features</ThemedText>
           </View>
 
           <TextInput
@@ -306,11 +316,7 @@ function CancelFeedbackPage() {
 
     return (
       <View style={styles.stepContent}>
-        <RetentionOfferCard
-          offer={offer}
-          onAccept={handleAcceptOffer}
-          onDecline={handleDeclineOffer}
-        />
+        <RetentionOfferCard offer={offer} onAccept={handleAcceptOffer} onDecline={handleDeclineOffer} />
       </View>
     );
   };
@@ -321,17 +327,13 @@ function CancelFeedbackPage() {
       <View style={styles.stepHeader}>
         <Ionicons name="pause-circle-outline" size={64} color={Colors.brand.purpleLight} />
         <ThemedText style={styles.stepTitle}>Would you like to pause instead?</ThemedText>
-        <ThemedText style={styles.stepSubtitle}>
-          Take a break without losing your benefits
-        </ThemedText>
+        <ThemedText style={styles.stepSubtitle}>Take a break without losing your benefits</ThemedText>
       </View>
 
       <View style={styles.pauseBenefitsCard}>
         <View style={styles.pauseBenefitRow}>
           <Ionicons name="checkmark-circle" size={24} color={Colors.success} />
-          <ThemedText style={styles.pauseBenefitText}>
-            Keep your benefits for 1 month
-          </ThemedText>
+          <ThemedText style={styles.pauseBenefitText}>Keep your benefits for 1 month</ThemedText>
         </View>
         <View style={styles.pauseBenefitRow}>
           <Ionicons name="checkmark-circle" size={24} color={Colors.success} />
@@ -422,10 +424,7 @@ function CancelFeedbackPage() {
 
         <View style={styles.cancellationTypeContainer}>
           <Pressable
-            style={[
-              styles.typeOption,
-              cancellationType === 'end_of_cycle' && styles.typeOptionSelected,
-            ]}
+            style={[styles.typeOption, cancellationType === 'end_of_cycle' && styles.typeOptionSelected]}
             onPress={() => setCancellationType('end_of_cycle')}
             accessibilityLabel={`Cancel at end of billing cycle. Keep access until ${formattedEndDate}. ${cancellationType === 'end_of_cycle' ? 'Selected' : ''}`}
             accessibilityRole="radio"
@@ -439,17 +438,12 @@ function CancelFeedbackPage() {
             </View>
             <View style={styles.typeContent}>
               <ThemedText style={styles.typeTitle}>Cancel at end of billing cycle</ThemedText>
-              <ThemedText style={styles.typeSubtitle}>
-                Keep access until {formattedEndDate}
-              </ThemedText>
+              <ThemedText style={styles.typeSubtitle}>Keep access until {formattedEndDate}</ThemedText>
             </View>
           </Pressable>
 
           <Pressable
-            style={[
-              styles.typeOption,
-              cancellationType === 'immediate' && styles.typeOptionSelected,
-            ]}
+            style={[styles.typeOption, cancellationType === 'immediate' && styles.typeOptionSelected]}
             onPress={() => setCancellationType('immediate')}
             accessibilityLabel={`Cancel immediately. Lose access now. ${cancellationType === 'immediate' ? 'Selected' : ''}`}
             accessibilityRole="radio"
@@ -457,9 +451,7 @@ function CancelFeedbackPage() {
             accessibilityHint="Double tap to cancel immediately and lose access right away"
           >
             <View style={styles.checkbox}>
-              {cancellationType === 'immediate' && (
-                <Ionicons name="checkmark" size={16} color={Colors.error} />
-              )}
+              {cancellationType === 'immediate' && <Ionicons name="checkmark" size={16} color={Colors.error} />}
             </View>
             <View style={styles.typeContent}>
               <ThemedText style={styles.typeTitle}>Cancel immediately</ThemedText>
@@ -478,10 +470,7 @@ function CancelFeedbackPage() {
             accessibilityState={{ disabled: isCancelling }}
             accessibilityHint="Double tap to keep your subscription and go back"
           >
-            <LinearGradient
-              colors={[colors.brand.purpleLight, colors.brand.purple]}
-              style={styles.keepButtonGradient}
-            >
+            <LinearGradient colors={[colors.brand.purpleLight, colors.brand.purple]} style={styles.keepButtonGradient}>
               <ThemedText style={styles.keepButtonText}>Keep My Subscription</ThemedText>
             </LinearGradient>
           </Pressable>
@@ -523,7 +512,7 @@ function CancelFeedbackPage() {
       <LinearGradient colors={[colors.error, colors.error]} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
             accessibilityLabel="Cancel and go back"
             accessibilityRole="button"
@@ -536,13 +525,23 @@ function CancelFeedbackPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
-        {/* Progress Steps */}
-        <ProgressSteps steps={steps} currentStep={currentStep} />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
+      >
+        <ScrollView
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
+          {/* Progress Steps */}
+          <ProgressSteps steps={steps} currentStep={currentStep} />
 
-        {/* Step Content */}
-        {renderStepContent()}
-      </ScrollView>
+          {/* Step Content */}
+          {renderStepContent()}
+        </ScrollView>
+      </KeyboardAvoidingView>
     </ThemedView>
   );
 }

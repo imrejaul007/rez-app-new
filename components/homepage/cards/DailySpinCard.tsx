@@ -36,9 +36,12 @@ const DailySpinCard: React.FC<DailySpinCardProps> = ({
 
   return (
     <Pressable
-     
       onPress={onPress}
       style={styles.cardContainer}
+      accessibilityLabel={`Daily Spin. ${spinsRemaining} of ${maxSpins} spins remaining. Win up to 500 coins.`}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !canSpin }}
+      accessibilityHint={canSpin ? 'Double tap to spin and win coins' : 'No spins remaining. Come back later.'}
     >
       <LinearGradient
         colors={gradientColors}

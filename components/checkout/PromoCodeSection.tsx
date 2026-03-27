@@ -79,7 +79,13 @@ function PromoCodeSection({
             </View>
           </View>
           <View style={styles.appliedPromoActions}>
-            <Pressable onPress={onOpenPromoModal} style={styles.changePromoButton}>
+            <Pressable
+              onPress={onOpenPromoModal}
+              style={styles.changePromoButton}
+              accessibilityLabel="Change promo code"
+              accessibilityRole="button"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
               <ThemedText style={styles.changePromoText}>Change</ThemedText>
             </Pressable>
             <Pressable
@@ -91,6 +97,9 @@ function PromoCodeSection({
                 }, 100);
               }}
               style={styles.removePromoButton}
+              accessibilityLabel="Remove promo code"
+              accessibilityRole="button"
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             >
               <Ionicons name="close" size={20} color={colors.error} />
             </Pressable>
@@ -133,7 +142,13 @@ function PromoCodeSection({
               You save {currencySymbol}{appliedRedemption.benefit}
             </ThemedText>
           </View>
-          <Pressable onPress={onRemoveRedemption} style={styles.removePromoButton}>
+          <Pressable
+            onPress={onRemoveRedemption}
+            style={styles.removePromoButton}
+            accessibilityLabel="Remove deal redemption code"
+            accessibilityRole="button"
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+          >
             <Ionicons name="close" size={20} color={colors.error} />
           </Pressable>
         </View>
@@ -141,6 +156,9 @@ function PromoCodeSection({
         <Pressable
           style={[styles.promoCodeCard, { borderWidth: 1, borderColor: colors.neutral[200], borderStyle: 'dashed' }]}
           onPress={onOpenRedemptionModal}
+          accessibilityLabel="Have a deal code? Redeem your exclusive deal"
+          accessibilityRole="button"
+          accessibilityHint="Double tap to enter your deal redemption code"
         >
           <View style={styles.promoCodeContent}>
             <View>
@@ -173,6 +191,9 @@ function PromoCodeSection({
               showToast({ message: 'Cashback voucher removed', type: 'info', duration: 2000 });
             }}
             style={styles.removePromoButton}
+            accessibilityLabel="Remove cashback voucher"
+            accessibilityRole="button"
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           >
             <Ionicons name="close" size={20} color={colors.error} />
           </Pressable>
@@ -217,6 +238,9 @@ function PromoCodeSection({
                 onVoucherCodeChange('');
               }
             }}
+            accessibilityLabel={validatingRedemption ? 'Validating voucher code' : 'Apply cashback voucher code'}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: validatingRedemption || !voucherCodeInput.trim(), busy: validatingRedemption }}
           >
             <ThemedText style={{ color: colors.text.inverse, fontWeight: '600', fontSize: 12 }}>
               {validatingRedemption ? 'Validating...' : 'Apply'}

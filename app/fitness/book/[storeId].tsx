@@ -104,7 +104,14 @@ const FALLBACK_MEMBERSHIP_PLANS: MembershipPlan[] = [
     durationMonths: 6,
     price: 9999,
     originalPrice: 13999,
-    features: ['Full gym access', 'Locker room', 'Fitness assessment', '2 PT sessions/month', 'Diet consultation', 'Group classes'],
+    features: [
+      'Full gym access',
+      'Locker room',
+      'Fitness assessment',
+      '2 PT sessions/month',
+      'Diet consultation',
+      'Group classes',
+    ],
   },
   {
     id: 'annual',
@@ -113,18 +120,80 @@ const FALLBACK_MEMBERSHIP_PLANS: MembershipPlan[] = [
     durationMonths: 12,
     price: 17999,
     originalPrice: 25999,
-    features: ['Full gym access', 'Locker room', 'Fitness assessment', '4 PT sessions/month', 'Diet consultation', 'All group classes', 'Guest passes'],
+    features: [
+      'Full gym access',
+      'Locker room',
+      'Fitness assessment',
+      '4 PT sessions/month',
+      'Diet consultation',
+      'All group classes',
+      'Guest passes',
+    ],
   },
 ];
 
 // Fallback classes used when API returns empty (store has no fitness class products yet)
 const FALLBACK_CLASSES: FitnessClass[] = [
-  { id: '1', name: 'Morning Yoga', instructor: 'Priya S.', time: '06:00 AM', duration: '60 min', spots: 8, maxSpots: 15, price: 299 },
-  { id: '2', name: 'HIIT Blast', instructor: 'Rahul K.', time: '07:30 AM', duration: '45 min', spots: 5, maxSpots: 20, price: 349 },
-  { id: '3', name: 'Pilates Core', instructor: 'Sneha M.', time: '09:00 AM', duration: '50 min', spots: 12, maxSpots: 12, price: 399 },
-  { id: '4', name: 'Zumba', instructor: 'Meera P.', time: '05:00 PM', duration: '60 min', spots: 3, maxSpots: 25, price: 249 },
-  { id: '5', name: 'CrossFit', instructor: 'Vikram R.', time: '06:30 PM', duration: '60 min', spots: 10, maxSpots: 15, price: 449 },
-  { id: '6', name: 'Spin Class', instructor: 'Arjun D.', time: '07:30 PM', duration: '45 min', spots: 6, maxSpots: 20, price: 349 },
+  {
+    id: '1',
+    name: 'Morning Yoga',
+    instructor: 'Priya S.',
+    time: '06:00 AM',
+    duration: '60 min',
+    spots: 8,
+    maxSpots: 15,
+    price: 299,
+  },
+  {
+    id: '2',
+    name: 'HIIT Blast',
+    instructor: 'Rahul K.',
+    time: '07:30 AM',
+    duration: '45 min',
+    spots: 5,
+    maxSpots: 20,
+    price: 349,
+  },
+  {
+    id: '3',
+    name: 'Pilates Core',
+    instructor: 'Sneha M.',
+    time: '09:00 AM',
+    duration: '50 min',
+    spots: 12,
+    maxSpots: 12,
+    price: 399,
+  },
+  {
+    id: '4',
+    name: 'Zumba',
+    instructor: 'Meera P.',
+    time: '05:00 PM',
+    duration: '60 min',
+    spots: 3,
+    maxSpots: 25,
+    price: 249,
+  },
+  {
+    id: '5',
+    name: 'CrossFit',
+    instructor: 'Vikram R.',
+    time: '06:30 PM',
+    duration: '60 min',
+    spots: 10,
+    maxSpots: 15,
+    price: 449,
+  },
+  {
+    id: '6',
+    name: 'Spin Class',
+    instructor: 'Arjun D.',
+    time: '07:30 PM',
+    duration: '45 min',
+    spots: 6,
+    maxSpots: 20,
+    price: 349,
+  },
 ];
 
 const FitnessBookingPage: React.FC = () => {
@@ -145,9 +214,7 @@ const FitnessBookingPage: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
 
   // Tab state
-  const [activeTab, setActiveTab] = useState<BookingTabType>(
-    (type as BookingTabType) || 'membership'
-  );
+  const [activeTab, setActiveTab] = useState<BookingTabType>((type as BookingTabType) || 'membership');
 
   // Membership state
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
@@ -194,29 +261,33 @@ const FitnessBookingPage: React.FC = () => {
 
       // Use API data if available, otherwise keep fallback plans
       if (plansRes?.success && Array.isArray(plansRes.data) && plansRes.data.length > 0) {
-        setMembershipPlans(plansRes.data.map((p: any) => ({
-          id: p._id || p.id,
-          name: p.name,
-          duration: p.metadata?.duration || p.name,
-          durationMonths: p.metadata?.durationMonths || 1,
-          price: p.pricing?.selling || (typeof p.price === 'number' ? p.price : p.price?.current) || 0,
-          originalPrice: p.pricing?.original || p.price?.original,
-          features: p.metadata?.features || [],
-          popular: p.metadata?.popular || false,
-        })));
+        setMembershipPlans(
+          plansRes.data.map((p: any) => ({
+            id: p._id || p.id,
+            name: p.name,
+            duration: p.metadata?.duration || p.name,
+            durationMonths: p.metadata?.durationMonths || 1,
+            price: p.pricing?.selling || (typeof p.price === 'number' ? p.price : p.price?.current) || 0,
+            originalPrice: p.pricing?.original || p.price?.original,
+            features: p.metadata?.features || [],
+            popular: p.metadata?.popular || false,
+          })),
+        );
       }
 
       if (classesRes?.success && Array.isArray(classesRes.data) && classesRes.data.length > 0) {
-        setClasses(classesRes.data.map((c: any) => ({
-          id: c._id || c.id,
-          name: c.name,
-          instructor: c.metadata?.instructor || 'Instructor',
-          time: c.metadata?.time || '09:00 AM',
-          duration: c.metadata?.duration || '60 min',
-          spots: c.metadata?.spots || 10,
-          maxSpots: c.metadata?.maxSpots || 20,
-          price: c.pricing?.selling || (typeof c.price === 'number' ? c.price : c.price?.current) || 0,
-        })));
+        setClasses(
+          classesRes.data.map((c: any) => ({
+            id: c._id || c.id,
+            name: c.name,
+            instructor: c.metadata?.instructor || 'Instructor',
+            time: c.metadata?.time || '09:00 AM',
+            duration: c.metadata?.duration || '60 min',
+            spots: c.metadata?.spots || 10,
+            maxSpots: c.metadata?.maxSpots || 20,
+            price: c.pricing?.selling || (typeof c.price === 'number' ? c.price : c.price?.current) || 0,
+          })),
+        );
       }
     } catch (error) {
       // silently handle — fallback data already set
@@ -250,7 +321,7 @@ const FitnessBookingPage: React.FC = () => {
       slots.push({
         id: `${hour}:00`,
         time: `${hour > 12 ? hour - 12 : hour}:00 ${hour >= 12 ? 'PM' : 'AM'}`,
-        available: Math.random() > 0.3, // Simulated availability
+        available: true, // TODO: fetch real slot availability from API (currently all shown as available)
       });
     }
     return slots;
@@ -264,10 +335,14 @@ const FitnessBookingPage: React.FC = () => {
 
   const getTrainerPrice = () => {
     switch (sessionType) {
-      case 'single': return 999;
-      case 'pack5': return 4499;
-      case 'pack10': return 7999;
-      default: return 999;
+      case 'single':
+        return 999;
+      case 'pack5':
+        return 4499;
+      case 'pack10':
+        return 7999;
+      default:
+        return 999;
     }
   };
 
@@ -292,7 +367,7 @@ const FitnessBookingPage: React.FC = () => {
         break;
     }
 
-    return Math.round(totalPrice * cashbackPercent / 100);
+    return Math.round((totalPrice * cashbackPercent) / 100);
   };
 
   const getTotalPrice = () => {
@@ -401,7 +476,8 @@ const FitnessBookingPage: React.FC = () => {
     } catch (error: any) {
       if (!isMounted()) return;
       setSubmitting(false);
-      const message = error?.response?.data?.message || error?.message || 'Failed to complete booking. Please try again.';
+      const message =
+        error?.response?.data?.message || error?.message || 'Failed to complete booking. Please try again.';
       if (!isMounted()) return;
       setErrorMessage(message);
     }
@@ -431,9 +507,7 @@ const FitnessBookingPage: React.FC = () => {
               size={18}
               color={activeTab === tab.id ? colors.background.primary : colors.text.tertiary}
             />
-            <Text style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}>
-              {tab.label}
-            </Text>
+            <Text style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}>{tab.label}</Text>
           </Pressable>
         ))}
       </ScrollView>
@@ -452,7 +526,6 @@ const FitnessBookingPage: React.FC = () => {
             plan.popular && styles.planCardPopular,
           ]}
           onPress={() => setSelectedPlan(plan)}
-         
         >
           {plan.popular && (
             <View style={styles.popularBadge}>
@@ -465,8 +538,14 @@ const FitnessBookingPage: React.FC = () => {
               <Text style={styles.planDuration}>{plan.duration}</Text>
             </View>
             <View style={styles.planPriceContainer}>
-              <Text style={styles.planOriginalPrice}>{currencySymbol}{plan.originalPrice.toLocaleString()}</Text>
-              <Text style={styles.planPrice}>{currencySymbol}{plan.price.toLocaleString()}</Text>
+              <Text style={styles.planOriginalPrice}>
+                {currencySymbol}
+                {plan.originalPrice.toLocaleString()}
+              </Text>
+              <Text style={styles.planPrice}>
+                {currencySymbol}
+                {plan.price.toLocaleString()}
+              </Text>
             </View>
           </View>
           <View style={styles.planFeatures}>
@@ -501,9 +580,7 @@ const FitnessBookingPage: React.FC = () => {
             <Text style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
               {date.toLocaleDateString('en-US', { weekday: 'short' })}
             </Text>
-            <Text style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>
-              {date.getDate()}
-            </Text>
+            <Text style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>{date.getDate()}</Text>
             {isToday && <View style={[styles.todayDot, isSelected && styles.todayDotSelected]} />}
           </Pressable>
         );
@@ -523,14 +600,9 @@ const FitnessBookingPage: React.FC = () => {
         return (
           <Pressable
             key={cls.id}
-            style={[
-              styles.classCard,
-              isSelected && styles.classCardSelected,
-              isFull && styles.classCardFull,
-            ]}
+            style={[styles.classCard, isSelected && styles.classCardSelected, isFull && styles.classCardFull]}
             onPress={() => !isFull && setSelectedClass(cls)}
             disabled={isFull}
-           
           >
             <View style={styles.classTime}>
               <Text style={styles.classTimeText}>{cls.time}</Text>
@@ -547,7 +619,10 @@ const FitnessBookingPage: React.FC = () => {
               </View>
             </View>
             <View style={styles.classPrice}>
-              <Text style={styles.classPriceText}>{currencySymbol}{cls.price}</Text>
+              <Text style={styles.classPriceText}>
+                {currencySymbol}
+                {cls.price}
+              </Text>
               {isSelected && <Ionicons name="checkmark-circle" size={20} color={colors.brand.orange} />}
             </View>
           </Pressable>
@@ -579,7 +654,8 @@ const FitnessBookingPage: React.FC = () => {
               {option.label}
             </Text>
             <Text style={[styles.sessionPrice, sessionType === option.id && styles.sessionPriceSelected]}>
-              {currencySymbol}{option.price.toLocaleString()}
+              {currencySymbol}
+              {option.price.toLocaleString()}
             </Text>
           </Pressable>
         ))}
@@ -601,11 +677,13 @@ const FitnessBookingPage: React.FC = () => {
             onPress={() => slot.available && setSelectedTimeSlot(slot.id)}
             disabled={!slot.available}
           >
-            <Text style={[
-              styles.timeSlotText,
-              selectedTimeSlot === slot.id && styles.timeSlotTextSelected,
-              !slot.available && styles.timeSlotTextDisabled,
-            ]}>
+            <Text
+              style={[
+                styles.timeSlotText,
+                selectedTimeSlot === slot.id && styles.timeSlotTextSelected,
+                !slot.available && styles.timeSlotTextDisabled,
+              ]}
+            >
               {slot.time}
             </Text>
           </Pressable>
@@ -720,17 +798,17 @@ const FitnessBookingPage: React.FC = () => {
     <>
       <Stack.Screen options={{ headerShown: false }} />
       <View style={styles.container}>
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={{ flex: 1 }}
-        >
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
           {/* Header */}
           <LinearGradient
             colors={[colors.brand.orange, colors.brand.orangeDark]}
             style={[styles.header, { paddingTop: Platform.OS === 'ios' ? insets.top : 16 }]}
           >
             <View style={styles.headerTop}>
-              <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+              <Pressable
+                style={styles.backBtn}
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              >
                 <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
               </Pressable>
               <View style={styles.headerInfo}>
@@ -774,23 +852,19 @@ const FitnessBookingPage: React.FC = () => {
           <View style={[styles.bottomBar, { paddingBottom: insets.bottom + 16 }]}>
             <View style={styles.priceSection}>
               <Text style={styles.totalLabel}>Total</Text>
-              <Text style={styles.totalPrice}>{currencySymbol}{getTotalPrice().toLocaleString()}</Text>
+              <Text style={styles.totalPrice}>
+                {currencySymbol}
+                {getTotalPrice().toLocaleString()}
+              </Text>
               {getCashbackAmount() > 0 && (
                 <Text style={styles.cashbackEarn}>
-                  Earn {currencySymbol}{getCashbackAmount()} cashback
+                  Earn {currencySymbol}
+                  {getCashbackAmount()} cashback
                 </Text>
               )}
             </View>
-            <Pressable
-              style={styles.bookButton}
-              onPress={handleBooking}
-              disabled={submitting}
-             
-            >
-              <LinearGradient
-                colors={[colors.brand.orange, colors.brand.orangeDark]}
-                style={styles.bookButtonGradient}
-              >
+            <Pressable style={styles.bookButton} onPress={handleBooking} disabled={submitting}>
+              <LinearGradient colors={[colors.brand.orange, colors.brand.orangeDark]} style={styles.bookButtonGradient}>
                 {submitting ? (
                   <ActivityIndicator size="small" color={colors.text.inverse} />
                 ) : (
@@ -805,12 +879,7 @@ const FitnessBookingPage: React.FC = () => {
         </KeyboardAvoidingView>
 
         {/* Success Modal */}
-        <Modal
-          visible={showSuccessModal}
-          transparent
-          animationType="fade"
-          onRequestClose={handleSuccessClose}
-        >
+        <Modal visible={showSuccessModal} transparent animationType="fade" onRequestClose={handleSuccessClose}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalContent}>
               <View style={styles.successIcon}>
@@ -821,20 +890,24 @@ const FitnessBookingPage: React.FC = () => {
                 {activeTab === 'membership'
                   ? `Your ${selectedPlan?.name} membership is confirmed.`
                   : activeTab === 'classes'
-                  ? `You're booked for ${selectedClass?.name}.`
-                  : activeTab === 'trainer'
-                  ? 'Your trainer session is confirmed.'
-                  : 'Your day pass is confirmed.'}
+                    ? `You're booked for ${selectedClass?.name}.`
+                    : activeTab === 'trainer'
+                      ? 'Your trainer session is confirmed.'
+                      : 'Your day pass is confirmed.'}
               </Text>
               <View style={styles.modalDetails}>
                 <View style={styles.modalDetailRow}>
                   <Text style={styles.modalDetailLabel}>Amount Paid</Text>
-                  <Text style={styles.modalDetailValue}>{currencySymbol}{getTotalPrice().toLocaleString()}</Text>
+                  <Text style={styles.modalDetailValue}>
+                    {currencySymbol}
+                    {getTotalPrice().toLocaleString()}
+                  </Text>
                 </View>
                 <View style={styles.modalDetailRow}>
                   <Text style={styles.modalDetailLabel}>Cashback Earned</Text>
                   <Text style={[styles.modalDetailValue, { color: Colors.success }]}>
-                    {currencySymbol}{getCashbackAmount()}
+                    {currencySymbol}
+                    {getCashbackAmount()}
                   </Text>
                 </View>
               </View>
@@ -856,38 +929,96 @@ const FitnessBookingPage: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.primary },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+  },
   loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: colors.text.tertiary },
 
   header: { paddingHorizontal: Spacing.base, paddingBottom: Spacing.base },
   headerTop: { flexDirection: 'row', alignItems: 'center' },
-  backBtn: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   headerInfo: { flex: 1, marginLeft: Spacing.md },
   headerTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.text.inverse },
   cashbackRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, marginTop: 2 },
   cashbackText: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.9)' },
 
-  tabsContainer: { backgroundColor: colors.background.primary, paddingVertical: Spacing.md, paddingHorizontal: Spacing.base, borderBottomWidth: 1, borderBottomColor: colors.border.default },
-  tab: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: Spacing.base, paddingVertical: 10, borderRadius: BorderRadius.xl, backgroundColor: colors.background.secondary, marginRight: Spacing.sm },
+  tabsContainer: {
+    backgroundColor: colors.background.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.base,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+  },
+  tab: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 10,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: colors.background.secondary,
+    marginRight: Spacing.sm,
+  },
   tabActive: { backgroundColor: colors.brand.orange },
   tabText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.text.tertiary },
   tabTextActive: { color: colors.text.inverse },
 
   content: { flex: 1 },
   section: { padding: Spacing.base },
-  sectionTitle: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.md },
+  sectionTitle: {
+    fontSize: Typography.bodyLarge.fontSize,
+    fontWeight: '700',
+    color: colors.nileBlue,
+    marginBottom: Spacing.md,
+  },
 
   // Membership Plans
-  planCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, marginBottom: Spacing.md, borderWidth: 2, borderColor: colors.border.default, position: 'relative' },
+  planCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    marginBottom: Spacing.md,
+    borderWidth: 2,
+    borderColor: colors.border.default,
+    position: 'relative',
+  },
   planCardSelected: { borderColor: colors.brand.orange },
   planCardPopular: { borderColor: Colors.brand.purple },
-  popularBadge: { position: 'absolute', top: -1, right: 16, backgroundColor: Colors.brand.purple, paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderBottomLeftRadius: 8, borderBottomRightRadius: 8 },
+  popularBadge: {
+    position: 'absolute',
+    top: -1,
+    right: 16,
+    backgroundColor: Colors.brand.purple,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+  },
   popularBadgeText: { fontSize: Typography.overline.fontSize, fontWeight: '700', color: colors.text.inverse },
-  planHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: Spacing.md },
+  planHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.md,
+  },
   planName: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue },
   planDuration: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, marginTop: 2 },
   planPriceContainer: { alignItems: 'flex-end' },
-  planOriginalPrice: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, textDecorationLine: 'line-through' },
+  planOriginalPrice: {
+    fontSize: Typography.bodySmall.fontSize,
+    color: colors.text.tertiary,
+    textDecorationLine: 'line-through',
+  },
   planPrice: { fontSize: 22, fontWeight: '700', color: colors.brand.orange },
   planFeatures: { borderTopWidth: 1, borderTopColor: colors.border.default, paddingTop: Spacing.md },
   featureRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: 6 },
@@ -896,19 +1027,49 @@ const styles = StyleSheet.create({
 
   // Date Selector
   dateScroll: { marginBottom: Spacing.sm },
-  dateCard: { width: 60, height: 72, borderRadius: BorderRadius.md, backgroundColor: colors.background.primary, alignItems: 'center', justifyContent: 'center', marginRight: Spacing.sm, borderWidth: 1.5, borderColor: colors.border.default },
+  dateCard: {
+    width: 60,
+    height: 72,
+    borderRadius: BorderRadius.md,
+    backgroundColor: colors.background.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: Spacing.sm,
+    borderWidth: 1.5,
+    borderColor: colors.border.default,
+  },
   dateCardSelected: { borderColor: colors.brand.orange, backgroundColor: colors.brand.orange },
-  dateDay: { fontSize: Typography.caption.fontSize, fontWeight: '500', color: colors.text.tertiary, textTransform: 'uppercase' },
+  dateDay: {
+    fontSize: Typography.caption.fontSize,
+    fontWeight: '500',
+    color: colors.text.tertiary,
+    textTransform: 'uppercase',
+  },
   dateNumber: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.nileBlue, marginVertical: 2 },
   dateTextSelected: { color: colors.text.inverse },
   todayDot: { width: 4, height: 4, borderRadius: 2, backgroundColor: colors.brand.orange },
   todayDotSelected: { backgroundColor: colors.background.primary },
 
   // Class Booking
-  classCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, padding: Spacing.md, marginBottom: 10, borderWidth: 1.5, borderColor: colors.border.default },
+  classCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginBottom: 10,
+    borderWidth: 1.5,
+    borderColor: colors.border.default,
+  },
   classCardSelected: { borderColor: colors.brand.orange, backgroundColor: colors.tint.orange },
   classCardFull: { opacity: 0.6 },
-  classTime: { width: 70, alignItems: 'center', paddingRight: Spacing.md, borderRightWidth: 1, borderRightColor: colors.border.default },
+  classTime: {
+    width: 70,
+    alignItems: 'center',
+    paddingRight: Spacing.md,
+    borderRightWidth: 1,
+    borderRightColor: colors.border.default,
+  },
   classTimeText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '700', color: colors.nileBlue },
   classDuration: { fontSize: Typography.caption.fontSize, color: colors.text.tertiary, marginTop: 2 },
   classInfo: { flex: 1, paddingHorizontal: Spacing.md },
@@ -922,17 +1083,48 @@ const styles = StyleSheet.create({
 
   // Trainer Booking
   sessionTypeContainer: { flexDirection: 'row', gap: Spacing.sm },
-  sessionOption: { flex: 1, backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, padding: Spacing.md, alignItems: 'center', borderWidth: 1.5, borderColor: colors.border.default, position: 'relative' },
+  sessionOption: {
+    flex: 1,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: colors.border.default,
+    position: 'relative',
+  },
   sessionOptionSelected: { borderColor: colors.brand.orange, backgroundColor: colors.tint.orange },
-  saveBadge: { position: 'absolute', top: -8, right: 8, backgroundColor: Colors.success, paddingHorizontal: 6, paddingVertical: 2, borderRadius: BorderRadius.sm },
+  saveBadge: {
+    position: 'absolute',
+    top: -8,
+    right: 8,
+    backgroundColor: Colors.success,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.sm,
+  },
   saveBadgeText: { fontSize: 9, fontWeight: '700', color: colors.text.inverse },
-  sessionLabel: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: colors.text.tertiary, textAlign: 'center', marginBottom: Spacing.xs },
+  sessionLabel: {
+    fontSize: Typography.bodySmall.fontSize,
+    fontWeight: '600',
+    color: colors.text.tertiary,
+    textAlign: 'center',
+    marginBottom: Spacing.xs,
+  },
   sessionLabelSelected: { color: colors.nileBlue },
   sessionPrice: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.nileBlue },
   sessionPriceSelected: { color: colors.brand.orange },
 
   timeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  timeSlot: { width: (SCREEN_WIDTH - 48) / 4, paddingVertical: 10, borderRadius: 10, backgroundColor: colors.background.primary, alignItems: 'center', borderWidth: 1.5, borderColor: colors.border.default },
+  timeSlot: {
+    width: (SCREEN_WIDTH - 48) / 4,
+    paddingVertical: 10,
+    borderRadius: 10,
+    backgroundColor: colors.background.primary,
+    alignItems: 'center',
+    borderWidth: 1.5,
+    borderColor: colors.border.default,
+  },
   timeSlotSelected: { borderColor: colors.brand.orange, backgroundColor: colors.tint.orange },
   timeSlotDisabled: { backgroundColor: colors.background.secondary, opacity: 0.5 },
   timeSlotText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '500', color: colors.text.tertiary },
@@ -940,43 +1132,136 @@ const styles = StyleSheet.create({
   timeSlotTextDisabled: { color: colors.text.tertiary },
 
   // Day Pass
-  dayPassCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, padding: Spacing.base, borderWidth: 1.5, borderColor: colors.border.default },
-  dayPassHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: Spacing.base },
+  dayPassCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.base,
+    borderWidth: 1.5,
+    borderColor: colors.border.default,
+  },
+  dayPassHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: Spacing.base,
+  },
   dayPassTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue },
   dayPassSubtitle: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary, marginTop: 2 },
   dayPassPrice: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.brand.orange },
-  dayPassFeatures: { borderBottomWidth: 1, borderBottomColor: colors.border.default, paddingBottom: Spacing.md, marginBottom: Spacing.base },
+  dayPassFeatures: {
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+    paddingBottom: Spacing.md,
+    marginBottom: Spacing.base,
+  },
   quantitySelector: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   quantityLabel: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.nileBlue },
   quantityControls: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base },
-  quantityButton: { width: 36, height: 36, borderRadius: 18, backgroundColor: colors.background.secondary, justifyContent: 'center', alignItems: 'center' },
-  quantityValue: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue, width: 30, textAlign: 'center' },
+  quantityButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.background.secondary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quantityValue: {
+    fontSize: Typography.h4.fontSize,
+    fontWeight: '700',
+    color: colors.nileBlue,
+    width: 30,
+    textAlign: 'center',
+  },
 
   // Customer Details
-  inputContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, paddingHorizontal: 14, borderWidth: 1.5, borderColor: colors.border.default, marginBottom: Spacing.md },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: 14,
+    borderWidth: 1.5,
+    borderColor: colors.border.default,
+    marginBottom: Spacing.md,
+  },
   input: { flex: 1, height: 48, fontSize: Typography.body.fontSize, color: colors.nileBlue, marginLeft: 10 },
 
   // Error Banner
-  errorBanner: { position: 'absolute', top: 120, left: 16, right: 16, flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.errorScale[100], borderRadius: BorderRadius.md, padding: Spacing.md, gap: Spacing.sm, zIndex: 100 },
+  errorBanner: {
+    position: 'absolute',
+    top: 120,
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.errorScale[100],
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    gap: Spacing.sm,
+    zIndex: 100,
+  },
   errorText: { flex: 1, fontSize: Typography.body.fontSize, color: Colors.error, fontWeight: '500' },
 
   // Bottom Bar
-  bottomBar: { position: 'absolute', bottom: 0, left: 0, right: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingTop: Spacing.base, backgroundColor: colors.background.primary, borderTopWidth: 1, borderTopColor: colors.border.default },
+  bottomBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.base,
+    paddingTop: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderTopWidth: 1,
+    borderTopColor: colors.border.default,
+  },
   priceSection: {},
   totalLabel: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary },
   totalPrice: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.nileBlue },
   cashbackEarn: { fontSize: Typography.caption.fontSize, color: Colors.success, fontWeight: '600' },
   bookButton: { borderRadius: BorderRadius['2xl'], overflow: 'hidden' },
-  bookButtonGradient: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, paddingHorizontal: Spacing.xl, paddingVertical: 14 },
+  bookButtonGradient: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: 14,
+  },
   bookButtonText: { fontSize: Typography.bodyLarge.fontSize, fontWeight: '700', color: colors.text.inverse },
 
   // Success Modal
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', padding: Spacing.xl },
-  modalContent: { backgroundColor: colors.background.primary, borderRadius: BorderRadius['2xl'], padding: Spacing.xl, width: '100%', maxWidth: 340, alignItems: 'center' },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: Spacing.xl,
+  },
+  modalContent: {
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius['2xl'],
+    padding: Spacing.xl,
+    width: '100%',
+    maxWidth: 340,
+    alignItems: 'center',
+  },
   successIcon: { marginBottom: Spacing.base },
   modalTitle: { fontSize: 22, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.sm },
-  modalMessage: { fontSize: Typography.body.fontSize, color: colors.text.tertiary, textAlign: 'center', marginBottom: Spacing.lg },
-  modalDetails: { width: '100%', backgroundColor: colors.background.secondary, borderRadius: BorderRadius.md, padding: Spacing.base, marginBottom: Spacing.lg },
+  modalMessage: {
+    fontSize: Typography.body.fontSize,
+    color: colors.text.tertiary,
+    textAlign: 'center',
+    marginBottom: Spacing.lg,
+  },
+  modalDetails: {
+    width: '100%',
+    backgroundColor: colors.background.secondary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.base,
+    marginBottom: Spacing.lg,
+  },
   modalDetailRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: Spacing.sm },
   modalDetailLabel: { fontSize: Typography.body.fontSize, color: colors.text.tertiary },
   modalDetailValue: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.nileBlue },

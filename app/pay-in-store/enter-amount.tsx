@@ -11,16 +11,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  Dimensions,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Dimensions, Platform, ActivityIndicator } from 'react-native';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -47,10 +38,14 @@ function EnterAmountScreen() {
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
   // EMI threshold varies by region (INR 4000 ≈ AED 180 ≈ CNY 3500)
-  const emiThreshold = regionState.regionConfig?.currency === 'INR' ? 4000
-    : regionState.regionConfig?.currency === 'AED' ? 180
-    : regionState.regionConfig?.currency === 'CNY' ? 3500
-    : 4000;
+  const emiThreshold =
+    regionState.regionConfig?.currency === 'INR'
+      ? 4000
+      : regionState.regionConfig?.currency === 'AED'
+        ? 180
+        : regionState.regionConfig?.currency === 'CNY'
+          ? 3500
+          : 4000;
 
   const [amount, setAmount] = useState('0');
   const [store, setStore] = useState<StorePaymentInfo | null>(null);
@@ -78,12 +73,7 @@ function EnterAmountScreen() {
   useEffect(() => {
     if (userLocation && store?.location?.coordinates) {
       const [storeLng, storeLat] = store.location.coordinates;
-      const dist = calculateDistance(
-        userLocation.latitude,
-        userLocation.longitude,
-        storeLat,
-        storeLng
-      );
+      const dist = calculateDistance(userLocation.latitude, userLocation.longitude, storeLat, storeLng);
       setDistance(dist);
     }
   }, [userLocation, store]);
@@ -114,10 +104,7 @@ function EnterAmountScreen() {
     const dLon = (lon2 - lon1) * (Math.PI / 180);
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(lat1 * (Math.PI / 180)) *
-        Math.cos(lat2 * (Math.PI / 180)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
+      Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
@@ -161,7 +148,9 @@ function EnterAmountScreen() {
 
     try {
       setIsLoadingOffers(true);
-      const response = await apiClient.get<OffersResponse>(`/store-payment/offers/${storeId}`, { amount: numericAmount || 0 });
+      const response = await apiClient.get<OffersResponse>(`/store-payment/offers/${storeId}`, {
+        amount: numericAmount || 0,
+      });
 
       if (response.success && response.data) {
         const offersData = response.data;
@@ -184,17 +173,17 @@ function EnterAmountScreen() {
 
   const handleKeyPress = useCallback((key: string) => {
     if (key === 'backspace') {
-      setAmount(prev => {
+      setAmount((prev) => {
         if (prev.length <= 1) return '0';
         return prev.slice(0, -1);
       });
     } else if (key === '.') {
-      setAmount(prev => {
+      setAmount((prev) => {
         if (prev.includes('.')) return prev;
         return prev + '.';
       });
     } else {
-      setAmount(prev => {
+      setAmount((prev) => {
         if (prev === '0' && key !== '.') return key;
         if (prev.includes('.') && prev.split('.')[1]?.length >= 2) return prev;
         if (prev.length >= 8) return prev;
@@ -284,12 +273,20 @@ function EnterAmountScreen() {
       <SafeAreaView style={styles.container} edges={['top']}>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            hitSlop={{ top: 2, bottom: 2, left: 2, right: 2 }}
+          >
             <Ionicons name="chevron-back" size={24} color={colors.text.primary} />
           </Pressable>
           <View style={styles.headerContent}>
-            <Text style={styles.storeName} numberOfLines={1}>{displayStoreName}</Text>
-            <Text style={styles.storeAddress} numberOfLines={1}>{storeAddress}</Text>
+            <Text style={styles.storeName} numberOfLines={1}>
+              {displayStoreName}
+            </Text>
+            <Text style={styles.storeAddress} numberOfLines={1}>
+              {storeAddress}
+            </Text>
           </View>
         </View>
 
@@ -333,11 +330,18 @@ function EnterAmountScreen() {
 
           {/* Coin earning forecast */}
           {forecastCoins > 0 && (
-            <View style={{
-              flexDirection: 'row', alignItems: 'center', gap: 6,
-              backgroundColor: 'rgba(255,205,87,0.15)', borderRadius: 8,
-              paddingHorizontal: 12, paddingVertical: 6, marginTop: 8,
-            }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 6,
+                backgroundColor: 'rgba(255,205,87,0.15)',
+                borderRadius: 8,
+                paddingHorizontal: 12,
+                paddingVertical: 6,
+                marginTop: 8,
+              }}
+            >
               <Text style={{ fontSize: 16 }}>🪙</Text>
               <Text style={{ fontSize: 13, fontWeight: '700', color: '#92400E' }}>
                 You'll earn ~{forecastCoins} REZ coins
@@ -357,15 +361,20 @@ function EnterAmountScreen() {
             </View>
             <View style={styles.emiContent}>
               <Text style={styles.emiTitle}>No Cost EMI plans available</Text>
-              <Text style={styles.emiSubtitle}>above {currencySymbol}{emiThreshold}</Text>
+              <Text style={styles.emiSubtitle}>
+                above {currencySymbol}
+                {emiThreshold}
+              </Text>
             </View>
-            <Pressable onPress={() => {
-              showToast({
-                message: `No Cost EMI available on bills above ${currencySymbol}${emiThreshold}. Split your payment into easy monthly installments at 0% interest.`,
-                type: 'info',
-                duration: 5000,
-              });
-            }}>
+            <Pressable
+              onPress={() => {
+                showToast({
+                  message: `No Cost EMI available on bills above ${currencySymbol}${emiThreshold}. Split your payment into easy monthly installments at 0% interest.`,
+                  type: 'info',
+                  duration: 5000,
+                });
+              }}
+            >
               <Text style={styles.knowMoreText}>Know more</Text>
             </Pressable>
           </LinearGradient>
@@ -386,14 +395,12 @@ function EnterAmountScreen() {
               {offers.map((offer) => (
                 <View key={offer.id} style={styles.offerCard}>
                   <View style={styles.offerIconContainer}>
-                    <Ionicons
-                      name={getOfferIcon(offer) as any}
-                      size={20}
-                      color={Colors.gold}
-                    />
+                    <Ionicons name={getOfferIcon(offer) as any} size={20} color={Colors.gold} />
                   </View>
                   <Text style={styles.offerTitle}>{offer.title}</Text>
-                  <Text style={styles.offerDescription} numberOfLines={2}>{offer.description}</Text>
+                  <Text style={styles.offerDescription} numberOfLines={2}>
+                    {offer.description}
+                  </Text>
                 </View>
               ))}
             </ScrollView>
@@ -407,19 +414,11 @@ function EnterAmountScreen() {
         {/* Proceed Button */}
         <View style={styles.proceedContainer}>
           <Pressable
-            style={[
-              styles.proceedButton,
-              numericAmount <= 0 && styles.proceedButtonDisabled,
-            ]}
+            style={[styles.proceedButton, numericAmount <= 0 && styles.proceedButtonDisabled]}
             onPress={handleProceed}
             disabled={numericAmount <= 0}
           >
-            <Text style={[
-              styles.proceedText,
-              numericAmount <= 0 && styles.proceedTextDisabled,
-            ]}>
-              Proceed
-            </Text>
+            <Text style={[styles.proceedText, numericAmount <= 0 && styles.proceedTextDisabled]}>Proceed</Text>
             <Ionicons
               name="chevron-forward"
               size={20}
@@ -432,65 +431,36 @@ function EnterAmountScreen() {
         <View style={styles.keypadContainer}>
           <View style={styles.keypadRow}>
             {['1', '2', '3'].map((key) => (
-              <Pressable
-                key={key}
-                style={styles.keypadButton}
-                onPress={() => handleKeyPress(key)}
-              >
+              <Pressable key={key} style={styles.keypadButton} onPress={() => handleKeyPress(key)}>
                 <Text style={styles.keypadText}>{key}</Text>
-                {key !== '1' && (
-                  <Text style={styles.keypadSubText}>
-                    {key === '2' ? 'ABC' : 'DEF'}
-                  </Text>
-                )}
+                {key !== '1' && <Text style={styles.keypadSubText}>{key === '2' ? 'ABC' : 'DEF'}</Text>}
               </Pressable>
             ))}
           </View>
           <View style={styles.keypadRow}>
             {['4', '5', '6'].map((key) => (
-              <Pressable
-                key={key}
-                style={styles.keypadButton}
-                onPress={() => handleKeyPress(key)}
-              >
+              <Pressable key={key} style={styles.keypadButton} onPress={() => handleKeyPress(key)}>
                 <Text style={styles.keypadText}>{key}</Text>
-                <Text style={styles.keypadSubText}>
-                  {key === '4' ? 'GHI' : key === '5' ? 'JKL' : 'MNO'}
-                </Text>
+                <Text style={styles.keypadSubText}>{key === '4' ? 'GHI' : key === '5' ? 'JKL' : 'MNO'}</Text>
               </Pressable>
             ))}
           </View>
           <View style={styles.keypadRow}>
             {['7', '8', '9'].map((key) => (
-              <Pressable
-                key={key}
-                style={styles.keypadButton}
-                onPress={() => handleKeyPress(key)}
-              >
+              <Pressable key={key} style={styles.keypadButton} onPress={() => handleKeyPress(key)}>
                 <Text style={styles.keypadText}>{key}</Text>
-                <Text style={styles.keypadSubText}>
-                  {key === '7' ? 'PQRS' : key === '8' ? 'TUV' : 'WXYZ'}
-                </Text>
+                <Text style={styles.keypadSubText}>{key === '7' ? 'PQRS' : key === '8' ? 'TUV' : 'WXYZ'}</Text>
               </Pressable>
             ))}
           </View>
           <View style={styles.keypadRow}>
-            <Pressable
-              style={styles.keypadButton}
-              onPress={() => handleKeyPress('.')}
-            >
+            <Pressable style={styles.keypadButton} onPress={() => handleKeyPress('.')}>
               <Text style={styles.keypadText}>.</Text>
             </Pressable>
-            <Pressable
-              style={styles.keypadButton}
-              onPress={() => handleKeyPress('0')}
-            >
+            <Pressable style={styles.keypadButton} onPress={() => handleKeyPress('0')}>
               <Text style={styles.keypadText}>0</Text>
             </Pressable>
-            <Pressable
-              style={styles.keypadButton}
-              onPress={() => handleKeyPress('backspace')}
-            >
+            <Pressable style={styles.keypadButton} onPress={() => handleKeyPress('backspace')}>
               <Ionicons name="backspace-outline" size={22} color={colors.text.primary} />
             </Pressable>
           </View>

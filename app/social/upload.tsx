@@ -12,6 +12,7 @@ import {
   Platform,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -58,23 +59,21 @@ function UploadPage() {
   const handlePickMedia = async () => {
     const ImagePicker = await getImagePicker();
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: contentType === 'reel'
-        ? 'videos'
-        : 'mixed',
+      mediaTypes: contentType === 'reel' ? 'videos' : 'mixed',
       allowsMultipleSelection: contentType === 'post',
       quality: 0.8,
       videoMaxDuration: 60,
     });
 
     if (!result.canceled) {
-      const newMedia = result.assets.map(a => a.uri);
+      const newMedia = result.assets.map((a) => a.uri);
       if (!isMounted()) return;
-      setMedia(prev => [...prev, ...newMedia].slice(0, contentType === 'reel' ? 1 : 10));
+      setMedia((prev) => [...prev, ...newMedia].slice(0, contentType === 'reel' ? 1 : 10));
     }
   };
 
   const handleRemoveMedia = (index: number) => {
-    setMedia(prev => prev.filter((_, i) => i !== index));
+    setMedia((prev) => prev.filter((_, i) => i !== index));
   };
 
   const [title, setTitle] = useState('');
@@ -95,28 +94,39 @@ function UploadPage() {
 
   // Product search with debounce
   React.useEffect(() => {
-    if (productSearchQuery.length < 2) { setProductSearchResults([]); return; }
+    if (productSearchQuery.length < 2) {
+      setProductSearchResults([]);
+      return;
+    }
     const timeout = setTimeout(async () => {
       setSearchingProducts(true);
       try {
         const res = await apiClient.get<any>(`/products/search?q=${encodeURIComponent(productSearchQuery)}&limit=5`);
         if (res.success && res.data) {
           const products = Array.isArray(res.data) ? res.data : res.data.products || [];
-          setProductSearchResults(products.map((p: any) => ({
-            id: p._id || p.id,
-            name: p.name,
-            price: p.price ? `${currencySymbol}${p.price}` : '',
-          })));
+          setProductSearchResults(
+            products.map((p: any) => ({
+              id: p._id || p.id,
+              name: p.name,
+              price: p.price ? `${currencySymbol}${p.price}` : '',
+            })),
+          );
         }
-      } catch (_e) { /* silently handle */ }
-      finally { setSearchingProducts(false); }
+      } catch (_e) {
+        /* silently handle */
+      } finally {
+        setSearchingProducts(false);
+      }
     }, 400);
     return () => clearTimeout(timeout);
   }, [productSearchQuery, currencySymbol]);
 
   // Store search with debounce
   React.useEffect(() => {
-    if (storeSearchQuery.length < 2) { setStoreSearchResults([]); return; }
+    if (storeSearchQuery.length < 2) {
+      setStoreSearchResults([]);
+      return;
+    }
     const timeout = setTimeout(async () => {
       setSearchingStores(true);
       try {
@@ -125,8 +135,11 @@ function UploadPage() {
           const stores = Array.isArray(res.data) ? res.data : res.data.stores || [];
           setStoreSearchResults(stores.map((s: any) => ({ id: s._id || s.id, name: s.name })));
         }
-      } catch (_e) { /* silently handle */ }
-      finally { setSearchingStores(false); }
+      } catch (_e) {
+        /* silently handle */
+      } finally {
+        setSearchingStores(false);
+      }
     }, 400);
     return () => clearTimeout(timeout);
   }, [storeSearchQuery]);
@@ -136,7 +149,7 @@ function UploadPage() {
   };
 
   const handleSelectProduct = (product: TaggedProduct) => {
-    if (!taggedProducts.find(p => p.id === product.id)) {
+    if (!taggedProducts.find((p) => p.id === product.id)) {
       setTaggedProducts([...taggedProducts, product]);
     }
     setShowProductSearch(false);
@@ -149,7 +162,7 @@ function UploadPage() {
   };
 
   const handleSelectStore = (store: TaggedStore) => {
-    if (!taggedStores.find(s => s.id === store.id)) {
+    if (!taggedStores.find((s) => s.id === store.id)) {
       setTaggedStores([...taggedStores, store]);
     }
     setShowStoreSearch(false);
@@ -189,8 +202,8 @@ function UploadPage() {
           thumbnailUrl: uploadResult.thumbnailUrl,
           duration: uploadResult.duration,
           tags: [],
-          taggedProducts: taggedProducts.map(p => p.id),
-          taggedStores: taggedStores.map(s => s.id),
+          taggedProducts: taggedProducts.map((p) => p.id),
+          taggedStores: taggedStores.map((s) => s.id),
           storeId: taggedStores.length > 0 ? taggedStores[0].id : undefined,
         });
 
@@ -220,7 +233,7 @@ function UploadPage() {
       // Upload images to Cloudinary
       const imageUrls: string[] = [];
       for (let i = 0; i < media.length; i++) {
-        setUploadProgress(Math.round(((i) / media.length) * 80));
+        setUploadProgress(Math.round((i / media.length) * 80));
         const formData = new FormData();
         formData.append('file', { uri: media[i], type: 'image/jpeg', name: `${contentType}_${i}.jpg` } as any);
         formData.append('upload_preset', CLOUDINARY_CONFIG.uploadPresets.images);
@@ -249,8 +262,8 @@ function UploadPage() {
         imageUrls,
         caption: caption.trim() || undefined,
         tags: [],
-        taggedProducts: taggedProducts.map(p => p.id),
-        taggedStores: taggedStores.map(s => s.id),
+        taggedProducts: taggedProducts.map((p) => p.id),
+        taggedStores: taggedStores.map((s) => s.id),
         storeId: taggedStores.length > 0 ? taggedStores[0].id : undefined,
       });
 
@@ -278,12 +291,12 @@ function UploadPage() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="close" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Create</ThemedText>
@@ -304,245 +317,249 @@ function UploadPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
       >
-        {/* Content Type Selector */}
-        <View style={styles.typeSelector}>
-          {(['post', 'reel', 'story'] as ContentType[]).map(type => (
-            <Pressable
-              key={type}
-              style={[
-                styles.typeButton,
-                contentType === type && styles.typeButtonActive,
-              ]}
-              onPress={() => {
-                setContentType(type);
-                setMedia([]);
-              }}
-            >
-              <Ionicons
-                name={
-                  type === 'post' ? 'images' :
-                  type === 'reel' ? 'videocam' : 'timer'
-                }
-                size={20}
-                color={contentType === type ? Colors.primary[600] : colors.text.tertiary}
-              />
-              <ThemedText style={[
-                styles.typeText,
-                contentType === type && styles.typeTextActive,
-              ]}>
-                {type.charAt(0).toUpperCase() + type.slice(1)}
-              </ThemedText>
-            </Pressable>
-          ))}
-        </View>
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
+          {/* Content Type Selector */}
+          <View style={styles.typeSelector}>
+            {(['post', 'reel', 'story'] as ContentType[]).map((type) => (
+              <Pressable
+                key={type}
+                style={[styles.typeButton, contentType === type && styles.typeButtonActive]}
+                onPress={() => {
+                  setContentType(type);
+                  setMedia([]);
+                }}
+              >
+                <Ionicons
+                  name={type === 'post' ? 'images' : type === 'reel' ? 'videocam' : 'timer'}
+                  size={20}
+                  color={contentType === type ? Colors.primary[600] : colors.text.tertiary}
+                />
+                <ThemedText style={[styles.typeText, contentType === type && styles.typeTextActive]}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </ThemedText>
+              </Pressable>
+            ))}
+          </View>
 
-        {/* Media Upload Area */}
-        <View style={styles.mediaSection}>
-          {media.length > 0 ? (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={styles.mediaGrid}>
-                {media.map((uri, index) => (
-                  <View key={index} style={styles.mediaItem}>
-                    <CachedImage source={{ uri }} style={styles.mediaImage} />
-                    <Pressable
-                      style={styles.removeMedia}
-                      onPress={() => handleRemoveMedia(index)}
-                    >
-                      <Ionicons name="close-circle" size={24} color={Colors.error} />
+          {/* Media Upload Area */}
+          <View style={styles.mediaSection}>
+            {media.length > 0 ? (
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <View style={styles.mediaGrid}>
+                  {media.map((uri, index) => (
+                    <View key={index} style={styles.mediaItem}>
+                      <CachedImage source={{ uri }} style={styles.mediaImage} />
+                      <Pressable style={styles.removeMedia} onPress={() => handleRemoveMedia(index)}>
+                        <Ionicons name="close-circle" size={24} color={Colors.error} />
+                      </Pressable>
+                    </View>
+                  ))}
+                  {((contentType === 'post' && media.length < 10) ||
+                    (contentType !== 'post' && media.length === 0)) && (
+                    <Pressable style={styles.addMediaButton} onPress={handlePickMedia}>
+                      <Ionicons name="add" size={32} color={colors.text.tertiary} />
+                    </Pressable>
+                  )}
+                </View>
+              </ScrollView>
+            ) : (
+              <Pressable style={styles.uploadArea} onPress={handlePickMedia}>
+                <Ionicons
+                  name={contentType === 'reel' ? 'videocam-outline' : 'camera-outline'}
+                  size={48}
+                  color={colors.text.tertiary}
+                />
+                <ThemedText style={styles.uploadText}>
+                  {contentType === 'reel'
+                    ? 'Add a video (up to 60 seconds)'
+                    : contentType === 'story'
+                      ? 'Add a photo or video'
+                      : 'Add photos or videos (up to 10)'}
+                </ThemedText>
+                <ThemedText style={styles.uploadHint}>Tap to select from gallery</ThemedText>
+              </Pressable>
+            )}
+          </View>
+
+          {/* Title (required for reels) */}
+          {contentType === 'reel' && (
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionLabel}>Title *</ThemedText>
+              <TextInput
+                style={styles.titleInput}
+                value={title}
+                onChangeText={setTitle}
+                placeholder="Give your reel a title (min 3 chars)..."
+                placeholderTextColor={colors.text.tertiary}
+                maxLength={100}
+              />
+              <ThemedText style={styles.charCount}>{title.length}/100</ThemedText>
+            </View>
+          )}
+
+          {/* Caption */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionLabel}>Caption</ThemedText>
+            <TextInput
+              style={styles.captionInput}
+              value={caption}
+              onChangeText={setCaption}
+              placeholder="Write a caption..."
+              placeholderTextColor={colors.text.tertiary}
+              multiline
+              maxLength={2200}
+            />
+            <ThemedText style={styles.charCount}>{caption.length}/2200</ThemedText>
+          </View>
+
+          {/* Tag Products */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <ThemedText style={styles.sectionLabel}>Tag Products</ThemedText>
+              <Pressable onPress={handleAddProduct}>
+                <Ionicons name="add-circle" size={24} color={Colors.primary[600]} />
+              </Pressable>
+            </View>
+            {showProductSearch && (
+              <View style={{ marginBottom: Spacing.sm }}>
+                <TextInput
+                  style={styles.titleInput}
+                  value={productSearchQuery}
+                  onChangeText={setProductSearchQuery}
+                  placeholder="Search products..."
+                  placeholderTextColor={colors.text.tertiary}
+                  autoFocus
+                />
+                {searchingProducts && <ActivityIndicator size="small" style={{ marginTop: 4 }} />}
+                {productSearchResults.map((p) => (
+                  <Pressable
+                    key={p.id}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: Spacing.sm,
+                      padding: Spacing.md,
+                      borderBottomWidth: 1,
+                      borderBottomColor: Colors.gray[100],
+                    }}
+                    onPress={() => handleSelectProduct(p)}
+                  >
+                    <Ionicons name="cube" size={16} color={Colors.primary[600]} />
+                    <ThemedText style={{ flex: 1, ...Typography.body, color: colors.text.primary }}>
+                      {p.name}
+                    </ThemedText>
+                    {p.price ? (
+                      <ThemedText style={{ ...Typography.caption, color: colors.text.tertiary }}>{p.price}</ThemedText>
+                    ) : null}
+                  </Pressable>
+                ))}
+              </View>
+            )}
+            {taggedProducts.length > 0 ? (
+              <View style={styles.tagsContainer}>
+                {taggedProducts.map((product) => (
+                  <View key={product.id} style={styles.tagChip}>
+                    <Ionicons name="pricetag" size={14} color={Colors.primary[600]} />
+                    <ThemedText style={styles.tagText}>{product.name}</ThemedText>
+                    <ThemedText style={styles.tagPrice}>{product.price}</ThemedText>
+                    <Pressable onPress={() => setTaggedProducts((prev) => prev.filter((p) => p.id !== product.id))}>
+                      <Ionicons name="close" size={16} color={colors.text.tertiary} />
                     </Pressable>
                   </View>
                 ))}
-                {((contentType === 'post' && media.length < 10) ||
-                  (contentType !== 'post' && media.length === 0)) && (
-                  <Pressable style={styles.addMediaButton} onPress={handlePickMedia}>
-                    <Ionicons name="add" size={32} color={colors.text.tertiary} />
-                  </Pressable>
-                )}
               </View>
-            </ScrollView>
-          ) : (
-            <Pressable style={styles.uploadArea} onPress={handlePickMedia}>
-              <Ionicons
-                name={contentType === 'reel' ? 'videocam-outline' : 'camera-outline'}
-                size={48}
-                color={colors.text.tertiary}
-              />
-              <ThemedText style={styles.uploadText}>
-                {contentType === 'reel'
-                  ? 'Add a video (up to 60 seconds)'
-                  : contentType === 'story'
-                  ? 'Add a photo or video'
-                  : 'Add photos or videos (up to 10)'}
-              </ThemedText>
-              <ThemedText style={styles.uploadHint}>Tap to select from gallery</ThemedText>
-            </Pressable>
-          )}
-        </View>
+            ) : !showProductSearch ? (
+              <ThemedText style={styles.emptyTagText}>Tag products to help your followers shop</ThemedText>
+            ) : null}
+          </View>
 
-        {/* Title (required for reels) */}
-        {contentType === 'reel' && (
+          {/* Tag Stores */}
           <View style={styles.section}>
-            <ThemedText style={styles.sectionLabel}>Title *</ThemedText>
-            <TextInput
-              style={styles.titleInput}
-              value={title}
-              onChangeText={setTitle}
-              placeholder="Give your reel a title (min 3 chars)..."
-              placeholderTextColor={colors.text.tertiary}
-              maxLength={100}
-            />
-            <ThemedText style={styles.charCount}>{title.length}/100</ThemedText>
-          </View>
-        )}
-
-        {/* Caption */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionLabel}>Caption</ThemedText>
-          <TextInput
-            style={styles.captionInput}
-            value={caption}
-            onChangeText={setCaption}
-            placeholder="Write a caption..."
-            placeholderTextColor={colors.text.tertiary}
-            multiline
-            maxLength={2200}
-          />
-          <ThemedText style={styles.charCount}>{caption.length}/2200</ThemedText>
-        </View>
-
-        {/* Tag Products */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionLabel}>Tag Products</ThemedText>
-            <Pressable onPress={handleAddProduct}>
-              <Ionicons name="add-circle" size={24} color={Colors.primary[600]} />
-            </Pressable>
-          </View>
-          {showProductSearch && (
-            <View style={{ marginBottom: Spacing.sm }}>
-              <TextInput
-                style={styles.titleInput}
-                value={productSearchQuery}
-                onChangeText={setProductSearchQuery}
-                placeholder="Search products..."
-                placeholderTextColor={colors.text.tertiary}
-                autoFocus
-              />
-              {searchingProducts && <ActivityIndicator size="small" style={{ marginTop: 4 }} />}
-              {productSearchResults.map(p => (
-                <Pressable
-                  key={p.id}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, padding: Spacing.md, borderBottomWidth: 1, borderBottomColor: Colors.gray[100] }}
-                  onPress={() => handleSelectProduct(p)}
-                >
-                  <Ionicons name="cube" size={16} color={Colors.primary[600]} />
-                  <ThemedText style={{ flex: 1, ...Typography.body, color: colors.text.primary }}>{p.name}</ThemedText>
-                  {p.price ? <ThemedText style={{ ...Typography.caption, color: colors.text.tertiary }}>{p.price}</ThemedText> : null}
-                </Pressable>
-              ))}
+            <View style={styles.sectionHeader}>
+              <ThemedText style={styles.sectionLabel}>Tag Stores</ThemedText>
+              <Pressable onPress={handleAddStore}>
+                <Ionicons name="add-circle" size={24} color={Colors.primary[600]} />
+              </Pressable>
             </View>
-          )}
-          {taggedProducts.length > 0 ? (
-            <View style={styles.tagsContainer}>
-              {taggedProducts.map(product => (
-                <View key={product.id} style={styles.tagChip}>
-                  <Ionicons name="pricetag" size={14} color={Colors.primary[600]} />
-                  <ThemedText style={styles.tagText}>{product.name}</ThemedText>
-                  <ThemedText style={styles.tagPrice}>{product.price}</ThemedText>
+            {showStoreSearch && (
+              <View style={{ marginBottom: Spacing.sm }}>
+                <TextInput
+                  style={styles.titleInput}
+                  value={storeSearchQuery}
+                  onChangeText={setStoreSearchQuery}
+                  placeholder="Search stores..."
+                  placeholderTextColor={colors.text.tertiary}
+                  autoFocus
+                />
+                {searchingStores && <ActivityIndicator size="small" style={{ marginTop: 4 }} />}
+                {storeSearchResults.map((s) => (
                   <Pressable
-                    onPress={() => setTaggedProducts(prev => prev.filter(p => p.id !== product.id))}
+                    key={s.id}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: Spacing.sm,
+                      padding: Spacing.md,
+                      borderBottomWidth: 1,
+                      borderBottomColor: Colors.gray[100],
+                    }}
+                    onPress={() => handleSelectStore(s)}
                   >
-                    <Ionicons name="close" size={16} color={colors.text.tertiary} />
+                    <Ionicons name="storefront" size={16} color={Colors.primary[600]} />
+                    <ThemedText style={{ ...Typography.body, color: colors.text.primary }}>{s.name}</ThemedText>
                   </Pressable>
-                </View>
-              ))}
-            </View>
-          ) : !showProductSearch ? (
-            <ThemedText style={styles.emptyTagText}>
-              Tag products to help your followers shop
-            </ThemedText>
-          ) : null}
-        </View>
-
-        {/* Tag Stores */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionLabel}>Tag Stores</ThemedText>
-            <Pressable onPress={handleAddStore}>
-              <Ionicons name="add-circle" size={24} color={Colors.primary[600]} />
-            </Pressable>
+                ))}
+              </View>
+            )}
+            {taggedStores.length > 0 ? (
+              <View style={styles.tagsContainer}>
+                {taggedStores.map((store) => (
+                  <View key={store.id} style={styles.tagChip}>
+                    <Ionicons name="storefront" size={14} color={Colors.primary[600]} />
+                    <ThemedText style={styles.tagText}>{store.name}</ThemedText>
+                    <Pressable onPress={() => setTaggedStores((prev) => prev.filter((s) => s.id !== store.id))}>
+                      <Ionicons name="close" size={16} color={colors.text.tertiary} />
+                    </Pressable>
+                  </View>
+                ))}
+              </View>
+            ) : !showStoreSearch ? (
+              <ThemedText style={styles.emptyTagText}>Tag stores to give them credit</ThemedText>
+            ) : null}
           </View>
-          {showStoreSearch && (
-            <View style={{ marginBottom: Spacing.sm }}>
-              <TextInput
-                style={styles.titleInput}
-                value={storeSearchQuery}
-                onChangeText={setStoreSearchQuery}
-                placeholder="Search stores..."
-                placeholderTextColor={colors.text.tertiary}
-                autoFocus
-              />
-              {searchingStores && <ActivityIndicator size="small" style={{ marginTop: 4 }} />}
-              {storeSearchResults.map(s => (
-                <Pressable
-                  key={s.id}
-                  style={{ flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, padding: Spacing.md, borderBottomWidth: 1, borderBottomColor: Colors.gray[100] }}
-                  onPress={() => handleSelectStore(s)}
-                >
-                  <Ionicons name="storefront" size={16} color={Colors.primary[600]} />
-                  <ThemedText style={{ ...Typography.body, color: colors.text.primary }}>{s.name}</ThemedText>
-                </Pressable>
-              ))}
-            </View>
-          )}
-          {taggedStores.length > 0 ? (
-            <View style={styles.tagsContainer}>
-              {taggedStores.map(store => (
-                <View key={store.id} style={styles.tagChip}>
-                  <Ionicons name="storefront" size={14} color={Colors.primary[600]} />
-                  <ThemedText style={styles.tagText}>{store.name}</ThemedText>
-                  <Pressable
-                    onPress={() => setTaggedStores(prev => prev.filter(s => s.id !== store.id))}
-                  >
-                    <Ionicons name="close" size={16} color={colors.text.tertiary} />
-                  </Pressable>
-                </View>
-              ))}
-            </View>
-          ) : !showStoreSearch ? (
-            <ThemedText style={styles.emptyTagText}>
-              Tag stores to give them credit
-            </ThemedText>
-          ) : null}
-        </View>
 
-        {/* Location */}
-        <Pressable style={styles.optionRow}>
-          <View style={styles.optionLeft}>
-            <Ionicons name="location-outline" size={24} color={colors.text.secondary} />
-            <ThemedText style={styles.optionLabel}>Add Location</ThemedText>
-          </View>
-          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-        </Pressable>
+          {/* Location */}
+          <Pressable style={styles.optionRow}>
+            <View style={styles.optionLeft}>
+              <Ionicons name="location-outline" size={24} color={colors.text.secondary} />
+              <ThemedText style={styles.optionLabel}>Add Location</ThemedText>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+          </Pressable>
 
-        {/* Earn Coins Info */}
-        <View style={styles.earnCard}>
-          <Ionicons name="diamond" size={24} color={Colors.gold} />
-          <View style={styles.earnContent}>
-            <ThemedText style={styles.earnTitle}>{`Earn ${BRAND.COIN_NAME}`}</ThemedText>
-            <ThemedText style={styles.earnText}>
-              {contentType === 'reel'
-                ? 'Earn up to 200 coins for approved reels! Coins are awarded after moderation review.'
-                : 'Get 10 RC for every post and bonus coins for engagement!'}
-            </ThemedText>
+          {/* Earn Coins Info */}
+          <View style={styles.earnCard}>
+            <Ionicons name="diamond" size={24} color={Colors.gold} />
+            <View style={styles.earnContent}>
+              <ThemedText style={styles.earnTitle}>{`Earn ${BRAND.COIN_NAME}`}</ThemedText>
+              <ThemedText style={styles.earnText}>
+                {contentType === 'reel'
+                  ? 'Earn up to 200 coins for approved reels! Coins are awarded after moderation review.'
+                  : 'Get 10 RC for every post and bonus coins for engagement!'}
+              </ThemedText>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

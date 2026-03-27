@@ -1,8 +1,15 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, ScrollView, Pressable,
-  TextInput, RefreshControl,
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  TextInput,
+  RefreshControl,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS } from '@/components/prive/priveTheme';
@@ -34,13 +41,22 @@ function ConciergeScreen() {
       if (response.success && response.data) {
         setTickets(response.data.tickets || response.data || []);
       }
-    } catch (e) { catchAndReport(e, setError, 'Concierge/fetchTickets'); }
-    finally { setIsLoading(false); setIsRefreshing(false); }
+    } catch (e) {
+      catchAndReport(e, setError, 'Concierge/fetchTickets');
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
   }, []);
 
   const isMounted = useIsMounted();
-  useEffect(() => { fetchTickets(); }, [fetchTickets]);
-  const onRefresh = () => { setIsRefreshing(true); fetchTickets(); };
+  useEffect(() => {
+    fetchTickets();
+  }, [fetchTickets]);
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    fetchTickets();
+  };
 
   const handleSubmit = async () => {
     if (!subject.trim() || !message.trim()) return;
@@ -60,23 +76,34 @@ function ConciergeScreen() {
         setShowForm(false);
         await fetchTickets();
       }
-    } catch (e) { catchAndReport(e, setError, 'Concierge/submitTicket'); }
-    finally { setIsSubmitting(false); }
+    } catch (e) {
+      catchAndReport(e, setError, 'Concierge/submitTicket');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open': return PRIVE_COLORS.status.info;
-      case 'in_progress': return PRIVE_COLORS.status.warning;
-      case 'resolved': case 'closed': return PRIVE_COLORS.status.success;
-      default: return PRIVE_COLORS.text.tertiary;
+      case 'open':
+        return PRIVE_COLORS.status.info;
+      case 'in_progress':
+        return PRIVE_COLORS.status.warning;
+      case 'resolved':
+      case 'closed':
+        return PRIVE_COLORS.status.success;
+      default:
+        return PRIVE_COLORS.text.tertiary;
     }
   };
 
   if (tierRank[tier] < 2) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <PriveEmptyState
           icon="◆"
           title="Concierge is available for Signature and Elite members"
@@ -89,7 +116,10 @@ function ConciergeScreen() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <ChatSkeleton />
       </View>
     );
@@ -97,94 +127,103 @@ function ConciergeScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }}
-        style={styles.scroll}
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />}
+      <LinearGradient
+        colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+        style={StyleSheet.absoluteFill}
+      />
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
       >
-        {/* Info Banner */}
-        <View style={styles.infoBanner}>
-          <Text style={styles.infoIcon}>◆</Text>
-          <View style={{ flex: 1 }}>
-            <Text style={styles.infoTitle}>Prive Concierge</Text>
-            <Text style={styles.infoSubtitle}>Priority support for Prive members. Response times vary by tier.</Text>
-          </View>
-        </View>
-
-        {/* New Ticket Button / Form */}
-        {!showForm ? (
-          <Pressable style={styles.newTicketBtn} onPress={() => setShowForm(true)}>
-            <Text style={styles.newTicketText}>+ New Support Request</Text>
-          </Pressable>
-        ) : (
-          <View style={styles.formCard}>
-            <Text style={styles.formTitle}>New Support Request</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Subject"
-              placeholderTextColor={PRIVE_COLORS.text.tertiary}
-              value={subject}
-              onChangeText={setSubject}
-            />
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="Describe your issue..."
-              placeholderTextColor={PRIVE_COLORS.text.tertiary}
-              value={message}
-              onChangeText={setMessage}
-              multiline
-              numberOfLines={4}
-              textAlignVertical="top"
-            />
-            <View style={styles.formActions}>
-              <Pressable style={styles.cancelBtn} onPress={() => setShowForm(false)}>
-                <Text style={styles.cancelText}>Cancel</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.submitBtn, (!subject.trim() || !message.trim()) && styles.submitDisabled]}
-                onPress={handleSubmit}
-                disabled={isSubmitting || !subject.trim() || !message.trim()}
-              >
-                <Text style={styles.submitText}>{isSubmitting ? 'Submitting...' : 'Submit'}</Text>
-              </Pressable>
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 120 }}
+          style={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />
+          }
+        >
+          {/* Info Banner */}
+          <View style={styles.infoBanner}>
+            <Text style={styles.infoIcon}>◆</Text>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.infoTitle}>Prive Concierge</Text>
+              <Text style={styles.infoSubtitle}>Priority support for Prive members. Response times vary by tier.</Text>
             </View>
           </View>
-        )}
 
-        {/* Ticket History */}
-        <Text style={styles.sectionTitle}>Your Tickets</Text>
-        {tickets.length === 0 ? (
-          <PriveEmptyState icon="◆" title="No tickets yet" subtitle="Your support history will appear here" />
-        ) : (
-          tickets.map((ticket: any) => (
-            <View key={ticket._id || ticket.ticketNumber} style={styles.ticketCard}>
-              <View style={styles.ticketHeader}>
-                <Text style={styles.ticketSubject}>{ticket.subject}</Text>
-                <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(ticket.status)}20` }]}>
-                  <Text style={[styles.statusText, { color: getStatusColor(ticket.status) }]}>
-                    {ticket.status?.replace('_', ' ')}
-                  </Text>
-                </View>
+          {/* New Ticket Button / Form */}
+          {!showForm ? (
+            <Pressable style={styles.newTicketBtn} onPress={() => setShowForm(true)}>
+              <Text style={styles.newTicketText}>+ New Support Request</Text>
+            </Pressable>
+          ) : (
+            <View style={styles.formCard}>
+              <Text style={styles.formTitle}>New Support Request</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Subject"
+                placeholderTextColor={PRIVE_COLORS.text.tertiary}
+                value={subject}
+                onChangeText={setSubject}
+              />
+              <TextInput
+                style={[styles.input, styles.textArea]}
+                placeholder="Describe your issue..."
+                placeholderTextColor={PRIVE_COLORS.text.tertiary}
+                value={message}
+                onChangeText={setMessage}
+                multiline
+                numberOfLines={4}
+                textAlignVertical="top"
+              />
+              <View style={styles.formActions}>
+                <Pressable style={styles.cancelBtn} onPress={() => setShowForm(false)}>
+                  <Text style={styles.cancelText}>Cancel</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.submitBtn, (!subject.trim() || !message.trim()) && styles.submitDisabled]}
+                  onPress={handleSubmit}
+                  disabled={isSubmitting || !subject.trim() || !message.trim()}
+                >
+                  <Text style={styles.submitText}>{isSubmitting ? 'Submitting...' : 'Submit'}</Text>
+                </Pressable>
               </View>
-              {ticket.ticketNumber && (
-                <Text style={styles.ticketNumber}>#{ticket.ticketNumber}</Text>
-              )}
-              {ticket.lastMessage && (
-                <Text style={styles.lastMessage} numberOfLines={2}>
-                  {typeof ticket.lastMessage === 'string' ? ticket.lastMessage : ticket.lastMessage.message}
-                </Text>
-              )}
-              <Text style={styles.ticketDate}>
-                {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString() : ''}
-              </Text>
             </View>
-          ))
-        )}
+          )}
 
-        <View style={{ height: 40 }} />
-      </ScrollView>
+          {/* Ticket History */}
+          <Text style={styles.sectionTitle}>Your Tickets</Text>
+          {tickets.length === 0 ? (
+            <PriveEmptyState icon="◆" title="No tickets yet" subtitle="Your support history will appear here" />
+          ) : (
+            tickets.map((ticket: any) => (
+              <View key={ticket._id || ticket.ticketNumber} style={styles.ticketCard}>
+                <View style={styles.ticketHeader}>
+                  <Text style={styles.ticketSubject}>{ticket.subject}</Text>
+                  <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(ticket.status)}20` }]}>
+                    <Text style={[styles.statusText, { color: getStatusColor(ticket.status) }]}>
+                      {ticket.status?.replace('_', ' ')}
+                    </Text>
+                  </View>
+                </View>
+                {ticket.ticketNumber && <Text style={styles.ticketNumber}>#{ticket.ticketNumber}</Text>}
+                {ticket.lastMessage && (
+                  <Text style={styles.lastMessage} numberOfLines={2}>
+                    {typeof ticket.lastMessage === 'string' ? ticket.lastMessage : ticket.lastMessage.message}
+                  </Text>
+                )}
+                <Text style={styles.ticketDate}>
+                  {ticket.createdAt ? new Date(ticket.createdAt).toLocaleDateString() : ''}
+                </Text>
+              </View>
+            ))
+          )}
+
+          <View style={{ height: 40 }} />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -258,8 +297,19 @@ const styles = StyleSheet.create({
     borderColor: PRIVE_COLORS.border.primary,
     marginBottom: PRIVE_SPACING.md,
   },
-  ticketHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: PRIVE_SPACING.sm },
-  ticketSubject: { fontSize: 14, fontWeight: '600', color: PRIVE_COLORS.text.primary, flex: 1, marginRight: PRIVE_SPACING.sm },
+  ticketHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: PRIVE_SPACING.sm,
+  },
+  ticketSubject: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: PRIVE_COLORS.text.primary,
+    flex: 1,
+    marginRight: PRIVE_SPACING.sm,
+  },
   statusBadge: { paddingHorizontal: PRIVE_SPACING.sm, paddingVertical: 2, borderRadius: PRIVE_RADIUS.sm },
   statusText: { fontSize: 11, fontWeight: '600', textTransform: 'capitalize' },
   ticketNumber: { fontSize: 11, color: PRIVE_COLORS.text.tertiary, marginBottom: PRIVE_SPACING.sm },

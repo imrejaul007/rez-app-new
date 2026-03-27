@@ -105,7 +105,7 @@ function AddedToCartModal({
             <Pressable
               style={styles.closeButton}
               onPress={onClose}
-             
+              hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
               accessibilityLabel="Close dialog"
               accessibilityRole="button"
               accessibilityHint="Double tap to close this dialog"

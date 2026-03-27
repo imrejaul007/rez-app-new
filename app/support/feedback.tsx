@@ -13,6 +13,7 @@ import {
   Platform,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -58,14 +59,14 @@ function FeedbackPage() {
     });
 
     if (!result.canceled) {
-      const newImages = result.assets.map(a => a.uri);
+      const newImages = result.assets.map((a) => a.uri);
       if (!isMounted()) return;
-      setScreenshots(prev => [...prev, ...newImages].slice(0, 3));
+      setScreenshots((prev) => [...prev, ...newImages].slice(0, 3));
     }
   };
 
   const handleRemoveImage = (index: number) => {
-    setScreenshots(prev => prev.filter((_, i) => i !== index));
+    setScreenshots((prev) => prev.filter((_, i) => i !== index));
   };
 
   const [uploadingImages, setUploadingImages] = useState(false);
@@ -110,9 +111,7 @@ function FeedbackPage() {
       if (screenshots.length > 0) {
         setUploadingImages(true);
         try {
-          attachmentUrls = await Promise.all(
-            screenshots.map(uri => uploadImageToCloudinary(uri))
-          );
+          attachmentUrls = await Promise.all(screenshots.map((uri) => uploadImageToCloudinary(uri)));
         } catch (uploadError) {
           platformAlertSimple('Upload Error', 'Failed to upload screenshots. Submitting feedback without images.');
         } finally {
@@ -122,7 +121,7 @@ function FeedbackPage() {
       }
 
       const response = await supportService.createTicket({
-        subject: `Feedback: ${FEEDBACK_CATEGORIES.find(c => c.id === selectedCategory)?.label || selectedCategory}`,
+        subject: `Feedback: ${FEEDBACK_CATEGORIES.find((c) => c.id === selectedCategory)?.label || selectedCategory}`,
         category: 'other',
         message: `[Rating: ${rating}/5]\n[Category: ${selectedCategory}]\n\n${feedback}${email ? `\n\nContact email: ${email}` : ''}`,
         priority: 'low',
@@ -150,12 +149,12 @@ function FeedbackPage() {
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <StatusBar barStyle="light-content" translucent />
-        <LinearGradient
-          colors={Gradients.nileBlue}
-          style={styles.header}
-        >
+        <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.white} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Feedback</ThemedText>
@@ -172,7 +171,10 @@ function FeedbackPage() {
             Your feedback helps us improve ${BRAND.APP_NAME} for everyone.{'\n'}
             We truly appreciate you taking the time to share your thoughts.
           </ThemedText>
-          <Pressable style={styles.doneButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.doneButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <ThemedText style={styles.doneButtonText}>Done</ThemedText>
           </Pressable>
         </View>
@@ -186,12 +188,12 @@ function FeedbackPage() {
       <StatusBar barStyle="light-content" translucent />
 
       {/* Header */}
-      <LinearGradient
-        colors={Gradients.nileBlue}
-        style={styles.header}
-      >
+      <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.white} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Feedback</ThemedText>
@@ -199,166 +201,151 @@ function FeedbackPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
       >
-        {/* Intro */}
-        <View style={styles.introCard}>
-          <ThemedText style={styles.introTitle}>We'd love to hear from you!</ThemedText>
-          <ThemedText style={styles.introText}>
-            Your feedback is valuable in making ${BRAND.APP_NAME} better for everyone.
-          </ThemedText>
-        </View>
-
-        {/* Rating */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>{`How's your experience with ${BRAND.APP_NAME}?`}</ThemedText>
-          <View style={styles.ratingContainer}>
-            {[1, 2, 3, 4, 5].map(star => (
-              <Pressable
-                key={star}
-                style={styles.starButton}
-                onPress={() => setRating(star)}
-              >
-                <Ionicons
-                  name={star <= rating ? 'star' : 'star-outline'}
-                  size={40}
-                  color={star <= rating ? Colors.gold : Colors.gray[300]}
-                />
-              </Pressable>
-            ))}
-          </View>
-          {rating > 0 && (
-            <ThemedText style={styles.ratingLabel}>{RATING_LABELS[rating - 1]}</ThemedText>
-          )}
-        </View>
-
-        {/* Category */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>What's this about? *</ThemedText>
-          <View style={styles.categoriesGrid}>
-            {FEEDBACK_CATEGORIES.map(category => (
-              <Pressable
-                key={category.id}
-                style={[
-                  styles.categoryCard,
-                  selectedCategory === category.id && styles.categoryCardSelected,
-                ]}
-                onPress={() => setSelectedCategory(category.id)}
-              >
-                <Ionicons
-                  name={category.icon as any}
-                  size={24}
-                  color={selectedCategory === category.id ? Colors.primary[600] : colors.text.tertiary}
-                />
-                <ThemedText style={[
-                  styles.categoryLabel,
-                  selectedCategory === category.id && styles.categoryLabelSelected,
-                ]}>
-                  {category.label}
-                </ThemedText>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-
-        {/* Feedback Text */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Tell us more *</ThemedText>
-          <TextInput
-            style={styles.textArea}
-            value={feedback}
-            onChangeText={setFeedback}
-            placeholder={
-              selectedCategory === 'bug'
-                ? "What went wrong? Please describe the steps to reproduce..."
-                : selectedCategory === 'feature'
-                ? "What feature would you like to see? How would it help you?"
-                : "Share your thoughts..."
-            }
-            placeholderTextColor={colors.text.tertiary}
-            multiline
-            maxLength={1000}
-          />
-          <ThemedText style={styles.charCount}>{feedback.length}/1000</ThemedText>
-        </View>
-
-        {/* Screenshots */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Attach Screenshots (Optional)</ThemedText>
-          <View style={styles.screenshotsContainer}>
-            {screenshots.map((uri, index) => (
-              <View key={index} style={styles.screenshotItem}>
-                <CachedImage source={{ uri }} style={styles.screenshotImage} />
-                <Pressable
-                  style={styles.removeButton}
-                  onPress={() => handleRemoveImage(index)}
-                >
-                  <Ionicons name="close-circle" size={24} color={Colors.error} />
-                </Pressable>
-              </View>
-            ))}
-            {screenshots.length < 3 && (
-              <Pressable style={styles.addButton} onPress={handlePickImage}>
-                <Ionicons name="camera-outline" size={28} color={colors.text.tertiary} />
-                <ThemedText style={styles.addButtonText}>Add Photo</ThemedText>
-              </Pressable>
-            )}
-          </View>
-        </View>
-
-        {/* Email */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Email (Optional)</ThemedText>
-          <ThemedText style={styles.sectionSubtitle}>
-            We may reach out for more details
-          </ThemedText>
-          <TextInput
-            style={styles.textInput}
-            value={email}
-            onChangeText={setEmail}
-            placeholder="your@email.com"
-            placeholderTextColor={colors.text.tertiary}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
-
-        {/* Submit Button */}
-        <Pressable
-          style={[
-            styles.submitButton,
-            (!selectedCategory || !feedback) && styles.submitButtonDisabled,
-          ]}
-          onPress={handleSubmit}
-          disabled={!selectedCategory || !feedback || loading}
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
         >
-          {loading ? (
-            <>
-              <ActivityIndicator color={colors.text.white} />
-              {uploadingImages && (
-                <ThemedText style={styles.submitButtonText}>Uploading images...</ThemedText>
-              )}
-            </>
-          ) : (
-            <>
-              <Ionicons name="paper-plane" size={20} color={colors.text.white} />
-              <ThemedText style={styles.submitButtonText}>Submit Feedback</ThemedText>
-            </>
-          )}
-        </Pressable>
+          {/* Intro */}
+          <View style={styles.introCard}>
+            <ThemedText style={styles.introTitle}>We'd love to hear from you!</ThemedText>
+            <ThemedText style={styles.introText}>
+              Your feedback is valuable in making ${BRAND.APP_NAME} better for everyone.
+            </ThemedText>
+          </View>
 
-        {/* Note */}
-        <View style={styles.noteCard}>
-          <Ionicons name="information-circle-outline" size={20} color={Colors.info} />
-          <ThemedText style={styles.noteText}>
-            For urgent issues or account problems, please use our chat support
-            for faster response.
-          </ThemedText>
-        </View>
-      </ScrollView>
+          {/* Rating */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>{`How's your experience with ${BRAND.APP_NAME}?`}</ThemedText>
+            <View style={styles.ratingContainer}>
+              {[1, 2, 3, 4, 5].map((star) => (
+                <Pressable key={star} style={styles.starButton} onPress={() => setRating(star)}>
+                  <Ionicons
+                    name={star <= rating ? 'star' : 'star-outline'}
+                    size={40}
+                    color={star <= rating ? Colors.gold : Colors.gray[300]}
+                  />
+                </Pressable>
+              ))}
+            </View>
+            {rating > 0 && <ThemedText style={styles.ratingLabel}>{RATING_LABELS[rating - 1]}</ThemedText>}
+          </View>
+
+          {/* Category */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>What's this about? *</ThemedText>
+            <View style={styles.categoriesGrid}>
+              {FEEDBACK_CATEGORIES.map((category) => (
+                <Pressable
+                  key={category.id}
+                  style={[styles.categoryCard, selectedCategory === category.id && styles.categoryCardSelected]}
+                  onPress={() => setSelectedCategory(category.id)}
+                >
+                  <Ionicons
+                    name={category.icon as any}
+                    size={24}
+                    color={selectedCategory === category.id ? Colors.primary[600] : colors.text.tertiary}
+                  />
+                  <ThemedText
+                    style={[styles.categoryLabel, selectedCategory === category.id && styles.categoryLabelSelected]}
+                  >
+                    {category.label}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          {/* Feedback Text */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Tell us more *</ThemedText>
+            <TextInput
+              style={styles.textArea}
+              value={feedback}
+              onChangeText={setFeedback}
+              placeholder={
+                selectedCategory === 'bug'
+                  ? 'What went wrong? Please describe the steps to reproduce...'
+                  : selectedCategory === 'feature'
+                    ? 'What feature would you like to see? How would it help you?'
+                    : 'Share your thoughts...'
+              }
+              placeholderTextColor={colors.text.tertiary}
+              multiline
+              maxLength={1000}
+            />
+            <ThemedText style={styles.charCount}>{feedback.length}/1000</ThemedText>
+          </View>
+
+          {/* Screenshots */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Attach Screenshots (Optional)</ThemedText>
+            <View style={styles.screenshotsContainer}>
+              {screenshots.map((uri, index) => (
+                <View key={index} style={styles.screenshotItem}>
+                  <CachedImage source={{ uri }} style={styles.screenshotImage} />
+                  <Pressable style={styles.removeButton} onPress={() => handleRemoveImage(index)}>
+                    <Ionicons name="close-circle" size={24} color={Colors.error} />
+                  </Pressable>
+                </View>
+              ))}
+              {screenshots.length < 3 && (
+                <Pressable style={styles.addButton} onPress={handlePickImage}>
+                  <Ionicons name="camera-outline" size={28} color={colors.text.tertiary} />
+                  <ThemedText style={styles.addButtonText}>Add Photo</ThemedText>
+                </Pressable>
+              )}
+            </View>
+          </View>
+
+          {/* Email */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Email (Optional)</ThemedText>
+            <ThemedText style={styles.sectionSubtitle}>We may reach out for more details</ThemedText>
+            <TextInput
+              style={styles.textInput}
+              value={email}
+              onChangeText={setEmail}
+              placeholder="your@email.com"
+              placeholderTextColor={colors.text.tertiary}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+
+          {/* Submit Button */}
+          <Pressable
+            style={[styles.submitButton, (!selectedCategory || !feedback) && styles.submitButtonDisabled]}
+            onPress={handleSubmit}
+            disabled={!selectedCategory || !feedback || loading}
+          >
+            {loading ? (
+              <>
+                <ActivityIndicator color={colors.text.white} />
+                {uploadingImages && <ThemedText style={styles.submitButtonText}>Uploading images...</ThemedText>}
+              </>
+            ) : (
+              <>
+                <Ionicons name="paper-plane" size={20} color={colors.text.white} />
+                <ThemedText style={styles.submitButtonText}>Submit Feedback</ThemedText>
+              </>
+            )}
+          </Pressable>
+
+          {/* Note */}
+          <View style={styles.noteCard}>
+            <Ionicons name="information-circle-outline" size={20} color={Colors.info} />
+            <ThemedText style={styles.noteText}>
+              For urgent issues or account problems, please use our chat support for faster response.
+            </ThemedText>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

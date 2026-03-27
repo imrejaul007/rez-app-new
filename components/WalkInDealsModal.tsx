@@ -327,7 +327,12 @@ function WalkInDealsModal({ visible, onClose, deals = [], storeId }: DealModalPr
                   {renderModalContent()}
                 </BlurView>
               ) : (
-                <View style={[styles.modal, styles.modalAndroid]}>
+                // accessible + importantForAccessibility trap TalkBack focus inside the modal on Android
+                <View
+                  style={[styles.modal, styles.modalAndroid]}
+                  accessible={true}
+                  importantForAccessibility="yes"
+                >
                   {renderModalContent()}
                 </View>
               )}

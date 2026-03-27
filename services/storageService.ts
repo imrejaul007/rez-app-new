@@ -8,7 +8,10 @@ const SECURE_KEYS = ['auth_token', 'refresh_token', 'device_fingerprint', 'user_
 
 // Types
 export interface StorageOptions {
-  encrypt?: boolean;
+  // WARNING: This is Base64 encoding, NOT encryption.
+  // For sensitive data, use SecureStore (already applied automatically for SECURE_KEYS).
+  // Rename kept as `encode` to avoid implying cryptographic protection.
+  encode?: boolean;
   compress?: boolean;
   expiration?: number; // TTL in milliseconds
 }
@@ -84,10 +87,9 @@ class StorageService {
         serializedData = `COMPRESSED:${serializedData}`;
       }
 
-      // NOTE: base64 is NOT encryption — it is only encoding.
-      // This is a placeholder until a proper encryption library (e.g. expo-crypto
-      // with AES-GCM) is integrated. Do NOT rely on this for sensitive data.
-      if (options.encrypt) {
+      // WARNING: This is Base64 encoding, NOT encryption. Do NOT use for sensitive data.
+      // For sensitive values use SecureStore (applied automatically via SECURE_KEYS above).
+      if (options.encode) {
         try {
           serializedData = `ENCODED:${btoa(serializedData)}`;
         } catch {

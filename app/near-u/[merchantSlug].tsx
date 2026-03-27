@@ -108,7 +108,11 @@ function MerchantSlugScreen() {
           ) : (
             <View style={[styles.coverImg, styles.coverPlaceholder]} />
           )}
-          <Pressable style={styles.backFab} onPress={() => router.back()}>
+          <Pressable
+            style={styles.backFab}
+            onPress={() => router.back()}
+            hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
+          >
             <Ionicons name="chevron-back" size={22} color="#111" />
           </Pressable>
         </View>

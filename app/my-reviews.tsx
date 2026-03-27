@@ -335,7 +335,7 @@ function MyReviewsPage() {
         ) : (
           <FlashList
             data={filteredReviews}
-            keyExtractor={(item) => item._id || item.id || String(Math.random())}
+            keyExtractor={(item, index) => item._id || item.id || `review-${index}`}
             renderItem={renderReviewItem}
             refreshControl={
               <RefreshControl

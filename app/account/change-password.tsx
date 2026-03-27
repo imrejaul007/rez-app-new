@@ -12,6 +12,7 @@ import {
   Platform,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -41,11 +42,11 @@ function ChangePasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const togglePasswordVisibility = (field: keyof typeof showPasswords) => {
-    setShowPasswords(prev => ({ ...prev, [field]: !prev[field] }));
+    setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
   };
 
   const validateForm = () => {
@@ -81,7 +82,7 @@ function ChangePasswordPage() {
     if (!validateForm()) return;
 
     setIsLoading(true);
-    
+
     try {
       const response = await apiClient.put('/auth/change-password', {
         currentPassword: formData.currentPassword,
@@ -97,7 +98,7 @@ function ChangePasswordPage() {
             // AuthContext navigation guard handles redirect after logout
             await actions.logout();
           },
-          'OK'
+          'OK',
         );
       } else {
         platformAlertSimple('Error', data?.message || 'Failed to change password');
@@ -115,50 +116,46 @@ function ChangePasswordPage() {
     label: string,
     field: keyof typeof formData,
     placeholder: string,
-    showField: keyof typeof showPasswords
+    showField: keyof typeof showPasswords,
   ) => {
     const fieldLabels = {
       currentPassword: 'Current password',
       newPassword: 'New password',
-      confirmPassword: 'Confirm new password'
+      confirmPassword: 'Confirm new password',
     };
     const fieldHints = {
       currentPassword: 'Enter your current password for verification',
       newPassword: 'Enter your new password. Must be at least 6 characters',
-      confirmPassword: 'Re-enter your new password to confirm'
+      confirmPassword: 'Re-enter your new password to confirm',
     };
 
     return (
-    <View style={styles.inputContainer}>
-      <ThemedText style={styles.inputLabel}>{label}</ThemedText>
-      <View style={styles.passwordInputContainer}>
-        <TextInput
-          style={styles.passwordInput}
-          value={formData[field]}
-          onChangeText={(value) => handleInputChange(field, value)}
-          placeholder={placeholder}
-          placeholderTextColor={colors.neutral[400]}
-          secureTextEntry={!showPasswords[showField]}
-          autoCapitalize="none"
-          autoCorrect={false}
-          accessibilityLabel={fieldLabels[field]}
-          accessibilityHint={fieldHints[field]}
-        />
-        <Pressable
-          style={styles.eyeButton}
-          onPress={() => togglePasswordVisibility(showField)}
-          accessibilityRole="button"
-          accessibilityLabel={`${showPasswords[showField] ? 'Hide' : 'Show'} ${fieldLabels[field]}`}
-          accessibilityHint={`Double tap to ${showPasswords[showField] ? 'hide' : 'reveal'} password characters`}
-        >
-          <Ionicons
-            name={showPasswords[showField] ? 'eye-off' : 'eye'}
-            size={20}
-            color={colors.neutral[500]}
+      <View style={styles.inputContainer}>
+        <ThemedText style={styles.inputLabel}>{label}</ThemedText>
+        <View style={styles.passwordInputContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            value={formData[field]}
+            onChangeText={(value) => handleInputChange(field, value)}
+            placeholder={placeholder}
+            placeholderTextColor={colors.neutral[400]}
+            secureTextEntry={!showPasswords[showField]}
+            autoCapitalize="none"
+            autoCorrect={false}
+            accessibilityLabel={fieldLabels[field]}
+            accessibilityHint={fieldHints[field]}
           />
-        </Pressable>
+          <Pressable
+            style={styles.eyeButton}
+            onPress={() => togglePasswordVisibility(showField)}
+            accessibilityRole="button"
+            accessibilityLabel={`${showPasswords[showField] ? 'Hide' : 'Show'} ${fieldLabels[field]}`}
+            accessibilityHint={`Double tap to ${showPasswords[showField] ? 'hide' : 'reveal'} password characters`}
+          >
+            <Ionicons name={showPasswords[showField] ? 'eye-off' : 'eye'} size={20} color={colors.neutral[500]} />
+          </Pressable>
+        </View>
       </View>
-    </View>
     );
   };
 
@@ -171,7 +168,7 @@ function ChangePasswordPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             accessibilityRole="button"
             accessibilityLabel="Go back"
             accessibilityHint="Double tap to return to previous screen"
@@ -185,88 +182,79 @@ function ChangePasswordPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
-        {/* Security Info */}
-        <View style={styles.infoCard}>
-          <View style={styles.infoHeader}>
-            <Ionicons name="shield-checkmark" size={24} color={colors.brand.purpleLight} />
-            <ThemedText style={styles.infoTitle}>Password Security</ThemedText>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
+      >
+        <ScrollView style={styles.content} contentContainerStyle={styles.scrollContent}>
+          {/* Security Info */}
+          <View style={styles.infoCard}>
+            <View style={styles.infoHeader}>
+              <Ionicons name="shield-checkmark" size={24} color={colors.brand.purpleLight} />
+              <ThemedText style={styles.infoTitle}>Password Security</ThemedText>
+            </View>
+            <ThemedText style={styles.infoText}>
+              For your security, you'll be logged out after changing your password. Make sure to use a strong password
+              with at least 6 characters.
+            </ThemedText>
           </View>
-          <ThemedText style={styles.infoText}>
-            For your security, you'll be logged out after changing your password. 
-            Make sure to use a strong password with at least 6 characters.
-          </ThemedText>
-        </View>
 
-        {/* Form */}
-        <View style={styles.formContainer}>
-          {renderPasswordField(
-            'Current Password',
-            'currentPassword',
-            'Enter your current password',
-            'current'
-          )}
+          {/* Form */}
+          <View style={styles.formContainer}>
+            {renderPasswordField('Current Password', 'currentPassword', 'Enter your current password', 'current')}
 
-          {renderPasswordField(
-            'New Password',
-            'newPassword',
-            'Enter your new password',
-            'new'
-          )}
+            {renderPasswordField('New Password', 'newPassword', 'Enter your new password', 'new')}
 
-          {renderPasswordField(
-            'Confirm New Password',
-            'confirmPassword',
-            'Confirm your new password',
-            'confirm'
-          )}
-        </View>
+            {renderPasswordField('Confirm New Password', 'confirmPassword', 'Confirm your new password', 'confirm')}
+          </View>
 
-        {/* Change Password Button */}
-        <Pressable
-          style={[styles.changeButton, isLoading && styles.changeButtonDisabled]}
-          onPress={handleChangePassword}
-          disabled={isLoading}
-          accessibilityRole="button"
-          accessibilityLabel="Change password"
-          accessibilityHint="Double tap to submit your password change. You will be logged out for security"
-          accessibilityState={{ disabled: isLoading }}
-        >
-          {isLoading ? (
-            <ActivityIndicator color="white" size="small" />
-          ) : (
-            <>
-              <Ionicons name="key" size={20} color="white" />
-              <ThemedText style={styles.changeButtonText}>Change Password</ThemedText>
-            </>
-          )}
-        </Pressable>
+          {/* Change Password Button */}
+          <Pressable
+            style={[styles.changeButton, isLoading && styles.changeButtonDisabled]}
+            onPress={handleChangePassword}
+            disabled={isLoading}
+            accessibilityRole="button"
+            accessibilityLabel="Change password"
+            accessibilityHint="Double tap to submit your password change. You will be logged out for security"
+            accessibilityState={{ disabled: isLoading }}
+          >
+            {isLoading ? (
+              <ActivityIndicator color="white" size="small" />
+            ) : (
+              <>
+                <Ionicons name="key" size={20} color="white" />
+                <ThemedText style={styles.changeButtonText}>Change Password</ThemedText>
+              </>
+            )}
+          </Pressable>
 
-        {/* Security Tips */}
-        <View style={styles.tipsCard}>
-          <ThemedText style={styles.tipsTitle}>Password Tips</ThemedText>
-          <View style={styles.tipsList}>
-            <View style={styles.tipItem}>
-              <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
-              <ThemedText style={styles.tipText}>Use at least 6 characters</ThemedText>
-            </View>
-            <View style={styles.tipItem}>
-              <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
-              <ThemedText style={styles.tipText}>Include numbers and symbols</ThemedText>
-            </View>
-            <View style={styles.tipItem}>
-              <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
-              <ThemedText style={styles.tipText}>Avoid common words</ThemedText>
-            </View>
-            <View style={styles.tipItem}>
-              <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
-              <ThemedText style={styles.tipText}>Don't reuse old passwords</ThemedText>
+          {/* Security Tips */}
+          <View style={styles.tipsCard}>
+            <ThemedText style={styles.tipsTitle}>Password Tips</ThemedText>
+            <View style={styles.tipsList}>
+              <View style={styles.tipItem}>
+                <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
+                <ThemedText style={styles.tipText}>Use at least 6 characters</ThemedText>
+              </View>
+              <View style={styles.tipItem}>
+                <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
+                <ThemedText style={styles.tipText}>Include numbers and symbols</ThemedText>
+              </View>
+              <View style={styles.tipItem}>
+                <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
+                <ThemedText style={styles.tipText}>Avoid common words</ThemedText>
+              </View>
+              <View style={styles.tipItem}>
+                <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
+                <ThemedText style={styles.tipText}>Don't reuse old passwords</ThemedText>
+              </View>
             </View>
           </View>
-        </View>
 
-        <View style={styles.footer} />
-      </ScrollView>
+          <View style={styles.footer} />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

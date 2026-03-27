@@ -1,5 +1,18 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, SafeAreaView, StatusBar, Pressable, Platform, Clipboard, Animated, RefreshControl, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  SafeAreaView,
+  StatusBar,
+  Pressable,
+  Platform,
+  Clipboard,
+  Animated,
+  RefreshControl,
+  ActivityIndicator,
+} from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -68,15 +81,15 @@ function PartnerProfilePage() {
   }, []);
 
   // Normalise raw API milestone → type-safe OrderMilestone
-  const normalizeMilestone = (m: any): OrderMilestone => ({
-    id: m.id || m._id || String(Math.random()),
+  const normalizeMilestone = (m: any, idx: number): OrderMilestone => ({
+    id: m.id || m._id || `milestone-${idx}`,
     orderNumber: m.orderCount ?? m.orderNumber ?? 0,
     orderCount: m.orderCount ?? m.orderNumber ?? 0,
     isCompleted: m.achieved ?? m.isCompleted ?? false,
     isLocked: m.isLocked ?? false,
     reward: m.reward
       ? {
-          id: m.reward.id || m.reward._id || String(Math.random()),
+          id: m.reward.id || m.reward._id || `milestone-${idx}-reward`,
           title: m.reward.title || '',
           description: m.reward.description || '',
           type: m.reward.type || 'cashback',
@@ -89,15 +102,15 @@ function PartnerProfilePage() {
   });
 
   // Normalise raw API task → type-safe RewardTask
-  const normalizeTask = (t: any): RewardTask => ({
-    id: t.id || t._id || String(Math.random()),
+  const normalizeTask = (t: any, idx: number): RewardTask => ({
+    id: t.id || t._id || `task-${idx}`,
     title: t.title || '',
     description: t.description || '',
     type: t.type || 'purchase',
     isCompleted: t.completed ?? t.isCompleted ?? false,
     progress: t.progress,
     reward: {
-      id: t.reward?.id || t.reward?._id || String(Math.random()),
+      id: t.reward?.id || t.reward?._id || `task-${idx}-reward`,
       title: t.reward?.title || '',
       description: t.reward?.description || '',
       type: t.reward?.type || 'cashback',
@@ -109,8 +122,8 @@ function PartnerProfilePage() {
   });
 
   // Normalise raw API jackpot milestone → type-safe JackpotMilestone
-  const normalizeJackpot = (j: any): JackpotMilestone => ({
-    id: j.id || j._id || String(Math.random()),
+  const normalizeJackpot = (j: any, idx: number): JackpotMilestone => ({
+    id: j.id || j._id || `jackpot-${idx}`,
     amount: j.spendAmount ?? j.amount ?? 0,
     spendAmount: j.spendAmount ?? j.amount ?? 0,
     title: j.title || '',
@@ -120,7 +133,7 @@ function PartnerProfilePage() {
     achieved: j.achieved ?? false,
     claimedAt: j.claimedAt,
     reward: {
-      id: j.reward?.id || j.reward?._id || String(Math.random()),
+      id: j.reward?.id || j.reward?._id || `jackpot-${idx}-reward`,
       title: j.reward?.title || '',
       description: j.reward?.description || '',
       type: j.reward?.type || 'cashback',
@@ -132,11 +145,11 @@ function PartnerProfilePage() {
   });
 
   // Normalise raw API offer → type-safe ClaimableOffer
-  const normalizeOffer = (o: any): ClaimableOffer => ({
-    id: o.id || o._id || String(Math.random()),
+  const normalizeOffer = (o: any, idx: number): ClaimableOffer => ({
+    id: o.id || o._id || `offer-${idx}`,
     title: o.title || '',
     description: o.description || '',
-    discount: typeof o.discount === 'number' ? `${o.discount}%` : (o.discount || ''),
+    discount: typeof o.discount === 'number' ? `${o.discount}%` : o.discount || '',
     image: o.image,
     validUntil: o.validUntil || new Date().toISOString(),
     termsAndConditions: Array.isArray(o.termsAndConditions) ? o.termsAndConditions : [],
@@ -145,7 +158,7 @@ function PartnerProfilePage() {
 
   const loadPartnerData = async () => {
     try {
-      setPartnerState(prev => ({ ...prev, loading: true, error: null }));
+      setPartnerState((prev) => ({ ...prev, loading: true, error: null }));
 
       const dashboardResponse = await partnerApi.getDashboard();
 
@@ -154,7 +167,7 @@ function PartnerProfilePage() {
         if (dashboardResponse.data.enrolled === false) {
           if (!isMounted()) return;
           setEnrolled(false);
-          setPartnerState(prev => ({ ...prev, loading: false, error: null }));
+          setPartnerState((prev) => ({ ...prev, loading: false, error: null }));
           return;
         }
 
@@ -162,9 +175,10 @@ function PartnerProfilePage() {
         setEnrolled(true);
 
         const benefitsResponse = await partnerApi.getBenefits();
-        const levelsWithBenefits = benefitsResponse.success && benefitsResponse.data
-          ? (benefitsResponse.data.allLevels || benefitsResponse.data.levels || [])
-          : [];
+        const levelsWithBenefits =
+          benefitsResponse.success && benefitsResponse.data
+            ? benefitsResponse.data.allLevels || benefitsResponse.data.levels || []
+            : [];
 
         if (!isMounted()) return;
         setPartnerState({
@@ -173,8 +187,8 @@ function PartnerProfilePage() {
           tasks: (dashboardResponse.data.tasks || []).map(normalizeTask),
           jackpotProgress: (dashboardResponse.data.jackpotProgress || []).map(normalizeJackpot),
           claimableOffers: (dashboardResponse.data.claimableOffers || []).map(normalizeOffer),
-          faqs: (dashboardResponse.data.faqs || []).map((f: any) => ({
-            id: f.id || f._id || String(Math.random()),
+          faqs: (dashboardResponse.data.faqs || []).map((f: any, idx: number) => ({
+            id: f.id || f._id || `faq-${idx}`,
             question: f.question || '',
             answer: f.answer || '',
             category: (['general', 'transactions', 'rewards', 'levels'].includes(f.category)
@@ -222,7 +236,7 @@ function PartnerProfilePage() {
         }
       } catch {}
       if (!isMounted()) return;
-      setPartnerState(prev => ({
+      setPartnerState((prev) => ({
         ...prev,
         loading: false,
         error: error instanceof Error ? error.message : 'Failed to load partner data',
@@ -259,7 +273,7 @@ function PartnerProfilePage() {
       if (currentLevel > previousLevelRef.current) {
         // Level up detected!
         const levelName = partnerState.profile?.level?.name || `Level ${currentLevel}`;
-        const levelBenefits = partnerState.levels?.find(l => l.level === currentLevel)?.benefits || [];
+        const levelBenefits = partnerState.levels?.find((l) => l.level === currentLevel)?.benefits || [];
         const bonusAmount = currentLevel * 500; // 500, 1000, 1500 based on level
 
         setLevelUpModal({
@@ -287,7 +301,7 @@ function PartnerProfilePage() {
 
   // Close level-up modal
   const closeLevelUpModal = () => {
-    setLevelUpModal(prev => ({ ...prev, visible: false }));
+    setLevelUpModal((prev) => ({ ...prev, visible: false }));
   };
 
   const handleGoBack = () => {
@@ -318,7 +332,10 @@ function PartnerProfilePage() {
       const response = await partnerApi.claimTaskReward(taskId);
 
       if (response.success) {
-        platformAlertSimple('Task Reward Claimed!', response.data?.message || 'Congratulations! Your task reward has been claimed.');
+        platformAlertSimple(
+          'Task Reward Claimed!',
+          response.data?.message || 'Congratulations! Your task reward has been claimed.',
+        );
         loadPartnerData();
       } else {
         platformAlertSimple('Error', response.error || 'Failed to claim task reward');
@@ -348,7 +365,7 @@ function PartnerProfilePage() {
               Clipboard.setString(voucherCode);
             }
           },
-          'Copy Code'
+          'Copy Code',
         );
       } else {
         platformAlertSimple('Error', response.error || 'Failed to claim offer');
@@ -370,7 +387,7 @@ function PartnerProfilePage() {
     if (milestone.claimedAt) {
       platformAlertSimple(
         'Already Claimed',
-        `You claimed this jackpot reward on ${new Date(milestone.claimedAt).toLocaleDateString()}`
+        `You claimed this jackpot reward on ${new Date(milestone.claimedAt).toLocaleDateString()}`,
       );
       return;
     }
@@ -379,7 +396,7 @@ function PartnerProfilePage() {
       const remaining = (milestone.spendAmount ?? 0) - ((partnerState.profile as any)?.totalSpent || 0);
       platformAlertSimple(
         milestone.title,
-        `${milestone.description}\n\nSpend ${currencySymbol}${remaining.toLocaleString()} more to unlock this jackpot!`
+        `${milestone.description}\n\nSpend ${currencySymbol}${remaining.toLocaleString()} more to unlock this jackpot!`,
       );
       return;
     }
@@ -394,7 +411,7 @@ function PartnerProfilePage() {
           if (response.success) {
             platformAlertSimple(
               'Jackpot Claimed!',
-              `Congratulations! ${currencySymbol}${milestone.reward.value} has been added to your wallet!`
+              `Congratulations! ${currencySymbol}${milestone.reward.value} has been added to your wallet!`,
             );
             loadPartnerData();
           } else {
@@ -404,14 +421,14 @@ function PartnerProfilePage() {
           platformAlertSimple('Error', 'Failed to claim jackpot reward. Please try again.');
         }
       },
-      'Claim Now'
+      'Claim Now',
     );
   };
 
   const handleUpgradeLevel = (targetLevel: any) => {
     platformAlertSimple(
       'Upgrade to ' + targetLevel.name,
-      `Requirements: ${targetLevel.requirements.orders} orders in ${targetLevel.requirements.timeframe} days`
+      `Requirements: ${targetLevel.requirements.orders} orders in ${targetLevel.requirements.timeframe} days`,
     );
   };
 
@@ -447,9 +464,33 @@ function PartnerProfilePage() {
     }
     // Fallback to basic structure from backend profile
     return [
-      { level: 1, name: 'Partner', orders: profile?.level?.requirements?.orders || 15, days: profile?.level?.requirements?.timeframe || 44, current: currentLevelNumber === 1, locked: false, future: false },
-      { level: 2, name: 'Influencer', orders: 45, days: 44, current: currentLevelNumber === 2, locked: currentLevelNumber < 2, future: currentLevelNumber < 1 },
-      { level: 3, name: 'Ambassador', orders: 100, days: 44, current: currentLevelNumber === 3, locked: currentLevelNumber < 3, future: currentLevelNumber < 2 }
+      {
+        level: 1,
+        name: 'Partner',
+        orders: profile?.level?.requirements?.orders || 15,
+        days: profile?.level?.requirements?.timeframe || 44,
+        current: currentLevelNumber === 1,
+        locked: false,
+        future: false,
+      },
+      {
+        level: 2,
+        name: 'Influencer',
+        orders: 45,
+        days: 44,
+        current: currentLevelNumber === 2,
+        locked: currentLevelNumber < 2,
+        future: currentLevelNumber < 1,
+      },
+      {
+        level: 3,
+        name: 'Ambassador',
+        orders: 100,
+        days: 44,
+        current: currentLevelNumber === 3,
+        locked: currentLevelNumber < 3,
+        future: currentLevelNumber < 2,
+      },
     ];
   };
 
@@ -457,10 +498,7 @@ function PartnerProfilePage() {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
-        <LinearGradient
-          colors={[Colors.gold, colors.nileBlue]}
-          style={styles.loadingContainer}
-        >
+        <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.loadingContainer}>
           <View style={styles.loadingContent}>
             <View style={styles.loadingSpinner}>
               <Ionicons name="trophy" size={32} color={colors.brand.goldWarm} />
@@ -483,11 +521,7 @@ function PartnerProfilePage() {
           </View>
           <Text style={styles.errorTitle}>Oops!</Text>
           <Text style={styles.errorText}>{partnerState.error}</Text>
-          <Pressable
-            style={styles.retryButton}
-            onPress={loadPartnerData}
-
-          >
+          <Pressable style={styles.retryButton} onPress={loadPartnerData}>
             <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.retryButtonGradient}>
               <Ionicons name="refresh" size={18} color="white" />
               <Text style={styles.retryButtonText}>Try Again</Text>
@@ -531,7 +565,8 @@ function PartnerProfilePage() {
           </View>
           <Text style={styles.enrollTitle}>Partner Program</Text>
           <Text style={styles.enrollDescription}>
-            Earn rewards, unlock milestones, and get exclusive offers as a REZ partner. Track your progress and level up for bigger benefits.
+            Earn rewards, unlock milestones, and get exclusive offers as a REZ partner. Track your progress and level up
+            for bigger benefits.
           </Text>
 
           <View style={styles.enrollBenefits}>
@@ -603,7 +638,6 @@ function PartnerProfilePage() {
 
           <Pressable
             style={styles.menuButton}
-           
             onPress={() => {
               router.push('/profile/activity' as any);
             }}
@@ -642,10 +676,7 @@ function PartnerProfilePage() {
             <View style={styles.partnerInfo}>
               {/* Avatar with gold ring */}
               <View style={styles.avatarWrapper}>
-                <LinearGradient
-                  colors={[colors.brand.goldWarm, colors.warning]}
-                  style={styles.avatarRing}
-                >
+                <LinearGradient colors={[colors.brand.goldWarm, colors.warning]} style={styles.avatarRing}>
                   {profile?.avatar ? (
                     <CachedImage
                       source={{ uri: profile.avatar }}
@@ -655,9 +686,7 @@ function PartnerProfilePage() {
                     />
                   ) : (
                     <View style={styles.avatarPlaceholder}>
-                      <Text style={styles.avatarInitials}>
-                        {profile?.name?.substring(0, 2).toUpperCase() || 'U'}
-                      </Text>
+                      <Text style={styles.avatarInitials}>{profile?.name?.substring(0, 2).toUpperCase() || 'U'}</Text>
                     </View>
                   )}
                 </LinearGradient>
@@ -683,7 +712,10 @@ function PartnerProfilePage() {
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <Text style={styles.statValue}>{currencySymbol}{(profile as any)?.totalSpent?.toLocaleString() || '0'}</Text>
+                <Text style={styles.statValue}>
+                  {currencySymbol}
+                  {(profile as any)?.totalSpent?.toLocaleString() || '0'}
+                </Text>
                 <Text style={styles.statLabel}>Spent</Text>
               </View>
               <View style={styles.statDivider} />
@@ -696,14 +728,10 @@ function PartnerProfilePage() {
             {/* Benefits Button */}
             <Pressable
               style={styles.benefitsButton}
-             
               onPress={() => {
                 const benefits = profile?.level?.benefits || profile?.currentBenefits || [];
                 const benefitsList = Array.isArray(benefits) ? benefits.join('\n\u2022 ') : 'No benefits available';
-                platformAlertSimple(
-                  'Your Current Benefits',
-                  `As a ${levelName}, you enjoy:\n\n\u2022 ${benefitsList}`
-                );
+                platformAlertSimple('Your Current Benefits', `As a ${levelName}, you enjoy:\n\n\u2022 ${benefitsList}`);
               }}
             >
               <View style={styles.benefitsButtonInner}>
@@ -727,10 +755,7 @@ function PartnerProfilePage() {
         )}
 
         {/* Partner Statistics Dashboard - Shows ranking and leaderboard preview */}
-        <PartnerStatsDashboard
-          compact={true}
-          onViewLeaderboard={() => router.push('/partner/leaderboard')}
-        />
+        <PartnerStatsDashboard compact={true} onViewLeaderboard={() => router.push('/partner/leaderboard')} />
 
         {/* Level Criteria Section */}
         <View style={styles.section}>
@@ -750,7 +775,6 @@ function PartnerProfilePage() {
           <View style={styles.actionButtons}>
             <Pressable
               style={styles.upgradeButton}
-             
               onPress={() => {
                 const nextLevel = currentLevelNumber + 1;
                 const levelNames = ['Partner', 'Influencer', 'Ambassador'];
@@ -758,7 +782,7 @@ function PartnerProfilePage() {
                 const ordersNeeded = Math.max(0, ordersRequired - ordersThisLevel);
                 platformAlertSimple(
                   `Upgrade to ${nextLevelName}`,
-                  `Complete ${ordersNeeded} more orders within ${daysRemaining} days to upgrade and unlock exclusive benefits!`
+                  `Complete ${ordersNeeded} more orders within ${daysRemaining} days to upgrade and unlock exclusive benefits!`,
                 );
               }}
             >
@@ -770,11 +794,10 @@ function PartnerProfilePage() {
 
             <Pressable
               style={styles.maintainButton}
-             
               onPress={() => {
                 platformAlertSimple(
                   'Maintain Your Level',
-                  `To maintain your ${levelName} status, complete ${ordersRequired} orders every ${profile?.level?.requirements?.timeframe || 44} days.\n\nKeep shopping to retain your benefits!`
+                  `To maintain your ${levelName} status, complete ${ordersRequired} orders every ${profile?.level?.requirements?.timeframe || 44} days.\n\nKeep shopping to retain your benefits!`,
                 );
               }}
             >
@@ -791,7 +814,7 @@ function PartnerProfilePage() {
                 style={[
                   styles.levelCard,
                   level.current && styles.currentLevelCard,
-                  level.locked && styles.lockedLevelCard
+                  level.locked && styles.lockedLevelCard,
                 ]}
               >
                 {level.current && <View style={styles.currentIndicator} />}
@@ -799,9 +822,7 @@ function PartnerProfilePage() {
                 <Text style={[styles.levelCardLabel, level.current && styles.currentLevelText]}>
                   Level {level.level}
                 </Text>
-                <Text style={[styles.levelCardName, level.current && styles.currentLevelText]}>
-                  {level.name}
-                </Text>
+                <Text style={[styles.levelCardName, level.current && styles.currentLevelText]}>{level.name}</Text>
 
                 {!level.future ? (
                   <View style={styles.levelRequirements}>
@@ -813,9 +834,7 @@ function PartnerProfilePage() {
                     </Text>
                   </View>
                 ) : (
-                  <Text style={styles.futureLevelText}>
-                    Unlock{'\n'}this level
-                  </Text>
+                  <Text style={styles.futureLevelText}>Unlock{'\n'}this level</Text>
                 )}
 
                 {level.locked && !level.future && (
@@ -891,10 +910,7 @@ function PartnerProfilePage() {
         />
 
         {/* FAQ Section */}
-        <FAQAccordion
-          faqs={partnerState.faqs}
-          onContactPress={handleContactSupport}
-        />
+        <FAQAccordion faqs={partnerState.faqs} onContactPress={handleContactSupport} />
 
         <View style={styles.bottomSpacer} />
       </ScrollView>

@@ -6,16 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  RefreshControl,
-  Linking,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, RefreshControl, Linking } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -41,13 +32,16 @@ const COLORS = {
 };
 
 // Category configuration
-const categoryConfig: Record<string, {
-  title: string;
-  icon: string;
-  gradientColors: [string, string];
-  apiType: string;
-  dedicatedPage?: string;
-}> = {
+const categoryConfig: Record<
+  string,
+  {
+    title: string;
+    icon: string;
+    gradientColors: [string, string];
+    apiType: string;
+    dedicatedPage?: string;
+  }
+> = {
   doctors: {
     title: 'Doctors',
     icon: 'medical',
@@ -221,7 +215,11 @@ const HealthcareCategoryPage: React.FC = () => {
 
   const handleCallStore = (phone?: string) => {
     if (phone) {
-      try { Linking.openURL(`tel:${phone}`); } catch (_e) { /* silently handle */ }
+      try {
+        Linking.openURL(`tel:${phone}`);
+      } catch (_e) {
+        /* silently handle */
+      }
     } else {
       platformAlertSimple('Not Available', 'Phone number is not available.');
     }
@@ -240,14 +238,14 @@ const HealthcareCategoryPage: React.FC = () => {
   };
 
   const renderStoreCard = (store: Store) => {
-    const cashback = store.metadata?.cashbackPercentage || Math.floor(Math.random() * 15) + 10;
+    // TODO: cashback percentage should come from store.metadata.cashbackPercentage via API
+    const cashback = store.metadata?.cashbackPercentage || 0;
 
     return (
       <Pressable
         key={store._id}
         style={styles.itemCard}
         onPress={() => router.push(`/MainStorePage?storeId=${store._id}` as any)}
-       
       >
         <View style={styles.cardHeader}>
           <View style={styles.storeImageContainer}>
@@ -261,9 +259,11 @@ const HealthcareCategoryPage: React.FC = () => {
               </View>
             )}
           </View>
-          <View style={styles.cashbackBadge}>
-            <Text style={styles.cashbackText}>{cashback}% CB</Text>
-          </View>
+          {cashback > 0 && (
+            <View style={styles.cashbackBadge}>
+              <Text style={styles.cashbackText}>{cashback}% CB</Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.itemInfo}>
@@ -279,9 +279,7 @@ const HealthcareCategoryPage: React.FC = () => {
             <Text style={styles.qualificationText}>{store.metadata.qualification}</Text>
           )}
 
-          {store.metadata?.experience && (
-            <Text style={styles.experienceText}>{store.metadata.experience}</Text>
-          )}
+          {store.metadata?.experience && <Text style={styles.experienceText}>{store.metadata.experience}</Text>}
 
           <View style={styles.locationRow}>
             <Ionicons name="location-outline" size={14} color={COLORS.gray600} />
@@ -301,9 +299,7 @@ const HealthcareCategoryPage: React.FC = () => {
             {store.metadata?.languages && store.metadata.languages.length > 0 && (
               <View style={styles.languagesContainer}>
                 <Ionicons name="chatbubble-outline" size={12} color={COLORS.gray600} />
-                <Text style={styles.languagesText}>
-                  {store.metadata.languages.slice(0, 2).join(', ')}
-                </Text>
+                <Text style={styles.languagesText}>{store.metadata.languages.slice(0, 2).join(', ')}</Text>
               </View>
             )}
           </View>
@@ -319,10 +315,7 @@ const HealthcareCategoryPage: React.FC = () => {
             </View>
 
             <View style={styles.actionButtons}>
-              <Pressable
-                style={styles.callButton}
-                onPress={() => handleCallStore(store.contact.phone)}
-              >
+              <Pressable style={styles.callButton} onPress={() => handleCallStore(store.contact.phone)}>
                 <Ionicons name="call" size={18} color={config.gradientColors[0]} />
               </Pressable>
               <Pressable
@@ -347,8 +340,7 @@ const HealthcareCategoryPage: React.FC = () => {
             <Ionicons name="shield-checkmark" size={64} color={COLORS.gray200} />
             <Text style={styles.comingSoonTitle}>Health Insurance</Text>
             <Text style={styles.comingSoonText}>
-              Compare and buy health insurance plans from top providers.
-              This feature is coming soon!
+              Compare and buy health insurance plans from top providers. This feature is coming soon!
             </Text>
             <Pressable style={styles.notifyButton}>
               <Text style={styles.notifyButtonText}>Notify Me</Text>
@@ -365,8 +357,7 @@ const HealthcareCategoryPage: React.FC = () => {
             <Ionicons name="pricetag" size={64} color={COLORS.gray200} />
             <Text style={styles.comingSoonTitle}>Health Offers</Text>
             <Text style={styles.comingSoonText}>
-              Exclusive health offers and discounts.
-              Stay tuned for amazing deals!
+              Exclusive health offers and discounts. Stay tuned for amazing deals!
             </Text>
             <Pressable style={styles.notifyButton}>
               <Text style={styles.notifyButtonText}>Notify Me</Text>
@@ -381,14 +372,12 @@ const HealthcareCategoryPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={config.gradientColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.header}
-      >
+      <LinearGradient colors={config.gradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -414,17 +403,9 @@ const HealthcareCategoryPage: React.FC = () => {
               <Pressable
                 key={filter}
                 onPress={() => setSelectedFilter(filter)}
-                style={[
-                  styles.filterChip,
-                  selectedFilter === filter && { backgroundColor: config.gradientColors[0] },
-                ]}
+                style={[styles.filterChip, selectedFilter === filter && { backgroundColor: config.gradientColors[0] }]}
               >
-                <Text
-                  style={[
-                    styles.filterChipText,
-                    selectedFilter === filter && styles.filterChipTextActive,
-                  ]}
-                >
+                <Text style={[styles.filterChipText, selectedFilter === filter && styles.filterChipTextActive]}>
                   {filter}
                 </Text>
               </Pressable>
@@ -437,11 +418,7 @@ const HealthcareCategoryPage: React.FC = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[config.gradientColors[0]]}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[config.gradientColors[0]]} />
         }
       >
         {/* Static content for insurance/offers */}
@@ -456,14 +433,10 @@ const HealthcareCategoryPage: React.FC = () => {
               <View style={styles.emptyContainer}>
                 <Ionicons name={config.icon as any} size={64} color={COLORS.gray200} />
                 <Text style={styles.emptyText}>No {config.title.toLowerCase()} found</Text>
-                <Text style={styles.emptySubtext}>
-                  Try adjusting your filters or check back later
-                </Text>
+                <Text style={styles.emptySubtext}>Try adjusting your filters or check back later</Text>
               </View>
             ) : (
-              <View style={styles.itemsList}>
-                {stores.map(renderStoreCard)}
-              </View>
+              <View style={styles.itemsList}>{stores.map(renderStoreCard)}</View>
             )}
           </>
         )}

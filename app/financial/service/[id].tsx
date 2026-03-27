@@ -119,7 +119,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
       if (response.success && response.data) {
         if (!isMounted()) return;
         setService(response.data);
-        
+
         // Track service view
         trackEvent(ANALYTICS_EVENTS.SERVICE_VIEWED, {
           service_id: id,
@@ -199,7 +199,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
   // Handle bill fetch
   const handleFetchBill = () => {
     const sanitizedNumber = sanitizeNumericInput(consumerNumber);
-    
+
     if (!sanitizedNumber || sanitizedNumber.length < 8) {
       platformAlertSimple('Invalid Input', 'Please enter a valid consumer/account number');
       return;
@@ -211,17 +211,18 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
       service_type: serviceType,
     });
 
-    // Simulate bill fetch - in production, this would call an API
-    const amount = Math.floor(Math.random() * 3000) + 500;
+    // TODO: Replace with real bill-fetch API call (e.g. POST /financial/bills/fetch)
+    // that returns { amount, dueDate } for the given consumerNumber and service.
+    // For now show a loading state and leave the amount blank until the API is connected.
     setFetchedBill({
-      amount,
+      amount: 0,
       dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', {
         day: 'numeric',
         month: 'short',
         year: 'numeric',
       }),
     });
-    setBillAmount(amount.toString());
+    setBillAmount('');
   };
 
   // Handle proceed to payment
@@ -363,7 +364,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
         return (
           <View style={styles.formSection}>
             <Text style={styles.formTitle}>Bill Details</Text>
-            
+
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Consumer/Account Number</Text>
               <TextInput
@@ -389,7 +390,10 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
               <View style={styles.billCard}>
                 <View style={styles.billRow}>
                   <Text style={styles.billLabel}>Bill Amount</Text>
-                  <Text style={styles.billAmount}>{currencySymbol}{fetchedBill.amount}</Text>
+                  <Text style={styles.billAmount}>
+                    {currencySymbol}
+                    {fetchedBill.amount}
+                  </Text>
                 </View>
                 <View style={styles.billRow}>
                   <Text style={styles.billLabel}>Due Date</Text>
@@ -406,8 +410,11 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
                       style={[styles.amountChip, billAmount === amt.toString() && styles.amountChipActive]}
                       onPress={() => setBillAmount(amt.toString())}
                     >
-                      <Text style={[styles.amountChipText, billAmount === amt.toString() && styles.amountChipTextActive]}>
-                        {currencySymbol}{amt}
+                      <Text
+                        style={[styles.amountChipText, billAmount === amt.toString() && styles.amountChipTextActive]}
+                      >
+                        {currencySymbol}
+                        {amt}
                       </Text>
                     </Pressable>
                   ))}
@@ -428,7 +435,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
         return (
           <View style={styles.formSection}>
             <Text style={styles.formTitle}>Recharge Details</Text>
-            
+
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Mobile Number</Text>
               <View style={styles.phoneInputContainer}>
@@ -455,8 +462,11 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
                     style={[styles.amountChip, rechargeAmount === amt.toString() && styles.amountChipActive]}
                     onPress={() => setRechargeAmount(amt.toString())}
                   >
-                    <Text style={[styles.amountChipText, rechargeAmount === amt.toString() && styles.amountChipTextActive]}>
-                      {currencySymbol}{amt}
+                    <Text
+                      style={[styles.amountChipText, rechargeAmount === amt.toString() && styles.amountChipTextActive]}
+                    >
+                      {currencySymbol}
+                      {amt}
                     </Text>
                   </Pressable>
                 ))}
@@ -477,13 +487,19 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
           <View style={styles.formSection}>
             <Text style={styles.formTitle}>Select Plan</Text>
             <Text style={styles.formSubtitle}>Choose a subscription plan</Text>
-            
+
             {/* OTT Plans - would be fetched from service details or API */}
             <View style={styles.plansContainer}>
               {[
                 { id: 'mobile', name: 'Mobile', price: 149, duration: '1 month', features: ['SD Quality', '1 Device'] },
                 { id: 'basic', name: 'Basic', price: 199, duration: '1 month', features: ['HD Quality', '1 Device'] },
-                { id: 'standard', name: 'Standard', price: 499, duration: '1 month', features: ['Full HD', '2 Devices'] },
+                {
+                  id: 'standard',
+                  name: 'Standard',
+                  price: 499,
+                  duration: '1 month',
+                  features: ['Full HD', '2 Devices'],
+                },
                 { id: 'premium', name: 'Premium', price: 649, duration: '1 month', features: ['4K UHD', '4 Devices'] },
               ].map((plan) => (
                 <Pressable
@@ -493,12 +509,17 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
                 >
                   <View style={styles.planHeader}>
                     <Text style={styles.planName}>{plan.name}</Text>
-                    <Text style={styles.planPrice}>{currencySymbol}{plan.price}</Text>
+                    <Text style={styles.planPrice}>
+                      {currencySymbol}
+                      {plan.price}
+                    </Text>
                   </View>
                   <Text style={styles.planDuration}>{plan.duration}</Text>
                   <View style={styles.planFeatures}>
                     {plan.features.map((feature, idx) => (
-                      <Text key={idx} style={styles.planFeature}>• {feature}</Text>
+                      <Text key={idx} style={styles.planFeature}>
+                        • {feature}
+                      </Text>
                     ))}
                   </View>
                 </Pressable>
@@ -512,7 +533,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
           <View style={styles.formSection}>
             <Text style={styles.formTitle}>Buy Digital Gold</Text>
             <Text style={styles.formSubtitle}>Start with just {currencySymbol}10 • 24K purity guaranteed</Text>
-            
+
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Amount to Invest</Text>
               <View style={styles.quickAmounts}>
@@ -523,7 +544,8 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
                     onPress={() => setGoldAmount(amt.toString())}
                   >
                     <Text style={[styles.amountChipText, goldAmount === amt.toString() && styles.amountChipTextActive]}>
-                      {currencySymbol}{amt}
+                      {currencySymbol}
+                      {amt}
                     </Text>
                   </Pressable>
                 ))}
@@ -550,7 +572,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
         return (
           <View style={styles.formSection}>
             <Text style={styles.formTitle}>Insurance Details</Text>
-            
+
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>Full Name</Text>
               <TextInput
@@ -581,7 +603,9 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
                 style={styles.input}
                 placeholder="Enter 10-digit phone number"
                 value={insuranceDetails.phone}
-                onChangeText={(text) => setInsuranceDetails({ ...insuranceDetails, phone: text.replace(/[^0-9]/g, '').slice(0, 10) })}
+                onChangeText={(text) =>
+                  setInsuranceDetails({ ...insuranceDetails, phone: text.replace(/[^0-9]/g, '').slice(0, 10) })
+                }
                 keyboardType="phone-pad"
                 maxLength={10}
               />
@@ -635,7 +659,10 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
           <Ionicons name="alert-circle" size={48} color={COLORS.red} />
           <Text style={styles.errorTitle}>Service Not Found</Text>
           <Text style={styles.errorText}>{error || 'The service you are looking for does not exist.'}</Text>
-          <Pressable style={styles.retryButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.retryButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Text style={styles.retryButtonText}>Go Back</Text>
           </Pressable>
         </View>
@@ -649,7 +676,7 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      
+
       {/* Header */}
       <LinearGradient
         colors={[categoryColor, categoryColor + 'DD']}
@@ -658,14 +685,17 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>{service.name}</Text>
             <Text style={styles.headerSubtitle}>{categoryName}</Text>
           </View>
-          <Pressable 
+          <Pressable
             style={styles.shareButton}
             onPress={() => {
               setShowShareModal(true);
@@ -715,7 +745,9 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
         {/* Service Description */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>About This Service</Text>
-          <Text style={styles.description}>{service.description || service.shortDescription || 'No description available.'}</Text>
+          <Text style={styles.description}>
+            {service.description || service.shortDescription || 'No description available.'}
+          </Text>
         </View>
 
         {/* Service-Specific Form */}
@@ -783,12 +815,17 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
               <ActivityIndicator size="small" color={COLORS.white} />
             ) : (
               <Text style={styles.proceedButtonText}>
-                {serviceType === 'bills' ? 'Pay Now' :
-                 serviceType === 'recharge' ? 'Recharge Now' :
-                 serviceType === 'ott' ? 'Subscribe Now' :
-                 serviceType === 'gold' ? 'Buy Gold' :
-                 serviceType === 'insurance' ? 'Get Quote' :
-                 'Proceed'}
+                {serviceType === 'bills'
+                  ? 'Pay Now'
+                  : serviceType === 'recharge'
+                    ? 'Recharge Now'
+                    : serviceType === 'ott'
+                      ? 'Subscribe Now'
+                      : serviceType === 'gold'
+                        ? 'Buy Gold'
+                        : serviceType === 'insurance'
+                          ? 'Get Quote'
+                          : 'Proceed'}
               </Text>
             )}
           </Pressable>
@@ -1181,9 +1218,7 @@ const FinancialServiceDetailPageWithErrorBoundary: React.FC = () => {
           <View style={styles.errorContainer}>
             <Ionicons name="alert-circle" size={48} color={COLORS.red} />
             <Text style={styles.errorTitle}>Something went wrong</Text>
-            <Text style={styles.errorText}>
-              We encountered an error loading this service. Please try again.
-            </Text>
+            <Text style={styles.errorText}>We encountered an error loading this service. Please try again.</Text>
             <Pressable
               style={styles.retryButton}
               onPress={() => {

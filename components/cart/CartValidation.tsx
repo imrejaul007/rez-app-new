@@ -174,7 +174,7 @@ function CartValidation({
                 </View>
               </View>
 
-              <Pressable style={styles.closeButton} onPress={onClose}>
+              <Pressable style={styles.closeButton} onPress={onClose} hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}>
                 <Ionicons name="close" size={24} color="white" />
               </Pressable>
             </View>

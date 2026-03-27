@@ -136,6 +136,7 @@ function CashbackModal({
           accessibilityRole="button"
           accessibilityHint="Double tap to close this dialog"
         />
+        {/* accessible + importantForAccessibility trap TalkBack focus inside the modal on Android */}
         <Animated.View
           style={[
             styles.modalContainer,
@@ -143,6 +144,8 @@ function CashbackModal({
               transform: [{ translateY: slideAnim }],
             },
           ]}
+          accessible={true}
+          importantForAccessibility="yes"
         >
           <Pressable
             style={styles.closeButton}

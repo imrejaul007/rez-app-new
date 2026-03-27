@@ -86,7 +86,10 @@ const WebCategoryTabItem = memo<WebCategoryTabItemProps>(({ category, isActive, 
     <Pressable
       onPress={handlePress}
       style={webStyles.tabButton}
-     
+      accessibilityLabel={`${category.label} category`}
+      accessibilityRole="tab"
+      accessibilityState={{ selected: isActive }}
+      accessibilityHint={`Double tap to browse ${category.label}`}
     >
       {/* Image Container */}
       <View style={[
@@ -249,7 +252,10 @@ const NativeCategoryTabItem = memo<NativeCategoryTabItemProps>(({ category, isAc
     <Pressable
       style={styles.tabItem}
       onPress={handlePress}
-     
+      accessibilityLabel={`${category.label} category`}
+      accessibilityRole="tab"
+      accessibilityState={{ selected: isActive }}
+      accessibilityHint={`Double tap to browse ${category.label}`}
     >
       <View style={[
         styles.imageContainer,

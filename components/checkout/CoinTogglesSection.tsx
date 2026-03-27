@@ -56,7 +56,14 @@ function CoinTogglesSection({
   return (
     <View style={styles.coinToggles}>
       {/* Collapsible Header */}
-      <Pressable style={styles.coinSectionHeader} onPress={onToggleExpanded}>
+      <Pressable
+        style={styles.coinSectionHeader}
+        onPress={onToggleExpanded}
+        accessibilityLabel={`Use your coins. ${totalWalletBalance} coins available`}
+        accessibilityRole="button"
+        accessibilityState={{ expanded: coinSectionExpanded }}
+        accessibilityHint={coinSectionExpanded ? 'Double tap to collapse coin options' : 'Double tap to expand and apply your coins'}
+      >
         <View style={styles.coinSectionHeaderLeft}>
           <CachedImage
             source={BRAND.COIN_IMAGE}

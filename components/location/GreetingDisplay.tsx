@@ -142,7 +142,10 @@ function GreetingDisplay({
           {showEmoji && displayGreeting.emoji && (
             <Text style={[styles.emoji, emojiStyle]}>{displayGreeting.emoji}</Text>
           )}
-          <Text style={[styles.greetingText, textStyle, { color: timeColor }]}>
+          <Text
+            style={[styles.greetingText, textStyle, { color: timeColor }]}
+            accessibilityRole="header"
+          >
             {truncateText(displayGreeting.personalizedMessage, maxLength)}
           </Text>
         </View>

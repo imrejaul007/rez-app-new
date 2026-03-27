@@ -94,13 +94,25 @@ function TopStoreCard({ store, onPress, width = 180 }: TopStoreCardProps) {
     }
   }, [onPress, store]);
 
+  // Memoize accessibility label
+  const storeA11yLabel = useMemo(() => {
+    const parts = [store.name];
+    if (store.rating?.value) parts.push(`${formattedRating} stars`);
+    if (store.distance) parts.push(store.distance);
+    parts.push(`${cashbackPercentage}% cashback`);
+    parts.push(`Earn ${nuqtaCoins} coins`);
+    return parts.join('. ');
+  }, [store.name, formattedRating, store.rating?.value, store.distance, cashbackPercentage, nuqtaCoins]);
+
   return (
     <Pressable
       style={[styles.container, { width }]}
       onPress={handlePress}
-     
       delayPressIn={0}
       delayPressOut={0}
+      accessibilityLabel={storeA11yLabel}
+      accessibilityRole="button"
+      accessibilityHint="Double tap to view store and available offers"
     >
       <ThemedView style={styles.card}>
         {/* Store Image */}

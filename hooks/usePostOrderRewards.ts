@@ -87,6 +87,7 @@ export function usePostOrderRewards({
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
   const [hasShared, setHasShared] = useState(false);
+  const [shareLockedReason, setShareLockedReason] = useState<string | null>(null);
   const [hasReviewed, setHasReviewed] = useState(false);
   const [shareCoinsEarned, setShareCoinsEarned] = useState<number | null>(null);
   const [isCheckingShare, setIsCheckingShare] = useState(false);
@@ -116,7 +117,16 @@ export function usePostOrderRewards({
         if (cancelled) return;
         if (response.success && response.data) {
           if (!response.data.canShare) {
-            setHasShared(true);
+            const reason = response.data.reason || '';
+            // FIX: Distinguish "already shared" (completed) from "not yet allowed" (locked).
+            // Previously both cases set hasShared=true, causing a "not yet delivered" order
+            // to display the share item as "completed/already shared" — incorrect UX.
+            if (reason.toLowerCase().includes('already shared') || reason.toLowerCase().includes('already')) {
+              setHasShared(true);
+            } else {
+              // Locked: order not delivered yet, daily limit reached, etc.
+              setShareLockedReason(reason || 'Not yet available');
+            }
           }
         }
       }).finally(() => {
@@ -188,11 +198,11 @@ export function usePostOrderRewards({
     }
   }, [storeId, storeName, storeLogo, reviewCoins, router, hasReviewed]);
 
-  // Navigate to social media earn page
+  // Navigate to social media earn page (only if not locked and not already shared)
   const handleShare = useCallback(async () => {
-    if (hasShared) return;
+    if (hasShared || shareLockedReason) return;
     router.push(`/earn-from-social-media?orderId=${orderId || ''}` as any);
-  }, [orderId, hasShared, router]);
+  }, [orderId, hasShared, shareLockedReason, router]);
 
   // Build checklist items
   const checklistItems: RewardChecklistItem[] = useMemo(() => {
@@ -223,20 +233,22 @@ export function usePostOrderRewards({
       isLoading: isCheckingReview,
     });
 
-    // 3. Share & Earn - always available (share is a marketing action)
+    // 3. Share & Earn - locked until backend allows (e.g. order must be delivered for delivery orders)
     items.push({
       id: 'share',
       label: 'Share & Earn',
       description: hasShared
         ? 'Shared successfully! Coins pending approval'
-        : 'Share your purchase on social media',
+        : shareLockedReason
+          ? 'Available after you receive your order'
+          : 'Share your purchase on social media',
       coinAmount: shareCoinsEarned ?? shareCoins,
-      status: hasShared ? 'completed' : 'available',
+      status: hasShared ? 'completed' : shareLockedReason ? 'locked' : 'available',
       isLoading: isCheckingShare,
     });
 
     return items;
-  }, [totalEarned, reviewCoins, shareCoins, hasShared, hasReviewed, reviewAllowed, isCheckingShare, isCheckingReview, shareCoinsEarned]);
+  }, [totalEarned, reviewCoins, shareCoins, hasShared, shareLockedReason, hasReviewed, reviewAllowed, isCheckingShare, isCheckingReview, shareCoinsEarned]);
 
   return {
     totalEarned,

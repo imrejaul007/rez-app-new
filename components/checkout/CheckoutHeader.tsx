@@ -48,7 +48,12 @@ function CheckoutHeader({
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
 
-          <ThemedText style={styles.headerTitle}>Checkout</ThemedText>
+          <ThemedText
+            style={styles.headerTitle}
+            accessibilityRole="header"
+          >
+            Checkout
+          </ThemedText>
 
           <View style={styles.coinsDisplay}>
             <CachedImage

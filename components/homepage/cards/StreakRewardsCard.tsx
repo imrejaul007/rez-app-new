@@ -33,9 +33,11 @@ const StreakRewardsCard: React.FC<StreakRewardsCardProps> = ({
 
   return (
     <Pressable
-     
       onPress={onPress}
       style={styles.cardContainer}
+      accessibilityLabel={`Streak Rewards. ${currentStreak > 0 ? `${currentStreak} day streak` : 'Start your streak'}. ${todayCheckedIn ? 'Checked in today' : 'Not checked in today'}. Next milestone: day ${nextMilestone.day} for ${nextMilestone.coins} coins. ${daysToMilestone} days to go.`}
+      accessibilityRole="button"
+      accessibilityHint="Double tap to view your streak progress and rewards"
     >
       <LinearGradient
         colors={gradientColors}

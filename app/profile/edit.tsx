@@ -3,7 +3,19 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Edit user profile information with photo upload
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, TextInput, SafeAreaView, ActivityIndicator, Modal } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  StatusBar,
+  Platform,
+  TextInput,
+  SafeAreaView,
+  ActivityIndicator,
+  Modal,
+  KeyboardAvoidingView,
+} from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -18,7 +30,12 @@ import { HeaderBackButton } from '@/components/navigation/SafeBackButton';
 import { PROFILE_COLORS } from '@/types/profile.types';
 import { getImagePicker } from '@/utils/lazyImports';
 import { uploadProfileImage } from '@/services/imageUploadService';
-import { platformAlertSimple, platformAlertConfirm, platformAlertDestructive, platformAlertError } from '@/utils/platformAlert';
+import {
+  platformAlertSimple,
+  platformAlertConfirm,
+  platformAlertDestructive,
+  platformAlertError,
+} from '@/utils/platformAlert';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -75,9 +92,10 @@ function ProfileEditPage() {
         if (response.success && response.data) {
           const d = response.data as any;
           const profileData: ProfileFormData = {
-            name: d.profile?.firstName && d.profile?.lastName
-              ? `${d.profile.firstName} ${d.profile.lastName}`
-              : d.profile?.firstName || d.name || '',
+            name:
+              d.profile?.firstName && d.profile?.lastName
+                ? `${d.profile.firstName} ${d.profile.lastName}`
+                : d.profile?.firstName || d.name || '',
             email: d.email || '',
             phone: d.phoneNumber || d.phone || '',
             bio: d.profile?.bio || d.bio || '',
@@ -126,7 +144,9 @@ function ProfileEditPage() {
       }
     };
     loadProfile();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {
@@ -151,7 +171,7 @@ function ProfileEditPage() {
         'Leave',
         () => {
           goBack('/profile' as any);
-        }
+        },
       );
     } else {
       goBack('/profile' as any);
@@ -159,11 +179,11 @@ function ProfileEditPage() {
   };
 
   const handleInputChange = (field: keyof ProfileFormData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleGenderSelect = (gender: string) => {
-    setFormData(prev => ({ ...prev, gender }));
+    setFormData((prev) => ({ ...prev, gender }));
     setShowGenderModal(false);
   };
 
@@ -186,7 +206,10 @@ function ProfileEditPage() {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
         if (status !== 'granted') {
-          platformAlertSimple('Permission Required', 'Please allow access to your photo library to upload a profile picture.');
+          platformAlertSimple(
+            'Permission Required',
+            'Please allow access to your photo library to upload a profile picture.',
+          );
           return;
         }
       }
@@ -220,7 +243,7 @@ function ProfileEditPage() {
 
           retryCount++;
           if (retryCount <= maxRetries) {
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise((resolve) => setTimeout(resolve, 2000));
           }
         }
 
@@ -229,11 +252,17 @@ function ProfileEditPage() {
           await authActions.checkAuthStatus();
           platformAlertSimple('Success', 'Profile picture updated successfully!');
         } else {
-          platformAlertSimple('Upload Failed', `After ${retryCount} attempts: ${uploadResult?.error || 'Failed to upload image'}\n\nCloudinary connection is slow. Try different network or smaller image.`);
+          platformAlertSimple(
+            'Upload Failed',
+            `After ${retryCount} attempts: ${uploadResult?.error || 'Failed to upload image'}\n\nCloudinary connection is slow. Try different network or smaller image.`,
+          );
         }
       }
     } catch (error) {
-      platformAlertSimple('Error', error instanceof Error ? error.message : 'An error occurred while uploading the image');
+      platformAlertSimple(
+        'Error',
+        error instanceof Error ? error.message : 'An error occurred while uploading the image',
+      );
     } finally {
       if (!isMounted()) return;
       setUploadingImage(false);
@@ -272,9 +301,10 @@ function ProfileEditPage() {
           bio: formData.bio || undefined,
           website: formData.website || undefined,
           dateOfBirth: formData.dateOfBirth ? new Date(formData.dateOfBirth) : undefined,
-          gender: formData.gender && ['male', 'female', 'other'].includes(formData.gender.toLowerCase())
-            ? formData.gender.toLowerCase()
-            : undefined,
+          gender:
+            formData.gender && ['male', 'female', 'other'].includes(formData.gender.toLowerCase())
+              ? formData.gender.toLowerCase()
+              : undefined,
           location: formData.location ? { address: formData.location } : undefined,
         },
       };
@@ -325,7 +355,7 @@ function ProfileEditPage() {
     placeholder: string,
     multiline: boolean = false,
     keyboardType: 'default' | 'email-address' | 'phone-pad' | 'url' = 'default',
-    readonly: boolean = false
+    readonly: boolean = false,
   ) => (
     <View style={styles.fieldContainer}>
       <View style={styles.fieldIconRow}>
@@ -341,11 +371,7 @@ function ProfileEditPage() {
         )}
       </View>
       <TextInput
-        style={[
-          styles.textInput,
-          multiline && styles.multilineInput,
-          readonly && styles.readonlyInput
-        ]}
+        style={[styles.textInput, multiline && styles.multilineInput, readonly && styles.readonlyInput]}
         value={formData[field] as string}
         onChangeText={readonly ? undefined : (value) => handleInputChange(field, value)}
         placeholder={placeholder}
@@ -365,37 +391,30 @@ function ProfileEditPage() {
     </View>
   );
 
-  const renderGenderOption = useCallback(({ item }: { item: { value: string; label: string } }) => (
-    <Pressable
-      style={[
-        styles.genderOption,
-        formData.gender === item.value && styles.selectedGenderOption
-      ]}
-      onPress={() => handleGenderSelect(item.value)}
-      accessibilityLabel={`Select ${item.label} as your gender`}
-      accessibilityRole="button"
-      accessibilityHint={`Double tap to set your gender to ${item.label}`}
-      accessibilityState={{ selected: formData.gender === item.value }}
-    >
-      <ThemedText style={[
-        styles.genderOptionText,
-        formData.gender === item.value && styles.selectedGenderOptionText
-      ]}>
-        {item.label}
-      </ThemedText>
-      {formData.gender === item.value && (
-        <Ionicons name="checkmark" size={20} color={PROFILE_COLORS.gold} />
-      )}
-    </Pressable>
-  ), [formData.gender, handleGenderSelect]);
+  const renderGenderOption = useCallback(
+    ({ item }: { item: { value: string; label: string } }) => (
+      <Pressable
+        style={[styles.genderOption, formData.gender === item.value && styles.selectedGenderOption]}
+        onPress={() => handleGenderSelect(item.value)}
+        accessibilityLabel={`Select ${item.label} as your gender`}
+        accessibilityRole="button"
+        accessibilityHint={`Double tap to set your gender to ${item.label}`}
+        accessibilityState={{ selected: formData.gender === item.value }}
+      >
+        <ThemedText
+          style={[styles.genderOptionText, formData.gender === item.value && styles.selectedGenderOptionText]}
+        >
+          {item.label}
+        </ThemedText>
+        {formData.gender === item.value && <Ionicons name="checkmark" size={20} color={PROFILE_COLORS.gold} />}
+      </Pressable>
+    ),
+    [formData.gender, handleGenderSelect],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={PROFILE_COLORS.primaryDark}
-        translucent={false}
-      />
+      <StatusBar barStyle="light-content" backgroundColor={PROFILE_COLORS.primaryDark} translucent={false} />
 
       {/* Gradient Header with Avatar */}
       <LinearGradient
@@ -422,7 +441,9 @@ function ProfileEditPage() {
             style={[styles.saveButton, (!hasChanges || isSaving) && styles.saveButtonDisabled]}
             onPress={handleSave}
             disabled={isSaving || !hasChanges}
-            accessibilityLabel={isSaving ? 'Saving profile changes' : hasChanges ? 'Save profile changes' : 'Save profile'}
+            accessibilityLabel={
+              isSaving ? 'Saving profile changes' : hasChanges ? 'Save profile changes' : 'Save profile'
+            }
             accessibilityRole="button"
             accessibilityHint="Double tap to save your profile changes"
             accessibilityState={{ disabled: isSaving || !hasChanges, busy: isSaving }}
@@ -430,10 +451,7 @@ function ProfileEditPage() {
             {isSaving ? (
               <ActivityIndicator size="small" color={colors.text.inverse} />
             ) : (
-              <ThemedText style={[
-                styles.saveButtonText,
-                (!hasChanges || isSaving) && styles.saveButtonTextDisabled
-              ]}>
+              <ThemedText style={[styles.saveButtonText, (!hasChanges || isSaving) && styles.saveButtonTextDisabled]}>
                 Save
               </ThemedText>
             )}
@@ -452,10 +470,7 @@ function ProfileEditPage() {
             accessibilityState={{ disabled: uploadingImage, busy: uploadingImage }}
           >
             {/* Gradient ring */}
-            <LinearGradient
-              colors={[PROFILE_COLORS.gold, '#ffd7b5']}
-              style={styles.avatarRing}
-            >
+            <LinearGradient colors={[PROFILE_COLORS.gold, '#ffd7b5']} style={styles.avatarRing}>
               <View style={styles.avatarInner}>
                 {user?.avatar ? (
                   <CachedImage
@@ -485,9 +500,7 @@ function ProfileEditPage() {
           </Pressable>
 
           <View style={styles.headerUserInfo}>
-            <ThemedText style={styles.headerUserName}>
-              {formData.name || user?.name || ''}
-            </ThemedText>
+            <ThemedText style={styles.headerUserName}>{formData.name || user?.name || ''}</ThemedText>
             <ThemedText style={styles.headerUserSub}>
               {uploadingImage ? 'Uploading photo...' : 'Tap photo to change'}
             </ThemedText>
@@ -495,223 +508,210 @@ function ProfileEditPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
       >
-
-        {/* Personal Info Card */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardIconBadge}>
-              <Ionicons name="person" size={16} color={PROFILE_COLORS.primaryDark} />
+        <ScrollView
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Personal Info Card */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconBadge}>
+                <Ionicons name="person" size={16} color={PROFILE_COLORS.primaryDark} />
+              </View>
+              <ThemedText style={styles.cardTitle}>Personal Info</ThemedText>
             </View>
-            <ThemedText style={styles.cardTitle}>Personal Info</ThemedText>
+
+            {renderFormField('Full Name', 'name', 'Enter your full name')}
+            {renderFormField('Email Address', 'email', 'Enter your email', false, 'email-address', false)}
+            {renderFormField('Phone Number', 'phone', 'Enter your phone number', false, 'phone-pad', true)}
+            {renderFormField('Date of Birth', 'dateOfBirth', 'YYYY-MM-DD', false, 'default')}
+
+            {/* Gender Selection */}
+            <View style={styles.fieldContainer}>
+              <View style={styles.fieldIconRow}>
+                <View style={styles.fieldIconCircle}>
+                  <Ionicons name="people-outline" size={16} color={PROFILE_COLORS.primaryDark} />
+                </View>
+                <ThemedText style={styles.fieldLabel}>Gender</ThemedText>
+              </View>
+              <Pressable
+                style={styles.genderSelector}
+                onPress={() => setShowGenderModal(true)}
+                accessibilityLabel={`Gender: ${formData.gender ? genderOptions.find((opt) => opt.value === formData.gender)?.label : 'Not selected'}`}
+                accessibilityRole="button"
+                accessibilityHint="Double tap to select your gender"
+              >
+                <ThemedText style={[styles.genderText, !formData.gender && styles.placeholderText]}>
+                  {formData.gender
+                    ? genderOptions.find((opt) => opt.value === formData.gender)?.label
+                    : 'Select gender'}
+                </ThemedText>
+                <Ionicons name="chevron-down" size={20} color={colors.text.tertiary} />
+              </Pressable>
+            </View>
           </View>
 
-          {renderFormField('Full Name', 'name', 'Enter your full name')}
-          {renderFormField('Email Address', 'email', 'Enter your email', false, 'email-address', false)}
-          {renderFormField('Phone Number', 'phone', 'Enter your phone number', false, 'phone-pad', true)}
-          {renderFormField('Date of Birth', 'dateOfBirth', 'YYYY-MM-DD', false, 'default')}
-
-          {/* Gender Selection */}
-          <View style={styles.fieldContainer}>
-            <View style={styles.fieldIconRow}>
-              <View style={styles.fieldIconCircle}>
-                <Ionicons name="people-outline" size={16} color={PROFILE_COLORS.primaryDark} />
+          {/* About Card */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconBadge}>
+                <Ionicons name="chatbubble-ellipses" size={16} color={PROFILE_COLORS.primaryDark} />
               </View>
-              <ThemedText style={styles.fieldLabel}>Gender</ThemedText>
+              <ThemedText style={styles.cardTitle}>About</ThemedText>
             </View>
+            {renderFormField('Bio', 'bio', 'Tell us about yourself...', true)}
+          </View>
+
+          {/* Contact Card */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconBadge}>
+                <Ionicons name="compass" size={16} color={PROFILE_COLORS.primaryDark} />
+              </View>
+              <ThemedText style={styles.cardTitle}>Contact</ThemedText>
+            </View>
+            {renderFormField('Location', 'location', 'Enter your city or location')}
+            {renderFormField('Website', 'website', 'https://your-website.com', false, 'url')}
+          </View>
+
+          {/* Account Settings Card */}
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <View style={styles.cardIconBadge}>
+                <Ionicons name="settings" size={16} color={PROFILE_COLORS.primaryDark} />
+              </View>
+              <ThemedText style={styles.cardTitle}>Account Settings</ThemedText>
+            </View>
+
             <Pressable
-              style={styles.genderSelector}
-              onPress={() => setShowGenderModal(true)}
-              accessibilityLabel={`Gender: ${formData.gender ? genderOptions.find(opt => opt.value === formData.gender)?.label : 'Not selected'}`}
+              style={styles.settingItem}
+              accessibilityLabel="Change Password"
               accessibilityRole="button"
-              accessibilityHint="Double tap to select your gender"
+              accessibilityHint="Double tap to update your account password"
             >
-              <ThemedText style={[
-                styles.genderText,
-                !formData.gender && styles.placeholderText
-              ]}>
-                {formData.gender ? genderOptions.find(opt => opt.value === formData.gender)?.label : 'Select gender'}
-              </ThemedText>
-              <Ionicons name="chevron-down" size={20} color={colors.text.tertiary} />
+              <View style={styles.settingItemLeft}>
+                <View style={styles.settingIconCircle}>
+                  <Ionicons name="key-outline" size={20} color={PROFILE_COLORS.primaryDark} />
+                </View>
+                <View style={styles.settingItemText}>
+                  <ThemedText style={styles.settingItemTitle}>Change Password</ThemedText>
+                  <ThemedText style={styles.settingItemDescription}>Update your account password</ThemedText>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.neutral[300]} />
+            </Pressable>
+
+            <Pressable
+              style={styles.settingItem}
+              accessibilityLabel="Notification Preferences"
+              accessibilityRole="button"
+              accessibilityHint="Double tap to manage your notification settings"
+            >
+              <View style={styles.settingItemLeft}>
+                <View style={styles.settingIconCircle}>
+                  <Ionicons name="notifications-outline" size={20} color={PROFILE_COLORS.primaryDark} />
+                </View>
+                <View style={styles.settingItemText}>
+                  <ThemedText style={styles.settingItemTitle}>Notification Preferences</ThemedText>
+                  <ThemedText style={styles.settingItemDescription}>Manage your notification settings</ThemedText>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.neutral[300]} />
+            </Pressable>
+
+            <Pressable
+              style={[styles.settingItem, styles.settingItemLast]}
+              accessibilityLabel="Privacy Settings"
+              accessibilityRole="button"
+              accessibilityHint="Double tap to control who can see your profile"
+            >
+              <View style={styles.settingItemLeft}>
+                <View style={styles.settingIconCircle}>
+                  <Ionicons name="shield-outline" size={20} color={PROFILE_COLORS.primaryDark} />
+                </View>
+                <View style={styles.settingItemText}>
+                  <ThemedText style={styles.settingItemTitle}>Privacy Settings</ThemedText>
+                  <ThemedText style={styles.settingItemDescription}>Control who can see your profile</ThemedText>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={colors.neutral[300]} />
             </Pressable>
           </View>
-        </View>
 
-        {/* About Card */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardIconBadge}>
-              <Ionicons name="chatbubble-ellipses" size={16} color={PROFILE_COLORS.primaryDark} />
-            </View>
-            <ThemedText style={styles.cardTitle}>About</ThemedText>
-          </View>
-          {renderFormField('Bio', 'bio', 'Tell us about yourself...', true)}
-        </View>
-
-        {/* Contact Card */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardIconBadge}>
-              <Ionicons name="compass" size={16} color={PROFILE_COLORS.primaryDark} />
-            </View>
-            <ThemedText style={styles.cardTitle}>Contact</ThemedText>
-          </View>
-          {renderFormField('Location', 'location', 'Enter your city or location')}
-          {renderFormField('Website', 'website', 'https://your-website.com', false, 'url')}
-        </View>
-
-        {/* Account Settings Card */}
-        <View style={styles.card}>
-          <View style={styles.cardHeader}>
-            <View style={styles.cardIconBadge}>
-              <Ionicons name="settings" size={16} color={PROFILE_COLORS.primaryDark} />
-            </View>
-            <ThemedText style={styles.cardTitle}>Account Settings</ThemedText>
-          </View>
-
-          <Pressable
-            style={styles.settingItem}
-            accessibilityLabel="Change Password"
-            accessibilityRole="button"
-            accessibilityHint="Double tap to update your account password"
-          >
-            <View style={styles.settingItemLeft}>
-              <View style={styles.settingIconCircle}>
-                <Ionicons name="key-outline" size={20} color={PROFILE_COLORS.primaryDark} />
+          {/* Danger Zone Card */}
+          <View style={[styles.card, styles.dangerCard]}>
+            <View style={styles.cardHeader}>
+              <View style={[styles.cardIconBadge, styles.dangerIconBadge]}>
+                <Ionicons name="warning" size={16} color={Colors.error} />
               </View>
-              <View style={styles.settingItemText}>
-                <ThemedText style={styles.settingItemTitle}>Change Password</ThemedText>
-                <ThemedText style={styles.settingItemDescription}>
-                  Update your account password
+              <ThemedText style={[styles.cardTitle, styles.dangerCardTitle]}>Danger Zone</ThemedText>
+            </View>
+
+            <Pressable
+              style={styles.dangerItem}
+              onPress={() => {
+                platformAlertDestructive(
+                  'Delete Account',
+                  'Are you sure you want to delete your account? This action cannot be undone.',
+                  'Delete',
+                  () => {
+                    platformAlertSimple('Account Deleted', 'Your account has been scheduled for deletion.');
+                  },
+                );
+              }}
+              accessibilityLabel="Delete Account"
+              accessibilityRole="button"
+              accessibilityHint="Double tap to permanently delete your account and all data. This action cannot be undone"
+            >
+              <View style={styles.dangerIconCircle}>
+                <Ionicons name="trash-outline" size={20} color={Colors.error} />
+              </View>
+              <View style={styles.dangerItemText}>
+                <ThemedText style={styles.dangerItemTitle}>Delete Account</ThemedText>
+                <ThemedText style={styles.dangerItemDescription}>
+                  Permanently delete your account and all data
                 </ThemedText>
               </View>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.neutral[300]} />
-          </Pressable>
-
-          <Pressable
-            style={styles.settingItem}
-            accessibilityLabel="Notification Preferences"
-            accessibilityRole="button"
-            accessibilityHint="Double tap to manage your notification settings"
-          >
-            <View style={styles.settingItemLeft}>
-              <View style={styles.settingIconCircle}>
-                <Ionicons name="notifications-outline" size={20} color={PROFILE_COLORS.primaryDark} />
-              </View>
-              <View style={styles.settingItemText}>
-                <ThemedText style={styles.settingItemTitle}>Notification Preferences</ThemedText>
-                <ThemedText style={styles.settingItemDescription}>
-                  Manage your notification settings
-                </ThemedText>
-              </View>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.neutral[300]} />
-          </Pressable>
-
-          <Pressable
-            style={[styles.settingItem, styles.settingItemLast]}
-            accessibilityLabel="Privacy Settings"
-            accessibilityRole="button"
-            accessibilityHint="Double tap to control who can see your profile"
-          >
-            <View style={styles.settingItemLeft}>
-              <View style={styles.settingIconCircle}>
-                <Ionicons name="shield-outline" size={20} color={PROFILE_COLORS.primaryDark} />
-              </View>
-              <View style={styles.settingItemText}>
-                <ThemedText style={styles.settingItemTitle}>Privacy Settings</ThemedText>
-                <ThemedText style={styles.settingItemDescription}>
-                  Control who can see your profile
-                </ThemedText>
-              </View>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={colors.neutral[300]} />
-          </Pressable>
-        </View>
-
-        {/* Danger Zone Card */}
-        <View style={[styles.card, styles.dangerCard]}>
-          <View style={styles.cardHeader}>
-            <View style={[styles.cardIconBadge, styles.dangerIconBadge]}>
-              <Ionicons name="warning" size={16} color={Colors.error} />
-            </View>
-            <ThemedText style={[styles.cardTitle, styles.dangerCardTitle]}>Danger Zone</ThemedText>
+              <Ionicons name="chevron-forward" size={18} color={Colors.error} />
+            </Pressable>
           </View>
 
+          {/* Full-width Save Button */}
           <Pressable
-            style={styles.dangerItem}
-            onPress={() => {
-              platformAlertDestructive(
-                'Delete Account',
-                'Are you sure you want to delete your account? This action cannot be undone.',
-                'Delete',
-                () => {
-                  platformAlertSimple('Account Deleted', 'Your account has been scheduled for deletion.');
-                }
-              );
-            }}
-            accessibilityLabel="Delete Account"
+            onPress={handleSave}
+            disabled={isSaving || !hasChanges}
+            accessibilityLabel={isSaving ? 'Saving profile changes' : 'Save changes'}
             accessibilityRole="button"
-            accessibilityHint="Double tap to permanently delete your account and all data. This action cannot be undone"
+            accessibilityState={{ disabled: isSaving || !hasChanges, busy: isSaving }}
+            style={styles.bottomSaveWrapper}
           >
-            <View style={styles.dangerIconCircle}>
-              <Ionicons name="trash-outline" size={20} color={Colors.error} />
-            </View>
-            <View style={styles.dangerItemText}>
-              <ThemedText style={styles.dangerItemTitle}>Delete Account</ThemedText>
-              <ThemedText style={styles.dangerItemDescription}>
-                Permanently delete your account and all data
-              </ThemedText>
-            </View>
-            <Ionicons name="chevron-forward" size={18} color={Colors.error} />
+            <LinearGradient
+              colors={hasChanges && !isSaving ? [PROFILE_COLORS.primaryDark, '#2d5a7b'] : ['#B0BEC5', '#CFD8DC']}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.bottomSaveButton}
+            >
+              {isSaving ? (
+                <ActivityIndicator size="small" color="white" />
+              ) : (
+                <>
+                  <Ionicons name="checkmark-circle" size={20} color="white" style={{ marginRight: 8 }} />
+                  <ThemedText style={styles.bottomSaveText}>{hasChanges ? 'Save Changes' : 'No Changes'}</ThemedText>
+                </>
+              )}
+            </LinearGradient>
           </Pressable>
-        </View>
 
-        {/* Full-width Save Button */}
-        <Pressable
-          onPress={handleSave}
-          disabled={isSaving || !hasChanges}
-          accessibilityLabel={isSaving ? 'Saving profile changes' : 'Save changes'}
-          accessibilityRole="button"
-          accessibilityState={{ disabled: isSaving || !hasChanges, busy: isSaving }}
-          style={styles.bottomSaveWrapper}
-        >
-          <LinearGradient
-            colors={
-              hasChanges && !isSaving
-                ? [PROFILE_COLORS.primaryDark, '#2d5a7b']
-                : ['#B0BEC5', '#CFD8DC']
-            }
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.bottomSaveButton}
-          >
-            {isSaving ? (
-              <ActivityIndicator size="small" color="white" />
-            ) : (
-              <>
-                <Ionicons
-                  name="checkmark-circle"
-                  size={20}
-                  color="white"
-                  style={{ marginRight: 8 }}
-                />
-                <ThemedText style={styles.bottomSaveText}>
-                  {hasChanges ? 'Save Changes' : 'No Changes'}
-                </ThemedText>
-              </>
-            )}
-          </LinearGradient>
-        </Pressable>
-
-        <View style={styles.bottomSpace} />
-      </ScrollView>
+          <View style={styles.bottomSpace} />
+        </ScrollView>
+      </KeyboardAvoidingView>
 
       {/* Gender Selection Modal */}
       <Modal

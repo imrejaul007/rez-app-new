@@ -41,7 +41,12 @@ function DealRedemptionModal({
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <ThemedText style={styles.modalTitle}>Redeem Deal Code</ThemedText>
-            <Pressable onPress={onClose}>
+            <Pressable
+              onPress={onClose}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              accessibilityLabel="Close deal redemption modal"
+              accessibilityRole="button"
+            >
               <Ionicons name="close" size={24} color={colors.neutral[700]} />
             </Pressable>
           </View>
@@ -54,6 +59,8 @@ function DealRedemptionModal({
               onChangeText={onRedemptionCodeChange}
               autoCapitalize="characters"
               autoFocus={true}
+              accessibilityLabel="Deal redemption code"
+              accessibilityHint="Enter the redemption code from your redeemed deal"
             />
 
             <View style={{ marginTop: 16 }}>
@@ -72,6 +79,9 @@ function DealRedemptionModal({
               style={[styles.applyButton, validatingRedemption && styles.applyButtonDisabled, { marginTop: 20 }]}
               onPress={onApplyRedemptionCode}
               disabled={validatingRedemption}
+              accessibilityLabel={validatingRedemption ? 'Validating deal code' : 'Apply deal code'}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: validatingRedemption, busy: validatingRedemption }}
             >
               {validatingRedemption ? (
                 <View style={styles.applyLoading}>
@@ -89,6 +99,9 @@ function DealRedemptionModal({
                 onClose();
                 router.push('/my-deals' as any);
               }}
+              accessibilityLabel="View my deals"
+              accessibilityRole="button"
+              accessibilityHint="Double tap to navigate to your redeemed deals"
             >
               <ThemedText style={{ color: colors.warningScale[400], fontWeight: '500' }}>View My Deals &#x2192;</ThemedText>
             </Pressable>

@@ -68,7 +68,7 @@ function GoldSavingsSipPage() {
           setGoldData(response.data);
         }
       } catch (error) {
-        console.debug('[GoldSIP] API fetch failed, using fallback data');
+        if (__DEV__) console.debug('[GoldSIP] API fetch failed, using fallback data');
         if (isMounted) {
           // Use fallback data if API not available
           setGoldData({
@@ -118,7 +118,7 @@ function GoldSavingsSipPage() {
         setGoldData(response.data);
       }
     } catch (error) {
-      console.debug('[GoldSIP] API fetch failed, using fallback data');
+      if (__DEV__) console.debug('[GoldSIP] API fetch failed, using fallback data');
       // Use fallback data if API not available
       setGoldData({
         activeSip: null,
@@ -234,9 +234,7 @@ function GoldSavingsSipPage() {
         <View style={styles.priceCard}>
           <View style={styles.priceHeader}>
             <ThemedText style={styles.priceLabel}>Current Gold Price</ThemedText>
-            <ThemedText style={styles.timestamp}>
-              Updated just now
-            </ThemedText>
+            <ThemedText style={styles.timestamp}>Updated just now</ThemedText>
           </View>
           <View style={styles.priceDisplay}>
             <ThemedText style={styles.price}>
@@ -262,9 +260,7 @@ function GoldSavingsSipPage() {
               </View>
               <View style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>Deduction Date</ThemedText>
-                <ThemedText style={styles.detailValue}>
-                  {goldData.activeSip?.deductionDate}th of every month
-                </ThemedText>
+                <ThemedText style={styles.detailValue}>{goldData.activeSip?.deductionDate}th of every month</ThemedText>
               </View>
               <View style={styles.detailRow}>
                 <ThemedText style={styles.detailLabel}>Next Debit</ThemedText>
@@ -273,14 +269,8 @@ function GoldSavingsSipPage() {
                 </ThemedText>
               </View>
             </View>
-            <Pressable
-              style={styles.cancelButton}
-              onPress={handleCancelSip}
-              disabled={saving}
-            >
-              <ThemedText style={styles.cancelButtonText}>
-                {saving ? 'Cancelling...' : 'Cancel SIP'}
-              </ThemedText>
+            <Pressable style={styles.cancelButton} onPress={handleCancelSip} disabled={saving}>
+              <ThemedText style={styles.cancelButtonText}>{saving ? 'Cancelling...' : 'Cancel SIP'}</ThemedText>
             </Pressable>
           </View>
         ) : (
@@ -294,20 +284,14 @@ function GoldSavingsSipPage() {
                 {AMOUNT_OPTIONS.map((amount) => (
                   <Pressable
                     key={amount}
-                    style={[
-                      styles.pill,
-                      selectedAmount === amount && !customAmount && styles.pillActive,
-                    ]}
+                    style={[styles.pill, selectedAmount === amount && !customAmount && styles.pillActive]}
                     onPress={() => {
                       setSelectedAmount(amount);
                       setCustomAmount('');
                     }}
                   >
                     <ThemedText
-                      style={[
-                        styles.pillText,
-                        selectedAmount === amount && !customAmount && styles.pillTextActive,
-                      ]}
+                      style={[styles.pillText, selectedAmount === amount && !customAmount && styles.pillTextActive]}
                     >
                       ₹{amount}
                     </ThemedText>
@@ -319,9 +303,7 @@ function GoldSavingsSipPage() {
                 <View style={styles.customInput}>
                   <ThemedText style={styles.currencySymbol}>₹</ThemedText>
                   {/* Using View as placeholder since we can't use TextInput in this context */}
-                  <ThemedText style={styles.customAmount}>
-                    {customAmount || 'Enter amount'}
-                  </ThemedText>
+                  <ThemedText style={styles.customAmount}>{customAmount || 'Enter amount'}</ThemedText>
                 </View>
               </View>
             </View>
@@ -333,18 +315,10 @@ function GoldSavingsSipPage() {
                 {DATE_OPTIONS.map((date) => (
                   <Pressable
                     key={date}
-                    style={[
-                      styles.dateOption,
-                      selectedDate === date && styles.dateOptionActive,
-                    ]}
+                    style={[styles.dateOption, selectedDate === date && styles.dateOptionActive]}
                     onPress={() => setSelectedDate(date)}
                   >
-                    <ThemedText
-                      style={[
-                        styles.dateText,
-                        selectedDate === date && styles.dateTextActive,
-                      ]}
-                    >
+                    <ThemedText style={[styles.dateText, selectedDate === date && styles.dateTextActive]}>
                       {date}
                     </ThemedText>
                   </Pressable>
@@ -361,14 +335,8 @@ function GoldSavingsSipPage() {
             </View>
 
             {/* Start Button */}
-            <Pressable
-              style={styles.startButton}
-              onPress={handleStartSip}
-              disabled={saving}
-            >
-              <ThemedText style={styles.startButtonText}>
-                {saving ? 'Starting SIP...' : 'Start Gold SIP'}
-              </ThemedText>
+            <Pressable style={styles.startButton} onPress={handleStartSip} disabled={saving}>
+              <ThemedText style={styles.startButtonText}>{saving ? 'Starting SIP...' : 'Start Gold SIP'}</ThemedText>
             </Pressable>
           </View>
         )}
@@ -379,23 +347,17 @@ function GoldSavingsSipPage() {
           <View style={styles.holdingsGrid}>
             <View style={styles.holdingItem}>
               <ThemedText style={styles.holdingLabel}>Total Grams</ThemedText>
-              <ThemedText style={styles.holdingValue}>
-                {goldData?.holdings.grams.toFixed(2)}g
-              </ThemedText>
+              <ThemedText style={styles.holdingValue}>{goldData?.holdings.grams.toFixed(2)}g</ThemedText>
             </View>
             <View style={styles.holdingItem}>
               <ThemedText style={styles.holdingLabel}>Current Value</ThemedText>
-              <ThemedText style={styles.holdingValue}>
-                ₹{goldData?.holdings.currentValue.toLocaleString()}
-              </ThemedText>
+              <ThemedText style={styles.holdingValue}>₹{goldData?.holdings.currentValue.toLocaleString()}</ThemedText>
             </View>
           </View>
           <View style={styles.summaryStats}>
             <View style={styles.statRow}>
               <ThemedText style={styles.statLabel}>Invested</ThemedText>
-              <ThemedText style={styles.statValue}>
-                ₹{goldData?.holdings.invested.toLocaleString()}
-              </ThemedText>
+              <ThemedText style={styles.statValue}>₹{goldData?.holdings.invested.toLocaleString()}</ThemedText>
             </View>
             <View style={[styles.statRow, styles.gainRow]}>
               <ThemedText style={styles.statLabel}>Gain/Loss</ThemedText>
@@ -425,9 +387,7 @@ function GoldSavingsSipPage() {
                       {entry.gramsBought.toFixed(3)}g @ ₹{entry.pricePerGram}/g
                     </ThemedText>
                   </View>
-                  <ThemedText style={styles.historyAmount}>
-                    ₹{entry.amount.toLocaleString()}
-                  </ThemedText>
+                  <ThemedText style={styles.historyAmount}>₹{entry.amount.toLocaleString()}</ThemedText>
                 </View>
               ))}
             </View>

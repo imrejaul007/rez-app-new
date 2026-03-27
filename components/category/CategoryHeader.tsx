@@ -95,6 +95,7 @@ function CategoryHeader({
             numberOfLines={2}
             adjustsFontSizeToFit
             minimumFontScale={0.8}
+            accessibilityRole="header"
           >
             {category.headerConfig.title}
           </ThemedText>

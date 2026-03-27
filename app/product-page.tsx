@@ -35,7 +35,13 @@ import BottomBanner from '@/components/product/BottomBanner';
 import ProductStickyBottomBar from '@/components/product/ProductStickyBottomBar';
 import { showAlert } from '@/components/common/CrossPlatformAlert';
 import { prefetchImages } from '@/components/ui/CachedImage';
-import { useIsAuthenticated, useAuthLoading, useCartState, useRefreshCart, useGetCurrencySymbol } from '@/stores/selectors';
+import {
+  useIsAuthenticated,
+  useAuthLoading,
+  useCartState,
+  useRefreshCart,
+  useGetCurrencySymbol,
+} from '@/stores/selectors';
 import cartApi from '@/services/cartApi';
 import asyncStorageService from '@/services/asyncStorageService';
 import reviewsService from '@/services/reviewsApi';
@@ -217,21 +223,36 @@ function StorePage() {
   const isDesktop = screenWidth >= 1024;
 
   // Memoized computed values for new sections
-  const productPrice = useMemo(() => cardData?.price || cardData?.pricing?.selling || 0, [cardData?.price, cardData?.pricing?.selling]);
-  const originalPrice = useMemo(() => cardData?.originalPrice || cardData?.pricing?.compare || productPrice, [cardData?.originalPrice, cardData?.pricing?.compare, productPrice]);
+  const productPrice = useMemo(
+    () => cardData?.price || cardData?.pricing?.selling || 0,
+    [cardData?.price, cardData?.pricing?.selling],
+  );
+  const originalPrice = useMemo(
+    () => cardData?.originalPrice || cardData?.pricing?.compare || productPrice,
+    [cardData?.originalPrice, cardData?.pricing?.compare, productPrice],
+  );
   const earnableCoins = useMemo(() => Math.floor(productPrice * 0.1), [productPrice]);
-  const cashbackAmount = useMemo(() => cardData?.computedCashback?.amount || cardData?.cashback?.maxAmount || Math.floor(productPrice * 0.05), [cardData?.computedCashback?.amount, cardData?.cashback?.maxAmount, productPrice]);
-  const savingsAmount = useMemo(() => originalPrice > productPrice ? originalPrice - productPrice : 0, [originalPrice, productPrice]);
+  const cashbackAmount = useMemo(
+    () => cardData?.computedCashback?.amount || cardData?.cashback?.maxAmount || Math.floor(productPrice * 0.05),
+    [cardData?.computedCashback?.amount, cardData?.cashback?.maxAmount, productPrice],
+  );
+  const savingsAmount = useMemo(
+    () => (originalPrice > productPrice ? originalPrice - productPrice : 0),
+    [originalPrice, productPrice],
+  );
 
   // Get product ID for recommendations
-  const productId = useMemo(() => cardData?.id || cardData?._id || (params.cardId as string), [cardData?.id, cardData?._id, params.cardId]);
+  const productId = useMemo(
+    () => cardData?.id || cardData?._id || (params.cardId as string),
+    [cardData?.id, cardData?._id, params.cardId],
+  );
   const isMounted = useIsMounted();
 
   // Sync quantity from cart if this product is already in the cart
   useEffect(() => {
     if (!productId || !cartState?.items?.length) return;
     const existingItem = cartState.items.find(
-      (item: any) => (item.productId || item.product?._id || item.product) === productId
+      (item: any) => (item.productId || item.product?._id || item.product) === productId,
     );
     if (existingItem?.quantity && existingItem.quantity > 1) {
       setQuantity(existingItem.quantity);
@@ -243,11 +264,11 @@ function StorePage() {
     similar,
     frequentlyBought,
     bundles,
-    loading: recommendationsLoading
+    loading: recommendationsLoading,
   } = useRecommendations({
     productId: productId || '',
     autoFetch: !!productId,
-    trackView: false  // Disable view tracking to prevent infinite API calls
+    trackView: false, // Disable view tracking to prevent infinite API calls
   });
 
   // Function to fetch backend data for a product
@@ -274,11 +295,14 @@ function StorePage() {
 
         // Determine correct price: check if price is a direct number or an object
         const priceField = (productData as any).price;
-        const actualPrice = typeof priceField === 'number' ? priceField :
-          (priceField?.current || priceField?.selling ||
-            (productData as any).pricing?.selling ||
-            (productData as any).pricing?.basePrice ||
-            0);
+        const actualPrice =
+          typeof priceField === 'number'
+            ? priceField
+            : priceField?.current ||
+              priceField?.selling ||
+              (productData as any).pricing?.selling ||
+              (productData as any).pricing?.basePrice ||
+              0;
         // Get original price - check unified price object first, then raw pricing
         const unifiedPriceOriginal = (productData as any).price?.original;
         const originalPriceField = (productData as any).originalPrice;
@@ -290,18 +314,15 @@ function StorePage() {
           (productData as any).pricing?.compare ||
           (productData as any).pricing?.mrp ||
           undefined;
-        const actualDiscount = (productData as any).discount ||
+        const actualDiscount =
+          (productData as any).discount ||
           (productData as any).price?.discount ||
           (productData as any).pricing?.discount ||
           0;
 
         // Determine correct rating: prioritize rating.value over ratings.average if rating object exists
-        const actualRatingValue = (productData as any).rating?.value ||
-          productData.ratings?.average ||
-          0;
-        const actualReviewCount = (productData as any).rating?.count ||
-          productData.ratings?.count ||
-          0;
+        const actualRatingValue = (productData as any).rating?.value || productData.ratings?.average || 0;
+        const actualReviewCount = (productData as any).rating?.count || productData.ratings?.count || 0;
 
         const updatedCardData: DynamicCardData = {
           id: (productData as any)._id || productData.id,
@@ -316,10 +337,17 @@ function StorePage() {
           ratings: productData.ratings, // Full ratings object
           category: (productData.category as any)?.name || (productData.category as any) || 'General',
           merchant: productData.store?.name || (productData as any).merchant || 'Store',
-          image: (typeof productData.images?.[0] === 'string' ? productData.images[0] : (productData.images?.[0] as any)?.url) || (productData as any).image,
-          images: (productData.images as any)?.map((img: any) => typeof img === 'string' ? img : img?.url).filter(Boolean) || [],
+          image:
+            (typeof productData.images?.[0] === 'string'
+              ? productData.images[0]
+              : (productData.images?.[0] as any)?.url) || (productData as any).image,
+          images:
+            (productData.images as any)
+              ?.map((img: any) => (typeof img === 'string' ? img : img?.url))
+              .filter(Boolean) || [],
           discount: actualDiscount,
-          isAvailable: (productData as any).inventory?.isAvailable || (productData as any).availabilityStatus === 'in_stock',
+          isAvailable:
+            (productData as any).inventory?.isAvailable || (productData as any).availabilityStatus === 'in_stock',
           availabilityStatus: (productData as any).inventory?.isAvailable ? 'in_stock' : 'out_of_stock',
           stock: (productData as any).inventory?.stock || 0,
           productType: productType, // 'product' or 'service'
@@ -350,27 +378,31 @@ function StorePage() {
         }
 
         // Track this product as recently viewed
-        asyncStorageService.addRecentlyViewedProduct({
-          _id: updatedCardData.id || updatedCardData._id,
-          name: updatedCardData.name,
-          title: updatedCardData.title,
-          image: updatedCardData.image,
-          images: updatedCardData.images,
-          price: updatedCardData.price ? {
-            current: updatedCardData.price,
-            original: updatedCardData.originalPrice,
-          } : undefined,
-          rating: {
-            value: updatedCardData.rating || 0,
-            count: updatedCardData.reviewCount || 0,
-          },
-          cashback: updatedCardData.cashback,
-        }).catch(() => {});
+        asyncStorageService
+          .addRecentlyViewedProduct({
+            _id: updatedCardData.id || updatedCardData._id,
+            name: updatedCardData.name,
+            title: updatedCardData.title,
+            image: updatedCardData.image,
+            images: updatedCardData.images,
+            price: updatedCardData.price
+              ? {
+                  current: updatedCardData.price,
+                  original: updatedCardData.originalPrice,
+                }
+              : undefined,
+            rating: {
+              value: updatedCardData.rating || 0,
+              count: updatedCardData.reviewCount || 0,
+            },
+            cashback: updatedCardData.cashback,
+          })
+          .catch(() => {});
 
         // Fire analytics + view tracking in parallel (non-blocking)
         Promise.allSettled([
           productsApi.trackProductView(productId),
-          productsApi.getProductAnalytics(productId).then(analyticsResponse => {
+          productsApi.getProductAnalytics(productId).then((analyticsResponse) => {
             if (analyticsResponse.success && analyticsResponse.data) {
               if (!isMounted()) return;
               setProductAnalytics(analyticsResponse.data);
@@ -410,7 +442,7 @@ function StorePage() {
 
       if (lockedResponse.success && lockedResponse.data) {
         const lockedItem = lockedResponse.data.lockedItems.find(
-          (item: any) => item.product?._id === productId || item.product?.id === productId
+          (item: any) => item.product?._id === productId || item.product?.id === productId,
         );
         if (!isMounted()) return;
         setIsLocked(!!lockedItem);
@@ -424,14 +456,13 @@ function StorePage() {
   useFocusEffect(
     useCallback(() => {
       checkLockStatus();
-    }, [checkLockStatus])
+    }, [checkLockStatus]),
   );
 
   // Parse dynamic card data from navigation params
   useEffect(() => {
     // Only process if we have the required params and haven't already processed this cardId
     if (params.cardId && params.cardType && fetchedProductIdRef.current !== params.cardId) {
-
       // Check if we have cardData passed from navigation
       if (params.cardData) {
         try {
@@ -444,14 +475,13 @@ function StorePage() {
           // Also fetch latest backend data in background to ensure freshness
           fetchBackendData(params.cardId as string);
         } catch (error) {
-
           // Fallback: Create basic card data and fetch from backend
           const cardDataFromParams: DynamicCardData = {
             id: params.cardId as string,
             title: 'Product Details',
             description: 'Loading product information...',
-            category: params.category as string || 'general',
-            type: params.cardType as string
+            category: (params.category as string) || 'general',
+            type: params.cardType as string,
           };
 
           setCardData(cardDataFromParams);
@@ -465,8 +495,8 @@ function StorePage() {
           id: params.cardId as string,
           title: 'Product Details',
           description: 'Loading product information...',
-          category: params.category as string || 'general',
-          type: params.cardType as string
+          category: (params.category as string) || 'general',
+          type: params.cardType as string,
         };
 
         setCardData(cardDataFromParams);
@@ -489,7 +519,7 @@ function StorePage() {
         // Fetch reviews from API
         const response = await reviewsService.getTargetReviews('store', storeId, {
           limit: 5,
-          sortBy: 'newest'
+          sortBy: 'newest',
         });
 
         if (response.data?.reviews) {
@@ -501,7 +531,7 @@ function StorePage() {
             rating: review.rating || 5,
             date: formatReviewDate(review.createdAt),
             text: review.content || review.comment || review.text || '',
-            cashbackEarned: review.metadata?.cashbackEarned || null
+            cashbackEarned: review.metadata?.cashbackEarned || null,
           }));
           if (!isMounted()) return;
           setStoreReviews(formattedReviews);
@@ -515,7 +545,10 @@ function StorePage() {
   }, [cardData?.storeId, cardData?.store?.id, cardData?.store?._id]);
 
   // Determine store type from backend productType (defaults to PRODUCT)
-  const storeType = useMemo(() => cardData?.productType === 'service' ? 'SERVICE' : 'PRODUCT', [cardData?.productType]);
+  const storeType = useMemo(
+    () => (cardData?.productType === 'service' ? 'SERVICE' : 'PRODUCT'),
+    [cardData?.productType],
+  );
 
   // ============================================
   // PRODUCTION-READY BUTTON HANDLERS
@@ -529,12 +562,14 @@ function StorePage() {
       }
 
       const productId = cardData.id || cardData._id;
+      const storeId = cardData.store?._id || cardData.store?.id || cardData.storeId;
 
       // Add to cart via API with selected quantity
       const cartResponse = await cartApi.addToCart({
         productId: productId!,
         quantity: quantity,
-        variant: cardData.selectedVariant as any
+        storeId: storeId || undefined,
+        variant: cardData.selectedVariant as any,
       });
 
       if (cartResponse.success) {
@@ -549,7 +584,16 @@ function StorePage() {
     } catch (error) {
       showAlert('Error', 'Unable to add to cart. Please try again.', [{ text: 'OK' }], 'error');
     }
-  }, [cardData?.id, cardData?._id, cardData?.selectedVariant, quantity, refreshCart]);
+  }, [
+    cardData?.id,
+    cardData?._id,
+    cardData?.selectedVariant,
+    cardData?.store?._id,
+    cardData?.store?.id,
+    cardData?.storeId,
+    quantity,
+    refreshCart,
+  ]);
 
   const handleLockPress = useCallback(() => {
     // Open the paid lock modal instead of directly locking
@@ -563,29 +607,27 @@ function StorePage() {
   }, [cardData?.id, cardData?._id]);
 
   // Handle successful lock with payment
-  const handleLockSuccess = useCallback(async (lockDetails: {
-    lockFee: number;
-    duration: number;
-    expiresAt: string;
-    message: string;
-  }) => {
-    // Refresh cart context to update locked items count
-    await refreshCart();
+  const handleLockSuccess = useCallback(
+    async (lockDetails: { lockFee: number; duration: number; expiresAt: string; message: string }) => {
+      // Refresh cart context to update locked items count
+      await refreshCart();
 
-    // Update lock state
-    setIsLocked(true);
+      // Update lock state
+      setIsLocked(true);
 
-    // Show success alert using cross-platform modal
-    showAlert(
-      'Price Locked!',
-      lockDetails.message,
-      [
-        { text: 'OK', style: 'cancel' },
-        { text: 'View Cart', onPress: () => router.push('/cart') }
-      ],
-      'success'
-    );
-  }, [refreshCart, router]);
+      // Show success alert using cross-platform modal
+      showAlert(
+        'Price Locked!',
+        lockDetails.message,
+        [
+          { text: 'OK', style: 'cancel' },
+          { text: 'View Cart', onPress: () => router.push('/cart') },
+        ],
+        'success',
+      );
+    },
+    [refreshCart, router],
+  );
 
   // Memoized navigation callbacks to prevent child re-renders
   const handleVisitStore = useCallback(() => {
@@ -595,12 +637,15 @@ function StorePage() {
     }
   }, [cardData?.store?._id, cardData?.store?.id, cardData?.storeId, router]);
 
-  const handleProductPress = useCallback((prodId: string) => {
-    router.push({
-      pathname: '/product-page',
-      params: { cardId: prodId, cardType: 'product' }
-    } as any);
-  }, [router]);
+  const handleProductPress = useCallback(
+    (prodId: string) => {
+      router.push({
+        pathname: '/product-page',
+        params: { cardId: prodId, cardType: 'product' },
+      } as any);
+    },
+    [router],
+  );
 
   const handleViewAllReviews = useCallback(() => {
     const storeId = cardData?.storeId || cardData?.store?.id || cardData?.store?._id;
@@ -614,96 +659,137 @@ function StorePage() {
   const handleCloseAddedToCart = useCallback(() => setShowAddedToCartModal(false), []);
   const handleViewCart = useCallback(() => router.push('/cart'), [router]);
   const handleCloseLockModal = useCallback(() => setShowLockPriceModal(false), []);
-  const handleBundleAddToCart = useCallback(async (products: any[]) => {
-    try {
-      for (const product of products) {
-        const productId = product._id || product.id;
-        if (productId) {
-          await cartApi.addToCart({
-            productId,
-            quantity: 1,
-          });
+  const handleBundleAddToCart = useCallback(
+    async (products: any[]) => {
+      try {
+        for (const product of products) {
+          const productId = product._id || product.id;
+          if (productId) {
+            await cartApi.addToCart({
+              productId,
+              quantity: 1,
+            });
+          }
         }
+        await refreshCart();
+        if (!isMounted()) return;
+        setShowAddedToCartModal(true);
+      } catch (error) {
+        platformAlertSimple('Error', 'Failed to add bundle to cart. Please try again.');
       }
-      await refreshCart();
-      if (!isMounted()) return;
-      setShowAddedToCartModal(true);
-    } catch (error) {
-      platformAlertSimple('Error', 'Failed to add bundle to cart. Please try again.');
-    }
-  }, [refreshCart]);
+    },
+    [refreshCart],
+  );
   const handleCardOffersPress = useCallback(() => {
     const storeId = cardData?.store?._id || cardData?.store?.id || cardData?.storeId;
     const storeName = cardData?.store?.name || 'Store';
     if (storeId) {
-      router.push(`/CardOffersPage?storeId=${storeId}&storeName=${encodeURIComponent(storeName)}&orderValue=${productPrice}` as any);
+      router.push(
+        `/CardOffersPage?storeId=${storeId}&storeName=${encodeURIComponent(storeName)}&orderValue=${productPrice}` as any,
+      );
     }
   }, [cardData?.store?._id, cardData?.store?.id, cardData?.storeId, cardData?.store?.name, productPrice, router]);
 
   // Memoized store info for CompletePurchaseSection
-  const storeInfo = useMemo(() => ({
-    name: cardData?.store?.name || 'Store',
-    location: cardData?.store?.location?.address ||
-      `${cardData?.store?.location?.city || ''}, ${cardData?.store?.location?.state || ''}`.trim() ||
-      'Location available at store',
-    hours: (cardData?.store as any)?.operatingHours || '9 AM - 9 PM',
-  }), [cardData?.store]);
+  const storeInfo = useMemo(
+    () => ({
+      name: cardData?.store?.name || 'Store',
+      location:
+        cardData?.store?.location?.address ||
+        `${cardData?.store?.location?.city || ''}, ${cardData?.store?.location?.state || ''}`.trim() ||
+        'Location available at store',
+      hours: (cardData?.store as any)?.operatingHours || '9 AM - 9 PM',
+    }),
+    [cardData?.store],
+  );
 
   // Memoized insights for WhyGoodDealSection
-  const dealInsights = useMemo(() => [
-    {
-      icon: 'bulb',
-      iconColor: Colors.warning,
-      text: savingsAmount > 0
-        ? `This product is usually bought on weekends — locking now saves ${currencySymbol}${savingsAmount}`
-        : 'Lock the price now to avoid future price increases',
-    },
-    {
-      icon: 'flame',
-      iconColor: Colors.error,
-      text: 'High demand item — price may change later',
-    },
-    {
-      icon: 'gift',
-      iconColor: Colors.gold,
-      text: `Earn ${earnableCoins} ${BRAND.COIN_NAME} + ${currencySymbol}${cashbackAmount} cashback on this purchase`,
-    },
-  ], [savingsAmount, currencySymbol, earnableCoins, cashbackAmount]);
+  const dealInsights = useMemo(
+    () => [
+      {
+        icon: 'bulb',
+        iconColor: Colors.warning,
+        text:
+          savingsAmount > 0
+            ? `This product is usually bought on weekends — locking now saves ${currencySymbol}${savingsAmount}`
+            : 'Lock the price now to avoid future price increases',
+      },
+      {
+        icon: 'flame',
+        iconColor: Colors.error,
+        text: 'High demand item — price may change later',
+      },
+      {
+        icon: 'gift',
+        iconColor: Colors.gold,
+        text: `Earn ${earnableCoins} ${BRAND.COIN_NAME} + ${currencySymbol}${cashbackAmount} cashback on this purchase`,
+      },
+    ],
+    [savingsAmount, currencySymbol, earnableCoins, cashbackAmount],
+  );
 
   // Memoized specifications for ProductTabbedSection
-  const specifications = useMemo(() => [
-    { key: 'Category', value: cardData?.category || 'N/A' },
-    { key: 'Store', value: cardData?.store?.name || cardData?.merchant || 'N/A' },
-    { key: 'Availability', value: cardData?.isAvailable ? 'In Stock' : 'Out of Stock' },
-    { key: 'Delivery Time', value: cardData?.store?.operationalInfo?.deliveryTime || '30-45 mins' },
-    { key: 'Minimum Order', value: cardData?.store?.operationalInfo?.minimumOrder ? `${currencySymbol}${cardData.store!.operationalInfo.minimumOrder}` : 'N/A' },
-    { key: 'Cashback', value: `Up to ${(cardData?.store as any)?.offers?.cashback || 5}%` },
-    { key: BRAND.COIN_NAME, value: '10% of purchase' },
-    { key: 'Lock Duration', value: 'Up to 48 hours' },
-  ].filter(spec => spec.value !== 'N/A'), [cardData, currencySymbol]);
+  const specifications = useMemo(
+    () =>
+      [
+        { key: 'Category', value: cardData?.category || 'N/A' },
+        { key: 'Store', value: cardData?.store?.name || cardData?.merchant || 'N/A' },
+        { key: 'Availability', value: cardData?.isAvailable ? 'In Stock' : 'Out of Stock' },
+        { key: 'Delivery Time', value: cardData?.store?.operationalInfo?.deliveryTime || '30-45 mins' },
+        {
+          key: 'Minimum Order',
+          value: cardData?.store?.operationalInfo?.minimumOrder
+            ? `${currencySymbol}${cardData.store!.operationalInfo.minimumOrder}`
+            : 'N/A',
+        },
+        { key: 'Cashback', value: `Up to ${(cardData?.store as any)?.offers?.cashback || 5}%` },
+        { key: BRAND.COIN_NAME, value: '10% of purchase' },
+        { key: 'Lock Duration', value: 'Up to 48 hours' },
+      ].filter((spec) => spec.value !== 'N/A'),
+    [cardData, currencySymbol],
+  );
 
   // Memoized storeData for StoreActionButtons
-  const storeActionData = useMemo(() => ({
-    storeId: cardData?.store?._id || cardData?.store?.id || cardData?.storeId,
-    storeName: cardData?.store?.name,
-    phone: cardData?.store?.phone || cardData?.store?.contact?.phone,
-    location: cardData?.store?.location,
-    name: cardData?.store?.name,
-  }), [cardData?.store, cardData?.storeId]);
+  const storeActionData = useMemo(
+    () => ({
+      storeId: cardData?.store?._id || cardData?.store?.id || cardData?.storeId,
+      storeName: cardData?.store?.name,
+      phone: cardData?.store?.phone || cardData?.store?.contact?.phone,
+      location: cardData?.store?.location,
+      name: cardData?.store?.name,
+    }),
+    [cardData?.store, cardData?.storeId],
+  );
 
   // Memoized dynamic data with analytics for ProductInfo
-  const productInfoData = useMemo(() =>
-    isDynamic && cardData ? { ...cardData, analytics: productAnalytics } : null,
-  [isDynamic, cardData, productAnalytics]);
+  const productInfoData = useMemo(
+    () => (isDynamic && cardData ? { ...cardData, analytics: productAnalytics } : null),
+    [isDynamic, cardData, productAnalytics],
+  );
 
   // Memoized product object for AddedToCartModal
-  const addedToCartProduct = useMemo(() => cardData ? {
-    id: cardData.id || cardData._id || '',
-    name: cardData.title || cardData.name || '',
-    image: cardData.image || cardData.images?.[0] || '',
-    price: cardData.price || 0,
-    quantity: quantity,
-  } : null, [cardData?.id, cardData?._id, cardData?.title, cardData?.name, cardData?.image, cardData?.images, cardData?.price, quantity]);
+  const addedToCartProduct = useMemo(
+    () =>
+      cardData
+        ? {
+            id: cardData.id || cardData._id || '',
+            name: cardData.title || cardData.name || '',
+            image: cardData.image || cardData.images?.[0] || '',
+            price: cardData.price || 0,
+            quantity: quantity,
+          }
+        : null,
+    [
+      cardData?.id,
+      cardData?._id,
+      cardData?.title,
+      cardData?.name,
+      cardData?.image,
+      cardData?.images,
+      cardData?.price,
+      quantity,
+    ],
+  );
 
   // Memoized lock details for ProductTabbedSection
   const lockDetails = useMemo(() => ({ isLocked }), [isLocked]);
@@ -735,10 +821,12 @@ function StorePage() {
           },
         ]}
       >
-        <View style={[
-          styles.contentWrapper,
-          MAX_CONTENT_WIDTH && { maxWidth: MAX_CONTENT_WIDTH, alignSelf: 'center', width: '100%' }
-        ]}>
+        <View
+          style={[
+            styles.contentWrapper,
+            MAX_CONTENT_WIDTH && { maxWidth: MAX_CONTENT_WIDTH, alignSelf: 'center', width: '100%' },
+          ]}
+        >
           {/* 1. Product Image Section */}
           <StoreHeader
             dynamicData={isDynamic ? cardData : null}
@@ -771,7 +859,12 @@ function StorePage() {
               <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
               <ThemedText style={styles.errorTitle}>Oops! Something went wrong</ThemedText>
               <ThemedText style={styles.errorMessage}>{error}</ThemedText>
-              <Pressable style={styles.retryButton} onPress={retryFetch}>
+              <Pressable
+                style={styles.retryButton}
+                onPress={retryFetch}
+                accessibilityLabel="Retry loading product"
+                accessibilityRole="button"
+              >
                 <Ionicons name="refresh-outline" size={20} color={colors.text.inverse} />
                 <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
               </Pressable>
@@ -780,7 +873,6 @@ function StorePage() {
 
           {/* ========== NEW REDESIGNED SECTIONS ========== */}
 
-          
           {/* Locked Product Badge (when already locked) */}
           {isLocked && (
             <View style={styles.lockedBadgeContainer}>
@@ -794,6 +886,9 @@ function StorePage() {
               <Pressable
                 style={styles.viewCartButton}
                 onPress={handleViewCart}
+                accessibilityLabel="View locked product in cart"
+                accessibilityRole="button"
+                accessibilityHint="Double tap to go to your cart and complete the purchase"
               >
                 <ThemedText style={styles.viewCartButtonText}>View in Cart</ThemedText>
                 <Ionicons name="arrow-forward" size={16} color={Colors.gold} />
@@ -805,7 +900,9 @@ function StorePage() {
           {!isLoadingBackend && cardData && (
             <CompletePurchaseSection
               storeInfo={storeInfo}
-              deliveryFee={(cardData?.store as any)?.deliveryFee || (cardData?.store as any)?.operationalInfo?.deliveryFee || 49}
+              deliveryFee={
+                (cardData?.store as any)?.deliveryFee || (cardData?.store as any)?.operationalInfo?.deliveryFee || 49
+              }
               onVisitStore={handleVisitStore}
               onBuyOnline={handleBuyPress}
               isLocked={isLocked}
@@ -814,23 +911,15 @@ function StorePage() {
 
           {/* 9. Pay with ReZ Section */}
           {!isLoadingBackend && cardData && productPrice > 0 && (
-            <PayWithRezSection
-              productPrice={productPrice}
-              earnableCoins={earnableCoins}
-            />
+            <PayWithRezSection productPrice={productPrice} earnableCoins={earnableCoins} />
           )}
 
           {/* 10. Delivery & Pickup Cards */}
-          {!isLoadingBackend && cardData && (
-            <DeliveryPickupCards />
-          )}
+          {!isLoadingBackend && cardData && <DeliveryPickupCards />}
 
           {/* 11. Why This is a Good Deal */}
           {!isLoadingBackend && cardData && (
-            <WhyGoodDealSection
-              savingsAmount={savingsAmount}
-              insights={dealInsights}
-            />
+            <WhyGoodDealSection savingsAmount={savingsAmount} insights={dealInsights} />
           )}
 
           {/* 12. Product Tabbed Section (Description/Specs/Reviews/Lock Info) */}
@@ -840,8 +929,16 @@ function StorePage() {
               features={cardData.features || EMPTY_ARRAY}
               specifications={specifications}
               reviews={storeReviews}
-              averageRating={cardData.ratings?.average || (typeof cardData.rating === 'object' ? cardData.rating?.value : cardData.rating) || 0}
-              reviewCount={cardData.ratings?.count || (typeof cardData.rating === 'object' ? cardData.rating?.count : cardData.reviewCount) || 0}
+              averageRating={
+                cardData.ratings?.average ||
+                (typeof cardData.rating === 'object' ? cardData.rating?.value : cardData.rating) ||
+                0
+              }
+              reviewCount={
+                cardData.ratings?.count ||
+                (typeof cardData.rating === 'object' ? cardData.rating?.count : cardData.reviewCount) ||
+                0
+              }
               lockDetails={lockDetails}
               onViewAllReviews={handleViewAllReviews}
             />
@@ -875,7 +972,9 @@ function StorePage() {
             <Pressable
               style={styles.writeReviewCard}
               onPress={handleWriteReviewPress}
-             
+              accessibilityLabel={`Write a review and earn ${cashbackAmount > 0 ? `${currencySymbol}${cashbackAmount}` : '5%'} cashback`}
+              accessibilityRole="button"
+              accessibilityHint="Double tap to open the review form"
             >
               <View style={styles.writeReviewContent}>
                 <View style={styles.writeReviewIcon}>
@@ -891,7 +990,8 @@ function StorePage() {
               <View style={styles.writeReviewBadge}>
                 <Ionicons name="gift-outline" size={16} color={Colors.gold} />
                 <ThemedText style={styles.writeReviewBadgeText}>
-                  {currencySymbol}{cashbackAmount || Math.floor(productPrice * 0.05)}
+                  {currencySymbol}
+                  {cashbackAmount || Math.floor(productPrice * 0.05)}
                 </ThemedText>
               </View>
             </Pressable>
@@ -904,9 +1004,7 @@ function StorePage() {
                 fallback={
                   <View style={styles.errorFallback}>
                     <Ionicons name="alert-circle-outline" size={32} color={Colors.error} />
-                    <ThemedText style={styles.errorText}>
-                      Unable to load recommendations
-                    </ThemedText>
+                    <ThemedText style={styles.errorText}>Unable to load recommendations</ThemedText>
                   </View>
                 }
               >
@@ -924,10 +1022,7 @@ function StorePage() {
           {/* ========== EXISTING SECTIONS (Moved to Bottom) ========== */}
 
           {/* 15. Instagram Card */}
-          <NewSection
-            dynamicData={isDynamic ? cardData : null}
-            cardType={params.cardType as string}
-          />
+          <NewSection dynamicData={isDynamic ? cardData : null} cardType={params.cardType as string} />
 
           {/* 16. Mega Sale Offers */}
           <Section3
@@ -952,29 +1047,17 @@ function StorePage() {
           />
 
           {/* 19. Section 5 */}
-          <Section5
-            dynamicData={isDynamic ? cardData : null}
-            cardType={params.cardType as string}
-          />
+          <Section5 dynamicData={isDynamic ? cardData : null} cardType={params.cardType as string} />
 
           {/* 20. Section 6 */}
-          <Section6
-            dynamicData={isDynamic ? cardData : null}
-            cardType={params.cardType as string}
-          />
+          <Section6 dynamicData={isDynamic ? cardData : null} cardType={params.cardType as string} />
 
           {/* 21. Combined Section 7 & 8 */}
-          <CombinedSection78
-            dynamicData={isDynamic ? cardData : null}
-            cardType={params.cardType as string}
-          />
+          <CombinedSection78 dynamicData={isDynamic ? cardData : null} cardType={params.cardType as string} />
 
           {/* Product Gallery Section */}
           {isDynamic && cardData && (cardData.id || cardData._id) && (
-            <ProductGallerySection
-              productId={cardData.id || cardData._id!}
-              variantId={cardData.selectedVariant?.id}
-            />
+            <ProductGallerySection productId={cardData.id || cardData._id!} variantId={cardData.selectedVariant?.id} />
           )}
 
           {/* 22. Bottom Banner */}
@@ -996,6 +1079,9 @@ function StorePage() {
             <Pressable
               onPress={handleCloseReviewForm}
               style={styles.closeButton}
+              accessibilityLabel="Close review form"
+              accessibilityRole="button"
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
             >
               <Ionicons name="close" size={28} color={colors.text.primary} />
             </Pressable>

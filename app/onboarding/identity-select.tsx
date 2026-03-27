@@ -144,7 +144,13 @@ function IdentitySelectPage() {
           />
         ))}
 
-        <Pressable onPress={handleSkip} style={styles.skipButton}>
+        <Pressable
+          onPress={handleSkip}
+          style={styles.skipButton}
+          accessibilityLabel="Skip identity selection"
+          accessibilityRole="button"
+          accessibilityHint="Double tap to browse public deals without linking an identity"
+        >
           <ThemedText style={styles.skipText}>Skip for now</ThemedText>
         </Pressable>
       </ScrollView>

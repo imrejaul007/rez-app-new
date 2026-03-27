@@ -398,7 +398,9 @@ function HomeScreen() {
         // Start session tracking service
         sessionTrackingService.startSession(authUser?.id);
         // CARLOS: retention — log to analytics (would go to analytics queue)
-        console.debug('[Retention] Session started:', event);
+        if (__DEV__) {
+          console.debug('[Retention] Session started:', event);
+        }
       } else if (state === 'background' || state === 'inactive') {
         // Session end — app goes background
         if (sessionStartTimeRef.current > 0) {
@@ -406,7 +408,9 @@ function HomeScreen() {
           // End session tracking and persist for analytics
           sessionTrackingService.endSession().catch(() => {});
           // CARLOS: retention — log to analytics (would go to analytics queue)
-          console.debug('[Retention] Session ended, duration:', event.sessionDuration, 'ms');
+          if (__DEV__) {
+            console.debug('[Retention] Session ended, duration:', event.sessionDuration, 'ms');
+          }
           sessionStartTimeRef.current = 0;
         }
       }
@@ -421,28 +425,15 @@ function HomeScreen() {
     };
   }, [authUser?.id]);
 
-  // CARLOS: retention — calculate and display user's daily visit streak
+  // CARLOS: retention — streak count must come from real backend data.
+  // TODO: replace with a real API call (e.g. GET /users/streak) that returns
+  //   { streakCount: number, lastActiveDate: string } tracked server-side.
+  // Until that API exists we show nothing to avoid displaying fabricated numbers.
   React.useEffect(() => {
     if (!authUser) return;
-    // Fetch or calculate streak from local storage or backend
-    import('@react-native-async-storage/async-storage')
-      .then(({ default: AS }) => {
-        AS.getItem('last_active_date')
-          .then((lastActive) => {
-            // Simple streak: if visited yesterday or today, show streak
-            // Real implementation would track full streak on backend
-            const daysSinceJoined = getDaysSinceJoined(authUser);
-            // For MVP, show a visual if user is in early days
-            if (daysSinceJoined >= 0 && daysSinceJoined <= 30) {
-              // Show a placeholder streak display for early users
-              const display = getStreakDisplay(Math.max(1, daysSinceJoined + 1));
-              setStreakCount(daysSinceJoined + 1);
-              setStreakDisplay(display);
-            }
-          })
-          .catch(() => {});
-      })
-      .catch(() => {});
+    // Streak data not yet available from backend — do not show a fake inflated value.
+    setStreakCount(0);
+    setStreakDisplay(null);
   }, [authUser]);
 
   const animatedHeight = useSharedValue(0);

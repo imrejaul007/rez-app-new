@@ -155,7 +155,9 @@ function DealCard({
     >
       <Pressable
         onPress={handleCardPress}
-       
+        accessibilityLabel={`${deal.storeName} deal: ${deal.badge?.text || `Save up to ${currencySymbol}${savingsAmount.toLocaleString()}`}. ${timeLeft}`}
+        accessibilityRole="button"
+        accessibilityHint="Double tap to view deal details"
         style={styles.cardContent}
       >
         {/* Deal Image */}
@@ -252,7 +254,13 @@ function DealCard({
             <ThemedText style={styles.availabilityText}>
               {deal.isOfflineOnly ? 'In-store only' : 'Online & In-store'}
             </ThemedText>
-            <Pressable onPress={() => onMoreDetails(deal.id)} style={styles.moreDetailsButton}>
+            <Pressable
+              onPress={() => onMoreDetails(deal.id)}
+              style={styles.moreDetailsButton}
+              accessibilityLabel="View deal details"
+              accessibilityRole="button"
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            >
               <ThemedText style={styles.moreDetailsText}>Details</ThemedText>
             </Pressable>
           </View>
@@ -305,7 +313,10 @@ function DealCard({
             isAdded && styles.actionButtonSelected
           ]}
           onPress={handleAddPress}
-         
+          accessibilityLabel={isAdded ? 'Remove deal' : 'Add deal'}
+          accessibilityRole="button"
+          accessibilityState={{ selected: isAdded }}
+          accessibilityHint={isAdded ? 'Double tap to remove this deal from your selections' : 'Double tap to add this deal to your selections'}
         >
           <Ionicons 
             name={isAdded ? "checkmark-circle" : "add-circle-outline"} 

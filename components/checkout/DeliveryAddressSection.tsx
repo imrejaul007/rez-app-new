@@ -54,6 +54,9 @@ function DeliveryAddressSection({
           <Pressable
             style={styles.addressCard}
             onPress={onOpenAddressModal}
+            accessibilityLabel={`Delivery address: ${selectedAddress.name || selectedAddress.type || 'Address'}, ${selectedAddress.addressLine1 || ''}${selectedAddress.city ? `, ${selectedAddress.city}` : ''}. Tap to change`}
+            accessibilityRole="button"
+            accessibilityHint="Double tap to select a different delivery address"
           >
             <View style={styles.addressCardContent}>
               <View style={styles.addressIconContainer}>
@@ -85,6 +88,9 @@ function DeliveryAddressSection({
           <Pressable
             style={styles.addAddressCard}
             onPress={onOpenAddressModal}
+            accessibilityLabel="Add delivery address"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to add or select a delivery address"
           >
             <Ionicons name="add-circle-outline" size={24} color={colors.gold} />
             <ThemedText style={styles.addAddressText}>Add Delivery Address</ThemedText>
@@ -129,6 +135,8 @@ function DeliveryAddressSection({
           value={pickupInstructions || ''}
           onChangeText={(text) => onSetFulfillmentDetails({ pickupInstructions: text })}
           maxLength={200}
+          accessibilityLabel="Pickup instructions"
+          accessibilityHint="Optional notes for the store about your pickup"
         />
       </View>
     );
@@ -159,6 +167,8 @@ function DeliveryAddressSection({
           value={vehicleInfo || ''}
           onChangeText={(text) => onSetFulfillmentDetails({ vehicleInfo: text })}
           maxLength={100}
+          accessibilityLabel="Vehicle description"
+          accessibilityHint="Optional vehicle color and model to help staff identify you at drive-thru"
         />
       </View>
     );
@@ -186,6 +196,9 @@ function DeliveryAddressSection({
           value={tableNumber || ''}
           onChangeText={(text) => onSetFulfillmentDetails({ tableNumber: text })}
           maxLength={20}
+          accessibilityLabel="Table number"
+          accessibilityHint="Required. Enter your table number for dine-in service"
+          keyboardType="number-pad"
         />
       </View>
     );

@@ -42,13 +42,16 @@ const COLORS = {
 };
 
 // Category configuration with metadata
-const categoryConfig: Record<string, {
-  title: string;
-  icon: string;
-  gradientColors: [string, string];
-  description: string;
-  tags: string[];
-}> = {
+const categoryConfig: Record<
+  string,
+  {
+    title: string;
+    icon: string;
+    gradientColors: [string, string];
+    description: string;
+    tags: string[];
+  }
+> = {
   // Main categories from homepage
   fruits: {
     title: 'Fruits',
@@ -202,85 +205,88 @@ const GroceryCategoryPage: React.FC = () => {
   };
 
   // Fetch products from API
-  const fetchProducts = useCallback(async (page: number = 1, append: boolean = false) => {
-    try {
-      if (page === 1) {
-        setLoading(true);
-      } else {
-        setLoadingMore(true);
-      }
-      setError(null);
-
-      // Build query params
-      const queryParams: any = {
-        page,
-        limit: 20,
-        status: 'active',
-      };
-
-      // Add category filter based on tags or category slug
-      if (categorySlug && categorySlug !== 'all') {
-        queryParams.category = categorySlug;
-        // Also search by tags for better results
-        queryParams.tags = config.tags;
-      }
-
-      // Add search query
-      if (searchQuery.trim()) {
-        queryParams.search = searchQuery.trim();
-      }
-
-      // Add sorting
-      const filter = filterOptions.find(f => f.key === selectedFilter);
-      if (filter && filter.sort) {
-        queryParams.sort = filter.sort;
-        queryParams.order = filter.order;
-      }
-
-      const response = await productsApi.getProducts(queryParams);
-
-      if (response.success && response.data) {
-        const newProducts = response.data.products || [];
-        if (append) {
-          if (!isMounted()) return;
-          setProducts(prev => [...prev, ...newProducts]);
+  const fetchProducts = useCallback(
+    async (page: number = 1, append: boolean = false) => {
+      try {
+        if (page === 1) {
+          setLoading(true);
         } else {
-          if (!isMounted()) return;
-          setProducts(newProducts);
+          setLoadingMore(true);
         }
-        if (!isMounted()) return;
-        setPagination({
-          current: response.data.pagination?.current || page,
-          pages: response.data.pagination?.pages || 1,
-          total: response.data.pagination?.total || newProducts.length,
-        });
-      } else {
-        // If API fails, use fallback data
+        setError(null);
+
+        // Build query params
+        const queryParams: any = {
+          page,
+          limit: 20,
+          status: 'active',
+        };
+
+        // Add category filter based on tags or category slug
+        if (categorySlug && categorySlug !== 'all') {
+          queryParams.category = categorySlug;
+          // Also search by tags for better results
+          queryParams.tags = config.tags;
+        }
+
+        // Add search query
+        if (searchQuery.trim()) {
+          queryParams.search = searchQuery.trim();
+        }
+
+        // Add sorting
+        const filter = filterOptions.find((f) => f.key === selectedFilter);
+        if (filter && filter.sort) {
+          queryParams.sort = filter.sort;
+          queryParams.order = filter.order;
+        }
+
+        const response = await productsApi.getProducts(queryParams);
+
+        if (response.success && response.data) {
+          const newProducts = response.data.products || [];
+          if (append) {
+            if (!isMounted()) return;
+            setProducts((prev) => [...prev, ...newProducts]);
+          } else {
+            if (!isMounted()) return;
+            setProducts(newProducts);
+          }
+          if (!isMounted()) return;
+          setPagination({
+            current: response.data.pagination?.current || page,
+            pages: response.data.pagination?.pages || 1,
+            total: response.data.pagination?.total || newProducts.length,
+          });
+        } else {
+          // If API fails, use fallback data
+          if (page === 1) {
+            if (!isMounted()) return;
+            setProducts(getFallbackProducts(categorySlug));
+            if (!isMounted()) return;
+            setPagination({ current: 1, pages: 1, total: 10 });
+          }
+        }
+      } catch (err: any) {
         if (page === 1) {
           if (!isMounted()) return;
           setProducts(getFallbackProducts(categorySlug));
           if (!isMounted()) return;
           setPagination({ current: 1, pages: 1, total: 10 });
         }
-      }
-    } catch (err: any) {
-      if (page === 1) {
         if (!isMounted()) return;
-        setProducts(getFallbackProducts(categorySlug));
+        setError('Unable to load products. Showing cached data.');
+      } finally {
         if (!isMounted()) return;
-        setPagination({ current: 1, pages: 1, total: 10 });
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-      if (!isMounted()) return;
-      setError('Unable to load products. Showing cached data.');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [categorySlug, searchQuery, selectedFilter, config.tags]);
+    },
+    [categorySlug, searchQuery, selectedFilter, config.tags],
+  );
 
   // Initial load
   useEffect(() => {
@@ -343,7 +349,12 @@ const GroceryCategoryPage: React.FC = () => {
             autoFocus
           />
           {searchQuery.length > 0 && (
-            <Pressable onPress={() => { setSearchQuery(''); handleSearch(); }}>
+            <Pressable
+              onPress={() => {
+                setSearchQuery('');
+                handleSearch();
+              }}
+            >
               <Ionicons name="close-circle" size={20} color={COLORS.gray400} />
             </Pressable>
           )}
@@ -358,9 +369,7 @@ const GroceryCategoryPage: React.FC = () => {
       <Text style={styles.emptyIcon}>{config.icon}</Text>
       <Text style={styles.emptyTitle}>No products found</Text>
       <Text style={styles.emptyText}>
-        {searchQuery
-          ? `No results for "${searchQuery}"`
-          : `No ${config.title.toLowerCase()} available right now`}
+        {searchQuery ? `No results for "${searchQuery}"` : `No ${config.title.toLowerCase()} available right now`}
       </Text>
       <Pressable style={styles.emptyButton} onPress={onRefresh}>
         <Text style={styles.emptyButtonText}>Refresh</Text>
@@ -386,34 +395,24 @@ const GroceryCategoryPage: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient
-        colors={config.gradientColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.header}
-      >
+      <LinearGradient colors={config.gradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
           <Pressable
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle}>{config.icon} {config.title}</Text>
+            <Text style={styles.headerTitle}>
+              {config.icon} {config.title}
+            </Text>
             <Text style={styles.headerSubtitle}>
               {pagination.total > 0 ? `${pagination.total} items` : config.description}
             </Text>
           </View>
-          <Pressable
-            style={styles.searchButton}
-            onPress={() => setShowSearch(!showSearch)}
-          >
-            <Ionicons
-              name={showSearch ? 'close' : 'search'}
-              size={24}
-              color={COLORS.white}
-            />
+          <Pressable style={styles.searchButton} onPress={() => setShowSearch(!showSearch)}>
+            <Ionicons name={showSearch ? 'close' : 'search'} size={24} color={COLORS.white} />
           </Pressable>
         </View>
       </LinearGradient>
@@ -431,17 +430,9 @@ const GroceryCategoryPage: React.FC = () => {
             <Pressable
               key={filter.key}
               onPress={() => handleFilterChange(filter.key)}
-              style={[
-                styles.filterChip,
-                selectedFilter === filter.key && styles.filterChipActive,
-              ]}
+              style={[styles.filterChip, selectedFilter === filter.key && styles.filterChipActive]}
             >
-              <Text
-                style={[
-                  styles.filterChipText,
-                  selectedFilter === filter.key && styles.filterChipTextActive,
-                ]}
-              >
+              <Text style={[styles.filterChipText, selectedFilter === filter.key && styles.filterChipTextActive]}>
                 {filter.label}
               </Text>
             </Pressable>
@@ -454,7 +445,7 @@ const GroceryCategoryPage: React.FC = () => {
         <ProductsGridSkeleton count={6} />
       ) : (
         <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: 120 }}
           showsVerticalScrollIndicator={false}
           refreshControl={
             <RefreshControl
@@ -466,8 +457,7 @@ const GroceryCategoryPage: React.FC = () => {
           }
           onScroll={({ nativeEvent }) => {
             const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-            const isCloseToBottom =
-              layoutMeasurement.height + contentOffset.y >= contentSize.height - 100;
+            const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= contentSize.height - 100;
             if (isCloseToBottom) {
               handleLoadMore();
             }
@@ -518,7 +508,7 @@ function getFallbackProducts(category: string): Product[] {
     images: [{ url: image, alt: title }],
     pricing: { basePrice: 50 + i * 20, salePrice: 45 + i * 18 },
     unit: '1 kg',
-    rating: { average: 4.2 + Math.random() * 0.6, count: 50 + i * 10 },
+    rating: { average: 0, count: 0 }, // TODO: use real rating from API; fallback data has no valid rating
     cashback: { percentage: 8 + i },
     store: { id: 'store-1', name: 'Local Store' },
     inStock: true,

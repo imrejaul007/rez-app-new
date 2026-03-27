@@ -1,3 +1,4 @@
+// Canonical color source: @/constants/theme — import from there
 /**
  * Design System Tokens - LEGACY SHIM
  *

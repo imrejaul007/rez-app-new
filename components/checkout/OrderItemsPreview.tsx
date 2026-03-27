@@ -32,7 +32,13 @@ function OrderItemsPreview({ items, currencySymbol }: OrderItemsPreviewProps) {
         <ThemedText style={styles.orderItemsTitle}>
           Order Items ({items.length})
         </ThemedText>
-        <Pressable onPress={() => router.push('/cart')}>
+        <Pressable
+          onPress={() => router.push('/cart')}
+          accessibilityLabel="Edit cart"
+          accessibilityRole="button"
+          accessibilityHint="Double tap to go back to your cart and modify items"
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        >
           <ThemedText style={styles.editCartText}>Edit Cart</ThemedText>
         </Pressable>
       </View>
@@ -71,6 +77,9 @@ function OrderItemsPreview({ items, currencySymbol }: OrderItemsPreviewProps) {
           <Pressable
             style={styles.moreItemsCard}
             onPress={() => router.push('/cart')}
+            accessibilityLabel={`View ${items.length - 5} more items in cart`}
+            accessibilityRole="button"
+            accessibilityHint="Double tap to view all items in your cart"
           >
             <ThemedText style={styles.moreItemsText}>
               +{items.length - 5} more

@@ -53,9 +53,12 @@ const SurpriseCoinDropCard: React.FC<SurpriseCoinDropCardProps> = ({
       ]}
     >
       <Pressable
-       
         onPress={available ? onPress : undefined}
         style={styles.touchable}
+        accessibilityLabel={available ? `Surprise Drop! Claim ${coins > 0 ? `${coins} bonus coins` : 'your surprise reward'} now` : 'Surprise Drop. No drop available yet. Check back later.'}
+        accessibilityRole="button"
+        accessibilityState={{ disabled: !available }}
+        accessibilityHint={available ? 'Double tap to claim your surprise coin drop' : undefined}
       >
         <LinearGradient
           colors={gradientColors}

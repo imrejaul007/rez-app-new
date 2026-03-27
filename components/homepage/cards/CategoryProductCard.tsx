@@ -42,7 +42,14 @@ function CategoryProductCard({
     <Pressable
       style={[styles.container, { width }]}
       onPress={handlePress}
-     
+      accessibilityLabel={[
+        product.name,
+        hasCashback ? `Up to ${cashbackPercentage}% cashback` : null,
+      ]
+        .filter(Boolean)
+        .join(', ')}
+      accessibilityRole="button"
+      accessibilityHint="Double tap to view product details"
     >
       <View style={styles.card}>
         {/* Product Image */}

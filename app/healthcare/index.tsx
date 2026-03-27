@@ -50,7 +50,13 @@ const categoryConfig = [
   { id: 'lab', title: 'Lab Tests', icon: 'flask', color: Colors.brand.purpleLight, route: '/healthcare/lab' },
   { id: 'dental', title: 'Dental Care', icon: 'happy', color: colors.brand.pink, route: '/healthcare/dental' },
   { id: 'emergency', title: 'Emergency', icon: 'warning', color: Colors.error, route: '/healthcare/emergency' },
-  { id: 'records', title: 'Health Records', icon: 'document-text', color: colors.brand.cyan, route: '/healthcare/records' },
+  {
+    id: 'records',
+    title: 'Health Records',
+    icon: 'document-text',
+    color: colors.brand.cyan,
+    route: '/healthcare/records',
+  },
 ];
 
 // Quick actions for emergency
@@ -113,10 +119,20 @@ const HealthcarePage: React.FC = () => {
       // Extract counts
       if (!isMounted()) return;
       setStats({
-        doctors: doctorsRes.status === 'fulfilled' ? (doctorsRes.value.data?.total || doctorsRes.value.data?.stores?.length || 30) : 30,
-        pharmacies: pharmaciesRes.status === 'fulfilled' ? (pharmaciesRes.value.data?.total || pharmaciesRes.value.data?.stores?.length || 15) : 15,
-        labs: labsRes.status === 'fulfilled' ? (labsRes.value.data?.total || labsRes.value.data?.stores?.length || 10) : 10,
-        tests: productsRes.status === 'fulfilled' ? (productsRes.value.data?.total || productsRes.value.data?.products?.length || 48) : 48,
+        doctors:
+          doctorsRes.status === 'fulfilled'
+            ? doctorsRes.value.data?.total || doctorsRes.value.data?.stores?.length || 30
+            : 30,
+        pharmacies:
+          pharmaciesRes.status === 'fulfilled'
+            ? pharmaciesRes.value.data?.total || pharmaciesRes.value.data?.stores?.length || 15
+            : 15,
+        labs:
+          labsRes.status === 'fulfilled' ? labsRes.value.data?.total || labsRes.value.data?.stores?.length || 10 : 10,
+        tests:
+          productsRes.status === 'fulfilled'
+            ? productsRes.value.data?.total || productsRes.value.data?.products?.length || 48
+            : 48,
       });
 
       // Get featured services/products
@@ -144,7 +160,11 @@ const HealthcarePage: React.FC = () => {
   }, []);
 
   const handleQuickCall = (phone: string) => {
-    try { Linking.openURL(`tel:${phone}`); } catch (e) { catchAndWarn(e, 'Healthcare/openURL'); }
+    try {
+      Linking.openURL(`tel:${phone}`);
+    } catch (e) {
+      catchAndWarn(e, 'Healthcare/openURL');
+    }
   };
 
   const getCategoryCount = (id: string): string => {
@@ -180,17 +200,17 @@ const HealthcarePage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Healthcare</Text>
             <Text style={styles.headerSubtitle}>Your health, our priority</Text>
           </View>
-          <Pressable
-            style={styles.searchButton}
-            onPress={() => router.push('/healthcare/records' as any)}
-          >
+          <Pressable style={styles.searchButton} onPress={() => router.push('/healthcare/records' as any)}>
             <Ionicons name="document-text" size={24} color={COLORS.white} />
           </Pressable>
         </View>
@@ -217,13 +237,7 @@ const HealthcarePage: React.FC = () => {
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            colors={[COLORS.red500]}
-          />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.red500]} />}
       >
         {/* Emergency Quick Actions */}
         <View style={styles.emergencySection}>
@@ -248,12 +262,7 @@ const HealthcarePage: React.FC = () => {
           <Text style={styles.sectionTitle}>Healthcare Services</Text>
           <View style={styles.categoriesGrid}>
             {categoryConfig.map((cat) => (
-              <Pressable
-                key={cat.id}
-                style={styles.categoryCard}
-                onPress={() => navigateToCategory(cat.route)}
-               
-              >
+              <Pressable key={cat.id} style={styles.categoryCard} onPress={() => navigateToCategory(cat.route)}>
                 <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                   <Ionicons name={cat.icon as any} size={24} color={cat.color} />
                 </View>
@@ -280,9 +289,10 @@ const HealthcarePage: React.FC = () => {
           ) : featuredServices.length > 0 ? (
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {featuredServices.map((service) => {
-                const cashback = service.metadata?.cashbackPercentage ||
-                  Math.floor(Math.random() * 15) + 10;
-                const discount = service.price.discount ||
+                // TODO: cashback percentage should come from service.metadata.cashbackPercentage via API
+                const cashback = service.metadata?.cashbackPercentage || 0;
+                const discount =
+                  service.price.discount ||
                   Math.round(((service.price.mrp - service.price.selling) / service.price.mrp) * 100);
 
                 return (
@@ -290,15 +300,13 @@ const HealthcarePage: React.FC = () => {
                     key={service._id}
                     style={styles.serviceCard}
                     onPress={() => router.push('/healthcare/lab' as any)}
-                   
                   >
-                    <CachedImage
-                      source={service.images?.[0] || undefined}
-                      style={styles.serviceImage}
-                    />
-                    <View style={styles.cashbackBadge}>
-                      <Text style={styles.cashbackText}>{cashback}% CB</Text>
-                    </View>
+                    <CachedImage source={service.images?.[0] || undefined} style={styles.serviceImage} />
+                    {cashback > 0 && (
+                      <View style={styles.cashbackBadge}>
+                        <Text style={styles.cashbackText}>{cashback}% CB</Text>
+                      </View>
+                    )}
                     {discount > 0 && (
                       <View style={styles.discountBadge}>
                         <Text style={styles.discountText}>{discount}% OFF</Text>
@@ -308,9 +316,7 @@ const HealthcarePage: React.FC = () => {
                       <Text style={styles.serviceName} numberOfLines={2}>
                         {service.name}
                       </Text>
-                      <Text style={styles.serviceType}>
-                        {service.metadata?.serviceType || 'Lab Test'}
-                      </Text>
+                      <Text style={styles.serviceType}>{service.metadata?.serviceType || 'Lab Test'}</Text>
                       <View style={styles.priceRow}>
                         <Text style={styles.servicePrice}>Rs {service.price.selling}</Text>
                         {service.price.mrp > service.price.selling && (
@@ -330,10 +336,7 @@ const HealthcarePage: React.FC = () => {
         </View>
 
         {/* Health Records Banner */}
-        <Pressable
-          style={styles.recordsBanner}
-          onPress={() => router.push('/healthcare/records' as any)}
-        >
+        <Pressable style={styles.recordsBanner} onPress={() => router.push('/healthcare/records' as any)}>
           <LinearGradient
             colors={[colors.brand.cyan, colors.cyanDark]}
             start={{ x: 0, y: 0 }}
@@ -354,10 +357,7 @@ const HealthcarePage: React.FC = () => {
         </Pressable>
 
         {/* Emergency Services Banner */}
-        <Pressable
-          style={styles.emergencyBanner}
-          onPress={() => router.push('/healthcare/emergency' as any)}
-        >
+        <Pressable style={styles.emergencyBanner} onPress={() => router.push('/healthcare/emergency' as any)}>
           <LinearGradient
             colors={[Colors.error, Colors.error]}
             start={{ x: 0, y: 0 }}

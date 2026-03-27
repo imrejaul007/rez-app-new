@@ -62,11 +62,17 @@ function InfoModal({
       transparent
       animationType="fade"
       onRequestClose={onClose}
+      accessibilityViewIsModal={true}
     >
       <TouchableWithoutFeedback onPress={onClose}>
         <View style={styles.overlay}>
           <TouchableWithoutFeedback onPress={(e) => e.stopPropagation()}>
-            <View style={styles.modalContainer}>
+            {/* accessible + importantForAccessibility trap TalkBack focus inside the modal on Android */}
+            <View
+              style={styles.modalContainer}
+              accessible={true}
+              importantForAccessibility="yes"
+            >
               {/* Icon */}
               <View style={styles.iconContainer}>
                 <View style={[styles.iconCircle, { backgroundColor: getIconBgColor() }]}>

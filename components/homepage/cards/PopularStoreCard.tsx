@@ -105,11 +105,25 @@ function PopularStoreCard({ store, onPress, width = 170 }: PopularStoreCardProps
     }
   }, [onPress, store]);
 
+  const storeA11yLabel = useMemo(() => {
+    const parts = [store.name];
+    if (typeof store.rating?.value === 'number') {
+      parts.push(`Rated ${formattedRating} out of 5`);
+    }
+    if (formattedDistance) parts.push(formattedDistance);
+    if (store.cashback?.percentage) {
+      parts.push(`Up to ${currencySymbol}${rewardAmount} in rewards`);
+    }
+    return parts.join(', ');
+  }, [store.name, store.rating, formattedRating, formattedDistance, store.cashback, currencySymbol, rewardAmount]);
+
   return (
     <Pressable
       style={[styles.container, { width }]}
       onPress={handlePress}
-     
+      accessibilityLabel={storeA11yLabel}
+      accessibilityRole="button"
+      accessibilityHint="Double tap to view store details and products"
       delayPressIn={0}
       delayPressOut={0}
     >

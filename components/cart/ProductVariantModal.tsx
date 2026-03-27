@@ -313,7 +313,7 @@ function ProductVariantModal({
             <Pressable
               style={styles.closeButton}
               onPress={onCancel}
-             
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
               accessibilityLabel="Close dialog"
               accessibilityRole="button"
             >

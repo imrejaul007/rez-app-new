@@ -46,7 +46,18 @@ function HomepageProductCard({
     <Pressable
       style={[styles.container, { width }]}
       onPress={handlePress}
-     
+      accessibilityLabel={[
+        product.name,
+        product.store?.deliveryTime || '30-45 min',
+        product.store?.deliveryFee === 0 ? 'Free delivery' : product.store?.deliveryFee ? `Delivery fee applies` : null,
+        showDistance && product.store?.distance !== null && product.store?.distance !== undefined
+          ? formatDistance(product.store.distance)
+          : null,
+      ]
+        .filter(Boolean)
+        .join(', ')}
+      accessibilityRole="button"
+      accessibilityHint="Double tap to view product details"
     >
       <ThemedView style={styles.card}>
         {/* Product Image */}

@@ -27,20 +27,15 @@ interface ThemeStoreState {
 }
 
 export const useThemeStore = create<ThemeStoreState>((set, get) => ({
-  themeMode: 'system',
+  // Dark mode is disabled until all screens fully support it.
+  // Force 'light' at store level; stored preferences are ignored for now.
+  themeMode: 'light',
   _loaded: false,
 
   _initialize: () => {
     if (get()._loaded) return;
-    AsyncStorage.getItem(THEME_STORAGE_KEY)
-      .then((stored) => {
-        if (stored === 'light' || stored === 'dark' || stored === 'system') {
-          set({ themeMode: stored, _loaded: true });
-        } else {
-          set({ _loaded: true });
-        }
-      })
-      .catch(() => set({ _loaded: true }));
+    // Always resolve to light mode regardless of stored preference
+    set({ themeMode: 'light', _loaded: true });
   },
 
   setThemeMode: (mode: ThemeMode) => {
@@ -63,17 +58,20 @@ useThemeStore.getState()._initialize();
  */
 export function useResolvedTheme() {
   const { themeMode, _loaded, setThemeMode, toggleTheme } = useThemeStore();
-  const systemScheme = useColorScheme();
+  // Intentionally unused — dark mode is disabled until all screens support it.
+  // Keep the hook call so the component stays reactive to system changes without errors.
+  useColorScheme();
 
-  const isDark = themeMode === 'system' ? systemScheme === 'dark' : themeMode === 'dark';
+  // Dark mode is disabled: always resolve to light regardless of themeMode or system setting.
+  const isDark = false;
 
   return {
     themeMode,
     isDark,
-    colors: isDark ? darkColors : colors,
-    gradients: isDark ? darkGradients : gradients,
-    shadows: isDark ? darkShadows : shadows,
-    glass: isDark ? darkGlass : glass,
+    colors,
+    gradients,
+    shadows,
+    glass,
     setThemeMode,
     toggleTheme,
     _loaded,

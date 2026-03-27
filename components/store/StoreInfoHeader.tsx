@@ -33,7 +33,11 @@ function StoreInfoHeader({ storeName, rating, categoryTags, horizontalPadding }:
   return (
     <View style={styles.storeInfoSection}>
       {/* Store Name */}
-      <ThemedText style={styles.storeNameLarge} numberOfLines={1}>
+      <ThemedText
+        style={styles.storeNameLarge}
+        numberOfLines={1}
+        accessibilityRole="header"
+      >
         {storeName}
       </ThemedText>
 

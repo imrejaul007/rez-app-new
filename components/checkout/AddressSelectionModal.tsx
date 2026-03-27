@@ -69,7 +69,13 @@ function AddressSelectionModal({
           {/* Header */}
           <View style={styles.modalHeader}>
             <ThemedText style={styles.modalTitle}>Select Delivery Address</ThemedText>
-            <Pressable onPress={onClose} style={styles.closeButton}>
+            <Pressable
+              onPress={onClose}
+              style={styles.closeButton}
+              accessibilityLabel="Close address selection"
+              accessibilityRole="button"
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            >
               <Ionicons name="close" size={24} color={colors.neutral[800]} />
             </Pressable>
           </View>
@@ -86,7 +92,12 @@ function AddressSelectionModal({
               <ThemedText style={styles.emptyDescription}>
                 Add a delivery address to continue with your order
               </ThemedText>
-              <Pressable style={styles.addNewButton} onPress={onAddNew}>
+              <Pressable
+                style={styles.addNewButton}
+                onPress={onAddNew}
+                accessibilityLabel="Add new delivery address"
+                accessibilityRole="button"
+              >
                 <Ionicons name="add-circle" size={20} color={colors.background.primary} />
                 <ThemedText style={styles.addNewButtonText}>Add New Address</ThemedText>
               </Pressable>
@@ -108,7 +119,10 @@ function AddressSelectionModal({
                         isSelected && styles.addressItemSelected,
                       ]}
                       onPress={() => onSelect(address)}
-                     
+                      accessibilityLabel={`${address.name || address.type || 'Address'}, ${address.addressLine1 || ''}${address.city ? `, ${address.city}` : ''}${address.isDefault ? ', Default address' : ''}`}
+                      accessibilityRole="radio"
+                      accessibilityState={{ selected: isSelected }}
+                      accessibilityHint="Double tap to select this delivery address"
                     >
                       <View style={styles.addressItemContent}>
                         <View
@@ -180,7 +194,12 @@ function AddressSelectionModal({
 
               {/* Add New Address Button */}
               <View style={styles.footer}>
-                <Pressable style={styles.addNewOutlineButton} onPress={onAddNew}>
+                <Pressable
+                  style={styles.addNewOutlineButton}
+                  onPress={onAddNew}
+                  accessibilityLabel="Add new delivery address"
+                  accessibilityRole="button"
+                >
                   <Ionicons name="add-circle-outline" size={20} color={colors.lightMustard} />
                   <ThemedText style={styles.addNewOutlineButtonText}>Add New Address</ThemedText>
                 </Pressable>

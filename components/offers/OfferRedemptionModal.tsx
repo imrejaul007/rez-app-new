@@ -223,7 +223,7 @@ export const OfferRedemptionModal: React.FC<OfferRedemptionModalProps> = ({
                 <Ionicons name="flash" size={24} color="white" />
                 <ThemedText style={styles.headerTitle}>Lightning Deal</ThemedText>
               </View>
-              <Pressable style={styles.closeButton} onPress={onClose}>
+              <Pressable style={styles.closeButton} onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
                 <Ionicons name="close" size={24} color="white" />
               </Pressable>
             </View>

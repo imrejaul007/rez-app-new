@@ -132,7 +132,7 @@ function SourcePicker({
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Import Video from URL</Text>
-              <Pressable onPress={handleCancelUrl} style={styles.closeButton}>
+              <Pressable onPress={handleCancelUrl} style={styles.closeButton} hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}>
                 <Ionicons name="close" size={24} color={colors.midGray} />
               </Pressable>
             </View>

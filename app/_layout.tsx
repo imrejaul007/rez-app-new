@@ -34,8 +34,9 @@ initSentry();
 import { useFonts } from 'expo-font';
 import * as Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
-import React, { useEffect, useState } from 'react';
-import { View, useColorScheme } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, AppState, AppStateStatus, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import { useRouter } from 'expo-router';
 import { Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
 import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold } from '@expo-google-fonts/inter';
@@ -71,6 +72,15 @@ function RootLayout() {
   });
 
   const [fontTimedOut, setFontTimedOut] = useState(false);
+  const [isConnected, setIsConnected] = useState<boolean | null>(true);
+
+  // Offline detection — subscribe to network state changes
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener((state) => {
+      setIsConnected(state.isConnected);
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     installProductionConsoleGuard();
@@ -119,35 +129,91 @@ function RootLayout() {
     return () => clearTimeout(timer);
   }, [loaded, fontError]);
 
+  // Track whether an OTA update has been downloaded and is ready to apply
+  const updateReadyRef = useRef(false);
+
   useEffect(() => {
-    if (!__DEV__) {
-      Updates.checkForUpdateAsync()
-        .then(async ({ isAvailable }) => {
-          if (isAvailable) {
-            await Updates.fetchUpdateAsync();
-            await Updates.reloadAsync();
-          }
-        })
-        .catch(() => {});
-    }
+    if (__DEV__) return;
+
+    // Download the update silently in the background
+    Updates.checkForUpdateAsync()
+      .then(async ({ isAvailable }) => {
+        if (isAvailable) {
+          await Updates.fetchUpdateAsync();
+          updateReadyRef.current = true;
+          // Notify the user non-intrusively; they can dismiss and the app
+          // will reload automatically the next time it resumes from background.
+          Alert.alert(
+            'Update Available',
+            'A new version has been downloaded and will be applied the next time you open the app.',
+            [
+              { text: 'Later', style: 'cancel' },
+              {
+                text: 'Restart Now',
+                onPress: () => Updates.reloadAsync(),
+              },
+            ],
+            { cancelable: true },
+          );
+        }
+      })
+      .catch(() => {});
+
+    // Reload when the app returns to the foreground after going to background,
+    // but only if an update was already downloaded.
+    const subscription = AppState.addEventListener('change', (nextState: AppStateStatus) => {
+      if (nextState === 'active' && updateReadyRef.current) {
+        updateReadyRef.current = false;
+        Updates.reloadAsync();
+      }
+    });
+
+    return () => subscription.remove();
   }, []);
 
-  const systemScheme = useColorScheme();
+  // Dark mode is disabled — always use light background colour for the loading screen.
+  useColorScheme(); // keep hook call to avoid Rules-of-Hooks violations
   const fontsReady = loaded || fontError != null || fontTimedOut;
 
   const { handleQueueSyncError, handleQueueSyncComplete, handleErrorBoundaryError } = useAppServices(fontsReady);
 
   if (!fontsReady) {
-    return <View style={{ flex: 1, backgroundColor: systemScheme === 'dark' ? '#121212' : colors.nileBlue }} />;
+    return <View style={{ flex: 1, backgroundColor: colors.nileBlue }} />;
   }
 
   return (
-    <AppProviders
-      onErrorBoundaryError={handleErrorBoundaryError}
-      onQueueSyncComplete={handleQueueSyncComplete}
-      onQueueSyncError={handleQueueSyncError}
-    />
+    <View style={styles.rootContainer}>
+      {isConnected === false && (
+        <View style={styles.offlineBanner}>
+          <Text style={styles.offlineBannerText}>You&apos;re offline. Some features may be unavailable.</Text>
+        </View>
+      )}
+      <AppProviders
+        onErrorBoundaryError={handleErrorBoundaryError}
+        onQueueSyncComplete={handleQueueSyncComplete}
+        onQueueSyncError={handleQueueSyncError}
+      />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  rootContainer: {
+    flex: 1,
+  },
+  offlineBanner: {
+    backgroundColor: '#F59E0B',
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    zIndex: 9999,
+  },
+  offlineBannerText: {
+    color: '#1C1C1E',
+    fontSize: 13,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+});
 
 export default Sentry.wrap(RootLayout);

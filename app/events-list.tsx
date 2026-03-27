@@ -76,12 +76,15 @@ function EventsListPage() {
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   }, [router]);
 
-  const handleEventPress = useCallback((event: EventItem) => {
-    router.push({
-      pathname: '/EventPage',
-      params: { id: event.id },
-    } as any);
-  }, [router]);
+  const handleEventPress = useCallback(
+    (event: EventItem) => {
+      router.push({
+        pathname: '/EventPage',
+        params: { id: event.id },
+      } as any);
+    },
+    [router],
+  );
 
   // Filter handlers
   const handleOpenFilters = useCallback(() => {
@@ -92,54 +95,60 @@ function EventsListPage() {
     setShowFiltersModal(false);
   }, []);
 
-  const handleFiltersChange = useCallback((newFilters: EventFilters) => {
-    setFilters(newFilters);
-  }, [setFilters]);
+  const handleFiltersChange = useCallback(
+    (newFilters: EventFilters) => {
+      setFilters(newFilters);
+    },
+    [setFilters],
+  );
 
   const handleResetFilters = useCallback(() => {
     clearFilters();
   }, [clearFilters]);
 
   // Quick filter toggle handler
-  const handleQuickFilterToggle = useCallback((filterId: string) => {
-    const newFilters = { ...filters };
+  const handleQuickFilterToggle = useCallback(
+    (filterId: string) => {
+      const newFilters = { ...filters };
 
-    switch (filterId) {
-      case 'free':
-        if (filters.priceMax === 0) {
-          delete newFilters.priceMax;
-          delete newFilters.priceMin;
-        } else {
-          newFilters.priceMin = 0;
-          newFilters.priceMax = 0;
-        }
-        break;
-      case 'online':
-        if (filters.isOnline === true) {
-          delete newFilters.isOnline;
-        } else {
-          newFilters.isOnline = true;
-        }
-        break;
-      case 'venue':
-        if (filters.isOnline === false) {
-          delete newFilters.isOnline;
-        } else {
-          newFilters.isOnline = false;
-        }
-        break;
-      case 'today':
-        const today = new Date().toISOString().split('T')[0];
-        if (filters.date === today) {
-          delete newFilters.date;
-        } else {
-          newFilters.date = today;
-        }
-        break;
-    }
+      switch (filterId) {
+        case 'free':
+          if (filters.priceMax === 0) {
+            delete newFilters.priceMax;
+            delete newFilters.priceMin;
+          } else {
+            newFilters.priceMin = 0;
+            newFilters.priceMax = 0;
+          }
+          break;
+        case 'online':
+          if (filters.isOnline === true) {
+            delete newFilters.isOnline;
+          } else {
+            newFilters.isOnline = true;
+          }
+          break;
+        case 'venue':
+          if (filters.isOnline === false) {
+            delete newFilters.isOnline;
+          } else {
+            newFilters.isOnline = false;
+          }
+          break;
+        case 'today':
+          const today = new Date().toISOString().split('T')[0];
+          if (filters.date === today) {
+            delete newFilters.date;
+          } else {
+            newFilters.date = today;
+          }
+          break;
+      }
 
-    setFilters(newFilters);
-  }, [filters, setFilters]);
+      setFilters(newFilters);
+    },
+    [filters, setFilters],
+  );
 
   // Sort handlers
   const handleOpenSort = useCallback(() => {
@@ -150,9 +159,12 @@ function EventsListPage() {
     setShowSortModal(false);
   }, []);
 
-  const handleSortChange = useCallback((newSortBy: EventSortOption) => {
-    setSortBy(newSortBy);
-  }, [setSortBy]);
+  const handleSortChange = useCallback(
+    (newSortBy: EventSortOption) => {
+      setSortBy(newSortBy);
+    },
+    [setSortBy],
+  );
 
   // Load more handler
   const handleLoadMore = useCallback(() => {
@@ -182,15 +194,9 @@ function EventsListPage() {
           : 'Try adjusting your filters or check back later for new events'}
       </ThemedText>
       {(getActiveFiltersCount() > 0 || searchQuery) && (
-        <Pressable
-          style={styles.clearFiltersButton}
-          onPress={handleResetFilters}
-         
-        >
+        <Pressable style={styles.clearFiltersButton} onPress={handleResetFilters}>
           <Ionicons name="refresh-outline" size={18} color={colors.background.primary} />
-          <ThemedText style={styles.clearFiltersText}>
-            Clear all filters
-          </ThemedText>
+          <ThemedText style={styles.clearFiltersText}>Clear all filters</ThemedText>
         </Pressable>
       )}
     </View>
@@ -204,11 +210,7 @@ function EventsListPage() {
       </View>
       <ThemedText style={styles.errorTitle}>Something went wrong</ThemedText>
       <ThemedText style={styles.errorSubtitle}>{error}</ThemedText>
-      <Pressable
-        style={styles.retryButton}
-        onPress={fetchEvents}
-       
-      >
+      <Pressable style={styles.retryButton} onPress={fetchEvents}>
         <Ionicons name="refresh-outline" size={18} color={colors.background.primary} />
         <ThemedText style={styles.retryButtonText}>Try again</ThemedText>
       </Pressable>
@@ -218,10 +220,7 @@ function EventsListPage() {
   // Render event card
   const renderEventCard = ({ item: event }: { item: EventItem }) => (
     <View style={{ width: '48%' }}>
-      <EventGridCard
-        event={event}
-        onPress={handleEventPress}
-      />
+      <EventGridCard event={event} onPress={handleEventPress} />
     </View>
   );
 
@@ -242,10 +241,7 @@ function EventsListPage() {
         />
 
         {/* Category Tabs */}
-        <EventCategoryTabs
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-        />
+        <EventCategoryTabs activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
         {/* Quick Filters */}
         <EventsQuickFilters
@@ -278,7 +274,7 @@ function EventsListPage() {
             />
           }
           data={events}
-          keyExtractor={(item) => item.id || Math.random().toString()}
+          keyExtractor={(item, index) => item.id || `event-${index}`}
           renderItem={renderEventCard}
           numColumns={2}
           columnWrapperStyle={{ justifyContent: 'space-between', gap: Spacing.base }}
@@ -301,13 +297,8 @@ function EventsListPage() {
             <>
               {/* Load More Button */}
               {hasMore && events.length > 0 && !loading && (
-                <Pressable
-                  style={styles.loadMoreButton}
-                  onPress={handleLoadMore}
-                >
-                  <ThemedText style={styles.loadMoreText}>
-                    Load More Events
-                  </ThemedText>
+                <Pressable style={styles.loadMoreButton} onPress={handleLoadMore}>
+                  <ThemedText style={styles.loadMoreText}>Load More Events</ThemedText>
                   <Ionicons name="chevron-down" size={20} color={colors.nileBlue} />
                 </Pressable>
               )}
@@ -315,9 +306,7 @@ function EventsListPage() {
               {/* Loading More Indicator */}
               {loading && events.length > 0 && (
                 <View style={styles.loadingMore}>
-                  <ThemedText style={styles.loadingMoreText}>
-                    Loading more events...
-                  </ThemedText>
+                  <ThemedText style={styles.loadingMoreText}>Loading more events...</ThemedText>
                 </View>
               )}
 

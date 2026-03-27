@@ -92,7 +92,7 @@ function QuantitySelector({
         ]}
         onPress={handleDecrease}
         disabled={isDecreaseDisabled}
-       
+        hitSlop={size === 'small' ? { top: 8, bottom: 8, left: 8, right: 8 } : undefined}
         accessibilityLabel="Decrease quantity"
         accessibilityRole="button"
         accessibilityState={{ disabled: isDecreaseDisabled }}
@@ -138,7 +138,7 @@ function QuantitySelector({
         ]}
         onPress={handleIncrease}
         disabled={isIncreaseDisabled}
-       
+        hitSlop={size === 'small' ? { top: 8, bottom: 8, left: 8, right: 8 } : undefined}
         accessibilityLabel="Increase quantity"
         accessibilityRole="button"
         accessibilityState={{ disabled: isIncreaseDisabled }}

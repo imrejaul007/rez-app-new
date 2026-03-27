@@ -237,10 +237,11 @@ config.server = {
 // =============================================================================
 // SUPPRESS KNOWN HARMLESS WARNINGS (bundler-level only)
 // =============================================================================
+// NOTE: 'Require cycle:' warnings are intentionally NOT suppressed so that
+// circular dependency issues remain visible during development and CI.
 
 const originalWarn = console.warn;
 const suppressedPrefixes = [
-  'Require cycle:',
   '"shadow*" style props are deprecated',
   '"textShadow*" style props are deprecated',
   'props.pointerEvents is deprecated',

@@ -1,15 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useMemo, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  FlatList,
-  Pressable,
-  Platform,
-  Dimensions,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, FlatList, Pressable, Platform, Dimensions } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -30,48 +21,43 @@ function BrandedCoinsScreen() {
   const brandedCoins = brandedCoinsFromCtx || [];
   const totalBranded = walletData?.brandedCoinsTotal || 0;
 
-  const renderBrandedCoin = useCallback(({ item: bc }: any) => (
-    <View style={styles.storeCard}>
-      <View style={styles.storeRow}>
-        <View style={[styles.storeIcon, { backgroundColor: (bc.merchantColor || COIN_TYPES.branded.color) + '15' }]}>
-          {bc.merchantLogo ? (
-            <CachedImage
-              source={bc.merchantLogo}
-              style={styles.storeLogo}
-              contentFit="contain"
-            />
-          ) : (
-            <Ionicons
-              name="storefront"
-              size={24}
-              color={bc.merchantColor || COIN_TYPES.branded.color}
-            />
-          )}
-        </View>
+  const renderBrandedCoin = useCallback(
+    ({ item: bc }: any) => (
+      <View style={styles.storeCard}>
+        <View style={styles.storeRow}>
+          <View style={[styles.storeIcon, { backgroundColor: (bc.merchantColor || COIN_TYPES.branded.color) + '15' }]}>
+            {bc.merchantLogo ? (
+              <CachedImage source={bc.merchantLogo} style={styles.storeLogo} contentFit="contain" />
+            ) : (
+              <Ionicons name="storefront" size={24} color={bc.merchantColor || COIN_TYPES.branded.color} />
+            )}
+          </View>
 
-        <View style={styles.storeInfo}>
-          <Text style={styles.storeName}>{bc.merchantName}</Text>
-          <Text style={styles.storeDesc}>Use only at {bc.merchantName}</Text>
-        </View>
+          <View style={styles.storeInfo}>
+            <Text style={styles.storeName}>{bc.merchantName}</Text>
+            <Text style={styles.storeDesc}>Use only at {bc.merchantName}</Text>
+          </View>
 
-        <View style={styles.storeAmountWrap}>
-          <Text style={[styles.storeAmount, { color: bc.merchantColor || COIN_TYPES.branded.color }]}>
-            RC {bc.amount}
-          </Text>
+          <View style={styles.storeAmountWrap}>
+            <Text style={[styles.storeAmount, { color: bc.merchantColor || COIN_TYPES.branded.color }]}>
+              RC {bc.amount}
+            </Text>
+          </View>
         </View>
       </View>
-    </View>
-  ), []);
+    ),
+    [],
+  );
 
   return (
     <View style={styles.root}>
       {/* Header */}
-      <LinearGradient
-        colors={[colors.brand.indigo, '#4F46E5'] as const}
-        style={styles.headerBg}
-      >
+      <LinearGradient colors={[colors.brand.indigo, '#4F46E5'] as const} style={styles.headerBg}>
         <View style={styles.headerRow}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={22} color={colors.background.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Branded Coins</Text>
@@ -93,15 +79,13 @@ function BrandedCoinsScreen() {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
         data={brandedCoins}
-        keyExtractor={(item) => item.merchantId || Math.random().toString()}
+        keyExtractor={(item, index) => item.merchantId || `branded-coin-${index}`}
         renderItem={renderBrandedCoin}
         ListEmptyComponent={() => (
           <View style={styles.emptyState}>
             <Ionicons name="storefront-outline" size={48} color={colors.neutral[400]} />
             <Text style={styles.emptyTitle}>No Branded Coins Yet</Text>
-            <Text style={styles.emptySubtext}>
-              When stores reward you with branded coins, they will appear here
-            </Text>
+            <Text style={styles.emptySubtext}>When stores reward you with branded coins, they will appear here</Text>
           </View>
         )}
         ListFooterComponent={() => (
@@ -112,7 +96,8 @@ function BrandedCoinsScreen() {
                 <View style={styles.infoContent}>
                   <Text style={styles.infoTitle}>How Branded Coins Work</Text>
                   <Text style={styles.infoText}>
-                    Branded coins are awarded by stores as rewards. Each store's coins can only be used at that specific store. They are used automatically during checkout.
+                    Branded coins are awarded by stores as rewards. Each store's coins can only be used at that specific
+                    store. They are used automatically during checkout.
                   </Text>
                 </View>
               </View>

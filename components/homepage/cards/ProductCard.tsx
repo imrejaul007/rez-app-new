@@ -263,6 +263,7 @@ function ProductCard({
       style={[styles.container, { width }]}
       onPress={handlePress}
       accessibilityLabel={productLabel}
+      accessibilityRole="button"
       accessibilityHint="Double tap to view product details"
     >
       <ThemedView style={styles.card}>

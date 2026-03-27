@@ -12,6 +12,7 @@ import {
   Platform,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
@@ -87,7 +88,7 @@ function ReviewToEarnPage() {
   useFocusEffect(
     useCallback(() => {
       fetchReviewableItems();
-    }, [fetchReviewableItems])
+    }, [fetchReviewableItems]),
   );
 
   const handlePickPhoto = async () => {
@@ -99,14 +100,14 @@ function ReviewToEarnPage() {
     });
 
     if (!result.canceled) {
-      const newPhotos = result.assets.map(a => a.uri);
+      const newPhotos = result.assets.map((a) => a.uri);
       if (!isMounted()) return;
-      setPhotos(prev => [...prev, ...newPhotos].slice(0, 5));
+      setPhotos((prev) => [...prev, ...newPhotos].slice(0, 5));
     }
   };
 
   const handleRemovePhoto = (index: number) => {
-    setPhotos(prev => prev.filter((_, i) => i !== index));
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
   };
 
   const uploadImageToCloudinary = async (uri: string): Promise<string> => {
@@ -141,7 +142,7 @@ function ReviewToEarnPage() {
       // Upload photos to Cloudinary first
       let uploadedImageUrls: string[] | undefined;
       if (photos.length > 0) {
-        uploadedImageUrls = await Promise.all(photos.map(uri => uploadImageToCloudinary(uri)));
+        uploadedImageUrls = await Promise.all(photos.map((uri) => uploadImageToCloudinary(uri)));
       }
 
       const payload: any = {
@@ -160,7 +161,10 @@ function ReviewToEarnPage() {
       const response = await apiClient.post('/reviews', payload);
 
       if (response.success) {
-        platformAlert('Review Submitted!', `You earned ${calculateCoins()} ${BRAND.COIN_NAME} for your review! Your review will be moderated before publishing.`);
+        platformAlert(
+          'Review Submitted!',
+          `You earned ${calculateCoins()} ${BRAND.COIN_NAME} for your review! Your review will be moderated before publishing.`,
+        );
         if (!isMounted()) return;
         setSelectedItem(null);
         if (!isMounted()) return;
@@ -185,54 +189,47 @@ function ReviewToEarnPage() {
   const calculateCoins = () => {
     if (!selectedItem) return 0;
     let total = selectedItem.coins;
-    if (photos.length > 0) total += (selectedItem.bonusCoins || 5);
+    if (photos.length > 0) total += selectedItem.bonusCoins || 5;
     if (review.length > 100) total += 5;
     return total;
   };
 
-  const renderPendingReview = useCallback(({ item }: { item: PendingReview }) => (
-    <Pressable
-      style={styles.reviewCard}
-      onPress={() => setSelectedItem(item)}
-    >
-      <View style={styles.reviewImage}>
-        {item.image ? (
-          <CachedImage source={item.image} style={{ width: 56, height: 56, borderRadius: BorderRadius.md }} />
-        ) : (
-          <Ionicons
-            name={item.type === 'store' ? 'storefront' : item.type === 'product' ? 'cube' : 'construct'}
-            size={28}
-            color={colors.text.tertiary}
-          />
-        )}
-      </View>
-      <View style={styles.reviewInfo}>
-        <View style={styles.typeBadge}>
-          <ThemedText style={styles.typeText}>
-            {item.type.charAt(0).toUpperCase() + item.type.slice(1)}
-          </ThemedText>
+  const renderPendingReview = useCallback(
+    ({ item }: { item: PendingReview }) => (
+      <Pressable style={styles.reviewCard} onPress={() => setSelectedItem(item)}>
+        <View style={styles.reviewImage}>
+          {item.image ? (
+            <CachedImage source={item.image} style={{ width: 56, height: 56, borderRadius: BorderRadius.md }} />
+          ) : (
+            <Ionicons
+              name={item.type === 'store' ? 'storefront' : item.type === 'product' ? 'cube' : 'construct'}
+              size={28}
+              color={colors.text.tertiary}
+            />
+          )}
         </View>
-        <ThemedText style={styles.reviewName}>{item.name}</ThemedText>
-        <ThemedText style={styles.reviewDate}>Purchased {item.purchaseDate}</ThemedText>
-      </View>
-      <View style={styles.coinsBadge}>
-        <Ionicons name="diamond" size={16} color={Colors.gold} />
-        <ThemedText style={styles.coinsValue}>{item.coins}</ThemedText>
-        {item.bonusCoins && (
-          <ThemedText style={styles.bonusText}>+{item.bonusCoins}</ThemedText>
-        )}
-      </View>
-    </Pressable>
-  ), []);
+        <View style={styles.reviewInfo}>
+          <View style={styles.typeBadge}>
+            <ThemedText style={styles.typeText}>{item.type.charAt(0).toUpperCase() + item.type.slice(1)}</ThemedText>
+          </View>
+          <ThemedText style={styles.reviewName}>{item.name}</ThemedText>
+          <ThemedText style={styles.reviewDate}>Purchased {item.purchaseDate}</ThemedText>
+        </View>
+        <View style={styles.coinsBadge}>
+          <Ionicons name="diamond" size={16} color={Colors.gold} />
+          <ThemedText style={styles.coinsValue}>{item.coins}</ThemedText>
+          {item.bonusCoins && <ThemedText style={styles.bonusText}>+{item.bonusCoins}</ThemedText>}
+        </View>
+      </Pressable>
+    ),
+    [],
+  );
 
   if (selectedItem) {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
-        <LinearGradient
-          colors={[Colors.primary[600], Colors.secondary[700]]}
-          style={styles.header}
-        >
+        <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
           <View style={styles.headerContent}>
             <Pressable style={styles.backButton} onPress={() => setSelectedItem(null)}>
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
@@ -242,120 +239,123 @@ function ReviewToEarnPage() {
           </View>
         </LinearGradient>
 
-        <ScrollView style={styles.content} contentContainerStyle={styles.writeContent}>
-          {/* Item Info */}
-          <View style={styles.itemCard}>
-            <View style={styles.itemImage}>
-              {selectedItem.image ? (
-                <CachedImage source={selectedItem.image} style={{ width: 64, height: 64, borderRadius: BorderRadius.md }} />
-              ) : (
-                <Ionicons
-                  name={selectedItem.type === 'store' ? 'storefront' : 'cube'}
-                  size={32}
-                  color={colors.text.tertiary}
-                />
-              )}
-            </View>
-            <View style={styles.itemInfo}>
-              <ThemedText style={styles.itemName}>{selectedItem.name}</ThemedText>
-              <ThemedText style={styles.itemOrder}>{selectedItem.purchaseDate}</ThemedText>
-            </View>
-          </View>
-
-          {/* Rating */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Your Rating *</ThemedText>
-            <View style={styles.ratingContainer}>
-              {[1, 2, 3, 4, 5].map(star => (
-                <Pressable key={star} onPress={() => setRating(star)}>
-                  <Ionicons
-                    name={star <= rating ? 'star' : 'star-outline'}
-                    size={40}
-                    color={star <= rating ? Colors.gold : Colors.gray[300]}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
+        >
+          <ScrollView style={styles.content} contentContainerStyle={styles.writeContent}>
+            {/* Item Info */}
+            <View style={styles.itemCard}>
+              <View style={styles.itemImage}>
+                {selectedItem.image ? (
+                  <CachedImage
+                    source={selectedItem.image}
+                    style={{ width: 64, height: 64, borderRadius: BorderRadius.md }}
                   />
-                </Pressable>
-              ))}
+                ) : (
+                  <Ionicons
+                    name={selectedItem.type === 'store' ? 'storefront' : 'cube'}
+                    size={32}
+                    color={colors.text.tertiary}
+                  />
+                )}
+              </View>
+              <View style={styles.itemInfo}>
+                <ThemedText style={styles.itemName}>{selectedItem.name}</ThemedText>
+                <ThemedText style={styles.itemOrder}>{selectedItem.purchaseDate}</ThemedText>
+              </View>
             </View>
-          </View>
 
-          {/* Review Text */}
-          <View style={styles.section}>
-            <ThemedText style={styles.sectionTitle}>Your Review *</ThemedText>
-            <TextInput
-              style={styles.reviewInput}
-              value={review}
-              onChangeText={setReview}
-              placeholder="Share your experience..."
-              placeholderTextColor={colors.text.tertiary}
-              multiline
-              maxLength={500}
-            />
-            <View style={styles.reviewMeta}>
-              <ThemedText style={styles.charCount}>{review.length}/500</ThemedText>
-              {review.length > 100 && (
-                <View style={styles.bonusBadge}>
-                  <ThemedText style={styles.bonusBadgeText}>+5 RC for detailed review!</ThemedText>
-                </View>
-              )}
-            </View>
-          </View>
-
-          {/* Photos */}
-          <View style={styles.section}>
-            <View style={styles.sectionHeader}>
-              <ThemedText style={styles.sectionTitle}>Add Photos (Optional)</ThemedText>
-              {photos.length === 0 && (
-                <View style={styles.photoBonusBadge}>
-                  <ThemedText style={styles.photoBonusText}>+{selectedItem.bonusCoins || 5} RC</ThemedText>
-                </View>
-              )}
-            </View>
-            <View style={styles.photosGrid}>
-              {photos.map((uri, index) => (
-                <View key={index} style={styles.photoItem}>
-                  <CachedImage source={{ uri }} style={styles.photoImage} />
-                  <Pressable
-                    style={styles.removePhoto}
-                    onPress={() => handleRemovePhoto(index)}
-                  >
-                    <Ionicons name="close-circle" size={24} color={Colors.error} />
+            {/* Rating */}
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Your Rating *</ThemedText>
+              <View style={styles.ratingContainer}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Pressable key={star} onPress={() => setRating(star)}>
+                    <Ionicons
+                      name={star <= rating ? 'star' : 'star-outline'}
+                      size={40}
+                      color={star <= rating ? Colors.gold : Colors.gray[300]}
+                    />
                   </Pressable>
-                </View>
-              ))}
-              {photos.length < 5 && (
-                <Pressable style={styles.addPhoto} onPress={handlePickPhoto}>
-                  <Ionicons name="camera-outline" size={28} color={colors.text.tertiary} />
-                  <ThemedText style={styles.addPhotoText}>Add</ThemedText>
-                </Pressable>
+                ))}
+              </View>
+            </View>
+
+            {/* Review Text */}
+            <View style={styles.section}>
+              <ThemedText style={styles.sectionTitle}>Your Review *</ThemedText>
+              <TextInput
+                style={styles.reviewInput}
+                value={review}
+                onChangeText={setReview}
+                placeholder="Share your experience..."
+                placeholderTextColor={colors.text.tertiary}
+                multiline
+                maxLength={500}
+              />
+              <View style={styles.reviewMeta}>
+                <ThemedText style={styles.charCount}>{review.length}/500</ThemedText>
+                {review.length > 100 && (
+                  <View style={styles.bonusBadge}>
+                    <ThemedText style={styles.bonusBadgeText}>+5 RC for detailed review!</ThemedText>
+                  </View>
+                )}
+              </View>
+            </View>
+
+            {/* Photos */}
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <ThemedText style={styles.sectionTitle}>Add Photos (Optional)</ThemedText>
+                {photos.length === 0 && (
+                  <View style={styles.photoBonusBadge}>
+                    <ThemedText style={styles.photoBonusText}>+{selectedItem.bonusCoins || 5} RC</ThemedText>
+                  </View>
+                )}
+              </View>
+              <View style={styles.photosGrid}>
+                {photos.map((uri, index) => (
+                  <View key={index} style={styles.photoItem}>
+                    <CachedImage source={{ uri }} style={styles.photoImage} />
+                    <Pressable style={styles.removePhoto} onPress={() => handleRemovePhoto(index)}>
+                      <Ionicons name="close-circle" size={24} color={Colors.error} />
+                    </Pressable>
+                  </View>
+                ))}
+                {photos.length < 5 && (
+                  <Pressable style={styles.addPhoto} onPress={handlePickPhoto}>
+                    <Ionicons name="camera-outline" size={28} color={colors.text.tertiary} />
+                    <ThemedText style={styles.addPhotoText}>Add</ThemedText>
+                  </Pressable>
+                )}
+              </View>
+            </View>
+
+            {/* Coin Preview */}
+            <View style={styles.coinPreview}>
+              <ThemedText style={styles.coinPreviewLabel}>You'll earn</ThemedText>
+              <View style={styles.coinPreviewValue}>
+                <Ionicons name="diamond" size={24} color={Colors.gold} />
+                <ThemedText style={styles.coinPreviewAmount}>{calculateCoins()} RC</ThemedText>
+              </View>
+            </View>
+
+            {/* Submit Button */}
+            <Pressable
+              style={[styles.submitButton, (rating === 0 || !review) && styles.submitButtonDisabled]}
+              onPress={handleSubmitReview}
+              disabled={rating === 0 || !review || submitting}
+            >
+              {submitting ? (
+                <ActivityIndicator color={colors.background.primary} />
+              ) : (
+                <ThemedText style={styles.submitButtonText}>Submit Review</ThemedText>
               )}
-            </View>
-          </View>
-
-          {/* Coin Preview */}
-          <View style={styles.coinPreview}>
-            <ThemedText style={styles.coinPreviewLabel}>You'll earn</ThemedText>
-            <View style={styles.coinPreviewValue}>
-              <Ionicons name="diamond" size={24} color={Colors.gold} />
-              <ThemedText style={styles.coinPreviewAmount}>{calculateCoins()} RC</ThemedText>
-            </View>
-          </View>
-
-          {/* Submit Button */}
-          <Pressable
-            style={[
-              styles.submitButton,
-              (rating === 0 || !review) && styles.submitButtonDisabled,
-            ]}
-            onPress={handleSubmitReview}
-            disabled={rating === 0 || !review || submitting}
-          >
-            {submitting ? (
-              <ActivityIndicator color={colors.background.primary} />
-            ) : (
-              <ThemedText style={styles.submitButtonText}>Submit Review</ThemedText>
-            )}
-          </Pressable>
-        </ScrollView>
+            </Pressable>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
     );
   }
@@ -363,12 +363,12 @@ function ReviewToEarnPage() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Review & Earn</ThemedText>
@@ -383,9 +383,7 @@ function ReviewToEarnPage() {
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <ThemedText style={styles.statValue}>
-              {potentialEarnings}
-            </ThemedText>
+            <ThemedText style={styles.statValue}>{potentialEarnings}</ThemedText>
             <ThemedText style={styles.statLabel}>RC Available</ThemedText>
           </View>
         </View>
@@ -394,34 +392,32 @@ function ReviewToEarnPage() {
       {loading ? (
         <FormPageSkeleton />
       ) : (
-      <FlashList
-        data={pendingReviews}
-        renderItem={renderPendingReview}
-        keyExtractor={item => item.id}
-        contentContainerStyle={styles.listContent}
-        showsVerticalScrollIndicator={false}
-        estimatedItemSize={120}
-        ListHeaderComponent={
-          <View style={styles.tipsCard}>
-            <Ionicons name="bulb-outline" size={24} color={Colors.gold} />
-            <View style={styles.tipsContent}>
-              <ThemedText style={styles.tipsTitle}>Earn More Coins</ThemedText>
-              <ThemedText style={styles.tipsText}>
-                Write detailed reviews (100+ characters) and add photos to earn bonus coins!
-              </ThemedText>
+        <FlashList
+          data={pendingReviews}
+          renderItem={renderPendingReview}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.listContent}
+          showsVerticalScrollIndicator={false}
+          estimatedItemSize={120}
+          ListHeaderComponent={
+            <View style={styles.tipsCard}>
+              <Ionicons name="bulb-outline" size={24} color={Colors.gold} />
+              <View style={styles.tipsContent}>
+                <ThemedText style={styles.tipsTitle}>Earn More Coins</ThemedText>
+                <ThemedText style={styles.tipsText}>
+                  Write detailed reviews (100+ characters) and add photos to earn bonus coins!
+                </ThemedText>
+              </View>
             </View>
-          </View>
-        }
-        ListEmptyComponent={
-          <View style={styles.emptyState}>
-            <Ionicons name="star-outline" size={64} color={Colors.gray[300]} />
-            <ThemedText style={styles.emptyTitle}>No Pending Reviews</ThemedText>
-            <ThemedText style={styles.emptyText}>
-              Make purchases to unlock review opportunities
-            </ThemedText>
-          </View>
-        }
-      />
+          }
+          ListEmptyComponent={
+            <View style={styles.emptyState}>
+              <Ionicons name="star-outline" size={64} color={Colors.gray[300]} />
+              <ThemedText style={styles.emptyTitle}>No Pending Reviews</ThemedText>
+              <ThemedText style={styles.emptyText}>Make purchases to unlock review opportunities</ThemedText>
+            </View>
+          }
+        />
       )}
     </View>
   );

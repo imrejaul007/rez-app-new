@@ -225,13 +225,25 @@ function StoreProductCard({
     }
   };
 
+  // Build accessibility label combining name, price, and rating
+  const cardA11yLabel = [
+    product.name,
+    currentPrice !== null ? `${formatPrice(currentPrice, 'INR', false)}` : null,
+    hasDiscount ? `${discountPercentage}% off` : null,
+    normalizedRating.value !== null ? `Rated ${normalizedRating.value} out of 5` : null,
+  ]
+    .filter(Boolean)
+    .join(', ');
+
   return (
     <>
       <Pressable
         style={styles.card}
         onPress={onPress}
         onLongPress={onLongPress}
-       
+        accessibilityLabel={cardA11yLabel}
+        accessibilityRole="button"
+        accessibilityHint="Double tap to view product details"
       >
         {/* Product Image */}
         <View style={styles.imageContainer}>
@@ -256,8 +268,10 @@ function StoreProductCard({
             ]}
             onPress={handleWishlistToggle}
             disabled={isTogglingWishlist}
-            role="button"
-            aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+            accessibilityLabel={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+            accessibilityRole="button"
+            accessibilityHint={inWishlist ? "Double tap to remove this product from your wishlist" : "Double tap to save this product to your wishlist"}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
           >
             <Animated.View style={{ transform: [{ scale: heartScale }] }}>
               <Ionicons
@@ -321,8 +335,10 @@ function StoreProductCard({
             ]}
             onPress={handleAddToCart}
             disabled={isAddingToCart}
-            role="button"
-            aria-label="Add to cart"
+            accessibilityLabel={isAddingToCart ? "Adding to cart" : `Add ${product.name} to cart`}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: isAddingToCart, busy: isAddingToCart }}
+            accessibilityHint="Double tap to add this item to your shopping cart"
           >
             {isAddingToCart ? (
               <>

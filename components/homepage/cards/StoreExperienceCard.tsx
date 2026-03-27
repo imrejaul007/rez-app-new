@@ -96,7 +96,9 @@ const StoreExperienceCard: React.FC<StoreExperienceCardProps> = memo(({
           <Pressable
             style={styles.button}
             onPress={handlePress}
-           
+            accessibilityLabel={buttonText}
+            accessibilityRole="button"
+            importantForAccessibility="no-hide-descendants"
           >
             <Text style={[styles.buttonText, { color: buttonTextColor }]}>
               {buttonText}

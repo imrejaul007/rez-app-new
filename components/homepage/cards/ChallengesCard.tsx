@@ -41,9 +41,11 @@ const ChallengesCard: React.FC<ChallengesCardProps> = ({
 
   return (
     <Pressable
-     
       onPress={onPress}
       style={styles.cardContainer}
+      accessibilityLabel={`Challenges. ${totalActive > 0 ? `${totalActive} active challenges` : 'No active challenges'}${completedToday > 0 ? `. ${completedToday} completed today` : ''}${topChallenge ? `. Top challenge: ${topChallenge.title}, earn ${topChallenge.reward} coins` : ''}`}
+      accessibilityRole="button"
+      accessibilityHint="Double tap to view all challenges"
     >
       <LinearGradient
         colors={gradientColors}

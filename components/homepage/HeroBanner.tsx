@@ -120,7 +120,9 @@ function HeroBanner({ totalSaved = 0, onScanPayPress, onViewWalletPress }: HeroB
           <Pressable
             style={[styles.ctaCard, styles.ctaCardPrimary]}
             onPress={handleScanPayPress}
-
+            accessibilityLabel="Scan and pay at store"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to open the QR code scanner and pay at a participating store"
           >
             <Ionicons name="qr-code-outline" size={iconSize.md} color={colors.nileBlue} />
             <Text style={[styles.ctaText, styles.ctaTextPrimary]}>Scan & Pay</Text>
@@ -130,7 +132,9 @@ function HeroBanner({ totalSaved = 0, onScanPayPress, onViewWalletPress }: HeroB
           <Pressable
             style={styles.ctaCard}
             onPress={handleViewWalletPress}
-
+            accessibilityLabel="View wallet balance"
+            accessibilityRole="button"
+            accessibilityHint="Double tap to view your REZ wallet balance and transaction history"
           >
             <Ionicons name="wallet-outline" size={iconSize.md} color={colors.background.primary} />
             <Text style={styles.ctaText}>View Wallet</Text>

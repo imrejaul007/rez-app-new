@@ -13,6 +13,7 @@ import {
   Platform,
   TextInput,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -56,14 +57,14 @@ function ReportFraudPage() {
     });
 
     if (!result.canceled) {
-      const newImages = result.assets.map(a => a.uri);
+      const newImages = result.assets.map((a) => a.uri);
       if (!isMounted()) return;
-      setEvidence(prev => [...prev, ...newImages].slice(0, 5));
+      setEvidence((prev) => [...prev, ...newImages].slice(0, 5));
     }
   };
 
   const handleRemoveImage = (index: number) => {
-    setEvidence(prev => prev.filter((_, i) => i !== index));
+    setEvidence((prev) => prev.filter((_, i) => i !== index));
   };
 
   const [uploadingImages, setUploadingImages] = useState(false);
@@ -108,9 +109,7 @@ function ReportFraudPage() {
       if (evidence.length > 0) {
         setUploadingImages(true);
         try {
-          attachmentUrls = await Promise.all(
-            evidence.map(uri => uploadImageToCloudinary(uri))
-          );
+          attachmentUrls = await Promise.all(evidence.map((uri) => uploadImageToCloudinary(uri)));
         } catch (uploadError) {
           platformAlertSimple('Upload Error', 'Failed to upload evidence images. Submitting report without images.');
         } finally {
@@ -119,7 +118,7 @@ function ReportFraudPage() {
         }
       }
 
-      const fraudLabel = FRAUD_TYPES.find(t => t.id === selectedType)?.label || selectedType;
+      const fraudLabel = FRAUD_TYPES.find((t) => t.id === selectedType)?.label || selectedType;
       const response = await supportService.createTicket({
         subject: `Fraud Report: ${fraudLabel}`,
         category: 'other',
@@ -151,12 +150,12 @@ function ReportFraudPage() {
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <StatusBar barStyle="light-content" translucent />
-        <LinearGradient
-          colors={Gradients.nileBlue}
-          style={styles.header}
-        >
+        <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.white} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Report Fraud</ThemedText>
@@ -176,26 +175,33 @@ function ReportFraudPage() {
           <View style={styles.reportIdCard}>
             <ThemedText style={styles.reportIdLabel}>Report ID</ThemedText>
             <ThemedText style={styles.reportIdValue}>{reportId}</ThemedText>
-            <ThemedText style={styles.reportIdNote}>
-              Save this for future reference
-            </ThemedText>
+            <ThemedText style={styles.reportIdNote}>Save this for future reference</ThemedText>
           </View>
           <View style={styles.nextSteps}>
             <ThemedText style={styles.nextStepsTitle}>What happens next?</ThemedText>
             <View style={styles.nextStep}>
-              <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>1</ThemedText></View>
+              <View style={styles.stepNumber}>
+                <ThemedText style={styles.stepNumberText}>1</ThemedText>
+              </View>
               <ThemedText style={styles.stepText}>Our team reviews your report within 24 hours</ThemedText>
             </View>
             <View style={styles.nextStep}>
-              <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>2</ThemedText></View>
+              <View style={styles.stepNumber}>
+                <ThemedText style={styles.stepNumberText}>2</ThemedText>
+              </View>
               <ThemedText style={styles.stepText}>We may contact you for additional information</ThemedText>
             </View>
             <View style={styles.nextStep}>
-              <View style={styles.stepNumber}><ThemedText style={styles.stepNumberText}>3</ThemedText></View>
+              <View style={styles.stepNumber}>
+                <ThemedText style={styles.stepNumberText}>3</ThemedText>
+              </View>
               <ThemedText style={styles.stepText}>You'll receive an email with the investigation outcome</ThemedText>
             </View>
           </View>
-          <Pressable style={styles.doneButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.doneButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <ThemedText style={styles.doneButtonText}>Done</ThemedText>
           </Pressable>
         </View>
@@ -209,12 +215,12 @@ function ReportFraudPage() {
       <StatusBar barStyle="light-content" translucent />
 
       {/* Header */}
-      <LinearGradient
-        colors={Gradients.nileBlue}
-        style={styles.header}
-      >
+      <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.white} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Report Fraud</ThemedText>
@@ -222,148 +228,141 @@ function ReportFraudPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
       >
-        {/* Warning Banner */}
-        <View style={styles.warningBanner}>
-          <Ionicons name="shield-outline" size={24} color={Colors.warning} />
-          <ThemedText style={styles.warningText}>
-            If you suspect your account is compromised, change your password immediately.
-          </ThemedText>
-        </View>
-
-        {/* Fraud Type */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Type of Incident *</ThemedText>
-          <View style={styles.typesGrid}>
-            {FRAUD_TYPES.map(type => (
-              <Pressable
-                key={type.id}
-                style={[
-                  styles.typeCard,
-                  selectedType === type.id && styles.typeCardSelected,
-                ]}
-                onPress={() => setSelectedType(type.id)}
-              >
-                <Ionicons
-                  name={type.icon as any}
-                  size={24}
-                  color={selectedType === type.id ? Colors.error : colors.text.tertiary}
-                />
-                <ThemedText style={[
-                  styles.typeLabel,
-                  selectedType === type.id && styles.typeLabelSelected,
-                ]}>
-                  {type.label}
-                </ThemedText>
-              </Pressable>
-            ))}
-          </View>
-        </View>
-
-        {/* Transaction Reference */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Transaction/Order ID (if applicable)</ThemedText>
-          <TextInput
-            style={styles.textInput}
-            value={transactionId}
-            onChangeText={setTransactionId}
-            placeholder="e.g., ORD-2024-001234"
-            placeholderTextColor={colors.text.tertiary}
-          />
-        </View>
-
-        {/* Description */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Describe what happened *</ThemedText>
-          <TextInput
-            style={styles.textArea}
-            value={description}
-            onChangeText={setDescription}
-            placeholder="Please provide details about the fraudulent activity..."
-            placeholderTextColor={colors.text.tertiary}
-            multiline
-            maxLength={1000}
-          />
-          <ThemedText style={styles.charCount}>{description.length}/1000</ThemedText>
-        </View>
-
-        {/* Evidence Upload */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Upload Evidence (Optional)</ThemedText>
-          <ThemedText style={styles.sectionSubtitle}>
-            Screenshots, messages, or any relevant images
-          </ThemedText>
-          <View style={styles.evidenceContainer}>
-            {evidence.map((uri, index) => (
-              <View key={index} style={styles.evidenceItem}>
-                <CachedImage source={{ uri }} style={styles.evidenceImage} />
-                <Pressable
-                  style={styles.removeButton}
-                  onPress={() => handleRemoveImage(index)}
-                >
-                  <Ionicons name="close-circle" size={24} color={Colors.error} />
-                </Pressable>
-              </View>
-            ))}
-            {evidence.length < 5 && (
-              <Pressable style={styles.addButton} onPress={handlePickImage}>
-                <Ionicons name="add" size={32} color={colors.text.tertiary} />
-                <ThemedText style={styles.addButtonText}>Add</ThemedText>
-              </Pressable>
-            )}
-          </View>
-        </View>
-
-        {/* Contact Email */}
-        <View style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>Contact Email *</ThemedText>
-          <TextInput
-            style={styles.textInput}
-            value={contactEmail}
-            onChangeText={setContactEmail}
-            placeholder="your@email.com"
-            placeholderTextColor={colors.text.tertiary}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-        </View>
-
-        {/* Submit Button */}
-        <Pressable
-          style={[
-            styles.submitButton,
-            (!selectedType || !description || !contactEmail) && styles.submitButtonDisabled,
-          ]}
-          onPress={handleSubmit}
-          disabled={!selectedType || !description || !contactEmail || loading}
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
         >
-          {loading ? (
-            <>
-              <ActivityIndicator color={colors.text.white} />
-              {uploadingImages && (
-                <ThemedText style={styles.submitButtonText}>Uploading evidence...</ThemedText>
-              )}
-            </>
-          ) : (
-            <>
-              <Ionicons name="shield-checkmark" size={20} color={colors.text.white} />
-              <ThemedText style={styles.submitButtonText}>Submit Report</ThemedText>
-            </>
-          )}
-        </Pressable>
+          {/* Warning Banner */}
+          <View style={styles.warningBanner}>
+            <Ionicons name="shield-outline" size={24} color={Colors.warning} />
+            <ThemedText style={styles.warningText}>
+              If you suspect your account is compromised, change your password immediately.
+            </ThemedText>
+          </View>
 
-        {/* Disclaimer */}
-        <View style={styles.disclaimer}>
-          <ThemedText style={styles.disclaimerText}>
-            By submitting this report, you confirm that the information provided is true
-            and accurate to the best of your knowledge. False reports may result in account suspension.
-          </ThemedText>
-        </View>
-      </ScrollView>
+          {/* Fraud Type */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Type of Incident *</ThemedText>
+            <View style={styles.typesGrid}>
+              {FRAUD_TYPES.map((type) => (
+                <Pressable
+                  key={type.id}
+                  style={[styles.typeCard, selectedType === type.id && styles.typeCardSelected]}
+                  onPress={() => setSelectedType(type.id)}
+                >
+                  <Ionicons
+                    name={type.icon as any}
+                    size={24}
+                    color={selectedType === type.id ? Colors.error : colors.text.tertiary}
+                  />
+                  <ThemedText style={[styles.typeLabel, selectedType === type.id && styles.typeLabelSelected]}>
+                    {type.label}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+
+          {/* Transaction Reference */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Transaction/Order ID (if applicable)</ThemedText>
+            <TextInput
+              style={styles.textInput}
+              value={transactionId}
+              onChangeText={setTransactionId}
+              placeholder="e.g., ORD-2024-001234"
+              placeholderTextColor={colors.text.tertiary}
+            />
+          </View>
+
+          {/* Description */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Describe what happened *</ThemedText>
+            <TextInput
+              style={styles.textArea}
+              value={description}
+              onChangeText={setDescription}
+              placeholder="Please provide details about the fraudulent activity..."
+              placeholderTextColor={colors.text.tertiary}
+              multiline
+              maxLength={1000}
+            />
+            <ThemedText style={styles.charCount}>{description.length}/1000</ThemedText>
+          </View>
+
+          {/* Evidence Upload */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Upload Evidence (Optional)</ThemedText>
+            <ThemedText style={styles.sectionSubtitle}>Screenshots, messages, or any relevant images</ThemedText>
+            <View style={styles.evidenceContainer}>
+              {evidence.map((uri, index) => (
+                <View key={index} style={styles.evidenceItem}>
+                  <CachedImage source={{ uri }} style={styles.evidenceImage} />
+                  <Pressable style={styles.removeButton} onPress={() => handleRemoveImage(index)}>
+                    <Ionicons name="close-circle" size={24} color={Colors.error} />
+                  </Pressable>
+                </View>
+              ))}
+              {evidence.length < 5 && (
+                <Pressable style={styles.addButton} onPress={handlePickImage}>
+                  <Ionicons name="add" size={32} color={colors.text.tertiary} />
+                  <ThemedText style={styles.addButtonText}>Add</ThemedText>
+                </Pressable>
+              )}
+            </View>
+          </View>
+
+          {/* Contact Email */}
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>Contact Email *</ThemedText>
+            <TextInput
+              style={styles.textInput}
+              value={contactEmail}
+              onChangeText={setContactEmail}
+              placeholder="your@email.com"
+              placeholderTextColor={colors.text.tertiary}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
+
+          {/* Submit Button */}
+          <Pressable
+            style={[
+              styles.submitButton,
+              (!selectedType || !description || !contactEmail) && styles.submitButtonDisabled,
+            ]}
+            onPress={handleSubmit}
+            disabled={!selectedType || !description || !contactEmail || loading}
+          >
+            {loading ? (
+              <>
+                <ActivityIndicator color={colors.text.white} />
+                {uploadingImages && <ThemedText style={styles.submitButtonText}>Uploading evidence...</ThemedText>}
+              </>
+            ) : (
+              <>
+                <Ionicons name="shield-checkmark" size={20} color={colors.text.white} />
+                <ThemedText style={styles.submitButtonText}>Submit Report</ThemedText>
+              </>
+            )}
+          </Pressable>
+
+          {/* Disclaimer */}
+          <View style={styles.disclaimer}>
+            <ThemedText style={styles.disclaimerText}>
+              By submitting this report, you confirm that the information provided is true and accurate to the best of
+              your knowledge. False reports may result in account suspension.
+            </ThemedText>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }

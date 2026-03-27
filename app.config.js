@@ -50,7 +50,7 @@ module.exports = {
     orientation: 'portrait',
     icon: './assets/images/icon.png',
     scheme: 'rez', // Deep link scheme
-    userInterfaceStyle: 'automatic',
+    userInterfaceStyle: 'light',
     newArchEnabled: true,
     notification: {
       vapidPublicKey: process.env.EXPO_PUBLIC_VAPID_KEY,
@@ -58,6 +58,7 @@ module.exports = {
     },
     ios: {
       supportsTablet: true,
+      userInterfaceStyle: 'light',
       // TODO: Update to your production App Store bundle identifier before release (e.g. com.yourcompany.yourapp)
       bundleIdentifier: 'com.rez.app', // App Store identifier
       buildNumber: process.env.BUILD_NUMBER || '1',
@@ -73,6 +74,7 @@ module.exports = {
     },
     android: {
       googleServicesFile: './google-services.json',
+      userInterfaceStyle: 'light',
       adaptiveIcon: {
         foregroundImage: './assets/images/adaptive-icon.png',
         backgroundColor: '#1a3a52',
@@ -95,10 +97,9 @@ module.exports = {
         'android.permission.CAMERA',
         'android.permission.ACCESS_FINE_LOCATION',
         'android.permission.ACCESS_COARSE_LOCATION',
-        'android.permission.READ_EXTERNAL_STORAGE',
-        'android.permission.WRITE_EXTERNAL_STORAGE',
+        'android.permission.READ_MEDIA_IMAGES',
+        'android.permission.READ_MEDIA_VIDEO',
         'android.permission.VIBRATE',
-        'android.permission.RECORD_AUDIO',
         'android.permission.POST_NOTIFICATIONS',
       ],
     },
@@ -108,9 +109,9 @@ module.exports = {
       favicon: './assets/images/favicon.png',
     },
     updates: {
-      url: `https://u.expo.dev/${process.env.EXPO_PUBLIC_EAS_PROJECT_ID || '58b80355-a254-4d4a-80ce-d2bc3272b144'}`,
+      url: `https://u.expo.dev/${process.env.EXPO_PUBLIC_EAS_PROJECT_ID || 'cf84e3b3-4a96-4c9b-a438-465c29fbf720'}`,
       enabled: true,
-      fallbackToCacheTimeout: 0,
+      fallbackToCacheTimeout: 3000,
       requestHeaders: {
         'expo-channel-name': process.env.EXPO_PUBLIC_CHANNEL || 'production',
       },
@@ -189,7 +190,7 @@ module.exports = {
     },
     extra: {
       eas: {
-        projectId: 'cf84e3b3-4a96-4c9b-a438-465c29fbf720',
+        projectId: process.env.EXPO_PUBLIC_EAS_PROJECT_ID || 'cf84e3b3-4a96-4c9b-a438-465c29fbf720',
       },
       router: {
         origin: false,

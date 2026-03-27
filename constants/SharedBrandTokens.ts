@@ -1,5 +1,10 @@
+// Canonical color source: @/constants/theme — import from there
 /**
- * Shared Brand Tokens - Single Source of Truth
+ * Shared Brand Tokens
+ *
+ * NOTE: The canonical runtime color source for the consumer app is @/constants/theme.ts.
+ * This file holds the immutable brand palette used for cross-app reference and
+ * design documentation. In-app UI components must import colors from @/constants/theme.
  *
  * All ReZ applications must reference these core brand colors.
  * App-specific variations (error/warning/success) are allowed,

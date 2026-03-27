@@ -138,6 +138,8 @@ function SetPinScreen() {
                     autoFocus={true}
                     style={[styles.pinInput, { borderColor: errors.pin ? colors.error : colors.neutral[200] }]}
                     placeholderTextColor={colors.neutral[400]}
+                    accessibilityLabel="4-digit PIN"
+                    accessibilityHint="Enter a 4-digit PIN you'll use for quick sign-in"
                   />
                   {!!errors.pin && <Text style={styles.errorText}>{errors.pin}</Text>}
                 </View>
@@ -157,6 +159,8 @@ function SetPinScreen() {
                     secureTextEntry={true}
                     style={[styles.pinInput, { borderColor: errors.confirmPin ? colors.error : colors.neutral[200] }]}
                     placeholderTextColor={colors.neutral[400]}
+                    accessibilityLabel="Confirm 4-digit PIN"
+                    accessibilityHint="Re-enter your PIN to confirm it matches"
                   />
                   {!!errors.confirmPin && <Text style={styles.errorText}>{errors.confirmPin}</Text>}
                 </View>

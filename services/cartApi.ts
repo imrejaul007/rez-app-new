@@ -201,6 +201,7 @@ export { UnifiedCartItem, UnifiedCart };
 export interface AddToCartRequest {
   productId: string;
   quantity: number;
+  storeId?: string;
   itemType?: 'product' | 'service' | 'event';
   variant?: {
     type: string;

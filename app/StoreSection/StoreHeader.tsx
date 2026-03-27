@@ -1,16 +1,23 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useRef, useState, useEffect, useCallback } from 'react';
-import { View, Pressable, StyleSheet, ActivityIndicator, Share, Platform, ScrollView, Dimensions, NativeScrollEvent, NativeSyntheticEvent } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
+import {
+  View,
+  Pressable,
+  StyleSheet,
+  ActivityIndicator,
+  Share,
+  Platform,
+  ScrollView,
+  Dimensions,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+} from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useFocusEffect } from 'expo-router';
-import { triggerImpact, triggerNotification } from "@/utils/haptics";
+import { triggerImpact, triggerNotification } from '@/utils/haptics';
 import { ThemedText } from '@/components/ThemedText';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { useIsAuthenticated, useRezBalance, useWalletLoading } from '@/stores/selectors';
@@ -18,16 +25,9 @@ import wishlistApi from '@/services/wishlistApi';
 import EnhancedCoinBadge from '@/components/product/EnhancedCoinBadge';
 import AvailabilityBadge from '@/components/product/AvailabilityBadge';
 import { ImageZoomModal } from '@/components/product/ImageZoomModal';
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  IconSize,
-  Timing,
-} from '@/constants/DesignSystem';
+import { Colors, Spacing, BorderRadius, IconSize, Timing } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-
 
 interface StoreHeaderProps {
   dynamicData?: {
@@ -117,7 +117,7 @@ function StoreHeader({
   useFocusEffect(
     useCallback(() => {
       checkWishlistStatus();
-    }, [checkWishlistStatus])
+    }, [checkWishlistStatus]),
   );
 
   // Handlers
@@ -264,91 +264,84 @@ function StoreHeader({
     <View style={styles.container}>
       {/* Header Bar - Above the image */}
       {showHeaderBar && (
-      <View style={styles.headerBar}>
-        {/* Left - Back button */}
-        <Animated.View style={backScaleStyle}>
-          <Pressable
-            style={styles.iconBtn}
-            onPress={handleBackPress}
-            onPressIn={() => animateScale(backScaleAnim, 0.9)}
-            onPressOut={() => animateScale(backScaleAnim, 1)}
-            accessibilityLabel="Go back"
-            accessibilityRole="button"
-          >
-            <Ionicons name="chevron-back" size={20} color={colors.neutral[700]} />
-          </Pressable>
-        </Animated.View>
+        <View style={styles.headerBar}>
+          {/* Left - Back button */}
+          <Animated.View style={backScaleStyle}>
+            <Pressable
+              style={styles.iconBtn}
+              onPress={handleBackPress}
+              onPressIn={() => animateScale(backScaleAnim, 0.9)}
+              onPressOut={() => animateScale(backScaleAnim, 1)}
+              accessibilityLabel="Go back"
+              accessibilityRole="button"
+            >
+              <Ionicons name="chevron-back" size={20} color={colors.neutral[700]} />
+            </Pressable>
+          </Animated.View>
 
-        {/* Center - Enhanced Coin Badge */}
-        {!isLoadingCoins ? (
-          <EnhancedCoinBadge
-            coinCount={coinCount}
-            onPress={handleCoinPress}
-            size="medium"
-          />
-        ) : (
-          <View style={styles.coinBadgeLoading}>
-            <ActivityIndicator size="small" color={colors.lightMustard} />
+          {/* Center - Enhanced Coin Badge */}
+          {!isLoadingCoins ? (
+            <EnhancedCoinBadge coinCount={coinCount} onPress={handleCoinPress} size="medium" />
+          ) : (
+            <View style={styles.coinBadgeLoading}>
+              <ActivityIndicator size="small" color={colors.lightMustard} />
+            </View>
+          )}
+
+          {/* Right - Action buttons */}
+          <View style={styles.rightActions}>
+            {/* Share Button */}
+            <Animated.View style={shareScaleStyle}>
+              <Pressable
+                style={styles.iconBtn}
+                onPress={handleSharePress}
+                onPressIn={() => animateScale(shareScaleAnim, 0.9)}
+                onPressOut={() => animateScale(shareScaleAnim, 1)}
+                accessibilityLabel="Share"
+                accessibilityRole="button"
+              >
+                <Ionicons name="share-outline" size={18} color={colors.neutral[700]} />
+              </Pressable>
+            </Animated.View>
+
+            {/* Cart Button */}
+            <Animated.View style={cartScaleStyle}>
+              <Pressable
+                style={styles.iconBtn}
+                onPress={handleCartPress}
+                onPressIn={() => animateScale(cartScaleAnim, 0.9)}
+                onPressOut={() => animateScale(cartScaleAnim, 1)}
+                accessibilityLabel="Cart"
+                accessibilityRole="button"
+              >
+                <Ionicons name="bag-outline" size={18} color={colors.neutral[700]} />
+              </Pressable>
+            </Animated.View>
+
+            {/* Heart/Wishlist Button */}
+            <Animated.View style={heartScaleStyle}>
+              <Pressable
+                style={[styles.iconBtn, isSaved && styles.heartBtnActive]}
+                onPress={handleFavoritePress}
+                onPressIn={() => animateScale(heartScaleAnim, 0.9)}
+                onPressOut={() => animateScale(heartScaleAnim, 1)}
+                disabled={isWishlistLoading}
+                accessibilityLabel={isSaved ? 'Remove from wishlist' : 'Add to wishlist'}
+                accessibilityRole="button"
+              >
+                {isWishlistLoading ? (
+                  <ActivityIndicator size="small" color={colors.lightPeach} />
+                ) : (
+                  <Ionicons
+                    name={isSaved ? 'heart' : 'heart-outline'}
+                    size={18}
+                    color={isSaved ? colors.lightPeach : colors.neutral[700]}
+                  />
+                )}
+              </Pressable>
+            </Animated.View>
           </View>
-        )}
-
-        {/* Right - Action buttons */}
-        <View style={styles.rightActions}>
-          {/* Share Button */}
-          <Animated.View style={shareScaleStyle}>
-            <Pressable
-              style={styles.iconBtn}
-              onPress={handleSharePress}
-              onPressIn={() => animateScale(shareScaleAnim, 0.9)}
-              onPressOut={() => animateScale(shareScaleAnim, 1)}
-              accessibilityLabel="Share"
-              accessibilityRole="button"
-            >
-              <Ionicons name="share-outline" size={18} color={colors.neutral[700]} />
-            </Pressable>
-          </Animated.View>
-
-          {/* Cart Button */}
-          <Animated.View style={cartScaleStyle}>
-            <Pressable
-              style={styles.iconBtn}
-              onPress={handleCartPress}
-              onPressIn={() => animateScale(cartScaleAnim, 0.9)}
-              onPressOut={() => animateScale(cartScaleAnim, 1)}
-              accessibilityLabel="Cart"
-              accessibilityRole="button"
-            >
-              <Ionicons name="bag-outline" size={18} color={colors.neutral[700]} />
-            </Pressable>
-          </Animated.View>
-
-          {/* Heart/Wishlist Button */}
-          <Animated.View style={heartScaleStyle}>
-            <Pressable
-              style={[
-                styles.iconBtn,
-                isSaved && styles.heartBtnActive
-              ]}
-              onPress={handleFavoritePress}
-              onPressIn={() => animateScale(heartScaleAnim, 0.9)}
-              onPressOut={() => animateScale(heartScaleAnim, 1)}
-              disabled={isWishlistLoading}
-              accessibilityLabel={isSaved ? "Remove from wishlist" : "Add to wishlist"}
-              accessibilityRole="button"
-            >
-              {isWishlistLoading ? (
-                <ActivityIndicator size="small" color={colors.lightPeach} />
-              ) : (
-                <Ionicons
-                  name={isSaved ? "heart" : "heart-outline"}
-                  size={18}
-                  color={isSaved ? colors.lightPeach : colors.neutral[700]}
-                />
-              )}
-            </Pressable>
-          </Animated.View>
         </View>
-      </View>
       )}
 
       {/* Product Image Slider - Below the header */}
@@ -371,7 +364,6 @@ function StoreHeader({
                 {allImages.map((imageUrl, index) => (
                   <Pressable
                     key={index}
-                   
                     onPress={() => {
                       triggerImpact('Light');
                       setShowZoomModal(true);
@@ -394,10 +386,7 @@ function StoreHeader({
                     <Pressable
                       key={index}
                       onPress={() => handleDotPress(index)}
-                      style={[
-                        styles.paginationDot,
-                        index === currentImageIndex && styles.paginationDotActive,
-                      ]}
+                      style={[styles.paginationDot, index === currentImageIndex && styles.paginationDotActive]}
                     />
                   ))}
                 </View>
@@ -426,10 +415,7 @@ function StoreHeader({
           {/* Availability Badge - Top left */}
           {isInStore && (
             <View style={styles.availabilityBadgeContainer}>
-              <AvailabilityBadge
-                status="in-store"
-                label="In-Store Available"
-              />
+              <AvailabilityBadge status="in-store" label="In-Store Available" />
             </View>
           )}
 
@@ -452,6 +438,7 @@ function StoreHeader({
                 triggerImpact('Light');
                 setShowZoomModal(true);
               }}
+              hitSlop={{ top: 4, bottom: 4, left: 4, right: 4 }}
               accessibilityLabel="Tap to zoom"
               accessibilityRole="button"
             >

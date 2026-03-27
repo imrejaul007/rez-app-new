@@ -14,6 +14,7 @@ import {
   Platform,
   StatusBar,
   Alert,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
@@ -91,9 +92,7 @@ function SubmitPickPage() {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: type === 'video'
-          ? 'videos'
-          : 'images',
+        mediaTypes: type === 'video' ? 'videos' : 'images',
         allowsEditing: type === 'image',
         quality: type === 'image' ? 0.8 : 1,
         videoMaxDuration: 60,
@@ -175,8 +174,11 @@ function SubmitPickPage() {
 
         xhr.onload = () => {
           if (xhr.status >= 200 && xhr.status < 300) {
-            try { resolve(JSON.parse(xhr.responseText)); }
-            catch { reject(new Error('Failed to parse upload response')); }
+            try {
+              resolve(JSON.parse(xhr.responseText));
+            } catch {
+              reject(new Error('Failed to parse upload response'));
+            }
           } else {
             reject(new Error('Upload failed'));
           }
@@ -235,7 +237,7 @@ function SubmitPickPage() {
           setSearchResults(products);
         } else {
           if (!isMounted()) return;
-          setSearchResults(prev => [...prev, ...products]);
+          setSearchResults((prev) => [...prev, ...products]);
         }
 
         if (!isMounted()) return;
@@ -255,45 +257,51 @@ function SubmitPickPage() {
     }
   }, []);
 
-  const handleSearchChange = useCallback((text: string) => {
-    setSearchQuery(text);
-    currentQueryRef.current = text;
-    if (searchTimeout.current) clearTimeout(searchTimeout.current);
+  const handleSearchChange = useCallback(
+    (text: string) => {
+      setSearchQuery(text);
+      currentQueryRef.current = text;
+      if (searchTimeout.current) clearTimeout(searchTimeout.current);
 
-    if (text.trim().length < 2) {
-      setSearchResults([]);
-      setHasMore(false);
-      return;
-    }
+      if (text.trim().length < 2) {
+        setSearchResults([]);
+        setHasMore(false);
+        return;
+      }
 
-    searchTimeout.current = setTimeout(() => searchProducts(text, 1), 400);
-  }, [searchProducts]);
+      searchTimeout.current = setTimeout(() => searchProducts(text, 1), 400);
+    },
+    [searchProducts],
+  );
 
   const loadMore = useCallback(() => {
     if (loadingMore || !hasMore) return;
     searchProducts(currentQueryRef.current, currentPage + 1);
   }, [loadingMore, hasMore, currentPage, searchProducts]);
 
-  const selectProduct = useCallback((product: ProductResult) => {
-    setSelectedProduct(product);
-    setSearchQuery('');
-    setSearchResults([]);
-    setHasMore(false);
-    if (!title) {
-      setTitle(`My pick: ${product.name}`);
-    }
-  }, [title]);
+  const selectProduct = useCallback(
+    (product: ProductResult) => {
+      setSelectedProduct(product);
+      setSearchQuery('');
+      setSearchResults([]);
+      setHasMore(false);
+      if (!title) {
+        setTitle(`My pick: ${product.name}`);
+      }
+    },
+    [title],
+  );
 
   const addTag = useCallback(() => {
     const trimmed = tagInput.trim().toLowerCase();
     if (trimmed && tags.length < 5 && !tags.includes(trimmed)) {
-      setTags(prev => [...prev, trimmed]);
+      setTags((prev) => [...prev, trimmed]);
       setTagInput('');
     }
   }, [tagInput, tags]);
 
   const removeTag = useCallback((tag: string) => {
-    setTags(prev => prev.filter(t => t !== tag));
+    setTags((prev) => prev.filter((t) => t !== tag));
   }, []);
 
   const handleSubmit = async () => {
@@ -341,32 +349,33 @@ function SubmitPickPage() {
 
   const getProductPrice = (product: ProductResult) => product.basePrice || product.price;
 
-  const renderProductItem = useCallback(({ item: product }: { item: ProductResult }) => {
-    const price = getProductPrice(product);
-    return (
-      <Pressable
-        style={styles.searchResultItem}
-        onPress={() => selectProduct(product)}
-       
-      >
-        {product.images?.[0] ? (
-          <CachedImage source={product.images[0]} style={styles.productThumb} />
-        ) : (
-          <View style={[styles.productThumb, styles.productThumbPlaceholder]}>
-            <Ionicons name="cube-outline" size={20} color={colors.text.tertiary} />
+  const renderProductItem = useCallback(
+    ({ item: product }: { item: ProductResult }) => {
+      const price = getProductPrice(product);
+      return (
+        <Pressable style={styles.searchResultItem} onPress={() => selectProduct(product)}>
+          {product.images?.[0] ? (
+            <CachedImage source={product.images[0]} style={styles.productThumb} />
+          ) : (
+            <View style={[styles.productThumb, styles.productThumbPlaceholder]}>
+              <Ionicons name="cube-outline" size={20} color={colors.text.tertiary} />
+            </View>
+          )}
+          <View style={styles.productInfo}>
+            <Text style={styles.productName} numberOfLines={1}>
+              {product.name}
+            </Text>
+            <Text style={styles.productMeta}>
+              {product.store?.name || product.brand || ''}
+              {price ? ` · ${currencySymbol}${price}` : ''}
+            </Text>
           </View>
-        )}
-        <View style={styles.productInfo}>
-          <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
-          <Text style={styles.productMeta}>
-            {product.store?.name || product.brand || ''}
-            {price ? ` · ${currencySymbol}${price}` : ''}
-          </Text>
-        </View>
-        <Ionicons name="add-circle-outline" size={22} color={Colors.brand.purple} />
-      </Pressable>
-    );
-  }, [selectProduct]);
+          <Ionicons name="add-circle-outline" size={22} color={Colors.brand.purple} />
+        </Pressable>
+      );
+    },
+    [selectProduct],
+  );
 
   const renderDropdownFooter = useCallback(() => {
     if (loadingMore) {
@@ -396,11 +405,7 @@ function SubmitPickPage() {
           <Text style={styles.successSubtitle}>
             The store owner will review your pick. You'll be notified once it's approved.
           </Text>
-          <Pressable
-            style={styles.primaryBtn}
-            onPress={() => router.replace('/creator-dashboard')}
-           
-          >
+          <Pressable style={styles.primaryBtn} onPress={() => router.replace('/creator-dashboard')}>
             <Text style={styles.primaryBtnText}>Back to Dashboard</Text>
           </Pressable>
           <Pressable
@@ -412,10 +417,13 @@ function SubmitPickPage() {
               setDescription('');
               setTags([]);
               setError(null);
-              setPhotoUri(null); setUploadedPhotoUrl(null); setPhotoProgress(0);
-              setVideoUri(null); setUploadedVideoUrl(null); setVideoProgress(0);
+              setPhotoUri(null);
+              setUploadedPhotoUrl(null);
+              setPhotoProgress(0);
+              setVideoUri(null);
+              setUploadedVideoUrl(null);
+              setVideoProgress(0);
             }}
-           
           >
             <Text style={styles.secondaryBtnText}>Submit Another Pick</Text>
           </Pressable>
@@ -432,235 +440,247 @@ function SubmitPickPage() {
 
       {/* Header */}
       <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backBtn}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backBtn}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
         <Text style={styles.headerTitle}>Submit a Pick</Text>
       </LinearGradient>
 
-      <ScrollView
-        style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled"
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 88 : 0}
       >
-        {/* Product Search */}
-        <Text style={styles.sectionLabel}>Select a Product</Text>
-        {!selectedProduct ? (
-          <View>
-            <View style={styles.searchBox}>
-              <Ionicons name="search" size={20} color={colors.text.tertiary} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="Search products..."
-                placeholderTextColor={colors.neutral[400]}
-                value={searchQuery}
-                onChangeText={handleSearchChange}
-                autoCapitalize="none"
-              />
-              {searching && <ActivityIndicator size="small" color={Colors.brand.purple} />}
-            </View>
-
-            {/* Dropdown results */}
-            {searchResults.length > 0 && (
-              <View style={styles.searchResults}>
-                <FlashList
-                  data={searchResults}
-                  keyExtractor={(item) => item._id}
-                  renderItem={renderProductItem}
-                  onEndReached={loadMore}
-                  onEndReachedThreshold={0.3}
-                  ListFooterComponent={renderDropdownFooter}
-                  keyboardShouldPersistTaps="handled"
-                  estimatedItemSize={60}
+        <ScrollView
+          style={styles.scroll}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {/* Product Search */}
+          <Text style={styles.sectionLabel}>Select a Product</Text>
+          {!selectedProduct ? (
+            <View>
+              <View style={styles.searchBox}>
+                <Ionicons name="search" size={20} color={colors.text.tertiary} />
+                <TextInput
+                  style={styles.searchInput}
+                  placeholder="Search products..."
+                  placeholderTextColor={colors.neutral[400]}
+                  value={searchQuery}
+                  onChangeText={handleSearchChange}
+                  autoCapitalize="none"
                 />
+                {searching && <ActivityIndicator size="small" color={Colors.brand.purple} />}
               </View>
-            )}
 
-            {searchQuery.length >= 2 && !searching && searchResults.length === 0 && (
-              <Text style={styles.noResults}>No products found for "{searchQuery}"</Text>
-            )}
-          </View>
-        ) : (
-          <View style={styles.selectedProductCard}>
-            {selectedProduct.images?.[0] ? (
-              <CachedImage source={selectedProduct.images[0]} style={styles.selectedProductImg} />
-            ) : (
-              <View style={[styles.selectedProductImg, styles.productThumbPlaceholder]}>
-                <Ionicons name="cube-outline" size={30} color={colors.text.tertiary} />
-              </View>
-            )}
-            <View style={styles.selectedProductInfo}>
-              <Text style={styles.selectedProductName}>{selectedProduct.name}</Text>
-              <Text style={styles.selectedProductMeta}>
-                {selectedProduct.store?.name || selectedProduct.brand || ''}
-                {getProductPrice(selectedProduct) ? ` · ${currencySymbol}${getProductPrice(selectedProduct)}` : ''}
-              </Text>
+              {/* Dropdown results */}
+              {searchResults.length > 0 && (
+                <View style={styles.searchResults}>
+                  <FlashList
+                    data={searchResults}
+                    keyExtractor={(item) => item._id}
+                    renderItem={renderProductItem}
+                    onEndReached={loadMore}
+                    onEndReachedThreshold={0.3}
+                    ListFooterComponent={renderDropdownFooter}
+                    keyboardShouldPersistTaps="handled"
+                    estimatedItemSize={60}
+                  />
+                </View>
+              )}
+
+              {searchQuery.length >= 2 && !searching && searchResults.length === 0 && (
+                <Text style={styles.noResults}>No products found for "{searchQuery}"</Text>
+              )}
             </View>
-            <Pressable onPress={() => setSelectedProduct(null)} style={styles.removeProductBtn}>
-              <Ionicons name="close-circle" size={24} color={Colors.error} />
+          ) : (
+            <View style={styles.selectedProductCard}>
+              {selectedProduct.images?.[0] ? (
+                <CachedImage source={selectedProduct.images[0]} style={styles.selectedProductImg} />
+              ) : (
+                <View style={[styles.selectedProductImg, styles.productThumbPlaceholder]}>
+                  <Ionicons name="cube-outline" size={30} color={colors.text.tertiary} />
+                </View>
+              )}
+              <View style={styles.selectedProductInfo}>
+                <Text style={styles.selectedProductName}>{selectedProduct.name}</Text>
+                <Text style={styles.selectedProductMeta}>
+                  {selectedProduct.store?.name || selectedProduct.brand || ''}
+                  {getProductPrice(selectedProduct) ? ` · ${currencySymbol}${getProductPrice(selectedProduct)}` : ''}
+                </Text>
+              </View>
+              <Pressable onPress={() => setSelectedProduct(null)} style={styles.removeProductBtn}>
+                <Ionicons name="close-circle" size={24} color={Colors.error} />
+              </Pressable>
+            </View>
+          )}
+
+          {/* Media Upload */}
+          <Text style={[styles.sectionLabel, { marginTop: Spacing.xl }]}>
+            Add Photo & Video <Text style={{ color: Colors.error }}>*</Text>
+          </Text>
+          <View style={styles.mediaPickerRow}>
+            {/* Photo picker */}
+            <Pressable
+              style={[styles.mediaPickerBtn, photoUri && styles.mediaPickerBtnActive]}
+              onPress={() => pickMedia('image')}
+              disabled={uploadingPhoto}
+            >
+              {photoUri ? (
+                <View style={styles.mediaThumbWrap}>
+                  <CachedImage source={photoUri} style={styles.mediaPickerThumb} />
+                  {uploadingPhoto && (
+                    <View style={styles.mediaThumbOverlay}>
+                      <ActivityIndicator size="small" color={colors.text.inverse} />
+                    </View>
+                  )}
+                  {uploadedPhotoUrl && !uploadingPhoto && (
+                    <View style={styles.mediaPickerCheckmark}>
+                      <Ionicons name="checkmark-circle" size={18} color={Colors.success} />
+                    </View>
+                  )}
+                </View>
+              ) : (
+                <View style={[styles.mediaPickerIcon, { backgroundColor: colors.tint.purple }]}>
+                  <Ionicons name="image-outline" size={28} color={Colors.brand.purple} />
+                </View>
+              )}
+              <Text style={styles.mediaPickerLabel}>{photoUri ? 'Change' : 'Photo'}</Text>
+              {uploadingPhoto && <Text style={styles.mediaPickerProgress}>{photoProgress}%</Text>}
+            </Pressable>
+
+            {/* Video picker */}
+            <Pressable
+              style={[styles.mediaPickerBtn, videoUri && styles.mediaPickerBtnActive]}
+              onPress={() => pickMedia('video')}
+              disabled={uploadingVideo}
+            >
+              {videoUri ? (
+                <View style={styles.mediaThumbWrap}>
+                  <View style={styles.mediaVideoThumb}>
+                    <Ionicons name="videocam" size={24} color={colors.text.inverse} />
+                  </View>
+                  {uploadingVideo && (
+                    <View style={styles.mediaThumbOverlay}>
+                      <ActivityIndicator size="small" color={colors.text.inverse} />
+                    </View>
+                  )}
+                  {uploadedVideoUrl && !uploadingVideo && (
+                    <View style={styles.mediaPickerCheckmark}>
+                      <Ionicons name="checkmark-circle" size={18} color={Colors.success} />
+                    </View>
+                  )}
+                </View>
+              ) : (
+                <View style={[styles.mediaPickerIcon, { backgroundColor: Colors.infoScale[50] }]}>
+                  <Ionicons name="videocam-outline" size={28} color={Colors.info} />
+                </View>
+              )}
+              <Text style={styles.mediaPickerLabel}>{videoUri ? 'Change' : 'Video'}</Text>
+              {uploadingVideo && <Text style={styles.mediaPickerProgress}>{videoProgress}%</Text>}
             </Pressable>
           </View>
-        )}
+          <Text style={styles.mediaHint}>At least one is required. You can add both.</Text>
 
-        {/* Media Upload */}
-        <Text style={[styles.sectionLabel, { marginTop: Spacing.xl }]}>Add Photo & Video <Text style={{ color: Colors.error }}>*</Text></Text>
-        <View style={styles.mediaPickerRow}>
-          {/* Photo picker */}
-          <Pressable
-            style={[styles.mediaPickerBtn, photoUri && styles.mediaPickerBtnActive]}
-            onPress={() => pickMedia('image')}
-           
-            disabled={uploadingPhoto}
-          >
-            {photoUri ? (
-              <View style={styles.mediaThumbWrap}>
-                <CachedImage source={photoUri} style={styles.mediaPickerThumb} />
-                {uploadingPhoto && (
-                  <View style={styles.mediaThumbOverlay}>
-                    <ActivityIndicator size="small" color={colors.text.inverse} />
-                  </View>
-                )}
-                {uploadedPhotoUrl && !uploadingPhoto && (
-                  <View style={styles.mediaPickerCheckmark}>
-                    <Ionicons name="checkmark-circle" size={18} color={Colors.success} />
-                  </View>
-                )}
-              </View>
-            ) : (
-              <View style={[styles.mediaPickerIcon, { backgroundColor: colors.tint.purple }]} >
-                <Ionicons name="image-outline" size={28} color={Colors.brand.purple} />
-              </View>
-            )}
-            <Text style={styles.mediaPickerLabel}>{photoUri ? 'Change' : 'Photo'}</Text>
-            {uploadingPhoto && (
-              <Text style={styles.mediaPickerProgress}>{photoProgress}%</Text>
-            )}
-          </Pressable>
-
-          {/* Video picker */}
-          <Pressable
-            style={[styles.mediaPickerBtn, videoUri && styles.mediaPickerBtnActive]}
-            onPress={() => pickMedia('video')}
-           
-            disabled={uploadingVideo}
-          >
-            {videoUri ? (
-              <View style={styles.mediaThumbWrap}>
-                <View style={styles.mediaVideoThumb}>
-                  <Ionicons name="videocam" size={24} color={colors.text.inverse} />
-                </View>
-                {uploadingVideo && (
-                  <View style={styles.mediaThumbOverlay}>
-                    <ActivityIndicator size="small" color={colors.text.inverse} />
-                  </View>
-                )}
-                {uploadedVideoUrl && !uploadingVideo && (
-                  <View style={styles.mediaPickerCheckmark}>
-                    <Ionicons name="checkmark-circle" size={18} color={Colors.success} />
-                  </View>
-                )}
-              </View>
-            ) : (
-              <View style={[styles.mediaPickerIcon, { backgroundColor: Colors.infoScale[50] }]}>
-                <Ionicons name="videocam-outline" size={28} color={Colors.info} />
-              </View>
-            )}
-            <Text style={styles.mediaPickerLabel}>{videoUri ? 'Change' : 'Video'}</Text>
-            {uploadingVideo && (
-              <Text style={styles.mediaPickerProgress}>{videoProgress}%</Text>
-            )}
-          </Pressable>
-        </View>
-        <Text style={styles.mediaHint}>At least one is required. You can add both.</Text>
-
-        {/* Title */}
-        <Text style={[styles.sectionLabel, { marginTop: Spacing.lg }]}>Pick Title</Text>
-        <TextInput
-          style={styles.textInput}
-          placeholder="What's great about this product?"
-          placeholderTextColor={colors.neutral[400]}
-          value={title}
-          onChangeText={setTitle}
-          maxLength={100}
-        />
-        <Text style={styles.charCount}>{title.length}/100</Text>
-
-        {/* Description */}
-        <Text style={[styles.sectionLabel, { marginTop: Spacing.base }]}>Description (optional)</Text>
-        <TextInput
-          style={[styles.textInput, { minHeight: 80, textAlignVertical: 'top' }]}
-          placeholder="Tell people why you recommend this..."
-          placeholderTextColor={colors.neutral[400]}
-          value={description}
-          onChangeText={setDescription}
-          maxLength={500}
-          multiline
-          numberOfLines={4}
-        />
-        <Text style={styles.charCount}>{description.length}/500</Text>
-
-        {/* Tags */}
-        <Text style={[styles.sectionLabel, { marginTop: Spacing.lg }]}>Tags (optional)</Text>
-        <View style={styles.tagInputRow}>
+          {/* Title */}
+          <Text style={[styles.sectionLabel, { marginTop: Spacing.lg }]}>Pick Title</Text>
           <TextInput
-            style={[styles.textInput, { flex: 1 }]}
-            placeholder="Add a tag..."
+            style={styles.textInput}
+            placeholder="What's great about this product?"
             placeholderTextColor={colors.neutral[400]}
-            value={tagInput}
-            onChangeText={setTagInput}
-            onSubmitEditing={addTag}
-            maxLength={30}
+            value={title}
+            onChangeText={setTitle}
+            maxLength={100}
           />
-          <Pressable style={styles.addTagBtn} onPress={addTag}>
-            <Ionicons name="add" size={20} color={colors.text.inverse} />
-          </Pressable>
-        </View>
-        {tags.length > 0 && (
-          <View style={styles.tagsList}>
-            {tags.map((tag) => (
-              <Pressable key={tag} style={styles.tagChip} onPress={() => removeTag(tag)}>
-                <Text style={styles.tagChipText}>#{tag}</Text>
-                <Ionicons name="close" size={14} color={Colors.brand.purple} />
-              </Pressable>
-            ))}
-          </View>
-        )}
+          <Text style={styles.charCount}>{title.length}/100</Text>
 
-        {/* Error */}
-        {error && (
-          <View style={styles.errorBox}>
-            <Ionicons name="alert-circle" size={18} color={Colors.error} />
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        )}
+          {/* Description */}
+          <Text style={[styles.sectionLabel, { marginTop: Spacing.base }]}>Description (optional)</Text>
+          <TextInput
+            style={[styles.textInput, { minHeight: 80, textAlignVertical: 'top' }]}
+            placeholder="Tell people why you recommend this..."
+            placeholderTextColor={colors.neutral[400]}
+            value={description}
+            onChangeText={setDescription}
+            maxLength={500}
+            multiline
+            numberOfLines={4}
+          />
+          <Text style={styles.charCount}>{description.length}/500</Text>
 
-        {/* Submit */}
-        <Pressable
-          style={[styles.submitBtn, (!selectedProduct || !title.trim() || !hasAnyMedia || submitting || isAnyUploading) && styles.submitBtnDisabled]}
-          onPress={handleSubmit}
-          disabled={!selectedProduct || !title.trim() || !hasAnyMedia || submitting || isAnyUploading}
-         
-        >
-          <LinearGradient
-            colors={(!selectedProduct || !title.trim() || !hasAnyMedia || submitting || isAnyUploading) ? [colors.neutral[300], colors.neutral[300]] : [colors.brand.purple, '#9333EA']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.submitBtnGradient}
+          {/* Tags */}
+          <Text style={[styles.sectionLabel, { marginTop: Spacing.lg }]}>Tags (optional)</Text>
+          <View style={styles.tagInputRow}>
+            <TextInput
+              style={[styles.textInput, { flex: 1 }]}
+              placeholder="Add a tag..."
+              placeholderTextColor={colors.neutral[400]}
+              value={tagInput}
+              onChangeText={setTagInput}
+              onSubmitEditing={addTag}
+              maxLength={30}
+            />
+            <Pressable style={styles.addTagBtn} onPress={addTag}>
+              <Ionicons name="add" size={20} color={colors.text.inverse} />
+            </Pressable>
+          </View>
+          {tags.length > 0 && (
+            <View style={styles.tagsList}>
+              {tags.map((tag) => (
+                <Pressable key={tag} style={styles.tagChip} onPress={() => removeTag(tag)}>
+                  <Text style={styles.tagChipText}>#{tag}</Text>
+                  <Ionicons name="close" size={14} color={Colors.brand.purple} />
+                </Pressable>
+              ))}
+            </View>
+          )}
+
+          {/* Error */}
+          {error && (
+            <View style={styles.errorBox}>
+              <Ionicons name="alert-circle" size={18} color={Colors.error} />
+              <Text style={styles.errorText}>{error}</Text>
+            </View>
+          )}
+
+          {/* Submit */}
+          <Pressable
+            style={[
+              styles.submitBtn,
+              (!selectedProduct || !title.trim() || !hasAnyMedia || submitting || isAnyUploading) &&
+                styles.submitBtnDisabled,
+            ]}
+            onPress={handleSubmit}
+            disabled={!selectedProduct || !title.trim() || !hasAnyMedia || submitting || isAnyUploading}
           >
-            {submitting ? (
-              <ActivityIndicator color={colors.text.inverse} />
-            ) : (
-              <>
-                <Ionicons name="rocket-outline" size={20} color={colors.text.inverse} />
-                <Text style={styles.submitBtnText}>Submit Pick</Text>
-              </>
-            )}
-          </LinearGradient>
-        </Pressable>
+            <LinearGradient
+              colors={
+                !selectedProduct || !title.trim() || !hasAnyMedia || submitting || isAnyUploading
+                  ? [colors.neutral[300], colors.neutral[300]]
+                  : [colors.brand.purple, '#9333EA']
+              }
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.submitBtnGradient}
+            >
+              {submitting ? (
+                <ActivityIndicator color={colors.text.inverse} />
+              ) : (
+                <>
+                  <Ionicons name="rocket-outline" size={20} color={colors.text.inverse} />
+                  <Text style={styles.submitBtnText}>Submit Pick</Text>
+                </>
+              )}
+            </LinearGradient>
+          </Pressable>
 
-        <View style={{ height: 100 }} />
-      </ScrollView>
+          <View style={{ height: 100 }} />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </View>
   );
 }
@@ -676,100 +696,173 @@ const styles = StyleSheet.create({
     gap: 14,
   },
   backBtn: {
-    width: 36, height: 36, borderRadius: 18,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: 'rgba(255,255,255,0.15)',
-    alignItems: 'center', justifyContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: { ...Typography.h3, fontWeight: '700', color: colors.text.inverse },
   scroll: { flex: 1 },
   scrollContent: { padding: Spacing.base },
 
   sectionLabel: {
-    ...Typography.body, fontWeight: '600', color: colors.text.secondary,
-    marginBottom: Spacing.sm, marginLeft: 2,
+    ...Typography.body,
+    fontWeight: '600',
+    color: colors.text.secondary,
+    marginBottom: Spacing.sm,
+    marginLeft: 2,
   },
 
   // Search
   searchBox: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, paddingHorizontal: 14, paddingVertical: Spacing.md,
-    borderWidth: 1, borderColor: colors.border.default,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: 14,
+    paddingVertical: Spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   searchInput: { flex: 1, ...Typography.body, fontSize: 15, color: colors.text.primary },
   searchResults: {
-    backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, marginTop: Spacing.sm,
-    borderWidth: 1, borderColor: colors.border.default, overflow: 'hidden',
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    marginTop: Spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    overflow: 'hidden',
   },
   dropdownList: {
     maxHeight: 300,
   },
   searchResultItem: {
-    flexDirection: 'row', alignItems: 'center', padding: Spacing.md, gap: Spacing.md,
-    borderBottomWidth: 1, borderBottomColor: colors.background.secondary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.md,
+    gap: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.background.secondary,
   },
   productThumb: { width: 48, height: 48, borderRadius: BorderRadius.sm },
-  productThumbPlaceholder: { backgroundColor: colors.background.secondary, alignItems: 'center', justifyContent: 'center' },
+  productThumbPlaceholder: {
+    backgroundColor: colors.background.secondary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   productInfo: { flex: 1 },
   productName: { ...Typography.body, fontWeight: '600', color: colors.text.primary },
   productMeta: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: 2 },
-  noResults: { ...Typography.bodySmall, fontSize: 13, color: colors.text.tertiary, textAlign: 'center', marginTop: Spacing.base },
+  noResults: {
+    ...Typography.bodySmall,
+    fontSize: 13,
+    color: colors.text.tertiary,
+    textAlign: 'center',
+    marginTop: Spacing.base,
+  },
 
   // Media picker
   mediaPickerRow: {
-    flexDirection: 'row', gap: Spacing.md,
+    flexDirection: 'row',
+    gap: Spacing.md,
   },
   mediaPickerBtn: {
-    flex: 1, alignItems: 'center', gap: 6,
-    backgroundColor: colors.background.primary, borderRadius: 14, paddingVertical: 14,
-    borderWidth: 2, borderColor: colors.border.default, borderStyle: 'dashed',
+    flex: 1,
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: colors.background.primary,
+    borderRadius: 14,
+    paddingVertical: 14,
+    borderWidth: 2,
+    borderColor: colors.border.default,
+    borderStyle: 'dashed',
   },
   mediaPickerBtnActive: {
-    borderColor: Colors.brand.purple, borderStyle: 'solid', backgroundColor: '#FAF5FF',
+    borderColor: Colors.brand.purple,
+    borderStyle: 'solid',
+    backgroundColor: '#FAF5FF',
   },
   mediaPickerIcon: {
-    width: 52, height: 52, borderRadius: 26,
-    alignItems: 'center', justifyContent: 'center',
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   mediaThumbWrap: {
     position: 'relative',
   },
   mediaPickerThumb: {
-    width: 52, height: 52, borderRadius: 10,
+    width: 52,
+    height: 52,
+    borderRadius: 10,
   },
   mediaVideoThumb: {
-    width: 52, height: 52, borderRadius: 10, backgroundColor: colors.text.primary,
-    alignItems: 'center', justifyContent: 'center',
+    width: 52,
+    height: 52,
+    borderRadius: 10,
+    backgroundColor: colors.text.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   mediaThumbOverlay: {
-    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-    borderRadius: 10, backgroundColor: 'rgba(0,0,0,0.5)',
-    alignItems: 'center', justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    borderRadius: 10,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   mediaPickerCheckmark: {
-    position: 'absolute', top: -4, right: -4,
-    backgroundColor: colors.background.primary, borderRadius: 10,
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: colors.background.primary,
+    borderRadius: 10,
   },
   mediaPickerLabel: {
-    ...Typography.bodySmall, fontSize: 13, fontWeight: '600', color: colors.text.secondary,
+    ...Typography.bodySmall,
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.text.secondary,
   },
   mediaPickerProgress: {
-    ...Typography.caption, color: Colors.brand.purple, fontWeight: '600',
+    ...Typography.caption,
+    color: Colors.brand.purple,
+    fontWeight: '600',
   },
   mediaHint: {
-    ...Typography.bodySmall, color: colors.text.tertiary, marginTop: 6, marginLeft: 2,
+    ...Typography.bodySmall,
+    color: colors.text.tertiary,
+    marginTop: 6,
+    marginLeft: 2,
   },
 
   loadingMoreContainer: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    paddingVertical: Spacing.md, gap: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.md,
+    gap: Spacing.sm,
   },
   loadingMoreText: { ...Typography.bodySmall, color: colors.text.tertiary },
 
   // Selected product
   selectedProductCard: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.md,
-    backgroundColor: colors.background.primary, borderRadius: 14, padding: 14,
-    borderWidth: 2, borderColor: Colors.brand.purple,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+    backgroundColor: colors.background.primary,
+    borderRadius: 14,
+    padding: 14,
+    borderWidth: 2,
+    borderColor: Colors.brand.purple,
   },
   selectedProductImg: { width: 60, height: 60, borderRadius: 10 },
   selectedProductInfo: { flex: 1 },
@@ -779,28 +872,49 @@ const styles = StyleSheet.create({
 
   // Form inputs
   textInput: {
-    backgroundColor: colors.background.primary, borderRadius: BorderRadius.md, paddingHorizontal: 14, paddingVertical: Spacing.md,
-    ...Typography.body, fontSize: 15, color: colors.text.primary, borderWidth: 1, borderColor: colors.border.default,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: 14,
+    paddingVertical: Spacing.md,
+    ...Typography.body,
+    fontSize: 15,
+    color: colors.text.primary,
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   charCount: { ...Typography.caption, color: colors.text.tertiary, textAlign: 'right', marginTop: Spacing.xs },
 
   // Tags
   tagInputRow: { flexDirection: 'row', gap: Spacing.sm },
   addTagBtn: {
-    width: 44, height: 44, borderRadius: BorderRadius.md, backgroundColor: Colors.brand.purple,
-    alignItems: 'center', justifyContent: 'center',
+    width: 44,
+    height: 44,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.brand.purple,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   tagsList: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm, marginTop: 10 },
   tagChip: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.xs,
-    backgroundColor: colors.tint.purple, borderRadius: BorderRadius.xl, paddingHorizontal: Spacing.md, paddingVertical: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    backgroundColor: colors.tint.purple,
+    borderRadius: BorderRadius.xl,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
   },
   tagChipText: { ...Typography.bodySmall, fontSize: 13, color: Colors.brand.purple, fontWeight: '500' },
 
   // Error
   errorBox: {
-    flexDirection: 'row', alignItems: 'center', gap: Spacing.sm,
-    backgroundColor: Colors.errorScale[50], borderRadius: 10, padding: Spacing.md, marginTop: Spacing.base,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    backgroundColor: Colors.errorScale[50],
+    borderRadius: 10,
+    padding: Spacing.md,
+    marginTop: Spacing.base,
   },
   errorText: { ...Typography.bodySmall, fontSize: 13, color: Colors.error, flex: 1 },
 
@@ -808,8 +922,11 @@ const styles = StyleSheet.create({
   submitBtn: { marginTop: Spacing.xl, borderRadius: 14, overflow: 'hidden' },
   submitBtnDisabled: { opacity: 0.7 },
   submitBtnGradient: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    paddingVertical: Spacing.base, gap: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: Spacing.base,
+    gap: 10,
   },
   submitBtnText: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse },
 
@@ -817,9 +934,19 @@ const styles = StyleSheet.create({
   successContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: Spacing.xl },
   successIcon: { marginBottom: Spacing.lg },
   successTitle: { fontSize: 22, fontWeight: '700', color: colors.text.primary, textAlign: 'center' },
-  successSubtitle: { ...Typography.body, color: colors.text.tertiary, textAlign: 'center', marginTop: Spacing.sm, lineHeight: 20 },
+  successSubtitle: {
+    ...Typography.body,
+    color: colors.text.tertiary,
+    textAlign: 'center',
+    marginTop: Spacing.sm,
+    lineHeight: 20,
+  },
   primaryBtn: {
-    backgroundColor: Colors.brand.purple, borderRadius: 14, paddingVertical: 14, paddingHorizontal: Spacing['2xl'], marginTop: 28,
+    backgroundColor: Colors.brand.purple,
+    borderRadius: 14,
+    paddingVertical: 14,
+    paddingHorizontal: Spacing['2xl'],
+    marginTop: 28,
   },
   primaryBtnText: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse },
   secondaryBtn: { marginTop: 14, paddingVertical: 10 },

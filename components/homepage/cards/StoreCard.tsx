@@ -328,11 +328,27 @@ function StoreCard({
     } : undefined;
   }, [store.location]);
 
+  // Build a rich accessibility label for screen readers
+  const storeA11yLabel = useMemo(() => {
+    const parts = [store.name];
+    if (typeof store.rating?.value === 'number') {
+      parts.push(`Rated ${store.rating.value.toFixed(1)} out of 5`);
+      if (store.rating.count) parts.push(`${store.rating.count} reviews`);
+    }
+    if (store.location?.city) parts.push(store.location.city);
+    if (store.deliveryTime) parts.push(store.deliveryTime);
+    if (store.isNew) parts.push('New');
+    if (store.isTrending) parts.push('Trending');
+    return parts.join(', ');
+  }, [store.name, store.rating, store.location, store.deliveryTime, store.isNew, store.isTrending]);
+
   return (
     <Pressable
       style={[styles.container, { width }]}
       onPress={handlePress}
-     
+      accessibilityLabel={storeA11yLabel}
+      accessibilityRole="button"
+      accessibilityHint="Double tap to view store details and products"
       delayPressIn={0}
       delayPressOut={0}
     >

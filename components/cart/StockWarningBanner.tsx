@@ -136,7 +136,7 @@ function StockWarningBanner({
             <Pressable
               style={styles.actionButton}
               onPress={onViewDetails}
-             
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
             >
               <Ionicons name="chevron-forward" size={20} color={bannerStyles.color} />
             </Pressable>
@@ -146,7 +146,7 @@ function StockWarningBanner({
             <Pressable
               style={styles.actionButton}
               onPress={handleDismiss}
-             
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
             >
               <Ionicons name="close" size={20} color={bannerStyles.color} />
             </Pressable>

@@ -81,7 +81,12 @@ function PromoCodeModal({
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <ThemedText style={styles.modalTitle}>Apply Promo Code</ThemedText>
-            <Pressable onPress={onClose}>
+            <Pressable
+              onPress={onClose}
+              accessibilityLabel="Close promo code modal"
+              accessibilityRole="button"
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            >
               <Ionicons name="close" size={24} color={colors.neutral[700]} />
             </Pressable>
           </View>
@@ -94,12 +99,19 @@ function PromoCodeModal({
               onChangeText={onPromoCodeChange}
               autoCapitalize="characters"
               autoFocus={true}
+              accessibilityLabel="Promo code"
+              accessibilityHint="Type or paste your promo code here"
             />
 
             <View style={styles.availablePromos}>
               <View style={styles.promoHeaderRow}>
                 <ThemedText style={styles.availablePromosTitle}>Available Coupons:</ThemedText>
-                <Pressable onPress={() => { onClose(); router.push('/account/coupons'); }}>
+                <Pressable
+                  onPress={() => { onClose(); router.push('/account/coupons'); }}
+                  accessibilityLabel="View all coupons"
+                  accessibilityRole="button"
+                  hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+                >
                   <ThemedText style={styles.viewAllLink}>View All &#x2192;</ThemedText>
                 </Pressable>
               </View>
@@ -111,6 +123,8 @@ function PromoCodeModal({
                   <Pressable
                     style={styles.browseCouponsButton}
                     onPress={() => { onClose(); router.push('/account/coupons'); }}
+                    accessibilityLabel="Browse available coupons"
+                    accessibilityRole="button"
                   >
                     <ThemedText style={styles.browseCouponsText}>Browse Coupons</ThemedText>
                   </Pressable>
@@ -150,6 +164,10 @@ function PromoCodeModal({
                           !isEligible && styles.ineligiblePromoOption,
                           applyingPromo && styles.promoOptionDisabled,
                         ]}
+                        accessibilityLabel={`${promo.code}: ${discountDisplay}${isCurrentlyApplied ? ', currently applied' : ''}${!isEligible ? ', not eligible' : ''}`}
+                        accessibilityRole="button"
+                        accessibilityState={{ selected: isCurrentlyApplied, disabled: !isEligible || applyingPromo }}
+                        accessibilityHint={isEligible ? 'Double tap to apply this promo code' : requiresTier && !meetsTierRequirement ? `Requires ${tierName} membership` : `Minimum order of ${currencySymbol}${promo.minOrderValue} required`}
                         onPress={() => {
                           if (applyingPromo) return;
                           if (isEligible) {
@@ -220,6 +238,9 @@ function PromoCodeModal({
               style={[styles.applyPromoButton, applyingPromo && styles.applyPromoButtonDisabled]}
               onPress={onApplyPromoCode}
               disabled={applyingPromo}
+              accessibilityLabel={applyingPromo ? 'Applying promo code' : 'Apply promo code'}
+              accessibilityRole="button"
+              accessibilityState={{ disabled: applyingPromo, busy: applyingPromo }}
             >
               {applyingPromo ? (
                 <View style={styles.applyPromoLoading}>

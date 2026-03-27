@@ -58,6 +58,7 @@ function CartHeader({ onBack, title = 'Cart' }: CartHeaderProps) {
               styles.title,
               { fontSize: isSmallScreen ? 18 : 20 },
             ]}
+            accessibilityRole="header"
           >
             {title}
           </ThemedText>

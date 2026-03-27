@@ -237,7 +237,10 @@ function RecommendationCard({
             style={styles.wishlistButton}
             onPress={handleToggleWishlist}
             disabled={isTogglingWishlist}
-           
+            accessibilityLabel={isInWishlist(productId) ? `Remove ${recommendation.name} from wishlist` : `Add ${recommendation.name} to wishlist`}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: isTogglingWishlist }}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
             <Ionicons
               name={isInWishlist(productId) ? "heart" : "heart-outline"}
@@ -328,8 +331,10 @@ function RecommendationCard({
                   ]}
                   key="notify-me-button"
                   onPress={handleNotifyMe}
-                 
                   disabled={subscribing[productId]}
+                  accessibilityLabel={subscribing[productId] ? `Subscribing to ${recommendation.name} stock notification` : `Notify me when ${recommendation.name} is back in stock`}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: subscribing[productId], busy: subscribing[productId] }}
                 >
                   <Ionicons name="notifications-outline" size={18} color={colors.lightMustard} />
                   <ThemedText style={styles.notifyMeText}>
@@ -342,7 +347,9 @@ function RecommendationCard({
                   <Pressable
                     style={styles.quantityButton}
                     onPress={handleDecreaseQuantity}
-                   
+                    accessibilityLabel={quantityInCart <= 1 ? `Remove ${recommendation.name} from cart` : `Decrease quantity of ${recommendation.name}`}
+                    accessibilityRole="button"
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   >
                     <Ionicons name="remove" size={18} color={colors.background.primary} />
                   </Pressable>
@@ -357,8 +364,11 @@ function RecommendationCard({
                       quantityInCart >= stock && styles.quantityButtonDisabled
                     ]}
                     onPress={handleIncreaseQuantity}
-                   
                     disabled={quantityInCart >= stock}
+                    accessibilityLabel={`Increase quantity of ${recommendation.name}`}
+                    accessibilityRole="button"
+                    accessibilityState={{ disabled: quantityInCart >= stock }}
+                    hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                   >
                     <Ionicons name="add" size={18} color={colors.background.primary} />
                   </Pressable>
@@ -372,8 +382,10 @@ function RecommendationCard({
                   ]}
                   key="add-to-cart-button"
                   onPress={handleAddToCart}
-                 
                   disabled={!canAddToCartStock}
+                  accessibilityLabel={`Add ${recommendation.name} to cart`}
+                  accessibilityRole="button"
+                  accessibilityState={{ disabled: !canAddToCartStock }}
                 >
                   <Ionicons name="add-circle" size={18} color={colors.background.primary} />
                   <ThemedText style={styles.addToCartText}>Add to Cart</ThemedText>

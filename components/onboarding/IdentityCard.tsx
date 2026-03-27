@@ -48,6 +48,10 @@ export default function IdentityCard({
       }}
       onPress={disabled ? undefined : onPress}
       style={[animatedStyle, styles.card, { backgroundColor, opacity: disabled ? 0.5 : 1 }]}
+      accessibilityLabel={`${title}. ${subtitle}${badge ? `. ${badge}` : ''}`}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: !!disabled }}
+      accessibilityHint="Double tap to select this identity type"
     >
       <View style={[styles.iconCircle, { backgroundColor: accentColor }]}>
         <Ionicons name={icon} size={24} color="#fff" />

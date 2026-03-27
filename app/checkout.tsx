@@ -49,63 +49,87 @@ const DELIVERY_SLOTS = [
 ];
 
 // ROHAN: Extract style object literals to memoized objects and wrap inline handlers with useCallback to prevent unnecessary re-renders
-const DeliverySlotPickerImpl = memo(({ selectedSlot, onSelectSlot }: { selectedSlot?: string; onSelectSlot: (s: string) => void }) => {
-  const slotButtonStyle = useCallback((isSelected: boolean) => ({
-    paddingHorizontal: isSmallDevice ? 10 : Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderRadius: 20,
-    backgroundColor: isSelected ? colors.primary[500] : colors.background.secondary,
-    borderWidth: 1,
-    borderColor: isSelected ? colors.primary[500] : colors.border.light,
-  }), []);
+const DeliverySlotPickerImpl = memo(
+  ({ selectedSlot, onSelectSlot }: { selectedSlot?: string; onSelectSlot: (s: string) => void }) => {
+    const slotButtonStyle = useCallback(
+      (isSelected: boolean) => ({
+        paddingHorizontal: isSmallDevice ? 10 : Spacing.sm,
+        paddingVertical: Spacing.xs,
+        borderRadius: 20,
+        backgroundColor: isSelected ? colors.primary[500] : colors.background.secondary,
+        borderWidth: 1,
+        borderColor: isSelected ? colors.primary[500] : colors.border.light,
+      }),
+      [],
+    );
 
-  const slotTextStyle = useCallback((isSelected: boolean) => ({
-    fontSize: 13, // readable on all devices without conditional logic
-    fontWeight: '600' as const,
-    color: isSelected ? '#fff' : colors.text.secondary,
-  }), []);
+    const slotTextStyle = useCallback(
+      (isSelected: boolean) => ({
+        fontSize: 13, // readable on all devices without conditional logic
+        fontWeight: '600' as const,
+        color: isSelected ? '#fff' : colors.text.secondary,
+      }),
+      [],
+    );
 
-  const containerStyle = useMemo(() => ({
-    backgroundColor: colors.background.primary,
-    borderRadius: 14,
-    padding: Spacing.sm,
-    marginBottom: Spacing.md,
-    shadowOpacity: 0.04,
-    shadowRadius: 4,
-    shadowOffset: { width: 0, height: 1 },
-    elevation: 1,
-  }), []);
+    const containerStyle = useMemo(
+      () => ({
+        backgroundColor: colors.background.primary,
+        borderRadius: 14,
+        padding: Spacing.sm,
+        marginBottom: Spacing.md,
+        shadowOpacity: 0.04,
+        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 1 },
+        elevation: 1,
+      }),
+      [],
+    );
 
-  const rowStyle = useMemo(() => ({
-    flexDirection: 'row' as const,
-    flexWrap: 'wrap' as const,
-    gap: isSmallDevice ? 6 : Spacing.xs,
-  }), []);
+    const rowStyle = useMemo(
+      () => ({
+        flexDirection: 'row' as const,
+        flexWrap: 'wrap' as const,
+        gap: isSmallDevice ? 6 : Spacing.xs,
+      }),
+      [],
+    );
 
-  const handleSlotPress = useCallback((value: string) => {
-    onSelectSlot(value);
-  }, [onSelectSlot]);
+    const handleSlotPress = useCallback(
+      (value: string) => {
+        onSelectSlot(value);
+      },
+      [onSelectSlot],
+    );
 
-  // ROHAN: Render slot button with pre-bound callback to avoid closure per map iteration
-  const renderSlotButton = useCallback((slot: typeof DELIVERY_SLOTS[0]) => (
-    <Pressable
-      key={slot.value}
-      onPress={() => handleSlotPress(slot.value)}
-      style={slotButtonStyle(selectedSlot === slot.value)}
-    >
-      <Text style={slotTextStyle(selectedSlot === slot.value)}>{slot.label}</Text>
-    </Pressable>
-  ), [handleSlotPress, selectedSlot, slotButtonStyle, slotTextStyle]);
+    // ROHAN: Render slot button with pre-bound callback to avoid closure per map iteration
+    const renderSlotButton = useCallback(
+      (slot: (typeof DELIVERY_SLOTS)[0]) => (
+        <Pressable
+          key={slot.value}
+          onPress={() => handleSlotPress(slot.value)}
+          style={slotButtonStyle(selectedSlot === slot.value)}
+          accessibilityLabel={slot.label}
+          accessibilityRole="radio"
+          accessibilityState={{ selected: selectedSlot === slot.value }}
+          accessibilityHint={`Double tap to select ${slot.label} delivery slot`}
+        >
+          <Text style={slotTextStyle(selectedSlot === slot.value)}>{slot.label}</Text>
+        </Pressable>
+      ),
+      [handleSlotPress, selectedSlot, slotButtonStyle, slotTextStyle],
+    );
 
-  return (
-    <View style={containerStyle}>
-      <Text style={{ fontSize: 13, fontWeight: '700', color: colors.text.primary, marginBottom: Spacing.sm }}>Delivery Time Slot</Text>
-      <View style={rowStyle}>
-        {DELIVERY_SLOTS.map(renderSlotButton)}
+    return (
+      <View style={containerStyle}>
+        <Text style={{ fontSize: 13, fontWeight: '700', color: colors.text.primary, marginBottom: Spacing.sm }}>
+          Delivery Time Slot
+        </Text>
+        <View style={rowStyle}>{DELIVERY_SLOTS.map(renderSlotButton)}</View>
       </View>
-    </View>
-  );
-});
+    );
+  },
+);
 
 DeliverySlotPickerImpl.displayName = 'DeliverySlotPicker';
 const DeliverySlotPicker = DeliverySlotPickerImpl;
@@ -123,13 +147,23 @@ function CheckoutPage() {
   const { state, actions, handlers: checkoutHandlers } = useCheckout(params.orderId);
 
   // Derived values
-  const serviceItems = useMemo(() => state.items?.filter((item: any) => item.itemType === 'service') || [], [state.items]);
+  const serviceItems = useMemo(
+    () => state.items?.filter((item: any) => item.itemType === 'service') || [],
+    [state.items],
+  );
   const hasServiceItems = serviceItems.length > 0;
   const productItems = state.items?.filter((item: any) => item.itemType !== 'service') || [];
-  const totalWalletBalance = state.coinSystem.nuqtaCoin.available + state.coinSystem.promoCoin.available + (state.coinSystem.storePromoCoin?.available || 0);
+  const totalWalletBalance =
+    state.coinSystem.nuqtaCoin.available +
+    state.coinSystem.promoCoin.available +
+    (state.coinSystem.storePromoCoin?.available || 0);
 
   // UI state & handlers (reducer + all event handlers)
-  const { uiState, dispatch, handlers: uiHandlers } = useCheckoutUI({
+  const {
+    uiState,
+    dispatch,
+    handlers: uiHandlers,
+  } = useCheckoutUI({
     checkoutState: state,
     checkoutHandlers,
     currencySymbol,
@@ -140,15 +174,15 @@ function CheckoutPage() {
   });
 
   // Cart validation
-  const {
-    validationState, canCheckout, errorCount, validateCart, removeInvalidItems,
-  } = useCartValidation({
+  const { validationState, canCheckout, errorCount, validateCart, removeInvalidItems } = useCartValidation({
     autoValidate: true,
     validationInterval: 30000,
     showToastNotifications: true,
   });
 
-  useEffect(() => { validateCart(); }, [validateCart]);
+  useEffect(() => {
+    validateCart();
+  }, [validateCart]);
 
   useEffect(() => {
     if (validationState.validationResult && errorCount > 0) {
@@ -192,10 +226,7 @@ function CheckoutPage() {
   }, [removeInvalidItems]);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={{ flex: 1 }}
-    >
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <View style={styles.container}>
         <CheckoutHeader
           totalPayable={state.billSummary?.totalPayable || 0}
@@ -206,15 +237,23 @@ function CheckoutPage() {
           onBack={checkoutHandlers.handleBackNavigation}
         />
 
-        <ScrollView ref={scrollViewRef} style={styles.content} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} scrollEventThrottle={16}>
-          {uiState.showWarningBanner && validationState.validationResult && validationState.validationResult.issues.length > 0 && (
-            <StockWarningBanner
-              issues={validationState.validationResult.issues}
-              onDismiss={() => dispatch({ type: 'SET_FIELD', field: 'showWarningBanner', value: false })}
-              onViewDetails={() => dispatch({ type: 'SET_FIELD', field: 'showValidationModal', value: true })}
-              autoHide={false}
-            />
-          )}
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.content}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          scrollEventThrottle={16}
+        >
+          {uiState.showWarningBanner &&
+            validationState.validationResult &&
+            validationState.validationResult.issues.length > 0 && (
+              <StockWarningBanner
+                issues={validationState.validationResult.issues}
+                onDismiss={() => dispatch({ type: 'SET_FIELD', field: 'showWarningBanner', value: false })}
+                onViewDetails={() => dispatch({ type: 'SET_FIELD', field: 'showValidationModal', value: true })}
+                autoHide={false}
+              />
+            )}
 
           {state.store?.distance && (
             <View style={styles.storeConfirmation}>
@@ -287,7 +326,9 @@ function CheckoutPage() {
               totalPayable={state.billSummary?.totalPayable || 0}
               totalBeforeCoinDiscount={state.billSummary?.totalBeforeCoinDiscount}
               currencySymbol={currencySymbol}
-              onToggleExpanded={() => dispatch({ type: 'SET_FIELD', field: 'coinSectionExpanded', value: !uiState.coinSectionExpanded })}
+              onToggleExpanded={() =>
+                dispatch({ type: 'SET_FIELD', field: 'coinSectionExpanded', value: !uiState.coinSectionExpanded })
+              }
               onCoinToggle={checkoutHandlers.handleCoinToggle}
               onCustomCoinAmount={checkoutHandlers.handleCustomCoinAmount}
             />
@@ -302,7 +343,9 @@ function CheckoutPage() {
             appliedOfferRedemption={uiState.appliedOfferRedemption}
             showPlatformFeeInfo={uiState.showPlatformFeeInfo}
             currencySymbol={currencySymbol}
-            onTogglePlatformFeeInfo={() => dispatch({ type: 'SET_FIELD', field: 'showPlatformFeeInfo', value: !uiState.showPlatformFeeInfo })}
+            onTogglePlatformFeeInfo={() =>
+              dispatch({ type: 'SET_FIELD', field: 'showPlatformFeeInfo', value: !uiState.showPlatformFeeInfo })
+            }
           />
 
           <View style={styles.bottomSpace} />
@@ -317,7 +360,9 @@ function CheckoutPage() {
           loading={state.loading}
           paymentExpanded={uiState.paymentExpanded}
           currencySymbol={currencySymbol}
-          onToggleExpanded={() => dispatch({ type: 'SET_FIELD', field: 'paymentExpanded', value: !uiState.paymentExpanded })}
+          onToggleExpanded={() =>
+            dispatch({ type: 'SET_FIELD', field: 'paymentExpanded', value: !uiState.paymentExpanded })
+          }
           onPaymentSelect={uiHandlers.handlePaymentSelect}
         />
 
@@ -329,7 +374,9 @@ function CheckoutPage() {
           onClose={() => dispatch({ type: 'SET_FIELD', field: 'showValidationModal', value: false })}
           onContinueToCheckout={handleContinueToCheckout}
           onRemoveInvalidItems={handleRemoveInvalidItems}
-          onRefresh={async () => { await validateCart(); }}
+          onRefresh={async () => {
+            await validateCart();
+          }}
         />
 
         <PromoCodeModal
