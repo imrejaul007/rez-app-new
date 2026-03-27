@@ -1,8 +1,9 @@
 /**
  * HeroCard — Home page hero card with two states.
  *
- * First-time state (totalSaved === 0 or undefined): dark green gradient,
- * mystery reward box, welcome messaging, claim CTA.
+ * First-time state (totalSaved === 0 or undefined): nile-blue background,
+ * stacked layout, store-count pill, welcome reward CTA, social proof column,
+ * bottom strip with scan & pay prompt.
  *
  * Returning user state (totalSaved > 0): dark navy, savings summary,
  * scan & pay / view wallet CTAs, coin expiry row.
@@ -23,6 +24,7 @@ import { colors, spacing, borderRadius } from '@/constants/theme';
 const MUSTARD = colors.lightMustard;   // #ffcd57
 const NAVY    = colors.nileBlue;        // #1a3a52
 const PEACH   = colors.lightPeach;      // #ffd7b5
+const LINEN   = '#faf1e0';              // #faf1e0
 
 // ─── Props ───────────────────────────────────────────────────────────────────
 interface HeroCardProps {
@@ -37,89 +39,68 @@ interface HeroCardProps {
   onUseCoinPress?: () => void;
 }
 
-// ─── Mystery box (CSS-drawn) ─────────────────────────────────────────────────
-const MysteryBox: React.FC = () => (
-  <View style={mystery.box}>
-    {/* Corner dots */}
-    <View style={[mystery.cornerDot, { top: 6, left: 6 }]} />
-    <View style={[mystery.cornerDot, { top: 6, right: 6 }]} />
-    <View style={[mystery.cornerDot, { bottom: 6, left: 6 }]} />
-    <View style={[mystery.cornerDot, { bottom: 6, right: 6 }]} />
-    {/* Centre question mark */}
-    <Text style={mystery.qmark}>?</Text>
-    {/* Sparkle dots */}
-    <View style={[mystery.sparkle, { top: -4, right: 2 }]} />
-    <View style={[mystery.sparkle, { top: 8, right: -5 }]} />
-    <View style={[mystery.sparkle, { bottom: 2, left: -4 }]} />
-  </View>
-);
-
-const mystery = StyleSheet.create({
-  box: {
-    width: 62,
-    height: 62,
-    borderRadius: 14,
-    backgroundColor: '#0d2b0d',
-    borderWidth: 1,
-    borderColor: 'rgba(34,197,94,0.25)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  cornerDot: {
-    position: 'absolute',
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: 'rgba(34,197,94,0.5)',
-  },
-  sparkle: {
-    position: 'absolute',
-    width: 5,
-    height: 5,
-    borderRadius: 3,
-    backgroundColor: 'rgba(34,197,94,0.6)',
-  },
-  qmark: {
-    fontSize: 24,
-    fontWeight: '800',
-    color: 'rgba(34,197,94,0.9)',
-  },
-});
-
 // ─── First-time state ─────────────────────────────────────────────────────────
 const FirstTimeState: React.FC<{ onClaimPress?: () => void }> = ({ onClaimPress }) => (
   <View style={first.wrapper}>
-    {/* Radial glow overlay (View simulates radial gradient centre glow) */}
-    <View style={first.radialGlow} pointerEvents="none" />
+    {/* Decorative radial glow — mustard top */}
+    <View style={first.glowTop} pointerEvents="none" />
+    {/* Decorative radial glow — mustard right */}
+    <View style={first.glowRight} pointerEvents="none" />
 
-    {/* Top row */}
-    <View style={first.topRow}>
-      <View style={first.textBlock}>
+    {/* Main content padding */}
+    <View style={first.inner}>
+      {/* ── Top row: eyebrow + store-count pill ── */}
+      <View style={first.headerRow}>
         <Text style={first.eyebrow}>WELCOME TO REZ</Text>
-        <Text style={first.title}>Your first reward{'\n'}is waiting</Text>
-        <Text style={first.subtitle}>Save money at 2,400+ stores near you</Text>
+        <View style={first.storePill}>
+          <View style={first.pulseDot} />
+          <Text style={first.storePillText}>24 stores near you</Text>
+        </View>
+      </View>
+
+      {/* ── Title ── */}
+      <Text style={first.title}>
+        {'Save money on\n'}
+        <Text style={first.titleAccent}>everything</Text>
+        {' you buy'}
+      </Text>
+
+      {/* ── Subtitle ── */}
+      <Text style={first.subtitle}>
+        Cashback, coins & free trials at 2,400+ stores. Zero effort.
+      </Text>
+
+      {/* ── CTA row ── */}
+      <View style={first.ctaRow}>
+        {/* Claim button */}
         <Pressable
           style={({ pressed }) => [first.ctaBtn, pressed && { opacity: 0.85 }]}
           onPress={onClaimPress}
         >
-          <Text style={first.ctaText}>Claim your reward ›</Text>
+          <Text style={first.ctaText}>🎁  Claim your welcome reward</Text>
         </Pressable>
-      </View>
-      <View style={first.boxWrapper}>
-        <MysteryBox />
+
+        {/* Social proof */}
+        <View style={first.socialProof}>
+          <Text style={first.proofAmount}>₹0</Text>
+          <Text style={first.proofLabel}>saved so far</Text>
+        </View>
       </View>
     </View>
 
-    {/* Bottom strip */}
+    {/* ── Bottom strip ── */}
     <View style={first.bottomStrip}>
-      <Text style={first.stripText}>24 stores with offers within 1 km</Text>
+      <Text style={first.stripText}>
+        <Text style={first.stripBold}>Scan & Pay</Text>
+        {' at any nearby store to start earning'}
+      </Text>
       <View style={first.activityDots}>
-        {[1, 2, 3].map(i => (
+        {[0, 1, 2, 3, 4].map(i => (
           <View
             key={i}
             style={[
               first.activityDot,
-              { opacity: i === 1 ? 1 : i === 2 ? 0.6 : 0.35 },
+              { backgroundColor: i < 3 ? 'rgba(255,205,87,.7)' : 'rgba(255,205,87,.2)' },
             ]}
           />
         ))}
@@ -130,90 +111,154 @@ const FirstTimeState: React.FC<{ onClaimPress?: () => void }> = ({ onClaimPress 
 
 const first = StyleSheet.create({
   wrapper: {
-    backgroundColor: '#0d2b0d',
+    backgroundColor: '#0a1e2e',
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
   },
-  radialGlow: {
+  // Decorative glows
+  glowTop: {
     position: 'absolute',
-    top: -40,
-    left: '25%' as any,
+    top: -60,
+    left: '10%' as any,
+    width: 220,
+    height: 220,
+    borderRadius: 110,
+    backgroundColor: 'rgba(255,205,87,.08)',
+  },
+  glowRight: {
+    position: 'absolute',
+    top: 0,
+    right: -40,
     width: 160,
     height: 160,
     borderRadius: 80,
-    backgroundColor: 'rgba(34,197,94,0.18)',
+    backgroundColor: 'rgba(255,205,87,.05)',
   },
-  topRow: {
+  // Inner padded area
+  inner: {
+    padding: 20,
+    paddingBottom: 16,
+  },
+  // Header row
+  headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    padding: 16,
-    paddingBottom: 12,
-  },
-  textBlock: {
-    flex: 1,
-    paddingRight: 12,
+    alignItems: 'center',
+    marginBottom: 12,
   },
   eyebrow: {
     fontSize: 9,
     fontWeight: '700',
-    color: 'rgba(34,197,94,0.7)',
+    color: 'rgba(255,205,87,.6)',
     letterSpacing: 1.4,
     textTransform: 'uppercase',
-    marginBottom: 6,
   },
+  // Store count pill
+  storePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: LINEN,
+    borderWidth: 1,
+    borderColor: 'rgba(255,205,87,.2)',
+    borderRadius: borderRadius.full,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    gap: 5,
+  },
+  pulseDot: {
+    width: 5,
+    height: 5,
+    borderRadius: 3,
+    backgroundColor: MUSTARD,
+  },
+  storePillText: {
+    fontSize: 10,
+    fontWeight: '600',
+    color: MUSTARD,
+  },
+  // Title
   title: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: '800',
     color: '#ffffff',
-    lineHeight: 24,
-    marginBottom: 6,
+    letterSpacing: -0.3,
+    lineHeight: 32,
+    marginBottom: 8,
   },
+  titleAccent: {
+    color: MUSTARD,
+  },
+  // Subtitle
   subtitle: {
-    fontSize: 11,
-    color: 'rgba(255,255,255,0.45)',
-    lineHeight: 16,
-    marginBottom: 14,
+    fontSize: 12,
+    color: 'rgba(255,255,255,.45)',
+    lineHeight: 18,
+    marginBottom: 16,
+  },
+  // CTA row
+  ctaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   ctaBtn: {
-    alignSelf: 'flex-start',
+    flex: 1,
     backgroundColor: MUSTARD,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: borderRadius.full,
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ctaText: {
     fontSize: 12,
     fontWeight: '800',
-    color: NAVY,
+    color: '#1a3a52',
   },
-  boxWrapper: {
-    paddingTop: 4,
+  // Social proof
+  socialProof: {
+    alignItems: 'center',
+  },
+  proofAmount: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: MUSTARD,
+    lineHeight: 22,
+  },
+  proofLabel: {
+    fontSize: 9,
+    color: 'rgba(255,255,255,.35)',
+    textAlign: 'center',
   },
   // Bottom strip
   bottomStrip: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: 'rgba(34,197,94,0.10)',
-    paddingHorizontal: 16,
-    paddingVertical: 9,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,205,87,.1)',
+    paddingHorizontal: 20,
+    paddingVertical: 8,
   },
   stripText: {
     fontSize: 10,
-    color: 'rgba(255,255,255,0.6)',
-    fontWeight: '500',
+    color: 'rgba(255,255,255,.4)',
+    flex: 1,
+    flexWrap: 'wrap',
+  },
+  stripBold: {
+    fontWeight: '700',
+    color: 'rgba(255,205,87,.8)',
   },
   activityDots: {
     flexDirection: 'row',
     gap: 4,
     alignItems: 'center',
+    marginLeft: 8,
   },
   activityDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(34,197,94,0.8)',
   },
 });
 

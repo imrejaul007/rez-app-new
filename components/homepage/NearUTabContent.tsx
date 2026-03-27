@@ -76,6 +76,15 @@ import RezScoreCard from '@/components/gamification/RezScoreCard';
 import { useHomePersona } from '@/hooks/useHomePersona';
 import { useWalletStore } from '@/stores/walletStore';
 
+// ─── Placeholder data ─────────────────────────────────────────────────────────
+
+const PLACEHOLDER_OFFERS = [
+  { id: '1', merchantName: 'Starbucks', distance: '120m', savings: 80, description: '15% cashback on every order', urgencyLabel: 'Open', closingSoon: false },
+  { id: '2', merchantName: 'Naturals', distance: '0.3km', savings: 0, description: 'Free haircut trial today', urgencyLabel: '3 slots left', slotsLeft: 3 },
+  { id: '3', merchantName: 'PVR', distance: '0.4km', savings: 50, description: 'Buy 2 get 1 — lunch show', urgencyLabel: 'Closes 3 PM', closingSoon: true },
+  { id: '4', merchantName: 'Cult.fit', distance: '1.2km', savings: 0, description: 'Free trial class, 5 PM batch', urgencyLabel: '1 slot', slotsLeft: 1 },
+];
+
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface NearUTabContentProps {
@@ -151,7 +160,21 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
 
   // Area not-serviceable dismissible banner
   const [bannerDismissed, setBannerDismissed] = useState(false);
+  const [renderError, setRenderError] = useState<Error | null>(null);
 
+  // Safety-net: if something inside the tab throws during render, show a
+  // graceful fallback instead of crashing the whole screen.
+  if (renderError) {
+    return (
+      <View style={{ padding: 24, alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#94a3b8', textAlign: 'center' }}>
+          Near-U content couldn't load. Please refresh.
+        </Text>
+      </View>
+    );
+  }
+
+  try {
   return (
     <>
       {/* Coming-soon banner — shown when user is outside serviceable area */}
@@ -212,7 +235,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
 
       {/* ── Section 2: DailyCheckInStrip (Near U only) ─────────────────────── */}
       <LazySection sectionId="daily-check-in-strip" scrollY={scrollY} height={80}
-        renderSection={() => <DailyCheckInStrip />} />
+        renderSection={() => <DailyCheckInStrip isClaimed={false} />} />
 
       {/* ── Section 3: CampusLeaderboardTeaser (Student only) ──────────────── */}
       {isStudent && (
@@ -232,7 +255,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
       <LazySection sectionId="nearby-offers-carousel" scrollY={scrollY} height={240}
         renderSection={() => (
           <NearbyOffersCarousel
-            offers={[]}
+            offers={PLACEHOLDER_OFFERS}
             onOfferPress={() => {}}
             onSeeAllPress={() => router.push('/near-u/map' as any)}
             showUrgencyTags
@@ -344,6 +367,11 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
         renderSection={() => <GlobeBanner />} />
     </>
   );
+  } catch (e) {
+    // Schedule state update outside the render cycle to avoid React warnings
+    setTimeout(() => setRenderError(e instanceof Error ? e : new Error(String(e))), 0);
+    return null;
+  }
 };
 
 export default React.memo(NearUTabContent);

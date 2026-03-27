@@ -1065,6 +1065,7 @@ function HomeScreen() {
               onScanPay={handleSearchPress}
               onViewWallet={handleCoinPress}
               onClaimPress={() => router.push('/offers' as any)}
+              onUseCoinPress={handleCoinPress}
             />
           )}
 
