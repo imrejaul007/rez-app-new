@@ -132,8 +132,6 @@ function UpgradeConfirmationPage() {
   const [isConfirming, setIsConfirming] = React.useState(false);
 
   const handlePaymentSuccess = async () => {
-    setShowStripeModal(false);
-
     if (upgradeId && !isConfirming) {
       setIsConfirming(true);
       try {
