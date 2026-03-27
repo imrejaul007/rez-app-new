@@ -1,19 +1,9 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-// Payment Page with Razorpay + Stripe Dual Gateway Support
-// Supports multi-currency: INR (Razorpay/Stripe), AED/USD/EUR/GBP (Stripe only)
+// Payment Page with Razorpay Gateway Support
+// Supports multi-currency: INR (Razorpay)
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-  Dimensions,
-} from 'react-native';
+import { View, StyleSheet, Pressable, ScrollView, StatusBar, Platform, ActivityIndicator } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,10 +11,8 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { FormPageSkeleton } from '@/components/skeletons';
-import paymentService, { PaymentMethod, PaymentResponse } from '@/services/paymentService';
-import PaymentValidator from '@/services/paymentValidation';
+import paymentService, { PaymentMethod } from '@/services/paymentService';
 import apiClient from '@/services/apiClient';
-import travelApi from '@/services/travelApi';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { getCurrencySymbol as getPaymentCurrencySymbol } from '@/config/payment';
 import * as WebBrowser from 'expo-web-browser';
@@ -41,15 +29,8 @@ try {
   // Not available in Expo Go
 }
 
-const { width, height } = Dimensions.get('window');
-
 // Razorpay Key from environment
 const RAZORPAY_KEY_ID = process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '';
-
-// Currencies that require Stripe (Razorpay is INR-only)
-const STRIPE_ONLY_CURRENCIES = ['AED', 'USD', 'EUR', 'GBP', 'CAD', 'AUD'];
-
-type PaymentGateway = 'razorpay' | 'stripe';
 
 function PaymentPage() {
   const isMounted = useIsMounted();
@@ -62,7 +43,6 @@ function PaymentPage() {
   const orderId = params.orderId as string;
   const bookingId = params.bookingId as string;
   const bookingType = params.bookingType as string;
-  const gatewayParam = params.paymentGateway as PaymentGateway | undefined;
   const isTravelPayment = bookingType === 'travel';
 
   // Track navigation timeouts so they can be cancelled on unmount
@@ -74,14 +54,6 @@ function PaymentPage() {
     };
   }, []);
 
-  // Determine payment gateway based on currency and param
-  const resolveGateway = (): PaymentGateway => {
-    if (gatewayParam) return gatewayParam;
-    if (STRIPE_ONLY_CURRENCIES.includes(currency)) return 'stripe';
-    return 'stripe'; // Default to Stripe (matches DEFAULT_PAYMENT_PROVIDER config)
-  };
-
-  const [paymentGateway, setPaymentGateway] = useState<PaymentGateway>(resolveGateway);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -93,9 +65,6 @@ function PaymentPage() {
   // Razorpay state
   const [razorpayOrderId, setRazorpayOrderId] = useState('');
   const [razorpayKeyId, setRazorpayKeyId] = useState(RAZORPAY_KEY_ID);
-
-  // Stripe state
-  const [stripeSessionId, setStripeSessionId] = useState('');
 
   // Payment timeout (5 minutes)
   useEffect(() => {
@@ -193,137 +162,7 @@ function PaymentPage() {
 
   const handleMethodSelect = (method: PaymentMethod) => {
     setSelectedMethod(method);
-
-    if (paymentGateway === 'stripe') {
-      handleStripePayment();
-    } else {
-      handleRazorpayPayment();
-    }
-  };
-
-  // ==================== STRIPE FLOW ====================
-
-  const handleStripePayment = async () => {
-    setCurrentStep('processing');
-    setIsProcessing(true);
-    setPaymentStartedAt(Date.now());
-
-    try {
-      // Build success/cancel URLs
-      const baseUrl = Platform.OS === 'web' ? window.location.origin : 'https://rez.app'; // Deep link base
-
-      let successUrl: string;
-      let cancelUrl: string;
-
-      if (isTravelPayment) {
-        successUrl = `${baseUrl}/travel-booking-confirmation?bookingId=${bookingId}&stripeSuccess=true`;
-        cancelUrl = `${baseUrl}/payment-razorpay?bookingId=${bookingId}&bookingType=travel&amount=${amount}&currency=${currency}&cancelled=true`;
-      } else {
-        successUrl = `${baseUrl}/order-confirmation?orderId=${orderId}&stripeSuccess=true`;
-        cancelUrl = `${baseUrl}/payment-razorpay?orderId=${orderId}&amount=${amount}&currency=${currency}&cancelled=true`;
-      }
-
-      let response;
-
-      if (isTravelPayment) {
-        // Travel Stripe session
-        response = await travelApi.createStripeSession(bookingId, amount, currency, successUrl, cancelUrl);
-      } else {
-        // Standard order Stripe session
-        response = await apiClient.post<{ url: string; sessionId: string }>('/payment/create-checkout-session', {
-          orderId,
-          amount,
-          currency,
-          successUrl,
-          cancelUrl,
-        });
-      }
-
-      if (response.success && response.data) {
-        const checkoutUrl = response.data.url;
-        const sessionId = response.data.sessionId;
-
-        if (!checkoutUrl) {
-          throw new Error('No checkout URL received from Stripe');
-        }
-
-        if (!isMounted()) return;
-        setStripeSessionId(sessionId);
-
-        // Redirect to Stripe Checkout
-        if (Platform.OS === 'web' && typeof window !== 'undefined') {
-          // Web: Direct redirect
-          window.location.href = checkoutUrl;
-        } else {
-          // Native: Open in-app browser
-          const result = await WebBrowser.openBrowserAsync(checkoutUrl, {
-            dismissButtonStyle: 'cancel',
-            showTitle: true,
-            enableBarCollapsing: true,
-          });
-
-          // Browser closed — verify payment
-          if (result.type === 'cancel' || result.type === 'dismiss') {
-            await verifyStripePaymentAfterReturn(sessionId);
-          }
-        }
-      } else {
-        throw new Error(response.error || 'Failed to create Stripe checkout session');
-      }
-    } catch (error: any) {
-      if (!isMounted()) return;
-      setCurrentStep('methods');
-      if (!isMounted()) return;
-      setIsProcessing(false);
-      platformAlertSimple('Payment Failed', error.message || 'Failed to initiate Stripe payment. Please try again.');
-    }
-  };
-
-  const verifyStripePaymentAfterReturn = async (sessionId: string) => {
-    try {
-      let response;
-
-      if (isTravelPayment) {
-        response = await travelApi.verifyStripeSession(sessionId, bookingId);
-      } else {
-        response = await apiClient.post<{ verified: boolean }>('/payment/verify-stripe-session', {
-          sessionId,
-          orderId,
-        });
-      }
-
-      if (response.success && response.data?.verified) {
-        if (!isMounted()) return;
-        setIsProcessing(false);
-        if (!isMounted()) return;
-        const t = setTimeout(() => {
-          navTimeoutsRef.current.delete(t);
-          if (isTravelPayment) {
-            router.replace(`/travel-booking-confirmation?bookingId=${bookingId}` as any);
-          } else {
-            router.replace(`/order-confirmation?orderId=${orderId}` as any);
-          }
-        }, 500);
-        navTimeoutsRef.current.add(t);
-      } else {
-        // Payment might not be complete — show retry option
-        if (!isMounted()) return;
-        setIsProcessing(false);
-        if (!isMounted()) return;
-        setCurrentStep('methods');
-        platformAlertConfirm(
-          'Payment Incomplete',
-          'Your payment may not have been completed. Would you like to try again?',
-          () => handleStripePayment(),
-          'Try Again',
-        );
-      }
-    } catch (error) {
-      if (!isMounted()) return;
-      setIsProcessing(false);
-      if (!isMounted()) return;
-      setCurrentStep('methods');
-    }
+    handleRazorpayPayment();
   };
 
   // ==================== RAZORPAY FLOW ====================
@@ -515,8 +354,6 @@ function PaymentPage() {
   // ==================== UI HELPERS ====================
 
   const displayCurrencySymbol = getPaymentCurrencySymbol(currency) || currencySymbol;
-  const isStripe = paymentGateway === 'stripe';
-  const gatewayLabel = isStripe ? 'Stripe' : 'Razorpay';
 
   const getMethodIcon = (type: string) => {
     switch (type) {
@@ -550,111 +387,48 @@ function PaymentPage() {
 
   // ==================== RENDER ====================
 
-  const renderGatewayToggle = () => {
-    // Only show toggle if currency is INR (both gateways available)
-    if (STRIPE_ONLY_CURRENCIES.includes(currency)) return null;
-
-    return (
-      <View style={styles.gatewayToggle}>
-        <Pressable
-          style={[styles.gatewayOption, paymentGateway === 'stripe' && styles.gatewayOptionActive]}
-          onPress={() => setPaymentGateway('stripe')}
-        >
-          <Ionicons
-            name="card"
-            size={16}
-            color={paymentGateway === 'stripe' ? colors.text.inverse : colors.text.tertiary}
-          />
-          <Text style={[styles.gatewayOptionText, paymentGateway === 'stripe' && styles.gatewayOptionTextActive]}>
-            Stripe
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[styles.gatewayOption, paymentGateway === 'razorpay' && styles.gatewayOptionActive]}
-          onPress={() => setPaymentGateway('razorpay')}
-        >
-          <Ionicons
-            name="shield-checkmark"
-            size={16}
-            color={paymentGateway === 'razorpay' ? colors.text.inverse : colors.text.tertiary}
-          />
-          <Text style={[styles.gatewayOptionText, paymentGateway === 'razorpay' && styles.gatewayOptionTextActive]}>
-            Razorpay
-          </Text>
-        </Pressable>
-      </View>
-    );
-  };
-
   const renderPaymentMethods = () => (
     <Animated.View style={[styles.stepContainer, stepContainerStyle]}>
       <ThemedText style={styles.stepTitle}>Choose Payment Method</ThemedText>
-      <ThemedText style={styles.stepSubtitle}>Secure payment powered by {gatewayLabel}</ThemedText>
-
-      {renderGatewayToggle()}
+      <ThemedText style={styles.stepSubtitle}>Secure payment powered by Razorpay</ThemedText>
 
       <View style={styles.securityBadge}>
         <Ionicons name="shield-checkmark" size={16} color={Colors.success} />
-        <ThemedText style={styles.securityBadgeText}>
-          {isStripe ? 'Secured by Stripe - PCI Level 1' : 'Secured by Razorpay - PCI DSS Compliant'}
-        </ThemedText>
+        <ThemedText style={styles.securityBadgeText}>Secured by Razorpay - PCI DSS Compliant</ThemedText>
       </View>
 
-      {currency !== 'INR' && (
-        <View style={styles.currencyBadge}>
-          <Ionicons name="globe-outline" size={14} color={Colors.info} />
-          <ThemedText style={styles.currencyBadgeText}>Paying in {currency} via Stripe</ThemedText>
-        </View>
-      )}
-
-      {isStripe ? (
-        // Stripe: Single "Pay with Stripe" button
-        <Pressable style={styles.stripePayButton} onPress={() => handleStripePayment()} disabled={isProcessing}>
-          <LinearGradient colors={['#635BFF', '#7B73FF']} style={styles.stripePayButtonGradient}>
-            <Ionicons name="card" size={22} color={colors.text.inverse} />
-            <Text style={styles.stripePayButtonText}>
-              Pay {displayCurrencySymbol}
-              {amount.toLocaleString()} with Stripe
-            </Text>
-          </LinearGradient>
-        </Pressable>
-      ) : (
-        // Razorpay: Show method cards
-        <View style={styles.methodsGrid}>
-          {paymentMethods.map((method) => (
-            <Pressable
-              key={method.id}
-              style={[styles.methodCard, { borderColor: getMethodColor(method.type) }]}
-              onPress={() => handleMethodSelect(method)}
-              disabled={!method.isAvailable || isProcessing}
-            >
-              <View style={[styles.methodIconContainer, { backgroundColor: getMethodColor(method.type) }]}>
-                <Ionicons name={getMethodIcon(method.type)} size={24} color={colors.text.inverse} />
+      <View style={styles.methodsGrid}>
+        {paymentMethods.map((method) => (
+          <Pressable
+            key={method.id}
+            style={[styles.methodCard, { borderColor: getMethodColor(method.type) }]}
+            onPress={() => handleMethodSelect(method)}
+            disabled={!method.isAvailable || isProcessing}
+          >
+            <View style={[styles.methodIconContainer, { backgroundColor: getMethodColor(method.type) }]}>
+              <Ionicons name={getMethodIcon(method.type)} size={24} color={colors.text.inverse} />
+            </View>
+            <View style={styles.methodInfo}>
+              <ThemedText style={styles.methodName}>{method.name}</ThemedText>
+              <ThemedText style={styles.methodGateway}>Razorpay Gateway</ThemedText>
+              <View style={styles.methodDetails}>
+                <ThemedText style={styles.methodFee}>
+                  {method.processingFee && method.processingFee > 0 ? `Fee: ${method.processingFee}%` : 'No fee'}
+                </ThemedText>
+                <ThemedText style={styles.methodTime}>{method.processingTime}</ThemedText>
               </View>
-              <View style={styles.methodInfo}>
-                <ThemedText style={styles.methodName}>{method.name}</ThemedText>
-                <ThemedText style={styles.methodGateway}>Razorpay Gateway</ThemedText>
-                <View style={styles.methodDetails}>
-                  <ThemedText style={styles.methodFee}>
-                    {method.processingFee && method.processingFee > 0 ? `Fee: ${method.processingFee}%` : 'No fee'}
-                  </ThemedText>
-                  <ThemedText style={styles.methodTime}>{method.processingTime}</ThemedText>
-                </View>
-              </View>
-              <View style={styles.methodArrow}>
-                <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-              </View>
-            </Pressable>
-          ))}
-        </View>
-      )}
+            </View>
+            <View style={styles.methodArrow}>
+              <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+            </View>
+          </Pressable>
+        ))}
+      </View>
 
       <View style={styles.supportedMethods}>
         <ThemedText style={styles.supportedTitle}>Supported Payment Options:</ThemedText>
         <ThemedText style={styles.supportedText}>
-          {isStripe
-            ? 'Cards (Visa, Mastercard, Amex), Apple Pay, Google Pay, and more'
-            : 'UPI, Cards (Visa, Mastercard, Amex, RuPay), Net Banking, Wallets (Paytm, PhonePe, etc.)'}
+          UPI, Cards (Visa, Mastercard, Amex, RuPay), Net Banking, Wallets (Paytm, PhonePe, etc.)
         </ThemedText>
       </View>
     </Animated.View>
@@ -667,11 +441,7 @@ function PaymentPage() {
       </View>
 
       <ThemedText style={styles.processingTitle}>Processing Payment</ThemedText>
-      <ThemedText style={styles.processingSubtitle}>
-        {isStripe
-          ? 'Redirecting to Stripe secure checkout...'
-          : 'Please wait while we securely process your payment...'}
-      </ThemedText>
+      <ThemedText style={styles.processingSubtitle}>Please wait while we securely process your payment...</ThemedText>
 
       <View style={styles.progressContainer}>
         <View style={styles.progressBar}>
@@ -828,33 +598,6 @@ const styles = StyleSheet.create({
     color: colors.text.tertiary,
     marginBottom: Spacing.base,
   },
-  gatewayToggle: {
-    flexDirection: 'row',
-    backgroundColor: colors.background.secondary,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.xs,
-    marginBottom: Spacing.base,
-  },
-  gatewayOption: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 10,
-    borderRadius: 10,
-    gap: 6,
-  },
-  gatewayOptionActive: {
-    backgroundColor: Colors.brand.purple,
-  },
-  gatewayOptionText: {
-    ...Typography.body,
-    fontWeight: '600',
-    color: colors.text.tertiary,
-  },
-  gatewayOptionTextActive: {
-    color: colors.text.inverse,
-  },
   securityBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -869,45 +612,6 @@ const styles = StyleSheet.create({
     ...Typography.bodySmall,
     color: Colors.success,
     fontWeight: '600',
-  },
-  currencyBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.infoScale[50],
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.sm,
-    marginBottom: Spacing.lg,
-    gap: 6,
-  },
-  currencyBadgeText: {
-    ...Typography.bodySmall,
-    color: Colors.info,
-    fontWeight: '600',
-  },
-  stripePayButton: {
-    marginTop: Spacing.sm,
-    marginBottom: Spacing.base,
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    shadowColor: '#635BFF',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 6,
-  },
-  stripePayButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 18,
-    paddingHorizontal: Spacing.xl,
-    gap: 10,
-  },
-  stripePayButtonText: {
-    color: colors.text.inverse,
-    fontSize: 17,
-    fontWeight: '700',
   },
   methodsGrid: {
     gap: Spacing.base,

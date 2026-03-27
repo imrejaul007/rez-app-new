@@ -3,13 +3,14 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Confirm subscription tier upgrade with prorated pricing
 
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, Pressable, StatusBar, ActivityIndicator} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, StatusBar, ActivityIndicator } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming} from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -20,7 +21,6 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import subscriptionAPI from '@/services/subscriptionApi';
 import ProratedPriceDisplay from '@/components/subscription/ProratedPriceDisplay';
 import FeatureComparisonTable from '@/components/subscription/FeatureComparisonTable';
-import StripePaymentModal from '@/components/subscription/StripePaymentModal';
 import { SubscriptionTier, TIER_NAMES, TIER_COLORS } from '@/types/subscription.types';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -44,22 +44,18 @@ function UpgradeConfirmationPage() {
   const [proratedAmount, setProratedAmount] = useState<number>(0);
   const [creditFromCurrent, setCreditFromCurrent] = useState<number>(0);
   const [upgradeId, setUpgradeId] = useState<string | null>(null);
-  const [showStripeModal, setShowStripeModal] = useState(false);
   const isMounted = useIsMounted();
 
   // Animated arrow
   const arrowAnim = useSharedValue(0);
   const arrowStyle = useAnimatedStyle(() => ({
-    transform: [{ translateX: arrowAnim.value }]}));
+    transform: [{ translateX: arrowAnim.value }],
+  }));
   useEffect(() => {
-    arrowAnim.value = withRepeat(
-      withSequence(
-        withTiming(5, { duration: 800 }),
-        withTiming(0, { duration: 800 })
-      ),
-      -1
-    );
-    return () => { arrowAnim.value = 0; };
+    arrowAnim.value = withRepeat(withSequence(withTiming(5, { duration: 800 }), withTiming(0, { duration: 800 })), -1);
+    return () => {
+      arrowAnim.value = 0;
+    };
   }, []);
 
   // Get tier price from available tiers (DB-driven, not hardcoded)
@@ -105,27 +101,25 @@ function UpgradeConfirmationPage() {
       setIsUpgrading(true);
 
       if (timing === 'cycle_end') {
-        platformAlertSimple('Upgrade Scheduled', `Your upgrade to ${TIER_NAMES[newTier]} will take effect at the end of your current billing cycle.`);
+        platformAlertSimple(
+          'Upgrade Scheduled',
+          `Your upgrade to ${TIER_NAMES[newTier]} will take effect at the end of your current billing cycle.`,
+        );
         router.push('/subscription/manage');
         return;
       }
 
       // Phase 1: Initiate upgrade (get payment details)
       const billingCycle = state.currentSubscription?.billingCycle || 'monthly';
-      const result = await subscriptionAPI.initiateUpgrade(
-        newTier as 'premium' | 'vip',
-        billingCycle,
-        'stripe'
-      );
+      const result = await subscriptionAPI.initiateUpgrade(newTier as 'premium' | 'vip', billingCycle, 'razorpay');
 
       if (result?.upgradeId) {
         if (!isMounted()) return;
         setUpgradeId(result.upgradeId);
         if (!isMounted()) return;
         setProratedAmount(result.proratedAmount);
-        // Phase 2: Open payment modal
-        if (!isMounted()) return;
-        setShowStripeModal(true);
+        // TODO: open Razorpay payment flow for subscription upgrades
+        platformAlertSimple('Upgrade Initiated', 'Please complete payment via the Razorpay flow.');
       }
     } catch (error: any) {
       platformAlertSimple('Upgrade Failed', error.message || 'Failed to process upgrade');
@@ -148,10 +142,14 @@ function UpgradeConfirmationPage() {
         await actions.loadSubscription(true);
 
         router.push({
-          pathname: '/subscription/manage' });
+          pathname: '/subscription/manage',
+        });
         platformAlertSimple('Upgrade Complete', `You are now a ${TIER_NAMES[newTier]} member!`);
       } catch (error: any) {
-        platformAlertSimple('Activation Failed', 'Payment received but upgrade activation failed. Please contact support.');
+        platformAlertSimple(
+          'Activation Failed',
+          'Payment received but upgrade activation failed. Please contact support.',
+        );
       } finally {
         if (!isMounted()) return;
         setIsConfirming(false);
@@ -168,14 +166,14 @@ function UpgradeConfirmationPage() {
         { icon: 'bicycle', text: 'Free delivery on ALL orders', color: Colors.info },
         { icon: 'person', text: 'Personal shopper assistance', color: Colors.brand.purpleLight },
         { icon: 'calendar', text: 'Access to premium events', color: Colors.warning },
-        { icon: 'shield-checkmark', text: 'Dedicated concierge service', color: colors.brand.pink }
+        { icon: 'shield-checkmark', text: 'Dedicated concierge service', color: colors.brand.pink },
       );
     } else if (newTier === 'premium') {
       benefits.push(
         { icon: 'cash', text: '2x cashback on all orders', color: Colors.success },
         { icon: 'bicycle', text: `Free delivery (orders above ${currencySymbol}500)`, color: Colors.info },
         { icon: 'headset', text: 'Priority customer support', color: Colors.brand.purpleLight },
-        { icon: 'pricetag', text: 'Exclusive deals & early access', color: Colors.warning }
+        { icon: 'pricetag', text: 'Exclusive deals & early access', color: Colors.warning },
       );
     }
 
@@ -190,7 +188,7 @@ function UpgradeConfirmationPage() {
       <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple] as any} style={styles.header}>
         <View style={styles.headerContainer}>
           <Pressable
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
             accessibilityLabel="Go back"
             accessibilityRole="button"
@@ -203,15 +201,17 @@ function UpgradeConfirmationPage() {
         </View>
       </LinearGradient>
 
-      <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={{ paddingBottom: 120 }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Upgrade Summary */}
         <View style={styles.summaryCard}>
           <View style={styles.summaryHeader}>
             <View style={styles.tierContainer}>
               <View style={[styles.tierBox, { backgroundColor: TIER_COLORS[currentTier] + '20' }]}>
-                <ThemedText style={[styles.tierLabel, { color: TIER_COLORS[currentTier] }]}>
-                  Current
-                </ThemedText>
+                <ThemedText style={[styles.tierLabel, { color: TIER_COLORS[currentTier] }]}>Current</ThemedText>
                 <ThemedText style={[styles.tierName, { color: TIER_COLORS[currentTier] }]}>
                   {TIER_NAMES[currentTier]}
                 </ThemedText>
@@ -222,9 +222,7 @@ function UpgradeConfirmationPage() {
               </Animated.View>
 
               <View style={[styles.tierBox, { backgroundColor: TIER_COLORS[newTier] + '20' }]}>
-                <ThemedText style={[styles.tierLabel, { color: TIER_COLORS[newTier] }]}>
-                  Upgrade to
-                </ThemedText>
+                <ThemedText style={[styles.tierLabel, { color: TIER_COLORS[newTier] }]}>Upgrade to</ThemedText>
                 <ThemedText style={[styles.tierName, { color: TIER_COLORS[newTier] }]}>
                   {TIER_NAMES[newTier]}
                 </ThemedText>
@@ -260,16 +258,17 @@ function UpgradeConfirmationPage() {
             accessibilityState={{ checked: timing === 'immediate' }}
             accessibilityHint="Double tap to upgrade immediately and enjoy benefits instantly"
           >
-            <View style={styles.radioButton}>
-              {timing === 'immediate' && <View style={styles.radioButtonInner} />}
-            </View>
+            <View style={styles.radioButton}>{timing === 'immediate' && <View style={styles.radioButtonInner} />}</View>
             <View style={styles.timingContent}>
               <ThemedText style={styles.timingTitle}>Upgrade Immediately</ThemedText>
               <ThemedText style={styles.timingDescription}>
                 Pay prorated amount now and enjoy benefits instantly
               </ThemedText>
               {proratedAmount > 0 && (
-                <ThemedText style={styles.timingPrice}>Pay {currencySymbol}{proratedAmount} today</ThemedText>
+                <ThemedText style={styles.timingPrice}>
+                  Pay {currencySymbol}
+                  {proratedAmount} today
+                </ThemedText>
               )}
             </View>
             <Ionicons name="flash" size={24} color={Colors.warning} />
@@ -283,15 +282,16 @@ function UpgradeConfirmationPage() {
             accessibilityState={{ checked: timing === 'cycle_end' }}
             accessibilityHint="Double tap to schedule upgrade for the end of your current billing cycle"
           >
-            <View style={styles.radioButton}>
-              {timing === 'cycle_end' && <View style={styles.radioButtonInner} />}
-            </View>
+            <View style={styles.radioButton}>{timing === 'cycle_end' && <View style={styles.radioButtonInner} />}</View>
             <View style={styles.timingContent}>
               <ThemedText style={styles.timingTitle}>Upgrade at Cycle End</ThemedText>
               <ThemedText style={styles.timingDescription}>
                 Upgrade takes effect after {computed.daysRemaining} days (no extra charge now)
               </ThemedText>
-              <ThemedText style={styles.timingPrice}>{currencySymbol}{getTierPrice(newTier)}/month from next cycle</ThemedText>
+              <ThemedText style={styles.timingPrice}>
+                {currencySymbol}
+                {getTierPrice(newTier)}/month from next cycle
+              </ThemedText>
             </View>
             <Ionicons name="calendar-outline" size={24} color={colors.text.tertiary} />
           </Pressable>
@@ -322,7 +322,9 @@ function UpgradeConfirmationPage() {
             style={styles.confirmButton}
             onPress={handleUpgrade}
             disabled={isUpgrading}
-            accessibilityLabel={isUpgrading ? 'Processing upgrade' : (timing === 'immediate' ? 'Confirm and pay' : 'Schedule upgrade')}
+            accessibilityLabel={
+              isUpgrading ? 'Processing upgrade' : timing === 'immediate' ? 'Confirm and pay' : 'Schedule upgrade'
+            }
             accessibilityRole="button"
             accessibilityState={{ disabled: isUpgrading, busy: isUpgrading }}
             accessibilityHint={`Double tap to ${timing === 'immediate' ? 'proceed to payment' : 'schedule your upgrade'}`}
@@ -341,7 +343,7 @@ function UpgradeConfirmationPage() {
 
           <Pressable
             style={styles.cancelButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             disabled={isUpgrading}
             accessibilityLabel="Cancel upgrade"
             accessibilityRole="button"
@@ -352,23 +354,6 @@ function UpgradeConfirmationPage() {
           </Pressable>
         </View>
       </ScrollView>
-
-      {/* Stripe Payment Modal for upgrade */}
-      {showStripeModal && upgradeId && (
-        <StripePaymentModal
-          visible={showStripeModal}
-          tier={newTier as 'premium' | 'vip'}
-          amount={proratedAmount}
-          billingCycle={(state.currentSubscription?.billingCycle || 'monthly') as any}
-          subscriptionId={upgradeId}
-          onSuccess={handlePaymentSuccess}
-          onClose={() => setShowStripeModal(false)}
-          onError={(error: Error) => {
-            setShowStripeModal(false);
-            platformAlertSimple('Payment Failed', error?.message || 'Please try again.');
-          }}
-        />
-      )}
     </ThemedView>
   );
 }
@@ -376,27 +361,34 @@ function UpgradeConfirmationPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   header: {
     paddingTop: StatusBar.currentHeight || 50,
     paddingBottom: Spacing.lg,
-    paddingHorizontal: Spacing.lg },
+    paddingHorizontal: Spacing.lg,
+  },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between' },
+    justifyContent: 'space-between',
+  },
   backButton: {
-    padding: Spacing.sm },
+    padding: Spacing.sm,
+  },
   headerTitle: {
     color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   headerRight: {
-    width: 40 },
+    width: 40,
+  },
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   summaryCard: {
     margin: Spacing.lg,
     backgroundColor: colors.background.primary,
@@ -406,33 +398,41 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 5 },
+    elevation: 5,
+  },
   summaryHeader: {
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   tierContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.base },
+    gap: Spacing.base,
+  },
   tierBox: {
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
     alignItems: 'center',
-    minWidth: 100 },
+    minWidth: 100,
+  },
   tierLabel: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   tierName: {
     ...Typography.h3,
-    fontWeight: 'bold' },
+    fontWeight: 'bold',
+  },
   section: {
     marginHorizontal: Spacing.lg,
-    marginBottom: Spacing.xl },
+    marginBottom: Spacing.xl,
+  },
   sectionTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
     color: colors.text.primary,
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   benefitsContainer: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.md,
@@ -441,22 +441,26 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.05,
     shadowRadius: 4,
-    elevation: 2 },
+    elevation: 2,
+  },
   benefitRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: Spacing.md },
+    paddingVertical: Spacing.md,
+  },
   benefitIcon: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: Spacing.md },
+    marginRight: Spacing.md,
+  },
   benefitText: {
     flex: 1,
     ...Typography.body,
-    color: colors.text.secondary },
+    color: colors.text.secondary,
+  },
   timingOption: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -465,10 +469,12 @@ const styles = StyleSheet.create({
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 2,
-    borderColor: colors.border.default },
+    borderColor: colors.border.default,
+  },
   timingOptionSelected: {
     borderColor: Colors.brand.purpleLight,
-    backgroundColor: '#8B5CF605' },
+    backgroundColor: '#8B5CF605',
+  },
   radioButton: {
     width: 24,
     height: 24,
@@ -477,32 +483,39 @@ const styles = StyleSheet.create({
     borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: Spacing.md },
+    marginRight: Spacing.md,
+  },
   radioButtonInner: {
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: Colors.brand.purpleLight },
+    backgroundColor: Colors.brand.purpleLight,
+  },
   timingContent: {
-    flex: 1 },
+    flex: 1,
+  },
   timingTitle: {
     ...Typography.bodyLarge,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   timingDescription: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
-    lineHeight: 18 },
+    lineHeight: 18,
+  },
   timingPrice: {
     ...Typography.body,
     fontWeight: '600',
     color: Colors.brand.purpleLight,
-    marginTop: Spacing.xs },
+    marginTop: Spacing.xs,
+  },
   actionsContainer: {
     padding: Spacing.lg,
     gap: Spacing.md,
-    paddingBottom: 40 },
+    paddingBottom: 40,
+  },
   confirmButton: {
     flexDirection: 'row',
     backgroundColor: Colors.brand.purpleLight,
@@ -510,19 +523,24 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   confirmButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: 'bold' },
+    fontWeight: 'bold',
+  },
   cancelButton: {
     backgroundColor: colors.background.secondary,
     paddingVertical: Spacing.base,
     borderRadius: BorderRadius.md,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   cancelButtonText: {
     color: colors.text.tertiary,
     ...Typography.bodyLarge,
-    fontWeight: '600' } });
+    fontWeight: '600',
+  },
+});
 
 export default withErrorBoundary(UpgradeConfirmationPage, 'SubscriptionUpgradeConfirmation');

@@ -1,14 +1,20 @@
 // Subscription Plans Page - Premium ReZ Design System
 // Display all subscription tiers with glassmorphism and premium styling
 
-import React, { useState, useEffect, useLayoutEffect} from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import { View, StyleSheet, ScrollView, Pressable, StatusBar, ActivityIndicator, TextInput, Platform, Dimensions } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming } from 'react-native-reanimated';
+import {
+  View,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  StatusBar,
+  ActivityIndicator,
+  TextInput,
+  Platform,
+  Dimensions,
+} from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useNavigation } from 'expo-router';
@@ -16,10 +22,8 @@ import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useSubscription } from '@/contexts/SubscriptionContext';
 import subscriptionAPI from '@/services/subscriptionApi';
-import stripeApi from '@/services/stripeApi';
 import type { SubscriptionTier as TierType, BillingCycle } from '@/types/subscription.types';
 import PaymentSuccessModal from '@/components/subscription/PaymentSuccessModal';
-import StripePaymentModal from '@/components/subscription/StripePaymentModal';
 import { useAuthUser, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import { showToast } from '@/components/common/ToastManager';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
@@ -65,8 +69,7 @@ function SubscriptionPlansPage() {
     transform: [{ translateY: slideAnim.value }],
   }));
 
-  // Stripe payment states
-  const [showStripeModal, setShowStripeModal] = useState(false);
+  // Payment states
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [paymentData, setPaymentData] = useState<{
     subscriptionId: string;
@@ -79,7 +82,8 @@ function SubscriptionPlansPage() {
   // Hide the default navigation header
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerShown: false });
+      headerShown: false,
+    });
   }, [navigation]);
 
   // Entrance animation
@@ -115,22 +119,11 @@ function SubscriptionPlansPage() {
   const [promoValid, setPromoValid] = useState(false);
   const [validatingPromo, setValidatingPromo] = useState(false);
 
-  // Handle subscription purchase with Stripe payment flow
+  // Handle subscription purchase
   const handleSubscribe = async (tier: 'premium' | 'vip') => {
     try {
       setIsSubscribing(true);
       setSelectedTier(tier);
-
-      if (!stripeApi.isConfigured()) {
-        if (Platform.OS === 'web') {
-          showToast({ message: 'Payment not available. Stripe is not configured properly.', type: 'error' });
-        } else {
-          platformAlertSimple('Payment Not Available', 'Stripe is not configured properly.');
-        }
-        setIsSubscribing(false);
-        setSelectedTier(null);
-        return;
-      }
 
       // Get prices from backend (available tiers from SubscriptionContext)
       const pricing = getTierPricing(tier);
@@ -138,42 +131,48 @@ function SubscriptionPlansPage() {
 
       const confirmMessage = `Subscribe to ${tier === 'vip' ? 'VIP' : 'Premium'} plan for ${selectedBilling === 'monthly' ? 'monthly' : 'yearly'} billing?\n\nAmount: ${currencySymbol}${amount}`;
 
-      platformAlertConfirm('Confirm Subscription', confirmMessage, async () => {
-        try {
-          setProcessingPayment(true);
-          const result = await subscriptionAPI.subscribeToPlan(
-            tier,
-            selectedBilling,
-            'stripe',
-            promoCode || undefined
-          );
-
-          if (result && result.subscription) {
-            if (!isMounted()) return;
-            setPaymentData({
-              subscriptionId: result.subscription._id,
-              amount,
+      platformAlertConfirm(
+        'Confirm Subscription',
+        confirmMessage,
+        async () => {
+          try {
+            setProcessingPayment(true);
+            const result = await subscriptionAPI.subscribeToPlan(
               tier,
-              billingCycle: selectedBilling });
-            if (!isMounted()) return;
-            setShowStripeModal(true);
+              selectedBilling,
+              'razorpay',
+              promoCode || undefined,
+            );
+
+            if (result && result.subscription) {
+              if (!isMounted()) return;
+              setPaymentData({
+                subscriptionId: result.subscription._id,
+                amount,
+                tier,
+                billingCycle: selectedBilling,
+              });
+              if (!isMounted()) return;
+              setShowSuccessModal(true);
+              if (!isMounted()) return;
+              setIsSubscribing(false);
+              if (!isMounted()) return;
+              setProcessingPayment(false);
+            } else {
+              throw new Error('Failed to create subscription');
+            }
+          } catch (error: any) {
+            platformAlertSimple('Subscription Failed', error.message || 'Please try again.');
             if (!isMounted()) return;
             setIsSubscribing(false);
             if (!isMounted()) return;
+            setSelectedTier(null);
+            if (!isMounted()) return;
             setProcessingPayment(false);
-          } else {
-            throw new Error('Failed to create subscription');
           }
-        } catch (error: any) {
-          platformAlertSimple('Subscription Failed', error.message || 'Please try again.');
-          if (!isMounted()) return;
-          setIsSubscribing(false);
-          if (!isMounted()) return;
-          setSelectedTier(null);
-          if (!isMounted()) return;
-          setProcessingPayment(false);
-        }
-      }, 'Proceed to Payment');
+        },
+        'Proceed to Payment',
+      );
     } catch (error: any) {
       const errorMessage = error.message || 'An error occurred.';
       if (Platform.OS === 'web') {
@@ -195,42 +194,6 @@ function SubscriptionPlansPage() {
     setPaymentData(null);
   };
 
-  const handlePaymentSuccess = () => {
-    setShowStripeModal(false);
-    setSelectedTier(null);
-    setPaymentData(null);
-
-    if (Platform.OS === 'web') {
-      showToast({ message: 'Payment successful! Your subscription is now active.', type: 'success', duration: 5000 });
-    }
-
-    actions.loadSubscription(true);
-
-    if (paymentData) {
-      setShowSuccessModal(true);
-    }
-  };
-
-  const handlePaymentClose = () => {
-    setShowStripeModal(false);
-    setSelectedTier(null);
-    setIsSubscribing(false);
-    setProcessingPayment(false);
-  };
-
-  const handlePaymentError = (error: Error) => {
-    setShowStripeModal(false);
-    setSelectedTier(null);
-    setIsSubscribing(false);
-    setProcessingPayment(false);
-
-    if (Platform.OS === 'web') {
-      showToast({ message: `Payment failed: ${error.message}`, type: 'error', duration: 5000 });
-    } else {
-      platformAlertSimple('Payment Failed', error.message);
-    }
-  };
-
   const handleApplyPromo = async () => {
     if (!promoCode.trim()) {
       if (Platform.OS === 'web') {
@@ -249,18 +212,15 @@ function SubscriptionPlansPage() {
     }
 
     try {
-      const response = await subscriptionAPI.validatePromoCode(
-        promoCode,
-        tierToValidate,
-        selectedBilling
-      );
+      const response = await subscriptionAPI.validatePromoCode(promoCode, tierToValidate, selectedBilling);
 
       if (response.success && response.data) {
         if (!isMounted()) return;
         setPromoValid(true);
         if (!isMounted()) return;
         setPromoDiscount(response.data.discount);
-        const successMsg = response.data.message || `Promo applied! You saved ${currencySymbol}${response.data.discount}`;
+        const successMsg =
+          response.data.message || `Promo applied! You saved ${currencySymbol}${response.data.discount}`;
         if (Platform.OS === 'web') {
           showToast({ message: successMsg, type: 'success' });
         } else {
@@ -304,9 +264,7 @@ function SubscriptionPlansPage() {
           color={included ? colors.background.primary : colors.text.tertiary}
         />
       </View>
-      <ThemedText style={[styles.featureText, !included && styles.featureTextDisabled]}>
-        {feature}
-      </ThemedText>
+      <ThemedText style={[styles.featureText, !included && styles.featureTextDisabled]}>{feature}</ThemedText>
     </View>
   );
 
@@ -319,7 +277,7 @@ function SubscriptionPlansPage() {
     features: string[],
     gradientColors: string[],
     icon: string,
-    popular?: boolean
+    popular?: boolean,
   ) => {
     const isCurrentTier = currentTier === tier;
     const displayPrice = selectedBilling === 'monthly' ? price : Math.floor(yearlyPrice / 12);
@@ -328,12 +286,7 @@ function SubscriptionPlansPage() {
     const isPremium = tier === 'premium';
 
     return (
-      <Animated.View
-        style={[
-          styles.planCardWrapper,
-          contentAnimStyle,
-        ]}
-      >
+      <Animated.View style={[styles.planCardWrapper, contentAnimStyle]}>
         {popular && (
           <LinearGradient
             colors={[Colors.gold, Colors.goldDark]}
@@ -382,15 +335,14 @@ function SubscriptionPlansPage() {
               <View style={styles.savingsContainer}>
                 <Ionicons name="pricetag" size={14} color={Colors.gold} />
                 <ThemedText style={styles.yearlyNote}>
-                  Save {Math.round(((price * 12 - yearlyPrice) / (price * 12)) * 100)}% — {currencySymbol}{yearlyPrice}/year
+                  Save {Math.round(((price * 12 - yearlyPrice) / (price * 12)) * 100)}% — {currencySymbol}
+                  {yearlyPrice}/year
                 </ThemedText>
               </View>
             )}
 
             {/* Features */}
-            <View style={styles.featuresContainer}>
-              {features.map((feature) => renderFeature(feature, true))}
-            </View>
+            <View style={styles.featuresContainer}>{features.map((feature) => renderFeature(feature, true))}</View>
 
             {/* CTA Button */}
             {tier === 'free' ? (
@@ -403,11 +355,7 @@ function SubscriptionPlansPage() {
                 <ThemedText style={styles.activeButtonText}>Active</ThemedText>
               </View>
             ) : (
-              <Pressable
-                onPress={() => handleSubscribe(tier as 'premium' | 'vip')}
-                disabled={isSubscribing}
-               
-              >
+              <Pressable onPress={() => handleSubscribe(tier as 'premium' | 'vip')} disabled={isSubscribing}>
                 <LinearGradient
                   colors={isVIP ? [Colors.gold, Colors.goldDark] : [Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
@@ -468,9 +416,7 @@ function SubscriptionPlansPage() {
         </View>
 
         {/* Header Subtitle */}
-        <ThemedText style={styles.headerSubtitle}>
-          Unlock premium rewards and exclusive benefits
-        </ThemedText>
+        <ThemedText style={styles.headerSubtitle}>Unlock premium rewards and exclusive benefits</ThemedText>
       </LinearGradient>
 
       <ScrollView
@@ -482,10 +428,7 @@ function SubscriptionPlansPage() {
         <View style={styles.billingToggleWrapper}>
           <View style={styles.billingToggleContainer}>
             <Pressable
-              style={[
-                styles.billingOption,
-                selectedBilling === 'monthly' && styles.billingOptionActive,
-              ]}
+              style={[styles.billingOption, selectedBilling === 'monthly' && styles.billingOptionActive]}
               onPress={() => setSelectedBilling('monthly')}
             >
               {selectedBilling === 'monthly' && (
@@ -497,20 +440,14 @@ function SubscriptionPlansPage() {
                 />
               )}
               <ThemedText
-                style={[
-                  styles.billingOptionText,
-                  selectedBilling === 'monthly' && styles.billingOptionTextActive,
-                ]}
+                style={[styles.billingOptionText, selectedBilling === 'monthly' && styles.billingOptionTextActive]}
               >
                 Monthly
               </ThemedText>
             </Pressable>
 
             <Pressable
-              style={[
-                styles.billingOption,
-                selectedBilling === 'yearly' && styles.billingOptionActive,
-              ]}
+              style={[styles.billingOption, selectedBilling === 'yearly' && styles.billingOptionActive]}
               onPress={() => setSelectedBilling('yearly')}
             >
               {selectedBilling === 'yearly' && (
@@ -522,10 +459,7 @@ function SubscriptionPlansPage() {
                 />
               )}
               <ThemedText
-                style={[
-                  styles.billingOptionText,
-                  selectedBilling === 'yearly' && styles.billingOptionTextActive,
-                ]}
+                style={[styles.billingOptionText, selectedBilling === 'yearly' && styles.billingOptionTextActive]}
               >
                 Yearly
               </ThemedText>
@@ -538,21 +472,14 @@ function SubscriptionPlansPage() {
 
         {/* Promo Code Section */}
         <View style={styles.promoSection}>
-          <Pressable
-            style={styles.promoToggle}
-            onPress={() => setShowPromoInput(!showPromoInput)}
-          >
+          <Pressable style={styles.promoToggle} onPress={() => setShowPromoInput(!showPromoInput)}>
             <View style={styles.promoIconContainer}>
               <Ionicons name="pricetag" size={18} color={Colors.gold} />
             </View>
             <ThemedText style={styles.promoToggleText}>
               {showPromoInput ? 'Hide Promo Code' : 'Have a Promo Code?'}
             </ThemedText>
-            <Ionicons
-              name={showPromoInput ? 'chevron-up' : 'chevron-down'}
-              size={20}
-              color={Colors.gold}
-            />
+            <Ionicons name={showPromoInput ? 'chevron-up' : 'chevron-down'} size={20} color={Colors.gold} />
           </Pressable>
 
           {showPromoInput && (
@@ -565,14 +492,8 @@ function SubscriptionPlansPage() {
                 placeholderTextColor={colors.text.tertiary}
                 autoCapitalize="characters"
               />
-              <Pressable
-                onPress={handleApplyPromo}
-                disabled={validatingPromo}
-              >
-                <LinearGradient
-                  colors={[Colors.gold, colors.nileBlue]}
-                  style={styles.promoApplyButton}
-                >
+              <Pressable onPress={handleApplyPromo} disabled={validatingPromo}>
+                <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.promoApplyButton}>
                   {validatingPromo ? (
                     <ActivityIndicator color={colors.background.primary} size="small" />
                   ) : (
@@ -587,7 +508,8 @@ function SubscriptionPlansPage() {
             <View style={styles.promoApplied}>
               <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
               <ThemedText style={styles.promoAppliedText}>
-                Promo applied! You saved {currencySymbol}{promoDiscount}
+                Promo applied! You saved {currencySymbol}
+                {promoDiscount}
               </ThemedText>
             </View>
           )}
@@ -601,14 +523,9 @@ function SubscriptionPlansPage() {
             'Free',
             0,
             0,
-            getTierFeatures('free', [
-              'Basic cashback',
-              'Access to all stores',
-              'Email support',
-              'Basic wishlist',
-            ]),
+            getTierFeatures('free', ['Basic cashback', 'Access to all stores', 'Email support', 'Basic wishlist']),
             [colors.neutral[400], colors.neutral[500]],
-            'person-outline'
+            'person-outline',
           )}
 
           {/* Premium Tier */}
@@ -627,7 +544,7 @@ function SubscriptionPlansPage() {
             ]),
             [Colors.gold, colors.nileBlue],
             'star',
-            true
+            true,
           )}
 
           {/* VIP Tier */}
@@ -646,7 +563,7 @@ function SubscriptionPlansPage() {
               'All Premium benefits',
             ]),
             [Colors.gold, Colors.goldDark],
-            'diamond'
+            'diamond',
           )}
         </View>
 
@@ -661,12 +578,8 @@ function SubscriptionPlansPage() {
             <View style={styles.comparisonTableHeader}>
               <ThemedText style={styles.comparisonHeaderText}>Feature</ThemedText>
               <ThemedText style={styles.comparisonHeaderText}>Free</ThemedText>
-              <ThemedText style={[styles.comparisonHeaderText, { color: Colors.gold }]}>
-                Premium
-              </ThemedText>
-              <ThemedText style={[styles.comparisonHeaderText, { color: Colors.gold }]}>
-                VIP
-              </ThemedText>
+              <ThemedText style={[styles.comparisonHeaderText, { color: Colors.gold }]}>Premium</ThemedText>
+              <ThemedText style={[styles.comparisonHeaderText, { color: Colors.gold }]}>VIP</ThemedText>
             </View>
 
             {[
@@ -694,22 +607,7 @@ function SubscriptionPlansPage() {
             ))}
           </View>
         </View>
-
       </ScrollView>
-
-      {/* Stripe Payment Modal */}
-      {showStripeModal && paymentData && (
-        <StripePaymentModal
-          visible={showStripeModal}
-          tier={paymentData.tier}
-          amount={paymentData.amount}
-          billingCycle={paymentData.billingCycle}
-          subscriptionId={paymentData.subscriptionId}
-          onSuccess={handlePaymentSuccess}
-          onClose={handlePaymentClose}
-          onError={handlePaymentError}
-        />
-      )}
 
       {/* Payment Success Modal */}
       {showSuccessModal && paymentData && (
@@ -731,61 +629,75 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background.secondary,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   backgroundGradient: {
-    ...StyleSheet.absoluteFillObject },
+    ...StyleSheet.absoluteFillObject,
+  },
   decorativeOrb: {
     position: 'absolute',
     borderRadius: 200,
-    opacity: 0.3 },
+    opacity: 0.3,
+  },
   orbPrimary: {
     width: 300,
     height: 300,
     backgroundColor: Colors.goldGlow,
     top: -100,
-    right: -100 },
+    right: -100,
+  },
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 50,
     paddingBottom: 24,
     paddingHorizontal: Spacing.lg,
     borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24 },
+    borderBottomRightRadius: 24,
+  },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between' },
+    justifyContent: 'space-between',
+  },
   backButton: {
-    padding: Spacing.xs },
+    padding: Spacing.xs,
+  },
   backButtonInner: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   headerTitle: {
     color: colors.text.inverse,
     fontSize: 20,
     fontWeight: '700',
     fontFamily: 'Poppins-Bold',
     flex: 1,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   headerRight: {
-    width: 48 },
+    width: 48,
+  },
   headerSubtitle: {
     color: 'rgba(255, 255, 255, 0.9)',
     fontSize: 14,
     textAlign: 'center',
     marginTop: Spacing.sm,
-    fontFamily: 'Inter-Regular' },
+    fontFamily: 'Inter-Regular',
+  },
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   scrollContent: {
     paddingTop: 20,
-    paddingBottom: 120 },
+    paddingBottom: 120,
+  },
   billingToggleWrapper: {
     paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   billingToggleContainer: {
     flexDirection: 'row',
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -798,18 +710,24 @@ const styles = StyleSheet.create({
         shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
-        shadowRadius: 12 },
+        shadowRadius: 12,
+      },
       android: {
-        elevation: 4 },
+        elevation: 4,
+      },
       web: {
-        boxShadow: '0 4px 12px rgba(11, 34, 64, 0.08)' } }) },
+        boxShadow: '0 4px 12px rgba(11, 34, 64, 0.08)',
+      },
+    }),
+  },
   billingOption: {
     flex: 1,
     paddingVertical: 14,
     alignItems: 'center',
     borderRadius: BorderRadius.md,
     position: 'relative',
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   billingOptionActive: {
     // Gradient applied via LinearGradient
   },
@@ -817,9 +735,11 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: colors.text.secondary,
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   billingOptionTextActive: {
-    color: colors.text.inverse },
+    color: colors.text.inverse,
+  },
   saveBadge: {
     position: 'absolute',
     top: 2,
@@ -827,12 +747,14 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gold,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   saveText: {
     color: colors.nileBlue,
     fontSize: 10,
     fontWeight: '800',
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   promoSection: {
     marginHorizontal: Spacing.lg,
     marginBottom: Spacing.lg,
@@ -846,14 +768,20 @@ const styles = StyleSheet.create({
         shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
-        shadowRadius: 12 },
+        shadowRadius: 12,
+      },
       android: {
-        elevation: 4 },
+        elevation: 4,
+      },
       web: {
-        boxShadow: '0 4px 12px rgba(11, 34, 64, 0.08)' } }) },
+        boxShadow: '0 4px 12px rgba(11, 34, 64, 0.08)',
+      },
+    }),
+  },
   promoToggle: {
     flexDirection: 'row',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   promoIconContainer: {
     width: 36,
     height: 36,
@@ -861,17 +789,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.goldLight,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12 },
+    marginRight: 12,
+  },
   promoToggleText: {
     flex: 1,
     fontSize: 14,
     fontWeight: '600',
     color: Colors.gold,
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   promoInputContainer: {
     flexDirection: 'row',
     gap: Spacing.md,
-    marginTop: Spacing.base },
+    marginTop: Spacing.base,
+  },
   promoInput: {
     flex: 1,
     borderWidth: 1.5,
@@ -882,17 +813,20 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.nileBlue,
     backgroundColor: colors.background.primary,
-    fontFamily: 'Inter-Regular' },
+    fontFamily: 'Inter-Regular',
+  },
   promoApplyButton: {
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
-    justifyContent: 'center' },
+    justifyContent: 'center',
+  },
   promoApplyText: {
     color: colors.text.inverse,
     fontSize: 14,
     fontWeight: '600',
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   promoApplied: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -902,16 +836,20 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(16, 185, 129, 0.1)',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.2)' },
+    borderColor: 'rgba(16, 185, 129, 0.2)',
+  },
   promoAppliedText: {
     fontSize: 14,
     fontWeight: '600',
     color: Colors.success,
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   plansContainer: {
-    paddingHorizontal: Spacing.lg },
+    paddingHorizontal: Spacing.lg,
+  },
   planCardWrapper: {
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   planCard: {
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: BorderRadius.xl,
@@ -923,14 +861,20 @@ const styles = StyleSheet.create({
         shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 8 },
         shadowOpacity: 0.12,
-        shadowRadius: 20 },
+        shadowRadius: 20,
+      },
       android: {
-        elevation: 8 },
+        elevation: 8,
+      },
       web: {
-        boxShadow: '0 8px 24px rgba(11, 34, 64, 0.12)' } }) },
+        boxShadow: '0 8px 24px rgba(11, 34, 64, 0.12)',
+      },
+    }),
+  },
   planCardPopular: {
     borderColor: 'rgba(255, 200, 87, 0.5)',
-    borderWidth: 2 },
+    borderWidth: 2,
+  },
   cardShine: {
     position: 'absolute',
     top: 0,
@@ -939,7 +883,8 @@ const styles = StyleSheet.create({
     height: 100,
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
     transform: [{ skewY: '-5deg' }],
-    opacity: 0.5 },
+    opacity: 0.5,
+  },
   popularBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -947,16 +892,19 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     gap: 6,
     borderTopLeftRadius: 20,
-    borderTopRightRadius: 20 },
+    borderTopRightRadius: 20,
+  },
   popularText: {
     color: colors.nileBlue,
     fontSize: 12,
     fontWeight: '800',
     letterSpacing: 1,
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   planHeader: {
     padding: Spacing.xl,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   planIconContainer: {
     width: 56,
     height: 56,
@@ -964,12 +912,14 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   planName: {
     color: colors.text.inverse,
     fontSize: 24,
     fontWeight: '700',
-    fontFamily: 'Poppins-Bold' },
+    fontFamily: 'Poppins-Bold',
+  },
   currentBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -978,35 +928,42 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.xl,
-    gap: Spacing.xs },
+    gap: Spacing.xs,
+  },
   currentBadgeText: {
     color: colors.text.inverse,
     fontSize: 12,
     fontWeight: '600',
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   planBody: {
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'center',
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   currency: {
     fontSize: 24,
     fontWeight: '700',
     color: colors.nileBlue,
     marginTop: Spacing.sm,
-    fontFamily: 'Poppins-Bold' },
+    fontFamily: 'Poppins-Bold',
+  },
   price: {
     fontSize: 48,
     fontWeight: '800',
     color: colors.nileBlue,
-    fontFamily: 'Poppins-Bold' },
+    fontFamily: 'Poppins-Bold',
+  },
   period: {
     fontSize: 16,
     color: colors.text.tertiary,
     marginTop: Spacing.xl,
-    fontFamily: 'Inter-Regular' },
+    fontFamily: 'Inter-Regular',
+  },
   savingsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1017,18 +974,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.xl,
-    alignSelf: 'center' },
+    alignSelf: 'center',
+  },
   yearlyNote: {
     fontSize: 13,
     color: Colors.gold,
     fontWeight: '600',
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   featuresContainer: {
-    marginVertical: Spacing.lg },
+    marginVertical: Spacing.lg,
+  },
   featureRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 14 },
+    marginBottom: 14,
+  },
   featureIcon: {
     width: 24,
     height: 24,
@@ -1036,30 +997,37 @@ const styles = StyleSheet.create({
     backgroundColor: colors.text.tertiary,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12 },
+    marginRight: 12,
+  },
   featureIconActive: {
-    backgroundColor: Colors.gold },
+    backgroundColor: Colors.gold,
+  },
   featureText: {
     fontSize: 14,
     color: colors.text.secondary,
     flex: 1,
-    fontFamily: 'Inter-Regular' },
+    fontFamily: 'Inter-Regular',
+  },
   featureTextDisabled: {
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   upgradeButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: Spacing.base,
     borderRadius: 14,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   upgradeButtonText: {
     color: colors.text.inverse,
     fontSize: 16,
     fontWeight: '700',
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   vipButtonText: {
-    color: colors.nileBlue },
+    color: colors.nileBlue,
+  },
   activeButton: {
     flexDirection: 'row',
     backgroundColor: Colors.goldLight,
@@ -1069,24 +1037,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: Spacing.sm,
     borderWidth: 1,
-    borderColor: 'rgba(0, 192, 106, 0.2)' },
+    borderColor: 'rgba(0, 192, 106, 0.2)',
+  },
   activeButtonText: {
     color: Colors.gold,
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   freeButton: {
     backgroundColor: 'rgba(156, 163, 175, 0.1)',
     paddingVertical: Spacing.base,
     borderRadius: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(156, 163, 175, 0.2)' },
+    borderColor: 'rgba(156, 163, 175, 0.2)',
+  },
   freeButtonText: {
     color: colors.text.tertiary,
     fontSize: 16,
     fontWeight: '600',
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   comparisonSection: {
     margin: Spacing.lg,
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
@@ -1099,65 +1071,82 @@ const styles = StyleSheet.create({
         shadowColor: colors.nileBlue,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.08,
-        shadowRadius: 12 },
+        shadowRadius: 12,
+      },
       android: {
-        elevation: 4 },
+        elevation: 4,
+      },
       web: {
-        boxShadow: '0 4px 12px rgba(11, 34, 64, 0.08)' } }) },
+        boxShadow: '0 4px 12px rgba(11, 34, 64, 0.08)',
+      },
+    }),
+  },
   comparisonHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   comparisonTitle: {
     fontSize: 18,
     fontWeight: '700',
     color: colors.nileBlue,
-    fontFamily: 'Poppins-Bold' },
+    fontFamily: 'Poppins-Bold',
+  },
   comparisonTable: {
     borderRadius: BorderRadius.md,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   comparisonTableHeader: {
     flexDirection: 'row',
     backgroundColor: Colors.goldLight,
     paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.sm },
+    paddingHorizontal: Spacing.sm,
+  },
   comparisonHeaderText: {
     flex: 1,
     fontSize: 12,
     fontWeight: '700',
     color: colors.nileBlue,
     textAlign: 'center',
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   comparisonRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 14,
     paddingHorizontal: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(0, 0, 0, 0.05)' },
+    borderBottomColor: 'rgba(0, 0, 0, 0.05)',
+  },
   comparisonRowAlt: {
-    backgroundColor: 'rgba(0, 0, 0, 0.02)' },
+    backgroundColor: 'rgba(0, 0, 0, 0.02)',
+  },
   comparisonFeature: {
     flex: 1,
     fontSize: 13,
     color: colors.text.secondary,
-    fontFamily: 'Inter-Regular' },
+    fontFamily: 'Inter-Regular',
+  },
   comparisonCell: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center' },
+    justifyContent: 'center',
+  },
   comparisonValue: {
     fontSize: 14,
     fontWeight: '700',
     color: colors.nileBlue,
-    fontFamily: 'Inter-SemiBold' },
+    fontFamily: 'Inter-SemiBold',
+  },
   checkIcon: {
     width: 22,
     height: 22,
     borderRadius: 11,
     backgroundColor: Colors.success,
     justifyContent: 'center',
-    alignItems: 'center' } });
+    alignItems: 'center',
+  },
+});
 
 export default withErrorBoundary(SubscriptionPlansPage, 'SubscriptionPlans');

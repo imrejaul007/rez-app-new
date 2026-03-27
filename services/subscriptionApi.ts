@@ -155,7 +155,7 @@ class SubscriptionAPI {
       const response = await apiClient.post<any>('/subscriptions/upgrade/initiate', {
         newTier,
         billingCycle,
-        paymentGateway: paymentGateway || 'stripe',
+        paymentGateway: paymentGateway || 'razorpay',
       });
       return response.data;
     } catch (error: any) {

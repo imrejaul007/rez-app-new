@@ -28,12 +28,6 @@ export const lazyRazorpayService = () =>
 export const lazyRazorpayApi = () =>
   import('@/services/razorpayApi').then(module => module.default || module);
 
-export const lazyStripeApi = () =>
-  import('@/services/stripeApi').then(module => module.default || module);
-
-export const lazyStripeReactNativeService = () =>
-  import('@/services/stripeReactNativeService').then(module => module.default || module);
-
 export const lazyPaymentOrchestratorService = () =>
   import('@/services/paymentOrchestratorService').then(module => module.default || module);
 
@@ -348,7 +342,6 @@ export async function preloadServicesByCategory(
   const serviceMap: Record<string, (() => Promise<any>)[]> = {
     payment: [
       lazyRazorpayService,
-      lazyStripeApi,
       lazyPaymentService,
     ],
     video: [
@@ -392,7 +385,6 @@ export default {
   // Payment
   lazyRazorpayService,
   lazyRazorpayApi,
-  lazyStripeApi,
   lazyPaymentOrchestratorService,
   lazyPaymentService,
 

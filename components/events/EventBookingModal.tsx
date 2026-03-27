@@ -17,45 +17,12 @@ import { ThemedView } from '@/components/ThemedView';
 import { useThemeColor } from '@/hooks/useThemeColor';
 import { EventItem } from '@/types/homepage.types';
 import { useEventBooking, BookingFormData } from '@/hooks/useEventBooking';
-import { useAuthUser, useGetCurrency, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import eventsApiService from '@/services/eventsApi';
-import stripeApi from '@/services/stripeApi';
+import { useAuthUser, useGetCurrency, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import eventAnalytics from '@/services/eventAnalytics';
 import { useRouter } from 'expo-router';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-// Conditional import for native Stripe service
-let stripeReactNativeService: any = null;
-if (Platform.OS !== 'web') {
-  try {
-    stripeReactNativeService = require('@/services/stripeReactNativeService').default;
-  } catch (e) {
-    // silently handle
-  }
-}
-// Conditional import for web Stripe Elements
-let StripeElements: any = null;
-let loadStripe: any = null;
-let useStripe: any = null;
-let useElements: any = null;
-let CardNumberElement: any = null;
-let CardExpiryElement: any = null;
-let CardCvcElement: any = null;
-if (Platform.OS === 'web') {
-  try {
-    const stripeReact = require('@stripe/react-stripe-js');
-    const stripeJs = require('@stripe/stripe-js');
-    StripeElements = stripeReact.Elements;
-    loadStripe = stripeJs.loadStripe;
-    useStripe = stripeReact.useStripe;
-    useElements = stripeReact.useElements;
-    CardNumberElement = stripeReact.CardNumberElement;
-    CardExpiryElement = stripeReact.CardExpiryElement;
-    CardCvcElement = stripeReact.CardCvcElement;
-  } catch (e) {
-    // silently handle
-  }
-}
 
 interface EventBookingModalProps {
   visible: boolean;
@@ -65,207 +32,6 @@ interface EventBookingModalProps {
   initialSelectedSlot?: string | null; // Slot ID selected on EventPage
 }
 
-// Web Payment Form Component (only rendered on web)
-function WebPaymentForm({ 
-  clientSecret, 
-  amount, 
-  currency,
-  onSuccess, 
-  onError 
-}: { 
-  clientSecret: string; 
-  amount: number; 
-  currency: string;
-  onSuccess: (paymentIntentId: string) => void; 
-  onError: (error: string) => void;
-}) {
-  if (Platform.OS !== 'web' || !useStripe || !useElements) {
-    return null;
-  }
-
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [cardError, setCardError] = useState<string>('');
-  const isMounted = useIsMounted();
-
-  const handlePayment = async () => {
-    if (!stripe || !elements) {
-      onError('Stripe.js has not loaded yet. Please try again.');
-      return;
-    }
-
-    const cardNumberElement = elements.getElement(CardNumberElement);
-    if (!cardNumberElement) {
-      onError('Card input not found. Please refresh and try again.');
-      return;
-    }
-
-    setIsProcessing(true);
-    setCardError('');
-
-    try {
-      // First, create a payment method with all card details
-      const { error: pmError, paymentMethod } = await stripe.createPaymentMethod({
-        type: 'card',
-        card: cardNumberElement,
-      });
-
-      if (pmError) {
-        const errorMessage = pmError.message || 'Failed to process card details';
-        if (!isMounted()) return;
-        setCardError(errorMessage);
-        onError(errorMessage);
-        setIsProcessing(false);
-        return;
-      }
-
-      if (!paymentMethod) {
-        setCardError('Failed to create payment method');
-        onError('Failed to create payment method');
-        setIsProcessing(false);
-        return;
-      }
-
-      // Then, confirm the payment with the payment method
-      const { error: confirmError, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
-        payment_method: paymentMethod.id,
-      });
-
-      if (confirmError) {
-        const errorMessage = confirmError.message || 'Payment failed';
-        if (!isMounted()) return;
-        setCardError(errorMessage);
-        onError(errorMessage);
-      } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-        onSuccess(paymentIntent.id);
-      } else {
-        onError('Payment was not completed');
-      }
-    } catch (error: any) {
-      const errorMessage = error.message || 'Payment failed';
-      if (!isMounted()) return;
-      setCardError(errorMessage);
-      onError(errorMessage);
-    } finally {
-      if (!isMounted()) return;
-      setIsProcessing(false);
-    }
-  };
-
-  const textColor = colors.neutral[900];
-  const tintColor = colors.brand.purpleLight;
-  const placeholderColor = colors.neutral[400];
-
-  const cardElementOptions = {
-    style: {
-      base: {
-        fontSize: '16px',
-        color: colors.neutral[900],
-        '::placeholder': { color: colors.neutral[400] },
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-      },
-      invalid: {
-        color: colors.error,
-        iconColor: colors.error,
-      },
-    },
-  };
-
-  return (
-    <View style={styles.paymentSection}>
-      <ThemedText style={[styles.paymentTitle, { color: textColor }]}>
-        Payment Details
-      </ThemedText>
-
-      {/* Card Number */}
-      <View style={styles.paymentFieldGroup}>
-        <ThemedText style={[styles.paymentFieldLabel, { color: placeholderColor }]}>
-          Card Number
-        </ThemedText>
-        <View style={{ 
-          borderWidth: 1, 
-          borderColor: cardError ? colors.error : colors.neutral[200], 
-          borderRadius: 8, 
-          padding: 15, 
-          backgroundColor: colors.background.primary,
-          minHeight: 50
-        }}>
-          {CardNumberElement && (
-            <CardNumberElement options={cardElementOptions} />
-          )}
-        </View>
-      </View>
-
-      {/* Expiry and CVC Row */}
-      <View style={styles.paymentRow}>
-        <View style={styles.paymentRowItem}>
-          <ThemedText style={[styles.paymentFieldLabel, { color: placeholderColor }]}>
-            Expiry Date
-          </ThemedText>
-          <View style={{ 
-            borderWidth: 1, 
-            borderColor: cardError ? colors.error : colors.neutral[200], 
-            borderRadius: 8, 
-            padding: 15, 
-            backgroundColor: colors.background.primary,
-            minHeight: 50
-          }}>
-            {CardExpiryElement && (
-              <CardExpiryElement options={cardElementOptions} />
-            )}
-          </View>
-        </View>
-        
-        <View style={styles.paymentRowItem}>
-          <ThemedText style={[styles.paymentFieldLabel, { color: placeholderColor }]}>
-            CVC
-          </ThemedText>
-          <View style={{ 
-            borderWidth: 1, 
-            borderColor: cardError ? colors.error : colors.neutral[200], 
-            borderRadius: 8, 
-            padding: 15, 
-            backgroundColor: colors.background.primary,
-            minHeight: 50
-          }}>
-            {CardCvcElement && (
-              <CardCvcElement options={cardElementOptions} />
-            )}
-          </View>
-        </View>
-      </View>
-
-      {cardError && (
-        <View style={styles.cardErrorBox}>
-          <ThemedText style={styles.cardErrorText}>
-            {cardError}
-          </ThemedText>
-        </View>
-      )}
-
-      <Pressable
-        style={{
-          backgroundColor: tintColor,
-          padding: 15,
-          borderRadius: 8,
-          alignItems: 'center',
-          opacity: isProcessing ? 0.6 : 1,
-        }}
-        onPress={handlePayment}
-        disabled={isProcessing}
-      >
-        {isProcessing ? (
-          <ActivityIndicator color={colors.background.primary} />
-        ) : (
-          <ThemedText style={styles.payBtnText}>
-            Pay {currency}{amount}
-          </ThemedText>
-        )}
-      </Pressable>
-    </View>
-  );
-}
 
 function EventBookingModal({
   visible,
@@ -297,10 +63,6 @@ function EventBookingModal({
     phone?: boolean;
     age?: boolean;
   }>({});
-  const [showPaymentForm, setShowPaymentForm] = useState(false);
-  const [paymentClientSecret, setPaymentClientSecret] = useState<string | null>(null);
-  const [paymentBookingId, setPaymentBookingId] = useState<string | null>(null);
-  const [stripePromise, setStripePromise] = useState<any>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successData, setSuccessData] = useState<{
     bookingId: string;
@@ -314,7 +76,7 @@ function EventBookingModal({
   const getCurrencySymbol = useGetCurrencySymbol();
   const getCurrency = useGetCurrency();
   const currencySymbol = getCurrencySymbol();
-  const currencyCode = getCurrency().toLowerCase(); // For Stripe (e.g., 'inr', 'aed')
+  const currencyCode = getCurrency().toLowerCase();
 
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
@@ -524,97 +286,13 @@ function EventBookingModal({
       // Track payment start
       eventAnalytics.trackPaymentStart(event.id, event.price.amount, bookingId, 'booking_modal');
 
-      // Use payment data from backend response (if available)
-      if (!bookingResult.payment) {
-        throw new Error('Payment information not available. Please try again.');
-      }
-
-      const paymentData = bookingResult.payment;
-
-      // Process payment based on platform
-      let paymentSuccess = false;
-      
-      if (Platform.OS === 'web') {
-        // Web: Use Stripe Elements for payment
-        if (!paymentData.clientSecret) {
-          throw new Error('Payment client secret not available');
-        }
-
-        // Load Stripe for web
-        if (loadStripe) {
-          const publishableKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-          if (!publishableKey) {
-            throw new Error('Stripe publishable key not configured');
-          }
-          
-          const stripe = await loadStripe(publishableKey);
-          if (!isMounted()) return;
-          setStripePromise(stripe);
-          setPaymentClientSecret(paymentData.clientSecret);
-          setPaymentBookingId(bookingId);
-          setShowPaymentForm(true);
-          
-          // Don't mark as success yet - wait for payment completion
-          setIsProcessingPayment(false);
-          return; // Exit early, payment form will handle completion
-        } else {
-          throw new Error('Stripe Elements not available');
-        }
-      } else {
-        // Native: Use Payment Sheet
-        if (!stripeReactNativeService) {
-          throw new Error('Payment service not available on this platform');
-        }
-        
-        if (!paymentData.clientSecret) {
-          throw new Error('Payment client secret not available');
-        }
-
-        const paymentResult = await stripeReactNativeService.presentPaymentSheet(
-          {
-            id: paymentData.paymentIntentId || '',
-            clientSecret: paymentData.clientSecret,
-            amount: event.price.amount * 100, // Convert to cents
-            currency: event.price.currency?.toLowerCase() || currencyCode,
-            status: 'requires_payment_method',
-            paymentMethodTypes: ['card'],
-          },
-          {
-            name: formData.attendeeInfo.name,
-            email: formData.attendeeInfo.email,
-            phone: formData.attendeeInfo.phone,
-          }
-        );
-
-        paymentSuccess = paymentResult?.success || false;
-      }
-
-      if (paymentSuccess) {
-        // Track payment completion
-        const paymentIntentId = paymentData.paymentIntentId || paymentData.sessionId || '';
-        eventAnalytics.trackPaymentComplete(event.id, paymentIntentId, event.price.amount, bookingId, 'booking_modal');
-        
-        // Immediately confirm booking after payment succeeds
-        try {
-          await eventsApiService.confirmBooking(bookingId, paymentIntentId);
-        } catch (confirmError) {
-          // Continue anyway - webhook will handle it as backup
-        }
-
-        // Track booking completion
-        eventAnalytics.trackBookingComplete(event.id, bookingId, selectedSlot || undefined, 'booking_modal');
-
-        showAlert(
-          'Booking Confirmed!',
-          `Your booking for "${event.title}" has been confirmed. Payment successful!`,
-          [{ text: 'OK', onPress: () => {
-            onBookingSuccess?.(bookingId);
-            onClose();
-          }}]
-        );
-      } else {
-        throw new Error('Payment was not completed');
-      }
+      // Redirect to Razorpay payment page to complete payment
+      if (!isMounted()) return;
+      setIsProcessingPayment(false);
+      onClose();
+      router.push(
+        `/payment-razorpay?bookingId=${bookingId}&bookingType=event&amount=${event.price.amount}&currency=${event.price.currency || 'INR'}` as any
+      );
     } catch (error) {
       
       // Track payment failure
@@ -878,55 +556,10 @@ function EventBookingModal({
             </View>
           </View>
 
-          {/* Payment Form (Web only) */}
-          {Platform.OS === 'web' && showPaymentForm && paymentClientSecret && stripePromise && StripeElements && (
-            <View style={styles.section}>
-              <ThemedText style={[styles.sectionTitle, { color: textColor }]}>
-                Complete Payment
-              </ThemedText>
-              <StripeElements stripe={stripePromise} options={{ clientSecret: paymentClientSecret }}>
-                <WebPaymentForm
-                  clientSecret={paymentClientSecret}
-                  amount={event.price.amount}
-                  currency={event.price.currency}
-                  onSuccess={async (paymentIntentId: string) => {
-                    // Payment successful
-                    const bookingId = paymentBookingId || '';
-                    eventAnalytics.trackPaymentComplete(event.id, paymentIntentId, event.price.amount, bookingId, 'booking_modal');
-                    
-                    // Immediately confirm booking after payment succeeds
-                    try {
-                      await eventsApiService.confirmBooking(bookingId, paymentIntentId);
-                    } catch (confirmError) {
-                      // Continue anyway - webhook will handle it as backup
-                    }
-                    
-                    eventAnalytics.trackBookingComplete(event.id, bookingId, selectedSlot || undefined, 'booking_modal');
-                    
-                    // Show success modal
-                    if (!isMounted()) return;
-                    setSuccessData({
-                      bookingId,
-                      paymentIntentId,
-                      bookingReference: bookingResultData?.booking?.bookingReference
-                    });
-                    if (!isMounted()) return;
-                    setShowSuccessModal(true);
-                    setShowPaymentForm(false);
-                  }}
-                  onError={(error: string) => {
-                    eventAnalytics.trackPaymentFailed(event.id, error, event.price.amount, paymentBookingId || '', 'booking_modal');
-                    showAlert('Payment Failed', error, [{ text: 'OK' }]);
-                  }}
-                />
-              </StripeElements>
-            </View>
-          )}
         </ScrollView>
 
         {/* Footer */}
-        {!showPaymentForm && (
-          <View style={[styles.footer, { backgroundColor: cardBackground, borderTopColor: borderColor }]}>
+        <View style={[styles.footer, { backgroundColor: cardBackground, borderTopColor: borderColor }]}>
             <Pressable
               style={[
                 styles.bookButton,
@@ -949,7 +582,6 @@ function EventBookingModal({
               )}
           </Pressable>
         </View>
-        )}
       </KeyboardAvoidingView>
 
       {/* Success Modal */}

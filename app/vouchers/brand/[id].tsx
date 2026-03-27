@@ -3,7 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Voucher Brand Detail Page
  *
  * Shows gift card brand details with denomination selection and purchase flow.
- * Supports wallet and Stripe card payment.
+ * Supports wallet payment.
  * Data source: realVouchersApi.getVoucherBrandById(id)
  */
 
@@ -23,21 +23,13 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Elements } from '@stripe/react-stripe-js';
-import { getStripePromise } from '@/utils/lazyImports';
 import realVouchersApi from '@/services/realVouchersApi';
 import apiClient from '@/services/apiClient';
 import { useGetCurrencySymbol, useRefreshWallet } from '@/stores/selectors';
-import { StripeCardForm } from '@/components/payment';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-
-// Initialize Stripe lazily — only if key is configured
-const stripeKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-if (__DEV__ && !stripeKey) console.warn('[Vouchers] EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY missing — card payments disabled');
-const stripePromise = stripeKey ? getStripePromise(stripeKey) : null;
 
 interface VoucherBrand {
   _id: string;
@@ -56,7 +48,7 @@ interface VoucherBrand {
   purchaseCount: number;
 }
 
-type PaymentMethod = 'card' | 'wallet';
+type PaymentMethod = 'wallet';
 
 const COLORS = {
   white: colors.background.primary,
@@ -86,13 +78,9 @@ function VoucherBrandDetailPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isPurchasing, setIsPurchasing] = useState(false);
   const [selectedDenomination, setSelectedDenomination] = useState<number | null>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(stripeKey ? 'card' : 'wallet');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('wallet');
   const [showTerms, setShowTerms] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // Stripe payment state
-  const [showStripeModal, setShowStripeModal] = useState(false);
-  const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null);
 
   // Cross-platform confirm/result modal
   const [confirmModal, setConfirmModal] = useState<{
@@ -144,7 +132,7 @@ function VoucherBrandDetailPage() {
   const executeWalletPurchase = useCallback(async () => {
     if (!brand || !selectedDenomination) return;
 
-    setConfirmModal(prev => ({ ...prev, visible: false }));
+    setConfirmModal((prev) => ({ ...prev, visible: false }));
     setIsPurchasing(true);
 
     try {
@@ -197,117 +185,19 @@ function VoucherBrandDetailPage() {
       return;
     }
 
-    if (paymentMethod === 'card') {
-      // Card payment: create PaymentIntent, show Stripe form
-      setIsPurchasing(true);
-      try {
-        const response = await realVouchersApi.purchaseVoucher({
-          brandId: brand._id,
-          denomination: selectedDenomination,
-          paymentMethod: 'card',
-        });
-
-        if (response.success && response.data?.clientSecret) {
-          if (!isMounted()) return;
-          setStripeClientSecret(response.data.clientSecret);
-          if (!isMounted()) return;
-          setShowStripeModal(true);
-        } else {
-          if (!isMounted()) return;
-          setConfirmModal({
-            visible: true,
-            title: 'Payment Error',
-            message: (response as any).error || 'Failed to initiate card payment.',
-            type: 'error',
-          });
-        }
-      } catch (err: any) {
-        if (!isMounted()) return;
-        setConfirmModal({
-          visible: true,
-          title: 'Payment Error',
-          message: err?.message || 'Failed to initiate card payment.',
-          type: 'error',
-        });
-      } finally {
-        if (!isMounted()) return;
-        setIsPurchasing(false);
-      }
-    } else {
-      // Wallet payment: show confirm modal
-      if (!isMounted()) return;
-      setConfirmModal({
-        visible: true,
-        title: 'Buy Gift Card',
-        message: `Purchase ${brand.name} gift card worth ${currencySymbol}${selectedDenomination.toLocaleString()} from your wallet?\n\nYou'll earn ${currencySymbol}${Math.round(selectedDenomination * (brand.cashbackRate / 100)).toLocaleString()} cashback!`,
-        type: 'confirm',
-        onConfirm: () => executeWalletPurchase(),
-      });
-    }
-  }, [brand, selectedDenomination, paymentMethod, currencySymbol, executeWalletPurchase]);
-
-  const handleStripeSuccess = useCallback(async (paymentIntentId: string) => {
-    setShowStripeModal(false);
-    setIsPurchasing(true);
-
-    try {
-      const confirmResponse = await apiClient.post('/vouchers/confirm-card-purchase', {
-        paymentIntentId,
-      });
-
-      if (confirmResponse.success) {
-        if (!isMounted()) return;
-        refreshWallet().catch(() => {});
-        setConfirmModal({
-          visible: true,
-          title: 'Purchase Successful!',
-          message: `Your ${brand?.name} gift card has been purchased. Check your vouchers in Account.`,
-          type: 'success',
-        });
-      } else {
-        if (!isMounted()) return;
-        setConfirmModal({
-          visible: true,
-          title: 'Confirmation Failed',
-          message: (confirmResponse as any).error || 'Payment succeeded but voucher creation failed. Please contact support.',
-          type: 'error',
-        });
-      }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setConfirmModal({
-        visible: true,
-        title: 'Confirmation Error',
-        message: err?.message || 'Payment succeeded but confirmation failed. Please contact support.',
-        type: 'error',
-      });
-    } finally {
-      if (!isMounted()) return;
-      setIsPurchasing(false);
-      if (!isMounted()) return;
-      setStripeClientSecret(null);
-    }
-  }, [brand]);
-
-  const handleStripeError = useCallback((errorMessage: string) => {
-    setShowStripeModal(false);
-    setStripeClientSecret(null);
+    // Wallet payment: show confirm modal
+    if (!isMounted()) return;
     setConfirmModal({
       visible: true,
-      title: 'Payment Failed',
-      message: errorMessage || 'Card payment failed. Please try again.',
-      type: 'error',
+      title: 'Buy Gift Card',
+      message: `Purchase ${brand.name} gift card worth ${currencySymbol}${selectedDenomination.toLocaleString()} from your wallet?\n\nYou'll earn ${currencySymbol}${Math.round(selectedDenomination * (brand.cashbackRate / 100)).toLocaleString()} cashback!`,
+      type: 'confirm',
+      onConfirm: () => executeWalletPurchase(),
     });
-  }, []);
+  }, [brand, selectedDenomination, currencySymbol, executeWalletPurchase]);
 
-  const handleStripeCancel = useCallback(() => {
-    setShowStripeModal(false);
-    setStripeClientSecret(null);
-  }, []);
-
-  const cashbackAmount = selectedDenomination && brand
-    ? Math.round(selectedDenomination * (brand.cashbackRate / 100))
-    : 0;
+  const cashbackAmount =
+    selectedDenomination && brand ? Math.round(selectedDenomination * (brand.cashbackRate / 100)) : 0;
 
   const brandGradient = brand?.backgroundColor
     ? [brand.backgroundColor, adjustColor(brand.backgroundColor, -20)]
@@ -325,7 +215,10 @@ function VoucherBrandDetailPage() {
         <Pressable style={styles.retryButton} onPress={fetchBrand}>
           <Text style={styles.retryText}>Try Again</Text>
         </Pressable>
-        <Pressable style={styles.backLink} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backLink}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Text style={styles.backLinkText}>Go Back</Text>
         </Pressable>
       </View>
@@ -336,27 +229,25 @@ function VoucherBrandDetailPage() {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.headerBackButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.headerBackButton}
+        >
           <Ionicons name="arrow-back" size={24} color={COLORS.navy} />
         </Pressable>
-        <Text style={styles.headerTitle} numberOfLines={1}>{brand.name}</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          {brand.name}
+        </Text>
         <View style={{ width: 40 }} />
       </View>
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[COLORS.peach]} />
-        }
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[COLORS.peach]} />}
       >
         {/* Brand Hero */}
-        <LinearGradient
-          colors={brandGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.heroSection}
-        >
+        <LinearGradient colors={brandGradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.heroSection}>
           <View style={styles.heroDecoCircle1} />
           <View style={styles.heroDecoCircle2} />
 
@@ -423,63 +314,20 @@ function VoucherBrandDetailPage() {
                   key={denom}
                   style={[styles.denomCard, isSelected && styles.denomCardSelected]}
                   onPress={() => setSelectedDenomination(denom)}
-                 
                 >
                   <Text style={[styles.denomAmount, isSelected && styles.denomAmountSelected]}>
-                    {currencySymbol}{denom.toLocaleString()}
+                    {currencySymbol}
+                    {denom.toLocaleString()}
                   </Text>
                   <Text style={[styles.denomCashback, isSelected && styles.denomCashbackSelected]}>
-                    Earn {currencySymbol}{Math.round(denom * (brand.cashbackRate / 100))}
+                    Earn {currencySymbol}
+                    {Math.round(denom * (brand.cashbackRate / 100))}
                   </Text>
                 </Pressable>
               );
             })}
           </View>
         </View>
-
-        {/* Payment Method Selector */}
-        {selectedDenomination && (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Payment Method</Text>
-            <View style={styles.paymentMethodRow}>
-              <Pressable
-                style={[styles.paymentMethodCard, paymentMethod === 'card' && styles.paymentMethodCardSelected]}
-                onPress={() => setPaymentMethod('card')}
-               
-              >
-                <View style={[styles.paymentMethodIcon, paymentMethod === 'card' && { backgroundColor: colors.tint.purple }]}>
-                  <Ionicons name="card" size={20} color={paymentMethod === 'card' ? COLORS.purple : COLORS.gray500} />
-                </View>
-                <Text style={[styles.paymentMethodLabel, paymentMethod === 'card' && styles.paymentMethodLabelSelected]}>
-                  Card
-                </Text>
-                {paymentMethod === 'card' && (
-                  <View style={styles.paymentMethodCheck}>
-                    <Ionicons name="checkmark-circle" size={18} color={COLORS.purple} />
-                  </View>
-                )}
-              </Pressable>
-
-              <Pressable
-                style={[styles.paymentMethodCard, paymentMethod === 'wallet' && styles.paymentMethodWalletSelected]}
-                onPress={() => setPaymentMethod('wallet')}
-               
-              >
-                <View style={[styles.paymentMethodIcon, paymentMethod === 'wallet' && { backgroundColor: colors.tint.greenLight }]}>
-                  <Ionicons name="wallet" size={20} color={paymentMethod === 'wallet' ? COLORS.green : COLORS.gray500} />
-                </View>
-                <Text style={[styles.paymentMethodLabel, paymentMethod === 'wallet' && styles.paymentMethodLabelSelected]}>
-                  Wallet
-                </Text>
-                {paymentMethod === 'wallet' && (
-                  <View style={styles.paymentMethodCheck}>
-                    <Ionicons name="checkmark-circle" size={18} color={COLORS.green} />
-                  </View>
-                )}
-              </Pressable>
-            </View>
-          </View>
-        )}
 
         {/* Order Summary */}
         {selectedDenomination && (
@@ -488,11 +336,17 @@ function VoucherBrandDetailPage() {
             <View style={styles.summaryCard}>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>Gift Card Value</Text>
-                <Text style={styles.summaryValue}>{currencySymbol}{selectedDenomination.toLocaleString()}</Text>
+                <Text style={styles.summaryValue}>
+                  {currencySymbol}
+                  {selectedDenomination.toLocaleString()}
+                </Text>
               </View>
               <View style={styles.summaryRow}>
                 <Text style={styles.summaryLabel}>You Pay</Text>
-                <Text style={styles.summaryValue}>{currencySymbol}{selectedDenomination.toLocaleString()}</Text>
+                <Text style={styles.summaryValue}>
+                  {currencySymbol}
+                  {selectedDenomination.toLocaleString()}
+                </Text>
               </View>
               <View style={styles.summaryDivider} />
               <View style={styles.summaryRow}>
@@ -500,12 +354,16 @@ function VoucherBrandDetailPage() {
                   <Ionicons name="gift" size={14} color={COLORS.green} />
                   <Text style={styles.cashbackLabel}>Cashback ({brand.cashbackRate}%)</Text>
                 </View>
-                <Text style={styles.cashbackValueText}>+ {currencySymbol}{cashbackAmount.toLocaleString()}</Text>
+                <Text style={styles.cashbackValueText}>
+                  + {currencySymbol}
+                  {cashbackAmount.toLocaleString()}
+                </Text>
               </View>
               <View style={styles.effectiveCostRow}>
                 <Text style={styles.effectiveCostLabel}>Effective Cost</Text>
                 <Text style={styles.effectiveCostValue}>
-                  {currencySymbol}{(selectedDenomination - cashbackAmount).toLocaleString()}
+                  {currencySymbol}
+                  {(selectedDenomination - cashbackAmount).toLocaleString()}
                 </Text>
               </View>
             </View>
@@ -515,17 +373,9 @@ function VoucherBrandDetailPage() {
         {/* Terms & Conditions */}
         {brand.termsAndConditions?.length > 0 && (
           <View style={styles.section}>
-            <Pressable
-              style={styles.termsHeader}
-              onPress={() => setShowTerms(!showTerms)}
-             
-            >
+            <Pressable style={styles.termsHeader} onPress={() => setShowTerms(!showTerms)}>
               <Text style={styles.sectionTitle}>Terms & Conditions</Text>
-              <Ionicons
-                name={showTerms ? 'chevron-up' : 'chevron-down'}
-                size={20}
-                color={COLORS.navy}
-              />
+              <Ionicons name={showTerms ? 'chevron-up' : 'chevron-down'} size={20} color={COLORS.navy} />
             </Pressable>
             {showTerms && (
               <View style={styles.termsContent}>
@@ -549,12 +399,11 @@ function VoucherBrandDetailPage() {
           style={[styles.buyButton, (!selectedDenomination || isPurchasing) && styles.buyButtonDisabled]}
           onPress={handlePurchase}
           disabled={!selectedDenomination || isPurchasing}
-         
         >
           <LinearGradient
-            colors={selectedDenomination
-              ? (paymentMethod === 'card' ? [colors.brand.purpleSoft, COLORS.purple] : [colors.successScale[400], Colors.success])
-              : [COLORS.gray200, COLORS.gray200]}
+            colors={
+              selectedDenomination ? [colors.successScale[400], Colors.success] : [COLORS.gray200, COLORS.gray200]
+            }
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.buyButtonGradient}
@@ -563,14 +412,10 @@ function VoucherBrandDetailPage() {
               <ActivityIndicator size="small" color={COLORS.white} />
             ) : (
               <>
-                <Ionicons
-                  name={paymentMethod === 'card' ? 'card' : 'wallet'}
-                  size={20}
-                  color={COLORS.white}
-                />
+                <Ionicons name="wallet" size={20} color={COLORS.white} />
                 <Text style={styles.buyButtonText}>
                   {selectedDenomination
-                    ? `Pay ${currencySymbol}${selectedDenomination.toLocaleString()} via ${paymentMethod === 'card' ? 'Card' : 'Wallet'}`
+                    ? `Pay ${currencySymbol}${selectedDenomination.toLocaleString()} via Wallet`
                     : 'Select an Amount'}
                 </Text>
               </>
@@ -579,46 +424,6 @@ function VoucherBrandDetailPage() {
         </Pressable>
       </View>
 
-      {/* Stripe Card Payment Modal */}
-      <Modal
-        visible={showStripeModal}
-        transparent
-        animationType="slide"
-        onRequestClose={handleStripeCancel}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {stripeClientSecret && (
-              <Elements
-                stripe={stripePromise}
-                options={{
-                  clientSecret: stripeClientSecret,
-                  appearance: {
-                    theme: 'stripe',
-                    variables: {
-                      colorPrimary: COLORS.purple,
-                      colorBackground: colors.background.primary,
-                      colorText: COLORS.navy,
-                      colorDanger: Colors.error,
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                      borderRadius: '12px',
-                    },
-                  },
-                }}
-              >
-                <StripeCardForm
-                  clientSecret={stripeClientSecret}
-                  amount={selectedDenomination || 0}
-                  onSuccess={handleStripeSuccess}
-                  onError={handleStripeError}
-                  onCancel={handleStripeCancel}
-                />
-              </Elements>
-            )}
-          </View>
-        </View>
-      </Modal>
-
       {/* Cross-platform Confirm / Success / Error Modal */}
       <Modal
         visible={confirmModal.visible}
@@ -626,33 +431,39 @@ function VoucherBrandDetailPage() {
         animationType="fade"
         onRequestClose={() => {
           if (confirmModal.type === 'success') {
-            setConfirmModal(prev => ({ ...prev, visible: false }));
+            setConfirmModal((prev) => ({ ...prev, visible: false }));
             router.canGoBack() ? router.back() : router.replace('/(tabs)');
           } else {
-            setConfirmModal(prev => ({ ...prev, visible: false }));
+            setConfirmModal((prev) => ({ ...prev, visible: false }));
           }
         }}
       >
         <View style={styles.alertOverlay}>
           <View style={styles.alertBox}>
             {/* Icon */}
-            <View style={[
-              styles.alertIconCircle,
-              confirmModal.type === 'success' && styles.alertIconSuccess,
-              confirmModal.type === 'error' && styles.alertIconError,
-              confirmModal.type === 'confirm' && styles.alertIconConfirm,
-            ]}>
+            <View
+              style={[
+                styles.alertIconCircle,
+                confirmModal.type === 'success' && styles.alertIconSuccess,
+                confirmModal.type === 'error' && styles.alertIconError,
+                confirmModal.type === 'confirm' && styles.alertIconConfirm,
+              ]}
+            >
               <Ionicons
                 name={
-                  confirmModal.type === 'success' ? 'checkmark-circle' :
-                  confirmModal.type === 'error' ? 'close-circle' :
-                  'help-circle'
+                  confirmModal.type === 'success'
+                    ? 'checkmark-circle'
+                    : confirmModal.type === 'error'
+                      ? 'close-circle'
+                      : 'help-circle'
                 }
                 size={32}
                 color={
-                  confirmModal.type === 'success' ? COLORS.green :
-                  confirmModal.type === 'error' ? Colors.error :
-                  COLORS.navy
+                  confirmModal.type === 'success'
+                    ? COLORS.green
+                    : confirmModal.type === 'error'
+                      ? Colors.error
+                      : COLORS.navy
                 }
               />
             </View>
@@ -669,16 +480,11 @@ function VoucherBrandDetailPage() {
                 <>
                   <Pressable
                     style={styles.alertButtonCancel}
-                    onPress={() => setConfirmModal(prev => ({ ...prev, visible: false }))}
-                   
+                    onPress={() => setConfirmModal((prev) => ({ ...prev, visible: false }))}
                   >
                     <Text style={styles.alertButtonCancelText}>Cancel</Text>
                   </Pressable>
-                  <Pressable
-                    style={styles.alertButtonConfirm}
-                    onPress={() => confirmModal.onConfirm?.()}
-                   
-                  >
+                  <Pressable style={styles.alertButtonConfirm} onPress={() => confirmModal.onConfirm?.()}>
                     <LinearGradient
                       colors={[colors.successScale[400], Colors.success]}
                       start={{ x: 0, y: 0 }}
@@ -694,12 +500,11 @@ function VoucherBrandDetailPage() {
                 <Pressable
                   style={styles.alertButtonOk}
                   onPress={() => {
-                    setConfirmModal(prev => ({ ...prev, visible: false }));
+                    setConfirmModal((prev) => ({ ...prev, visible: false }));
                     if (confirmModal.type === 'success') {
                       router.canGoBack() ? router.back() : router.replace('/(tabs)');
                     }
                   }}
-                 
                 >
                   <Text style={styles.alertButtonOkText}>OK</Text>
                 </Pressable>
@@ -1127,8 +932,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: COLORS.white,
   },
-
-  // Stripe Modal
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',

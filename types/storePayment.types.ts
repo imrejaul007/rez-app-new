@@ -344,8 +344,6 @@ export interface StorePaymentInitResponse {
   offersApplied: string[];
   status: PaymentStatus;
   expiresAt: string;
-  // Stripe payment integration
-  clientSecret?: string;
 }
 
 export type PaymentStatus = 'INITIATED' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'EXPIRED';

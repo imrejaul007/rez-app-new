@@ -96,11 +96,6 @@ export const LazyKYCUploadModal = lazyLoad(
   { componentName: 'KYCUploadModal', fallback: <ModalLoader /> }
 );
 
-export const LazyStripePaymentModal = lazyLoad(
-  () => import('@/components/subscription/StripePaymentModal'),
-  { componentName: 'StripePaymentModal', fallback: <ModalLoader /> }
-);
-
 // ============================================================================
 // Subscription Modals
 // ============================================================================

@@ -266,7 +266,7 @@ function TopupModal({
               <View style={styles.infoText}>
                 <ThemedText style={styles.infoTitle}>Secure Payment</ThemedText>
                 <ThemedText style={styles.infoDescription}>
-                  Your payment is processed securely via Stripe. We never store your card details.
+                  Your payment is processed securely. We never store your card details.
                 </ThemedText>
               </View>
             </View>

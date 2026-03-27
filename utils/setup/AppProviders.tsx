@@ -43,17 +43,6 @@ import { CrossPlatformAlertRenderer } from '@/components/common/CrossPlatformAle
 import LocationRegionSync from '@/components/common/LocationRegionSync';
 import OfflineBanner from '@/components/common/OfflineBanner';
 
-// Stripe Provider — native only (web uses @stripe/stripe-js)
-let StripeProvider: React.ComponentType<any> | null = null;
-if (Platform.OS !== 'web') {
-  try {
-    StripeProvider = require('@stripe/stripe-react-native').StripeProvider;
-  } catch {
-    // @stripe/stripe-react-native not available
-  }
-}
-
-
 import {
   DeferredSocket,
   DeferredWallet,
@@ -149,8 +138,6 @@ function AppProviders({
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onQueueSyncError: _onQueueSyncError,
 }: AppProvidersProps) {
-  const stripeKey = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || '';
-
   const content = (
     <QueryClientProvider client={queryClient}>
     <ErrorBoundary onError={onErrorBoundaryError}>
@@ -173,19 +160,6 @@ function AppProviders({
     </ErrorBoundary>
     </QueryClientProvider>
   );
-
-  // Wrap with StripeProvider on native platforms only
-  if (StripeProvider && stripeKey) {
-    return (
-      <StripeProvider
-        publishableKey={stripeKey}
-        merchantIdentifier="merchant.com.rez.app"
-        urlScheme="rez"
-      >
-        {content}
-      </StripeProvider>
-    );
-  }
 
   return content;
 }

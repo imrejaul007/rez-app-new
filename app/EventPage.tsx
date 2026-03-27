@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState, useEffect, useRef } from "react";
+import React, { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import {
   Dimensions,
   Platform,
@@ -12,44 +12,32 @@ import {
   Linking,
   ImageBackground,
   SafeAreaView,
-  ActivityIndicator} from 'react-native';
-import Animated, {
-  useSharedValue,
-  withTiming,
-  interpolate,
-} from 'react-native-reanimated';
+  ActivityIndicator,
+} from 'react-native';
+import Animated, { useSharedValue, withTiming, interpolate } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
-import { showAlert, alertOk, confirmAlert } from "@/utils/alert";
-import { LinearGradient } from "expo-linear-gradient";
-import { useRouter, useLocalSearchParams, useFocusEffect, Stack } from "expo-router";
-import Constants from "expo-constants";
-import { ThemedView } from "@/components/ThemedView";
-import { EventItem } from "@/types/homepage.types";
-import { Ionicons } from "@expo/vector-icons";
-import EventBookingModal from "@/components/events/EventBookingModal";
-import RelatedEventsSection from "@/components/events/RelatedEventsSection";
-import EventReviews from "@/components/events/EventReviews";
-import StarRating from "@/components/events/StarRating";
-import { useEventBooking } from "@/hooks/useEventBooking";
-import eventsApiService from "@/services/eventsApi";
+import { showAlert, alertOk, confirmAlert } from '@/utils/alert';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useRouter, useLocalSearchParams, useFocusEffect, Stack } from 'expo-router';
+import Constants from 'expo-constants';
+import { ThemedView } from '@/components/ThemedView';
+import { EventItem } from '@/types/homepage.types';
+import { Ionicons } from '@expo/vector-icons';
+import EventBookingModal from '@/components/events/EventBookingModal';
+import RelatedEventsSection from '@/components/events/RelatedEventsSection';
+import EventReviews from '@/components/events/EventReviews';
+import StarRating from '@/components/events/StarRating';
+import { useEventBooking } from '@/hooks/useEventBooking';
+import eventsApiService from '@/services/eventsApi';
 import { useAuthUser, useIsAuthenticated } from '@/stores/selectors';
-import { useRegion } from "@/contexts/RegionContext";
-import { BUSINESS_CONFIG } from "@/config/env";
-import stripeApi from "@/services/stripeApi";
-import eventAnalytics from "@/services/eventAnalytics";
-import { getCategoryTheme, CategoryTheme, DEFAULT_THEME } from "@/constants/categoryThemes";
+import { useRegion } from '@/contexts/RegionContext';
+import { BUSINESS_CONFIG } from '@/config/env';
+import eventAnalytics from '@/services/eventAnalytics';
+import { getCategoryTheme, CategoryTheme, DEFAULT_THEME } from '@/constants/categoryThemes';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { errorReporter } from '@/utils/errorReporter';
-// Conditional import for native Stripe service
-let stripeReactNativeService: any = null;
-if (Platform.OS !== 'web') {
-  try {
-    stripeReactNativeService = require('@/services/stripeReactNativeService').default;
-  } catch (e) { // Silent: non-critical dynamic import for native Stripe
-  }
-}
 
 interface EventPageProps {
   eventId?: string;
@@ -92,7 +80,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
   const isAuthenticated = useIsAuthenticated();
   const { getCurrencySymbol } = useRegion();
   const currencySymbol = getCurrencySymbol();
-  const [screenData, setScreenData] = useState(Dimensions.get("window"));
+  const [screenData, setScreenData] = useState(Dimensions.get('window'));
   const resizeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const retryTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isMountedRef = useRef(true);
@@ -168,7 +156,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               errorReporter.captureError(
                 err instanceof Error ? err : new Error('Failed to fetch real event data'),
                 { context: 'EventPage.loadEventData.fetchReal' },
-                'info'
+                'info',
               );
             }
           } catch (err) {
@@ -176,7 +164,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             errorReporter.captureError(
               err instanceof Error ? err : new Error('Failed to parse event data param'),
               { context: 'EventPage.loadEventData.parseParam' },
-              'info'
+              'info',
             );
             setIsDynamic(false);
           }
@@ -189,16 +177,16 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               setRealEventData(realData);
               setIsDynamic(false);
             } else {
-              setError("Event not found");
+              setError('Event not found');
             }
           } catch (err) {
             if (cancelled) return;
             errorReporter.captureError(
               err instanceof Error ? err : new Error('Failed to load event by ID'),
               { context: 'EventPage.loadEventData.fetchById' },
-              'warning'
+              'warning',
             );
-            setError("Failed to load event. Please try again.");
+            setError('Failed to load event. Please try again.');
           }
         } else {
           if (cancelled) return;
@@ -209,34 +197,41 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to load event data'),
           { context: 'EventPage.loadEventData' },
-          'warning'
+          'warning',
         );
-        setError("Failed to load event. Please try again.");
+        setError('Failed to load event. Please try again.');
       } finally {
         if (!cancelled) setIsLoadingEvent(false);
       }
     };
 
     loadEventData();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [eventIdParam, eventDataParam, eventTypeParam]);
 
   // Fetch reward info, favorite status, and related events when event loads
   useEffect(() => {
     if (realEventData?.id) {
-      eventsApiService.getEventRewardInfo(realEventData.id)
-        .then(info => { if (info) setRewardInfo(info); })
+      eventsApiService
+        .getEventRewardInfo(realEventData.id)
+        .then((info) => {
+          if (info) setRewardInfo(info);
+        })
         .catch(() => {}); // Silent: non-critical reward info
 
       // Check if user has favorited this event
-      eventsApiService.isFavorited(realEventData.id)
-        .then(fav => setIsFavorited(fav))
+      eventsApiService
+        .isFavorited(realEventData.id)
+        .then((fav) => setIsFavorited(fav))
         .catch(() => {}); // Silent: non-critical favorite status
 
       // Load related events
       setIsLoadingRelated(true);
-      eventsApiService.getRelatedEvents(realEventData.id, 6)
-        .then(events => {
+      eventsApiService
+        .getRelatedEvents(realEventData.id, 6)
+        .then((events) => {
           if (isMountedRef.current) setRelatedEvents(events);
         })
         .catch(() => {})
@@ -279,7 +274,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
   const retryWithBackoff = useCallback(async (retryFn: () => Promise<void>, retries = 0) => {
     if (retries >= MAX_RETRIES) {
       if (isMountedRef.current) {
-        setError("Failed to load event after multiple attempts. Please check your connection.");
+        setError('Failed to load event after multiple attempts. Please check your connection.');
       }
       return;
     }
@@ -300,7 +295,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
   const HORIZONTAL_PADDING = screenData.width < 375 ? 16 : screenData.width > 768 ? 32 : 20;
 
   useEffect(() => {
-    const subscription = Dimensions.addEventListener("change", ({ window }) => {
+    const subscription = Dimensions.addEventListener('change', ({ window }) => {
       if (resizeTimeoutRef.current) clearTimeout(resizeTimeoutRef.current);
       resizeTimeoutRef.current = setTimeout(() => {
         setScreenData(window);
@@ -319,7 +314,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       try {
         // Parse URL - handle both web and native formats
         let eventId: string | null = null;
-        
+
         if (Platform.OS === 'web' && typeof window !== 'undefined') {
           // Web: Use URL API
           const urlObj = new URL(url);
@@ -331,23 +326,24 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             eventId = decodeURIComponent(match[1]);
           }
         }
-        
+
         if (eventId && eventId !== eventIdParam) {
           // Load event from deep link
           setIsLoadingEvent(true);
           setError(null);
-          
-          eventsApiService.getEventById(eventId)
+
+          eventsApiService
+            .getEventById(eventId)
             .then((data) => {
               if (data) {
                 setRealEventData(data);
                 setIsDynamic(false);
               } else {
-                setError("Event not found");
+                setError('Event not found');
               }
             })
             .catch((error) => {
-              setError("Failed to load event from link");
+              setError('Failed to load event from link');
             })
             .finally(() => {
               setIsLoadingEvent(false);
@@ -357,7 +353,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         errorReporter.captureError(
           err instanceof Error ? err : new Error('Failed to handle deep link'),
           { context: 'EventPage.handleDeepLink' },
-          'info'
+          'info',
         );
       }
     };
@@ -366,13 +362,15 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     const subscription = Linking.addEventListener('url', (event) => {
       handleDeepLink(event.url);
     });
-    
+
     // Check if app was opened via deep link
-    Linking.getInitialURL().then((url) => {
-      if (url) {
-        handleDeepLink(url);
-      }
-    }).catch(() => {}); // Silent: non-critical initial URL check
+    Linking.getInitialURL()
+      .then((url) => {
+        if (url) {
+          handleDeepLink(url);
+        }
+      })
+      .catch(() => {}); // Silent: non-critical initial URL check
 
     return () => {
       subscription.remove();
@@ -394,7 +392,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     if (isDynamic && eventData) {
       return {
         id: eventData.id,
-        type: "event",
+        type: 'event',
         title: eventData.title,
         subtitle: eventData.subtitle,
         description: eventData.description,
@@ -448,7 +446,6 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     return true;
   }, [eventDetails?.isOnline, eventDetails?.location]);
 
-
   // Get available slots for offline events - only use real data, no mock fallback
   const availableSlots = useMemo(() => {
     // Online events don't have slots
@@ -481,19 +478,20 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       setIsLoading(true);
 
       // Construct share URL - use app URL if available, otherwise use deep link
-      const appUrl = BUSINESS_CONFIG.app.website || "https://rezapp.com";
-      const shareUrl = Platform.OS === 'web' && typeof window !== 'undefined'
-        ? `${window.location.origin}/EventPage?eventId=${eventDetails.id}`
-        : `${appUrl}/EventPage?eventId=${eventDetails.id}`;
-      
+      const appUrl = BUSINESS_CONFIG.app.website || 'https://rezapp.com';
+      const shareUrl =
+        Platform.OS === 'web' && typeof window !== 'undefined'
+          ? `${window.location.origin}/EventPage?eventId=${eventDetails.id}`
+          : `${appUrl}/EventPage?eventId=${eventDetails.id}`;
+
       const shareMessage = `Check out ${eventDetails.title} by ${eventDetails.organizer} on ${eventDetails.date}\n${shareUrl}`;
-      
+
       await Share.share({
         message: shareMessage,
         url: shareUrl,
         title: eventDetails.title,
       });
-      
+
       // Track share analytics and earn sharing reward
       try {
         const shareResult = await eventsApiService.shareEvent(eventDetails.id);
@@ -509,8 +507,8 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         eventAnalytics.trackShare(eventDetails.id, Platform.OS, 'event_page');
       }
     } catch (err) {
-      if (err instanceof Error && err.message !== "User canceled") {
-        setError("Failed to share event.");
+      if (err instanceof Error && err.message !== 'User canceled') {
+        setError('Failed to share event.');
       }
     } finally {
       setIsLoading(false);
@@ -521,17 +519,17 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     if (!eventDetails) return;
 
     if (!isAuthenticated || !user) {
-      alertOk("Login Required", "Please login to favorite events");
+      alertOk('Login Required', 'Please login to favorite events');
       return;
     }
 
     try {
       setIsLoadingFavorite(true);
       const previousState = isFavorited;
-      
+
       // Optimistically update UI
       setIsFavorited(!previousState);
-      
+
       // Call backend API to toggle favorite
       const result = await eventsApiService.toggleEventFavorite(eventDetails.id);
 
@@ -544,16 +542,16 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         eventAnalytics.trackFavoriteToggle(eventDetails.id, newState, 'event_page');
 
         alertOk(
-          newState ? "Added to Favorites" : "Removed from Favorites",
-          `${eventDetails.title} ${newState ? "added to" : "removed from"} favorites.`
+          newState ? 'Added to Favorites' : 'Removed from Favorites',
+          `${eventDetails.title} ${newState ? 'added to' : 'removed from'} favorites.`,
         );
       } else {
         // Revert on failure
         setIsFavorited(previousState);
-        throw new Error(result.message || "Failed to update favorite status");
+        throw new Error(result.message || 'Failed to update favorite status');
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Failed to update favorite status");
+      setError(error instanceof Error ? error.message : 'Failed to update favorite status');
     } finally {
       setIsLoadingFavorite(false);
     }
@@ -564,7 +562,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
 
     // Check authentication
     if (!isAuthenticated || !user) {
-      alertOk("Login Required", "Please login to register for events");
+      alertOk('Login Required', 'Please login to register for events');
       return;
     }
 
@@ -580,13 +578,13 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
 
     // Check if user needs to select a time slot (only if slots are defined)
     if (availableSlots.length > 0 && !selectedSlot) {
-      alertOk("Select Time Slot", "Please select a time slot before booking.");
+      alertOk('Select Time Slot', 'Please select a time slot before booking.');
       return;
     }
 
     // Check authentication
     if (!isAuthenticated || !user) {
-      alertOk("Login Required", "Please login to book events");
+      alertOk('Login Required', 'Please login to book events');
       return;
     }
 
@@ -597,30 +595,33 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     setShowBookingModal(true);
   }, [eventDetails, selectedSlot, availableSlots, isAuthenticated, user]);
 
-  const handleBookingSuccess = useCallback((bookingId?: string) => {
-    setShowBookingModal(false);
+  const handleBookingSuccess = useCallback(
+    (bookingId?: string) => {
+      setShowBookingModal(false);
 
-    // Show success message and navigate to my events page
-    showAlert(
-      "Booking Confirmed!",
-      `Your booking has been confirmed${bookingId ? `. Booking Reference: ${bookingId}` : ''}. View your upcoming events in My Events.`,
-      [
-        { text: "Continue", style: "cancel" },
-        {
-          text: "My Events",
-          onPress: () => {
-            if (Platform.OS === 'ios') {
-              setTimeout(() => router.push('/my-events' as any), 50);
-            } else {
-              router.push('/my-events' as any);
-            }
-          }
-        }
-      ]
-    );
-  }, [router]);
+      // Show success message and navigate to my events page
+      showAlert(
+        'Booking Confirmed!',
+        `Your booking has been confirmed${bookingId ? `. Booking Reference: ${bookingId}` : ''}. View your upcoming events in My Events.`,
+        [
+          { text: 'Continue', style: 'cancel' },
+          {
+            text: 'My Events',
+            onPress: () => {
+              if (Platform.OS === 'ios') {
+                setTimeout(() => router.push('/my-events' as any), 50);
+              } else {
+                router.push('/my-events' as any);
+              }
+            },
+          },
+        ],
+      );
+    },
+    [router],
+  );
 
-  const handleBackPress = useCallback(() => router.canGoBack() ? router.back() : router.replace('/(tabs)'), [router]);
+  const handleBackPress = useCallback(() => (router.canGoBack() ? router.back() : router.replace('/(tabs)')), [router]);
 
   useEffect(() => {
     if (!error) return;
@@ -628,17 +629,14 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     return () => clearTimeout(id);
   }, [error]);
 
-  const styles = useMemo(
-    () => createStyles(HORIZONTAL_PADDING, screenData),
-    [HORIZONTAL_PADDING, screenData]
-  );
+  const styles = useMemo(() => createStyles(HORIZONTAL_PADDING, screenData), [HORIZONTAL_PADDING, screenData]);
 
   // Loading skeleton component with better UX
   if (isLoadingEvent) {
     return (
       <ThemedView style={styles.page}>
         <StatusBar barStyle="light-content" backgroundColor="#000000" translucent={false} />
-        <SafeAreaView style={{ backgroundColor: "#000000" }} />
+        <SafeAreaView style={{ backgroundColor: '#000000' }} />
         <View style={styles.loadingContainer}>
           <ActivityIndicator size="large" color={Colors.brand.purpleLight} />
           <Text style={styles.loadingText}>Loading event details...</Text>
@@ -661,12 +659,9 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       <ThemedView style={styles.page}>
         <Stack.Screen options={{ headerShown: false }} />
         <StatusBar barStyle="light-content" backgroundColor="#000000" translucent={false} />
-        <SafeAreaView style={{ backgroundColor: "#000000" }} />
+        <SafeAreaView style={{ backgroundColor: '#000000' }} />
         <View style={styles.notFoundContainer}>
-          <LinearGradient
-            colors={[colors.neutral[800], colors.neutral[900]]}
-            style={styles.notFoundGradient}
-          >
+          <LinearGradient colors={[colors.neutral[800], colors.neutral[900]]} style={styles.notFoundGradient}>
             <View style={styles.notFoundContent}>
               <View style={styles.notFoundIconContainer}>
                 <Ionicons name="calendar-outline" size={80} color={colors.neutral[500]} />
@@ -681,17 +676,12 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               <View style={styles.notFoundActions}>
                 <Pressable
                   style={styles.notFoundBackButton}
-                  onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-                 
+                  onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
                 >
                   <Ionicons name="arrow-back" size={20} color={colors.background.primary} />
                   <Text style={styles.notFoundBackText}>Go Back</Text>
                 </Pressable>
-                <Pressable
-                  style={styles.notFoundExploreButton}
-                  onPress={() => router.push('/events' as any)}
-                 
-                >
+                <Pressable style={styles.notFoundExploreButton} onPress={() => router.push('/events' as any)}>
                   <Ionicons name="compass-outline" size={20} color={Colors.brand.purpleLight} />
                   <Text style={styles.notFoundExploreText}>Explore Events</Text>
                 </Pressable>
@@ -708,7 +698,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
     return (
       <ThemedView style={styles.page}>
         <StatusBar barStyle="light-content" backgroundColor="#000000" translucent={false} />
-        <SafeAreaView style={{ backgroundColor: "#000000" }} />
+        <SafeAreaView style={{ backgroundColor: '#000000' }} />
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle" size={64} color={Colors.error} />
           <Text style={styles.errorTitle}>Something went wrong</Text>
@@ -717,7 +707,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             style={styles.retryButton}
             onPress={() => {
               setError(null);
-              setRetryCount(prev => prev + 1);
+              setRetryCount((prev) => prev + 1);
               setIsLoadingEvent(true);
               // Enhanced retry with exponential backoff
               const loadEventData = async () => {
@@ -728,7 +718,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                       setRealEventData(realData);
                       setRetryCount(0); // Reset on success
                     } else {
-                      setError("Event not found");
+                      setError('Event not found');
                     }
                   }
                 } catch (error) {
@@ -749,7 +739,6 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               };
               loadEventData();
             }}
-           
           >
             <Ionicons name="refresh" size={18} color={colors.background.primary} style={{ marginRight: 8 }} />
             <Text style={styles.retryButtonText}>
@@ -770,7 +759,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
       <StatusBar barStyle="light-content" backgroundColor="#000000" translucent={false} />
 
       {/* Top safe area to prevent overlap with the hero header */}
-      <SafeAreaView style={{ backgroundColor: "#000000" }} />
+      <SafeAreaView style={{ backgroundColor: '#000000' }} />
 
       {/* Hero Section - Optimized Image Loading */}
       <View style={styles.heroSection}>
@@ -790,82 +779,86 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                 },
               ]}
             />
-            <LinearGradient
-              colors={["rgba(0,0,0,0.35)", "rgba(0,0,0,0.75)"]}
-              style={styles.heroOverlay}
-            >
-            {/* Header */}
-            <View style={styles.header}>
-              <Pressable style={styles.backButton} onPress={handleBackPress}>
-                <Ionicons name="chevron-back" size={24} color={colors.background.primary} />
-              </Pressable>
-
-              <View style={styles.headerActions}>
-                <Pressable style={styles.actionButton} onPress={handleSharePress}>
-                  <Ionicons name="share-outline" size={20} color={colors.background.primary} />
+            <LinearGradient colors={['rgba(0,0,0,0.35)', 'rgba(0,0,0,0.75)']} style={styles.heroOverlay}>
+              {/* Header */}
+              <View style={styles.header}>
+                <Pressable style={styles.backButton} onPress={handleBackPress}>
+                  <Ionicons name="chevron-back" size={24} color={colors.background.primary} />
                 </Pressable>
-                <Pressable
-                  style={styles.actionButton}
-                  onPress={handleFavoritePress}
-                  disabled={isLoadingFavorite}
-                >
-                  {isLoadingFavorite ? (
-                    <ActivityIndicator size="small" color={colors.background.primary} />
-                  ) : (
-                    <Ionicons
-                      name={isFavorited ? "heart" : "heart-outline"}
-                      size={20}
-                      color={isFavorited ? Colors.error : colors.text.inverse}
-                    />
-                  )}
-                </Pressable>
-              </View>
-            </View>
 
-            {/* Event Info */}
-            <View style={styles.heroContent}>
-              <View style={[styles.categoryBadge, { backgroundColor: categoryTheme.badgeBackground }]}>
-                <Ionicons name={categoryTheme.icon as any} size={14} color={colors.background.primary} style={{ marginRight: 6 }} />
-                <Text style={styles.categoryText}>{eventDetails.category}</Text>
-              </View>
-
-              <Text style={styles.heroTitle}>{eventDetails.title}</Text>
-              <Text style={styles.heroSubtitle}>by {eventDetails.organizer}</Text>
-
-              <View style={styles.heroMeta}>
-                <View style={styles.heroMetaItem}>
-                  <Ionicons name="calendar-outline" size={16} color={colors.background.primary} />
-                  <Text style={styles.heroMetaText}>
-                    {eventDetails.date
-                      ? (() => {
-                          try {
-                            return new Date(eventDetails.date).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
-                          } catch { return eventDetails.date; }
-                        })()
-                      : 'TBD'}
-                  </Text>
+                <View style={styles.headerActions}>
+                  <Pressable style={styles.actionButton} onPress={handleSharePress}>
+                    <Ionicons name="share-outline" size={20} color={colors.background.primary} />
+                  </Pressable>
+                  <Pressable style={styles.actionButton} onPress={handleFavoritePress} disabled={isLoadingFavorite}>
+                    {isLoadingFavorite ? (
+                      <ActivityIndicator size="small" color={colors.background.primary} />
+                    ) : (
+                      <Ionicons
+                        name={isFavorited ? 'heart' : 'heart-outline'}
+                        size={20}
+                        color={isFavorited ? Colors.error : colors.text.inverse}
+                      />
+                    )}
+                  </Pressable>
                 </View>
-                {!!eventDetails.time && (
+              </View>
+
+              {/* Event Info */}
+              <View style={styles.heroContent}>
+                <View style={[styles.categoryBadge, { backgroundColor: categoryTheme.badgeBackground }]}>
+                  <Ionicons
+                    name={categoryTheme.icon as any}
+                    size={14}
+                    color={colors.background.primary}
+                    style={{ marginRight: 6 }}
+                  />
+                  <Text style={styles.categoryText}>{eventDetails.category}</Text>
+                </View>
+
+                <Text style={styles.heroTitle}>{eventDetails.title}</Text>
+                <Text style={styles.heroSubtitle}>by {eventDetails.organizer}</Text>
+
+                <View style={styles.heroMeta}>
                   <View style={styles.heroMetaItem}>
-                    <Ionicons name="time-outline" size={16} color={colors.background.primary} />
-                    <Text style={styles.heroMetaText}>{eventDetails.time}</Text>
-                  </View>
-                )}
-                {!!eventDetails.location && (
-                  <View style={styles.heroMetaItem}>
-                    <Ionicons
-                      name={eventDetails.isOnline ? "globe-outline" : "location-outline"}
-                      size={16}
-                      color={colors.background.primary}
-                    />
-                    <Text style={styles.heroMetaText} numberOfLines={1}>
-                      {eventDetails.isOnline ? 'Online' : eventDetails.location}
+                    <Ionicons name="calendar-outline" size={16} color={colors.background.primary} />
+                    <Text style={styles.heroMetaText}>
+                      {eventDetails.date
+                        ? (() => {
+                            try {
+                              return new Date(eventDetails.date).toLocaleDateString('en-IN', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                              });
+                            } catch {
+                              return eventDetails.date;
+                            }
+                          })()
+                        : 'TBD'}
                     </Text>
                   </View>
-                )}
+                  {!!eventDetails.time && (
+                    <View style={styles.heroMetaItem}>
+                      <Ionicons name="time-outline" size={16} color={colors.background.primary} />
+                      <Text style={styles.heroMetaText}>{eventDetails.time}</Text>
+                    </View>
+                  )}
+                  {!!eventDetails.location && (
+                    <View style={styles.heroMetaItem}>
+                      <Ionicons
+                        name={eventDetails.isOnline ? 'globe-outline' : 'location-outline'}
+                        size={16}
+                        color={colors.background.primary}
+                      />
+                      <Text style={styles.heroMetaText} numberOfLines={1}>
+                        {eventDetails.isOnline ? 'Online' : eventDetails.location}
+                      </Text>
+                    </View>
+                  )}
+                </View>
               </View>
-            </View>
-          </LinearGradient>
+            </LinearGradient>
           </ImageBackground>
         ) : (
           <View style={[styles.heroBackground, styles.imagePlaceholder]}>
@@ -876,13 +869,15 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               end={{ x: 1, y: 1 }}
             />
             <Ionicons name={categoryTheme.icon as any} size={80} color="rgba(255,255,255,0.3)" />
-            <LinearGradient
-              colors={["rgba(0,0,0,0.2)", "rgba(0,0,0,0.7)"]}
-              style={styles.heroOverlay}
-            >
+            <LinearGradient colors={['rgba(0,0,0,0.2)', 'rgba(0,0,0,0.7)']} style={styles.heroOverlay}>
               <View style={styles.heroContent}>
                 <View style={[styles.categoryBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
-                  <Ionicons name={categoryTheme.icon as any} size={14} color={colors.background.primary} style={{ marginRight: 6 }} />
+                  <Ionicons
+                    name={categoryTheme.icon as any}
+                    size={14}
+                    color={colors.background.primary}
+                    style={{ marginRight: 6 }}
+                  />
                   <Text style={styles.categoryText}>{eventDetails.category}</Text>
                 </View>
                 <Text style={styles.heroTitle}>{eventDetails.title}</Text>
@@ -893,25 +888,25 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         )}
       </View>
 
-          <Animated.ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-            onScroll={(event) => {
-              const scrollY = event.nativeEvent.contentOffset.y;
-              const contentHeight = event.nativeEvent.contentSize.height;
-              const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
-              const scrollDepth = Math.min(100, Math.round((scrollY / (contentHeight - scrollViewHeight)) * 100));
-              scrollDepthRef.current = Math.max(scrollDepthRef.current, scrollDepth);
-            }}
-            scrollEventThrottle={16}
-            style={[
-              styles.content,
-              {
-                opacity: fadeAnim,
-                transform: [{ translateY: slideAnim }],
-              },
-            ]}
-          >
+      <Animated.ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+        onScroll={(event) => {
+          const scrollY = event.nativeEvent.contentOffset.y;
+          const contentHeight = event.nativeEvent.contentSize.height;
+          const scrollViewHeight = event.nativeEvent.layoutMeasurement.height;
+          const scrollDepth = Math.min(100, Math.round((scrollY / (contentHeight - scrollViewHeight)) * 100));
+          scrollDepthRef.current = Math.max(scrollDepthRef.current, scrollDepth);
+        }}
+        scrollEventThrottle={16}
+        style={[
+          styles.content,
+          {
+            opacity: fadeAnim,
+            transform: [{ translateY: slideAnim }],
+          },
+        ]}
+      >
         {/* Price Card */}
         <View style={styles.priceCard}>
           <View style={styles.priceInfo}>
@@ -920,8 +915,8 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               {/* ✅ FIX: Add null checks for price access */}
               {/* For online events, use regional currency; for venue events, use event's currency */}
               {eventDetails.price?.isFree
-                ? "Free Entry"
-                : `${eventDetails.isOnline ? currencySymbol : (eventDetails.price?.currency || currencySymbol)}${eventDetails.price?.amount ?? 0}`}
+                ? 'Free Entry'
+                : `${eventDetails.isOnline ? currencySymbol : eventDetails.price?.currency || currencySymbol}${eventDetails.price?.amount ?? 0}`}
             </Text>
           </View>
           <View style={styles.priceCardRight}>
@@ -936,17 +931,12 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             )}
             <View style={styles.eventTypeBadge}>
               <Ionicons
-                name={eventDetails.isOnline ? "globe" : "location"}
+                name={eventDetails.isOnline ? 'globe' : 'location'}
                 size={14}
                 color={eventDetails.isOnline ? Colors.gold : Colors.warning}
               />
-              <Text
-                style={[
-                  styles.eventTypeText,
-                  { color: eventDetails.isOnline ? Colors.gold : Colors.warning },
-                ]}
-              >
-                {eventDetails.isOnline ? "Online Event" : "Venue Event"}
+              <Text style={[styles.eventTypeText, { color: eventDetails.isOnline ? Colors.gold : Colors.warning }]}>
+                {eventDetails.isOnline ? 'Online Event' : 'Venue Event'}
               </Text>
             </View>
           </View>
@@ -968,34 +958,30 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                   <Ionicons name="gift-outline" size={20} color={colors.text.inverse} />
                 </View>
                 <View style={styles.rewardHeaderText}>
-                  <Text style={styles.rewardTitle}>
-                    Earn up to {rewardInfo.totalPotential} coins
-                  </Text>
-                  <Text style={styles.rewardSubtitle}>
-                    Complete actions to earn rewards
-                  </Text>
+                  <Text style={styles.rewardTitle}>Earn up to {rewardInfo.totalPotential} coins</Text>
+                  <Text style={styles.rewardSubtitle}>Complete actions to earn rewards</Text>
                 </View>
               </View>
               {rewardInfo.rewards.map((reward, index) => (
                 <View key={index} style={[styles.rewardRow, index > 0 && styles.rewardRowBorder]}>
                   <Ionicons
                     name={
-                      reward.action.includes('checkin') ? 'location-outline' :
-                      reward.action.includes('booking') || reward.action.includes('entry') ? 'ticket-outline' :
-                      reward.action.includes('sharing') ? 'share-social-outline' :
-                      reward.action.includes('review') || reward.action.includes('rating') ? 'star-outline' :
-                      'gift-outline'
+                      reward.action.includes('checkin')
+                        ? 'location-outline'
+                        : reward.action.includes('booking') || reward.action.includes('entry')
+                          ? 'ticket-outline'
+                          : reward.action.includes('sharing')
+                            ? 'share-social-outline'
+                            : reward.action.includes('review') || reward.action.includes('rating')
+                              ? 'star-outline'
+                              : 'gift-outline'
                     }
                     size={18}
                     color={Colors.brand.purpleLight}
                   />
-                  <Text style={styles.rewardDescription}>
-                    {reward.description || reward.action.replace(/_/g, ' ')}
-                  </Text>
+                  <Text style={styles.rewardDescription}>{reward.description || reward.action.replace(/_/g, ' ')}</Text>
                   <View style={styles.rewardCoinBadge}>
-                    <Text style={styles.rewardCoinText}>
-                      +{reward.coins}
-                    </Text>
+                    <Text style={styles.rewardCoinText}>+{reward.coins}</Text>
                   </View>
                 </View>
               ))}
@@ -1008,22 +994,20 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Schedule</Text>
             {(realEventData as any).schedule.map((item: any, index: number) => (
-              <View key={index} style={[styles.scheduleRow, index < (realEventData as any).schedule.length - 1 && styles.scheduleRowBorder]}>
+              <View
+                key={index}
+                style={[
+                  styles.scheduleRow,
+                  index < (realEventData as any).schedule.length - 1 && styles.scheduleRowBorder,
+                ]}
+              >
                 <View style={styles.scheduleTimeCol}>
                   <Ionicons name="time-outline" size={18} color={Colors.brand.purpleLight} />
-                  <Text style={styles.scheduleTimeText}>
-                    {item.startTime || ''}
-                  </Text>
+                  <Text style={styles.scheduleTimeText}>{item.startTime || ''}</Text>
                 </View>
                 <View style={styles.scheduleContent}>
-                  <Text style={styles.scheduleItemTitle}>
-                    {item.title}
-                  </Text>
-                  {item.description && (
-                    <Text style={styles.scheduleItemDesc}>
-                      {item.description}
-                    </Text>
-                  )}
+                  <Text style={styles.scheduleItemTitle}>{item.title}</Text>
+                  {item.description && <Text style={styles.scheduleItemDesc}>{item.description}</Text>}
                 </View>
               </View>
             ))}
@@ -1038,18 +1022,13 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               {(realEventData as any).sponsors.map((sponsor: any, index: number) => (
                 <View key={index} style={styles.sponsorCard}>
                   {sponsor.logo ? (
-                    <CachedImage
-                      source={sponsor.logo}
-                      style={styles.sponsorLogo}
-                    />
+                    <CachedImage source={sponsor.logo} style={styles.sponsorLogo} />
                   ) : (
                     <View style={styles.sponsorLogoPlaceholder}>
                       <Ionicons name="business-outline" size={20} color={colors.neutral[400]} />
                     </View>
                   )}
-                  <Text style={styles.sponsorName}>
-                    {sponsor.name}
-                  </Text>
+                  <Text style={styles.sponsorName}>{sponsor.name}</Text>
                 </View>
               ))}
             </ScrollView>
@@ -1061,7 +1040,6 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Select Time Slot</Text>
             <Text style={styles.sectionSubtitle}>Choose your preferred time to attend the event</Text>
-
 
             {availableSlots.length > 0 ? (
               <View style={styles.slotsGrid}>
@@ -1091,10 +1069,8 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                       )}
                     </View>
 
-                    <Text
-                      style={[styles.slotCapacity, !slot.available && styles.slotCapacityDisabled]}
-                    >
-                      {slot.available ? `${slot.maxCapacity - slot.bookedCount} spots left` : "Fully booked"}
+                    <Text style={[styles.slotCapacity, !slot.available && styles.slotCapacityDisabled]}>
+                      {slot.available ? `${slot.maxCapacity - slot.bookedCount} spots left` : 'Fully booked'}
                     </Text>
 
                     <View style={styles.capacityBar}>
@@ -1129,10 +1105,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
               transform: [{ translateY: slideAnim }],
             }}
           >
-            <RelatedEventsSection
-              events={relatedEvents}
-              isLoading={isLoadingRelated}
-            />
+            <RelatedEventsSection events={relatedEvents} isLoading={isLoadingRelated} />
           </Animated.View>
         )}
 
@@ -1161,8 +1134,15 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
                   {eventDetails.date
                     ? (() => {
                         try {
-                          return new Date(eventDetails.date).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric' });
-                        } catch { return eventDetails.date; }
+                          return new Date(eventDetails.date).toLocaleDateString('en-IN', {
+                            weekday: 'short',
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric',
+                          });
+                        } catch {
+                          return eventDetails.date;
+                        }
                       })()
                     : 'TBD'}
                   {eventDetails.time ? ` at ${eventDetails.time}` : ''}
@@ -1173,7 +1153,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             <View style={styles.detailItem}>
               <View style={styles.detailIcon}>
                 <Ionicons
-                  name={eventDetails.isOnline ? "globe-outline" : "location-outline"}
+                  name={eventDetails.isOnline ? 'globe-outline' : 'location-outline'}
                   size={20}
                   color={colors.neutral[500]}
                 />
@@ -1197,12 +1177,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
         </View>
 
         {/* Reviews Section */}
-        {eventDetails.id && (
-          <EventReviews
-            eventId={eventDetails.id}
-            eventTitle={eventDetails.title}
-          />
-        )}
+        {eventDetails.id && <EventReviews eventId={eventDetails.id} eventTitle={eventDetails.title} />}
       </Animated.ScrollView>
 
       {/* Fixed Action Button */}
@@ -1214,10 +1189,10 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
           isOnline={eventDetails.isOnline}
           price={{
             amount: eventDetails.price?.amount ?? 0,
-            currency: eventDetails.isOnline ? currencySymbol : (eventDetails.price?.currency || currencySymbol),
-            isFree: eventDetails.price?.isFree ?? false
+            currency: eventDetails.isOnline ? currencySymbol : eventDetails.price?.currency || currencySymbol,
+            isFree: eventDetails.price?.isFree ?? false,
           }}
-          hasSelectedSlot={eventDetails.isOnline ? true : (availableSlots.length === 0 || !!selectedSlot)}
+          hasSelectedSlot={eventDetails.isOnline ? true : availableSlots.length === 0 || !!selectedSlot}
           theme={categoryTheme}
         />
       </View>
@@ -1228,7 +1203,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             styles.errorToast,
             {
               opacity: fadeAnim,
-              transform: [{ translateY: interpolate(slideAnim.value, [0, 30], [0, -10])}],
+              transform: [{ translateY: interpolate(slideAnim.value, [0, 30], [0, -10]) }],
             },
           ]}
         >
@@ -1236,10 +1211,7 @@ function EventPage({ eventId, initialEvent }: EventPageProps = {}) {
             <View style={styles.errorInner}>
               <Ionicons name="alert-circle" size={20} color={Colors.error} />
               <Text style={styles.errorText}>{error}</Text>
-              <Pressable
-                onPress={() => setError(null)}
-                style={styles.errorCloseButton}
-              >
+              <Pressable onPress={() => setError(null)} style={styles.errorCloseButton}>
                 <Ionicons name="close" size={18} color="#991B1B" />
               </Pressable>
             </View>
@@ -1281,44 +1253,42 @@ function EventActionButton({
   theme: CategoryTheme;
 }) {
   const getButtonText = () => {
-    if (loading) return "Processing...";
+    if (loading) return 'Processing...';
     if (isOnline) {
-      return price.isFree ? "Register Free" : `Book Now • ${price.currency}${price.amount}`;
+      return price.isFree ? 'Register Free' : `Book Now • ${price.currency}${price.amount}`;
     } else {
-      if (!hasSelectedSlot) return "Select Time Slot";
-      return `Book Now • ${price.isFree ? "Free" : `${price.currency}${price.amount}`}`;
+      if (!hasSelectedSlot) return 'Select Time Slot';
+      return `Book Now • ${price.isFree ? 'Free' : `${price.currency}${price.amount}`}`;
     }
   };
 
   const getButtonIcon = () => {
-    if (loading) return "hourglass-outline";
-    if (isOnline) return "globe-outline";
-    if (!hasSelectedSlot) return "time-outline";
-    return "ticket-outline";
+    if (loading) return 'hourglass-outline';
+    if (isOnline) return 'globe-outline';
+    if (!hasSelectedSlot) return 'time-outline';
+    return 'ticket-outline';
   };
 
   // Use theme colors for the button gradient
-  const buttonColors: [string, string] = disabled || !hasSelectedSlot
-    ? [colors.text.tertiary, colors.text.tertiary]
-    : theme.buttonGradient;
+  const buttonColors: [string, string] =
+    disabled || !hasSelectedSlot ? [colors.text.tertiary, colors.text.tertiary] : theme.buttonGradient;
 
   return (
     <Pressable
       style={[actionStyles.button, (disabled || !hasSelectedSlot) && actionStyles.buttonDisabled]}
       onPress={onPress}
       disabled={loading || disabled || !hasSelectedSlot}
-     
     >
-      <LinearGradient
-        colors={buttonColors}
-        style={actionStyles.gradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-      >
+      <LinearGradient colors={buttonColors} style={actionStyles.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}>
         {loading ? (
           <ActivityIndicator size="small" color={colors.background.primary} style={{ marginRight: 8 }} />
         ) : (
-          <Ionicons name={getButtonIcon() as any} size={20} color={colors.background.primary} style={{ marginRight: 8 }} />
+          <Ionicons
+            name={getButtonIcon() as any}
+            size={20}
+            color={colors.background.primary}
+            style={{ marginRight: 8 }}
+          />
         )}
         <Text style={actionStyles.buttonText}>{getButtonText()}</Text>
       </LinearGradient>
@@ -1326,10 +1296,7 @@ function EventActionButton({
   );
 }
 
-const createStyles = (
-  HORIZONTAL_PADDING: number,
-  screenData: { width: number; height: number }
-) =>
+const createStyles = (HORIZONTAL_PADDING: number, screenData: { width: number; height: number }) =>
   StyleSheet.create({
     page: {
       flex: 1,
@@ -1339,22 +1306,22 @@ const createStyles = (
     // HERO
     heroSection: {
       height: Math.min(Math.max(screenData.height * 0.4, 320), 460),
-      position: "relative",
-      width: "100%",
+      position: 'relative',
+      width: '100%',
       backgroundColor: colors.text.primary,
     },
     heroBackground: {
       flex: 1,
-      width: "100%",
+      width: '100%',
     },
     heroOverlay: {
       flex: 1,
-      paddingTop: Platform.OS === "ios" ? 0 : 8, // slight breathing room on Android
+      paddingTop: Platform.OS === 'ios' ? 0 : 8, // slight breathing room on Android
     },
     header: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       paddingHorizontal: HORIZONTAL_PADDING,
       paddingTop: 8,
       paddingBottom: 8,
@@ -1363,33 +1330,33 @@ const createStyles = (
       width: 40,
       height: 40,
       borderRadius: BorderRadius.xl,
-      backgroundColor: "rgba(0,0,0,0.4)",
-      alignItems: "center",
-      justifyContent: "center",
+      backgroundColor: 'rgba(0,0,0,0.4)',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     headerActions: {
-      flexDirection: "row",
+      flexDirection: 'row',
       gap: Spacing.md,
     },
     actionButton: {
       width: 40,
       height: 40,
       borderRadius: BorderRadius.xl,
-      backgroundColor: "rgba(0,0,0,0.4)",
-      alignItems: "center",
-      justifyContent: "center",
+      backgroundColor: 'rgba(0,0,0,0.4)',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     heroContent: {
       flex: 1,
-      justifyContent: "flex-end",
+      justifyContent: 'flex-end',
       paddingHorizontal: HORIZONTAL_PADDING,
       paddingBottom: Spacing.xl,
     },
     categoryBadge: {
-      alignSelf: "flex-start",
-      flexDirection: "row",
-      alignItems: "center",
-      backgroundColor: "rgba(139, 92, 246, 0.9)",
+      alignSelf: 'flex-start',
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: 'rgba(139, 92, 246, 0.9)',
       paddingHorizontal: Spacing.md,
       paddingVertical: 6,
       borderRadius: BorderRadius.lg,
@@ -1398,37 +1365,37 @@ const createStyles = (
     categoryText: {
       color: colors.text.inverse,
       ...Typography.bodySmall,
-      fontWeight: "600",
-      textTransform: "uppercase",
+      fontWeight: '600',
+      textTransform: 'uppercase',
       letterSpacing: 0.5,
     },
     heroTitle: {
       ...Typography.h1,
-      fontWeight: "800",
+      fontWeight: '800',
       color: colors.text.inverse,
       marginBottom: Spacing.sm,
       lineHeight: 34,
     },
     heroSubtitle: {
       ...Typography.bodyLarge,
-      color: "rgba(255,255,255,0.9)",
+      color: 'rgba(255,255,255,0.9)',
       marginBottom: Spacing.base,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     heroMeta: {
-      flexDirection: "row",
-      flexWrap: "wrap",
+      flexDirection: 'row',
+      flexWrap: 'wrap',
       gap: Spacing.base,
     },
     heroMetaItem: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 6,
     },
     heroMetaText: {
       color: colors.text.inverse,
       ...Typography.body,
-      fontWeight: "500",
+      fontWeight: '500',
     },
 
     // CONTENT
@@ -1446,10 +1413,10 @@ const createStyles = (
       backgroundColor: colors.background.primary,
       borderRadius: BorderRadius.xl,
       padding: Spacing.lg,
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      shadowColor: "#000",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
       shadowRadius: 12,
@@ -1463,34 +1430,34 @@ const createStyles = (
       ...Typography.body,
       color: colors.text.tertiary,
       marginBottom: Spacing.xs,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     priceValue: {
       ...Typography.h2,
-      fontWeight: "800",
+      fontWeight: '800',
       color: colors.text.primary,
     },
     priceCardRight: {
-      alignItems: "flex-end",
+      alignItems: 'flex-end',
       gap: Spacing.sm,
     },
     ratingBadge: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 6,
-      backgroundColor: "#FFF9E6",
+      backgroundColor: '#FFF9E6',
       paddingHorizontal: 10,
       paddingVertical: 6,
       borderRadius: 10,
     },
     ratingText: {
       fontSize: 13,
-      fontWeight: "600",
+      fontWeight: '600',
       color: colors.brand.amberDark,
     },
     eventTypeBadge: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 6,
       backgroundColor: colors.background.secondary,
       paddingHorizontal: Spacing.md,
@@ -1499,7 +1466,7 @@ const createStyles = (
     },
     eventTypeText: {
       ...Typography.bodySmall,
-      fontWeight: "600",
+      fontWeight: '600',
     },
 
     section: {
@@ -1508,7 +1475,7 @@ const createStyles = (
     },
     sectionTitle: {
       ...Typography.h3,
-      fontWeight: "800",
+      fontWeight: '800',
       color: colors.text.primary,
       marginBottom: Spacing.sm,
     },
@@ -1522,7 +1489,7 @@ const createStyles = (
       ...Typography.bodyLarge,
       color: colors.neutral[700],
       lineHeight: 24,
-      fontWeight: "400",
+      fontWeight: '400',
     },
 
     // Slots
@@ -1545,14 +1512,14 @@ const createStyles = (
       borderColor: colors.border.default,
     },
     slotHeader: {
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
       marginBottom: Spacing.sm,
     },
     slotTime: {
       ...Typography.bodyLarge,
-      fontWeight: "700",
+      fontWeight: '700',
       color: colors.text.primary,
     },
     slotTimeSelected: {
@@ -1565,7 +1532,7 @@ const createStyles = (
       ...Typography.body,
       color: colors.text.tertiary,
       marginBottom: Spacing.sm,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     slotCapacityDisabled: {
       color: colors.text.tertiary,
@@ -1574,21 +1541,21 @@ const createStyles = (
       height: 4,
       backgroundColor: colors.border.default,
       borderRadius: 2,
-      overflow: "hidden",
+      overflow: 'hidden',
     },
     capacityFill: {
-      height: "100%",
+      height: '100%',
       borderRadius: 2,
     },
     emptySlotsContainer: {
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
       paddingVertical: 40,
       paddingHorizontal: 20,
     },
     emptySlotsText: {
       ...Typography.bodyLarge,
-      fontWeight: "600",
+      fontWeight: '600',
       color: colors.text.primary,
       marginTop: Spacing.base,
       marginBottom: Spacing.sm,
@@ -1596,7 +1563,7 @@ const createStyles = (
     emptySlotsSubtext: {
       ...Typography.body,
       color: colors.text.tertiary,
-      textAlign: "center",
+      textAlign: 'center',
       lineHeight: 20,
     },
 
@@ -1604,8 +1571,8 @@ const createStyles = (
       gap: Spacing.lg,
     },
     detailItem: {
-      flexDirection: "row",
-      alignItems: "flex-start",
+      flexDirection: 'row',
+      alignItems: 'flex-start',
       gap: Spacing.base,
     },
     detailIcon: {
@@ -1613,8 +1580,8 @@ const createStyles = (
       height: 40,
       borderRadius: BorderRadius.xl,
       backgroundColor: colors.background.secondary,
-      alignItems: "center",
-      justifyContent: "center",
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     detailContent: {
       flex: 1,
@@ -1623,17 +1590,17 @@ const createStyles = (
       ...Typography.body,
       color: colors.text.tertiary,
       marginBottom: Spacing.xs,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     detailValue: {
       ...Typography.bodyLarge,
       color: colors.text.primary,
-      fontWeight: "600",
+      fontWeight: '600',
     },
 
     // Bottom UI
     fixedBottom: {
-      position: "absolute",
+      position: 'absolute',
       left: HORIZONTAL_PADDING,
       right: HORIZONTAL_PADDING,
       bottom: 70, // Position above bottom navigation bar (70px nav + 20px spacing)
@@ -1641,10 +1608,10 @@ const createStyles = (
 
     // Error toast
     errorToast: {
-      position: "absolute",
+      position: 'absolute',
       left: HORIZONTAL_PADDING,
       right: HORIZONTAL_PADDING,
-      top: Platform.OS === "ios" ? 60 : 44,
+      top: Platform.OS === 'ios' ? 60 : 44,
     },
     errorInner: {
       backgroundColor: Colors.errorScale[50],
@@ -1652,42 +1619,42 @@ const createStyles = (
       borderLeftColor: Colors.error,
       padding: Spacing.base,
       borderRadius: BorderRadius.md,
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: 12,
-      shadowColor: "#000",
+      shadowColor: '#000',
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
       elevation: 4,
     },
     errorText: {
-      color: "#991B1B",
+      color: '#991B1B',
       ...Typography.body,
-      fontWeight: "600",
+      fontWeight: '600',
       flex: 1,
     },
     loadingContainer: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       padding: 40,
     },
     loadingText: {
       marginTop: Spacing.base,
       ...Typography.bodyLarge,
       color: colors.text.tertiary,
-      fontWeight: "500",
+      fontWeight: '500',
     },
     errorContainer: {
       flex: 1,
-      justifyContent: "center",
-      alignItems: "center",
+      justifyContent: 'center',
+      alignItems: 'center',
       padding: 40,
     },
     errorTitle: {
       ...Typography.h3,
-      fontWeight: "700",
+      fontWeight: '700',
       color: colors.text.primary,
       marginTop: Spacing.base,
       marginBottom: Spacing.sm,
@@ -1695,7 +1662,7 @@ const createStyles = (
     errorMessage: {
       ...Typography.bodyLarge,
       color: colors.text.tertiary,
-      textAlign: "center",
+      textAlign: 'center',
       marginBottom: Spacing.xl,
     },
     retryButton: {
@@ -1710,7 +1677,7 @@ const createStyles = (
     retryButtonText: {
       color: colors.text.inverse,
       ...Typography.bodyLarge,
-      fontWeight: "600",
+      fontWeight: '600',
     },
     loadingSkeleton: {
       width: '80%',
@@ -1815,16 +1782,34 @@ const createStyles = (
     },
 
     // Extracted inline styles
-    rewardCard: { backgroundColor: colors.tint.purpleLight, borderRadius: BorderRadius.lg, padding: Spacing.base, borderWidth: 1, borderColor: '#E0D4FC' },
+    rewardCard: {
+      backgroundColor: colors.tint.purpleLight,
+      borderRadius: BorderRadius.lg,
+      padding: Spacing.base,
+      borderWidth: 1,
+      borderColor: '#E0D4FC',
+    },
     rewardCardHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md },
-    rewardIconCircle: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: Colors.brand.purpleLight, justifyContent: 'center', alignItems: 'center' },
+    rewardIconCircle: {
+      width: 40,
+      height: 40,
+      borderRadius: BorderRadius.xl,
+      backgroundColor: Colors.brand.purpleLight,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     rewardHeaderText: { marginLeft: Spacing.md, flex: 1 },
     rewardTitle: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.primary },
     rewardSubtitle: { ...Typography.bodySmall, color: colors.text.tertiary },
     rewardRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: Spacing.sm },
     rewardRowBorder: { borderTopWidth: 1, borderTopColor: '#E0D4FC' },
     rewardDescription: { flex: 1, marginLeft: 10, ...Typography.body, color: colors.neutral[700] },
-    rewardCoinBadge: { backgroundColor: Colors.brand.purpleLight, paddingHorizontal: Spacing.sm, paddingVertical: 3, borderRadius: 10 },
+    rewardCoinBadge: {
+      backgroundColor: Colors.brand.purpleLight,
+      paddingHorizontal: Spacing.sm,
+      paddingVertical: 3,
+      borderRadius: 10,
+    },
     rewardCoinText: { ...Typography.bodySmall, fontWeight: '700', color: colors.text.inverse },
     scheduleRow: { flexDirection: 'row', paddingVertical: Spacing.md },
     scheduleRowBorder: { borderBottomWidth: 1, borderBottomColor: colors.border.default },
@@ -1834,16 +1819,31 @@ const createStyles = (
     scheduleItemTitle: { fontSize: 15, fontWeight: '600', color: colors.text.primary },
     scheduleItemDesc: { fontSize: 13, color: colors.text.tertiary, marginTop: 2 },
     sponsorsScroll: { marginTop: 8 },
-    sponsorCard: { alignItems: 'center', marginRight: Spacing.base, padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.md, minWidth: 80 },
+    sponsorCard: {
+      alignItems: 'center',
+      marginRight: Spacing.base,
+      padding: Spacing.md,
+      backgroundColor: colors.background.secondary,
+      borderRadius: BorderRadius.md,
+      minWidth: 80,
+    },
     sponsorLogo: { width: 40, height: 40, borderRadius: 20, marginBottom: 8 },
-    sponsorLogoPlaceholder: { width: 40, height: 40, borderRadius: BorderRadius.xl, backgroundColor: colors.border.default, justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
+    sponsorLogoPlaceholder: {
+      width: 40,
+      height: 40,
+      borderRadius: BorderRadius.xl,
+      backgroundColor: colors.border.default,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: Spacing.sm,
+    },
     sponsorName: { ...Typography.bodySmall, fontWeight: '600', color: colors.neutral[700], textAlign: 'center' },
   });
 
 const actionStyles = StyleSheet.create({
   button: {
     borderRadius: BorderRadius.lg,
-    overflow: "hidden",
+    overflow: 'hidden',
     shadowColor: Colors.brand.purpleLight,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
@@ -1855,16 +1855,16 @@ const actionStyles = StyleSheet.create({
     elevation: 0,
   },
   gradient: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     paddingVertical: 18,
     paddingHorizontal: Spacing.xl,
     gap: 10,
   },
   buttonText: {
     ...Typography.bodyLarge,
-    fontWeight: "700",
+    fontWeight: '700',
     color: colors.text.inverse,
   },
 });

@@ -2,7 +2,7 @@
 // Comprehensive payment system types
 
 export type PaymentMethodType = 'upi' | 'card' | 'wallet' | 'netbanking' | 'cod' | 'nuqtacoins';
-export type PaymentGateway = 'razorpay' | 'stripe' | 'internal' | 'none';
+export type PaymentGateway = 'razorpay' | 'internal' | 'none';
 export type PaymentStatus = 'pending' | 'processing' | 'completed' | 'failed' | 'cancelled' | 'refunded';
 export type CardType = 'visa' | 'mastercard' | 'amex' | 'rupay' | 'unknown';
 
@@ -109,7 +109,7 @@ export interface PaymentResponse {
   status: PaymentStatus;
 
   // Gateway-specific data
-  gatewayOrderId?: string; // Razorpay/Stripe order ID
+  gatewayOrderId?: string; // Razorpay order ID
   gatewayPaymentId?: string;
   transactionId?: string;
 
@@ -150,18 +150,6 @@ export interface RazorpayPaymentData {
 }
 
 /**
- * Stripe Payment Intent
- */
-export interface StripePaymentIntent {
-  id: string;
-  clientSecret: string;
-  amount: number;
-  currency: string;
-  status: string;
-  paymentMethodTypes: string[];
-}
-
-/**
  * COD Configuration
  */
 export interface CODConfig {
@@ -180,10 +168,6 @@ export interface PaymentConfig {
   razorpay: {
     enabled: boolean;
     keyId: string;
-  };
-  stripe: {
-    enabled: boolean;
-    publishableKey: string;
   };
   cod: CODConfig;
   rezCoins: {

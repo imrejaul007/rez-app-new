@@ -1,6 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Modern Payment Page
-// Production-ready payment interface with Stripe integration
 
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
@@ -21,11 +20,8 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming, interpolate } f
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
-import { Elements } from '@stripe/react-stripe-js';
-import { getStripePromise } from '@/utils/lazyImports';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
-import { StripeCardForm } from '@/components/payment';
 import paymentService, { PaymentMethod, PaymentResponse } from '@/services/paymentService';
 import PaymentValidator from '@/services/paymentValidation';
 import financialServicesApi, { FinancialService } from '@/services/financialServicesApi';
@@ -35,13 +31,6 @@ import { FormPageSkeleton } from '@/components/skeletons';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { BRAND } from '@/constants/brand';
 import { useIsMounted } from '@/hooks/useIsMounted';
-
-// Initialize Stripe lazily — SDK is only loaded when this promise is first awaited
-const STRIPE_KEY = process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY;
-if (!STRIPE_KEY) {
-  console.error('[Payment] EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY is not set. Card payments will not work.');
-}
-const stripePromise = STRIPE_KEY ? getStripePromise(STRIPE_KEY) : null;
 
 function PaymentPage() {
   const router = useRouter();
@@ -83,10 +72,6 @@ function PaymentPage() {
   // Financial service state
   const [financialService, setFinancialService] = useState<FinancialService | null>(null);
   const [isLoadingService, setIsLoadingService] = useState(false);
-
-  // Stripe state
-  const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null);
-  const [showStripeCardModal, setShowStripeCardModal] = useState(false);
 
   // Recharge discount state
   const [discountInfo, setDiscountInfo] = useState<{ discount: number; payable: number; percentage: number } | null>(
@@ -200,10 +185,7 @@ function PaymentPage() {
     try {
       const response = await paymentService.getPaymentMethods(currency, fiatCurrency);
       if (response.success && response.data) {
-        // FIX: Hide card (Stripe) payment option when STRIPE_KEY is not configured —
-        // previously the tile appeared and tapping it showed a cryptic error.
-        const filtered = STRIPE_KEY ? response.data : response.data.filter((m) => m.type !== 'card');
-        setPaymentMethods(filtered);
+        setPaymentMethods(response.data);
       }
     } catch (error) {
       platformAlertSimple('Error', 'Failed to load payment methods. Please try again.');
@@ -214,18 +196,13 @@ function PaymentPage() {
   };
 
   const handleBackPress = useCallback(() => {
-    if (showStripeCardModal) {
-      setShowStripeCardModal(false);
-      setStripeClientSecret(null);
-      return;
-    }
     if (currentStep === 'details') {
       setCurrentStep('methods');
       setSelectedMethod(null);
     } else {
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     }
-  }, [currentStep, router, showStripeCardModal]);
+  }, [currentStep, router]);
 
   const handleMethodSelect = (method: PaymentMethod) => {
     setSelectedMethod(method);
@@ -272,7 +249,7 @@ function PaymentPage() {
   };
 
   /**
-   * Create PaymentIntent on backend and get clientSecret for Stripe
+   * Create payment intent on backend
    */
   const createPaymentIntent = async (extraMetadata?: Record<string, any>): Promise<PaymentResponse | null> => {
     if (!selectedMethod) return null;
@@ -304,75 +281,6 @@ function PaymentPage() {
     }
 
     return response.data;
-  };
-
-  /**
-   * Handle Stripe card payment — opens Stripe Elements modal
-   */
-  const handleStripeCardPayment = async () => {
-    if (!selectedMethod || isProcessing) return;
-
-    if (!STRIPE_KEY) {
-      platformAlertSimple(
-        'Configuration Error',
-        'Card payments are not available at the moment. Please choose a different payment method or contact support.',
-      );
-      return;
-    }
-
-    setIsProcessing(true);
-    try {
-      const paymentData = await createPaymentIntent();
-      if (!paymentData) throw new Error('Failed to create payment');
-
-      lastPaymentRef.current = paymentData;
-      const clientSecret = paymentData.gatewayResponse?.clientSecret;
-
-      if (!clientSecret) {
-        throw new Error('No client secret returned from payment gateway');
-      }
-
-      if (!isMounted()) return;
-      setStripeClientSecret(clientSecret);
-      if (!isMounted()) return;
-      setShowStripeCardModal(true);
-    } catch (error) {
-      platformAlertSimple('Payment Failed', error instanceof Error ? error.message : 'Payment initiation failed');
-    } finally {
-      if (!isMounted()) return;
-      setIsProcessing(false);
-    }
-  };
-
-  /**
-   * Called when Stripe card form confirms payment successfully.
-   * Tells backend to verify and credit wallet.
-   */
-  const handleStripeCardSuccess = async (paymentIntentId: string) => {
-    setShowStripeCardModal(false);
-    setStripeClientSecret(null);
-
-    // Tell backend to verify with Stripe and credit the wallet
-    try {
-      await paymentService.confirmPayment(paymentIntentId);
-    } catch (e) {
-      // Even if confirm call fails, payment succeeded on Stripe — backend webhook will catch it
-    }
-
-    platformAlertSimple('Payment Successful!', getSuccessMessage());
-    navigateAfterSuccess();
-  };
-
-  const handleStripeCardError = (error: string) => {
-    setShowStripeCardModal(false);
-    setStripeClientSecret(null);
-    setPaymentError(error);
-    setCurrentStep('failed');
-  };
-
-  const handleStripeCardCancel = () => {
-    setShowStripeCardModal(false);
-    setStripeClientSecret(null);
   };
 
   /**
@@ -578,38 +486,6 @@ function PaymentPage() {
                   Pay {displayCurrency}
                   {amount.toLocaleString()}
                 </ThemedText>
-              </LinearGradient>
-            </Pressable>
-          </View>
-        )}
-
-        {/* Card Payment — uses Stripe Elements */}
-        {selectedMethod.type === 'card' && (
-          <View style={styles.formContainer}>
-            <View style={styles.stripeInfo}>
-              <Ionicons name="shield-checkmark" size={20} color={Colors.success} />
-              <ThemedText style={styles.stripeInfoText}>
-                Card details are securely processed by Stripe. Your card info never touches our servers.
-              </ThemedText>
-            </View>
-
-            <Pressable
-              style={[styles.payButton, isProcessing && styles.disabledButton]}
-              onPress={handleStripeCardPayment}
-              disabled={isProcessing}
-            >
-              <LinearGradient colors={[colors.nileBlue, '#2A5577'] as const} style={styles.payButtonGradient}>
-                {isProcessing ? (
-                  <ActivityIndicator size="small" color={colors.text.inverse} />
-                ) : (
-                  <>
-                    <Ionicons name="card-outline" size={18} color={colors.text.inverse} />
-                    <ThemedText style={styles.payButtonText}>
-                      Pay {displayCurrency}
-                      {amount.toLocaleString()} with Card
-                    </ThemedText>
-                  </>
-                )}
               </LinearGradient>
             </Pressable>
           </View>
@@ -861,52 +737,6 @@ function PaymentPage() {
             {currentStep === 'processing' && renderProcessing()}
             {currentStep === 'failed' && renderPaymentFailed()}
           </ScrollView>
-
-          {/* Stripe Card Payment Modal */}
-          <Modal
-            visible={showStripeCardModal}
-            transparent
-            animationType="slide"
-            onRequestClose={handleStripeCardCancel}
-          >
-            <View style={styles.modalOverlay}>
-              <View style={styles.modalContent}>
-                <View style={styles.modalHeader}>
-                  <ThemedText style={styles.modalTitle}>Card Payment</ThemedText>
-                  <Pressable onPress={handleStripeCardCancel} style={styles.modalClose}>
-                    <Ionicons name="close" size={22} color={colors.text.tertiary} />
-                  </Pressable>
-                </View>
-                {stripeClientSecret && (
-                  <Elements
-                    stripe={stripePromise}
-                    options={{
-                      clientSecret: stripeClientSecret,
-                      appearance: {
-                        theme: 'stripe',
-                        variables: {
-                          colorPrimary: colors.nileBlue,
-                          colorBackground: colors.background.primary,
-                          colorText: colors.text.primary,
-                          colorDanger: Colors.error,
-                          fontFamily: 'system-ui, -apple-system, sans-serif',
-                          borderRadius: '12px',
-                        },
-                      },
-                    }}
-                  >
-                    <StripeCardForm
-                      clientSecret={stripeClientSecret}
-                      amount={discountInfo?.payable ?? amount}
-                      onSuccess={handleStripeCardSuccess}
-                      onError={handleStripeCardError}
-                      onCancel={handleStripeCardCancel}
-                    />
-                  </Elements>
-                )}
-              </View>
-            </View>
-          </Modal>
         </ThemedView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -1138,22 +968,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: colors.text.primary,
   },
-  stripeInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-    backgroundColor: Colors.successScale[50],
-    borderRadius: BorderRadius.md,
-    padding: Spacing.base,
-    borderWidth: 1,
-    borderColor: '#A7F3D0',
-  },
-  stripeInfoText: {
-    flex: 1,
-    fontSize: 13,
-    color: '#065F46',
-    lineHeight: 18,
-  },
   walletGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -1307,7 +1121,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '500',
   },
-  // Stripe Card Modal
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.5)',

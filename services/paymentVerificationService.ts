@@ -5,7 +5,6 @@ import apiClient, { ApiResponse } from './apiClient';
 import * as LocalAuthentication from 'expo-local-authentication';
 import { Platform } from 'react-native';
 import razorpayService from './razorpayService';
-import stripeReactNativeService from './stripeReactNativeService';
 import type {
   VerificationStatus,
   VerificationType,
@@ -79,39 +78,11 @@ class PaymentVerificationService {
   }
 
   /**
-   * Initiate card verification using Stripe/Razorpay
+   * Initiate card verification using Razorpay
    */
   private async initiateGatewayCardVerification(
     request: CardVerificationRequest
   ): Promise<ApiResponse<CardVerificationResponse>> {
-    // Try Stripe first
-    if (stripeReactNativeService.isConfigured() && Platform.OS !== 'web') {
-      try {
-        // Create a setup intent for verification
-        const setupIntent = await apiClient.post<{ id: string; clientSecret: string }>(
-          '/payment/stripe/create-setup-intent',
-          {
-          paymentMethodId: request.paymentMethodId,
-          }
-        );
-
-        if (setupIntent.success && setupIntent.data) {
-          return {
-            success: true,
-            data: {
-              verificationId: setupIntent.data.id,
-              status: 'IN_PROGRESS' as VerificationStatus,
-              requiresAuthentication: true,
-              clientSecret: setupIntent.data.clientSecret,
-              expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
-            },
-          };
-        }
-      } catch (error) {
-        devLog.warn('⚠️ [VERIFICATION] Stripe verification fallback failed');
-      }
-    }
-
     // Try Razorpay
     if (razorpayService.isConfigured()) {
       try {

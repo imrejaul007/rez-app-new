@@ -229,7 +229,6 @@ const PaymentMethods: React.FC<PaymentMethodsProps> = ({
           <View style={styles.partnersLogos}>
             <Text style={styles.partnerLogo}>Razorpay</Text>
             <Text style={styles.partnerLogo}>Paytm</Text>
-            <Text style={styles.partnerLogo}>Stripe</Text>
           </View>
         </View>
       </ScrollView>

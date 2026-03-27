@@ -58,9 +58,6 @@ export const EXTERNAL_SERVICES = {
     appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID || '',
   },
   payment: {
-    stripe: {
-      publishableKey: process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || '',
-    },
     razorpay: {
       keyId: process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '',
     },

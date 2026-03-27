@@ -36,15 +36,3 @@ export async function getExpoCamera() {
   return _ExpoCamera;
 }
 
-/**
- * Lazily load @stripe/stripe-js and return a Stripe instance.
- * Cached after first call.
- */
-let _stripePromise: Promise<any> | null = null;
-
-export function getStripePromise(publishableKey: string) {
-  if (!_stripePromise) {
-    _stripePromise = import('@stripe/stripe-js').then(mod => mod.loadStripe(publishableKey));
-  }
-  return _stripePromise;
-}

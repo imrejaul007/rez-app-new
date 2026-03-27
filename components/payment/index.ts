@@ -14,6 +14,3 @@ export { default as EnhancedPaymentMethodCard } from './EnhancedPaymentMethod';
 export { default as WalletPaymentOption } from './WalletPaymentOption';
 export { default as SavingsSummaryCard } from './SavingsSummaryCard';
 export { default as PayButtonWithRewards } from './PayButtonWithRewards';
-
-// Re-export existing payment components
-export { default as StripeCardForm } from './StripeCardForm';

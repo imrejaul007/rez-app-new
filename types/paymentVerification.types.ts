@@ -50,7 +50,6 @@ export interface CardVerificationResponse {
   status: VerificationStatus;
   requiresAuthentication: boolean;
   authenticationUrl?: string; // For 3DS redirect
-  clientSecret?: string; // For Stripe
   threeDSUrl?: string; // For Razorpay
   expiresAt?: string;
 }

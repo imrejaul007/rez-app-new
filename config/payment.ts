@@ -5,17 +5,14 @@
 
 import { EXTERNAL_SERVICES } from './env';
 
-// Stripe Configuration
-export const STRIPE_PUBLISHABLE_KEY = EXTERNAL_SERVICES.payment.stripe.publishableKey;
-
 // Razorpay Configuration (legacy - kept for backward compatibility)
 export const RAZORPAY_KEY = EXTERNAL_SERVICES.payment.razorpay.keyId;
 
 // Payment Provider Types
-export type PaymentProvider = 'stripe' | 'razorpay';
+export type PaymentProvider = 'razorpay';
 
 // Default payment provider
-export const DEFAULT_PAYMENT_PROVIDER: PaymentProvider = 'stripe';
+export const DEFAULT_PAYMENT_PROVIDER: PaymentProvider = 'razorpay';
 
 // Currency configuration
 export const CURRENCY_CONFIG = {
@@ -35,13 +32,6 @@ export const getCurrencySymbol = (currency: string): string => {
 };
 
 /**
- * Check if Stripe is configured
- */
-export const isStripeConfigured = (): boolean => {
-  return Boolean(STRIPE_PUBLISHABLE_KEY && STRIPE_PUBLISHABLE_KEY.length > 0);
-};
-
-/**
  * Check if Razorpay is configured
  */
 export const isRazorpayConfigured = (): boolean => {
@@ -49,11 +39,9 @@ export const isRazorpayConfigured = (): boolean => {
 };
 
 export default {
-  STRIPE_PUBLISHABLE_KEY,
   RAZORPAY_KEY,
   DEFAULT_PAYMENT_PROVIDER,
   CURRENCY_CONFIG,
   getCurrencySymbol,
-  isStripeConfigured,
   isRazorpayConfigured,
 };

@@ -2,7 +2,6 @@
 // Central service to manage all payment methods for REZ App
 
 import razorpayService from './razorpayService';
-import stripeReactNativeService from './stripeReactNativeService';
 import apiClient from './apiClient';
 import type {
   PaymentMethod,
@@ -17,7 +16,6 @@ import type {
 
 // Environment configuration
 const ENABLE_RAZORPAY = process.env.EXPO_PUBLIC_ENABLE_RAZORPAY === 'true';
-const ENABLE_STRIPE = process.env.EXPO_PUBLIC_ENABLE_STRIPE === 'true';
 const ENABLE_COD = process.env.EXPO_PUBLIC_ENABLE_COD === 'true';
 const COD_FEE = Number(process.env.EXPO_PUBLIC_COD_FEE) || 50;
 const COD_MIN_ORDER = Number(process.env.EXPO_PUBLIC_COD_MIN_ORDER) || 0;
@@ -40,11 +38,6 @@ class PaymentOrchestratorService {
     }
 
     try {
-      // Initialize Stripe if enabled
-      if (ENABLE_STRIPE && stripeReactNativeService.isNativeSDKAvailable()) {
-        await stripeReactNativeService.initialize();
-      }
-
       this.initialized = true;
 
     } catch (error) {
@@ -149,22 +142,6 @@ class PaymentOrchestratorService {
       });
     }
 
-    // Stripe methods (for international payments)
-    if (ENABLE_STRIPE && stripeReactNativeService.isConfigured()) {
-      methods.push({
-        id: 'stripe_card',
-        name: 'International Card',
-        type: 'card',
-        gateway: 'stripe',
-        icon: 'card',
-        isAvailable: true,
-        processingFee: 2.9,
-        processingTime: '2-3 minutes',
-        description: 'Visa, Mastercard, Amex (International)',
-        supportedCurrencies: ['USD', 'EUR', 'GBP', 'INR'],
-      });
-    }
-
     // Cash on Delivery
     if (ENABLE_COD) {
       const codConfig = await this.getCODConfiguration();
@@ -211,9 +188,6 @@ class PaymentOrchestratorService {
         case 'razorpay':
           return await this.processRazorpayPayment(paymentRequest, userDetails);
 
-        case 'stripe':
-          return await this.processStripePayment(paymentRequest, userDetails);
-
         case 'internal':
           return await this.processInternalPayment(paymentRequest);
 
@@ -245,25 +219,6 @@ class PaymentOrchestratorService {
 
     try {
       return await razorpayService.processPayment(paymentRequest, userDetails);
-    } catch (error: any) {
-      throw error;
-    }
-  }
-
-  /**
-   * Process Stripe payment
-   */
-  private async processStripePayment(
-    paymentRequest: PaymentRequest,
-    userDetails?: {
-      name?: string;
-      email?: string;
-      phone?: string;
-    }
-  ): Promise<PaymentResponse> {
-
-    try {
-      return await stripeReactNativeService.processPayment(paymentRequest, userDetails);
     } catch (error: any) {
       throw error;
     }
@@ -442,9 +397,6 @@ class PaymentOrchestratorService {
         case 'razorpay':
           return await razorpayService.checkPaymentStatus(paymentId);
 
-        case 'stripe':
-          return await stripeReactNativeService.checkPaymentStatus(paymentId);
-
         case 'internal':
         case 'none':
           const response = await apiClient.get(`/payment/status/${paymentId}`);
@@ -466,11 +418,9 @@ class PaymentOrchestratorService {
    */
   validateConfiguration(): {
     razorpay: { isValid: boolean; errors: string[] };
-    stripe: { isValid: boolean; errors: string[] };
     cod: { isValid: boolean; errors: string[] };
   } {
     const razorpayValidation = razorpayService.validateConfiguration();
-    const stripeValidation = stripeReactNativeService.validateConfiguration();
     const codValidation = {
       isValid: ENABLE_COD,
       errors: ENABLE_COD ? [] : ['COD is disabled'],
@@ -478,7 +428,6 @@ class PaymentOrchestratorService {
 
     return {
       razorpay: razorpayValidation,
-      stripe: stripeValidation,
       cod: codValidation,
     };
   }

@@ -14,21 +14,10 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  ActivityIndicator,
-  Platform,
-  Modal,
-  TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, Platform, Modal, TextInput } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Elements } from '@stripe/react-stripe-js';
-import { getStripePromise } from '@/utils/lazyImports';
 import { PaymentScreenParams, StorePaymentInitResponse } from '@/types/storePayment.types';
 import apiClient from '@/services/apiClient';
 import { useAuthUser, useGetCurrencySymbol } from '@/stores/selectors';
@@ -47,13 +36,9 @@ import {
   WalletPaymentOption,
   SavingsSummaryCard,
   PayButtonWithRewards,
-  StripeCardForm,
 } from '@/components/payment';
 import { borderRadius, colors, shadows, spacing, typography } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
-
-// Initialize Stripe lazily — SDK is only loaded when this promise is first awaited
-const stripePromise = getStripePromise(process.env.EXPO_PUBLIC_STRIPE_PUBLISHABLE_KEY || '');
 
 function PaymentScreen() {
   const isMounted = useIsMounted();
@@ -68,7 +53,11 @@ function PaymentScreen() {
   const billAmount = parseFloat(amount || '0');
   let selectedOfferIds: string[] = [];
   if (selectedOffersParam) {
-    try { selectedOfferIds = JSON.parse(selectedOffersParam); } catch { selectedOfferIds = []; }
+    try {
+      selectedOfferIds = JSON.parse(selectedOffersParam);
+    } catch {
+      selectedOfferIds = [];
+    }
   }
 
   // Use the payment flow hook
@@ -83,8 +72,6 @@ function PaymentScreen() {
   const idempotencyKeyRef = useRef(`PAY-${Date.now()}-${Math.random().toString(36).slice(2)}`);
 
   // Local state for modals
-  const [showStripeModal, setShowStripeModal] = useState(false);
-  const [stripeClientSecret, setStripeClientSecret] = useState<string | null>(null);
   const [currentPaymentData, setCurrentPaymentData] = useState<StorePaymentInitResponse | null>(null);
   const [showUpiModal, setShowUpiModal] = useState(false);
   const [upiId, setUpiId] = useState('');
@@ -94,7 +81,7 @@ function PaymentScreen() {
   // Handle payment initiation
   const handlePayment = async () => {
     paymentFlow.clearError();
-    
+
     const paymentData = await paymentFlow.initiatePayment(idempotencyKeyRef.current);
 
     if (!paymentData) return;
@@ -133,29 +120,15 @@ function PaymentScreen() {
 
   const handlePaymentRedirect = (paymentData: StorePaymentInitResponse) => {
     const selectedType = paymentFlow.selectedPaymentMethod?.type;
-    const isCardMethod = selectedType?.includes('card');
 
-    if (isCardMethod) {
-      if (paymentData.clientSecret) {
-        setStripeClientSecret(paymentData.clientSecret);
-        setCurrentPaymentData(paymentData);
-        setShowStripeModal(true);
-      } else {
-        // Card selected but Stripe not configured / clientSecret missing
-        showToast({
-          message: 'Card payments are temporarily unavailable. Please try UPI.',
-          type: 'warning',
-          duration: 4000,
-        });
-      }
-    } else if (paymentData.paymentMethod === 'upi' || selectedType === 'upi') {
+    if (paymentData.paymentMethod === 'upi' || selectedType === 'upi') {
       setCurrentPaymentData(paymentData);
       setUpiId('');
       setShowUpiModal(true);
     } else {
       // Net banking, pay later, etc. — not yet integrated
       showToast({
-        message: 'This payment method is not yet available. Please select UPI or Card.',
+        message: 'This payment method is not yet available. Please select UPI.',
         type: 'warning',
         duration: 4000,
       });
@@ -164,12 +137,12 @@ function PaymentScreen() {
 
   const handleUpiPayment = async () => {
     setUpiError(null);
-    
+
     if (!upiId.trim()) {
       setUpiError('Please enter your UPI ID');
       return;
     }
-    
+
     if (!currentPaymentData) {
       setUpiError('Payment data not found. Please try again.');
       return;
@@ -211,77 +184,6 @@ function PaymentScreen() {
     }
   };
 
-  const handleStripePaymentSuccess = async (paymentIntentId: string) => {
-    setShowStripeModal(false);
-
-    if (!currentPaymentData) return;
-
-    try {
-      const confirmResponse = await apiClient.post('/store-payment/confirm', {
-        paymentId: currentPaymentData.paymentId,
-        transactionId: paymentIntentId,
-      });
-
-      if (confirmResponse.success && confirmResponse.data) {
-        navigateToSuccess(confirmResponse.data);
-      } else {
-        showToast({
-          message: confirmResponse.error || 'Payment confirmation failed. Please contact support.',
-          type: 'error',
-          duration: 5000,
-        });
-      }
-    } catch (err: any) {
-      showToast({
-        message: 'Payment was processed but confirmation failed. Please check your transaction history.',
-        type: 'warning',
-        duration: 5000,
-      });
-    } finally {
-      if (!isMounted()) return;
-      setStripeClientSecret(null);
-      if (!isMounted()) return;
-      setCurrentPaymentData(null);
-    }
-  };
-
-  const handleStripePaymentError = (errorMessage: string) => {
-    setShowStripeModal(false);
-    // Show error to user via toast
-    if (errorMessage) {
-      showToast({
-        message: errorMessage || 'Payment failed. Please try again.',
-        type: 'error',
-        duration: 4000,
-      });
-    }
-  };
-
-  const handleStripePaymentCancel = async () => {
-    setShowStripeModal(false);
-
-    if (currentPaymentData?.paymentId) {
-      try {
-        await apiClient.post('/store-payment/cancel', {
-          paymentId: currentPaymentData.paymentId,
-          reason: 'user_cancelled',
-        });
-      } catch (err: any) {
-        // Inform user if cancellation failed (payment may still be pending)
-        showToast({
-          message: 'Payment cancellation may not have completed. Please check your payment status.',
-          type: 'warning',
-          duration: 5000,
-        });
-      }
-    }
-
-    if (!isMounted()) return;
-    setStripeClientSecret(null);
-    if (!isMounted()) return;
-    setCurrentPaymentData(null);
-  };
-
   const navigateToSuccess = async (paymentResult: any) => {
     if (paymentFlow.appliedCoins.totalApplied > 0) {
       try {
@@ -305,11 +207,13 @@ function PaymentScreen() {
         storeLogo: storeLogo || paymentFlow.store?.logo || '',
         amount: billAmount.toString(),
         coinsUsed: paymentFlow.appliedCoins.totalApplied.toString(),
-        rewards: JSON.stringify(paymentResult.rewards || {
-          cashback: paymentFlow.rewardsPreview.cashback,
-          coinsEarned: paymentFlow.rewardsPreview.coinsToEarn,
-          bonusCoins: 0,
-        }),
+        rewards: JSON.stringify(
+          paymentResult.rewards || {
+            cashback: paymentFlow.rewardsPreview.cashback,
+            coinsEarned: paymentFlow.rewardsPreview.coinsToEarn,
+            bonusCoins: 0,
+          },
+        ),
       },
     });
   };
@@ -373,7 +277,7 @@ function PaymentScreen() {
         {paymentFlow.amountToPay > 0 && (
           <View style={styles.paymentMethodsCard}>
             <Text style={styles.sectionTitle}>Payment Method</Text>
-            
+
             {paymentFlow.paymentMethods.map((method) => (
               <EnhancedPaymentMethodCard
                 key={method.id}
@@ -410,9 +314,7 @@ function PaymentScreen() {
         )}
 
         {/* Savings Summary */}
-        {paymentFlow.savingsSummary.totalSaved > 0 && (
-          <SavingsSummaryCard savings={paymentFlow.savingsSummary} />
-        )}
+        {paymentFlow.savingsSummary.totalSaved > 0 && <SavingsSummaryCard savings={paymentFlow.savingsSummary} />}
 
         {/* Error Display */}
         {paymentFlow.error && (
@@ -433,46 +335,6 @@ function PaymentScreen() {
         disabled={paymentFlow.amountToPay > 0 && !paymentFlow.selectedPaymentMethod}
         onPress={handlePayment}
       />
-
-      {/* Stripe Card Payment Modal */}
-      <Modal
-        visible={showStripeModal}
-        transparent
-        animationType="slide"
-        onRequestClose={handleStripePaymentCancel}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            {stripeClientSecret && (
-              <Elements
-                stripe={stripePromise}
-                options={{
-                  clientSecret: stripeClientSecret,
-                  appearance: {
-                    theme: 'stripe',
-                    variables: {
-                      colorPrimary: colors.primary[500],
-                      colorBackground: colors.background.primary,
-                      colorText: colors.neutral[900],
-                      colorDanger: colors.error,
-                      fontFamily: 'system-ui, -apple-system, sans-serif',
-                      borderRadius: '12px',
-                    },
-                  },
-                }}
-              >
-                <StripeCardForm
-                  clientSecret={stripeClientSecret}
-                  amount={currentPaymentData?.remainingAmount || 0}
-                  onSuccess={handleStripePaymentSuccess}
-                  onError={handleStripePaymentError}
-                  onCancel={handleStripePaymentCancel}
-                />
-              </Elements>
-            )}
-          </View>
-        </View>
-      </Modal>
 
       {/* UPI Payment Modal */}
       <Modal
@@ -512,14 +374,19 @@ function PaymentScreen() {
             <View style={styles.upiAmountContainer}>
               <Text style={styles.upiAmountLabel}>Amount to Pay</Text>
               <Text style={styles.upiAmount}>
-                {currencySymbol}{currentPaymentData?.remainingAmount || paymentFlow.amountToPay}
+                {currencySymbol}
+                {currentPaymentData?.remainingAmount || paymentFlow.amountToPay}
               </Text>
             </View>
 
             <View style={styles.upiInputContainer}>
               <Text style={styles.upiInputLabel}>Enter your UPI ID</Text>
               <View style={[styles.upiInputWrapper, upiError && styles.upiInputError]}>
-                <Ionicons name="phone-portrait-outline" size={20} color={upiError ? colors.error : colors.neutral[500]} />
+                <Ionicons
+                  name="phone-portrait-outline"
+                  size={20}
+                  color={upiError ? colors.error : colors.neutral[500]}
+                />
                 <TextInput
                   value={upiId}
                   onChangeText={(text) => {
@@ -540,9 +407,7 @@ function PaymentScreen() {
                   <Text style={styles.upiErrorText}>{upiError}</Text>
                 </View>
               ) : (
-                <Text style={styles.upiHint}>
-                  Example: name@paytm, name@oksbi, name@ybl
-                </Text>
+                <Text style={styles.upiHint}>Example: name@paytm, name@oksbi, name@ybl</Text>
               )}
             </View>
 
@@ -573,20 +438,13 @@ function PaymentScreen() {
                   Cancel
                 </Text>
               </View>
-              <View
-                style={[
-                  styles.upiPayButton,
-                  (!upiId.trim() || upiProcessing) && styles.upiPayButtonDisabled,
-                ]}
-              >
+              <View style={[styles.upiPayButton, (!upiId.trim() || upiProcessing) && styles.upiPayButtonDisabled]}>
                 {upiProcessing ? (
                   <ActivityIndicator size="small" color={colors.background.primary} />
                 ) : (
-                  <Text
-                    style={styles.upiPayButtonText}
-                    onPress={handleUpiPayment}
-                  >
-                    Pay {currencySymbol}{currentPaymentData?.remainingAmount || paymentFlow.amountToPay}
+                  <Text style={styles.upiPayButtonText} onPress={handleUpiPayment}>
+                    Pay {currencySymbol}
+                    {currentPaymentData?.remainingAmount || paymentFlow.amountToPay}
                   </Text>
                 )}
               </View>
