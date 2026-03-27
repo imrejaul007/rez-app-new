@@ -6,7 +6,6 @@ import {
   Order as UnifiedOrder,
   OrderItem as UnifiedOrderItem,
   toOrder,
-  validateOrder,
   canCancelOrder
 } from '@/types/unified';
 

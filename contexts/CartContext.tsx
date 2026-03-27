@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useEffect, useCallback, u
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { CartItem as CartItemType } from '@/types/cart';
-import { CartItem as ApiCartItemType, UnifiedCartItem, UnifiedCart } from '@/services/cartApi';
+import { CartItem as ApiCartItemType, UnifiedCartItem } from '@/services/cartApi';
 import cartService from '@/services/cartApi';
 import { mapBackendCartToFrontend } from '@/utils/dataMappers';
 import offlineQueueService from '@/services/offlineQueueService';

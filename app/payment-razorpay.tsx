@@ -179,12 +179,12 @@ function PaymentPage() {
       platformAlertDestructive(
         'Payment in Progress',
         'A payment is being processed. Are you sure you want to go back?',
-        'Go Back',
         () => {
           setIsProcessing(false);
           setCurrentStep('methods');
           router.canGoBack() ? router.back() : router.replace('/(tabs)');
         },
+        'Go Back',
       );
     } else {
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
@@ -230,7 +230,7 @@ function PaymentPage() {
         response = await travelApi.createStripeSession(bookingId, amount, currency, successUrl, cancelUrl);
       } else {
         // Standard order Stripe session
-        response = await apiClient.post('/payment/create-checkout-session', {
+        response = await apiClient.post<{ url: string; sessionId: string }>('/payment/create-checkout-session', {
           orderId,
           amount,
           currency,
@@ -286,7 +286,7 @@ function PaymentPage() {
       if (isTravelPayment) {
         response = await travelApi.verifyStripeSession(sessionId, bookingId);
       } else {
-        response = await apiClient.post('/payment/verify-stripe-session', {
+        response = await apiClient.post<{ verified: boolean }>('/payment/verify-stripe-session', {
           sessionId,
           orderId,
         });

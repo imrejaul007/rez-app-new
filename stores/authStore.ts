@@ -53,14 +53,16 @@ const defaultActions: AuthActions = {
   sendOTP: noopAsync,
   login: noopAsync,
   register: noopAsync,
-  verifyOTP: noopAsync,
+  // Typed noops: signatures must match AuthActions interface even for defaults.
+  // These are immediately replaced by AuthProvider on mount via _setFromProvider.
+  verifyOTP: async (_phoneNumber: string, _otp: string) => undefined,
   logout: noopAsync,
   forceLogout: noop,
   updateProfile: noopAsync,
   completeOnboarding: noopAsync,
   clearError: noop,
   checkAuthStatus: noopAsync,
-  loginWithTokens: noopAsync,
+  loginWithTokens: async (_tokens: { accessToken: string; refreshToken: string }, _user: any) => _user,
 };
 
 // ---------------------------------------------------------------------------

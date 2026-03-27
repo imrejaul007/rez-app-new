@@ -245,7 +245,9 @@ function SignInScreen() {
 
       // Check if this phone number has a PIN set — if so, show PIN screen instead of OTP
       try {
-        const response = await apiClient.get(`/user/auth/has-pin?phoneNumber=${encodeURIComponent(formattedPhone)}`);
+        const response = await apiClient.get<{ hasPin: boolean }>(
+          `/user/auth/has-pin?phoneNumber=${encodeURIComponent(formattedPhone)}`,
+        );
         const hasPinSet = response.data?.hasPin ?? false;
         if (hasPinSet) {
           if (!isMounted()) return;
@@ -271,7 +273,11 @@ function SignInScreen() {
     setIsSending(true);
     try {
       const formattedPhone = `${selectedCountry.dialCode}${formData.phoneNumber}`;
-      const response = await apiClient.post('/user/auth/verify-pin', {
+      const response = await apiClient.post<{
+        user: Record<string, any>;
+        tokens: { accessToken: string; refreshToken: string };
+        attemptsLeft?: number;
+      }>('/user/auth/verify-pin', {
         phoneNumber: formattedPhone,
         pin: formData.pin,
       });
@@ -296,7 +302,7 @@ function SignInScreen() {
         setErrors((prev) => ({ ...prev, pin: msg }));
         // Show alert for lockout or low remaining attempts
         const isLocked = msg.toLowerCase().includes('too many') || msg.toLowerCase().includes('locked');
-        const attemptsLeft = response.data?.attemptsLeft ?? response.attemptsLeft;
+        const attemptsLeft = (response.data as any)?.attemptsLeft ?? (response as any).attemptsLeft;
         if (isLocked) {
           platformAlertSimple('Account Locked', msg);
         } else if (attemptsLeft !== undefined && attemptsLeft <= 2) {

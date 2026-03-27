@@ -134,7 +134,7 @@ export function usePostOrderRewards({
       });
     } else {
       // StorePayment ID (SP-xxx) — single DB query via dedicated endpoint
-      apiClient.get('/social-media/shared-status', { orderId }).then((response) => {
+      apiClient.get<{ hasShared: boolean }>('/social-media/shared-status', { orderId }).then((response) => {
         if (cancelled) return;
         if (response.success && response.data?.hasShared) {
           setHasShared(true);

@@ -6,7 +6,6 @@ import apiClient, { ApiResponse } from './apiClient';
 import { withRetry, createErrorResponse, getUserFriendlyErrorMessage, logApiRequest, logApiResponse } from '@/utils/apiUtils';
 import {
   CartItem as UnifiedCartItem,
-  Cart as UnifiedCart,
   toCartItem,
   validateCartItem as validateUnifiedCartItem,
   isCartItemAvailable
@@ -196,7 +195,8 @@ export interface Cart {
 }
 
 // Export unified Cart types for new code
-export { UnifiedCartItem, UnifiedCart };
+// Note: Cart is defined locally in this file (not in @/types/unified), so we only re-export CartItem
+export { UnifiedCartItem };
 
 export interface AddToCartRequest {
   productId: string;
