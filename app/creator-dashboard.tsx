@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Shows earnings overview, recent conversions, picks management, and tier progress
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  StatusBar,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, StatusBar, RefreshControl } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -101,54 +92,61 @@ function CreatorDashboard() {
     fetchDashboardData(true);
   }, [fetchDashboardData]);
 
-  const handleDeletePick = useCallback((pick: MyPick) => {
-    const isApproved = pick.status === 'approved';
-    platformAlert(
-      isApproved ? 'Archive Pick?' : 'Delete Pick?',
-      isApproved
-        ? 'This pick will be archived and hidden from public view.'
-        : 'This pick will be permanently deleted.',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: isApproved ? 'Archive' : 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            // Optimistic removal
-            const prevPicks = [...picks];
-            setPicks(prev => prev.filter(p => p.id !== pick.id));
-            try {
-              const response = await creatorsApi.deleteMyPick(pick.id);
-              if (!response.success) {
+  const handleDeletePick = useCallback(
+    (pick: MyPick) => {
+      const isApproved = pick.status === 'approved';
+      platformAlert(
+        isApproved ? 'Archive Pick?' : 'Delete Pick?',
+        isApproved
+          ? 'This pick will be archived and hidden from public view.'
+          : 'This pick will be permanently deleted.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: isApproved ? 'Archive' : 'Delete',
+            style: 'destructive',
+            onPress: async () => {
+              // Optimistic removal
+              const prevPicks = [...picks];
+              setPicks((prev) => prev.filter((p) => p.id !== pick.id));
+              try {
+                const response = await creatorsApi.deleteMyPick(pick.id);
+                if (!response.success) {
+                  setPicks(prevPicks); // revert
+                  platformAlert('Error', response.error || 'Failed to delete pick');
+                }
+              } catch (err: any) {
+                if (!isMounted()) return;
                 setPicks(prevPicks); // revert
-                platformAlert('Error', response.error || 'Failed to delete pick');
+                platformAlert('Error', err.message || 'Something went wrong');
               }
-            } catch (err: any) {
-              if (!isMounted()) return;
-              setPicks(prevPicks); // revert
-              platformAlert('Error', err.message || 'Something went wrong');
-            }
+            },
           },
-        },
-      ]
-    );
-  }, [picks]);
+        ],
+      );
+    },
+    [picks],
+  );
 
   const tier = earnings?.tier || profile?.tier || 'starter';
   const tc = tierColors[tier] || tierColors.starter;
 
-  const pickCounts = useMemo(() => ({
-    all: picks.length,
-    approved: picks.filter(p => p.status === 'approved').length,
-    pending: picks.filter(p => p.status === 'pending_merchant' || p.status === 'pending_review').length,
-    draft: picks.filter(p => p.status === 'draft').length,
-    rejected: picks.filter(p => p.status === 'rejected').length,
-  }), [picks]);
+  const pickCounts = useMemo(
+    () => ({
+      all: picks.length,
+      approved: picks.filter((p) => p.status === 'approved').length,
+      pending: picks.filter((p) => p.status === 'pending_merchant' || p.status === 'pending_review').length,
+      draft: picks.filter((p) => p.status === 'draft').length,
+      rejected: picks.filter((p) => p.status === 'rejected').length,
+    }),
+    [picks],
+  );
 
   const filteredPicks = useMemo(() => {
     if (pickFilter === 'all') return picks;
-    if (pickFilter === 'pending') return picks.filter(p => p.status === 'pending_merchant' || p.status === 'pending_review');
-    return picks.filter(p => p.status === pickFilter);
+    if (pickFilter === 'pending')
+      return picks.filter((p) => p.status === 'pending_merchant' || p.status === 'pending_review');
+    return picks.filter((p) => p.status === pickFilter);
   }, [picks, pickFilter]);
 
   // ============================================
@@ -159,7 +157,7 @@ function CreatorDashboard() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} />
+        <Header onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))} />
         <ProfileSkeleton />
       </View>
     );
@@ -173,7 +171,7 @@ function CreatorDashboard() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-        <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} />
+        <Header onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))} />
         <View style={styles.centerContainer}>
           <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
           <Text style={styles.errorTitle}>Unable to Load</Text>
@@ -193,14 +191,12 @@ function CreatorDashboard() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
-      <Header onBack={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} />
+      <Header onBack={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))} />
 
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.nileBlue} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.nileBlue} />}
       >
         {/* Earnings Overview */}
         <LinearGradient
@@ -213,56 +209,41 @@ function CreatorDashboard() {
             <Text style={styles.earningsTitle}>Total Earnings</Text>
             <View style={[styles.tierBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}>
               <CachedImage source={NUQTA_COIN} style={styles.coinIcon14} />
-              <Text style={styles.tierBadgeText}>
-                {tier.charAt(0).toUpperCase() + tier.slice(1)}
-              </Text>
+              <Text style={styles.tierBadgeText}>{tier.charAt(0).toUpperCase() + tier.slice(1)}</Text>
             </View>
           </View>
 
           <View style={styles.totalEarningsRow}>
             <CachedImage source={NUQTA_COIN} style={styles.coinIcon28} />
-            <Text style={styles.totalEarnings}>
-              {formatCount(earnings?.totalEarnings || 0)} coins
-            </Text>
+            <Text style={styles.totalEarnings}>{formatCount(earnings?.totalEarnings || 0)} coins</Text>
           </View>
 
           <View style={styles.earningsGrid}>
             <View style={styles.earningsGridItem}>
               <Text style={styles.earningsGridLabel}>This Month</Text>
-              <Text style={styles.earningsGridValue}>
-                {formatCount(earnings?.thisMonthEarnings || 0)}
-              </Text>
+              <Text style={styles.earningsGridValue}>{formatCount(earnings?.thisMonthEarnings || 0)}</Text>
             </View>
             <View style={styles.earningsGridDivider} />
             <View style={styles.earningsGridItem}>
               <Text style={styles.earningsGridLabel}>Rewards</Text>
-              <Text style={styles.earningsGridValue}>
-                {formatCount(earnings?.merchantRewards || 0)}
-              </Text>
+              <Text style={styles.earningsGridValue}>{formatCount(earnings?.merchantRewards || 0)}</Text>
             </View>
             <View style={styles.earningsGridDivider} />
             <View style={styles.earningsGridItem}>
               <Text style={styles.earningsGridLabel}>Conversions</Text>
-              <Text style={styles.earningsGridValue}>
-                {earnings?.totalConversions || 0}
-              </Text>
+              <Text style={styles.earningsGridValue}>{earnings?.totalConversions || 0}</Text>
             </View>
           </View>
 
           <View style={styles.commissionRow}>
             <Ionicons name="trending-up" size={16} color="rgba(255,255,255,0.8)" />
-            <Text style={styles.commissionText}>
-              Commission Rate: {earnings?.commissionRate || 2}%
-            </Text>
+            <Text style={styles.commissionText}>Commission Rate: {earnings?.commissionRate || 2}%</Text>
           </View>
         </LinearGradient>
 
         {/* Quick Actions */}
         <View style={styles.actionsRow}>
-          <Pressable
-            style={styles.actionCard}
-            onPress={() => router.push('/submit-pick')}
-          >
+          <Pressable style={styles.actionCard} onPress={() => router.push('/submit-pick')}>
             <View style={[styles.actionIcon, { backgroundColor: colors.background.tertiary }]}>
               <Ionicons name="add-circle" size={24} color={colors.nileBlue} />
             </View>
@@ -271,7 +252,11 @@ function CreatorDashboard() {
 
           <Pressable
             style={styles.actionCard}
-            onPress={() => router.push(`/creator/${typeof profile?.user === 'string' ? profile.user : profile?.user?._id || profile?._id}`)}
+            onPress={() =>
+              router.push(
+                `/creator/${typeof profile?.user === 'string' ? profile.user : profile?.user?._id || profile?._id}`,
+              )
+            }
           >
             <View style={[styles.actionIcon, { backgroundColor: Colors.infoScale[50] }]}>
               <Ionicons name="person" size={24} color={Colors.info} />
@@ -279,20 +264,14 @@ function CreatorDashboard() {
             <Text style={styles.actionText}>My Profile</Text>
           </Pressable>
 
-          <Pressable
-            style={styles.actionCard}
-            onPress={() => router.push('/creator/edit')}
-          >
+          <Pressable style={styles.actionCard} onPress={() => router.push('/creator/edit')}>
             <View style={[styles.actionIcon, { backgroundColor: Colors.warningScale[50] }]}>
               <Ionicons name="create-outline" size={24} color={Colors.gold} />
             </View>
             <Text style={styles.actionText}>Edit Profile</Text>
           </Pressable>
 
-          <Pressable
-            style={styles.actionCard}
-            onPress={() => router.push('/my-earnings')}
-          >
+          <Pressable style={styles.actionCard} onPress={() => router.push('/my-earnings')}>
             <View style={[styles.actionIcon, { backgroundColor: Colors.successScale[100] }]}>
               <Ionicons name="stats-chart" size={24} color={Colors.success} />
             </View>
@@ -307,18 +286,19 @@ function CreatorDashboard() {
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll}>
             <View style={styles.filterRow}>
-              {([
-                { key: 'all', label: 'All' },
-                { key: 'approved', label: 'Published' },
-                { key: 'pending', label: 'Pending' },
-                { key: 'draft', label: 'Drafts' },
-                { key: 'rejected', label: 'Rejected' },
-              ] as const).map(f => (
+              {(
+                [
+                  { key: 'all', label: 'All' },
+                  { key: 'approved', label: 'Published' },
+                  { key: 'pending', label: 'Pending' },
+                  { key: 'draft', label: 'Drafts' },
+                  { key: 'rejected', label: 'Rejected' },
+                ] as const
+              ).map((f) => (
                 <Pressable
                   key={f.key}
                   style={[styles.filterChip, pickFilter === f.key && styles.filterChipActive]}
                   onPress={() => setPickFilter(f.key)}
-                 
                 >
                   <Text style={[styles.filterChipText, pickFilter === f.key && styles.filterChipTextActive]}>
                     {f.label} ({pickCounts[f.key]})
@@ -329,14 +309,16 @@ function CreatorDashboard() {
           </ScrollView>
 
           {filteredPicks.length > 0 ? (
-            filteredPicks.slice(0, 5).map(pick => {
+            filteredPicks.slice(0, 5).map((pick) => {
               const isApproved = pick.status === 'approved';
               return (
                 <Pressable
                   key={pick.id}
                   style={styles.pickRowWrapper}
-                  onPress={() => isApproved ? router.push({ pathname: '/picks/[id]', params: { id: pick.id } }) : undefined}
-                 
+                  onPress={
+                    isApproved ? () => router.push({ pathname: '/picks/[id]', params: { id: pick.id } }) : undefined
+                  }
+                  disabled={!isApproved}
                 >
                   <View style={styles.pickRow}>
                     <View style={styles.positionRelative}>
@@ -354,51 +336,54 @@ function CreatorDashboard() {
                       )}
                     </View>
                     <View style={styles.pickInfo}>
-                      <Text style={styles.pickTitle} numberOfLines={1}>{pick.title}</Text>
+                      <Text style={styles.pickTitle} numberOfLines={1}>
+                        {pick.title}
+                      </Text>
                       <View style={styles.pickMeta}>
                         {isApproved ? (
                           <>
-                            <Text style={styles.pickMetaText}>
-                              {formatCount(pick.views)} views
-                            </Text>
+                            <Text style={styles.pickMetaText}>{formatCount(pick.views)} views</Text>
                             <Text style={styles.pickMetaDot}>·</Text>
-                            <Text style={styles.pickMetaText}>
-                              {pick.purchases} sales
-                            </Text>
+                            <Text style={styles.pickMetaText}>{pick.purchases} sales</Text>
                             {pick.earnings > 0 && (
                               <>
                                 <Text style={styles.pickMetaDot}>·</Text>
                                 <CachedImage source={NUQTA_COIN} style={styles.coinIcon13} />
-                                <Text style={styles.pickEarnings}>
-                                  +{formatCount(pick.earnings)}
-                                </Text>
+                                <Text style={styles.pickEarnings}>+{formatCount(pick.earnings)}</Text>
                               </>
                             )}
                           </>
                         ) : (
                           <Text style={styles.pickMetaText}>
-                            {pick.productBrand ? `${pick.productBrand} · ` : ''}{BRAND.CURRENCY_CODE} {pick.productPrice?.toLocaleString() || 0}
+                            {pick.productBrand ? `${pick.productBrand} · ` : ''}
+                            {BRAND.CURRENCY_CODE} {pick.productPrice?.toLocaleString() || 0}
                           </Text>
                         )}
                       </View>
                     </View>
-                    <View style={[
-                      styles.pickStatusBadge,
-                      pick.status === 'approved' && { backgroundColor: Colors.successScale[100] },
-                      pick.status === 'pending_review' && { backgroundColor: Colors.warningScale[50] },
-                      pick.status === 'pending_merchant' && { backgroundColor: colors.tint.orange },
-                      pick.status === 'rejected' && { backgroundColor: Colors.errorScale[100] },
-                    ]}>
-                      <Text style={[
-                        styles.pickStatusText,
-                        pick.status === 'approved' && { color: Colors.success },
-                        pick.status === 'pending_review' && { color: Colors.gold },
-                        pick.status === 'pending_merchant' && { color: colors.brand.orangeDark },
-                        pick.status === 'rejected' && { color: Colors.error },
-                      ]}>
-                        {pick.status === 'pending_merchant' ? 'Awaiting Store' :
-                         pick.status === 'pending_review' ? 'In Review' :
-                         pick.status.charAt(0).toUpperCase() + pick.status.slice(1)}
+                    <View
+                      style={[
+                        styles.pickStatusBadge,
+                        pick.status === 'approved' && { backgroundColor: Colors.successScale[100] },
+                        pick.status === 'pending_review' && { backgroundColor: Colors.warningScale[50] },
+                        pick.status === 'pending_merchant' && { backgroundColor: colors.tint.orange },
+                        pick.status === 'rejected' && { backgroundColor: Colors.errorScale[100] },
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.pickStatusText,
+                          pick.status === 'approved' && { color: Colors.success },
+                          pick.status === 'pending_review' && { color: Colors.gold },
+                          pick.status === 'pending_merchant' && { color: colors.brand.orangeDark },
+                          pick.status === 'rejected' && { color: Colors.error },
+                        ]}
+                      >
+                        {pick.status === 'pending_merchant'
+                          ? 'Awaiting Store'
+                          : pick.status === 'pending_review'
+                            ? 'In Review'
+                            : pick.status.charAt(0).toUpperCase() + pick.status.slice(1)}
                       </Text>
                     </View>
                     {/* Delete/Archive button */}
@@ -408,7 +393,6 @@ function CreatorDashboard() {
                         e.stopPropagation();
                         handleDeletePick(pick);
                       }}
-                     
                       hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
                     >
                       <Ionicons
@@ -419,30 +403,31 @@ function CreatorDashboard() {
                     </Pressable>
                   </View>
                   {/* Show merchant rejection reason */}
-                  {pick.status === 'rejected' && pick.merchantApproval?.status === 'rejected' && pick.merchantApproval?.rejectionReason && (
-                    <Text style={styles.rejectionReasonText}>
-                      Store: {pick.merchantApproval.rejectionReason}
-                    </Text>
-                  )}
+                  {pick.status === 'rejected' &&
+                    pick.merchantApproval?.status === 'rejected' &&
+                    pick.merchantApproval?.rejectionReason && (
+                      <Text style={styles.rejectionReasonText}>Store: {pick.merchantApproval.rejectionReason}</Text>
+                    )}
                   {/* Show merchant reward if approved with reward */}
-                  {pick.merchantApproval?.reward && pick.merchantApproval.reward.type !== 'none' && pick.merchantApproval.reward.amount > 0 && (
-                    <View style={styles.merchantRewardRow}>
-                      <Ionicons name="gift-outline" size={12} color={colors.nileBlue} />
-                      <CachedImage source={NUQTA_COIN} style={styles.coinIcon13} />
-                      <Text style={styles.merchantRewardText}>
-                        +{pick.merchantApproval.reward.amount} {pick.merchantApproval.reward.type === 'branded_coins' ? 'branded' : BRAND.APP_NAME} reward
-                      </Text>
-                    </View>
-                  )}
+                  {pick.merchantApproval?.reward &&
+                    pick.merchantApproval.reward.type !== 'none' &&
+                    pick.merchantApproval.reward.amount > 0 && (
+                      <View style={styles.merchantRewardRow}>
+                        <Ionicons name="gift-outline" size={12} color={colors.nileBlue} />
+                        <CachedImage source={NUQTA_COIN} style={styles.coinIcon13} />
+                        <Text style={styles.merchantRewardText}>
+                          +{pick.merchantApproval.reward.amount}{' '}
+                          {pick.merchantApproval.reward.type === 'branded_coins' ? 'branded' : BRAND.APP_NAME} reward
+                        </Text>
+                      </View>
+                    )}
                 </Pressable>
               );
             })
           ) : (
             <View style={styles.emptyPicks}>
               <Ionicons name="bag-outline" size={32} color={colors.border.default} />
-              <Text style={styles.emptyText}>
-                {pickFilter === 'all' ? 'No picks yet' : `No ${pickFilter} picks`}
-              </Text>
+              <Text style={styles.emptyText}>{pickFilter === 'all' ? 'No picks yet' : `No ${pickFilter} picks`}</Text>
               <Text style={styles.emptySubtext}>
                 {pickFilter === 'all' ? 'Start sharing products you love' : 'Try a different filter'}
               </Text>
@@ -457,7 +442,7 @@ function CreatorDashboard() {
               <Text style={styles.sectionTitle}>Recent Conversions</Text>
             </View>
 
-            {earnings.recentConversions.slice(0, 5).map(conv => (
+            {earnings.recentConversions.slice(0, 5).map((conv) => (
               <View key={conv.id} style={styles.conversionRow}>
                 {conv.productImage ? (
                   <CachedImage source={conv.productImage} style={styles.convImage} />
@@ -467,7 +452,9 @@ function CreatorDashboard() {
                   </View>
                 )}
                 <View style={styles.convInfo}>
-                  <Text style={styles.convProduct} numberOfLines={1}>{conv.product}</Text>
+                  <Text style={styles.convProduct} numberOfLines={1}>
+                    {conv.product}
+                  </Text>
                   <Text style={styles.convBuyer}>by {conv.buyer}</Text>
                 </View>
                 <View style={styles.convRight}>
@@ -475,18 +462,22 @@ function CreatorDashboard() {
                     <CachedImage source={NUQTA_COIN} style={styles.coinIcon14} />
                     <Text style={styles.convCommission}>+{conv.commission}</Text>
                   </View>
-                  <View style={[
-                    styles.convStatusBadge,
-                    conv.status === 'paid' && { backgroundColor: Colors.successScale[100] },
-                    conv.status === 'confirmed' && { backgroundColor: Colors.infoScale[50] },
-                    conv.status === 'pending' && { backgroundColor: Colors.warningScale[50] },
-                  ]}>
-                    <Text style={[
-                      styles.convStatusText,
-                      conv.status === 'paid' && { color: Colors.success },
-                      conv.status === 'confirmed' && { color: Colors.info },
-                      conv.status === 'pending' && { color: Colors.gold },
-                    ]}>
+                  <View
+                    style={[
+                      styles.convStatusBadge,
+                      conv.status === 'paid' && { backgroundColor: Colors.successScale[100] },
+                      conv.status === 'confirmed' && { backgroundColor: Colors.infoScale[50] },
+                      conv.status === 'pending' && { backgroundColor: Colors.warningScale[50] },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.convStatusText,
+                        conv.status === 'paid' && { color: Colors.success },
+                        conv.status === 'confirmed' && { color: Colors.info },
+                        conv.status === 'pending' && { color: Colors.gold },
+                      ]}
+                    >
                       {conv.status.charAt(0).toUpperCase() + conv.status.slice(1)}
                     </Text>
                   </View>
@@ -518,23 +509,35 @@ function CreatorDashboard() {
                 const icon = tierIcons[t];
                 return (
                   <View key={t} style={styles.tierItem}>
-                    <View style={[
-                      styles.tierDot,
-                      isPast && !isActive && { backgroundColor: tcolors.border, borderColor: tcolors.border },
-                      isActive && { backgroundColor: tColors.bg, borderColor: tcolors.border, borderWidth: 2.5, transform: [{ scale: 1.35 }], shadowColor: tcolors.border, shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.4, shadowRadius: 5, elevation: 5 },
-                    ]}>
-                      {isActive && (
-                        <Ionicons name={icon.filled as any} size={13} color={tcolors.border} />
-                      )}
+                    <View
+                      style={[
+                        styles.tierDot,
+                        isPast && !isActive && { backgroundColor: tcolors.border, borderColor: tcolors.border },
+                        isActive && {
+                          backgroundColor: tColors.bg,
+                          borderColor: tcolors.border,
+                          borderWidth: 2.5,
+                          transform: [{ scale: 1.35 }],
+                          shadowColor: tcolors.border,
+                          shadowOffset: { width: 0, height: 2 },
+                          shadowOpacity: 0.4,
+                          shadowRadius: 5,
+                          elevation: 5,
+                        },
+                      ]}
+                    >
+                      {isActive && <Ionicons name={icon.filled as any} size={13} color={tcolors.border} />}
                       {isPast && !isActive && (
                         <Ionicons name={icon.outline as any} size={10} color={colors.text.inverse} />
                       )}
                     </View>
-                    <Text style={[
-                      styles.tierName,
-                      isActive && { fontWeight: '700', color: tcolors.border },
-                      isPast && !isActive && { color: colors.text.tertiary },
-                    ]}>
+                    <Text
+                      style={[
+                        styles.tierName,
+                        isActive && { fontWeight: '700', color: tcolors.border },
+                        isPast && !isActive && { color: colors.text.tertiary },
+                      ]}
+                    >
                       {t.charAt(0).toUpperCase() + t.slice(1)}
                     </Text>
                   </View>

@@ -332,7 +332,7 @@ function WebOrderMenuScreen() {
       {/* Store header */}
       <LinearGradient colors={[themeColors.brand.purple, themeColors.brand.purpleMuted]} style={styles.header}>
         <TouchableOpacity
-          onPress={() => (router.canGoBack() ? router.back() : undefined)}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backBtn}
           accessibilityLabel="Go back"
           accessibilityRole="button"
