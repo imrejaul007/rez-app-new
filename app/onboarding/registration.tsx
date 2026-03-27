@@ -67,9 +67,34 @@ function RegistrationScreen() {
 
   const [showExistingUserMessage, setShowExistingUserMessage] = useState(false);
 
+  const validatePhoneRealTime = (value: string) => {
+    const cleaned = value.replace(/\D/g, '');
+    if (cleaned.length > 0 && selectedCountry.dialCode === '+91' && cleaned.length !== 10) {
+      setErrors((prev) => ({ ...prev, phoneNumber: 'Enter a valid 10-digit phone number' }));
+    } else if (
+      cleaned.length > 0 &&
+      selectedCountry.dialCode !== '+91' &&
+      (cleaned.length < 5 || cleaned.length > 15)
+    ) {
+      setErrors((prev) => ({ ...prev, phoneNumber: 'Enter a valid phone number' }));
+    } else {
+      setErrors((prev) => ({ ...prev, phoneNumber: '' }));
+    }
+  };
+
+  const validateEmailOnBlur = (value: string) => {
+    if (value.trim() && !/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(value)) {
+      setErrors((prev) => ({ ...prev, email: 'Please enter a valid email address' }));
+    } else {
+      setErrors((prev) => ({ ...prev, email: '' }));
+    }
+  };
+
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field as keyof typeof errors]) {
+    if (field === 'phoneNumber') {
+      validatePhoneRealTime(value);
+    } else if (errors[field as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
@@ -82,7 +107,9 @@ function RegistrationScreen() {
 
     if (!formData.phoneNumber.trim()) {
       newErrors.phoneNumber = 'Phone number is required';
-    } else if (!/^[1-9]\d{4,14}$/.test(formData.phoneNumber.replace(/\s/g, ''))) {
+    } else if (!/^[1-9]\d{5,14}$/.test(formData.phoneNumber.replace(/\s/g, ''))) {
+      // Validates the LOCAL part (country code is prepended in handleSubmit).
+      // Min 6 digits (+ country code → at least 7 total, matching E.164).
       newErrors.phoneNumber = "That number doesn't look right — double-check and try again";
     }
 
@@ -121,10 +148,15 @@ function RegistrationScreen() {
       const errorMessage =
         error?.message || useAuthStore.getState().state.error || 'Failed to send OTP. Please try again.';
 
-      if (
-        errorMessage.toLowerCase().includes('already') &&
-        (errorMessage.toLowerCase().includes('registered') || errorMessage.toLowerCase().includes('exists'))
-      ) {
+      // Detect "phone already registered" reliably:
+      // Primary check: HTTP 409 Conflict status code (set by backend on duplicate phone/email).
+      // Fallback: message string match in case the error is rethrown without status code.
+      const httpStatus = (error as any)?.response?.status || (error as any)?.status;
+      const isConflict =
+        httpStatus === 409 ||
+        (errorMessage.toLowerCase().includes('already') &&
+          (errorMessage.toLowerCase().includes('registered') || errorMessage.toLowerCase().includes('exists')));
+      if (isConflict) {
         if (!isMounted()) return;
         setShowExistingUserMessage(true);
       } else if (errorMessage.toLowerCase().includes('phone')) {
@@ -182,7 +214,13 @@ function RegistrationScreen() {
                 <Text style={styles.existingUserTitle}>Welcome Back!</Text>
                 <Text style={styles.existingUserMessage}>Great to see you again! Sign in to continue.</Text>
 
-                <Pressable style={styles.primaryButtonWrapper} onPress={handleGoToSignIn}>
+                <Pressable
+                  style={styles.primaryButtonWrapper}
+                  onPress={handleGoToSignIn}
+                  accessibilityLabel="Go to sign in"
+                  accessibilityRole="button"
+                  accessibilityHint="Double tap to navigate to the sign in screen"
+                >
                   <LinearGradient
                     colors={[Colors.gold, colors.nileBlue]}
                     start={{ x: 0, y: 0 }}
@@ -194,7 +232,12 @@ function RegistrationScreen() {
                   </LinearGradient>
                 </Pressable>
 
-                <Pressable style={styles.secondaryButton} onPress={handleTryAgain}>
+                <Pressable
+                  style={styles.secondaryButton}
+                  onPress={handleTryAgain}
+                  accessibilityLabel="Try a different phone number"
+                  accessibilityRole="button"
+                >
                   <Text style={styles.secondaryButtonText}>Try Different Number</Text>
                 </Pressable>
               </View>
@@ -245,6 +288,8 @@ function RegistrationScreen() {
                         value={formData.phoneNumber}
                         onChangeText={(value) => handleInputChange('phoneNumber', value)}
                         keyboardType="phone-pad"
+                        accessibilityLabel="Mobile number"
+                        accessibilityHint="Enter your mobile number to receive an OTP"
                       />
                     </View>
                   </View>
@@ -255,6 +300,7 @@ function RegistrationScreen() {
                   placeholder="Email Id (Optional)"
                   value={formData.email}
                   onChangeText={(value) => handleInputChange('email', value)}
+                  onBlur={() => validateEmailOnBlur(formData.email)}
                   keyboardType="email-address"
                   autoCapitalize="none"
                   error={errors.email}
@@ -280,6 +326,10 @@ function RegistrationScreen() {
                 style={styles.primaryButtonWrapper}
                 onPress={handleSubmit}
                 disabled={authLoading || !formData.phoneNumber.trim()}
+                accessibilityLabel={authLoading ? 'Submitting registration' : 'Continue with registration'}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: authLoading || !formData.phoneNumber.trim(), busy: authLoading }}
+                accessibilityHint="Double tap to send an OTP to your mobile number and continue registration"
               >
                 <LinearGradient
                   colors={authLoading ? [colors.border.default, colors.border.default] : [Colors.gold, colors.nileBlue]}
@@ -293,7 +343,13 @@ function RegistrationScreen() {
               </Pressable>
 
               {/* Sign In Link */}
-              <Pressable style={styles.signInLink} onPress={handleGoToSignIn}>
+              <Pressable
+                style={styles.signInLink}
+                onPress={handleGoToSignIn}
+                accessibilityLabel="Already have an account? Sign in"
+                accessibilityRole="button"
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
                 <Text style={styles.signInText}>
                   Already have an account? <Text style={styles.signInHighlight}>Sign In</Text>
                 </Text>

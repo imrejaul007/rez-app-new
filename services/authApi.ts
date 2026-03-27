@@ -130,8 +130,8 @@ function isValidPhoneNumber(phoneNumber: string): boolean {
   // Remove spaces and dashes
   const cleaned = phoneNumber.replace(/[\s\-\(\)]/g, '');
 
-  // Check international phone number format (E.164)
-  const phoneRegex = /^\+?[1-9]\d{6,14}$/;
+  // Canonical E.164 format — requires + prefix, 7–15 digits (matches backend validator)
+  const phoneRegex = /^\+[1-9]\d{6,14}$/;
   return phoneRegex.test(cleaned);
 }
 

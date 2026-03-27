@@ -124,8 +124,24 @@ function SignInScreen() {
     return unsub;
   }, [rootNavigationState?.key]);
 
+  const validatePhoneRealTime = (value: string) => {
+    const cleaned = value.replace(/\D/g, '');
+    if (cleaned.length > 0 && selectedCountry.dialCode === '+91' && cleaned.length !== 10) {
+      setErrors((prev) => ({ ...prev, phoneNumber: 'Enter a valid 10-digit phone number' }));
+    } else if (
+      cleaned.length > 0 &&
+      selectedCountry.dialCode !== '+91' &&
+      (cleaned.length < 5 || cleaned.length > 15)
+    ) {
+      setErrors((prev) => ({ ...prev, phoneNumber: 'Enter a valid phone number' }));
+    } else {
+      setErrors((prev) => ({ ...prev, phoneNumber: '' }));
+    }
+  };
+
   const validatePhoneNumber = (phone: string): boolean => {
-    const phoneRegex = /^[+]?[1-9][\d]{6,14}$/;
+    // Canonical E.164 — requires + prefix, 7–15 digits (matches backend validator)
+    const phoneRegex = /^\+[1-9]\d{6,14}$/;
     return phoneRegex.test(phone.replace(/\s/g, ''));
   };
 
@@ -135,7 +151,9 @@ function SignInScreen() {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    if (errors[field as keyof typeof errors]) {
+    if (field === 'phoneNumber') {
+      validatePhoneRealTime(value);
+    } else if (errors[field as keyof typeof errors]) {
       setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
@@ -274,14 +292,33 @@ function SignInScreen() {
         }
       } else {
         if (!isMounted()) return;
-        setErrors((prev) => ({ ...prev, pin: response.message || 'Incorrect PIN' }));
-        if (response.data?.attemptsLeft !== undefined && response.data.attemptsLeft <= 2) {
-          platformAlertSimple('PIN Error', `${response.message} (${response.data.attemptsLeft} attempts left)`);
+        const msg = response.message || 'Incorrect PIN';
+        setErrors((prev) => ({ ...prev, pin: msg }));
+        // Show alert for lockout or low remaining attempts
+        const isLocked = msg.toLowerCase().includes('too many') || msg.toLowerCase().includes('locked');
+        const attemptsLeft = response.data?.attemptsLeft ?? response.attemptsLeft;
+        if (isLocked) {
+          platformAlertSimple('Account Locked', msg);
+        } else if (attemptsLeft !== undefined && attemptsLeft <= 2) {
+          platformAlertSimple('PIN Error', `${msg} (${attemptsLeft} attempt${attemptsLeft === 1 ? '' : 's'} left)`);
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       if (!isMounted()) return;
-      setErrors((prev) => ({ ...prev, pin: 'Connection error. Try again.' }));
+      // Handle HTTP 429 (account locked) — apiClient throws on non-2xx
+      const httpStatus = err?.response?.status || err?.status;
+      const serverMsg = err?.response?.data?.message || err?.message || '';
+      const isLockout =
+        httpStatus === 429 ||
+        serverMsg.toLowerCase().includes('too many') ||
+        serverMsg.toLowerCase().includes('locked');
+      if (isLockout) {
+        const lockMsg = serverMsg || 'Too many incorrect attempts. Account locked for 15 minutes.';
+        setErrors((prev) => ({ ...prev, pin: lockMsg }));
+        platformAlertSimple('Account Locked', lockMsg);
+      } else {
+        setErrors((prev) => ({ ...prev, pin: 'Connection error. Please try again.' }));
+      }
     } finally {
       if (isMounted()) setIsSending(false);
     }
@@ -425,6 +462,8 @@ function SignInScreen() {
                   value={formData.phoneNumber}
                   onChangeText={(value) => handleInputChange('phoneNumber', value)}
                   keyboardType="phone-pad"
+                  accessibilityLabel="Mobile number"
+                  accessibilityHint="Enter your registered mobile number to receive an OTP"
                 />
               </View>
             </View>
@@ -524,6 +563,8 @@ function SignInScreen() {
               keyboardType="number-pad"
               maxLength={6}
               autoFocus={true}
+              textContentType="oneTimeCode"
+              autoComplete="sms-otp"
               style={{
                 backgroundColor: colors.background.primary,
                 borderRadius: 12,
@@ -538,6 +579,8 @@ function SignInScreen() {
                 letterSpacing: 8,
               }}
               placeholderTextColor={colors.neutral[400]}
+              accessibilityLabel="One-time password"
+              accessibilityHint="Enter the 6-digit code sent to your phone"
             />
             {!!errors.otp && <Text style={{ color: colors.error, fontSize: 14, marginTop: 4 }}>{errors.otp}</Text>}
           </View>
@@ -549,7 +592,16 @@ function SignInScreen() {
                 <Text style={styles.timerText}>Resend OTP in {otpTimer}s</Text>
               </View>
             ) : (
-              <Pressable onPress={handleResendOTP} disabled={!canResendOTP} style={styles.resendButton}>
+              <Pressable
+                onPress={handleResendOTP}
+                disabled={!canResendOTP}
+                style={styles.resendButton}
+                accessibilityLabel="Resend OTP"
+                accessibilityRole="button"
+                accessibilityState={{ disabled: !canResendOTP }}
+                accessibilityHint="Double tap to send a new verification code to your phone"
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              >
                 <Text style={[styles.resendText, !canResendOTP && styles.resendTextDisabled]}>Resend OTP</Text>
               </Pressable>
             )}
