@@ -53,9 +53,9 @@
   "submit": {
     "production": {
       "ios": {
-        "appleId": "YOUR_APPLE_ID", // TODO: Replace with your Apple ID (e.g. user@example.com)
-        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID", // TODO: Replace with your numeric App Store Connect App ID
-        "appleTeamId": "YOUR_TEAM_ID" // TODO: Replace with your Apple Developer Team ID (10-char alphanumeric)
+        "appleId": "YOUR_APPLE_ID",
+        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID",
+        "appleTeamId": "YOUR_TEAM_ID"
       },
       "android": {
         "serviceAccountKeyPath": "./google-play-key.json",
