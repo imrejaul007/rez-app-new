@@ -199,8 +199,18 @@ function ThemedNavigation() {
     import('@/services/offlineSyncService').then(m => m.default.initialize()).catch(() => {});
   }, []);
 
-  // BUG 25: Show splash while auth is initializing to prevent flash of home page
-  if (authState.isLoading) {
+  // BUG 25: Show splash while auth is initializing to prevent flash of home page.
+  // CRITICAL: Only block rendering during the INITIAL app startup load — never during
+  // subsequent in-progress auth actions (sendOTP, login, etc.).
+  // Unmounting <Stack> during an auth action destroys sign-in.tsx local state
+  // (including `step`), resetting the user back to the phone entry screen.
+  const hasEverLoadedRef = React.useRef(false);
+  if (!authState.isLoading) {
+    hasEverLoadedRef.current = true;
+  }
+  const isInitialLoad = authState.isLoading && !hasEverLoadedRef.current;
+
+  if (isInitialLoad) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1a3a52' }}>
         <ActivityIndicator size="large" color="#FFC857" />

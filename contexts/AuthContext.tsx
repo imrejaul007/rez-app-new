@@ -289,9 +289,12 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
   // Actions
   const sendOTP = async (phoneNumber: string, email?: string, referralCode?: string, flow: 'login' | 'signup' = 'login') => {
+    // NOTE: Do NOT dispatch AUTH_LOADING here.
+    // AUTH_LOADING sets isLoading=true which causes ThemedNavigation to unmount the
+    // entire <Stack> (its loading spinner replaces the stack), destroying sign-in.tsx's
+    // local state (including `step`). The sign-in screen manages its own loading state
+    // via the `isSending` local flag — no global loading dispatch is needed.
     try {
-      dispatch({ type: 'AUTH_LOADING', payload: true });
-
       const requestData: any = { phoneNumber, flow };
       if (email) requestData.email = email;
       if (referralCode) requestData.referralCode = referralCode;
@@ -301,17 +304,9 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       // Check if API returned an error
       if (!response.success) {
         const errorMessage = response.error || response.message || 'Failed to send OTP';
-        dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
         throw new Error(errorMessage);
       }
-
-      dispatch({ type: 'AUTH_LOADING', payload: false });
     } catch (error: any) {
-      dispatch({
-        type: 'AUTH_FAILURE',
-        payload: error?.message || 'Failed to send OTP'
-      });
-
       // Re-throw error so calling components know it failed
       throw error;
     }
