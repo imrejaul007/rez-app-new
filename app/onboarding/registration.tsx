@@ -7,7 +7,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import FormInput from '@/components/onboarding/FormInput';
-import { useAuthActions } from '@/stores/selectors';
+import { useAuth } from '@/contexts/AuthContext';
 import { useAuthStore } from '@/stores/authStore';
 import CountryCodePicker, { COUNTRY_CODES, CountryCode } from '@/components/common/CountryCodePicker';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -23,7 +23,7 @@ function RegistrationScreen() {
   const params = useLocalSearchParams<{ referralCode?: string }>();
   const [authLoading, setAuthLoading] = useState(false);
   const [slowLoadingMsg, setSlowLoadingMsg] = useState('');
-  const actions = useAuthActions();
+  const { actions } = useAuth();
 
   const [formData, setFormData] = useState({
     phoneNumber: '',
