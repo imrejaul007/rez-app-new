@@ -41,11 +41,13 @@ function FlashSaleSuccessPage() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   const [voucherCode, setVoucherCode] = useState<string>('');
   const [promoCode, setPromoCode] = useState<string | undefined>();
   const [expiresAt, setExpiresAt] = useState<string>('');
   const [amount, setAmount] = useState<number>(0);
   const [copiedCode, setCopiedCode] = useState(false);
+  const MAX_RETRIES = 3;
 
   // Animation
   const scaleAnim = useSharedValue(0);
@@ -66,7 +68,7 @@ function FlashSaleSuccessPage() {
     }
   }, [purchaseId, razorpay_order_id, razorpay_payment_id, razorpay_signature]);
 
-  const verifyPayment = async () => {
+  const verifyPayment = async (attempt = 0) => {
     try {
       setIsLoading(true);
       setError(null);
@@ -92,13 +94,30 @@ function FlashSaleSuccessPage() {
         scaleAnim.value = withSpring(1, { damping: 7, stiffness: 50 });
         fadeAnim.value = withTiming(1, { duration: 300 });
       } else {
+        // Retry on transient failures (network hiccup, backend still processing)
+        if (attempt < MAX_RETRIES) {
+          const delay = Math.pow(2, attempt) * 1000; // 1s, 2s, 4s
+          logger.warn(`[FlashSaleSuccess] Verification attempt ${attempt + 1} failed, retrying in ${delay}ms`);
+          await new Promise((resolve) => setTimeout(resolve, delay));
+          if (!isMounted()) return;
+          setRetryCount(attempt + 1);
+          return verifyPayment(attempt + 1);
+        }
         if (!isMounted()) return;
-        setError(response.message || 'Payment verification failed');
+        setError(response.message || 'Payment verification failed. Please try again or contact support.');
       }
     } catch (err: any) {
-      logger.error('Error verifying payment:', err);
+      logger.error('Error verifying flash sale payment:', err);
+      // Retry on network errors
+      if (attempt < MAX_RETRIES) {
+        const delay = Math.pow(2, attempt) * 1000;
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        if (!isMounted()) return;
+        setRetryCount(attempt + 1);
+        return verifyPayment(attempt + 1);
+      }
       if (!isMounted()) return;
-      setError(err.message || 'Failed to verify payment');
+      setError(err.message || 'Failed to verify payment. Please check My Purchases.');
     } finally {
       if (!isMounted()) return;
       setIsLoading(false);
@@ -127,6 +146,13 @@ function FlashSaleSuccessPage() {
       <View style={styles.container}>
         <Stack.Screen options={{ headerShown: false }} />
         <DetailPageSkeleton />
+        {retryCount > 0 && (
+          <View style={styles.retryingBanner}>
+            <ThemedText style={styles.retryingText}>
+              Retrying… attempt {retryCount + 1}/{MAX_RETRIES + 1}
+            </ThemedText>
+          </View>
+        )}
       </View>
     );
   }
@@ -139,10 +165,27 @@ function FlashSaleSuccessPage() {
           <View style={styles.errorIcon}>
             <Ionicons name="alert-circle" size={80} color={Colors.error} />
           </View>
-          <ThemedText style={styles.errorTitle}>Payment Verification Failed</ThemedText>
+          <ThemedText style={styles.errorTitle}>Verification Issue</ThemedText>
           <ThemedText style={styles.errorMessage}>{error}</ThemedText>
-          <Pressable style={styles.retryButton} onPress={() => router.replace('/offers')}>
-            <ThemedText style={styles.retryButtonText}>Back to Offers</ThemedText>
+          {retryCount > 0 && (
+            <ThemedText style={styles.retryCountText}>
+              Tried {retryCount}/{MAX_RETRIES} times automatically
+            </ThemedText>
+          )}
+          <Pressable
+            style={styles.retryButton}
+            onPress={() => {
+              setRetryCount(0);
+              verifyPayment(0);
+            }}
+          >
+            <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
+          </Pressable>
+          <Pressable
+            style={[styles.retryButton, styles.secondaryErrorButton]}
+            onPress={() => router.replace('/offers')}
+          >
+            <ThemedText style={[styles.retryButtonText, styles.secondaryErrorButtonText]}>Back to Offers</ThemedText>
           </Pressable>
         </SafeAreaView>
       </View>
@@ -294,11 +337,37 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing['2xl'],
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
+    marginTop: Spacing.md,
   },
   retryButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '600',
+  },
+  retryCountText: {
+    ...Typography.bodySmall,
+    color: colors.text.tertiary,
+    textAlign: 'center',
+    marginBottom: Spacing.sm,
+  },
+  secondaryErrorButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 2,
+    borderColor: Colors.brand.purple,
+  },
+  secondaryErrorButtonText: {
+    color: Colors.brand.purple,
+  },
+  retryingBanner: {
+    position: 'absolute',
+    bottom: Spacing['2xl'],
+    left: 0,
+    right: 0,
+    alignItems: 'center',
+  },
+  retryingText: {
+    ...Typography.bodySmall,
+    color: colors.text.tertiary,
   },
   successGradient: {
     flex: 1,
