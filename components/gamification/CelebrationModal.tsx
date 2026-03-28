@@ -103,7 +103,7 @@ function CelebrationModal({
     } else if (result.prize?.type === 'voucher') {
       return `${currencySymbol}${result.prize.value} Voucher`;
     }
-    return result.segment.label;
+    return result.segment?.label ?? 'Better Luck Next Time';
   };
 
   return (

@@ -9,7 +9,7 @@ import {
   Dimensions,
   Easing,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
 } from 'react-native';
 import Animated, {
   interpolate,
@@ -101,10 +101,7 @@ function SpinWinPage() {
       }
 
       // Fetch spin data + refresh wallet in parallel
-      const [wheelResponse] = await Promise.all([
-        gamificationApi.getSpinWheelData(),
-        refreshWallet(),
-      ]);
+      const [wheelResponse] = await Promise.all([gamificationApi.getSpinWheelData(), refreshWallet()]);
 
       if (wheelResponse.success && wheelResponse.data) {
         const data = wheelResponse.data;
@@ -158,14 +155,16 @@ function SpinWinPage() {
       if (response.success && response.data) {
         const { segmentId, rewardValue, spinsRemaining, newBalance, coinsAdded } = response.data;
 
-        const selectedPrize = prizes.find(p => p.id === segmentId) || prizes[0];
+        const selectedPrize = prizes.find((p) => p.id === segmentId) || prizes[0];
 
         // Calculate rotation to land on the correct segment
-        const prizeIndex = prizes.findIndex(p => p.id === segmentId);
+        const rawPrizeIndex = prizes.findIndex((p) => p.id === segmentId);
+        // If segment not found in client list, pick a random valid index
+        const prizeIndex = rawPrizeIndex >= 0 ? rawPrizeIndex : Math.floor(Math.random() * prizes.length);
         const degreesPerSlice = 360 / prizes.length;
         const prizeAngle = prizeIndex * degreesPerSlice;
         const fullSpins = 5;
-        const newRotation = currentRotation + (fullSpins * 360) + (360 - prizeAngle);
+        const newRotation = currentRotation + fullSpins * 360 + (360 - prizeAngle);
 
         if (!isMounted()) return;
         setCurrentRotation(newRotation);
@@ -181,7 +180,7 @@ function SpinWinPage() {
           if (!isMounted()) return;
           setSpinsLeft(spinsRemaining);
           if (!isMounted()) return;
-          setTodayCoinsWon(prev => prev + actualCoinsWon);
+          setTodayCoinsWon((prev) => prev + actualCoinsWon);
           refreshWallet();
           gamificationActions.syncCoinsFromWallet();
           // Haptic feedback on spin win
@@ -190,12 +189,16 @@ function SpinWinPage() {
           }
         };
 
-        spinAnim.value = withTiming(newRotation, {
-          duration: 4000,
-          easing: ReanimatedEasing.out(ReanimatedEasing.cubic),
-        }, (finished) => {
-          if (finished) runOnJS(onSpinComplete)();
-        });
+        spinAnim.value = withTiming(
+          newRotation,
+          {
+            duration: 4000,
+            easing: ReanimatedEasing.out(ReanimatedEasing.cubic),
+          },
+          (finished) => {
+            if (finished) runOnJS(onSpinComplete)();
+          },
+        );
       } else {
         if (!isMounted()) return;
         setSpinning(false);
@@ -216,7 +219,10 @@ function SpinWinPage() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerTitleContainer}>
@@ -224,21 +230,11 @@ function SpinWinPage() {
           <Text style={styles.headerTitle}>Spin & Win</Text>
         </View>
         <View style={styles.headerRight}>
-          <Pressable
-            style={styles.historyButton}
-            onPress={() => router.push('/explore/spin-history' as any)}
-          >
+          <Pressable style={styles.historyButton} onPress={() => router.push('/explore/spin-history' as any)}>
             <Ionicons name="time-outline" size={20} color={colors.text.tertiary} />
           </Pressable>
-          <Pressable
-            style={styles.coinsBadge}
-            onPress={() => router.push('/wallet' as any)}
-          >
-            <CachedImage
-              source={BRAND.COIN_IMAGE}
-              style={styles.coinIcon}
-              contentFit="contain"
-            />
+          <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any)}>
+            <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
             <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
           </Pressable>
         </View>
@@ -247,14 +243,10 @@ function SpinWinPage() {
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.warning]} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.warning]} />}
       >
         {/* Loading State */}
-        {loading && (
-          <GamePageSkeleton />
-        )}
+        {loading && <GamePageSkeleton />}
 
         {/* Error State */}
         {!loading && error && prizes.length === 0 && (
@@ -270,122 +262,128 @@ function SpinWinPage() {
 
         {/* Stats */}
         {!loading && (
-        <View style={styles.statsContainer}>
-          <View style={[styles.statCard, { backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.2)' }]}>
-            <Ionicons name="flash" size={20} color={Colors.info} />
-            <Text style={styles.statValue}>{spinsLeft}</Text>
-            <Text style={styles.statLabel}>Spins left</Text>
+          <View style={styles.statsContainer}>
+            <View
+              style={[
+                styles.statCard,
+                { backgroundColor: 'rgba(59, 130, 246, 0.1)', borderColor: 'rgba(59, 130, 246, 0.2)' },
+              ]}
+            >
+              <Ionicons name="flash" size={20} color={Colors.info} />
+              <Text style={styles.statValue}>{spinsLeft}</Text>
+              <Text style={styles.statLabel}>Spins left</Text>
+            </View>
+            <View
+              style={[
+                styles.statCard,
+                { backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: 'rgba(16, 185, 129, 0.2)' },
+              ]}
+            >
+              <Ionicons name="trending-up" size={20} color={Colors.success} />
+              <Text style={styles.statValue}>{todayCoinsWon}</Text>
+              <Text style={styles.statLabel}>Won today</Text>
+            </View>
+            <View
+              style={[
+                styles.statCard,
+                { backgroundColor: 'rgba(139, 92, 246, 0.1)', borderColor: 'rgba(139, 92, 246, 0.2)' },
+              ]}
+            >
+              <Ionicons name="time" size={20} color={Colors.brand.purple} />
+              <Text style={styles.statValue}>{resetTimer}</Text>
+              <Text style={styles.statLabel}>Resets in</Text>
+            </View>
           </View>
-          <View style={[styles.statCard, { backgroundColor: 'rgba(16, 185, 129, 0.1)', borderColor: 'rgba(16, 185, 129, 0.2)' }]}>
-            <Ionicons name="trending-up" size={20} color={Colors.success} />
-            <Text style={styles.statValue}>{todayCoinsWon}</Text>
-            <Text style={styles.statLabel}>Won today</Text>
-          </View>
-          <View style={[styles.statCard, { backgroundColor: 'rgba(139, 92, 246, 0.1)', borderColor: 'rgba(139, 92, 246, 0.2)' }]}>
-            <Ionicons name="time" size={20} color={Colors.brand.purple} />
-            <Text style={styles.statValue}>{resetTimer}</Text>
-            <Text style={styles.statLabel}>Resets in</Text>
-          </View>
-        </View>
         )}
 
         {/* Info Banner */}
         {!loading && (
-        <View style={styles.bannerContainer}>
-          <LinearGradient
-            colors={[colors.warningScale[400], colors.brand.orange]}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }}
-            style={styles.banner}
-          >
-            <Ionicons name="gift" size={20} color={colors.text.inverse} />
-            <View style={styles.bannerTextContainer}>
-              <Text style={styles.bannerTitle}>Daily Free Spins</Text>
-              <Text style={styles.bannerSubtitle}>Get 3 free spins every day! Win coins, cashback, discounts & vouchers.</Text>
-            </View>
-          </LinearGradient>
-        </View>
+          <View style={styles.bannerContainer}>
+            <LinearGradient
+              colors={[colors.warningScale[400], colors.brand.orange]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+              style={styles.banner}
+            >
+              <Ionicons name="gift" size={20} color={colors.text.inverse} />
+              <View style={styles.bannerTextContainer}>
+                <Text style={styles.bannerTitle}>Daily Free Spins</Text>
+                <Text style={styles.bannerSubtitle}>
+                  Get 3 free spins every day! Win coins, cashback, discounts & vouchers.
+                </Text>
+              </View>
+            </LinearGradient>
+          </View>
         )}
 
         {/* Spin Wheel */}
         {prizes.length > 0 && (
-        <View style={styles.wheelContainer}>
-          <View style={styles.wheelOuter}>
-            <Animated.View
-              style={[
-                styles.wheel,
-                spinStyle,
-              ]}
-            >
-              {prizes.map((prize, index) => {
-                const rotation = (360 / prizes.length) * index;
-                return (
-                  <View
-                    key={prize.id}
-                    style={[
-                      styles.wheelSegment,
-                      {
-                        backgroundColor: prize.color,
-                        transform: [
-                          { rotate: `${rotation}deg` },
-                        ],
-                      },
-                    ]}
-                  >
-                    <Text style={[styles.prizeLabel, { transform: [{ rotate: '60deg' }] }]}>
-                      {prize.label}
-                    </Text>
-                  </View>
-                );
-              })}
-            </Animated.View>
+          <View style={styles.wheelContainer}>
+            <View style={styles.wheelOuter}>
+              <Animated.View style={[styles.wheel, spinStyle]}>
+                {prizes.map((prize, index) => {
+                  const rotation = (360 / prizes.length) * index;
+                  return (
+                    <View
+                      key={prize.id}
+                      style={[
+                        styles.wheelSegment,
+                        {
+                          backgroundColor: prize.color,
+                          transform: [{ rotate: `${rotation}deg` }],
+                        },
+                      ]}
+                    >
+                      <Text style={[styles.prizeLabel, { transform: [{ rotate: '60deg' }] }]}>{prize.label}</Text>
+                    </View>
+                  );
+                })}
+              </Animated.View>
 
-            {/* Center Button */}
-            <Pressable
-              onPress={handleSpin}
-              disabled={spinning || spinsLeft <= 0}
-              style={[
-                styles.spinButton,
-                (spinning || spinsLeft <= 0) && styles.spinButtonDisabled,
-              ]}
-            >
-              <LinearGradient
-                colors={spinning || spinsLeft <= 0 ? [colors.text.tertiary, colors.text.tertiary] : [colors.success, colors.brand.greenDark]}
-                style={styles.spinButtonGradient}
+              {/* Center Button */}
+              <Pressable
+                onPress={handleSpin}
+                disabled={spinning || spinsLeft <= 0}
+                style={[styles.spinButton, (spinning || spinsLeft <= 0) && styles.spinButtonDisabled]}
               >
-                {spinning ? (
-                  <Ionicons name="flash" size={24} color={colors.text.inverse} />
-                ) : spinsLeft > 0 ? (
-                  <Text style={styles.spinButtonText}>SPIN</Text>
-                ) : (
-                  <Text style={styles.spinButtonText}>Done</Text>
-                )}
-              </LinearGradient>
-            </Pressable>
-          </View>
+                <LinearGradient
+                  colors={
+                    spinning || spinsLeft <= 0
+                      ? [colors.text.tertiary, colors.text.tertiary]
+                      : [colors.success, colors.brand.greenDark]
+                  }
+                  style={styles.spinButtonGradient}
+                >
+                  {spinning ? (
+                    <Ionicons name="flash" size={24} color={colors.text.inverse} />
+                  ) : spinsLeft > 0 ? (
+                    <Text style={styles.spinButtonText}>SPIN</Text>
+                  ) : (
+                    <Text style={styles.spinButtonText}>Done</Text>
+                  )}
+                </LinearGradient>
+              </Pressable>
+            </View>
 
-          {/* Pointer */}
-          <View style={styles.pointer} />
-        </View>
+            {/* Pointer */}
+            <View style={styles.pointer} />
+          </View>
         )}
 
         {/* Result */}
         {wonPrize && (
           <View style={styles.resultContainer}>
-            <LinearGradient
-              colors={[colors.successScale[400], colors.tealGreen]}
-              style={styles.resultCard}
-            >
+            <LinearGradient colors={[colors.successScale[400], colors.tealGreen]} style={styles.resultCard}>
               <Ionicons name="star" size={48} color={colors.text.inverse} />
               <Text style={styles.resultTitle}>You Won {wonPrize.label}!</Text>
               <Text style={styles.resultSubtitle}>
                 {wonPrize.type === 'coins'
                   ? 'Coins added to your wallet'
                   : wonPrize.type === 'cashback'
-                  ? 'Cashback coupon added to your coupons'
-                  : wonPrize.type === 'discount'
-                  ? 'Discount coupon added to your coupons'
-                  : 'Voucher added to your coupons'}
+                    ? 'Cashback coupon added to your coupons'
+                    : wonPrize.type === 'discount'
+                      ? 'Discount coupon added to your coupons'
+                      : 'Voucher added to your coupons'}
               </Text>
             </LinearGradient>
           </View>
@@ -393,23 +391,23 @@ function SpinWinPage() {
 
         {/* Prize Table */}
         {prizes.length > 0 && (
-        <View style={styles.sectionContainer}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Prize Distribution</Text>
-            <Pressable onPress={() => router.push('/explore/spin-history' as any)}>
-              <Text style={styles.seeAllText}>History</Text>
-            </Pressable>
-          </View>
-          {prizes.map((prize) => (
-            <View key={prize.id} style={styles.prizeRow}>
-              <View style={styles.prizeRowLeft}>
-                <View style={[styles.prizeColor, { backgroundColor: prize.color }]} />
-                <Text style={styles.prizeRowLabel}>{prize.label}</Text>
-              </View>
-              <Text style={styles.prizeRowChance}>{prize.probability}% chance</Text>
+          <View style={styles.sectionContainer}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>Prize Distribution</Text>
+              <Pressable onPress={() => router.push('/explore/spin-history' as any)}>
+                <Text style={styles.seeAllText}>History</Text>
+              </Pressable>
             </View>
-          ))}
-        </View>
+            {prizes.map((prize) => (
+              <View key={prize.id} style={styles.prizeRow}>
+                <View style={styles.prizeRowLeft}>
+                  <View style={[styles.prizeColor, { backgroundColor: prize.color }]} />
+                  <Text style={styles.prizeRowLabel}>{prize.label}</Text>
+                </View>
+                <Text style={styles.prizeRowChance}>{prize.probability}% chance</Text>
+              </View>
+            ))}
+          </View>
         )}
 
         {/* How to Get More Spins */}

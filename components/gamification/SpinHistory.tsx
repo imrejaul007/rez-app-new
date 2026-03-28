@@ -63,7 +63,7 @@ function SpinHistory({ limit = 10 }: SpinHistoryProps) {
       setLoading(true);
       setError(null);
 
-      const response = await gamificationAPI.getSpinWheelHistory(limit);
+      const response = await gamificationAPI.getSpinHistory({ limit });
 
       if (response.success && response.data) {
         if (!isMounted()) return;

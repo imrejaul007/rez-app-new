@@ -63,6 +63,7 @@ interface ChallengeStats {
   currentStreak: number;
   bestStreak: number;
   completionRate: number;
+  activeChallenges?: number;
 }
 
 type TabType = 'daily' | 'weekly' | 'monthly' | 'completed';
@@ -120,13 +121,14 @@ function ChallengesPage() {
 
       // Get all available challenges
       // apiClient returns { success, data, message } where data is the array
-      const availableChallenges = allChallengesRes.status === 'fulfilled' ? ((allChallengesRes.value.data as any) || []) : [];
+      const availableChallenges =
+        allChallengesRes.status === 'fulfilled' ? (allChallengesRes.value.data as any) || [] : [];
       logger.debug(`✅ [Challenges] Available challenges: ${availableChallenges.length}`);
       logger.debug('📋 [Challenges] Challenges:', availableChallenges);
 
       // Get user's progress
       // progressRes.data is { challenges: [], stats: {} }
-      const userProgress = progressRes.status === 'fulfilled' ? ((progressRes.value.data as any)?.challenges || []) : [];
+      const userProgress = progressRes.status === 'fulfilled' ? (progressRes.value.data as any)?.challenges || [] : [];
       logger.debug(`📊 [Challenges] User progress: ${userProgress.length}`);
 
       // Merge available challenges with user progress
@@ -173,11 +175,9 @@ function ChallengesPage() {
       setCompletedChallenges(completed);
 
       // Map API stats to our interface and calculate completion rate
-      const apiStats = statsRes.status === 'fulfilled' ? ((statsRes.value.data as any) || {}) : {};
+      const apiStats = statsRes.status === 'fulfilled' ? (statsRes.value.data as any) || {} : {};
       const totalChallenges = (apiStats.challengesCompleted || 0) + (apiStats.challengesActive || 0);
-      const completionRate = totalChallenges > 0
-        ? ((apiStats.challengesCompleted || 0) / totalChallenges) * 100
-        : 0;
+      const completionRate = totalChallenges > 0 ? ((apiStats.challengesCompleted || 0) / totalChallenges) * 100 : 0;
 
       if (!isMounted()) return;
       setStats({
@@ -218,7 +218,7 @@ function ChallengesPage() {
             onPress: () => loadChallengesData(),
           },
         ],
-        'success'
+        'success',
       );
     } catch (error: any) {
       showAlert('Error', error.response?.data?.message || 'Failed to join challenge', undefined, 'error');
@@ -263,7 +263,7 @@ function ChallengesPage() {
             'Reward Claimed! 🎉',
             `+${coinsEarned} coins added to your wallet!\nNew balance: ${backendWalletBalance} coins`,
             [{ text: 'Awesome!', style: 'default' }],
-            'success'
+            'success',
           );
           await refreshWallet();
           logger.debug('✅ [Claim Reward] Wallet context refreshed');
@@ -271,11 +271,7 @@ function ChallengesPage() {
           // Fallback: Try syncing via coin sync service (for backwards compatibility)
           logger.debug('⚠️ [Claim Reward] Backend did not return wallet balance, trying coin sync service...');
 
-          const syncResult = await coinSyncService.handleChallengeReward(
-            challengeId,
-            'Challenge',
-            coinsEarned
-          );
+          const syncResult = await coinSyncService.handleChallengeReward(challengeId, 'Challenge', coinsEarned);
           logger.debug('💰 [Claim Reward] Sync result:', JSON.stringify(syncResult, null, 2));
 
           if (syncResult.success) {
@@ -286,7 +282,7 @@ function ChallengesPage() {
               'Reward Claimed! 🎉',
               `+${coinsEarned} coins added to your wallet!\nNew balance: ${syncResult.newWalletBalance} coins`,
               [{ text: 'Awesome!', style: 'default' }],
-              'success'
+              'success',
             );
             await refreshWallet();
           } else {
@@ -297,14 +293,14 @@ function ChallengesPage() {
               'Reward Claimed! 🎉',
               `+${coinsEarned} coins earned! Check your wallet for the updated balance.`,
               [{ text: 'Great!', style: 'default' }],
-              'success'
+              'success',
             );
           }
         }
 
         // Wait a moment before reloading to ensure everything is synced
         logger.debug('⏳ [Claim Reward] Waiting 500ms before reload...');
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         logger.debug('🔄 [Claim Reward] Reloading challenges data...');
         await loadChallengesData();
@@ -318,7 +314,8 @@ function ChallengesPage() {
       logger.error('❌ [Claim Reward] Error:', error);
       logger.error('❌ [Claim Reward] Error response:', error.response?.data);
 
-      const errorMessage = error.response?.data?.message || error.response?.data?.error?.message || 'Failed to claim reward';
+      const errorMessage =
+        error.response?.data?.message || error.response?.data?.error?.message || 'Failed to claim reward';
 
       // Special handling for "already claimed" error
       if (errorMessage.toLowerCase().includes('already claimed')) {
@@ -326,17 +323,12 @@ function ChallengesPage() {
           'Already Claimed! ✅',
           'You have already claimed this reward. The page will refresh to show the correct status.',
           [{ text: 'OK', onPress: () => loadChallengesData() }],
-          'success'
+          'success',
         );
         // Force reload to get correct state
         await loadChallengesData();
       } else {
-        showAlert(
-          'Error',
-          errorMessage,
-          undefined,
-          'error'
-        );
+        showAlert('Error', errorMessage, undefined, 'error');
       }
     } finally {
       if (!isMounted()) return;
@@ -388,7 +380,6 @@ function ChallengesPage() {
       <Pressable
         key={challenge._id}
         style={styles.challengeCard}
-       
         onPress={() => {
           // Navigate to challenge detail page
           router.push(`/challenges/${challenge._id}` as any);
@@ -409,20 +400,12 @@ function ChallengesPage() {
               <View style={styles.challengeTitleRow}>
                 <Text style={styles.challengeTitle}>{challenge.challenge.title}</Text>
                 <View style={[styles.typeBadge, isClaimed && styles.typeBadgeClaimed]}>
-                  <Ionicons
-                    name={getTypeIcon(challenge.challenge.type) as any}
-                    size={12}
-                    color="white"
-                  />
-                  <Text style={styles.typeBadgeText}>
-                    {challenge.challenge.type}
-                  </Text>
+                  <Ionicons name={getTypeIcon(challenge.challenge.type) as any} size={12} color="white" />
+                  <Text style={styles.typeBadgeText}>{challenge.challenge.type}</Text>
                 </View>
               </View>
 
-              <Text style={styles.challengeDescription}>
-                {challenge.challenge.description}
-              </Text>
+              <Text style={styles.challengeDescription}>{challenge.challenge.description}</Text>
 
               {/* Progress Bar */}
               <View style={styles.progressContainer}>
@@ -438,20 +421,14 @@ function ChallengesPage() {
               <View style={styles.rewardRow}>
                 <View style={styles.rewardInfo}>
                   <Ionicons name="star" size={16} color={colors.brand.goldBright} />
-                  <Text style={styles.rewardText}>
-                    {challenge.challenge.rewards.coins} coins
-                  </Text>
+                  <Text style={styles.rewardText}>{challenge.challenge.rewards.coins} coins</Text>
                   {challenge.challenge.rewards.multiplier && (
-                    <Text style={styles.multiplierText}>
-                      {challenge.challenge.rewards.multiplier}x
-                    </Text>
+                    <Text style={styles.multiplierText}>{challenge.challenge.rewards.multiplier}x</Text>
                   )}
                 </View>
 
                 <View style={styles.difficultyBadge}>
-                  <Text style={styles.difficultyText}>
-                    {challenge.challenge.difficulty}
-                  </Text>
+                  <Text style={styles.difficultyText}>{challenge.challenge.difficulty}</Text>
                 </View>
               </View>
 
@@ -525,8 +502,7 @@ function ChallengesPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
@@ -536,11 +512,7 @@ function ChallengesPage() {
               <Text style={styles.headerSubtitle}>Complete tasks, earn rewards!</Text>
             </View>
 
-            <Pressable
-              style={styles.coinsBadge}
-              onPress={() => router.push('/wallet-screen' as any)}
-             
-            >
+            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as any)}>
               <LinearGradient
                 colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
                 style={styles.coinsBadgeGradient}
@@ -574,23 +546,16 @@ function ChallengesPage() {
 
         {/* Tabs */}
         <View style={styles.tabs}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.tabsContent}
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tabsContent}>
             {(['daily', 'weekly', 'monthly', 'completed'] as TabType[]).map((tab) => (
               <Pressable
                 key={tab}
                 style={[styles.tab, activeTab === tab && styles.activeTab]}
                 onPress={() => setActiveTab(tab)}
-               
               >
                 <LinearGradient
                   colors={
-                    activeTab === tab
-                      ? [colors.brand.purpleLight, colors.brand.purple]
-                      : ['transparent', 'transparent']
+                    activeTab === tab ? [colors.brand.purpleLight, colors.brand.purple] : ['transparent', 'transparent']
                   }
                   style={styles.tabGradient}
                   start={{ x: 0, y: 0 }}
@@ -601,9 +566,7 @@ function ChallengesPage() {
                     size={18}
                     color={activeTab === tab ? colors.text.inverse : colors.text.tertiary}
                   />
-                  <Text
-                    style={[styles.tabText, activeTab === tab && styles.activeTabText]}
-                  >
+                  <Text style={[styles.tabText, activeTab === tab && styles.activeTabText]}>
                     {tab.charAt(0).toUpperCase() + tab.slice(1)}
                   </Text>
                 </LinearGradient>
@@ -617,11 +580,7 @@ function ChallengesPage() {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={Colors.brand.purpleLight}
-            />
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Colors.brand.purpleLight} />
           }
         >
           {filteredChallenges.length > 0 ? (
@@ -635,11 +594,7 @@ function ChallengesPage() {
                   ? 'Complete challenges to see them here'
                   : 'New challenges will appear soon!'}
               </Text>
-              <Pressable
-                style={styles.refreshButton}
-                onPress={handleRefresh}
-               
-              >
+              <Pressable style={styles.refreshButton} onPress={handleRefresh}>
                 <LinearGradient
                   colors={[colors.brand.purpleLight, colors.brand.purple]}
                   style={styles.refreshGradient}

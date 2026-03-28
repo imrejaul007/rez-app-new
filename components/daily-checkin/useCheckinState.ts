@@ -20,10 +20,8 @@ import { useGetCurrencySymbol, useRefreshWallet } from '@/stores/selectors';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import apiClient from '@/services/apiClient';
 import { BRAND } from '@/constants/brand';
-import { catchAndWarn } from '@/utils/catchAndReport';
 
 export function useCheckinState() {
-  const router = useRouter();
   const { actions: gamificationActions } = useGamification();
   const getCurrencySymbol = useGetCurrencySymbol();
   const refreshWallet = useRefreshWallet();

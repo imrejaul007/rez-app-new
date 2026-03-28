@@ -1024,21 +1024,42 @@ class GamificationApiService {
    * Used by SpinWheelGame component
    */
   async spinWheel(): Promise<ApiResponse<{
-    result: SpinResult;
+    result: SpinResult & { segment: { id: string; label: string; value: number; color: string; type: string } };
     coinsAdded: number;
     newBalance: number;
+    tournamentUpdate?: { tournamentName: string; pointsAdded: number; newRank: number } | null;
   }>> {
     try {
       const response = await this.executeSpin();
 
       if (response.success && response.data) {
+        // SpinWheelGame.tsx expects result.segment.id to find the winning segment index.
+        // CelebrationModal expects result.prize.type and result.prize.value.
+        // executeSpin() normalises the backend response into SpinResult (segmentId/segmentLabel/rewardType/rewardValue)
+        // so we reconstruct the segment and prize sub-objects that the UI components need.
+        const data = response.data;
+        const resultWithSegment = {
+          ...data,
+          segment: {
+            id: data.segmentId,
+            label: data.segmentLabel,
+            value: data.rewardValue || 0,
+            color: '#FFFFFF',
+            type: data.rewardType || 'coins',
+          },
+          prize: {
+            type: data.rewardType || 'coins',
+            value: data.rewardValue || 0,
+            description: data.segmentLabel || data.message || 'Prize',
+          },
+        };
         return {
           success: true,
           data: {
-            result: response.data,
-            coinsAdded: response.data.coinsAdded || response.data.rewardValue || 0,
-            newBalance: response.data.newBalance || 0,
-            tournamentUpdate: response.data.tournamentUpdate || null,
+            result: resultWithSegment,
+            coinsAdded: data.coinsAdded || data.rewardValue || 0,
+            newBalance: data.newBalance || 0,
+            tournamentUpdate: data.tournamentUpdate || null,
           },
         };
       }

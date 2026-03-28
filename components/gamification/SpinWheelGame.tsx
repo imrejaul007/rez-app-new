@@ -101,9 +101,13 @@ function SpinWheelGame({
 
         // Calculate rotation angle based on result
         const winningSegment = result.segment;
-        const winningIndex = segments.findIndex(s => s.id === winningSegment.id);
+        const winningIndex = winningSegment
+          ? segments.findIndex(s => s.id === winningSegment.id)
+          : -1;
+        // If segment not found in client list, pick a random position so the animation is valid
+        const resolvedIndex = winningIndex >= 0 ? winningIndex : Math.floor(Math.random() * segments.length);
         const segmentAngle = 360 / segments.length;
-        const targetAngle = 360 - (winningIndex * segmentAngle + segmentAngle / 2);
+        const targetAngle = 360 - (resolvedIndex * segmentAngle + segmentAngle / 2);
 
         // Add multiple rotations for excitement
         const totalRotation = currentRotationValue.value + 360 * 5 + targetAngle;

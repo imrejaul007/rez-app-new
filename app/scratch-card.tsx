@@ -5,19 +5,8 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import { colors } from '@/constants/theme';
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Dimensions,
-  ActivityIndicator
-} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-  withTiming} from 'react-native-reanimated';
+import { View, StyleSheet, Pressable, StatusBar, Dimensions, ActivityIndicator } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -54,7 +43,8 @@ function ScratchCardPage() {
     checkEligibility,
     createSession,
     revealPrize,
-    retryClaim} = useScratchCard();
+    retryClaim,
+  } = useScratchCard();
 
   const [isAnimating, setIsAnimating] = useState(false);
   const fadeAnim = useSharedValue(0);
@@ -90,7 +80,7 @@ function ScratchCardPage() {
         checkEligibility();
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isAuthenticated])
+    }, [isAuthenticated]),
   );
 
   // Animate card entrance — only once when card first becomes available
@@ -168,7 +158,9 @@ function ScratchCardPage() {
       try {
         await refreshWallet();
         await gamificationActions.loadGamificationData(true);
-      } catch (e) { /* non-blocking */ }
+      } catch (e) {
+        /* non-blocking */
+      }
     } else {
       platformAlertSimple('Retry Failed', 'Please try again or contact support.');
     }
@@ -190,22 +182,35 @@ function ScratchCardPage() {
   // Get prize display info
   const getPrizeIcon = (type?: string): string => {
     switch (type) {
-      case 'coins': return 'wallet';
-      case 'badge': return 'ribbon';
-      case 'discount': return 'pricetag';
-      case 'cashback': return 'cash';
-      case 'free_delivery': return 'bicycle';
-      default: return 'gift';
+      case 'coins':
+      case 'coin':
+        return 'wallet';
+      case 'badge':
+        return 'ribbon';
+      case 'discount':
+        return 'pricetag';
+      case 'cashback':
+        return 'cash';
+      case 'free_delivery':
+        return 'bicycle';
+      default:
+        return 'gift';
     }
   };
 
   const getPrizeColor = (type?: string): string => {
     switch (type) {
-      case 'coins': return Colors.success;
-      case 'badge': return Colors.brand.purpleLight;
-      case 'discount': return Colors.warning;
-      case 'cashback': return Colors.info;
-      default: return Colors.brand.purple;
+      case 'coins':
+      case 'coin':
+        return Colors.success;
+      case 'badge':
+        return Colors.brand.purpleLight;
+      case 'discount':
+        return Colors.warning;
+      case 'cashback':
+        return Colors.info;
+      default:
+        return Colors.brand.purple;
     }
   };
 
@@ -214,11 +219,17 @@ function ScratchCardPage() {
   const renderHeader = () => (
     <LinearGradient colors={[Colors.brand.purple, Colors.brand.purpleLight]} style={styles.headerBg}>
       <View style={styles.headerContainer}>
-        <Pressable style={styles.backButton} onPress={handleBackPress}
-          accessibilityLabel="Go back" accessibilityRole="button">
+        <Pressable
+          style={styles.backButton}
+          onPress={handleBackPress}
+          accessibilityLabel="Go back"
+          accessibilityRole="button"
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
-        <ThemedText style={styles.headerTitle} accessibilityRole="header">Scratch & Win</ThemedText>
+        <ThemedText style={styles.headerTitle} accessibilityRole="header">
+          Scratch & Win
+        </ThemedText>
         <View style={styles.headerRight} />
       </View>
     </LinearGradient>
@@ -238,7 +249,12 @@ function ScratchCardPage() {
   /** Unavailable — cooldown, daily limit, or disabled */
   if (cardState === 'unavailable') {
     return (
-      <FeatureErrorBoundary featureName="Scratch Card" onSecondaryAction={() => router.push('/games' as any)} secondaryActionLabel="Back to Games" secondaryActionIcon="game-controller">
+      <FeatureErrorBoundary
+        featureName="Scratch Card"
+        onSecondaryAction={() => router.push('/games' as any)}
+        secondaryActionLabel="Back to Games"
+        secondaryActionIcon="game-controller"
+      >
         <ThemedView style={styles.container}>
           <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purple} />
           {renderHeader()}
@@ -247,9 +263,7 @@ function ScratchCardPage() {
               <>
                 <Ionicons name="time-outline" size={80} color={Colors.warning} />
                 <ThemedText style={styles.lockedTitle}>Cooldown Active</ThemedText>
-                <ThemedText style={styles.lockedDescription}>
-                  Your next scratch card will be available in:
-                </ThemedText>
+                <ThemedText style={styles.lockedDescription}>Your next scratch card will be available in:</ThemedText>
                 <ThemedText style={styles.cooldownTimer}>{formatCooldown(cooldownSeconds)}</ThemedText>
               </>
             ) : (
@@ -270,9 +284,12 @@ function ScratchCardPage() {
               </ThemedText>
             )}
 
-            <Pressable style={[styles.actionButton, { backgroundColor: colors.text.tertiary }]}
+            <Pressable
+              style={[styles.actionButton, { backgroundColor: colors.text.tertiary }]}
               onPress={() => checkEligibility()}
-              accessibilityLabel="Refresh status" accessibilityRole="button">
+              accessibilityLabel="Refresh status"
+              accessibilityRole="button"
+            >
               <ThemedText style={styles.actionButtonText}>Refresh</ThemedText>
             </Pressable>
           </View>
@@ -284,7 +301,12 @@ function ScratchCardPage() {
   /** Claim failed — retry option */
   if (cardState === 'claimFailed') {
     return (
-      <FeatureErrorBoundary featureName="Scratch Card" onSecondaryAction={() => router.push('/games' as any)} secondaryActionLabel="Back to Games" secondaryActionIcon="game-controller">
+      <FeatureErrorBoundary
+        featureName="Scratch Card"
+        onSecondaryAction={() => router.push('/games' as any)}
+        secondaryActionLabel="Back to Games"
+        secondaryActionIcon="game-controller"
+      >
         <ThemedView style={styles.container}>
           <StatusBar barStyle="light-content" backgroundColor={Colors.brand.purple} />
           {renderHeader()}
@@ -296,8 +318,12 @@ function ScratchCardPage() {
             </ThemedText>
             {error && <ThemedText style={styles.errorText}>{error}</ThemedText>}
 
-            <Pressable style={styles.actionButton} onPress={handleRetry}
-              accessibilityLabel="Retry claiming prize" accessibilityRole="button">
+            <Pressable
+              style={styles.actionButton}
+              onPress={handleRetry}
+              accessibilityLabel="Retry claiming prize"
+              accessibilityRole="button"
+            >
               <ThemedText style={styles.actionButtonText}>Retry Claim</ThemedText>
             </Pressable>
           </View>
@@ -330,12 +356,7 @@ function ScratchCardPage() {
           )}
 
           {/* Card area */}
-          <Animated.View
-            style={[
-              styles.cardContainer,
-              { opacity: fadeAnim, transform: [{ scale: scaleAnim }] },
-            ]}
-          >
+          <Animated.View style={[styles.cardContainer, { opacity: fadeAnim, transform: [{ scale: scaleAnim }] }]}>
             <View style={styles.scratchCard}>
               {/* Scratch Surface (visible before scratch) */}
               {cardState !== 'revealed' && (
@@ -361,7 +382,9 @@ function ScratchCardPage() {
                     <Ionicons name={getPrizeIcon(prize.type) as any} size={40} color={colors.text.inverse} />
                   </View>
                   <ThemedText style={styles.prizeTitle}>
-                    {prize.type === 'coins' ? `${prize.value} ${BRAND.COIN_NAME}!` : prize.description}
+                    {prize.type === 'coins' || prize.type === 'coin'
+                      ? `${prize.value} ${BRAND.COIN_NAME}!`
+                      : prize.description}
                   </ThemedText>
                   <ThemedText style={styles.prizeDescription}>{prize.description}</ThemedText>
                 </Animated.View>
@@ -380,16 +403,24 @@ function ScratchCardPage() {
           {/* Action buttons based on state */}
           <View style={styles.buttonArea}>
             {cardState === 'available' && (
-              <Pressable style={styles.actionButton} onPress={handleCreateCard}
-                accessibilityLabel="Get scratch card" accessibilityRole="button">
+              <Pressable
+                style={styles.actionButton}
+                onPress={handleCreateCard}
+                accessibilityLabel="Get scratch card"
+                accessibilityRole="button"
+              >
                 <Ionicons name="ticket" size={20} color={colors.text.inverse} style={{ marginRight: 8 }} />
                 <ThemedText style={styles.actionButtonText}>Get Scratch Card</ThemedText>
               </Pressable>
             )}
 
             {cardState === 'scratching' && !isAnimating && (
-              <Pressable style={styles.actionButton} onPress={handleScratch}
-                accessibilityLabel="Scratch the card" accessibilityRole="button">
+              <Pressable
+                style={styles.actionButton}
+                onPress={handleScratch}
+                accessibilityLabel="Scratch the card"
+                accessibilityRole="button"
+              >
                 <Ionicons name="hand-left" size={20} color={colors.text.inverse} style={{ marginRight: 8 }} />
                 <ThemedText style={styles.actionButtonText}>Scratch Card</ThemedText>
               </Pressable>
@@ -405,21 +436,31 @@ function ScratchCardPage() {
             {cardState === 'revealed' && (
               <View style={styles.revealedButtons}>
                 {eligibility && eligibility.remainingToday > 0 ? (
-                  <Pressable style={styles.actionButton} onPress={handlePlayAgain}
-                    accessibilityLabel="Play again" accessibilityRole="button">
+                  <Pressable
+                    style={styles.actionButton}
+                    onPress={handlePlayAgain}
+                    accessibilityLabel="Play again"
+                    accessibilityRole="button"
+                  >
                     <ThemedText style={styles.actionButtonText}>Play Again</ThemedText>
                   </Pressable>
                 ) : (
-                  <Pressable style={styles.actionButton} onPress={handleDone}
-                    accessibilityLabel="Done" accessibilityRole="button">
+                  <Pressable
+                    style={styles.actionButton}
+                    onPress={handleDone}
+                    accessibilityLabel="Done"
+                    accessibilityRole="button"
+                  >
                     <ThemedText style={styles.actionButtonText}>Done</ThemedText>
                   </Pressable>
                 )}
-                {prize?.type === 'coins' && (
+                {(prize?.type === 'coins' || prize?.type === 'coin') && (
                   <Pressable
                     style={[styles.actionButton, { backgroundColor: Colors.success, marginTop: Spacing.md }]}
                     onPress={() => router.push('/wallet-screen')}
-                    accessibilityLabel="View wallet" accessibilityRole="button">
+                    accessibilityLabel="View wallet"
+                    accessibilityRole="button"
+                  >
                     <Ionicons name="wallet" size={20} color={colors.text.inverse} style={{ marginRight: 8 }} />
                     <ThemedText style={styles.actionButtonText}>View Wallet</ThemedText>
                   </Pressable>
@@ -455,42 +496,51 @@ function ScratchCardPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary},
+    backgroundColor: colors.background.secondary,
+  },
   headerBg: {
     paddingTop: StatusBar.currentHeight || 50,
     paddingBottom: Spacing.lg,
     paddingHorizontal: Spacing.lg,
     borderBottomLeftRadius: 25,
     borderBottomRightRadius: 25,
-    ...Shadows.medium},
+    ...Shadows.medium,
+  },
   headerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'},
+    justifyContent: 'space-between',
+  },
   backButton: {
-    padding: Spacing.sm},
+    padding: Spacing.sm,
+  },
   headerTitle: {
     color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: 'bold',
     flex: 1,
-    textAlign: 'center'},
+    textAlign: 'center',
+  },
   headerRight: {
-    width: 40},
+    width: 40,
+  },
   content: {
     flex: 1,
     paddingHorizontal: Spacing.lg,
     paddingTop: Spacing.xl,
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   centerContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 40},
+    paddingHorizontal: 40,
+  },
   loadingText: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
-    marginTop: Spacing.base},
+    marginTop: Spacing.base,
+  },
   remainingBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -498,73 +548,86 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.xl,
-    marginBottom: Spacing.lg},
+    marginBottom: Spacing.lg,
+  },
   remainingText: {
     ...Typography.body,
     color: Colors.brand.purple,
     fontWeight: '600',
-    marginLeft: 6},
+    marginLeft: 6,
+  },
   cardContainer: {
     alignItems: 'center',
-    marginBottom: Spacing.xl},
+    marginBottom: Spacing.xl,
+  },
   scratchCard: {
     width: width * 0.8,
     height: width * 0.8,
     borderRadius: BorderRadius.xl,
     overflow: 'hidden',
     backgroundColor: colors.background.primary,
-    ...Shadows.strong},
+    ...Shadows.strong,
+  },
   scratchSurface: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: 2},
+    zIndex: 2,
+  },
   scratchGradient: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.lg},
+    padding: Spacing.lg,
+  },
   scratchText: {
     color: colors.text.inverse,
     ...Typography.h4,
     fontWeight: 'bold',
     marginTop: Spacing.base,
-    textAlign: 'center'},
+    textAlign: 'center',
+  },
   scratchSubtext: {
     color: colors.text.inverse,
     ...Typography.body,
     marginTop: Spacing.sm,
     textAlign: 'center',
-    opacity: 0.9},
+    opacity: 0.9,
+  },
   prizeContent: {
     flex: 1,
     backgroundColor: colors.background.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.lg},
+    padding: Spacing.lg,
+  },
   prizeIcon: {
     width: 80,
     height: 80,
     borderRadius: BorderRadius.full,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.lg},
+    marginBottom: Spacing.lg,
+  },
   prizeTitle: {
     ...Typography.h2,
     fontWeight: 'bold',
     color: colors.text.primary,
     marginBottom: Spacing.sm,
-    textAlign: 'center'},
+    textAlign: 'center',
+  },
   prizeDescription: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
-    textAlign: 'center'},
+    textAlign: 'center',
+  },
   buttonArea: {
     width: '100%',
     alignItems: 'center',
-    marginBottom: Spacing.lg},
+    marginBottom: Spacing.lg,
+  },
   actionButton: {
     backgroundColor: Colors.brand.purple,
     paddingHorizontal: Spacing['2xl'],
@@ -578,64 +641,78 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 6},
+    elevation: 6,
+  },
   disabledButton: {
     backgroundColor: colors.brand.purpleSoft,
-    shadowOpacity: 0.1},
+    shadowOpacity: 0.1,
+  },
   actionButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
   revealedButtons: {
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   instructionsContainer: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     width: '100%',
-    ...Shadows.subtle},
+    ...Shadows.subtle,
+  },
   instructionsTitle: {
     ...Typography.h4,
     fontWeight: 'bold',
     color: colors.text.primary,
     marginBottom: Spacing.md,
-    textAlign: 'center'},
+    textAlign: 'center',
+  },
   instructionsText: {
     ...Typography.body,
     color: colors.text.tertiary,
     lineHeight: 22,
-    textAlign: 'center'},
+    textAlign: 'center',
+  },
   lockedTitle: {
     ...Typography.h2,
     fontWeight: 'bold',
     color: colors.text.primary,
     marginTop: Spacing.lg,
     marginBottom: Spacing.md,
-    textAlign: 'center'},
+    textAlign: 'center',
+  },
   lockedDescription: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
     textAlign: 'center',
     lineHeight: 24,
-    marginBottom: Spacing.lg},
+    marginBottom: Spacing.lg,
+  },
   cooldownTimer: {
     fontSize: 36,
     fontWeight: '800',
     color: Colors.warning,
-    marginBottom: Spacing.xl},
+    marginBottom: Spacing.xl,
+  },
   statsText: {
     ...Typography.body,
     color: colors.text.tertiary,
-    marginBottom: Spacing.lg},
+    marginBottom: Spacing.lg,
+  },
   errorContainer: {
     backgroundColor: Colors.errorScale[50],
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
     marginTop: Spacing.md,
-    width: '100%'},
+    width: '100%',
+  },
   errorText: {
     ...Typography.body,
     color: Colors.error,
-    textAlign: 'center'}});
+    textAlign: 'center',
+  },
+});
 
 export default withErrorBoundary(ScratchCardPage, 'ScratchCard');

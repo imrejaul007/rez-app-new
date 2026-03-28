@@ -60,13 +60,13 @@ function SpinWheel({ segments = DEFAULT_SEGMENTS, onSpinComplete }: SpinWheelPro
   // Check if user can spin
   const checkEligibility = async () => {
     try {
-      const response = await gamificationAPI.canSpinWheel();
+      const response = await gamificationAPI.getSpinEligibility();
       if (response.success && response.data) {
         if (!isMounted()) return;
         setCanSpin(response.data.canSpin);
-        if (!response.data.canSpin && response.data.nextSpinAt) {
+        if (!response.data.canSpin && response.data.nextSpinEligibleAt) {
           if (!isMounted()) return;
-          setNextSpinTime(response.data.nextSpinAt);
+          setNextSpinTime(response.data.nextSpinEligibleAt);
         }
       }
     } catch (error) {

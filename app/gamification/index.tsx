@@ -44,9 +44,9 @@ function GamificationDashboard() {
       setLoading(true);
 
       const [challengesRes, achievementsRes, streaksRes, statsRes] = await Promise.all([
-        apiClient.get('/challenges/my-progress'),
-        apiClient.get('/achievements'),
-        apiClient.get('/streaks'),
+        apiClient.get('/gamification/challenges/my-progress'),
+        apiClient.get('/gamification/achievements'),
+        apiClient.get('/gamification/streaks'),
         apiClient.get('/gamification/stats'),
       ]);
 
@@ -78,19 +78,24 @@ function GamificationDashboard() {
 
   const handleClaimChallenge = async (challengeId: string) => {
     try {
-      const response = await apiClient.post(`/challenges/${challengeId}/claim`);
+      const response = await apiClient.post(`/gamification/challenges/${challengeId}/claim`);
 
-      if ((response.data as any).success) {
-        const coinsEarned = (response.data as any).data.rewards.coins;
+      // apiClient wraps responses: check response.success or nested response.data.success
+      const responseData = (response as any).success ? response : (response.data as any);
+      if (responseData?.success) {
+        const coinsEarned = responseData?.data?.rewards?.coins ?? responseData?.data?.coins ?? 0;
 
         const syncResult = await coinSyncService.handleChallengeReward(
           challengeId,
-          (response.data as any).data.challenge?.title || 'Challenge',
-          coinsEarned
+          responseData?.data?.challenge?.title || 'Challenge',
+          coinsEarned,
         );
 
         if (syncResult.success) {
-          platformAlertSimple('Reward Claimed', `Claimed ${coinsEarned} coins! New balance: ${syncResult.newWalletBalance}`);
+          platformAlertSimple(
+            'Reward Claimed',
+            `Claimed ${coinsEarned} coins! New balance: ${syncResult.newWalletBalance}`,
+          );
         } else {
           platformAlertSimple('Reward Claimed', `Claimed ${coinsEarned} coins!`);
         }
@@ -119,11 +124,7 @@ function GamificationDashboard() {
         style={styles.container}
         contentContainerStyle={styles.contentContainer}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.brand.purpleLight}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.brand.purpleLight} />
         }
       >
         {/* Modern Gradient Header */}
@@ -138,11 +139,7 @@ function GamificationDashboard() {
               <Text style={styles.title}>Gamification Hub</Text>
               <Text style={styles.subtitle}>Complete challenges, earn rewards!</Text>
             </View>
-            <Pressable
-              style={styles.coinsBadge}
-              onPress={() => router.push('/wallet-screen' as any)}
-             
-            >
+            <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet-screen' as any)}>
               <LinearGradient
                 colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.15)']}
                 style={styles.coinsBadgeGradient}
@@ -164,26 +161,21 @@ function GamificationDashboard() {
           </View>
           <View style={styles.streakRow}>
             {Object.entries(streaks).map(([type, data]: [string, any]) => (
-              <View
-                key={type}
-                style={styles.streakCard}
-              >
+              <View key={type} style={styles.streakCard}>
                 <LinearGradient
                   colors={
                     type === 'login'
                       ? ['#667EEA', '#764BA2']
                       : type === 'order'
-                      ? ['#F093FB', '#F5576C']
-                      : ['#4FACFE', '#00F2FE']
+                        ? ['#F093FB', '#F5576C']
+                        : ['#4FACFE', '#00F2FE']
                   }
                   style={styles.streakGradient}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                 >
                   <View style={styles.streakIconContainer}>
-                    <Text style={styles.streakIcon}>
-                      {type === 'login' ? '📅' : type === 'order' ? '🛒' : '⭐'}
-                    </Text>
+                    <Text style={styles.streakIcon}>{type === 'login' ? '📅' : type === 'order' ? '🛒' : '⭐'}</Text>
                   </View>
                   <Text style={styles.streakCount}>{data.current}</Text>
                   <Text style={styles.streakLabel}>{type}</Text>
@@ -196,80 +188,62 @@ function GamificationDashboard() {
           </View>
         </View>
 
-      {/* Tabs */}
-      <View style={styles.tabs}>
-        <Pressable
-          style={[styles.tab, activeTab === 'challenges' && styles.activeTab]}
-          onPress={() => setActiveTab('challenges')}
-        >
-          <Text style={[styles.tabText, activeTab === 'challenges' && styles.activeTabText]}>
-            Challenges
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[styles.tab, activeTab === 'achievements' && styles.activeTab]}
-          onPress={() => setActiveTab('achievements')}
-        >
-          <Text style={[styles.tabText, activeTab === 'achievements' && styles.activeTabText]}>
-            Achievements
-          </Text>
-        </Pressable>
-        <Pressable
-          style={[styles.tab, activeTab === 'leaderboards' && styles.activeTab]}
-          onPress={() => setActiveTab('leaderboards')}
-        >
-          <Text style={[styles.tabText, activeTab === 'leaderboards' && styles.activeTabText]}>
-            Leaderboards
-          </Text>
-        </Pressable>
-      </View>
-
-      {/* Content */}
-      {activeTab === 'challenges' && (
-        <View style={styles.content}>
-          <Text style={styles.sectionTitle}>Active Challenges</Text>
-          {challenges.map((challenge) => (
-            <ChallengeCard
-              key={challenge._id}
-              challenge={challenge}
-              onClaim={handleClaimChallenge}
-            />
-          ))}
-
-          {challenges.length === 0 && (
-            <Text style={styles.emptyText}>No active challenges</Text>
-          )}
-        </View>
-      )}
-
-      {activeTab === 'achievements' && (
-        <View style={styles.content}>
-          <Text style={styles.sectionTitle}>Achievements</Text>
-          {achievements.slice(0, 10).map((achievement) => (
-            <AchievementCard key={achievement._id} achievement={achievement} />
-          ))}
-
+        {/* Tabs */}
+        <View style={styles.tabs}>
           <Pressable
-            style={styles.viewAllButton}
-            onPress={() => router.push('/badges' as any)}
+            style={[styles.tab, activeTab === 'challenges' && styles.activeTab]}
+            onPress={() => setActiveTab('challenges')}
           >
-            <Text style={styles.viewAllText}>View All Achievements</Text>
+            <Text style={[styles.tabText, activeTab === 'challenges' && styles.activeTabText]}>Challenges</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.tab, activeTab === 'achievements' && styles.activeTab]}
+            onPress={() => setActiveTab('achievements')}
+          >
+            <Text style={[styles.tabText, activeTab === 'achievements' && styles.activeTabText]}>Achievements</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.tab, activeTab === 'leaderboards' && styles.activeTab]}
+            onPress={() => setActiveTab('leaderboards')}
+          >
+            <Text style={[styles.tabText, activeTab === 'leaderboards' && styles.activeTabText]}>Leaderboards</Text>
           </Pressable>
         </View>
-      )}
 
-      {activeTab === 'leaderboards' && (
-        <View style={styles.content}>
-          <Pressable
-            style={styles.leaderboardCard}
-            onPress={() => router.push('/playandearn/leaderboard' as any)}
-          >
-            <Ionicons name="trophy" size={24} color={colors.brand.goldBright} />
-            <Text style={styles.leaderboardTitle}>View Leaderboards</Text>
-            <Ionicons name="chevron-forward" size={24} color={colors.midGray} />
-          </Pressable>
-        </View>
-      )}
+        {/* Content */}
+        {activeTab === 'challenges' && (
+          <View style={styles.content}>
+            <Text style={styles.sectionTitle}>Active Challenges</Text>
+            {challenges.map((challenge) => (
+              <ChallengeCard key={challenge._id} challenge={challenge} onClaim={handleClaimChallenge} />
+            ))}
+
+            {challenges.length === 0 && <Text style={styles.emptyText}>No active challenges</Text>}
+          </View>
+        )}
+
+        {activeTab === 'achievements' && (
+          <View style={styles.content}>
+            <Text style={styles.sectionTitle}>Achievements</Text>
+            {achievements.slice(0, 10).map((achievement) => (
+              <AchievementCard key={achievement._id} achievement={achievement} />
+            ))}
+
+            <Pressable style={styles.viewAllButton} onPress={() => router.push('/badges' as any)}>
+              <Text style={styles.viewAllText}>View All Achievements</Text>
+            </Pressable>
+          </View>
+        )}
+
+        {activeTab === 'leaderboards' && (
+          <View style={styles.content}>
+            <Pressable style={styles.leaderboardCard} onPress={() => router.push('/playandearn/leaderboard' as any)}>
+              <Ionicons name="trophy" size={24} color={colors.brand.goldBright} />
+              <Text style={styles.leaderboardTitle}>View Leaderboards</Text>
+              <Ionicons name="chevron-forward" size={24} color={colors.midGray} />
+            </Pressable>
+          </View>
+        )}
 
         {/* Modern Mini Games Section */}
         <View style={styles.quickAccess}>
@@ -278,11 +252,7 @@ function GamificationDashboard() {
             <Ionicons name="game-controller" size={24} color={colors.brand.purpleLight} />
           </View>
           <View style={styles.gameRow}>
-            <Pressable
-              style={styles.gameCard}
-              onPress={() => router.push('/games/spin-wheel' as any)}
-             
-            >
+            <Pressable style={styles.gameCard} onPress={() => router.push('/games/spin-wheel' as any)}>
               <LinearGradient
                 colors={['#FF6B6B', '#EE5A6F']}
                 style={styles.gameGradient}
@@ -296,11 +266,7 @@ function GamificationDashboard() {
               </LinearGradient>
             </Pressable>
 
-            <Pressable
-              style={styles.gameCard}
-              onPress={() => router.push('/scratch-card' as any)}
-             
-            >
+            <Pressable style={styles.gameCard} onPress={() => router.push('/scratch-card' as any)}>
               <LinearGradient
                 colors={['#4ECDC4', '#44A08D']}
                 style={styles.gameGradient}
@@ -314,11 +280,7 @@ function GamificationDashboard() {
               </LinearGradient>
             </Pressable>
 
-            <Pressable
-              style={styles.gameCard}
-              onPress={() => router.push('/games/quiz' as any)}
-             
-            >
+            <Pressable style={styles.gameCard} onPress={() => router.push('/games/quiz' as any)}>
               <LinearGradient
                 colors={['#A8E6CF', '#88D4AB']}
                 style={styles.gameGradient}
@@ -365,20 +327,13 @@ function ChallengeCard({ challenge, onClaim }: any) {
 
       {/* Rewards */}
       <View style={styles.rewardsContainer}>
-        <Text style={styles.rewardText}>
-          💰 {challenge.challenge?.rewards.coins} coins
-        </Text>
+        <Text style={styles.rewardText}>💰 {challenge.challenge?.rewards.coins} coins</Text>
         {canClaim && (
-          <Pressable
-            style={styles.claimButton}
-            onPress={() => onClaim(challenge._id)}
-          >
+          <Pressable style={styles.claimButton} onPress={() => onClaim(challenge._id)}>
             <Text style={styles.claimButtonText}>Claim</Text>
           </Pressable>
         )}
-        {challenge.rewardsClaimed && (
-          <Text style={styles.claimedText}>✅ Claimed</Text>
-        )}
+        {challenge.rewardsClaimed && <Text style={styles.claimedText}>✅ Claimed</Text>}
       </View>
     </View>
   );
