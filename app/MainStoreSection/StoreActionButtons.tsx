@@ -1,24 +1,14 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // StoreActionButtons.tsx - Scan & Pay, Upload Bill, View Offers buttons
-import React, {} from "react";
-import {
-  View,
-  Pressable,
-  StyleSheet} from "react-native";
-import Animated, {
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import { triggerImpact } from "@/utils/haptics";
-import { ThemedText } from "@/components/ThemedText";
+import React from 'react';
+import { View, Pressable, StyleSheet } from 'react-native';
+import Animated, { useSharedValue, withSpring } from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { triggerImpact } from '@/utils/haptics';
+import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
-import {
-  Colors,
-  Spacing,
-  BorderRadius,
-  Shadows } from "@/constants/DesignSystem";
+import { Colors, Spacing, BorderRadius, Shadows } from '@/constants/DesignSystem';
 
 export interface StoreActionButtonsProps {
   storeId?: string;
@@ -27,11 +17,7 @@ export interface StoreActionButtonsProps {
   onViewOffers?: () => void;
 }
 
-function StoreActionButtons({
-  storeId,
-  onScanPay,
-  onUploadBill,
-  onViewOffers }: StoreActionButtonsProps) {
+function StoreActionButtons({ storeId, onScanPay, onUploadBill, onViewOffers }: StoreActionButtonsProps) {
   const router = useRouter();
 
   // Animation refs
@@ -57,7 +43,7 @@ function StoreActionButtons({
     if (onUploadBill) {
       onUploadBill();
     } else {
-      router.push(storeId ? `/bill-upload?storeId=${storeId}` as any : '/bill-upload');
+      router.push(storeId ? (`/bill-upload?storeId=${storeId}` as any) : '/bill-upload');
     }
   };
 
@@ -66,7 +52,7 @@ function StoreActionButtons({
     if (onViewOffers) {
       onViewOffers();
     } else if (storeId) {
-      router.push(`/store/${storeId}/offers` as any);
+      router.push(`/store/${storeId}` as any);
     }
   };
 
@@ -76,7 +62,6 @@ function StoreActionButtons({
       <Animated.View style={{ transform: [{ scale: scanPayScale }] }}>
         <Pressable
           style={styles.primaryButton}
-         
           onPress={handleScanPay}
           onPressIn={() => animateScale(scanPayScale, 0.97)}
           onPressOut={() => animateScale(scanPayScale, 1)}
@@ -94,7 +79,6 @@ function StoreActionButtons({
         <Animated.View style={[styles.secondaryButtonWrapper, { transform: [{ scale: uploadBillScale }] }]}>
           <Pressable
             style={styles.secondaryButton}
-           
             onPress={handleUploadBill}
             onPressIn={() => animateScale(uploadBillScale, 0.97)}
             onPressOut={() => animateScale(uploadBillScale, 1)}
@@ -110,7 +94,6 @@ function StoreActionButtons({
         <Animated.View style={[styles.secondaryButtonWrapper, { transform: [{ scale: viewOffersScale }] }]}>
           <Pressable
             style={styles.secondaryButton}
-           
             onPress={handleViewOffers}
             onPressIn={() => animateScale(viewOffersScale, 0.97)}
             onPressOut={() => animateScale(viewOffersScale, 1)}
@@ -130,38 +113,46 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   primaryButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.lightMustard,
     paddingVertical: 14,
     borderRadius: BorderRadius.md,
     gap: 8,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   primaryButtonText: {
     fontSize: 16,
-    fontWeight: "700",
-    color: colors.background.primary },
+    fontWeight: '700',
+    color: colors.background.primary,
+  },
   secondaryRow: {
-    flexDirection: "row",
-    gap: Spacing.sm },
+    flexDirection: 'row',
+    gap: Spacing.sm,
+  },
   secondaryButtonWrapper: {
-    flex: 1 },
+    flex: 1,
+  },
   secondaryButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: colors.background.primary,
     paddingVertical: 12,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
     borderColor: Colors.gray[200],
-    gap: 6 },
+    gap: 6,
+  },
   secondaryButtonText: {
     fontSize: 14,
-    fontWeight: "600",
-    color: colors.text.primary } });
+    fontWeight: '600',
+    color: colors.text.primary,
+  },
+});
 
 export default withErrorBoundary(StoreActionButtons, 'MainStoreSectionStoreActionButtons');

@@ -1325,7 +1325,7 @@ function DynamicCategoryPage({ slug }: DynamicCategoryPageProps) {
               </Text>
               <Pressable
                 style={[styles.emptyStateButton, { backgroundColor: primaryColor }]}
-                onPress={() => router.push('/location' as any)}
+                onPress={() => router.push('/location/settings' as any)}
               >
                 <Ionicons name="location-outline" size={16} color={colors.background.primary} />
                 <Text style={styles.emptyStateButtonText}>Change Location</Text>

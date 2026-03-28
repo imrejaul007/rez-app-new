@@ -5,16 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  SafeAreaView,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, SafeAreaView, StatusBar, Platform, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -80,7 +71,9 @@ function InsurancePage() {
         if (!cancelled) setTypesLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Fetch featured plans
@@ -98,41 +91,46 @@ function InsurancePage() {
         if (!cancelled) setFeaturedLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Fetch plans when type filter or page changes
-  const fetchPlans = useCallback(async (pageNum: number, append: boolean) => {
-    if (pageNum === 1) setPlansLoading(true);
-    else setLoadingMore(true);
+  const fetchPlans = useCallback(
+    async (pageNum: number, append: boolean) => {
+      if (pageNum === 1) setPlansLoading(true);
+      else setLoadingMore(true);
 
-    try {
-      const typeFilter = selectedType as InsuranceType | undefined;
-      const result = await getInsurancePlans({
-        type: typeFilter || undefined,
-        page: pageNum,
-        limit: 10,
-      });
+      try {
+        const typeFilter = selectedType as InsuranceType | undefined;
+        const result = await getInsurancePlans({
+          type: typeFilter || undefined,
+          page: pageNum,
+          limit: 10,
+        });
 
-      if (append) {
+        if (append) {
+          if (!isMounted()) return;
+          setPlans((prev) => [...prev, ...result.plans]);
+        } else {
+          if (!isMounted()) return;
+          setPlans(result.plans);
+        }
         if (!isMounted()) return;
-        setPlans((prev) => [...prev, ...result.plans]);
-      } else {
+        setHasMore(pageNum < result.pagination.pages);
+      } catch {
         if (!isMounted()) return;
-        setPlans(result.plans);
+        if (!append) setPlans([]);
+      } finally {
+        if (!isMounted()) return;
+        setPlansLoading(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-      if (!isMounted()) return;
-      setHasMore(pageNum < result.pagination.pages);
-    } catch {
-      if (!isMounted()) return;
-      if (!append) setPlans([]);
-    } finally {
-      if (!isMounted()) return;
-      setPlansLoading(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [selectedType]);
+    },
+    [selectedType],
+  );
 
   // Reset page when type changes
   useEffect(() => {
@@ -153,214 +151,206 @@ function InsurancePage() {
     setSelectedType((prev) => (prev === typeId ? '' : typeId));
   }, []);
 
-  const handlePlanPress = useCallback((plan: InsurancePlan) => {
-    router.push(`/insurance/${plan._id}` as any);
-  }, [router]);
+  const handlePlanPress = useCallback(
+    (plan: InsurancePlan) => {
+      // No detail page exists — stay on insurance listing page
+      router.push('/insurance' as any);
+    },
+    [router],
+  );
 
   const formatPremium = (amount: number): string => {
     return `${currencySymbol}${amount.toLocaleString()}`;
   };
 
   // Render header content (banner + types + featured) as FlatList header
-  const renderListHeader = useCallback(() => (
-    <View>
-      {/* Cashback Banner */}
-      <View style={styles.banner}>
-        <LinearGradient
-          colors={['rgba(139, 92, 246, 0.15)', 'rgba(59, 130, 246, 0.15)']}
-          style={styles.bannerGradient}
-        >
-          <Ionicons name="shield-checkmark" size={32} color={colors.brand.purpleLight} />
-          <View style={styles.bannerText}>
-            <Text style={styles.bannerTitle}>Protect & Earn Rewards</Text>
-            <Text style={styles.bannerSubtitle}>
-              Get up to 20% cashback on insurance premiums
-            </Text>
-          </View>
-        </LinearGradient>
-      </View>
+  const renderListHeader = useCallback(
+    () => (
+      <View>
+        {/* Cashback Banner */}
+        <View style={styles.banner}>
+          <LinearGradient
+            colors={['rgba(139, 92, 246, 0.15)', 'rgba(59, 130, 246, 0.15)']}
+            style={styles.bannerGradient}
+          >
+            <Ionicons name="shield-checkmark" size={32} color={colors.brand.purpleLight} />
+            <View style={styles.bannerText}>
+              <Text style={styles.bannerTitle}>Protect & Earn Rewards</Text>
+              <Text style={styles.bannerSubtitle}>Get up to 20% cashback on insurance premiums</Text>
+            </View>
+          </LinearGradient>
+        </View>
 
-      {/* Insurance Types */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Insurance Types</Text>
-        {typesLoading ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color={Colors.gold} />
-          </View>
-        ) : types.length === 0 ? (
-          <View style={styles.emptySmall}>
-            <Text style={styles.emptySmallText}>No insurance types available</Text>
-          </View>
-        ) : (
-          <View style={styles.typesGrid}>
-            {types.map((t) => {
-              const meta = TYPE_META[t.type] || { icon: 'help-circle', color: colors.neutral[500], label: t.type };
-              return (
-                <Pressable
-                  key={t.type}
-                  style={[
-                    styles.typeCard,
-                    selectedType === t.type && styles.typeCardActive,
-                  ]}
-                  onPress={() => handleTypePress(t.type)}
-                >
-                  <View style={[styles.typeIcon, { backgroundColor: meta.color + '20' }]}>
-                    <Ionicons name={meta.icon as any} size={24} color={meta.color} />
-                  </View>
-                  <Text style={styles.typeName}>{meta.label}</Text>
-                  <Text style={styles.typeCashback}>
-                    Up to {t.maxCashback}% cashback
-                  </Text>
-                  <View style={styles.typeCountBadge}>
-                    <Text style={styles.typeCountText}>{t.count}</Text>
-                  </View>
-                </Pressable>
-              );
-            })}
-          </View>
-        )}
-      </View>
-
-      {/* Featured Plans (only when no type filter) */}
-      {!selectedType && (
+        {/* Insurance Types */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Featured Plans</Text>
-          {featuredLoading ? (
+          <Text style={styles.sectionTitle}>Insurance Types</Text>
+          {typesLoading ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="small" color={Colors.gold} />
             </View>
-          ) : featuredPlans.length === 0 ? (
+          ) : types.length === 0 ? (
             <View style={styles.emptySmall}>
-              <Text style={styles.emptySmallText}>No featured plans right now</Text>
+              <Text style={styles.emptySmallText}>No insurance types available</Text>
             </View>
           ) : (
-            <View style={styles.featuredList}>
-              {featuredPlans.map((plan) => (
-                <Pressable
-                  key={plan._id}
-                  style={styles.featuredCard}
-                  onPress={() => handlePlanPress(plan)}
-                >
-                  <View style={styles.featuredHeader}>
-                    <View style={styles.featuredProviderRow}>
-                      {plan.providerLogo ? (
-                        <CachedImage
-                          source={{ uri: plan.providerLogo }}
-                          style={styles.providerLogo}
-                        />
-                      ) : null}
-                      <View style={{ flex: 1 }}>
-                        <Text style={styles.planProvider}>{plan.provider}</Text>
-                        <Text style={styles.planName}>{plan.name}</Text>
-                      </View>
+            <View style={styles.typesGrid}>
+              {types.map((t) => {
+                const meta = TYPE_META[t.type] || { icon: 'help-circle', color: colors.neutral[500], label: t.type };
+                return (
+                  <Pressable
+                    key={t.type}
+                    style={[styles.typeCard, selectedType === t.type && styles.typeCardActive]}
+                    onPress={() => handleTypePress(t.type)}
+                  >
+                    <View style={[styles.typeIcon, { backgroundColor: meta.color + '20' }]}>
+                      <Ionicons name={meta.icon as any} size={24} color={meta.color} />
                     </View>
-                    <View style={styles.planCashback}>
-                      <Text style={styles.planCashbackText}>{plan.cashbackPercent}%</Text>
-                      <Text style={styles.planCashbackLabel}>cashback</Text>
+                    <Text style={styles.typeName}>{meta.label}</Text>
+                    <Text style={styles.typeCashback}>Up to {t.maxCashback}% cashback</Text>
+                    <View style={styles.typeCountBadge}>
+                      <Text style={styles.typeCountText}>{t.count}</Text>
                     </View>
-                  </View>
-
-                  <View style={styles.planDetails}>
-                    <View style={styles.planDetail}>
-                      <Text style={styles.planDetailLabel}>Coverage</Text>
-                      <Text style={styles.planDetailValue}>{plan.coverage}</Text>
-                    </View>
-                    <View style={styles.planDetail}>
-                      <Text style={styles.planDetailLabel}>Premium</Text>
-                      <Text style={styles.planDetailValue}>
-                        {formatPremium(plan.premium.annual)}/yr
-                      </Text>
-                    </View>
-                    {plan.rating > 0 && (
-                      <View style={styles.planDetail}>
-                        <Text style={styles.planDetailLabel}>Rating</Text>
-                        <View style={styles.ratingRow}>
-                          <Ionicons name="star" size={14} color={colors.warningScale[400]} />
-                          <Text style={styles.planDetailValue}> {plan.rating.toFixed(1)}</Text>
-                        </View>
-                      </View>
-                    )}
-                  </View>
-
-                  {plan.features.length > 0 && (
-                    <View style={styles.planFeatures}>
-                      {plan.features.slice(0, 3).map((feature, index) => (
-                        <View key={index} style={styles.planFeature}>
-                          <Ionicons name="checkmark-circle" size={16} color={Colors.gold} />
-                          <Text style={styles.planFeatureText}>{feature}</Text>
-                        </View>
-                      ))}
-                    </View>
-                  )}
-
-                  <View style={styles.planButton}>
-                    <Text style={styles.planButtonText}>View Details</Text>
-                    <Ionicons name="arrow-forward" size={18} color={colors.background.primary} />
-                  </View>
-                </Pressable>
-              ))}
+                  </Pressable>
+                );
+              })}
             </View>
           )}
         </View>
-      )}
 
-      {/* Plans Section Title */}
-      <View style={styles.sectionHeaderRow}>
-        <Text style={styles.sectionTitle}>
-          {selectedType
-            ? `${TYPE_META[selectedType]?.label || 'Insurance'} Plans`
-            : 'All Plans'}
-        </Text>
-      </View>
-    </View>
-  ), [types, typesLoading, featuredPlans, featuredLoading, selectedType, handleTypePress, handlePlanPress, formatPremium, currencySymbol]);
-
-  const renderPlanItem = useCallback(({ item }: { item: InsurancePlan }) => {
-    const meta = TYPE_META[item.type] || { icon: 'help-circle', color: colors.neutral[500], label: item.type };
-    return (
-      <Pressable
-        style={styles.planListCard}
-        onPress={() => handlePlanPress(item)}
-      >
-        <View style={styles.planListHeader}>
-          <View style={styles.planListLeft}>
-            {item.providerLogo ? (
-              <CachedImage
-                source={{ uri: item.providerLogo }}
-                style={styles.providerLogoSmall}
-              />
+        {/* Featured Plans (only when no type filter) */}
+        {!selectedType && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Featured Plans</Text>
+            {featuredLoading ? (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color={Colors.gold} />
+              </View>
+            ) : featuredPlans.length === 0 ? (
+              <View style={styles.emptySmall}>
+                <Text style={styles.emptySmallText}>No featured plans right now</Text>
+              </View>
             ) : (
-              <View style={[styles.providerIconFallback, { backgroundColor: meta.color + '20' }]}>
-                <Ionicons name={meta.icon as any} size={20} color={meta.color} />
+              <View style={styles.featuredList}>
+                {featuredPlans.map((plan) => (
+                  <Pressable key={plan._id} style={styles.featuredCard} onPress={() => handlePlanPress(plan)}>
+                    <View style={styles.featuredHeader}>
+                      <View style={styles.featuredProviderRow}>
+                        {plan.providerLogo ? (
+                          <CachedImage source={{ uri: plan.providerLogo }} style={styles.providerLogo} />
+                        ) : null}
+                        <View style={{ flex: 1 }}>
+                          <Text style={styles.planProvider}>{plan.provider}</Text>
+                          <Text style={styles.planName}>{plan.name}</Text>
+                        </View>
+                      </View>
+                      <View style={styles.planCashback}>
+                        <Text style={styles.planCashbackText}>{plan.cashbackPercent}%</Text>
+                        <Text style={styles.planCashbackLabel}>cashback</Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.planDetails}>
+                      <View style={styles.planDetail}>
+                        <Text style={styles.planDetailLabel}>Coverage</Text>
+                        <Text style={styles.planDetailValue}>{plan.coverage}</Text>
+                      </View>
+                      <View style={styles.planDetail}>
+                        <Text style={styles.planDetailLabel}>Premium</Text>
+                        <Text style={styles.planDetailValue}>{formatPremium(plan.premium.annual)}/yr</Text>
+                      </View>
+                      {plan.rating > 0 && (
+                        <View style={styles.planDetail}>
+                          <Text style={styles.planDetailLabel}>Rating</Text>
+                          <View style={styles.ratingRow}>
+                            <Ionicons name="star" size={14} color={colors.warningScale[400]} />
+                            <Text style={styles.planDetailValue}> {plan.rating.toFixed(1)}</Text>
+                          </View>
+                        </View>
+                      )}
+                    </View>
+
+                    {plan.features.length > 0 && (
+                      <View style={styles.planFeatures}>
+                        {plan.features.slice(0, 3).map((feature, index) => (
+                          <View key={index} style={styles.planFeature}>
+                            <Ionicons name="checkmark-circle" size={16} color={Colors.gold} />
+                            <Text style={styles.planFeatureText}>{feature}</Text>
+                          </View>
+                        ))}
+                      </View>
+                    )}
+
+                    <View style={styles.planButton}>
+                      <Text style={styles.planButtonText}>View Details</Text>
+                      <Ionicons name="arrow-forward" size={18} color={colors.background.primary} />
+                    </View>
+                  </Pressable>
+                ))}
               </View>
             )}
-            <View style={{ flex: 1 }}>
-              <Text style={styles.planListProvider}>{item.provider}</Text>
-              <Text style={styles.planListName}>{item.name}</Text>
-              <Text style={styles.planListCoverage}>Coverage: {item.coverage}</Text>
-            </View>
-          </View>
-          <View style={styles.planListRight}>
-            <Text style={styles.planListPremium}>
-              {formatPremium(item.premium.monthly)}/mo
-            </Text>
-            <View style={styles.cashbackChip}>
-              <Text style={styles.cashbackChipText}>{item.cashbackPercent}% cashback</Text>
-            </View>
-          </View>
-        </View>
-
-        {item.claimSettlementRatio > 0 && (
-          <View style={styles.claimRatioRow}>
-            <Ionicons name="checkmark-shield" size={14} color={colors.successScale[400]} />
-            <Text style={styles.claimRatioText}>
-              {item.claimSettlementRatio.toFixed(1)}% claim settlement ratio
-            </Text>
           </View>
         )}
-      </Pressable>
-    );
-  }, [handlePlanPress, currencySymbol]);
+
+        {/* Plans Section Title */}
+        <View style={styles.sectionHeaderRow}>
+          <Text style={styles.sectionTitle}>
+            {selectedType ? `${TYPE_META[selectedType]?.label || 'Insurance'} Plans` : 'All Plans'}
+          </Text>
+        </View>
+      </View>
+    ),
+    [
+      types,
+      typesLoading,
+      featuredPlans,
+      featuredLoading,
+      selectedType,
+      handleTypePress,
+      handlePlanPress,
+      formatPremium,
+      currencySymbol,
+    ],
+  );
+
+  const renderPlanItem = useCallback(
+    ({ item }: { item: InsurancePlan }) => {
+      const meta = TYPE_META[item.type] || { icon: 'help-circle', color: colors.neutral[500], label: item.type };
+      return (
+        <Pressable style={styles.planListCard} onPress={() => handlePlanPress(item)}>
+          <View style={styles.planListHeader}>
+            <View style={styles.planListLeft}>
+              {item.providerLogo ? (
+                <CachedImage source={{ uri: item.providerLogo }} style={styles.providerLogoSmall} />
+              ) : (
+                <View style={[styles.providerIconFallback, { backgroundColor: meta.color + '20' }]}>
+                  <Ionicons name={meta.icon as any} size={20} color={meta.color} />
+                </View>
+              )}
+              <View style={{ flex: 1 }}>
+                <Text style={styles.planListProvider}>{item.provider}</Text>
+                <Text style={styles.planListName}>{item.name}</Text>
+                <Text style={styles.planListCoverage}>Coverage: {item.coverage}</Text>
+              </View>
+            </View>
+            <View style={styles.planListRight}>
+              <Text style={styles.planListPremium}>{formatPremium(item.premium.monthly)}/mo</Text>
+              <View style={styles.cashbackChip}>
+                <Text style={styles.cashbackChipText}>{item.cashbackPercent}% cashback</Text>
+              </View>
+            </View>
+          </View>
+
+          {item.claimSettlementRatio > 0 && (
+            <View style={styles.claimRatioRow}>
+              <Ionicons name="checkmark-shield" size={14} color={colors.successScale[400]} />
+              <Text style={styles.claimRatioText}>{item.claimSettlementRatio.toFixed(1)}% claim settlement ratio</Text>
+            </View>
+          )}
+        </Pressable>
+      );
+    },
+    [handlePlanPress, currencySymbol],
+  );
 
   const renderFooter = useCallback(() => {
     if (loadingMore) {
@@ -435,7 +425,10 @@ function InsurancePage() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Insurance</Text>

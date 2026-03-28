@@ -76,7 +76,7 @@ const StarRating: React.FC<{ rating: number; count?: number }> = ({ rating, coun
   const filled = Math.round(rating);
   return (
     <View style={starStyles.row}>
-      {[1, 2, 3, 4, 5].map(i => (
+      {[1, 2, 3, 4, 5].map((i) => (
         <Ionicons
           key={i}
           name={i <= filled ? 'star' : 'star-outline'}
@@ -84,9 +84,7 @@ const StarRating: React.FC<{ rating: number; count?: number }> = ({ rating, coun
           color={i <= filled ? colors.warningScale[400] : colors.neutral[300]}
         />
       ))}
-      {count !== undefined && count > 0 && (
-        <Text style={starStyles.count}>({count})</Text>
-      )}
+      {count !== undefined && count > 0 && <Text style={starStyles.count}>({count})</Text>}
     </View>
   );
 };
@@ -108,12 +106,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
 
   const { pricing, ratings, cashback } = product;
   const hasDiscount = pricing.discount && pricing.discount > 0;
-  const discountPct = pricing.discount ?? (pricing.original > pricing.selling
-    ? Math.round((1 - pricing.selling / pricing.original) * 100)
-    : 0);
+  const discountPct =
+    pricing.discount ??
+    (pricing.original > pricing.selling ? Math.round((1 - pricing.selling / pricing.original) * 100) : 0);
   const showCashback = cashback?.isActive && cashback.percentage > 0;
   // Calculate Rez Coins earned (cashback percentage of selling price, 1 coin = ₹1)
-  const coinsEarned = showCashback ? Math.round(pricing.selling * cashback!.percentage / 100) : 0;
+  const coinsEarned = showCashback ? Math.round((pricing.selling * cashback!.percentage) / 100) : 0;
 
   const formattedSelling = `₹${pricing.selling.toLocaleString('en-IN')}`;
   const formattedOriginal = `₹${pricing.original.toLocaleString('en-IN')}`;
@@ -174,9 +172,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
         </Text>
 
         {/* Rating */}
-        {ratings && ratings.count > 0 && (
-          <StarRating rating={ratings.average} count={ratings.count} />
-        )}
+        {ratings && ratings.count > 0 && <StarRating rating={ratings.average} count={ratings.count} />}
 
         {/* Price Row */}
         <View style={productCardStyles.priceRow}>
@@ -190,7 +186,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onPress }) => {
         {showCashback && coinsEarned > 0 && (
           <View style={productCardStyles.coinEarnRow}>
             <Ionicons name="diamond" size={12} color={colors.nileBlue} />
-            <Text style={productCardStyles.coinEarnText}>Earn ₹{coinsEarned} {BRAND.COIN_NAME}</Text>
+            <Text style={productCardStyles.coinEarnText}>
+              Earn ₹{coinsEarned} {BRAND.COIN_NAME}
+            </Text>
           </View>
         )}
 
@@ -364,11 +362,14 @@ const SortSheet: React.FC<SortSheetProps> = ({ visible, activeSort, onSelect, on
       <Pressable style={sortStyles.sheet} onPress={() => {}}>
         <View style={sortStyles.handle} />
         <Text style={sortStyles.title}>Sort By</Text>
-        {SORT_OPTIONS.map(opt => (
+        {SORT_OPTIONS.map((opt) => (
           <Pressable
             key={opt.key}
             style={[sortStyles.option, activeSort === opt.key && sortStyles.optionActive]}
-            onPress={() => { onSelect(opt.key); onClose(); }}
+            onPress={() => {
+              onSelect(opt.key);
+              onClose();
+            }}
           >
             <Ionicons
               name={opt.icon}
@@ -468,56 +469,61 @@ function CategoryProductsPage() {
   // Map sort option → API query params
   const getSortParams = (sort: SortOption): string => {
     switch (sort) {
-      case 'price_asc': return '&sort=price&order=asc';
-      case 'price_desc': return '&sort=price&order=desc';
-      case 'rating': return '&sort=rating&order=desc';
-      case 'newest': return '&sort=createdAt&order=desc';
-      case 'discount': return '&sort=discount&order=desc';
-      default: return '';
+      case 'price_asc':
+        return '&sort=price&order=asc';
+      case 'price_desc':
+        return '&sort=price&order=desc';
+      case 'rating':
+        return '&sort=rating&order=desc';
+      case 'newest':
+        return '&sort=createdAt&order=desc';
+      case 'discount':
+        return '&sort=discount&order=desc';
+      default:
+        return '';
     }
   };
 
-  const fetchProducts = useCallback(async (
-    pageNum: number = 1,
-    append: boolean = false,
-    sort: SortOption = 'default',
-  ) => {
-    if (!slug) return;
-    try {
-      setError(null);
-      const sortParams = getSortParams(sort);
-      const response = await apiClient.get(
-        `/products?category=${encodeURIComponent(slug)}&page=${pageNum}&limit=${LIMIT}${sortParams}`
-      );
-      if (!isMounted()) return;
-
-      const fetchedProducts: Product[] = response.data || [];
-      const pagination = response.meta?.pagination;
-
-      if (!isMounted()) return;
-      setTotal(pagination?.total ?? fetchedProducts.length);
-      if (!isMounted()) return;
-      setTotalPages(pagination?.pages ?? 1);
-
-      if (append) {
+  const fetchProducts = useCallback(
+    async (pageNum: number = 1, append: boolean = false, sort: SortOption = 'default') => {
+      if (!slug) return;
+      try {
+        setError(null);
+        const sortParams = getSortParams(sort);
+        const response = await apiClient.get(
+          `/products?category=${encodeURIComponent(slug)}&page=${pageNum}&limit=${LIMIT}${sortParams}`,
+        );
         if (!isMounted()) return;
-        setProducts(prev => [...prev, ...fetchedProducts]);
-      } else {
+
+        const fetchedProducts: Product[] = response.data || [];
+        const pagination = response.meta?.pagination;
+
         if (!isMounted()) return;
-        setProducts(fetchedProducts);
+        setTotal(pagination?.total ?? fetchedProducts.length);
+        if (!isMounted()) return;
+        setTotalPages(pagination?.pages ?? 1);
+
+        if (append) {
+          if (!isMounted()) return;
+          setProducts((prev) => [...prev, ...fetchedProducts]);
+        } else {
+          if (!isMounted()) return;
+          setProducts(fetchedProducts);
+        }
+      } catch (err: any) {
+        if (!isMounted()) return;
+        setError(err.message || 'Failed to load products');
+      } finally {
+        if (!isMounted()) return;
+        setIsLoading(false);
+        if (!isMounted()) return;
+        setIsRefreshing(false);
+        if (!isMounted()) return;
+        setIsLoadingMore(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Failed to load products');
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-      if (!isMounted()) return;
-      setIsLoadingMore(false);
-    }
-  }, [slug]);
+    },
+    [slug],
+  );
 
   const fetchCategory = useCallback(async () => {
     if (!slug) return;
@@ -551,29 +557,37 @@ function CategoryProductsPage() {
     fetchProducts(next, true, activeSort);
   }, [page, totalPages, isLoadingMore, fetchProducts, activeSort]);
 
-  const handleSortChange = useCallback((sort: SortOption) => {
-    setActiveSort(sort);
-    setIsLoading(true);
-    setPage(1);
-    fetchProducts(1, false, sort);
-  }, [fetchProducts]);
+  const handleSortChange = useCallback(
+    (sort: SortOption) => {
+      setActiveSort(sort);
+      setIsLoading(true);
+      setPage(1);
+      fetchProducts(1, false, sort);
+    },
+    [fetchProducts],
+  );
 
-  const handleProductPress = useCallback((product: Product) => {
-    router.push(`/product/${product._id}` as any);
-  }, [router]);
+  const handleProductPress = useCallback(
+    (product: Product) => {
+      router.push(`/product-page?cardId=${product._id}&cardType=product` as any);
+    },
+    [router],
+  );
 
   // Category vibes (from API) — horizontal quick filter
-  const vibes: Array<{ id: string; name: string; icon: string; color: string }> =
-    category?.vibes || [];
+  const vibes: Array<{ id: string; name: string; icon: string; color: string }> = category?.vibes || [];
   const occasions: Array<{ id: string; name: string; icon: string; color: string; tag?: string; discount?: number }> =
     category?.occasions || [];
   const quickFilters = [...vibes, ...occasions].slice(0, 8);
 
   // Grid renderer: two columns using numColumns = 2 equivalent via pairs
-  const renderItem = useCallback(({ item }: { item: Product | 'spacer' }) => {
-    if (item === 'spacer') return <View style={{ width: CARD_WIDTH }} />;
-    return <ProductCard product={item} onPress={handleProductPress} />;
-  }, [handleProductPress]);
+  const renderItem = useCallback(
+    ({ item }: { item: Product | 'spacer' }) => {
+      if (item === 'spacer') return <View style={{ width: CARD_WIDTH }} />;
+      return <ProductCard product={item} onPress={handleProductPress} />;
+    },
+    [handleProductPress],
+  );
 
   // Pair products into rows for the grid
   const gridData = useCallback((): (Product | 'spacer')[] => {
@@ -588,122 +602,118 @@ function CategoryProductsPage() {
   }, []);
 
   // ── Hero gradient colours
-  const catColor = category?.pageConfig?.theme?.primaryColor
-    || category?.metadata?.color
-    || category?.color
-    || colors.nileBlue;
+  const catColor =
+    category?.pageConfig?.theme?.primaryColor || category?.metadata?.color || category?.color || colors.nileBlue;
 
   const heroGradient: [string, string, string] = [catColor, `${catColor}CC`, colors.nileBlue];
 
-  const ListHeader = useCallback(() => (
-    <View>
-      {/* ── Hero Banner ── */}
-      <LinearGradient
-        colors={heroGradient}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[headerStyles.hero, { paddingTop: insets.top + 64 }]}
-      >
-        {/* Decorative circles */}
-        <View style={StyleSheet.absoluteFill} pointerEvents="none">
-          <View style={[headerStyles.circle, headerStyles.circle1]} />
-          <View style={[headerStyles.circle, headerStyles.circle2]} />
-          <View style={[headerStyles.circle, headerStyles.circle3]} />
-        </View>
+  const ListHeader = useCallback(
+    () => (
+      <View>
+        {/* ── Hero Banner ── */}
+        <LinearGradient
+          colors={heroGradient}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[headerStyles.hero, { paddingTop: insets.top + 64 }]}
+        >
+          {/* Decorative circles */}
+          <View style={StyleSheet.absoluteFill} pointerEvents="none">
+            <View style={[headerStyles.circle, headerStyles.circle1]} />
+            <View style={[headerStyles.circle, headerStyles.circle2]} />
+            <View style={[headerStyles.circle, headerStyles.circle3]} />
+          </View>
 
-        {/* Banner image overlay */}
-        {category?.bannerImage && (
-          <CachedImage
-            source={category.bannerImage}
-            style={headerStyles.bannerImage}
-            contentFit="cover"
-          />
-        )}
-        <View style={headerStyles.bannerOverlay} />
-
-        {/* Category icon + name */}
-        <View style={headerStyles.heroContent}>
-          {category?.icon ? (
-            <Text style={headerStyles.categoryEmoji}>{category.icon}</Text>
-          ) : (
-            <View style={headerStyles.iconCircle}>
-              <Ionicons name="grid-outline" size={36} color={colors.text.inverse} />
-            </View>
+          {/* Banner image overlay */}
+          {category?.bannerImage && (
+            <CachedImage source={category.bannerImage} style={headerStyles.bannerImage} contentFit="cover" />
           )}
-          <Text style={headerStyles.categoryTitle}>
-            {category?.name || (slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : 'Category')}
-          </Text>
-          {category?.description ? (
-            <Text style={headerStyles.categorySubtitle}>{category.description}</Text>
-          ) : null}
+          <View style={headerStyles.bannerOverlay} />
 
-          {/* Stats row */}
-          <View style={headerStyles.statsRow}>
-            <View style={headerStyles.statPill}>
-              <Ionicons name="cube-outline" size={14} color={colors.text.inverse} />
-              <Text style={headerStyles.statText}>{total} Products</Text>
-            </View>
-            {(category?.maxCashback || 0) > 0 && (
-              <View style={headerStyles.statPill}>
-                <Ionicons name="gift-outline" size={14} color={colors.text.inverse} />
-                <Text style={headerStyles.statText}>Up to {category.maxCashback}% {BRAND.COIN_NAME}</Text>
+          {/* Category icon + name */}
+          <View style={headerStyles.heroContent}>
+            {category?.icon ? (
+              <Text style={headerStyles.categoryEmoji}>{category.icon}</Text>
+            ) : (
+              <View style={headerStyles.iconCircle}>
+                <Ionicons name="grid-outline" size={36} color={colors.text.inverse} />
               </View>
             )}
+            <Text style={headerStyles.categoryTitle}>
+              {category?.name || (slug ? slug.charAt(0).toUpperCase() + slug.slice(1) : 'Category')}
+            </Text>
+            {category?.description ? <Text style={headerStyles.categorySubtitle}>{category.description}</Text> : null}
+
+            {/* Stats row */}
+            <View style={headerStyles.statsRow}>
+              <View style={headerStyles.statPill}>
+                <Ionicons name="cube-outline" size={14} color={colors.text.inverse} />
+                <Text style={headerStyles.statText}>{total} Products</Text>
+              </View>
+              {(category?.maxCashback || 0) > 0 && (
+                <View style={headerStyles.statPill}>
+                  <Ionicons name="gift-outline" size={14} color={colors.text.inverse} />
+                  <Text style={headerStyles.statText}>
+                    Up to {category.maxCashback}% {BRAND.COIN_NAME}
+                  </Text>
+                </View>
+              )}
+            </View>
+          </View>
+        </LinearGradient>
+
+        {/* ── Quick Filter Vibes ── */}
+        {quickFilters.length > 0 && (
+          <View style={headerStyles.vibesSection}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={headerStyles.vibesScroll}
+            >
+              {quickFilters.map((vibe) => {
+                const isActive = activeVibe === vibe.id;
+                return (
+                  <Pressable
+                    key={vibe.id}
+                    style={[headerStyles.vibeChip, isActive && { backgroundColor: vibe.color || colors.nileBlue }]}
+                    onPress={() => setActiveVibe(isActive ? null : vibe.id)}
+                  >
+                    <Text style={headerStyles.vibeEmoji}>{vibe.icon}</Text>
+                    <Text style={[headerStyles.vibeLabel, isActive && headerStyles.vibeLabelActive]}>{vibe.name}</Text>
+                    {'discount' in vibe && vibe.discount && (
+                      <View style={headerStyles.vibeDiscountBadge}>
+                        <Text style={headerStyles.vibeDiscountText}>{vibe.discount}%</Text>
+                      </View>
+                    )}
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        )}
+
+        {/* ── Sort & Filter Bar ── */}
+        <View style={headerStyles.toolbar}>
+          <Text style={headerStyles.resultCount}>
+            {products.length} of {total} results
+          </Text>
+          <View style={headerStyles.toolbarRight}>
+            <Pressable style={headerStyles.toolbarBtn} onPress={() => setShowSortSheet(true)}>
+              <Ionicons name="swap-vertical-outline" size={16} color={colors.nileBlue} />
+              <Text style={headerStyles.toolbarBtnText}>
+                {SORT_OPTIONS.find((s) => s.key === activeSort)?.label ?? 'Sort'}
+              </Text>
+            </Pressable>
+            <Pressable style={headerStyles.toolbarBtn}>
+              <Ionicons name="options-outline" size={16} color={colors.nileBlue} />
+              <Text style={headerStyles.toolbarBtnText}>Filter</Text>
+            </Pressable>
           </View>
         </View>
-      </LinearGradient>
-
-      {/* ── Quick Filter Vibes ── */}
-      {quickFilters.length > 0 && (
-        <View style={headerStyles.vibesSection}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={headerStyles.vibesScroll}>
-            {quickFilters.map((vibe) => {
-              const isActive = activeVibe === vibe.id;
-              return (
-                <Pressable
-                  key={vibe.id}
-                  style={[headerStyles.vibeChip, isActive && { backgroundColor: vibe.color || colors.nileBlue }]}
-                  onPress={() => setActiveVibe(isActive ? null : vibe.id)}
-                >
-                  <Text style={headerStyles.vibeEmoji}>{vibe.icon}</Text>
-                  <Text style={[headerStyles.vibeLabel, isActive && headerStyles.vibeLabelActive]}>
-                    {vibe.name}
-                  </Text>
-                  {'discount' in vibe && vibe.discount && (
-                    <View style={headerStyles.vibeDiscountBadge}>
-                      <Text style={headerStyles.vibeDiscountText}>{vibe.discount}%</Text>
-                    </View>
-                  )}
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
-      )}
-
-      {/* ── Sort & Filter Bar ── */}
-      <View style={headerStyles.toolbar}>
-        <Text style={headerStyles.resultCount}>
-          {products.length} of {total} results
-        </Text>
-        <View style={headerStyles.toolbarRight}>
-          <Pressable
-            style={headerStyles.toolbarBtn}
-            onPress={() => setShowSortSheet(true)}
-          >
-            <Ionicons name="swap-vertical-outline" size={16} color={colors.nileBlue} />
-            <Text style={headerStyles.toolbarBtnText}>
-              {SORT_OPTIONS.find(s => s.key === activeSort)?.label ?? 'Sort'}
-            </Text>
-          </Pressable>
-          <Pressable style={headerStyles.toolbarBtn}>
-            <Ionicons name="options-outline" size={16} color={colors.nileBlue} />
-            <Text style={headerStyles.toolbarBtnText}>Filter</Text>
-          </Pressable>
-        </View>
       </View>
-    </View>
-  ), [category, total, products.length, insets.top, quickFilters, activeVibe, activeSort, heroGradient]);
+    ),
+    [category, total, products.length, insets.top, quickFilters, activeVibe, activeSort, heroGradient],
+  );
 
   const ListFooter = useCallback(() => {
     if (isLoadingMore) {
@@ -777,7 +787,7 @@ function CategoryProductsPage() {
         {/* Back Button */}
         <Pressable
           style={[pageStyles.backButton, { top: insets.top + 10 }]}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           <View style={pageStyles.backButtonInner}>

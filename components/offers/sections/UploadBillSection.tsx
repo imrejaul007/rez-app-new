@@ -35,7 +35,7 @@ export const UploadBillSection: React.FC<UploadBillSectionProps> = ({
   if (stores.length === 0) return null;
 
   const handleUploadPress = (store: UploadBillStore) => {
-    router.push(`/upload-bill/${store.id}`);
+    router.push('/bill-upload');
   };
 
   const styles = StyleSheet.create({

@@ -972,15 +972,8 @@ function DiscoverAndShopSection({
           style={styles.viewAllButton}
           onPress={() => {
             // Navigate based on active tab
-            if (activeTab === 'reels') {
-              router.push('/social/reels' as any);
-            } else if (activeTab === 'posts') {
-              router.push('/social/posts' as any);
-            } else if (activeTab === 'articles') {
-              router.push('/social/articles' as any);
-            } else if (activeTab === 'images') {
-              router.push('/social/images' as any);
-            }
+            // All social tabs route to /social/reels — only social page that exists
+            router.push('/social/reels' as any);
           }}
          
         >
