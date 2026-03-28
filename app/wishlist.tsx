@@ -3,7 +3,6 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Page for managing user's wishlists with saved deals support
 
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { useFocusEffect } from 'expo-router';
 import {
   View,
   StyleSheet,
@@ -19,7 +18,7 @@ import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter, Stack } from 'expo-router';
+import { useRouter, Stack, useFocusEffect } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import wishlistApi, { Wishlist, WishlistItem as ApiWishlistItem, DiscountSnapshot } from '@/services/wishlistApi';
@@ -122,7 +121,9 @@ function WishlistPage() {
     // Backend uses capitalized itemType: 'Product', 'Store', 'Video', 'Discount'
     // Normalize to lowercase for frontend
     const rawItemType = apiItem.itemType || 'Product';
-    const itemType = (typeof rawItemType === 'string' ? rawItemType.toLowerCase() : 'product') as WishlistItem['itemType'];
+    const itemType = (
+      typeof rawItemType === 'string' ? rawItemType.toLowerCase() : 'product'
+    ) as WishlistItem['itemType'];
 
     // Generate a unique ID - use multiple fallbacks with wishlistId for uniqueness
     const rawId = apiItem.id || apiItem._id;
@@ -206,10 +207,11 @@ function WishlistPage() {
       }
 
       // Determine stock status
-      const inStock = populatedItem?.availability === 'available' ||
-                      populatedItem?.inStock === true ||
-                      populatedItem?.stock > 0 ||
-                      !populatedItem?.outOfStock;
+      const inStock =
+        populatedItem?.availability === 'available' ||
+        populatedItem?.inStock === true ||
+        populatedItem?.stock > 0 ||
+        !populatedItem?.outOfStock;
 
       return {
         id: uniqueId,
@@ -323,12 +325,12 @@ function WishlistPage() {
 
       // Filter wishlists: show all non-empty + max 1 empty wishlist
       // This prevents showing multiple empty "My Wishlist" sections
-      const nonEmptyWishlists = uniqueWishlists.filter(w => w.itemCount > 0);
-      const emptyWishlists = uniqueWishlists.filter(w => w.itemCount === 0);
+      const nonEmptyWishlists = uniqueWishlists.filter((w) => w.itemCount > 0);
+      const emptyWishlists = uniqueWishlists.filter((w) => w.itemCount === 0);
       const filteredWishlists = [
         ...nonEmptyWishlists,
         // Keep only 1 empty wishlist for users to add items to
-        ...(emptyWishlists.length > 0 ? [emptyWishlists[0]] : [])
+        ...(emptyWishlists.length > 0 ? [emptyWishlists[0]] : []),
       ];
 
       if (!isMounted()) return;
@@ -357,7 +359,7 @@ function WishlistPage() {
   useFocusEffect(
     useCallback(() => {
       fetchWishlists();
-    }, [fetchWishlists])
+    }, [fetchWishlists]),
   );
 
   const handleRefresh = useCallback(() => {
@@ -411,82 +413,91 @@ function WishlistPage() {
     showAlert(wishlist.name, `${wishlist.itemCount} items`, undefined, 'info');
   }, []);
 
-  const handleItemPress = useCallback((item: WishlistItem) => {
-    if (item.itemType === 'discount' && item.discountSnapshot?.storeId) {
-      router.push(`/MainStorePage?storeId=${item.discountSnapshot.storeId}`);
-    } else if (item.itemType === 'product') {
-      // Use ProductPage with cardId and cardType query params
-      router.push(`/product-page?cardId=${item.productId}&cardType=product`);
-    } else if (item.itemType === 'store') {
-      router.push(`/MainStorePage?storeId=${item.productId}`);
-    } else if (item.itemType === 'video') {
-      router.push(`/ugc/${item.productId}`);
-    }
-  }, [router]);
+  const handleItemPress = useCallback(
+    (item: WishlistItem) => {
+      if (item.itemType === 'discount' && item.discountSnapshot?.storeId) {
+        router.push(`/MainStorePage?storeId=${item.discountSnapshot.storeId}`);
+      } else if (item.itemType === 'product') {
+        // Use ProductPage with cardId and cardType query params
+        router.push(`/product-page?cardId=${item.productId}&cardType=product`);
+      } else if (item.itemType === 'store') {
+        router.push(`/MainStorePage?storeId=${item.productId}`);
+      } else if (item.itemType === 'video') {
+        router.push(`/ugc/${item.productId}`);
+      }
+    },
+    [router],
+  );
 
-  const handleRemoveItem = useCallback(async (itemId: string, wishlistId: string) => {
-    showAlert(
-      'Remove Item',
-      'Are you sure you want to remove this item?',
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Remove',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setWishlists(prev =>
-                prev.map(wishlist =>
-                  wishlist.id === wishlistId
-                    ? {
-                        ...wishlist,
-                        items: wishlist.items.filter(item => item.id !== itemId),
-                        itemCount: wishlist.itemCount - 1,
-                      }
-                    : wishlist
-                )
-              );
-              await wishlistApi.removeFromWishlist(itemId);
-              // Sync with global wishlist context so product pages update
-              await refreshWishlist();
-              showAlert('Success', 'Item removed from wishlist', undefined, 'success');
-            } catch (err) {
-              showAlert('Error', 'Failed to remove item. Please try again.', undefined, 'error');
-              await fetchWishlists();
-            }
+  const handleRemoveItem = useCallback(
+    async (itemId: string, wishlistId: string) => {
+      showAlert(
+        'Remove Item',
+        'Are you sure you want to remove this item?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Remove',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                setWishlists((prev) =>
+                  prev.map((wishlist) =>
+                    wishlist.id === wishlistId
+                      ? {
+                          ...wishlist,
+                          items: wishlist.items.filter((item) => item.id !== itemId),
+                          itemCount: wishlist.itemCount - 1,
+                        }
+                      : wishlist,
+                  ),
+                );
+                await wishlistApi.removeFromWishlist(itemId);
+                // Sync with global wishlist context so product pages update
+                await refreshWishlist();
+                showAlert('Success', 'Item removed from wishlist', undefined, 'success');
+              } catch (err) {
+                showAlert('Error', 'Failed to remove item. Please try again.', undefined, 'error');
+                await fetchWishlists();
+              }
+            },
           },
-        },
-      ],
-      'warning'
-    );
-  }, [fetchWishlists, refreshWishlist]);
+        ],
+        'warning',
+      );
+    },
+    [fetchWishlists, refreshWishlist],
+  );
 
-  const handleDeleteWishlist = useCallback(async (wishlistId: string, wishlistName: string) => {
-    showAlert(
-      'Delete Wishlist',
-      `Are you sure you want to delete "${wishlistName}"?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              setWishlists(prev => prev.filter(w => w.id !== wishlistId));
-              await wishlistApi.deleteWishlist(wishlistId);
-              // Sync with global wishlist context so product pages update
-              await refreshWishlist();
-              showAlert('Success', 'Wishlist deleted', undefined, 'success');
-            } catch (err) {
-              showAlert('Error', 'Failed to delete wishlist.', undefined, 'error');
-              await fetchWishlists();
-            }
+  const handleDeleteWishlist = useCallback(
+    async (wishlistId: string, wishlistName: string) => {
+      showAlert(
+        'Delete Wishlist',
+        `Are you sure you want to delete "${wishlistName}"?`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Delete',
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                setWishlists((prev) => prev.filter((w) => w.id !== wishlistId));
+                await wishlistApi.deleteWishlist(wishlistId);
+                // Sync with global wishlist context so product pages update
+                await refreshWishlist();
+                showAlert('Success', 'Wishlist deleted', undefined, 'success');
+              } catch (err) {
+                showAlert('Error', 'Failed to delete wishlist.', undefined, 'error');
+                await fetchWishlists();
+              }
+            },
           },
-        },
-      ],
-      'warning'
-    );
-  }, [fetchWishlists, refreshWishlist]);
+        ],
+        'warning',
+      );
+    },
+    [fetchWishlists, refreshWishlist],
+  );
 
   // Render a deal/discount card (key is handled by FlatList keyExtractor)
   const renderDealCard = (item: WishlistItem, wishlistId: string) => {
@@ -495,10 +506,7 @@ function WishlistPage() {
     const isExpired = isDealExpired(snapshot?.validUntil);
 
     return (
-      <Pressable
-        style={[styles.dealCard, isExpired && styles.dealCardExpired]}
-        onPress={() => handleItemPress(item)}
-      >
+      <Pressable style={[styles.dealCard, isExpired && styles.dealCardExpired]} onPress={() => handleItemPress(item)}>
         {/* Discount Badge */}
         <View style={[styles.discountBadge, isExpired && styles.discountBadgeExpired]}>
           <Ionicons name="pricetag" size={14} color={isExpired ? Colors.error : Colors.primary[500]} />
@@ -520,7 +528,10 @@ function WishlistPage() {
         )}
 
         {snapshot?.minOrderValue && snapshot.minOrderValue > 0 && (
-          <ThemedText style={styles.minOrder}>Min: {currencySymbol}{snapshot.minOrderValue}</ThemedText>
+          <ThemedText style={styles.minOrder}>
+            Min: {currencySymbol}
+            {snapshot.minOrderValue}
+          </ThemedText>
         )}
 
         {/* Expiry Status */}
@@ -532,7 +543,11 @@ function WishlistPage() {
             </View>
           ) : daysLeft !== null && daysLeft <= 7 ? (
             <View style={[styles.expiryBadge, daysLeft <= 3 && styles.expiryBadgeUrgent]}>
-              <Ionicons name="time-outline" size={12} color={daysLeft <= 3 ? colors.warningScale[400] : Colors.primary[500]} />
+              <Ionicons
+                name="time-outline"
+                size={12}
+                color={daysLeft <= 3 ? colors.warningScale[400] : Colors.primary[500]}
+              />
               <ThemedText style={[styles.expiryText, daysLeft <= 3 && styles.expiryTextUrgent]}>
                 {daysLeft <= 0 ? 'Today' : `${daysLeft}d left`}
               </ThemedText>
@@ -544,10 +559,7 @@ function WishlistPage() {
             </View>
           )}
 
-          <Pressable
-            style={styles.removeBtn}
-            onPress={() => handleRemoveItem(item.id, wishlistId)}
-          >
+          <Pressable style={styles.removeBtn} onPress={() => handleRemoveItem(item.id, wishlistId)}>
             <Ionicons name="trash-outline" size={16} color={Colors.error} />
           </Pressable>
         </View>
@@ -557,10 +569,7 @@ function WishlistPage() {
 
   // Render a store card (key is handled by FlatList keyExtractor)
   const renderStoreCard = (item: WishlistItem, wishlistId: string) => (
-    <Pressable
-      style={styles.storeCard}
-      onPress={() => handleItemPress(item)}
-    >
+    <Pressable style={styles.storeCard} onPress={() => handleItemPress(item)}>
       {item.image ? (
         <CachedImage source={item.image} style={styles.storeLogo} />
       ) : (
@@ -577,10 +586,7 @@ function WishlistPage() {
             <Ionicons name="heart" size={12} color={Colors.primary[500]} />
             <ThemedText style={styles.followingText}>Following</ThemedText>
           </View>
-          <Pressable
-            style={styles.removeBtn}
-            onPress={() => handleRemoveItem(item.id, wishlistId)}
-          >
+          <Pressable style={styles.removeBtn} onPress={() => handleRemoveItem(item.id, wishlistId)}>
             <Ionicons name="trash-outline" size={16} color={Colors.error} />
           </Pressable>
         </View>
@@ -590,10 +596,7 @@ function WishlistPage() {
 
   // Render a product card (key is handled by FlatList keyExtractor)
   const renderProductCard = (item: WishlistItem, wishlistId: string) => (
-    <Pressable
-      style={styles.productCard}
-      onPress={() => handleItemPress(item)}
-    >
+    <Pressable style={styles.productCard} onPress={() => handleItemPress(item)}>
       {item.image ? (
         <CachedImage source={item.image} style={styles.productImage} />
       ) : (
@@ -607,19 +610,15 @@ function WishlistPage() {
         </ThemedText>
         {item.price > 0 && (
           <ThemedText style={styles.productPrice}>
-            {currencySymbol}{item.price.toLocaleString()}
+            {currencySymbol}
+            {item.price.toLocaleString()}
           </ThemedText>
         )}
         <View style={styles.productFooter}>
           <View style={[styles.stockBadge, { backgroundColor: item.inStock ? Colors.primary[500] : Colors.error }]}>
-            <ThemedText style={styles.stockText}>
-              {item.inStock ? 'In Stock' : 'Out of Stock'}
-            </ThemedText>
+            <ThemedText style={styles.stockText}>{item.inStock ? 'In Stock' : 'Out of Stock'}</ThemedText>
           </View>
-          <Pressable
-            style={styles.removeBtn}
-            onPress={() => handleRemoveItem(item.id, wishlistId)}
-          >
+          <Pressable style={styles.removeBtn} onPress={() => handleRemoveItem(item.id, wishlistId)}>
             <Ionicons name="trash-outline" size={16} color={Colors.error} />
           </Pressable>
         </View>
@@ -629,10 +628,7 @@ function WishlistPage() {
 
   // Render a video card (key is handled by FlatList keyExtractor)
   const renderVideoCard = (item: WishlistItem, wishlistId: string) => (
-    <Pressable
-      style={styles.videoCard}
-      onPress={() => handleItemPress(item)}
-    >
+    <Pressable style={styles.videoCard} onPress={() => handleItemPress(item)}>
       {item.image ? (
         <View style={styles.videoThumbnailContainer}>
           <CachedImage source={item.image} style={styles.videoThumbnail} />
@@ -649,171 +645,165 @@ function WishlistPage() {
         <ThemedText style={styles.videoName} numberOfLines={2}>
           {item.name}
         </ThemedText>
-        <Pressable
-          style={styles.removeBtn}
-          onPress={() => handleRemoveItem(item.id, wishlistId)}
-        >
+        <Pressable style={styles.removeBtn} onPress={() => handleRemoveItem(item.id, wishlistId)}>
           <Ionicons name="trash-outline" size={16} color={Colors.error} />
         </Pressable>
       </View>
     </Pressable>
   );
 
-  const renderWishlistItem = (wishlistId: string) => ({ item, index }: { item: WishlistItem; index: number }) => {
-    switch (item.itemType) {
-      case 'discount':
-        return renderDealCard(item, wishlistId);
-      case 'store':
-        return renderStoreCard(item, wishlistId);
-      case 'video':
-        return renderVideoCard(item, wishlistId);
-      case 'product':
-      default:
-        return renderProductCard(item, wishlistId);
-    }
-  };
+  const renderWishlistItem =
+    (wishlistId: string) =>
+    ({ item, index }: { item: WishlistItem; index: number }) => {
+      switch (item.itemType) {
+        case 'discount':
+          return renderDealCard(item, wishlistId);
+        case 'store':
+          return renderStoreCard(item, wishlistId);
+        case 'video':
+          return renderVideoCard(item, wishlistId);
+        case 'product':
+        default:
+          return renderProductCard(item, wishlistId);
+      }
+    };
 
   // Render wishlist card (key is handled by FlatList keyExtractor)
-  const renderWishlist = useCallback(({ item: wishlist, index }: { item: WishlistData; index: number }) => {
-    // Separate items by type
-    const deals = wishlist.items.filter(i => i.itemType === 'discount');
-    const stores = wishlist.items.filter(i => i.itemType === 'store');
-    const videos = wishlist.items.filter(i => i.itemType === 'video');
-    const products = wishlist.items.filter(i => i.itemType === 'product');
+  const renderWishlist = useCallback(
+    ({ item: wishlist, index }: { item: WishlistData; index: number }) => {
+      // Separate items by type
+      const deals = wishlist.items.filter((i) => i.itemType === 'discount');
+      const stores = wishlist.items.filter((i) => i.itemType === 'store');
+      const videos = wishlist.items.filter((i) => i.itemType === 'video');
+      const products = wishlist.items.filter((i) => i.itemType === 'product');
 
-    // Build metadata string
-    const metaParts: string[] = [];
-    metaParts.push(`${wishlist.itemCount} item${wishlist.itemCount !== 1 ? 's' : ''}`);
-    if (deals.length > 0) metaParts.push(`${deals.length} deal${deals.length !== 1 ? 's' : ''}`);
-    if (stores.length > 0) metaParts.push(`${stores.length} store${stores.length !== 1 ? 's' : ''}`);
+      // Build metadata string
+      const metaParts: string[] = [];
+      metaParts.push(`${wishlist.itemCount} item${wishlist.itemCount !== 1 ? 's' : ''}`);
+      if (deals.length > 0) metaParts.push(`${deals.length} deal${deals.length !== 1 ? 's' : ''}`);
+      if (stores.length > 0) metaParts.push(`${stores.length} store${stores.length !== 1 ? 's' : ''}`);
 
-    return (
-      <View style={styles.wishlistCard}>
-        <View style={styles.wishlistHeader}>
-          <View style={styles.wishlistInfo}>
-            <ThemedText style={styles.wishlistName}>{wishlist.name}</ThemedText>
-            <ThemedText style={styles.wishlistMeta}>
-              {metaParts.join(' • ')}
-            </ThemedText>
+      return (
+        <View style={styles.wishlistCard}>
+          <View style={styles.wishlistHeader}>
+            <View style={styles.wishlistInfo}>
+              <ThemedText style={styles.wishlistName}>{wishlist.name}</ThemedText>
+              <ThemedText style={styles.wishlistMeta}>{metaParts.join(' • ')}</ThemedText>
+            </View>
+            <View style={styles.wishlistActions}>
+              <Pressable style={styles.actionBtn} onPress={() => handleWishlistPress(wishlist)}>
+                <Ionicons name="eye-outline" size={20} color={Colors.primary[500]} />
+              </Pressable>
+              <Pressable
+                style={styles.actionBtn}
+                onPress={() => {
+                  setSelectedWishlistForShare(wishlist);
+                  setShowShareModal(true);
+                }}
+              >
+                <Ionicons name="share-outline" size={20} color={Colors.primary[500]} />
+              </Pressable>
+              <Pressable style={styles.actionBtn} onPress={() => handleDeleteWishlist(wishlist.id, wishlist.name)}>
+                <Ionicons name="trash-outline" size={20} color={Colors.error} />
+              </Pressable>
+            </View>
           </View>
-          <View style={styles.wishlistActions}>
-            <Pressable
-              style={styles.actionBtn}
-              onPress={() => handleWishlistPress(wishlist)}
-            >
-              <Ionicons name="eye-outline" size={20} color={Colors.primary[500]} />
+
+          {/* Deals Section */}
+          {deals.length > 0 && (
+            <View style={styles.sectionContainer}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="pricetag" size={16} color={Colors.primary[500]} />
+                <ThemedText style={styles.sectionTitle}>Saved Deals</ThemedText>
+              </View>
+              <FlashList
+                data={deals}
+                renderItem={renderWishlistItem(wishlist.id)}
+                keyExtractor={(item, idx) => `deal-${wishlist.id}-${item.id}-${idx}`}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.itemsRow}
+                estimatedItemSize={70}
+              />
+            </View>
+          )}
+
+          {/* Stores Section */}
+          {stores.length > 0 && (
+            <View style={styles.sectionContainer}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="storefront-outline" size={16} color={Colors.primary[500]} />
+                <ThemedText style={styles.sectionTitle}>Following Stores</ThemedText>
+              </View>
+              <FlashList
+                data={stores.slice(0, 5)}
+                renderItem={renderWishlistItem(wishlist.id)}
+                keyExtractor={(item, idx) => `store-${wishlist.id}-${item.id}-${idx}`}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.itemsRow}
+                estimatedItemSize={70}
+              />
+            </View>
+          )}
+
+          {/* Products Section */}
+          {products.length > 0 && (
+            <View style={styles.sectionContainer}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="bag-outline" size={16} color={Colors.primary[500]} />
+                <ThemedText style={styles.sectionTitle}>Products</ThemedText>
+              </View>
+              <FlashList
+                data={products.slice(0, 5)}
+                renderItem={renderWishlistItem(wishlist.id)}
+                keyExtractor={(item, idx) => `product-${wishlist.id}-${item.id}-${idx}`}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.itemsRow}
+                estimatedItemSize={70}
+              />
+            </View>
+          )}
+
+          {/* Videos Section */}
+          {videos.length > 0 && (
+            <View style={styles.sectionContainer}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="videocam-outline" size={16} color={Colors.primary[500]} />
+                <ThemedText style={styles.sectionTitle}>Saved Videos</ThemedText>
+              </View>
+              <FlashList
+                data={videos.slice(0, 5)}
+                renderItem={renderWishlistItem(wishlist.id)}
+                keyExtractor={(item, idx) => `video-${wishlist.id}-${item.id}-${idx}`}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                contentContainerStyle={styles.itemsRow}
+                estimatedItemSize={70}
+              />
+            </View>
+          )}
+
+          {/* Empty State */}
+          {wishlist.items.length === 0 && (
+            <View style={styles.emptyWishlist}>
+              <Ionicons name="heart-outline" size={40} color={colors.border.medium} />
+              <ThemedText style={styles.emptyText}>No items yet</ThemedText>
+            </View>
+          )}
+
+          {wishlist.items.length > 5 && (
+            <Pressable style={styles.viewAllBtn} onPress={() => handleWishlistPress(wishlist)}>
+              <ThemedText style={styles.viewAllText}>View all {wishlist.itemCount} items</ThemedText>
+              <Ionicons name="chevron-forward" size={16} color={Colors.primary[500]} />
             </Pressable>
-            <Pressable
-              style={styles.actionBtn}
-              onPress={() => {
-                setSelectedWishlistForShare(wishlist);
-                setShowShareModal(true);
-              }}
-            >
-              <Ionicons name="share-outline" size={20} color={Colors.primary[500]} />
-            </Pressable>
-            <Pressable
-              style={styles.actionBtn}
-              onPress={() => handleDeleteWishlist(wishlist.id, wishlist.name)}
-            >
-              <Ionicons name="trash-outline" size={20} color={Colors.error} />
-            </Pressable>
-          </View>
+          )}
         </View>
-
-        {/* Deals Section */}
-        {deals.length > 0 && (
-          <View style={styles.sectionContainer}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="pricetag" size={16} color={Colors.primary[500]} />
-              <ThemedText style={styles.sectionTitle}>Saved Deals</ThemedText>
-            </View>
-            <FlashList
-              data={deals}
-              renderItem={renderWishlistItem(wishlist.id)}
-              keyExtractor={(item, idx) => `deal-${wishlist.id}-${item.id}-${idx}`}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.itemsRow}
-              estimatedItemSize={70}
-            />
-          </View>
-        )}
-
-        {/* Stores Section */}
-        {stores.length > 0 && (
-          <View style={styles.sectionContainer}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="storefront-outline" size={16} color={Colors.primary[500]} />
-              <ThemedText style={styles.sectionTitle}>Following Stores</ThemedText>
-            </View>
-            <FlashList
-              data={stores.slice(0, 5)}
-              renderItem={renderWishlistItem(wishlist.id)}
-              keyExtractor={(item, idx) => `store-${wishlist.id}-${item.id}-${idx}`}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.itemsRow}
-              estimatedItemSize={70}
-            />
-          </View>
-        )}
-
-        {/* Products Section */}
-        {products.length > 0 && (
-          <View style={styles.sectionContainer}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="bag-outline" size={16} color={Colors.primary[500]} />
-              <ThemedText style={styles.sectionTitle}>Products</ThemedText>
-            </View>
-            <FlashList
-              data={products.slice(0, 5)}
-              renderItem={renderWishlistItem(wishlist.id)}
-              keyExtractor={(item, idx) => `product-${wishlist.id}-${item.id}-${idx}`}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.itemsRow}
-              estimatedItemSize={70}
-            />
-          </View>
-        )}
-
-        {/* Videos Section */}
-        {videos.length > 0 && (
-          <View style={styles.sectionContainer}>
-            <View style={styles.sectionHeader}>
-              <Ionicons name="videocam-outline" size={16} color={Colors.primary[500]} />
-              <ThemedText style={styles.sectionTitle}>Saved Videos</ThemedText>
-            </View>
-            <FlashList
-              data={videos.slice(0, 5)}
-              renderItem={renderWishlistItem(wishlist.id)}
-              keyExtractor={(item, idx) => `video-${wishlist.id}-${item.id}-${idx}`}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.itemsRow}
-              estimatedItemSize={70}
-            />
-          </View>
-        )}
-
-        {/* Empty State */}
-        {wishlist.items.length === 0 && (
-          <View style={styles.emptyWishlist}>
-            <Ionicons name="heart-outline" size={40} color={colors.border.medium} />
-            <ThemedText style={styles.emptyText}>No items yet</ThemedText>
-          </View>
-        )}
-
-        {wishlist.items.length > 5 && (
-          <Pressable style={styles.viewAllBtn} onPress={() => handleWishlistPress(wishlist)}>
-            <ThemedText style={styles.viewAllText}>View all {wishlist.itemCount} items</ThemedText>
-            <Ionicons name="chevron-forward" size={16} color={Colors.primary[500]} />
-          </Pressable>
-        )}
-      </View>
-    );
-  }, [handleWishlistPress, handleDeleteWishlist, renderWishlistItem, handleItemPress, handleRemoveItem, currencySymbol]);
+      );
+    },
+    [handleWishlistPress, handleDeleteWishlist, renderWishlistItem, handleItemPress, handleRemoveItem, currencySymbol],
+  );
 
   // Loading State
   if (isLoading) {
@@ -831,7 +821,7 @@ function WishlistPage() {
           </Pressable>
         </LinearGradient>
         <View style={styles.loadingContainer}>
-          {[1, 2, 3, 4].map(i => (
+          {[1, 2, 3, 4].map((i) => (
             <View key={i} style={{ paddingHorizontal: Spacing.base }}>
               <WishlistItemSkeleton />
             </View>
@@ -885,9 +875,7 @@ function WishlistPage() {
           <View style={styles.emptyContainer}>
             <Ionicons name="heart-outline" size={80} color={colors.border.medium} />
             <ThemedText style={styles.emptyTitle}>No Wishlists Yet</ThemedText>
-            <ThemedText style={styles.emptyDesc}>
-              Save your favorite products and deals here
-            </ThemedText>
+            <ThemedText style={styles.emptyDesc}>Save your favorite products and deals here</ThemedText>
             <Pressable style={styles.createBtn} onPress={handleCreateWishlist}>
               <ThemedText style={styles.createBtnText}>Create Wishlist</ThemedText>
             </Pressable>
@@ -908,7 +896,9 @@ function WishlistPage() {
                 <View style={styles.emptyState}>
                   <Ionicons name="heart-outline" size={48} color={colors.text.tertiary} />
                   <ThemedText style={styles.emptyTitle}>No wishlists yet</ThemedText>
-                  <ThemedText style={styles.emptySubtitle}>Create your first wishlist to save favorite items</ThemedText>
+                  <ThemedText style={styles.emptySubtitle}>
+                    Create your first wishlist to save favorite items
+                  </ThemedText>
                 </View>
               ) : null
             }
@@ -917,7 +907,12 @@ function WishlistPage() {
       </View>
 
       {/* Create Wishlist Modal */}
-      <Modal visible={showCreateModal} transparent animationType="slide" onRequestClose={() => setShowCreateModal(false)}>
+      <Modal
+        visible={showCreateModal}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowCreateModal(false)}
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
@@ -944,11 +939,7 @@ function WishlistPage() {
               numberOfLines={3}
             />
             <View style={styles.modalBtns}>
-              <Pressable
-                style={styles.cancelBtn}
-                onPress={() => setShowCreateModal(false)}
-                disabled={isCreating}
-              >
+              <Pressable style={styles.cancelBtn} onPress={() => setShowCreateModal(false)} disabled={isCreating}>
                 <ThemedText style={styles.cancelBtnText}>Cancel</ThemedText>
               </Pressable>
               <Pressable

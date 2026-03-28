@@ -4,22 +4,13 @@
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, Dimensions, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthLoading } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
-import { CachedImage } from '@/components/ui/CachedImage';
+import CachedImage from '@/components/ui/CachedImage';
 import apiClient from '@/services/apiClient';
 import storesService from '@/services/storesApi';
 import categoriesService from '@/services/categoriesApi';
@@ -130,7 +121,7 @@ const FoodPage: React.FC = () => {
               icon: c.icon,
               image: c.image,
               storeCount: c.storeCount || c.metadata?.storeCount || 0,
-            }))
+            })),
         );
         // Also use parent stats if available
         if (!isMounted()) return;
@@ -144,7 +135,7 @@ const FoodPage: React.FC = () => {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to fetch food subcategories'),
         { context: 'FoodPage.fetchSubcategories' },
-        'warning'
+        'warning',
       );
     } finally {
       if (!isMounted()) return;
@@ -153,63 +144,66 @@ const FoodPage: React.FC = () => {
   }, []);
 
   // ---------- Fetch featured stores ----------
-  const fetchStores = useCallback(async (page: number = 1, append: boolean = false) => {
-    if (page === 1) setLoadingStores(true);
-    else setLoadingMoreStores(true);
+  const fetchStores = useCallback(
+    async (page: number = 1, append: boolean = false) => {
+      if (page === 1) setLoadingStores(true);
+      else setLoadingMoreStores(true);
 
-    try {
-      const response = await storesService.getStores({
-        category: FOOD_CATEGORY_SLUG,
-        page,
-        limit: PAGE_LIMIT,
-        isFeatured: true,
-        sortBy: 'rating',
-      } as any);
+      try {
+        const response = await storesService.getStores({
+          category: FOOD_CATEGORY_SLUG,
+          page,
+          limit: PAGE_LIMIT,
+          isFeatured: true,
+          sortBy: 'rating',
+        } as any);
 
-      if (response.success && response.data) {
-        const data = response.data as any;
-        const stores: FoodStore[] = data.stores || (Array.isArray(data) ? data : []);
+        if (response.success && response.data) {
+          const data = response.data as any;
+          const stores: FoodStore[] = data.stores || (Array.isArray(data) ? data : []);
 
-        if (append) {
-          if (!isMounted()) return;
-          setFeaturedStores(prev => [...prev, ...stores]);
-        } else {
-          if (!isMounted()) return;
-          setFeaturedStores(stores);
+          if (append) {
+            if (!isMounted()) return;
+            setFeaturedStores((prev) => [...prev, ...stores]);
+          } else {
+            if (!isMounted()) return;
+            setFeaturedStores(stores);
+          }
+
+          // Pagination metadata
+          const meta = response.meta?.pagination || data.pagination;
+          if (meta) {
+            if (!isMounted()) return;
+            setTotalStores(meta.total || 0);
+            if (!isMounted()) return;
+            setHasMoreStores(page < (meta.pages || meta.totalPages || 1));
+          } else {
+            if (!isMounted()) return;
+            setHasMoreStores(stores.length === PAGE_LIMIT);
+          }
+
+          // Compute max cashback from returned stores
+          if (!append && stores.length > 0) {
+            const mc = Math.max(...stores.map((s: FoodStore) => s.offers?.cashback || 0), 0);
+            if (!isMounted()) return;
+            if (mc > maxCashback) setMaxCashback(mc);
+          }
         }
-
-        // Pagination metadata
-        const meta = response.meta?.pagination || data.pagination;
-        if (meta) {
-          if (!isMounted()) return;
-          setTotalStores(meta.total || 0);
-          if (!isMounted()) return;
-          setHasMoreStores(page < (meta.pages || meta.totalPages || 1));
-        } else {
-          if (!isMounted()) return;
-          setHasMoreStores(stores.length === PAGE_LIMIT);
-        }
-
-        // Compute max cashback from returned stores
-        if (!append && stores.length > 0) {
-          const mc = Math.max(...stores.map((s: FoodStore) => s.offers?.cashback || 0), 0);
-          if (!isMounted()) return;
-          if (mc > maxCashback) setMaxCashback(mc);
-        }
+      } catch (err) {
+        errorReporter.captureError(
+          err instanceof Error ? err : new Error('Failed to fetch featured food stores'),
+          { context: 'FoodPage.fetchStores' },
+          'warning',
+        );
+      } finally {
+        if (!isMounted()) return;
+        if (page === 1) setLoadingStores(false);
+        if (!isMounted()) return;
+        else setLoadingMoreStores(false);
       }
-    } catch (err) {
-      errorReporter.captureError(
-        err instanceof Error ? err : new Error('Failed to fetch featured food stores'),
-        { context: 'FoodPage.fetchStores' },
-        'warning'
-      );
-    } finally {
-      if (!isMounted()) return;
-      if (page === 1) setLoadingStores(false);
-      if (!isMounted()) return;
-      else setLoadingMoreStores(false);
-    }
-  }, [maxCashback]);
+    },
+    [maxCashback],
+  );
 
   // ---------- Fetch cuisine counts ----------
   const fetchCuisines = useCallback(async () => {
@@ -226,7 +220,7 @@ const FoodPage: React.FC = () => {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to fetch cuisine counts'),
         { context: 'FoodPage.fetchCuisines' },
-        'warning'
+        'warning',
       );
     } finally {
       if (!isMounted()) return;
@@ -248,7 +242,7 @@ const FoodPage: React.FC = () => {
       errorReporter.captureError(
         err instanceof Error ? err : new Error('Failed to fetch food offers'),
         { context: 'FoodPage.fetchOffers' },
-        'warning'
+        'warning',
       );
     } finally {
       if (!isMounted()) return;
@@ -283,21 +277,47 @@ const FoodPage: React.FC = () => {
 
   const getCuisineEmoji = (tag: string): string => {
     const map: Record<string, string> = {
-      indian: '🍛', chinese: '🥡', italian: '🍝', mexican: '🌮',
-      thai: '🍜', japanese: '🍣', korean: '🍱', american: '🍔',
-      mediterranean: '🥙', arabic: '🧆', continental: '🥘',
-      seafood: '🦐', desserts: '🍰', cafe: '☕', bakery: '🧁',
-      pizza: '🍕', biryani: '🍚', south_indian: '🥣', north_indian: '🍛',
+      indian: '🍛',
+      chinese: '🥡',
+      italian: '🍝',
+      mexican: '🌮',
+      thai: '🍜',
+      japanese: '🍣',
+      korean: '🍱',
+      american: '🍔',
+      mediterranean: '🥙',
+      arabic: '🧆',
+      continental: '🥘',
+      seafood: '🦐',
+      desserts: '🍰',
+      cafe: '☕',
+      bakery: '🧁',
+      pizza: '🍕',
+      biryani: '🍚',
+      south_indian: '🥣',
+      north_indian: '🍛',
     };
     return map[tag.toLowerCase()] || '🍽️';
   };
 
   const getSubcategoryEmoji = (name: string): string => {
     const map: Record<string, string> = {
-      restaurants: '🍽️', delivery: '🍕', cafe: '☕', 'fast food': '🍔',
-      desserts: '🍰', bakery: '🧁', 'fine dining': '🥂', 'street food': '🌮',
-      'cloud kitchen': '🍳', bar: '🍺', pub: '🍻', lounge: '🎵',
-      'ice cream': '🍦', juice: '🧃', healthy: '🥗', vegan: '🌱',
+      restaurants: '🍽️',
+      delivery: '🍕',
+      cafe: '☕',
+      'fast food': '🍔',
+      desserts: '🍰',
+      bakery: '🧁',
+      'fine dining': '🥂',
+      'street food': '🌮',
+      'cloud kitchen': '🍳',
+      bar: '🍺',
+      pub: '🍻',
+      lounge: '🎵',
+      'ice cream': '🍦',
+      juice: '🧃',
+      healthy: '🥗',
+      vegan: '🌱',
     };
     return map[name.toLowerCase()] || '🍴';
   };
@@ -307,9 +327,7 @@ const FoodPage: React.FC = () => {
   };
 
   const getStoreDeliveryTime = (store: FoodStore): string => {
-    return store.serviceCapabilities?.homeDelivery?.estimatedTime
-      || store.deliveryTime
-      || '';
+    return store.serviceCapabilities?.homeDelivery?.estimatedTime || store.deliveryTime || '';
   };
 
   const getStoreCuisine = (store: FoodStore): string => {
@@ -342,9 +360,17 @@ const FoodPage: React.FC = () => {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.brand.orange, colors.brand.orangeDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
+        <LinearGradient
+          colors={[colors.brand.orange, colors.brand.orangeDark]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.header}
+        >
           <View style={styles.headerTop}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
@@ -368,9 +394,17 @@ const FoodPage: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={[colors.brand.orange, colors.brand.orangeDark]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
+      <LinearGradient
+        colors={[colors.brand.orange, colors.brand.orangeDark]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.header}
+      >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -403,7 +437,11 @@ const FoodPage: React.FC = () => {
       <View style={styles.filtersContainer}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           {['all', 'Fast Delivery', 'Rating 4.0+', 'Offers', 'Nearby'].map((filter) => (
-            <Pressable key={filter} onPress={() => setSelectedFilter(filter)} style={[styles.filterChip, selectedFilter === filter && styles.filterChipActive]}>
+            <Pressable
+              key={filter}
+              onPress={() => setSelectedFilter(filter)}
+              style={[styles.filterChip, selectedFilter === filter && styles.filterChipActive]}
+            >
               <Text style={[styles.filterChipText, selectedFilter === filter && styles.filterChipTextActive]}>
                 {filter === 'all' ? 'All' : filter}
               </Text>
@@ -434,9 +472,7 @@ const FoodPage: React.FC = () => {
               {offers.map((offer, index) => (
                 <View key={offer._id} style={[styles.offerCard, { backgroundColor: getOfferColor(index) }]}>
                   <Text style={styles.offerTitle}>
-                    {offer.cashbackPercentage
-                      ? `${offer.cashbackPercentage}% OFF`
-                      : offer.title}
+                    {offer.cashbackPercentage ? `${offer.cashbackPercentage}% OFF` : offer.title}
                   </Text>
                   <Text style={styles.offerSubtitle} numberOfLines={2}>
                     {offer.subtitle || offer.description || (offer.store?.name ? `At ${offer.store.name}` : '')}
@@ -478,15 +514,13 @@ const FoodPage: React.FC = () => {
                     />
                   ) : (
                     <View style={styles.categoryIcon}>
-                      <Text style={styles.categoryEmoji}>
-                        {cat.icon || getSubcategoryEmoji(cat.name)}
-                      </Text>
+                      <Text style={styles.categoryEmoji}>{cat.icon || getSubcategoryEmoji(cat.name)}</Text>
                     </View>
                   )}
-                  <Text style={styles.categoryTitle} numberOfLines={1}>{cat.name}</Text>
-                  <Text style={styles.categoryCount}>
-                    {cat.storeCount ? `${cat.storeCount} places` : ''}
+                  <Text style={styles.categoryTitle} numberOfLines={1}>
+                    {cat.name}
                   </Text>
+                  <Text style={styles.categoryCount}>{cat.storeCount ? `${cat.storeCount} places` : ''}</Text>
                 </Pressable>
               ))}
             </View>
@@ -570,7 +604,9 @@ const FoodPage: React.FC = () => {
                     )}
                     <View style={styles.restaurantInfo}>
                       <View style={styles.restaurantHeader}>
-                        <Text style={styles.restaurantName} numberOfLines={1}>{store.name}</Text>
+                        <Text style={styles.restaurantName} numberOfLines={1}>
+                          {store.name}
+                        </Text>
                         {rating > 0 && (
                           <View style={styles.ratingBadge}>
                             <Ionicons name="star" size={12} color={colors.text.inverse} />
@@ -578,7 +614,9 @@ const FoodPage: React.FC = () => {
                           </View>
                         )}
                       </View>
-                      <Text style={styles.cuisineText} numberOfLines={1}>{cuisine}</Text>
+                      <Text style={styles.cuisineText} numberOfLines={1}>
+                        {cuisine}
+                      </Text>
                       <View style={styles.restaurantMeta}>
                         {deliveryTime ? (
                           <View style={styles.metaItem}>
@@ -608,7 +646,12 @@ const FoodPage: React.FC = () => {
 
         {/* Promo Banner */}
         <View style={styles.promoBanner}>
-          <LinearGradient colors={[Colors.success, Colors.success]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.promoGradient}>
+          <LinearGradient
+            colors={[Colors.success, Colors.success]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.promoGradient}
+          >
             <Ionicons name="restaurant" size={40} color={colors.text.inverse} style={{ marginBottom: Spacing.md }} />
             <Text style={styles.promoTitle}>Explore All Restaurants</Text>
             <Text style={styles.promoSubtitle}>Discover new places near you and earn cashback on every order</Text>
@@ -620,7 +663,6 @@ const FoodPage: React.FC = () => {
             </Pressable>
           </LinearGradient>
         </View>
-
       </ScrollView>
     </View>
   );
@@ -630,7 +672,12 @@ const FoodPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: Spacing.lg },
-  headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: Spacing.base },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    marginBottom: Spacing.base,
+  },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
   headerTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.inverse },
@@ -641,40 +688,138 @@ const styles = StyleSheet.create({
   statValue: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.inverse },
   statLabel: { fontSize: Typography.caption.fontSize, color: 'rgba(255,255,255,0.8)' },
   statDivider: { width: 1, height: 30, backgroundColor: 'rgba(255,255,255,0.3)' },
-  filtersContainer: { height: 52, paddingVertical: Spacing.sm, paddingHorizontal: Spacing.base, backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.border.default },
-  filterChip: { paddingHorizontal: Spacing.base, paddingVertical: 7, borderRadius: BorderRadius.xl, backgroundColor: colors.background.secondary, marginRight: Spacing.sm },
+  filtersContainer: {
+    height: 52,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+  },
+  filterChip: {
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 7,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: colors.background.secondary,
+    marginRight: Spacing.sm,
+  },
   filterChipActive: { backgroundColor: colors.brand.orange },
   filterChipText: { fontSize: Typography.body.fontSize, color: colors.text.tertiary },
   filterChipTextActive: { color: colors.text.inverse, fontWeight: '600' },
   section: { padding: Spacing.base },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md },
-  sectionTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.md },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  sectionTitle: {
+    fontSize: Typography.h4.fontSize,
+    fontWeight: '700',
+    color: colors.nileBlue,
+    marginBottom: Spacing.md,
+  },
   viewAllText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.brand.orange },
   offerCard: { width: 180, padding: Spacing.base, borderRadius: BorderRadius.lg, marginRight: Spacing.md },
-  offerTitle: { fontSize: Typography.h2.fontSize, fontWeight: '700', color: colors.text.inverse, marginBottom: Spacing.xs },
+  offerTitle: {
+    fontSize: Typography.h2.fontSize,
+    fontWeight: '700',
+    color: colors.text.inverse,
+    marginBottom: Spacing.xs,
+  },
   offerSubtitle: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.9)', marginBottom: Spacing.md },
-  codeContainer: { backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: Spacing.md, paddingVertical: 6, borderRadius: BorderRadius.sm, alignSelf: 'flex-start' },
+  codeContainer: {
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
+    borderRadius: BorderRadius.sm,
+    alignSelf: 'flex-start',
+  },
   codeText: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: colors.text.inverse },
   categoriesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
-  categoryCard: { width: (SCREEN_WIDTH - 56) / 3, alignItems: 'center', padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.lg },
-  categoryIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], backgroundColor: '#F9731620', justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
+  categoryCard: {
+    width: (SCREEN_WIDTH - 56) / 3,
+    alignItems: 'center',
+    padding: Spacing.md,
+    backgroundColor: colors.background.secondary,
+    borderRadius: BorderRadius.lg,
+  },
+  categoryIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius['2xl'],
+    backgroundColor: '#F9731620',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
   categoryImageIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], marginBottom: Spacing.sm },
   categoryEmoji: { fontSize: Typography.h2.fontSize },
-  categoryTitle: { fontSize: Typography.caption.fontSize, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textAlign: 'center' },
+  categoryTitle: {
+    fontSize: Typography.caption.fontSize,
+    fontWeight: '600',
+    color: colors.nileBlue,
+    marginBottom: 2,
+    textAlign: 'center',
+  },
   categoryCount: { fontSize: Typography.overline.fontSize, color: colors.text.tertiary, textAlign: 'center' },
   cuisineCard: { width: 80, alignItems: 'center', marginRight: Spacing.md },
   cuisineEmoji: { fontSize: 36, marginBottom: Spacing.sm },
-  cuisineName: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textTransform: 'capitalize' },
+  cuisineName: {
+    fontSize: Typography.bodySmall.fontSize,
+    fontWeight: '600',
+    color: colors.nileBlue,
+    marginBottom: 2,
+    textTransform: 'capitalize',
+  },
   cuisineCount: { fontSize: Typography.overline.fontSize, color: colors.text.tertiary },
-  restaurantCard: { backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.border.default, marginBottom: Spacing.md },
+  restaurantCard: {
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    marginBottom: Spacing.md,
+  },
   restaurantImage: { width: '100%', height: 150 },
-  restaurantImagePlaceholder: { justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.secondary },
-  cashbackBadge: { position: 'absolute', top: 12, right: 12, backgroundColor: Colors.success, paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
+  restaurantImagePlaceholder: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background.secondary,
+  },
+  cashbackBadge: {
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    backgroundColor: Colors.success,
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
   cashbackText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '700', color: colors.text.inverse },
   restaurantInfo: { padding: Spacing.base },
-  restaurantHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.xs },
-  restaurantName: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue, flex: 1, marginRight: Spacing.sm },
-  ratingBadge: { flexDirection: 'row', alignItems: 'center', gap: Spacing.xs, backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
+  restaurantHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.xs,
+  },
+  restaurantName: {
+    fontSize: Typography.h4.fontSize,
+    fontWeight: '700',
+    color: colors.nileBlue,
+    flex: 1,
+    marginRight: Spacing.sm,
+  },
+  ratingBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.xs,
+    backgroundColor: Colors.success,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
   ratingText: { fontSize: Typography.bodySmall.fontSize, fontWeight: '700', color: colors.text.inverse },
   cuisineText: { fontSize: Typography.body.fontSize, color: colors.text.tertiary, marginBottom: Spacing.sm },
   restaurantMeta: { flexDirection: 'row', alignItems: 'center', gap: Spacing.base },
@@ -682,22 +827,69 @@ const styles = StyleSheet.create({
   metaText: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary },
   promoBanner: { marginHorizontal: Spacing.base },
   promoGradient: { padding: Spacing.xl, borderRadius: BorderRadius.lg, alignItems: 'center' },
-  promoTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.text.inverse, marginBottom: Spacing.xs },
-  promoSubtitle: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: Spacing.base },
-  promoButton: { backgroundColor: colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius['2xl'] },
+  promoTitle: {
+    fontSize: Typography.h4.fontSize,
+    fontWeight: '700',
+    color: colors.text.inverse,
+    marginBottom: Spacing.xs,
+  },
+  promoSubtitle: {
+    fontSize: Typography.bodySmall.fontSize,
+    color: 'rgba(255,255,255,0.9)',
+    textAlign: 'center',
+    marginBottom: Spacing.base,
+  },
+  promoButton: {
+    backgroundColor: colors.background.primary,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius['2xl'],
+  },
   promoButtonText: { fontSize: Typography.body.fontSize, fontWeight: '700', color: Colors.success },
 
   // Loading & empty states
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingIconWrap: { width: 72, height: 72, borderRadius: 36, backgroundColor: '#F9731615', justifyContent: 'center', alignItems: 'center' },
+  loadingIconWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: '#F9731615',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: colors.text.tertiary },
   emptyState: { alignItems: 'center', paddingVertical: Spacing.xl },
-  emptyIconWrap: { width: 72, height: 72, borderRadius: 36, backgroundColor: '#F9731615', justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.md },
-  emptyTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.neutral[900], marginBottom: Spacing.xs },
-  emptySubtitle: { fontSize: Typography.bodySmall.fontSize, color: colors.neutral[500], textAlign: 'center', paddingHorizontal: Spacing.xl },
+  emptyIconWrap: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: '#F9731615',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  emptyTitle: {
+    fontSize: Typography.h4.fontSize,
+    fontWeight: '700',
+    color: colors.neutral[900],
+    marginBottom: Spacing.xs,
+  },
+  emptySubtitle: {
+    fontSize: Typography.bodySmall.fontSize,
+    color: colors.neutral[500],
+    textAlign: 'center',
+    paddingHorizontal: Spacing.xl,
+  },
   emptySmall: { paddingVertical: Spacing.md, alignItems: 'center' },
   emptySmallText: { fontSize: Typography.bodySmall.fontSize, color: colors.text.tertiary },
-  loadMoreButton: { alignItems: 'center', paddingVertical: Spacing.md, marginTop: Spacing.sm, borderWidth: 1, borderColor: colors.brand.orange, borderRadius: BorderRadius.lg },
+  loadMoreButton: {
+    alignItems: 'center',
+    paddingVertical: Spacing.md,
+    marginTop: Spacing.sm,
+    borderWidth: 1,
+    borderColor: colors.brand.orange,
+    borderRadius: BorderRadius.lg,
+  },
   loadMoreText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.brand.orange },
 });
 

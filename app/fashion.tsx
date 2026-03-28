@@ -5,23 +5,14 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, Dimensions, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuthLoading, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import apiClient from '@/services/apiClient';
-import { CachedImage } from '@/components/ui/CachedImage';
+import CachedImage from '@/components/ui/CachedImage';
 import { catchAndReport } from '@/utils/catchAndReport';
 
 import { Colors, Spacing, BorderRadius } from '@/constants/DesignSystem';
@@ -113,8 +104,6 @@ const FashionPage: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-
-
   // ── Fetch category info + subcategories ──────────────────────
   const fetchCategoryData = useCallback(async () => {
     try {
@@ -145,74 +134,82 @@ const FashionPage: React.FC = () => {
   }, []);
 
   // ── Fetch products (paginated) ───────────────────────────────
-  const fetchProducts = useCallback(async (page: number, append: boolean = false) => {
-    try {
-      if (page === 1 && !append) setLoadingInitial(true);
-      else setLoadingMore(true);
+  const fetchProducts = useCallback(
+    async (page: number, append: boolean = false) => {
+      try {
+        if (page === 1 && !append) setLoadingInitial(true);
+        else setLoadingMore(true);
 
-      const res = await apiClient.get<any>(`/products/category/${FASHION_SLUG}`, {
-        page,
-        limit: PRODUCTS_PER_PAGE,
-        sort: selectedFilter === 'Trending' ? 'popularity'
-            : selectedFilter === 'New Arrivals' ? 'newest'
-            : selectedFilter === 'Sale' ? 'price_low'
-            : selectedFilter === 'Premium' ? 'price_high'
-            : 'popularity',
-      });
+        const res = await apiClient.get<any>(`/products/category/${FASHION_SLUG}`, {
+          page,
+          limit: PRODUCTS_PER_PAGE,
+          sort:
+            selectedFilter === 'Trending'
+              ? 'popularity'
+              : selectedFilter === 'New Arrivals'
+                ? 'newest'
+                : selectedFilter === 'Sale'
+                  ? 'price_low'
+                  : selectedFilter === 'Premium'
+                    ? 'price_high'
+                    : 'popularity',
+        });
 
-      if (!isMounted()) return;
+        if (!isMounted()) return;
 
-      if (res.success) {
-        // The endpoint returns via sendPaginated — data is the array in first element
-        const rawProducts: any[] = Array.isArray(res.data) ? res.data : res.data?.products || [];
-        const mapped: FashionProduct[] = rawProducts.map((p: any) => ({
-          id: p._id?.toString() || p.id,
-          _id: p._id?.toString() || p.id,
-          name: p.name || 'Unnamed Product',
-          image: getProductImage(p),
-          price: getProductPrice(p),
-          originalPrice: getProductOriginalPrice(p),
-          discount: p.pricing?.discount || p.discount || 0,
-          rating: p.ratings?.average || p.rating || 0,
-          reviewCount: p.ratings?.count || p.reviewCount || 0,
-          cashbackPercentage: p.cashback?.percentage || p.cashbackPercentage || 0,
-          category: p.category?.name || '',
-          categorySlug: p.category?.slug || '',
-          store: { name: p.store?.name || '', logo: p.store?.logo },
-          brand: p.brand || p.store?.name || '',
-        }));
+        if (res.success) {
+          // The endpoint returns via sendPaginated — data is the array in first element
+          const rawProducts: any[] = Array.isArray(res.data) ? res.data : res.data?.products || [];
+          const mapped: FashionProduct[] = rawProducts.map((p: any) => ({
+            id: p._id?.toString() || p.id,
+            _id: p._id?.toString() || p.id,
+            name: p.name || 'Unnamed Product',
+            image: getProductImage(p),
+            price: getProductPrice(p),
+            originalPrice: getProductOriginalPrice(p),
+            discount: p.pricing?.discount || p.discount || 0,
+            rating: p.ratings?.average || p.rating || 0,
+            reviewCount: p.ratings?.count || p.reviewCount || 0,
+            cashbackPercentage: p.cashback?.percentage || p.cashbackPercentage || 0,
+            category: p.category?.name || '',
+            categorySlug: p.category?.slug || '',
+            store: { name: p.store?.name || '', logo: p.store?.logo },
+            brand: p.brand || p.store?.name || '',
+          }));
 
-        if (append) {
+          if (append) {
+            if (!isMounted()) return;
+            setProducts((prev) => [...prev, ...mapped]);
+          } else {
+            if (!isMounted()) return;
+            setProducts(mapped);
+          }
+
+          // Determine hasMore from pagination meta or array length
+          const total = res.meta?.pagination?.total ?? null;
+          if (total !== null) {
+            if (!isMounted()) return;
+            setHasMore(page * PRODUCTS_PER_PAGE < total);
+          } else {
+            if (!isMounted()) return;
+            setHasMore(mapped.length === PRODUCTS_PER_PAGE);
+          }
           if (!isMounted()) return;
-          setProducts(prev => [...prev, ...mapped]);
-        } else {
-          if (!isMounted()) return;
-          setProducts(mapped);
+          setCurrentPage(page);
         }
-
-        // Determine hasMore from pagination meta or array length
-        const total = res.meta?.pagination?.total ?? null;
-        if (total !== null) {
+      } catch (_) {
+        // fail silently
+      } finally {
+        if (isMounted()) {
           if (!isMounted()) return;
-          setHasMore(page * PRODUCTS_PER_PAGE < total);
-        } else {
+          setLoadingInitial(false);
           if (!isMounted()) return;
-          setHasMore(mapped.length === PRODUCTS_PER_PAGE);
+          setLoadingMore(false);
         }
-        if (!isMounted()) return;
-        setCurrentPage(page);
       }
-    } catch (_) {
-      // fail silently
-    } finally {
-      if (isMounted()) {
-        if (!isMounted()) return;
-        setLoadingInitial(false);
-        if (!isMounted()) return;
-        setLoadingMore(false);
-      }
-    }
-  }, [selectedFilter]);
+    },
+    [selectedFilter],
+  );
 
   // ── Fetch trending products ──────────────────────────────────
   const fetchTrending = useCallback(async () => {
@@ -222,24 +219,28 @@ const FashionPage: React.FC = () => {
       if (res.success) {
         const raw: any[] = Array.isArray(res.data) ? res.data : res.data?.products || [];
         if (!isMounted()) return;
-        setTrendingProducts(raw.map((p: any) => ({
-          id: p._id?.toString() || p.id,
-          _id: p._id?.toString() || p.id,
-          name: p.name || '',
-          image: getProductImage(p),
-          price: getProductPrice(p),
-          originalPrice: getProductOriginalPrice(p),
-          discount: p.pricing?.discount || 0,
-          rating: p.ratings?.average || 0,
-          reviewCount: p.ratings?.count || 0,
-          cashbackPercentage: p.cashback?.percentage || 0,
-          category: p.category?.name || '',
-          categorySlug: p.category?.slug || '',
-          store: { name: p.store?.name || '', logo: p.store?.logo },
-          brand: p.brand || p.store?.name || '',
-        })));
+        setTrendingProducts(
+          raw.map((p: any) => ({
+            id: p._id?.toString() || p.id,
+            _id: p._id?.toString() || p.id,
+            name: p.name || '',
+            image: getProductImage(p),
+            price: getProductPrice(p),
+            originalPrice: getProductOriginalPrice(p),
+            discount: p.pricing?.discount || 0,
+            rating: p.ratings?.average || 0,
+            reviewCount: p.ratings?.count || 0,
+            cashbackPercentage: p.cashback?.percentage || 0,
+            category: p.category?.name || '',
+            categorySlug: p.category?.slug || '',
+            store: { name: p.store?.name || '', logo: p.store?.logo },
+            brand: p.brand || p.store?.name || '',
+          })),
+        );
       }
-    } catch (e) { catchAndReport(e, setError, 'Fashion/fetchTrending'); }
+    } catch (e) {
+      catchAndReport(e, setError, 'Fashion/fetchTrending');
+    }
   }, []);
 
   // ── Fetch fashion stores (brands) ────────────────────────────
@@ -250,17 +251,21 @@ const FashionPage: React.FC = () => {
       if (res.success) {
         const raw: any[] = Array.isArray(res.data) ? res.data : res.data?.stores || [];
         if (!isMounted()) return;
-        setStores(raw.map((s: any) => ({
-          _id: s._id?.toString() || s.id,
-          name: s.name,
-          logo: s.logo,
-          image: s.image || s.coverImage,
-          ratings: s.ratings,
-          offers: s.offers,
-          tags: s.tags,
-        })));
+        setStores(
+          raw.map((s: any) => ({
+            _id: s._id?.toString() || s.id,
+            name: s.name,
+            logo: s.logo,
+            image: s.image || s.coverImage,
+            ratings: s.ratings,
+            offers: s.offers,
+            tags: s.tags,
+          })),
+        );
       }
-    } catch (e) { catchAndReport(e, setError, 'Fashion/fetchStores'); }
+    } catch (e) {
+      catchAndReport(e, setError, 'Fashion/fetchStores');
+    }
   }, []);
 
   // ── Initial load ─────────────────────────────────────────────
@@ -287,44 +292,47 @@ const FashionPage: React.FC = () => {
   }, [loadingMore, hasMore, currentPage, fetchProducts]);
 
   // ── Format currency ──────────────────────────────────────────
-  const formatPrice = (amount: number) => `${currencySymbol}${amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+  const formatPrice = (amount: number) =>
+    `${currencySymbol}${amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
 
   // ── Render helpers ───────────────────────────────────────────
-  const renderProductCard = useCallback(({ item: product }: { item: FashionProduct }) => (
-    <Pressable
-      key={product.id}
-      style={styles.productCard}
-      onPress={() => router.push(`/product-page?cardId=${product._id}&cardType=product` as any)}
-    >
-      <CachedImage
-        source={product.image}
-        style={styles.productImage}
-        contentFit="cover"
-        cachePolicy="memory-disk"
-      />
-      {product.cashbackPercentage > 0 && (
-        <View style={styles.cashbackBadge}>
-          <Text style={styles.cashbackText}>{product.cashbackPercentage}%</Text>
-        </View>
-      )}
-      <View style={styles.productInfo}>
-        <Text style={styles.productBrand} numberOfLines={1}>{product.brand}</Text>
-        <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
-        {product.rating > 0 && (
-          <View style={styles.ratingContainer}>
-            <Ionicons name="star" size={12} color={Colors.warning} />
-            <Text style={styles.ratingText}>{product.rating.toFixed(1)}</Text>
+  const renderProductCard = useCallback(
+    ({ item: product }: { item: FashionProduct }) => (
+      <Pressable
+        key={product.id}
+        style={styles.productCard}
+        onPress={() => router.push(`/product-page?cardId=${product._id}&cardType=product` as any)}
+      >
+        <CachedImage source={product.image} style={styles.productImage} contentFit="cover" cachePolicy="memory-disk" />
+        {product.cashbackPercentage > 0 && (
+          <View style={styles.cashbackBadge}>
+            <Text style={styles.cashbackText}>{product.cashbackPercentage}%</Text>
           </View>
         )}
-        <View style={styles.priceRow}>
-          <Text style={styles.productPrice}>{formatPrice(product.price)}</Text>
-          {product.originalPrice > product.price && (
-            <Text style={styles.originalPrice}>{formatPrice(product.originalPrice)}</Text>
+        <View style={styles.productInfo}>
+          <Text style={styles.productBrand} numberOfLines={1}>
+            {product.brand}
+          </Text>
+          <Text style={styles.productName} numberOfLines={2}>
+            {product.name}
+          </Text>
+          {product.rating > 0 && (
+            <View style={styles.ratingContainer}>
+              <Ionicons name="star" size={12} color={Colors.warning} />
+              <Text style={styles.ratingText}>{product.rating.toFixed(1)}</Text>
+            </View>
           )}
+          <View style={styles.priceRow}>
+            <Text style={styles.productPrice}>{formatPrice(product.price)}</Text>
+            {product.originalPrice > product.price && (
+              <Text style={styles.originalPrice}>{formatPrice(product.originalPrice)}</Text>
+            )}
+          </View>
         </View>
-      </View>
-    </Pressable>
-  ), [currencySymbol, router]);
+      </Pressable>
+    ),
+    [currencySymbol, router],
+  );
 
   // ── Empty state component ────────────────────────────────────
   const EmptyState = ({ title, subtitle }: { title: string; subtitle: string }) => (
@@ -341,9 +349,17 @@ const FashionPage: React.FC = () => {
   if (loadingInitial && products.length === 0 && subcategories.length === 0) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.brand.pink, colors.deepPink]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
+        <LinearGradient
+          colors={[colors.brand.pink, colors.deepPink]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.header}
+        >
           <View style={styles.headerTop}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
@@ -369,9 +385,17 @@ const FashionPage: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* ── Header ─────────────────────────────────────── */}
-      <LinearGradient colors={[colors.brand.pink, colors.deepPink]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
+      <LinearGradient
+        colors={[colors.brand.pink, colors.deepPink]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.header}
+      >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -384,12 +408,20 @@ const FashionPage: React.FC = () => {
         </View>
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{categoryStats.productCount > 0 ? (categoryStats.productCount > 999 ? `${(categoryStats.productCount / 1000).toFixed(0)}k+` : `${categoryStats.productCount}`) : '--'}</Text>
+            <Text style={styles.statValue}>
+              {categoryStats.productCount > 0
+                ? categoryStats.productCount > 999
+                  ? `${(categoryStats.productCount / 1000).toFixed(0)}k+`
+                  : `${categoryStats.productCount}`
+                : '--'}
+            </Text>
             <Text style={styles.statLabel}>Products</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{categoryStats.maxCashback > 0 ? `${categoryStats.maxCashback}%` : '--'}</Text>
+            <Text style={styles.statValue}>
+              {categoryStats.maxCashback > 0 ? `${categoryStats.maxCashback}%` : '--'}
+            </Text>
             <Text style={styles.statLabel}>Max Off</Text>
           </View>
           <View style={styles.statDivider} />
@@ -422,7 +454,7 @@ const FashionPage: React.FC = () => {
         data={products}
         renderItem={renderProductCard}
         keyExtractor={(item) => item.id}
-          estimatedItemSize={220}
+        estimatedItemSize={220}
         numColumns={2}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
@@ -443,14 +475,24 @@ const FashionPage: React.FC = () => {
                     >
                       <View style={styles.categoryIcon}>
                         {cat.icon ? (
-                          <Ionicons name={(cat.icon as any) || 'pricetag-outline'} size={24} color={colors.brand.pink} />
+                          <Ionicons
+                            name={(cat.icon as any) || 'pricetag-outline'}
+                            size={24}
+                            color={colors.brand.pink}
+                          />
                         ) : (
                           <Ionicons name="pricetag-outline" size={24} color={colors.brand.pink} />
                         )}
                       </View>
-                      <Text style={styles.categoryTitle} numberOfLines={1}>{cat.name}</Text>
+                      <Text style={styles.categoryTitle} numberOfLines={1}>
+                        {cat.name}
+                      </Text>
                       {cat.productCount != null && cat.productCount > 0 && (
-                        <Text style={styles.categoryCount}>{cat.productCount > 999 ? `${(cat.productCount / 1000).toFixed(0)}k+ items` : `${cat.productCount} items`}</Text>
+                        <Text style={styles.categoryCount}>
+                          {cat.productCount > 999
+                            ? `${(cat.productCount / 1000).toFixed(0)}k+ items`
+                            : `${cat.productCount} items`}
+                        </Text>
                       )}
                     </Pressable>
                   ))}
@@ -463,7 +505,11 @@ const FashionPage: React.FC = () => {
               <View style={styles.section}>
                 <View style={styles.sectionHeader}>
                   <Text style={styles.sectionTitle}>Trending Styles</Text>
-                  <Pressable onPress={() => { setSelectedFilter('Trending'); }}>
+                  <Pressable
+                    onPress={() => {
+                      setSelectedFilter('Trending');
+                    }}
+                  >
                     <Text style={styles.viewAllText}>View All</Text>
                   </Pressable>
                 </View>
@@ -481,7 +527,9 @@ const FashionPage: React.FC = () => {
                         cachePolicy="memory-disk"
                       />
                       <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.styleGradient}>
-                        <Text style={styles.styleName} numberOfLines={1}>{tp.name}</Text>
+                        <Text style={styles.styleName} numberOfLines={1}>
+                          {tp.name}
+                        </Text>
                         {tp.price > 0 && <Text style={styles.stylePrice}>{formatPrice(tp.price)}</Text>}
                       </LinearGradient>
                     </Pressable>
@@ -519,7 +567,9 @@ const FashionPage: React.FC = () => {
                           <Text style={styles.brandLogo}>{store.name.charAt(0).toUpperCase()}</Text>
                         )}
                       </View>
-                      <Text style={styles.brandName} numberOfLines={1}>{store.name}</Text>
+                      <Text style={styles.brandName} numberOfLines={1}>
+                        {store.name}
+                      </Text>
                       {(store.offers?.cashback ?? 0) > 0 && (
                         <Text style={styles.brandDiscount}>Up to {store.offers?.cashback}% off</Text>
                       )}
@@ -559,7 +609,12 @@ const FashionPage: React.FC = () => {
             {/* ── Promo banner (after products) ────── */}
             {!loadingInitial && (
               <View style={styles.promoBanner}>
-                <LinearGradient colors={[colors.brand.purpleLight, colors.brand.purple]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.promoGradient}>
+                <LinearGradient
+                  colors={[colors.brand.purpleLight, colors.brand.purple]}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                  style={styles.promoGradient}
+                >
                   <Ionicons name="shirt-outline" size={40} color="rgba(255,255,255,0.3)" style={{ marginBottom: 12 }} />
                   <Text style={styles.promoTitle}>End of Season Sale</Text>
                   <Text style={styles.promoSubtitle}>
@@ -567,10 +622,7 @@ const FashionPage: React.FC = () => {
                       ? `Up to ${categoryStats.maxCashback}% off on top brands`
                       : 'Great deals on top fashion brands'}
                   </Text>
-                  <Pressable
-                    style={styles.promoButton}
-                    onPress={() => setSelectedFilter('Sale')}
-                  >
+                  <Pressable style={styles.promoButton} onPress={() => setSelectedFilter('Sale')}>
                     <Text style={styles.promoButtonText}>Shop Now</Text>
                   </Pressable>
                 </LinearGradient>
@@ -578,9 +630,7 @@ const FashionPage: React.FC = () => {
             )}
 
             {/* Pagination info */}
-            {!hasMore && products.length > 0 && (
-              <Text style={styles.endText}>You've seen all products</Text>
-            )}
+            {!hasMore && products.length > 0 && <Text style={styles.endText}>You've seen all products</Text>}
           </>
         }
       />
@@ -593,7 +643,12 @@ const FashionPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: 20 },
-  headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: Spacing.base },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    marginBottom: Spacing.base,
+  },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
   headerTitle: { fontSize: 20, fontWeight: '700', color: colors.text.inverse },
@@ -604,13 +659,31 @@ const styles = StyleSheet.create({
   statValue: { fontSize: 20, fontWeight: '700', color: colors.text.inverse },
   statLabel: { fontSize: 11, color: 'rgba(255,255,255,0.8)' },
   statDivider: { width: 1, height: 30, backgroundColor: 'rgba(255,255,255,0.3)' },
-  filtersContainer: { height: 48, paddingHorizontal: Spacing.base, backgroundColor: colors.background.primary, borderBottomWidth: 1, borderBottomColor: colors.border.default, justifyContent: 'center' },
-  filterChip: { paddingHorizontal: Spacing.base, paddingVertical: 7, borderRadius: BorderRadius.xl, backgroundColor: colors.neutral[100], marginRight: Spacing.sm },
+  filtersContainer: {
+    height: 48,
+    paddingHorizontal: Spacing.base,
+    backgroundColor: colors.background.primary,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+    justifyContent: 'center',
+  },
+  filterChip: {
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 7,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: colors.neutral[100],
+    marginRight: Spacing.sm,
+  },
   filterChipActive: { backgroundColor: colors.brand.pink },
   filterChipText: { fontSize: 14, color: colors.neutral[500] },
   filterChipTextActive: { color: colors.text.inverse, fontWeight: '600' },
   section: { paddingHorizontal: Spacing.base, paddingTop: Spacing.base },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
   sectionTitle: { fontSize: 18, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.md },
   viewAllText: { fontSize: 14, fontWeight: '600', color: colors.brand.pink },
   categoriesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
@@ -674,7 +747,15 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   productImage: { width: '100%', height: 160 },
-  cashbackBadge: { position: 'absolute', top: 8, right: 8, backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: 8 },
+  cashbackBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: Colors.success,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: 8,
+  },
   cashbackText: { fontSize: 11, fontWeight: '700', color: colors.text.inverse },
   productInfo: { padding: Spacing.md },
   productBrand: { fontSize: 11, color: colors.neutral[500], marginBottom: 2 },
@@ -688,7 +769,12 @@ const styles = StyleSheet.create({
   promoGradient: { padding: Spacing.xl, borderRadius: BorderRadius.lg, alignItems: 'center' },
   promoTitle: { fontSize: 18, fontWeight: '700', color: colors.text.inverse, marginBottom: Spacing.xs },
   promoSubtitle: { fontSize: 13, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: Spacing.base },
-  promoButton: { backgroundColor: colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: 24 },
+  promoButton: {
+    backgroundColor: colors.background.primary,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: 24,
+  },
   promoButtonText: { fontSize: 14, fontWeight: '700', color: colors.brand.purpleLight },
   // Loading / empty states
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },

@@ -26,7 +26,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import priveApi from '@/services/priveApi';
 import { platformAlert } from '@/utils/platformAlert';
-import { CachedImage } from '@/components/ui/CachedImage';
+import CachedImage from '@/components/ui/CachedImage';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 type Platform = 'instagram' | 'twitter' | 'youtube';

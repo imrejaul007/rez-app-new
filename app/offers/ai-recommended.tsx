@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Personalized AI-curated offers
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  RefreshControl,
-  ActivityIndicator,
-} from 'react-native';
+import { View, StyleSheet, Pressable, StatusBar, Platform, RefreshControl, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,7 +12,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { useAuthLoading, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { CardGridSkeleton } from '@/components/skeletons';
-import { CachedImage } from '@/components/ui/CachedImage';
+import CachedImage from '@/components/ui/CachedImage';
 import apiClient from '@/services/apiClient';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -129,7 +121,7 @@ function AIRecommendedPage() {
         const rawOffers = Array.isArray(response.data) ? response.data : (response.data as any).data || [];
         const mapped = rawOffers.map(mapOffer);
         if (!isMounted()) return;
-        setOffers(prev => append ? [...prev, ...mapped] : mapped);
+        setOffers((prev) => (append ? [...prev, ...mapped] : mapped));
 
         // Handle pagination metadata
         if (Array.isArray(response.data)) {
@@ -184,7 +176,7 @@ function AIRecommendedPage() {
 
   const computeStats = useMemo(() => {
     if (offers.length === 0) return { count: 0, avgDiscount: 0, totalSavings: 0 };
-    const discounts = offers.map(o => o.discountValue);
+    const discounts = offers.map((o) => o.discountValue);
     const avg = Math.round(discounts.reduce((a, b) => a + b, 0) / discounts.length);
     const totalSavings = discounts.reduce((a, b) => a + b, 0);
     return { count: offers.length, avgDiscount: avg, totalSavings };
@@ -195,59 +187,63 @@ function AIRecommendedPage() {
     return String(value);
   };
 
-  const renderOffer = useCallback(({ item }: { item: MappedOffer }) => {
-    const iconName = CATEGORY_ICONS[item.category] || 'pricetag-outline';
-    const discountColor = getDiscountColor(item.discountValue);
+  const renderOffer = useCallback(
+    ({ item }: { item: MappedOffer }) => {
+      const iconName = CATEGORY_ICONS[item.category] || 'pricetag-outline';
+      const discountColor = getDiscountColor(item.discountValue);
 
-    return (
-      <Pressable
-        style={styles.offerCard}
-        onPress={() => router.push(`/offers/${item.id}` as any)}
-      >
-        <View style={styles.offerHeader}>
-          {item.storeLogo ? (
-            <CachedImage source={{ uri: item.storeLogo }} style={styles.offerImage as any} />
-          ) : (
-            <View style={styles.offerImage}>
-              <Ionicons name={iconName as any} size={24} color={Colors.primary[600]} />
+      return (
+        <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as any)}>
+          <View style={styles.offerHeader}>
+            {item.storeLogo ? (
+              <CachedImage source={{ uri: item.storeLogo }} style={styles.offerImage as any} />
+            ) : (
+              <View style={styles.offerImage}>
+                <Ionicons name={iconName as any} size={24} color={Colors.primary[600]} />
+              </View>
+            )}
+            <View style={[styles.matchBadge, { backgroundColor: discountColor + '20' }]}>
+              <Ionicons name="sparkles" size={12} color={discountColor} />
+              <ThemedText style={[styles.matchScore, { color: discountColor }]}>{item.discountLabel} OFF</ThemedText>
             </View>
-          )}
-          <View style={[styles.matchBadge, { backgroundColor: discountColor + '20' }]}>
-            <Ionicons name="sparkles" size={12} color={discountColor} />
-            <ThemedText style={[styles.matchScore, { color: discountColor }]}>
-              {item.discountLabel} OFF
+          </View>
+
+          <ThemedText style={styles.offerTitle} numberOfLines={2}>
+            {item.title}
+          </ThemedText>
+          <ThemedText style={styles.offerStore} numberOfLines={1}>
+            {item.storeName}
+          </ThemedText>
+
+          <View style={styles.reasonContainer}>
+            <Ionicons name="bulb-outline" size={14} color={Colors.info} />
+            <ThemedText style={styles.reasonText} numberOfLines={2}>
+              {item.reason}
             </ThemedText>
           </View>
-        </View>
 
-        <ThemedText style={styles.offerTitle} numberOfLines={2}>{item.title}</ThemedText>
-        <ThemedText style={styles.offerStore} numberOfLines={1}>{item.storeName}</ThemedText>
-
-        <View style={styles.reasonContainer}>
-          <Ionicons name="bulb-outline" size={14} color={Colors.info} />
-          <ThemedText style={styles.reasonText} numberOfLines={2}>{item.reason}</ThemedText>
-        </View>
-
-        <View style={styles.offerFooter}>
-          <View style={styles.discountBadge}>
-            <ThemedText style={styles.discountText}>{item.discountLabel} OFF</ThemedText>
+          <View style={styles.offerFooter}>
+            <View style={styles.discountBadge}>
+              <ThemedText style={styles.discountText}>{item.discountLabel} OFF</ThemedText>
+            </View>
+            <View style={styles.expiryContainer}>
+              <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
+              <ThemedText style={styles.expiryText}>{item.expiresIn}</ThemedText>
+            </View>
           </View>
-          <View style={styles.expiryContainer}>
-            <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
-            <ThemedText style={styles.expiryText}>{item.expiresIn}</ThemedText>
-          </View>
-        </View>
-      </Pressable>
-    );
-  }, [router]);
+        </Pressable>
+      );
+    },
+    [router],
+  );
 
   const headerComponent = () => (
-    <LinearGradient
-      colors={[Colors.primary[600], Colors.secondary[700]]}
-      style={styles.header}
-    >
+    <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
       <View style={styles.headerContent}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>For You</ThemedText>
@@ -277,7 +273,14 @@ function AIRecommendedPage() {
           </View>
           <ThemedText style={styles.errorTitle}>Could not load offers</ThemedText>
           <ThemedText style={styles.errorSubtitle}>{error}</ThemedText>
-          <Pressable style={styles.retryButton} onPress={() => { setLoading(true); setPage(1); fetchOffers(1).finally(() => setLoading(false)); }}>
+          <Pressable
+            style={styles.retryButton}
+            onPress={() => {
+              setLoading(true);
+              setPage(1);
+              fetchOffers(1).finally(() => setLoading(false));
+            }}
+          >
             <ThemedText style={styles.retryText}>Retry</ThemedText>
           </Pressable>
         </View>
@@ -292,12 +295,12 @@ function AIRecommendedPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>For You</ThemedText>
@@ -307,9 +310,7 @@ function AIRecommendedPage() {
         {/* AI Badge */}
         <View style={styles.aiBadge}>
           <Ionicons name="sparkles" size={20} color={Colors.gold} />
-          <ThemedText style={styles.aiBadgeText}>
-            Personalized offers based on your preferences
-          </ThemedText>
+          <ThemedText style={styles.aiBadgeText}>Personalized offers based on your preferences</ThemedText>
         </View>
       </LinearGradient>
 
@@ -317,15 +318,13 @@ function AIRecommendedPage() {
         data={offers}
         renderItem={renderOffer}
         keyExtractor={(item) => item.id}
-          estimatedItemSize={220}
+        estimatedItemSize={220}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         numColumns={2}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.3}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ListHeaderComponent={
           <View style={styles.statsCard}>
             <View style={styles.statItem}>
@@ -339,7 +338,10 @@ function AIRecommendedPage() {
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statItem}>
-              <ThemedText style={styles.statValue}>{currencySymbol}{formatSavings(stats.totalSavings)}</ThemedText>
+              <ThemedText style={styles.statValue}>
+                {currencySymbol}
+                {formatSavings(stats.totalSavings)}
+              </ThemedText>
               <ThemedText style={styles.statLabel}>Potential Savings</ThemedText>
             </View>
           </View>

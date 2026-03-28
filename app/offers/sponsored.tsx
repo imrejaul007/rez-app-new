@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Brand-sponsored cashback offers (wired to GET /api/offers/bank-offers)
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native';
+import { View, StyleSheet, Pressable, StatusBar, Platform, ActivityIndicator, RefreshControl } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -20,7 +12,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { useAuthLoading, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import apiClient from '@/services/apiClient';
-import { CachedImage } from '@/components/ui/CachedImage';
+import CachedImage from '@/components/ui/CachedImage';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
@@ -63,9 +55,10 @@ const cardTypeEmoji: Record<string, string> = {
 };
 
 function mapBankOfferToSponsored(offer: BankOfferRaw, currencySymbol: string): SponsoredOffer {
-  const cashbackStr = offer.discountPercentage > 0
-    ? `${offer.discountPercentage}%`
-    : `${currencySymbol}${offer.maxDiscount.toLocaleString()}`;
+  const cashbackStr =
+    offer.discountPercentage > 0
+      ? `${offer.discountPercentage}%`
+      : `${currencySymbol}${offer.maxDiscount.toLocaleString()}`;
   const validDate = new Date(offer.validUntil);
   const validTillStr = validDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 
@@ -99,45 +92,46 @@ function SponsoredCashbackPage() {
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchOffers = useCallback(async (pageNum: number, append: boolean = false) => {
-    try {
-      if (!append) setError(null);
-      const params: Record<string, string | number> = {
-        page: pageNum,
-        limit: PAGE_LIMIT,
-        sort: filter,
-      };
-      const response = await apiClient.get<any>('/offers/bank-offers', params);
+  const fetchOffers = useCallback(
+    async (pageNum: number, append: boolean = false) => {
+      try {
+        if (!append) setError(null);
+        const params: Record<string, string | number> = {
+          page: pageNum,
+          limit: PAGE_LIMIT,
+          sort: filter,
+        };
+        const response = await apiClient.get<any>('/offers/bank-offers', params);
 
-      const rawOffers: BankOfferRaw[] = Array.isArray(response.data)
-        ? response.data
-        : response.data?.data || response.data?.offers || [];
+        const rawOffers: BankOfferRaw[] = Array.isArray(response.data)
+          ? response.data
+          : response.data?.data || response.data?.offers || [];
 
-      const mapped = rawOffers.map((o) => mapBankOfferToSponsored(o, currencySymbol));
+        const mapped = rawOffers.map((o) => mapBankOfferToSponsored(o, currencySymbol));
 
-      const pagination = response.data?.meta?.pagination;
-      const hasNextPage = pagination
-        ? pagination.page < pagination.pages
-        : rawOffers.length >= PAGE_LIMIT;
+        const pagination = response.data?.meta?.pagination;
+        const hasNextPage = pagination ? pagination.page < pagination.pages : rawOffers.length >= PAGE_LIMIT;
 
-      if (append) {
+        if (append) {
+          if (!isMounted()) return;
+          setOffers((prev) => [...prev, ...mapped]);
+        } else {
+          if (!isMounted()) return;
+          setOffers(mapped);
+        }
         if (!isMounted()) return;
-        setOffers((prev) => [...prev, ...mapped]);
-      } else {
+        setHasMore(hasNextPage);
         if (!isMounted()) return;
-        setOffers(mapped);
+        setPage(pageNum);
+      } catch (err: any) {
+        if (!append) {
+          if (!isMounted()) return;
+          setError(err?.message || 'Failed to load offers');
+        }
       }
-      if (!isMounted()) return;
-      setHasMore(hasNextPage);
-      if (!isMounted()) return;
-      setPage(pageNum);
-    } catch (err: any) {
-      if (!append) {
-        if (!isMounted()) return;
-        setError(err?.message || 'Failed to load offers');
-      }
-    }
-  }, [filter, currencySymbol]);
+    },
+    [filter, currencySymbol],
+  );
 
   // Initial load + filter change
   useEffect(() => {
@@ -164,55 +158,55 @@ function SponsoredCashbackPage() {
     fetchOffers(page + 1, true).finally(() => setLoadingMore(false));
   }, [loadingMore, hasMore, page, fetchOffers]);
 
-  const renderOffer = useCallback(({ item }: { item: SponsoredOffer }) => (
-    <Pressable
-      style={styles.offerCard}
-      onPress={() => router.push(`/offers/${item.id}` as any)}
-    >
-      <View style={styles.sponsoredBadge}>
-        <Ionicons name="megaphone" size={12} color={Colors.gold} />
-        <ThemedText style={styles.sponsoredText}>Sponsored</ThemedText>
-      </View>
+  const renderOffer = useCallback(
+    ({ item }: { item: SponsoredOffer }) => (
+      <Pressable style={styles.offerCard} onPress={() => router.push(`/offers/${item.id}` as any)}>
+        <View style={styles.sponsoredBadge}>
+          <Ionicons name="megaphone" size={12} color={Colors.gold} />
+          <ThemedText style={styles.sponsoredText}>Sponsored</ThemedText>
+        </View>
 
-      <View style={styles.offerHeader}>
-        <View style={styles.brandImage}>
-          {item.bankLogo ? (
-            <CachedImage source={{ uri: item.bankLogo }} style={{ width: 40, height: 40, borderRadius: 8 }} />
-          ) : (
-            <ThemedText style={styles.brandEmoji}>{item.image}</ThemedText>
-          )}
+        <View style={styles.offerHeader}>
+          <View style={styles.brandImage}>
+            {item.bankLogo ? (
+              <CachedImage source={{ uri: item.bankLogo }} style={{ width: 40, height: 40, borderRadius: 8 }} />
+            ) : (
+              <ThemedText style={styles.brandEmoji}>{item.image}</ThemedText>
+            )}
+          </View>
+          <View style={styles.brandInfo}>
+            <ThemedText style={styles.brandName}>{item.brand}</ThemedText>
+            <ThemedText style={styles.offerTitle}>{item.title}</ThemedText>
+          </View>
         </View>
-        <View style={styles.brandInfo}>
-          <ThemedText style={styles.brandName}>{item.brand}</ThemedText>
-          <ThemedText style={styles.offerTitle}>{item.title}</ThemedText>
-        </View>
-      </View>
 
-      <ThemedText style={styles.offerDescription}>{item.description}</ThemedText>
+        <ThemedText style={styles.offerDescription}>{item.description}</ThemedText>
 
-      <View style={styles.offerDetails}>
-        <View style={styles.cashbackBadge}>
-          <Ionicons name="wallet" size={14} color={colors.background.primary} />
-          <ThemedText style={styles.cashbackText}>{item.cashback} Cashback</ThemedText>
+        <View style={styles.offerDetails}>
+          <View style={styles.cashbackBadge}>
+            <Ionicons name="wallet" size={14} color={colors.background.primary} />
+            <ThemedText style={styles.cashbackText}>{item.cashback} Cashback</ThemedText>
+          </View>
+          <View style={styles.minPurchase}>
+            <ThemedText style={styles.minPurchaseLabel}>Min:</ThemedText>
+            <ThemedText style={styles.minPurchaseValue}>{item.minPurchase}</ThemedText>
+          </View>
         </View>
-        <View style={styles.minPurchase}>
-          <ThemedText style={styles.minPurchaseLabel}>Min:</ThemedText>
-          <ThemedText style={styles.minPurchaseValue}>{item.minPurchase}</ThemedText>
-        </View>
-      </View>
 
-      <View style={styles.offerFooter}>
-        <View style={styles.validTill}>
-          <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
-          <ThemedText style={styles.validTillText}>Valid till {item.validTill}</ThemedText>
+        <View style={styles.offerFooter}>
+          <View style={styles.validTill}>
+            <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
+            <ThemedText style={styles.validTillText}>Valid till {item.validTill}</ThemedText>
+          </View>
+          <Pressable style={styles.claimButton}>
+            <ThemedText style={styles.claimButtonText}>Claim</ThemedText>
+            <Ionicons name="arrow-forward" size={16} color={colors.background.primary} />
+          </Pressable>
         </View>
-        <Pressable style={styles.claimButton}>
-          <ThemedText style={styles.claimButtonText}>Claim</ThemedText>
-          <Ionicons name="arrow-forward" size={16} color={colors.background.primary} />
-        </Pressable>
-      </View>
-    </Pressable>
-  ), [router]);
+      </Pressable>
+    ),
+    [router],
+  );
 
   const renderFooter = useCallback(() => {
     if (!loadingMore) return null;
@@ -242,12 +236,12 @@ function SponsoredCashbackPage() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.brand.indigo} />
 
-      <LinearGradient
-        colors={[colors.brand.indigo, colors.brand.purpleLight]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[colors.brand.indigo, colors.brand.purpleLight]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Brand Offers</ThemedText>
@@ -257,9 +251,7 @@ function SponsoredCashbackPage() {
         <View style={styles.heroSection}>
           <Ionicons name="megaphone" size={40} color={colors.background.primary} />
           <ThemedText style={styles.heroTitle}>Sponsored Cashback</ThemedText>
-          <ThemedText style={styles.heroSubtitle}>
-            Exclusive offers from top brands with enhanced cashback
-          </ThemedText>
+          <ThemedText style={styles.heroSubtitle}>Exclusive offers from top brands with enhanced cashback</ThemedText>
         </View>
       </LinearGradient>
 
@@ -268,16 +260,13 @@ function SponsoredCashbackPage() {
           { key: 'all', label: 'All Offers' },
           { key: 'highest', label: 'Highest Cashback' },
           { key: 'expiring', label: 'Expiring Soon' },
-        ].map(f => (
+        ].map((f) => (
           <Pressable
             key={f.key}
             style={[styles.filterButton, filter === f.key && styles.filterButtonActive]}
             onPress={() => setFilter(f.key as any)}
           >
-            <ThemedText style={[
-              styles.filterButtonText,
-              filter === f.key && styles.filterButtonTextActive,
-            ]}>
+            <ThemedText style={[styles.filterButtonText, filter === f.key && styles.filterButtonTextActive]}>
               {f.label}
             </ThemedText>
           </Pressable>
@@ -295,7 +284,7 @@ function SponsoredCashbackPage() {
         <FlashList
           data={offers}
           renderItem={renderOffer}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={[styles.listContent, offers.length === 0 && { flex: 1 }]}
           showsVerticalScrollIndicator={false}
           onEndReached={handleLoadMore}

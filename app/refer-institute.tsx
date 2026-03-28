@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -17,7 +17,6 @@ import { colors, spacing, borderRadius, shadows } from '@/constants/theme';
 import * as identityApi from '@/services/identityApi';
 import analyticsService, { IdentityAnalyticsEvents } from '@/services/analyticsService';
 import { platformAlertSimple } from '@/utils/platformAlert';
-import { useEffect } from 'react';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
 type InstituteType = 'college' | 'company';

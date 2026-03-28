@@ -1,20 +1,12 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  ActivityIndicator,
-  RefreshControl,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, RefreshControl, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import disputeApi, { Dispute } from '@/services/disputeApi';
-import { CachedImage } from '@/components/ui/CachedImage';
+import CachedImage from '@/components/ui/CachedImage';
 import { colors, typography, spacing, borderRadius, shadows } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
@@ -49,35 +41,38 @@ function DisputeListScreen() {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  const fetchDisputes = useCallback(async (pageNum: number = 1, append: boolean = false) => {
-    if (authLoading || !isAuthenticated) return;
-    if (!append) setLoading(true);
-    else setLoadingMore(true);
+  const fetchDisputes = useCallback(
+    async (pageNum: number = 1, append: boolean = false) => {
+      if (authLoading || !isAuthenticated) return;
+      if (!append) setLoading(true);
+      else setLoadingMore(true);
 
-    try {
-      const response = await disputeApi.getMyDisputes(pageNum, 20);
-      if (response.success && response.data) {
-        const data = response.data as any;
-        const items = data.disputes || [];
-        const pagination = data.pagination;
+      try {
+        const response = await disputeApi.getMyDisputes(pageNum, 20);
+        if (response.success && response.data) {
+          const data = response.data as any;
+          const items = data.disputes || [];
+          const pagination = data.pagination;
 
-        if (append) {
-          setDisputes(prev => [...prev, ...items]);
-        } else {
-          setDisputes(items);
+          if (append) {
+            setDisputes((prev) => [...prev, ...items]);
+          } else {
+            setDisputes(items);
+          }
+          setPage(pageNum);
+          setHasMore(pagination?.hasNext ?? false);
         }
-        setPage(pageNum);
-        setHasMore(pagination?.hasNext ?? false);
+      } catch (err) {
+        if (__DEV__) console.error('Failed to fetch disputes:', err);
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-    } catch (err) {
-      if (__DEV__) console.error('Failed to fetch disputes:', err);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [authLoading, isAuthenticated]);
+    },
+    [authLoading, isAuthenticated],
+  );
 
   useEffect(() => {
     fetchDisputes(1);
@@ -100,17 +95,11 @@ function DisputeListScreen() {
     const statusColor = STATUS_COLORS[item.status] || colors.neutral[500];
 
     return (
-      <TouchableOpacity
-        style={styles.card}
-        onPress={() => router.push(`/disputes/${item._id}`)}
-        activeOpacity={0.7}
-      >
+      <TouchableOpacity style={styles.card} onPress={() => router.push(`/disputes/${item._id}`)} activeOpacity={0.7}>
         <View style={styles.cardHeader}>
           <Text style={styles.disputeNumber}>{item.disputeNumber}</Text>
           <View style={[styles.badge, { backgroundColor: statusColor + '18' }]}>
-            <Text style={[styles.badgeText, { color: statusColor }]}>
-              {STATUS_LABELS[item.status] || item.status}
-            </Text>
+            <Text style={[styles.badgeText, { color: statusColor }]}>{STATUS_LABELS[item.status] || item.status}</Text>
           </View>
         </View>
 
@@ -149,9 +138,11 @@ function DisputeListScreen() {
       <FlashList
         data={disputes}
         keyExtractor={(item) => item._id}
-          estimatedItemSize={70}
+        estimatedItemSize={70}
         renderItem={renderDispute}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand.purple} />}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.brand.purple} />
+        }
         onEndReached={loadMore}
         onEndReachedThreshold={0.3}
         ListFooterComponent={loadingMore ? <ActivityIndicator size="small" style={{ padding: 16 }} /> : null}
@@ -164,10 +155,7 @@ function DisputeListScreen() {
             <Text style={styles.emptySubtitle}>You haven't raised any disputes yet</Text>
           </View>
         }
-        contentContainerStyle={[
-          disputes.length === 0 && { flex: 1, justifyContent: 'center' },
-          { paddingBottom: 120 },
-        ]}
+        contentContainerStyle={[disputes.length === 0 && { flex: 1, justifyContent: 'center' }, { paddingBottom: 120 }]}
       />
     </View>
   );
@@ -178,7 +166,10 @@ const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.tint.coolGray },
 
   card: {
-    backgroundColor: colors.background.primary, borderRadius: 14, padding: 14, marginBottom: 10,
+    backgroundColor: colors.background.primary,
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 10,
     ...shadows.subtle,
   },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 },
@@ -194,8 +185,13 @@ const styles = StyleSheet.create({
 
   emptyState: { alignItems: 'center', gap: 6 },
   emptyIcon: {
-    width: 72, height: 72, borderRadius: 36, backgroundColor: colors.border.light,
-    justifyContent: 'center', alignItems: 'center', marginBottom: spacing.sm,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: colors.border.light,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: spacing.sm,
   },
   emptyTitle: { fontSize: 17, fontWeight: '700', color: colors.text.primary },
   emptySubtitle: { ...typography.body, color: colors.neutral[500] },

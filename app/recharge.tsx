@@ -24,7 +24,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGetCurrencySymbol, useIsAuthenticated, useRegionState } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
-import { CachedImage } from '@/components/ui/CachedImage';
+import CachedImage from '@/components/ui/CachedImage';
 import { platformAlert } from '@/utils/platformAlert';
 import {
   getOperators as fetchOperatorsApi,
@@ -59,8 +59,12 @@ function RechargePage() {
   const regionState = useRegionState();
   const currencySymbol = getCurrencySymbol();
   // Map region countryCode to phone prefix for fallback
-  const regionPhonePrefix = regionState.regionConfig?.countryCode === 'AE' ? '+971'
-    : regionState.regionConfig?.countryCode === 'CN' ? '+86' : '+91';
+  const regionPhonePrefix =
+    regionState.regionConfig?.countryCode === 'AE'
+      ? '+971'
+      : regionState.regionConfig?.countryCode === 'CN'
+        ? '+86'
+        : '+91';
   const isAuthenticated = useIsAuthenticated();
   // Form state
   const [mobileNumber, setMobileNumber] = useState('');
@@ -111,7 +115,9 @@ function RechargePage() {
     };
 
     fetchOperators();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // ============================================
@@ -128,7 +134,7 @@ function RechargePage() {
     try {
       const response = await fetchPlansApi(operatorCode, page, 10, 'amount');
       if (response.success && response.data) {
-        setPlans(prev => append ? [...prev, ...response.data!] : response.data!);
+        setPlans((prev) => (append ? [...prev, ...response.data!] : response.data!));
         const pagination = response.meta?.pagination;
         setPlansHasMore(pagination ? pagination.page < pagination.pages : false);
       }
@@ -185,15 +191,8 @@ function RechargePage() {
       // Ensure we always have a prefix string before concatenating.
       const dialPrefix: string = selectedOperator?.countryCode || regionPhonePrefix;
       // Strip any accidental duplicate leading '+' from the final E.164 string.
-      const e164Phone = dialPrefix.startsWith('+')
-        ? `${dialPrefix}${mobileNumber}`
-        : `+${dialPrefix}${mobileNumber}`;
-      const response = await initiateRecharge(
-        selectedOperator.code,
-        Number(amount),
-        e164Phone,
-        selectedPlan?._id,
-      );
+      const e164Phone = dialPrefix.startsWith('+') ? `${dialPrefix}${mobileNumber}` : `+${dialPrefix}${mobileNumber}`;
+      const response = await initiateRecharge(selectedOperator.code, Number(amount), e164Phone, selectedPlan?._id);
 
       if (response.success && response.data) {
         setResult(response.data);
@@ -203,7 +202,7 @@ function RechargePage() {
         // was therefore dead after this step. Navigate to the payment screen so the
         // user can complete the Razorpay/payment flow and wallet is actually debited.
         router.push(
-          `/payment?type=recharge&amount=${amount}&mobile=${e164Phone}&txnId=${response.data.transactionId}` as any
+          `/payment?type=recharge&amount=${amount}&mobile=${e164Phone}&txnId=${response.data.transactionId}` as any,
         );
       } else {
         const msg = response.message || 'Failed to initiate recharge';
@@ -226,241 +225,243 @@ function RechargePage() {
   // QUICK AMOUNTS (derived from plans or fallback)
   // ============================================
 
-  const quickAmounts = plans.length > 0
-    ? [...new Set(plans.map(p => p.amount.toString()))].slice(0, 8)
-    : [];
+  const quickAmounts = plans.length > 0 ? [...new Set(plans.map((p) => p.amount.toString()))].slice(0, 8) : [];
 
   // ============================================
   // RENDER HELPERS
   // ============================================
 
-  const renderOperator = useCallback(({ item }: { item: Operator }) => {
-    const isSelected = selectedOperator?.code === item.code;
-    return (
-      <Pressable
-        style={[styles.operatorCard, isSelected && styles.operatorCardActive]}
-        onPress={() => setSelectedOperator(isSelected ? null : item)}
-      >
-        {item.logo ? (
-          <CachedImage
-            source={{ uri: item.logo }}
-            style={styles.operatorLogo}
-            contentFit="contain"
-          />
-        ) : (
-          <View style={[styles.operatorIcon, { backgroundColor: (item.color || colors.text.primary) + '20' }]}>
-            <Text style={[styles.operatorInitial, { color: item.color || colors.text.primary }]}>
-              {item.name[0]}
-            </Text>
-          </View>
-        )}
-        <Text style={styles.operatorName}>{item.name}</Text>
-      </Pressable>
-    );
-  }, [selectedOperator]);
+  const renderOperator = useCallback(
+    ({ item }: { item: Operator }) => {
+      const isSelected = selectedOperator?.code === item.code;
+      return (
+        <Pressable
+          style={[styles.operatorCard, isSelected && styles.operatorCardActive]}
+          onPress={() => setSelectedOperator(isSelected ? null : item)}
+        >
+          {item.logo ? (
+            <CachedImage source={{ uri: item.logo }} style={styles.operatorLogo} contentFit="contain" />
+          ) : (
+            <View style={[styles.operatorIcon, { backgroundColor: (item.color || colors.text.primary) + '20' }]}>
+              <Text style={[styles.operatorInitial, { color: item.color || colors.text.primary }]}>{item.name[0]}</Text>
+            </View>
+          )}
+          <Text style={styles.operatorName}>{item.name}</Text>
+        </Pressable>
+      );
+    },
+    [selectedOperator],
+  );
 
-  const renderPlan = useCallback(({ item }: { item: Plan }) => {
-    const isSelected = selectedPlan?._id === item._id;
-    return (
-      <Pressable
-        style={[styles.planCard, isSelected && styles.planCardActive]}
-        onPress={() => {
-          setSelectedPlan(item);
-          setAmount(item.amount.toString());
-        }}
-      >
-        <View style={styles.planHeader}>
-          <View>
-            <Text style={styles.planAmount}>
-              {currencySymbol}{item.amount.toFixed(2)}
-            </Text>
-            <Text style={styles.planName}>{item.name}</Text>
+  const renderPlan = useCallback(
+    ({ item }: { item: Plan }) => {
+      const isSelected = selectedPlan?._id === item._id;
+      return (
+        <Pressable
+          style={[styles.planCard, isSelected && styles.planCardActive]}
+          onPress={() => {
+            setSelectedPlan(item);
+            setAmount(item.amount.toString());
+          }}
+        >
+          <View style={styles.planHeader}>
+            <View>
+              <Text style={styles.planAmount}>
+                {currencySymbol}
+                {item.amount.toFixed(2)}
+              </Text>
+              <Text style={styles.planName}>{item.name}</Text>
+            </View>
+            <View style={styles.planBadges}>
+              {item.popular && (
+                <View style={styles.popularBadge}>
+                  <Text style={styles.popularBadgeText}>Popular</Text>
+                </View>
+              )}
+              {item.cashbackPercent > 0 && (
+                <View style={styles.planCashback}>
+                  <Text style={styles.planCashbackText}>{item.cashbackPercent}% cashback</Text>
+                </View>
+              )}
+            </View>
           </View>
-          <View style={styles.planBadges}>
-            {item.popular && (
-              <View style={styles.popularBadge}>
-                <Text style={styles.popularBadgeText}>Popular</Text>
+          <View style={styles.planDetails}>
+            {item.data && (
+              <View style={styles.planDetail}>
+                <Ionicons name="cellular-outline" size={16} color={COLORS.textSecondary} />
+                <Text style={styles.planDetailText}>{item.data}</Text>
               </View>
             )}
-            {item.cashbackPercent > 0 && (
-              <View style={styles.planCashback}>
-                <Text style={styles.planCashbackText}>{item.cashbackPercent}% cashback</Text>
+            {item.calls && (
+              <View style={styles.planDetail}>
+                <Ionicons name="call-outline" size={16} color={COLORS.textSecondary} />
+                <Text style={styles.planDetailText}>{item.calls}</Text>
+              </View>
+            )}
+            {item.validity && (
+              <View style={styles.planDetail}>
+                <Ionicons name="calendar-outline" size={16} color={COLORS.textSecondary} />
+                <Text style={styles.planDetailText}>{item.validity}</Text>
+              </View>
+            )}
+            {item.sms && (
+              <View style={styles.planDetail}>
+                <Ionicons name="chatbubble-outline" size={16} color={COLORS.textSecondary} />
+                <Text style={styles.planDetailText}>{item.sms}</Text>
               </View>
             )}
           </View>
-        </View>
-        <View style={styles.planDetails}>
-          {item.data && (
-            <View style={styles.planDetail}>
-              <Ionicons name="cellular-outline" size={16} color={COLORS.textSecondary} />
-              <Text style={styles.planDetailText}>{item.data}</Text>
-            </View>
-          )}
-          {item.calls && (
-            <View style={styles.planDetail}>
-              <Ionicons name="call-outline" size={16} color={COLORS.textSecondary} />
-              <Text style={styles.planDetailText}>{item.calls}</Text>
-            </View>
-          )}
-          {item.validity && (
-            <View style={styles.planDetail}>
-              <Ionicons name="calendar-outline" size={16} color={COLORS.textSecondary} />
-              <Text style={styles.planDetailText}>{item.validity}</Text>
-            </View>
-          )}
-          {item.sms && (
-            <View style={styles.planDetail}>
-              <Ionicons name="chatbubble-outline" size={16} color={COLORS.textSecondary} />
-              <Text style={styles.planDetailText}>{item.sms}</Text>
-            </View>
-          )}
-        </View>
-      </Pressable>
-    );
-  }, [selectedPlan, currencySymbol]);
+        </Pressable>
+      );
+    },
+    [selectedPlan, currencySymbol],
+  );
 
   // ============================================
   // HEADER COMPONENT FOR FLATLIST
   // ============================================
 
-  const ListHeader = useCallback(() => (
-    <>
-      {/* Cashback Banner */}
-      <View style={styles.cashbackBanner}>
-        <LinearGradient
-          colors={['rgba(255, 205, 87, 0.15)', 'rgba(251, 191, 36, 0.15)']}
-          style={styles.cashbackGradient}
-        >
-          <Ionicons name="gift" size={24} color={COLORS.primaryGold} />
-          <View style={styles.cashbackText}>
-            <Text style={styles.cashbackTitle}>Get up to 20% Cashback</Text>
-            <Text style={styles.cashbackSubtitle}>+ Earn ${BRAND.COIN_NAME} on every recharge</Text>
-          </View>
-        </LinearGradient>
-      </View>
-
-      {/* Error Banner */}
-      {error && (
-        <View style={styles.errorBanner}>
-          <Ionicons name="warning-outline" size={18} color={colors.error} />
-          <Text style={styles.errorText}>{error}</Text>
-          <Pressable onPress={() => setError(null)}>
-            <Ionicons name="close-circle" size={18} color={colors.error} />
-          </Pressable>
-        </View>
-      )}
-
-      {/* Mobile Number */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Mobile Number</Text>
-        <View style={styles.inputContainer}>
-          <Text style={styles.countryCode}>{selectedOperator?.countryCode || regionPhonePrefix}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter 10-digit mobile number"
-            placeholderTextColor={COLORS.textSecondary}
-            keyboardType="phone-pad"
-            maxLength={10}
-            value={mobileNumber}
-            onChangeText={setMobileNumber}
-          />
-          {mobileNumber.length === 10 && (
-            <Ionicons name="checkmark-circle" size={24} color={COLORS.primaryGreen} />
-          )}
-        </View>
-      </View>
-
-      {/* Operator Selection */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Select Operator</Text>
-        {loadingOperators ? (
-          <View style={styles.loadingContainer}>
-            <ActivityIndicator size="small" color={COLORS.primaryGreen} />
-            <Text style={styles.loadingText}>Loading operators...</Text>
-          </View>
-        ) : operators.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <View style={styles.emptyIconWrap}>
-              <Ionicons name="wifi-outline" size={32} color={COLORS.textSecondary} />
+  const ListHeader = useCallback(
+    () => (
+      <>
+        {/* Cashback Banner */}
+        <View style={styles.cashbackBanner}>
+          <LinearGradient
+            colors={['rgba(255, 205, 87, 0.15)', 'rgba(251, 191, 36, 0.15)']}
+            style={styles.cashbackGradient}
+          >
+            <Ionicons name="gift" size={24} color={COLORS.primaryGold} />
+            <View style={styles.cashbackText}>
+              <Text style={styles.cashbackTitle}>Get up to 20% Cashback</Text>
+              <Text style={styles.cashbackSubtitle}>+ Earn ${BRAND.COIN_NAME} on every recharge</Text>
             </View>
-            <Text style={styles.emptyTitle}>No operators available</Text>
-            <Text style={styles.emptySubtitle}>Please check back later</Text>
-          </View>
-        ) : (
-          <View style={styles.operatorsGrid}>
-            {operators.map(op => (
-              <React.Fragment key={op._id}>
-                {renderOperator({ item: op })}
-              </React.Fragment>
-            ))}
+          </LinearGradient>
+        </View>
+
+        {/* Error Banner */}
+        {error && (
+          <View style={styles.errorBanner}>
+            <Ionicons name="warning-outline" size={18} color={colors.error} />
+            <Text style={styles.errorText}>{error}</Text>
+            <Pressable onPress={() => setError(null)}>
+              <Ionicons name="close-circle" size={18} color={colors.error} />
+            </Pressable>
           </View>
         )}
-      </View>
 
-      {/* Quick Amounts (only if plans loaded) */}
-      {quickAmounts.length > 0 && (
+        {/* Mobile Number */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Quick Recharge</Text>
-          <View style={styles.amountsGrid}>
-            {quickAmounts.map((amt) => (
-              <Pressable
-                key={amt}
-                style={[
-                  styles.amountCard,
-                  amount === amt && styles.amountCardActive,
-                ]}
-                onPress={() => {
-                  setAmount(amt);
-                  setSelectedPlan(null);
-                }}
-              >
-                <Text style={[styles.amountText, amount === amt && styles.amountTextActive]}>
-                  {currencySymbol}{amt}
-                </Text>
-              </Pressable>
-            ))}
+          <Text style={styles.sectionTitle}>Mobile Number</Text>
+          <View style={styles.inputContainer}>
+            <Text style={styles.countryCode}>{selectedOperator?.countryCode || regionPhonePrefix}</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter 10-digit mobile number"
+              placeholderTextColor={COLORS.textSecondary}
+              keyboardType="phone-pad"
+              maxLength={10}
+              value={mobileNumber}
+              onChangeText={setMobileNumber}
+            />
+            {mobileNumber.length === 10 && <Ionicons name="checkmark-circle" size={24} color={COLORS.primaryGreen} />}
           </View>
         </View>
-      )}
 
-      {/* Custom Amount */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Or Enter Amount</Text>
-        <View style={styles.customAmountContainer}>
-          <Text style={styles.rupeeSymbol}>{currencySymbol}</Text>
-          <TextInput
-            style={styles.customAmountInput}
-            placeholder="Enter amount"
-            placeholderTextColor={COLORS.textSecondary}
-            keyboardType="number-pad"
-            value={amount}
-            onChangeText={(val) => {
-              setAmount(val);
-              setSelectedPlan(null);
-            }}
-          />
-        </View>
-      </View>
-
-      {/* Plans Section Title */}
-      {selectedOperator && (
+        {/* Operator Selection */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            {selectedOperator.name} Plans
-          </Text>
-          {loadingPlans && (
+          <Text style={styles.sectionTitle}>Select Operator</Text>
+          {loadingOperators ? (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="small" color={COLORS.primaryGreen} />
-              <Text style={styles.loadingText}>Loading plans...</Text>
+              <Text style={styles.loadingText}>Loading operators...</Text>
+            </View>
+          ) : operators.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <View style={styles.emptyIconWrap}>
+                <Ionicons name="wifi-outline" size={32} color={COLORS.textSecondary} />
+              </View>
+              <Text style={styles.emptyTitle}>No operators available</Text>
+              <Text style={styles.emptySubtitle}>Please check back later</Text>
+            </View>
+          ) : (
+            <View style={styles.operatorsGrid}>
+              {operators.map((op) => (
+                <React.Fragment key={op._id}>{renderOperator({ item: op })}</React.Fragment>
+              ))}
             </View>
           )}
         </View>
-      )}
-    </>
-  ), [
-    error, mobileNumber, operators, loadingOperators, selectedOperator,
-    quickAmounts, amount, currencySymbol, loadingPlans, renderOperator,
-  ]);
+
+        {/* Quick Amounts (only if plans loaded) */}
+        {quickAmounts.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Quick Recharge</Text>
+            <View style={styles.amountsGrid}>
+              {quickAmounts.map((amt) => (
+                <Pressable
+                  key={amt}
+                  style={[styles.amountCard, amount === amt && styles.amountCardActive]}
+                  onPress={() => {
+                    setAmount(amt);
+                    setSelectedPlan(null);
+                  }}
+                >
+                  <Text style={[styles.amountText, amount === amt && styles.amountTextActive]}>
+                    {currencySymbol}
+                    {amt}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        )}
+
+        {/* Custom Amount */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Or Enter Amount</Text>
+          <View style={styles.customAmountContainer}>
+            <Text style={styles.rupeeSymbol}>{currencySymbol}</Text>
+            <TextInput
+              style={styles.customAmountInput}
+              placeholder="Enter amount"
+              placeholderTextColor={COLORS.textSecondary}
+              keyboardType="number-pad"
+              value={amount}
+              onChangeText={(val) => {
+                setAmount(val);
+                setSelectedPlan(null);
+              }}
+            />
+          </View>
+        </View>
+
+        {/* Plans Section Title */}
+        {selectedOperator && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>{selectedOperator.name} Plans</Text>
+            {loadingPlans && (
+              <View style={styles.loadingContainer}>
+                <ActivityIndicator size="small" color={COLORS.primaryGreen} />
+                <Text style={styles.loadingText}>Loading plans...</Text>
+              </View>
+            )}
+          </View>
+        )}
+      </>
+    ),
+    [
+      error,
+      mobileNumber,
+      operators,
+      loadingOperators,
+      selectedOperator,
+      quickAmounts,
+      amount,
+      currencySymbol,
+      loadingPlans,
+      renderOperator,
+    ],
+  );
 
   // ============================================
   // EMPTY / FOOTER FOR PLANS LIST
@@ -505,14 +506,22 @@ function RechargePage() {
 
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => { setResult(null); }} style={styles.backButton}>
+          <Pressable
+            onPress={() => {
+              setResult(null);
+            }}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
           </Pressable>
           <Text style={styles.headerTitle}>Recharge Successful</Text>
           <View style={{ width: 32 }} />
         </View>
 
-        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: Spacing.base }} showsVerticalScrollIndicator={false}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: Spacing.base }}
+          showsVerticalScrollIndicator={false}
+        >
           {/* Success Icon */}
           <View style={styles.successContainer}>
             <View style={styles.successIcon}>
@@ -536,7 +545,10 @@ function RechargePage() {
             <View style={styles.divider} />
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Amount</Text>
-              <Text style={styles.detailValue}>{currencySymbol}{Number(result.amount).toFixed(2)}</Text>
+              <Text style={styles.detailValue}>
+                {currencySymbol}
+                {Number(result.amount).toFixed(2)}
+              </Text>
             </View>
             {result.cashbackPercent > 0 && (
               <>
@@ -578,14 +590,13 @@ function RechargePage() {
           <View style={styles.actionButtons}>
             <Pressable
               style={styles.secondaryButton}
-              onPress={() => { setResult(null); }}
+              onPress={() => {
+                setResult(null);
+              }}
             >
               <Text style={styles.secondaryButtonText}>Recharge Again</Text>
             </Pressable>
-            <Pressable
-              style={styles.primaryButton}
-              onPress={() => router.replace('/(tabs)')}
-            >
+            <Pressable style={styles.primaryButton} onPress={() => router.replace('/(tabs)')}>
               <Text style={styles.primaryButtonText}>Go Home</Text>
             </Pressable>
           </View>
@@ -600,7 +611,10 @@ function RechargePage() {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={COLORS.textPrimary} />
         </Pressable>
         <Text style={styles.headerTitle}>Mobile Recharge</Text>
@@ -626,7 +640,10 @@ function RechargePage() {
         <View style={styles.bottomCta}>
           <View style={styles.totalSection}>
             <Text style={styles.totalLabel}>Total Amount</Text>
-            <Text style={styles.totalAmount}>{currencySymbol}{Number(amount).toFixed(2)}</Text>
+            <Text style={styles.totalAmount}>
+              {currencySymbol}
+              {Number(amount).toFixed(2)}
+            </Text>
           </View>
           <Pressable
             style={[styles.proceedButton, !canProceed && styles.proceedButtonDisabled]}

@@ -19,8 +19,7 @@ import {
 import { platformAlertSimple, platformAlertConfirm, platformAlertDestructive } from '@/utils/platformAlert';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { Stack } from 'expo-router';
+import { useRouter, Stack } from 'expo-router';
 import { useGroupBuying } from '@/hooks/useGroupBuying';
 import { useAuthUser, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import GroupCard from '@/components/group-buying/GroupCard';
@@ -28,12 +27,7 @@ import GroupCreationModal from '@/components/group-buying/GroupCreationModal';
 import GroupShareModal from '@/components/group-buying/GroupShareModal';
 import GroupMembersList from '@/components/group-buying/GroupMembersList';
 import GroupDiscountCalculator from '@/components/group-buying/GroupDiscountCalculator';
-import {
-  GroupBuyingGroup,
-  GroupBuyingProduct,
-  CreateGroupRequest,
-  JoinGroupRequest,
-} from '@/types/groupBuying.types';
+import { GroupBuyingGroup, GroupBuyingProduct, CreateGroupRequest, JoinGroupRequest } from '@/types/groupBuying.types';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
@@ -92,7 +86,7 @@ const GroupBuyPage = () => {
           if (!isMounted()) return;
           setShowShareModal(true);
         },
-        'Share Now'
+        'Share Now',
       );
       if (!isMounted()) return;
       setActiveTab('my-groups');
@@ -131,7 +125,7 @@ const GroupBuyPage = () => {
             platformAlertSimple('Error', groupBuying.error);
           }
         },
-        'Join'
+        'Join',
       );
     } else {
       platformAlertSimple('Error', groupBuying.error || 'Group not found');
@@ -156,21 +150,16 @@ const GroupBuyPage = () => {
 
   // Handle leave group
   const handleLeaveGroup = (groupId: string) => {
-    platformAlertDestructive(
-      'Leave Group?',
-      'Are you sure you want to leave this group?',
-      'Leave',
-      async () => {
-        const success = await groupBuying.leaveGroup(groupId);
-        if (success) {
-          platformAlertSimple('Success', 'You have left the group');
-          if (!isMounted()) return;
-          setExpandedGroupId(null);
-        } else if (groupBuying.error) {
-          platformAlertSimple('Error', groupBuying.error);
-        }
+    platformAlertDestructive('Leave Group?', 'Are you sure you want to leave this group?', 'Leave', async () => {
+      const success = await groupBuying.leaveGroup(groupId);
+      if (success) {
+        platformAlertSimple('Success', 'You have left the group');
+        if (!isMounted()) return;
+        setExpandedGroupId(null);
+      } else if (groupBuying.error) {
+        platformAlertSimple('Error', groupBuying.error);
       }
-    );
+    });
   };
 
   // Render available groups tab
@@ -184,13 +173,8 @@ const GroupBuyPage = () => {
         <View style={styles.emptyContainer}>
           <Ionicons name="people-outline" size={64} color={colors.border.default} />
           <Text style={styles.emptyTitle}>No Active Groups</Text>
-          <Text style={styles.emptyText}>
-            Be the first to create a group and start saving!
-          </Text>
-          <Pressable
-            style={styles.createButton}
-            onPress={() => setActiveTab('products')}
-          >
+          <Text style={styles.emptyText}>Be the first to create a group and start saving!</Text>
+          <Pressable style={styles.createButton} onPress={() => setActiveTab('products')}>
             <Ionicons name="add-circle" size={20} color="white" />
             <Text style={styles.createButtonText}>Browse Products</Text>
           </Pressable>
@@ -203,9 +187,7 @@ const GroupBuyPage = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         data={groupBuying.availableGroups}
         keyExtractor={(item) => item.id}
         renderItem={({ item: group }) => (
@@ -220,11 +202,7 @@ const GroupBuyPage = () => {
             {expandedGroupId === group.id && (
               <View style={styles.expandedSection}>
                 <GroupDiscountCalculator group={group} />
-                <GroupMembersList
-                  members={group.members}
-                  creatorId={group.creatorId}
-                  currentUserId={user?.id}
-                />
+                <GroupMembersList members={group.members} creatorId={group.creatorId} currentUserId={user?.id} />
               </View>
             )}
           </View>
@@ -250,21 +228,13 @@ const GroupBuyPage = () => {
         <View style={styles.emptyContainer}>
           <Ionicons name="people-circle-outline" size={64} color={colors.border.default} />
           <Text style={styles.emptyTitle}>No Groups Yet</Text>
-          <Text style={styles.emptyText}>
-            Join or create a group to start saving with friends!
-          </Text>
+          <Text style={styles.emptyText}>Join or create a group to start saving with friends!</Text>
           <View style={styles.emptyActions}>
-            <Pressable
-              style={styles.createButton}
-              onPress={() => setActiveTab('products')}
-            >
+            <Pressable style={styles.createButton} onPress={() => setActiveTab('products')}>
               <Ionicons name="add-circle" size={20} color="white" />
               <Text style={styles.createButtonText}>Create Group</Text>
             </Pressable>
-            <Pressable
-              style={styles.joinButton}
-              onPress={() => setShowJoinInput(true)}
-            >
+            <Pressable style={styles.joinButton} onPress={() => setShowJoinInput(true)}>
               <Ionicons name="enter-outline" size={20} color={Colors.brand.purpleLight} />
               <Text style={styles.joinButtonText}>Join Group</Text>
             </Pressable>
@@ -277,9 +247,7 @@ const GroupBuyPage = () => {
       <FlatList
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         data={groupBuying.myGroups}
         keyExtractor={(item) => item.id}
         renderItem={({ item: group }) => (
@@ -290,11 +258,7 @@ const GroupBuyPage = () => {
             {expandedGroupId === group.id && (
               <View style={styles.expandedSection}>
                 <GroupDiscountCalculator group={group} />
-                <GroupMembersList
-                  members={group.members}
-                  creatorId={group.creatorId}
-                  currentUserId={user?.id}
-                />
+                <GroupMembersList members={group.members} creatorId={group.creatorId} currentUserId={user?.id} />
 
                 {/* Group Actions */}
                 <View style={styles.groupActions}>
@@ -345,9 +309,7 @@ const GroupBuyPage = () => {
         <View style={styles.emptyContainer}>
           <Ionicons name="cube-outline" size={64} color={colors.border.default} />
           <Text style={styles.emptyTitle}>No Products Available</Text>
-          <Text style={styles.emptyText}>
-            Check back later for new group buying deals!
-          </Text>
+          <Text style={styles.emptyText}>Check back later for new group buying deals!</Text>
         </View>
       );
     }
@@ -356,21 +318,19 @@ const GroupBuyPage = () => {
       <FlatList
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         data={groupBuying.availableProducts}
         keyExtractor={(item) => item.id}
         renderItem={({ item: product }) => (
-          <Pressable
-            style={styles.productCard}
-            onPress={() => handleProductSelect(product)}
-          >
+          <Pressable style={styles.productCard} onPress={() => handleProductSelect(product)}>
             <View style={styles.productContent}>
               <Text style={styles.productName}>{product.name}</Text>
               <Text style={styles.productStore}>{product.storeName}</Text>
               <View style={styles.productPriceRow}>
-                <Text style={styles.productPrice}>{currencySymbol}{product.basePrice}</Text>
+                <Text style={styles.productPrice}>
+                  {currencySymbol}
+                  {product.basePrice}
+                </Text>
                 <View style={styles.productDiscount}>
                   <Text style={styles.productDiscountText}>
                     Up to {product.discountTiers[product.discountTiers.length - 1]?.discountPercentage}% OFF
@@ -386,9 +346,7 @@ const GroupBuyPage = () => {
                 </View>
                 <View style={styles.productMetaItem}>
                   <Ionicons name="time" size={14} color={colors.text.tertiary} />
-                  <Text style={styles.productMetaText}>
-                    {product.expiryDuration}h duration
-                  </Text>
+                  <Text style={styles.productMetaText}>{product.expiryDuration}h duration</Text>
                 </View>
               </View>
             </View>
@@ -416,17 +374,17 @@ const GroupBuyPage = () => {
       {/* Header */}
       <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple] as const} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
           <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>Group Buy</Text>
             <Text style={styles.headerSubtitle}>Save more together</Text>
           </View>
-          <Pressable
-            style={styles.codeButton}
-            onPress={() => setShowJoinInput(!showJoinInput)}
-          >
+          <Pressable style={styles.codeButton} onPress={() => setShowJoinInput(!showJoinInput)}>
             <Ionicons name="enter-outline" size={24} color="white" />
           </Pressable>
         </View>
@@ -461,9 +419,7 @@ const GroupBuyPage = () => {
             size={20}
             color={activeTab === 'available' ? Colors.brand.purpleLight : colors.text.tertiary}
           />
-          <Text
-            style={[styles.tabText, activeTab === 'available' && styles.tabTextActive]}
-          >
+          <Text style={[styles.tabText, activeTab === 'available' && styles.tabTextActive]}>
             Available ({groupBuying.availableGroups.length})
           </Text>
         </Pressable>
@@ -477,9 +433,7 @@ const GroupBuyPage = () => {
             size={20}
             color={activeTab === 'my-groups' ? Colors.brand.purpleLight : colors.text.tertiary}
           />
-          <Text
-            style={[styles.tabText, activeTab === 'my-groups' && styles.tabTextActive]}
-          >
+          <Text style={[styles.tabText, activeTab === 'my-groups' && styles.tabTextActive]}>
             My Groups ({groupBuying.myGroups.length})
           </Text>
         </Pressable>
@@ -493,11 +447,7 @@ const GroupBuyPage = () => {
             size={20}
             color={activeTab === 'products' ? Colors.brand.purpleLight : colors.text.tertiary}
           />
-          <Text
-            style={[styles.tabText, activeTab === 'products' && styles.tabTextActive]}
-          >
-            Products
-          </Text>
+          <Text style={[styles.tabText, activeTab === 'products' && styles.tabTextActive]}>Products</Text>
         </Pressable>
       </View>
 
