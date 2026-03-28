@@ -141,33 +141,18 @@ function AppointmentBookingPage() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
 
-  // ETHAN: crash guard — storeId from route params could be undefined
-  if (!storeId) {
-    return (
-      <ThemedView style={styles.container}>
-        <Stack.Screen options={{ headerShown: false }} />
-        <ThemedText style={styles.errorText}>Store not found</ThemedText>
-        <Pressable
-          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
-          style={styles.backToStoreButton}
-        >
-          <ThemedText style={styles.backToStoreText}>Go Back</ThemedText>
-        </Pressable>
-      </ThemedView>
-    );
-  }
-
+  // All hooks must be declared before any early return (Rules of Hooks)
   const backgroundColor = useThemeColor({}, 'background');
+  const textColor = useThemeColor({}, 'text');
+  const borderColor = useThemeColor({}, 'border');
+  const getCurrencySymbol = useGetCurrencySymbol();
+  const currencySymbol = getCurrencySymbol();
 
   // Screen fade-in animation
   const fadeAnim = useSharedValue(0);
   useEffect(() => {
     fadeAnim.value = withTiming(1, { duration: 250, easing: Easing.ease });
   }, [fadeAnim]);
-  const textColor = useThemeColor({}, 'text');
-  const borderColor = useThemeColor({}, 'border');
-  const getCurrencySymbol = useGetCurrencySymbol();
-  const currencySymbol = getCurrencySymbol();
 
   // State management
   const [store, setStore] = useState<Store | null>(null);
@@ -230,6 +215,22 @@ function AppointmentBookingPage() {
       setPatchTestStatus(null);
     }
   }, [selectedService]);
+
+  // Guard: storeId must be present (placed after all hooks to comply with Rules of Hooks)
+  if (!storeId) {
+    return (
+      <ThemedView style={styles.container}>
+        <Stack.Screen options={{ headerShown: false }} />
+        <ThemedText style={styles.errorText}>Store not found</ThemedText>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backToStoreButton}
+        >
+          <ThemedText style={styles.backToStoreText}>Go Back</ThemedText>
+        </Pressable>
+      </ThemedView>
+    );
+  }
 
   const loadStoreDetails = async () => {
     try {

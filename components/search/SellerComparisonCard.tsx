@@ -82,7 +82,7 @@ function SellerComparisonCard({
   };
 
   const getDeliveryIcon = () => {
-    switch (seller.delivery.type) {
+    switch (seller.delivery?.type) {
       case 'express':
         return 'flash';
       case 'pickup':
@@ -166,9 +166,9 @@ function SellerComparisonCard({
           <View style={styles.priceContainer}>
             <Text style={styles.priceLabel}>Price</Text>
             <Text style={styles.currentPrice}>
-              {formatPrice(seller.price.current)}
+              {formatPrice(seller.price?.current ?? 0)}
             </Text>
-            {seller.price.original && seller.price.original > seller.price.current && (
+            {seller.price?.original && seller.price.original > (seller.price?.current ?? 0) && (
               <Text style={styles.originalPrice}>
                 {formatPrice(seller.price.original)}
               </Text>
@@ -185,15 +185,17 @@ function SellerComparisonCard({
         {/* Cashback and Nuqta Coins */}
         <View style={styles.rewardsRow}>
           <Text style={styles.rewardsText}>
-            {formatPrice(seller.cashback.amount)} + {seller.cashback.coins} {BRAND.COIN_NAME}
+            {formatPrice(seller.cashback?.amount ?? 0)} + {seller.cashback?.coins ?? 0} {BRAND.COIN_NAME}
           </Text>
         </View>
 
         {/* Delivery Information */}
-        <View style={styles.deliveryRow}>
-          <Ionicons name={getDeliveryIcon()} size={14} color={colors.neutral[500]} />
-          <Text style={styles.deliveryText}>{seller.delivery.time}</Text>
-        </View>
+        {seller.delivery && (
+          <View style={styles.deliveryRow}>
+            <Ionicons name={getDeliveryIcon()} size={14} color={colors.neutral[500]} />
+            <Text style={styles.deliveryText}>{seller.delivery.time}</Text>
+          </View>
+        )}
 
         {/* Badges */}
         {seller.badges && seller.badges.length > 0 && (

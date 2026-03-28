@@ -36,9 +36,11 @@ interface CompletePurchaseSectionProps {
   /** Delivery fee */
   deliveryFee?: number;
   /** Product ID for buy action */
-  productId: string;
+  productId?: string;
   /** Currency symbol */
   currency?: string;
+  /** Whether the product price is currently locked */
+  isLocked?: boolean;
   /** Callback for Visit Store */
   onVisitStore?: () => void;
   /** Callback for Buy Online */
@@ -52,6 +54,7 @@ export const CompletePurchaseSection: React.FC<CompletePurchaseSectionProps> = (
   deliveryFee = 49,
   productId,
   currency,
+  isLocked,
   onVisitStore,
   onBuyOnline,
   style,

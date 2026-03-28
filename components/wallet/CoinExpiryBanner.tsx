@@ -91,10 +91,18 @@ const CoinExpiryBanner: React.FC<CoinExpiryBannerProps> = ({
             <ThemedText style={[styles.boldCount, { color: urgencyColor }]}>
               {expiringCount.toLocaleString('en-IN')} coins
             </ThemedText>
-            {' '}expiring in{' '}
-            <ThemedText style={[styles.boldCount, { color: urgencyColor }]}>
-              {daysLeft} {daysLeft === 1 ? 'day' : 'days'}
-            </ThemedText>
+            {daysLeft <= 0 ? (
+              <ThemedText style={[styles.boldCount, { color: urgencyColor }]}>
+                {' '}expire today!
+              </ThemedText>
+            ) : (
+              <>
+                {' '}expiring in{' '}
+                <ThemedText style={[styles.boldCount, { color: urgencyColor }]}>
+                  {daysLeft} {daysLeft === 1 ? 'day' : 'days'}
+                </ThemedText>
+              </>
+            )}
           </ThemedText>
           <ThemedText style={styles.subtext}>
             Use them at nearby stores before they expire

@@ -76,19 +76,20 @@ const TransactionDetailPage = () => {
       } else {
         // Fetch wallet transaction
         const response = await walletApi.getTransactionById(id);
+        if (!isMounted()) return;
         if (response.success && response.data) {
           setTransaction(response.data.transaction);
         } else {
-          if (!isMounted()) return;
-          setError(response.error || 'Transaction not found');
+          setError(response.message || response.error || 'Transaction not found');
         }
       }
     } catch (err) {
       if (!isMounted()) return;
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
-      if (!isMounted()) return;
-      setLoading(false);
+      if (isMounted()) {
+        setLoading(false);
+      }
     }
   };
 
@@ -146,11 +147,16 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return Colors.gold;
-      case 'pending': return Colors.warning;
-      case 'failed': return Colors.error;
-      case 'cancelled': return colors.text.tertiary;
-      default: return colors.text.tertiary;
+      case 'completed':
+        return Colors.gold;
+      case 'pending':
+        return Colors.warning;
+      case 'failed':
+        return Colors.error;
+      case 'cancelled':
+        return colors.text.tertiary;
+      default:
+        return colors.text.tertiary;
     }
   };
 
@@ -168,7 +174,10 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
         <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
         <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Transaction Details</Text>
@@ -189,7 +198,10 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
         <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
         <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Transaction Details</Text>
@@ -219,7 +231,10 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
         {/* Header */}
         <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Payment Receipt</Text>
@@ -234,22 +249,21 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
               <Ionicons name="storefront" size={32} color={Colors.gold} />
             </View>
             <Text style={[styles.amountText, { color: colors.text.inverse }]}>
-              {currencySymbol}{storePayment.billAmount}
+              {currencySymbol}
+              {storePayment.billAmount}
             </Text>
             <Text style={styles.storeNameText}>{storePayment.storeName}</Text>
             <View style={[styles.statusBadgeLarge, { backgroundColor: `${spStatusColor}20` }]}>
-              <Text style={[styles.statusTextLarge, { color: spStatusColor }]}>
-                {storePayment.status}
-              </Text>
+              <Text style={[styles.statusTextLarge, { color: spStatusColor }]}>{storePayment.status}</Text>
             </View>
           </View>
         </LinearGradient>
 
         <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
           {/* Payment Breakdown */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Payment Breakdown</Text>
@@ -292,7 +306,10 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
                 {storePayment.coinRedemption.promoCoins > 0 && (
                   <InfoRow label="Promo Coins" value={`${currencySymbol}${storePayment.coinRedemption.promoCoins}`} />
                 )}
-                <InfoRow label="Total Coins Used" value={`${currencySymbol}${storePayment.coinRedemption.totalAmount}`} />
+                <InfoRow
+                  label="Total Coins Used"
+                  value={`${currencySymbol}${storePayment.coinRedemption.totalAmount}`}
+                />
               </View>
             </View>
           )}
@@ -305,7 +322,10 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
                 <View style={styles.rewardsRow}>
                   <View style={styles.rewardItemSmall}>
                     <Ionicons name="cash-outline" size={24} color={Colors.gold} />
-                    <Text style={styles.rewardValueSmall}>{currencySymbol}{storePayment.rewards.cashbackEarned}</Text>
+                    <Text style={styles.rewardValueSmall}>
+                      {currencySymbol}
+                      {storePayment.rewards.cashbackEarned}
+                    </Text>
                     <Text style={styles.rewardLabelSmall}>Cashback</Text>
                   </View>
                   <View style={styles.rewardItemSmall}>
@@ -347,7 +367,10 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
       {/* Header */}
       <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>Transaction Details</Text>
@@ -362,12 +385,11 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
             <Ionicons name={getTypeIcon(transaction.type) as any} size={32} color={typeColor} />
           </View>
           <Text style={[styles.amountText, { color: typeColor }]}>
-            {transaction.type === 'credit' ? '+' : '-'}{transaction.amount} {transaction.currency}
+            {transaction.type === 'credit' ? '+' : '-'}
+            {transaction.amount} {transaction.currency}
           </Text>
           <View style={[styles.statusBadgeLarge, { backgroundColor: `${statusColor}20` }]}>
-            <Text style={[styles.statusTextLarge, { color: statusColor }]}>
-              {transaction.status.current}
-            </Text>
+            <Text style={[styles.statusTextLarge, { color: statusColor }]}>{transaction.status.current}</Text>
           </View>
         </View>
       </LinearGradient>
@@ -413,9 +435,7 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
             <Text style={styles.sectionTitle}>Source</Text>
             <View style={styles.infoCard}>
               <InfoRow label="Type" value={transaction.source.type} />
-              {transaction.source.description && (
-                <InfoRow label="Description" value={transaction.source.description} />
-              )}
+              {transaction.source.description && <InfoRow label="Description" value={transaction.source.description} />}
               <InfoRow label="Reference" value={transaction.source.reference} />
             </View>
           </View>
@@ -431,12 +451,8 @@ Balance After: ${transaction.balanceAfter} ${transaction.currency}
                   <View style={styles.historyDot} />
                   <View style={styles.historyContent}>
                     <Text style={styles.historyStatus}>{item.status}</Text>
-                    <Text style={styles.historyDate}>
-                      {formatDate(item.timestamp)}
-                    </Text>
-                    {item.reason && (
-                      <Text style={styles.historyReason}>{item.reason}</Text>
-                    )}
+                    <Text style={styles.historyDate}>{formatDate(item.timestamp)}</Text>
+                    {item.reason && <Text style={styles.historyReason}>{item.reason}</Text>}
                   </View>
                 </View>
               ))}

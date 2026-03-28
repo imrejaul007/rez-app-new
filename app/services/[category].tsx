@@ -20,7 +20,7 @@ import { ThemedText } from '@/components/ThemedText';
 import serviceCategoriesApi, {
   ServiceCategory,
   ServiceInCategory,
-  ServiceCategoryQueryParams
+  ServiceCategoryQueryParams,
 } from '@/services/serviceCategoriesApi';
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -28,18 +28,12 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_GAP = 12;
 const PARENT_PADDING = 16;
-const AVAILABLE_WIDTH = SCREEN_WIDTH - (PARENT_PADDING * 2);
+const AVAILABLE_WIDTH = SCREEN_WIDTH - PARENT_PADDING * 2;
 const CARD_WIDTH = Math.floor((AVAILABLE_WIDTH - CARD_GAP) / 2);
 
 // ReZ Design System Colors from TASK.md
 // Service Card Component - ReZ Premium Design
-const ServiceCard = memo(({
-  service,
-  onPress
-}: {
-  service: ServiceInCategory;
-  onPress: () => void;
-}) => {
+const ServiceCard = memo(({ service, onPress }: { service: ServiceInCategory; onPress: () => void }) => {
   const imageUrl = service.images?.[0];
   const price = service.pricing?.selling || service.pricing?.original || 0;
   const originalPrice = service.pricing?.original || price;
@@ -49,23 +43,13 @@ const ServiceCard = memo(({
   const ratingCount = service.ratings?.count || 0;
 
   return (
-    <Pressable
-      style={styles.serviceCard}
-      onPress={onPress}
-     
-    >
+    <Pressable style={styles.serviceCard} onPress={onPress}>
       {/* Service Image */}
       <View style={styles.imageContainer}>
-        <CachedImage
-          source={imageUrl}
-          style={styles.serviceImage}
-          contentFit="cover"
-        />
+        <CachedImage source={imageUrl} style={styles.serviceImage} contentFit="cover" />
         {cashbackPercentage > 0 && (
           <View style={styles.cashbackBadge}>
-            <ThemedText style={styles.cashbackBadgeText}>
-              {cashbackPercentage}% back
-            </ThemedText>
+            <ThemedText style={styles.cashbackBadgeText}>{cashbackPercentage}% back</ThemedText>
           </View>
         )}
       </View>
@@ -106,11 +90,7 @@ const ServiceCard = memo(({
         </View>
 
         {/* Get Service Button */}
-        <Pressable
-          style={styles.getServiceButton}
-          onPress={onPress}
-         
-        >
+        <Pressable style={styles.getServiceButton} onPress={onPress}>
           <ThemedText style={styles.getServiceButtonText}>Get service</ThemedText>
         </Pressable>
       </View>
@@ -142,66 +122,71 @@ function ServiceCategoryPage() {
   const [sortBy, setSortBy] = useState<ServiceCategoryQueryParams['sortBy']>('rating');
   const [showSortOptions, setShowSortOptions] = useState(false);
 
+  const isMounted = useIsMounted();
+
   // Fetch category and services
-  const fetchData = useCallback(async (pageNum: number = 1, isRefresh: boolean = false) => {
-    try {
-      if (pageNum === 1) {
-        if (isRefresh) {
-          setRefreshing(true);
-        } else {
-          setLoading(true);
-        }
-      } else {
-        setLoadingMore(true);
-      }
-      setError(null);
-
-      const response = await serviceCategoriesApi.getServicesInCategory(
-        categorySlug as string,
-        { page: pageNum, limit: 20, sortBy }
-      );
-
-      if (response.success && response.data) {
-        const { services: newServices, category: categoryData, pagination } = response.data;
-
-        if (!isMounted()) return;
-        setCategory(categoryData as any);
-
-        // Safely handle services array
-        const servicesArray = Array.isArray(newServices) ? newServices : [];
-
+  const fetchData = useCallback(
+    async (pageNum: number = 1, isRefresh: boolean = false) => {
+      try {
         if (pageNum === 1) {
+          if (isRefresh) {
+            setRefreshing(true);
+          } else {
+            setLoading(true);
+          }
+        } else {
+          setLoadingMore(true);
+        }
+        setError(null);
+
+        const response = await serviceCategoriesApi.getServicesInCategory(categorySlug as string, {
+          page: pageNum,
+          limit: 20,
+          sortBy,
+        });
+
+        if (response.success && response.data) {
+          const { services: newServices, category: categoryData, pagination } = response.data;
+
           if (!isMounted()) return;
-          setServices(servicesArray);
+          setCategory(categoryData as any);
+
+          // Safely handle services array
+          const servicesArray = Array.isArray(newServices) ? newServices : [];
+
+          if (pageNum === 1) {
+            if (!isMounted()) return;
+            setServices(servicesArray);
+          } else {
+            if (!isMounted()) return;
+            setServices((prev) => [...prev, ...servicesArray]);
+          }
+
+          // Safely handle pagination
+          const totalPages = pagination?.pages || 1;
+          const currentPage = pagination?.page || 1;
+          if (!isMounted()) return;
+          setHasMore(currentPage < totalPages);
+          if (!isMounted()) return;
+          setPage(pageNum);
         } else {
           if (!isMounted()) return;
-          setServices(prev => [...prev, ...servicesArray]);
+          setError('Failed to load services');
         }
-
-        // Safely handle pagination
-        const totalPages = pagination?.pages || 1;
-        const currentPage = pagination?.page || 1;
-        if (!isMounted()) return;
-        setHasMore(currentPage < totalPages);
-        if (!isMounted()) return;
-        setPage(pageNum);
-      } else {
+      } catch (err) {
         if (!isMounted()) return;
         setError('Failed to load services');
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-    } catch (err) {
-      if (!isMounted()) return;
-      setError('Failed to load services');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [categorySlug, sortBy]);
-  const isMounted = useIsMounted();
+    },
+    [categorySlug, sortBy],
+  );
 
   useEffect(() => {
     if (categorySlug) {
@@ -243,8 +228,7 @@ function ServiceCategoryPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
@@ -273,8 +257,7 @@ function ServiceCategoryPage() {
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
@@ -286,10 +269,7 @@ function ServiceCategoryPage() {
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
           <ThemedText style={styles.errorText}>{error}</ThemedText>
-          <Pressable
-            style={styles.retryButton}
-            onPress={() => fetchData(1)}
-          >
+          <Pressable style={styles.retryButton} onPress={() => fetchData(1)}>
             <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
           </Pressable>
         </View>
@@ -309,20 +289,15 @@ function ServiceCategoryPage() {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-           
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
-            <ThemedText style={styles.headerTitle}>
-              {category?.name || 'Services'}
-            </ThemedText>
+            <ThemedText style={styles.headerTitle}>{category?.name || 'Services'}</ThemedText>
             {category?.cashbackPercentage && (
               <View style={styles.cashbackPill}>
-                <ThemedText style={styles.cashbackPillText}>
-                  Up to {category.cashbackPercentage}% cash back
-                </ThemedText>
+                <ThemedText style={styles.cashbackPillText}>Up to {category.cashbackPercentage}% cash back</ThemedText>
               </View>
             )}
           </View>
@@ -331,21 +306,12 @@ function ServiceCategoryPage() {
 
       {/* Sort Bar */}
       <View style={styles.sortBar}>
-        <ThemedText style={styles.resultsCount}>
-          {services.length} services
-        </ThemedText>
-        <Pressable
-          style={styles.sortButton}
-          onPress={() => setShowSortOptions(!showSortOptions)}
-        >
+        <ThemedText style={styles.resultsCount}>{services.length} services</ThemedText>
+        <Pressable style={styles.sortButton} onPress={() => setShowSortOptions(!showSortOptions)}>
           <ThemedText style={styles.sortButtonText}>
-            {SORT_OPTIONS.find(o => o.value === sortBy)?.label || 'Sort'}
+            {SORT_OPTIONS.find((o) => o.value === sortBy)?.label || 'Sort'}
           </ThemedText>
-          <Ionicons
-            name={showSortOptions ? "chevron-up" : "chevron-down"}
-            size={16}
-            color={colors.brand.green}
-          />
+          <Ionicons name={showSortOptions ? 'chevron-up' : 'chevron-down'} size={16} color={colors.brand.green} />
         </Pressable>
       </View>
 
@@ -355,21 +321,13 @@ function ServiceCategoryPage() {
           {SORT_OPTIONS.map((option) => (
             <Pressable
               key={option.value}
-              style={[
-                styles.sortOption,
-                sortBy === option.value && styles.sortOptionActive
-              ]}
+              style={[styles.sortOption, sortBy === option.value && styles.sortOptionActive]}
               onPress={() => handleSortChange(option.value as ServiceCategoryQueryParams['sortBy'])}
             >
-              <ThemedText style={[
-                styles.sortOptionText,
-                sortBy === option.value && styles.sortOptionTextActive
-              ]}>
+              <ThemedText style={[styles.sortOptionText, sortBy === option.value && styles.sortOptionTextActive]}>
                 {option.label}
               </ThemedText>
-              {sortBy === option.value && (
-                <Ionicons name="checkmark" size={18} color={colors.brand.green} />
-              )}
+              {sortBy === option.value && <Ionicons name="checkmark" size={18} color={colors.brand.green} />}
             </Pressable>
           ))}
         </View>
@@ -401,9 +359,7 @@ function ServiceCategoryPage() {
           <View style={styles.emptyContainer}>
             <Ionicons name="cube-outline" size={48} color={colors.gray[400]} />
             <ThemedText style={styles.emptyText}>No services available</ThemedText>
-            <ThemedText style={styles.emptySubtext}>
-              Check back later for new services
-            </ThemedText>
+            <ThemedText style={styles.emptySubtext}>Check back later for new services</ThemedText>
           </View>
         ) : (
           <View style={styles.servicesGrid}>
@@ -430,9 +386,7 @@ function ServiceCategoryPage() {
         {/* End of List */}
         {!hasMore && services.length > 0 && (
           <View style={styles.endOfListContainer}>
-            <ThemedText style={styles.endOfListText}>
-              That's all the services in this category
-            </ThemedText>
+            <ThemedText style={styles.endOfListText}>That's all the services in this category</ThemedText>
           </View>
         )}
       </ScrollView>

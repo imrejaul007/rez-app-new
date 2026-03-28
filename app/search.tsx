@@ -282,25 +282,31 @@ function SearchPage() {
       const sortedSellers = [...productGroup.sellers].sort((a, b) => {
         switch (currentSort) {
           case 'price_low':
-            return a.price.current - b.price.current;
+            return (a.price?.current ?? 0) - (b.price?.current ?? 0);
           case 'price_high':
-            return b.price.current - a.price.current;
+            return (b.price?.current ?? 0) - (a.price?.current ?? 0);
           case 'cashback_high':
-            return b.cashback.amount - a.cashback.amount;
+            return (b.cashback?.amount ?? 0) - (a.cashback?.amount ?? 0);
           case 'distance': {
             const distA = a.distance ?? 999;
             const distB = b.distance ?? 999;
             return distA - distB;
           }
           case 'rating':
-            if (b.rating !== a.rating) return b.rating - a.rating;
-            return b.reviewCount - a.reviewCount;
+            if (b.rating !== a.rating) return (b.rating ?? 0) - (a.rating ?? 0);
+            return (b.reviewCount ?? 0) - (a.reviewCount ?? 0);
           case 'best_value':
           default: {
             const scoreA =
-              a.price.current * 0.4 - a.cashback.amount * 0.3 - a.rating * 100 * 0.2 + (a.distance || 999) * 0.1;
+              (a.price?.current ?? 0) * 0.4 -
+              (a.cashback?.amount ?? 0) * 0.3 -
+              (a.rating ?? 0) * 100 * 0.2 +
+              (a.distance || 999) * 0.1;
             const scoreB =
-              b.price.current * 0.4 - b.cashback.amount * 0.3 - b.rating * 100 * 0.2 + (b.distance || 999) * 0.1;
+              (b.price?.current ?? 0) * 0.4 -
+              (b.cashback?.amount ?? 0) * 0.3 -
+              (b.rating ?? 0) * 100 * 0.2 +
+              (b.distance || 999) * 0.1;
             return scoreA - scoreB;
           }
         }
@@ -432,7 +438,7 @@ function SearchPage() {
         currentFilters={currentFilters}
         categories={
           searchState.sections.length > 0
-            ? searchState.sections.flatMap((s) => s.categories).map((c) => ({ id: c.id, name: c.name }))
+            ? searchState.sections.flatMap((s) => s.categories ?? []).map((c) => ({ id: c.id, name: c.name }))
             : undefined
         }
       />

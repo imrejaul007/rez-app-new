@@ -23,7 +23,14 @@ import { useRouter, useNavigation } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
 import vouchersService from '@/services/realVouchersApi';
 import realOffersApi from '@/services/realOffersApi';
-import { useAuthUser, useIsAuthenticated, useAuthLoading, useCartState, useCartActions, useGetCurrencySymbol } from '@/stores/selectors';
+import {
+  useAuthUser,
+  useIsAuthenticated,
+  useAuthLoading,
+  useCartState,
+  useCartActions,
+  useGetCurrencySymbol,
+} from '@/stores/selectors';
 import { useSafeNavigation } from '@/hooks/useSafeNavigation';
 import { HeaderBackButton } from '@/components/navigation/SafeBackButton';
 import QRCodeModal from '@/components/vouchers/QRCodeModal';
@@ -96,143 +103,140 @@ const MyVouchersPage = () => {
     goBack('/account' as any);
   }, [goBack]);
 
-  const fetchVouchers = useCallback(async (pageNum = 1, append = false) => {
-    try {
-      if (pageNum === 1) {
-        setLoading(true);
-      } else {
-        setLoadingMore(true);
-      }
+  const fetchVouchers = useCallback(
+    async (pageNum = 1, append = false) => {
+      try {
+        if (pageNum === 1) {
+          setLoading(true);
+        } else {
+          setLoadingMore(true);
+        }
 
-      if (authLoading) {
-        return;
-      }
+        if (authLoading) {
+          return;
+        }
 
-      if (!isAuthenticated) {
-        setVouchers([]);
-        setLoading(false);
-        return;
-      }
+        if (!isAuthenticated) {
+          setVouchers([]);
+          setLoading(false);
+          return;
+        }
 
-      const params: any = {
-        page: pageNum,
-        limit: 20
-      };
+        const params: any = {
+          page: pageNum,
+          limit: 20,
+        };
 
-      if (activeTab !== 'all' && activeTab !== 'partner') {
-        params.status = activeTab;
-      }
+        if (activeTab !== 'all' && activeTab !== 'partner') {
+          params.status = activeTab;
+        }
 
-      // Fetch BOTH gift card vouchers AND offer redemptions
-      const [vouchersResponse, redemptionsResponse] = await Promise.all([
-        vouchersService.getUserVouchers(params).catch(() => ({ data: [] })),
-        realOffersApi.getUserRedemptions(params).catch(() => ({ data: [] }))
-      ]);
+        // Fetch BOTH gift card vouchers AND offer redemptions
+        const [vouchersResponse, redemptionsResponse] = await Promise.all([
+          vouchersService.getUserVouchers(params).catch(() => ({ data: [] })),
+          realOffersApi.getUserRedemptions(params).catch(() => ({ data: [] })),
+        ]);
 
-      logger.debug('[MY VOUCHERS] Vouchers response:', vouchersResponse);
-      logger.debug('[MY VOUCHERS] Redemptions response:', redemptionsResponse);
+        logger.debug('[MY VOUCHERS] Vouchers response:', vouchersResponse);
+        logger.debug('[MY VOUCHERS] Redemptions response:', redemptionsResponse);
 
-      const allVouchers: UserVoucher[] = [];
+        const allVouchers: UserVoucher[] = [];
 
-      // 1. Map gift card vouchers
-      const vouchersArray = vouchersResponse.data || [];
-      if (vouchersArray.length > 0) {
-        const mappedVouchers: UserVoucher[] = vouchersArray.map((voucher: any) => ({
-          id: voucher._id || voucher.id,
-          code: voucher.voucherCode,
-          brandName: voucher.brand?.name || 'Unknown Brand',
-          brandLogo: voucher.brand?.logo,
-          value: voucher.denomination,
-          description: voucher.brand?.description || `${currencySymbol}${voucher.denomination} voucher`,
-          expiryDate: voucher.expiryDate,
-          status: voucher.status,
-          usedAt: voucher.usedAt,
-          category: voucher.brand?.category || 'General',
-          voucherType: 'gift_card' as const
-        }));
-        allVouchers.push(...mappedVouchers);
-      }
+        // 1. Map gift card vouchers
+        const vouchersArray = vouchersResponse.data || [];
+        if (vouchersArray.length > 0) {
+          const mappedVouchers: UserVoucher[] = vouchersArray.map((voucher: any) => ({
+            id: voucher._id || voucher.id,
+            code: voucher.voucherCode,
+            brandName: voucher.brand?.name || 'Unknown Brand',
+            brandLogo: voucher.brand?.logo,
+            value: voucher.denomination,
+            description: voucher.brand?.description || `${currencySymbol}${voucher.denomination} voucher`,
+            expiryDate: voucher.expiryDate,
+            status: voucher.status,
+            usedAt: voucher.usedAt,
+            category: voucher.brand?.category || 'General',
+            voucherType: 'gift_card' as const,
+          }));
+          allVouchers.push(...mappedVouchers);
+        }
 
-      // 2. Map offer redemptions (cashback vouchers)
-      const redemptionsArray = redemptionsResponse.data || [];
-      logger.debug('[MY VOUCHERS] Redemptions array:', redemptionsArray);
-      
-      if (redemptionsArray.length > 0) {
-        const mappedRedemptions: UserVoucher[] = redemptionsArray.map((redemption: any) => {
-          const offerTitle = redemption.offer?.title || 'Cashback Offer';
-          
-          // Get cashback info - prefer percentage over fixed amount
-          const cashbackPercentage = redemption.cashbackPercentage || 
-                                    redemption.offer?.cashbackPercentage || 0;
-          
-          const usedAmount = redemption.usedAmount;
-          
-          // If used, show actual amount saved, otherwise show percentage
-          let displayValue: number;
-          let displayDescription: string;
-          
-          if (usedAmount) {
-            displayValue = usedAmount;
-            displayDescription = `Cashback saved - Used on order`;
-          } else if (cashbackPercentage) {
-            displayValue = cashbackPercentage;
-            displayDescription = `Get ${cashbackPercentage}% cashback - Use during checkout`;
-          } else {
-            displayValue = 0;
-            displayDescription = `Cashback voucher - Use during checkout`;
-          }
-          
-          // Map redemption status to voucher status
-          let voucherStatus: 'active' | 'used' | 'expired' = 'active';
-          if (redemption.status === 'used') voucherStatus = 'used';
-          else if (redemption.status === 'expired') voucherStatus = 'expired';
-          
-          return {
-            id: redemption._id || redemption.id,
-            code: redemption.redemptionCode,
-            brandName: offerTitle,
-            brandLogo: redemption.offer?.image,
-            value: displayValue,
-            description: displayDescription,
-            expiryDate: redemption.expiryDate,
-            status: voucherStatus,
-            usedAt: redemption.usedAt,
-            category: usedAmount ? 'Used' : `${cashbackPercentage}% Cashback`,
-            restrictions: redemption.restrictions || redemption.offer?.restrictions,
-            voucherType: 'cashback' as const
-          };
-        });
-        logger.debug('[MY VOUCHERS] Mapped redemptions:', mappedRedemptions);
-        allVouchers.push(...mappedRedemptions);
-      }
+        // 2. Map offer redemptions (cashback vouchers)
+        const redemptionsArray = redemptionsResponse.data || [];
+        logger.debug('[MY VOUCHERS] Redemptions array:', redemptionsArray);
 
-      logger.debug('[MY VOUCHERS] Total vouchers:', allVouchers.length);
-      if (append) {
+        if (redemptionsArray.length > 0) {
+          const mappedRedemptions: UserVoucher[] = redemptionsArray.map((redemption: any) => {
+            const offerTitle = redemption.offer?.title || 'Cashback Offer';
+
+            // Get cashback info - prefer percentage over fixed amount
+            const cashbackPercentage = redemption.cashbackPercentage || redemption.offer?.cashbackPercentage || 0;
+
+            const usedAmount = redemption.usedAmount;
+
+            // If used, show actual amount saved, otherwise show percentage
+            let displayValue: number;
+            let displayDescription: string;
+
+            if (usedAmount) {
+              displayValue = usedAmount;
+              displayDescription = `Cashback saved - Used on order`;
+            } else if (cashbackPercentage) {
+              displayValue = cashbackPercentage;
+              displayDescription = `Get ${cashbackPercentage}% cashback - Use during checkout`;
+            } else {
+              displayValue = 0;
+              displayDescription = `Cashback voucher - Use during checkout`;
+            }
+
+            // Map redemption status to voucher status
+            let voucherStatus: 'active' | 'used' | 'expired' = 'active';
+            if (redemption.status === 'used') voucherStatus = 'used';
+            else if (redemption.status === 'expired') voucherStatus = 'expired';
+
+            return {
+              id: redemption._id || redemption.id,
+              code: redemption.redemptionCode,
+              brandName: offerTitle,
+              brandLogo: redemption.offer?.image,
+              value: displayValue,
+              description: displayDescription,
+              expiryDate: redemption.expiryDate,
+              status: voucherStatus,
+              usedAt: redemption.usedAt,
+              category: usedAmount ? 'Used' : `${cashbackPercentage}% Cashback`,
+              restrictions: redemption.restrictions || redemption.offer?.restrictions,
+              voucherType: 'cashback' as const,
+            };
+          });
+          logger.debug('[MY VOUCHERS] Mapped redemptions:', mappedRedemptions);
+          allVouchers.push(...mappedRedemptions);
+        }
+
+        logger.debug('[MY VOUCHERS] Total vouchers:', allVouchers.length);
         if (!isMounted()) return;
-        setVouchers(prev => [...prev, ...allVouchers]);
-      } else {
+        if (append) {
+          setVouchers((prev) => [...prev, ...allVouchers]);
+        } else {
+          setVouchers(allVouchers);
+        }
+        setPage(pageNum);
+        setHasMore(allVouchers.length >= 20);
+      } catch (error) {
+        logger.error('Error fetching vouchers:', error);
         if (!isMounted()) return;
-        setVouchers(allVouchers);
+        if (!append) setVouchers([]);
+        setHasMore(false);
+      } finally {
+        if (isMounted()) {
+          setLoading(false);
+          setRefreshing(false);
+          setLoadingMore(false);
+        }
       }
-      if (!isMounted()) return;
-      setPage(pageNum);
-      if (!isMounted()) return;
-      setHasMore(allVouchers.length >= 20);
-    } catch (error) {
-      logger.error('Error fetching vouchers:', error);
-      if (!isMounted()) return;
-      if (!append) setVouchers([]);
-      if (!isMounted()) return;
-      setHasMore(false);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [activeTab, authLoading, isAuthenticated]);
+    },
+    [activeTab, authLoading, isAuthenticated, isMounted],
+  );
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -251,161 +255,172 @@ const MyVouchersPage = () => {
     }
   }, [loadingMore, hasMore, loading, page, fetchVouchers]);
 
-  const filteredVouchers = useMemo(() => vouchers.filter((voucher) => {
-    if (activeTab === 'all') return true;
-    return voucher.status === activeTab;
-  }), [vouchers, activeTab]);
+  const filteredVouchers = useMemo(
+    () =>
+      vouchers.filter((voucher) => {
+        if (activeTab === 'all') return true;
+        return voucher.status === activeTab;
+      }),
+    [vouchers, activeTab],
+  );
 
   const handleCopyCode = useCallback(async (code: string) => {
     await Clipboard.setStringAsync(code);
     platformAlertSimple('Copied to Clipboard!', `Voucher code "${code}" has been copied to clipboard`);
   }, []);
 
-  const handleApplyVoucher = useCallback(async (voucher: UserVoucher) => {
-    // Check if cart has items first
-    if (!cartState.items || cartState.items.length === 0) {
-      platformAlertConfirm(
-        'Cart is Empty',
-        'Please add items to your cart before applying this voucher.',
-        () => router.push('/(tabs)' as any),
-        'Browse Products'
-      );
-      return;
-    }
-
-    try {
-      // Validate the voucher code first
-      const validationResult = await realOffersApi.validateRedemptionCode(voucher.code);
-
-      if (!validationResult.success || !validationResult.data?.valid) {
-        // Provide specific error message based on response
-        const errorMessage = validationResult.message || validationResult.data?.message ||
-          'This voucher cannot be applied. It may have expired or already been used.';
-        platformAlertSimple(
-          'Voucher Not Valid',
-          errorMessage
-        );
-        return;
-      }
-
-      const { offer, redemption } = validationResult.data;
-      const cashbackPercentage = offer?.cashbackPercentage || 0;
-      const minOrderValue = offer?.restrictions?.minOrderValue || 0;
-      const maxDiscount = offer?.restrictions?.maxDiscountAmount;
-
-      // Calculate estimated cashback based on cart total
-      const cartTotal = cartState.items.reduce(
-        (sum, item) => sum + (item.price * item.quantity),
-        0
-      );
-
-      // Check minimum order value
-      if (minOrderValue > 0 && cartTotal < minOrderValue) {
+  const handleApplyVoucher = useCallback(
+    async (voucher: UserVoucher) => {
+      // Check if cart has items first
+      if (!cartState.items || cartState.items.length === 0) {
         platformAlertConfirm(
-          'Minimum Order Required',
-          `This voucher requires a minimum order of ${currencySymbol}${minOrderValue}. Your cart total is ${currencySymbol}${cartTotal.toFixed(2)}.`,
+          'Cart is Empty',
+          'Please add items to your cart before applying this voucher.',
           () => router.push('/(tabs)' as any),
-          'Continue Shopping'
+          'Browse Products',
         );
         return;
       }
 
-      let estimatedCashback = Math.round(cartTotal * (cashbackPercentage / 100));
-      if (maxDiscount && estimatedCashback > maxDiscount) {
-        estimatedCashback = maxDiscount;
+      try {
+        // Validate the voucher code first
+        const validationResult = await realOffersApi.validateRedemptionCode(voucher.code);
+
+        if (!validationResult.success || !validationResult.data?.valid) {
+          // Provide specific error message based on response
+          const errorMessage =
+            validationResult.message ||
+            validationResult.data?.message ||
+            'This voucher cannot be applied. It may have expired or already been used.';
+          platformAlertSimple('Voucher Not Valid', errorMessage);
+          return;
+        }
+
+        const { offer, redemption } = validationResult.data;
+        const cashbackPercentage = offer?.cashbackPercentage || 0;
+        const minOrderValue = offer?.restrictions?.minOrderValue || 0;
+        const maxDiscount = offer?.restrictions?.maxDiscountAmount;
+
+        // Calculate estimated cashback based on cart total
+        const cartTotal = cartState.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+        // Check minimum order value
+        if (minOrderValue > 0 && cartTotal < minOrderValue) {
+          platformAlertConfirm(
+            'Minimum Order Required',
+            `This voucher requires a minimum order of ${currencySymbol}${minOrderValue}. Your cart total is ${currencySymbol}${cartTotal.toFixed(2)}.`,
+            () => router.push('/(tabs)' as any),
+            'Continue Shopping',
+          );
+          return;
+        }
+
+        let estimatedCashback = Math.round(cartTotal * (cashbackPercentage / 100));
+        if (maxDiscount && estimatedCashback > maxDiscount) {
+          estimatedCashback = maxDiscount;
+        }
+
+        // Copy voucher code to clipboard
+        if (!isMounted()) return;
+        await Clipboard.setStringAsync(voucher.code);
+
+        // Show confirmation with cashback details
+        platformAlertConfirm(
+          'Apply Voucher?',
+          `${offer?.title || voucher.brandName}\n\n` +
+            `Cashback: ${cashbackPercentage}%\n` +
+            `Estimated Cashback: ${currencySymbol}${estimatedCashback}\n` +
+            (maxDiscount ? `Max Cashback: ${currencySymbol}${maxDiscount}\n` : '') +
+            `\nVoucher code copied to clipboard!`,
+          () =>
+            router.push({
+              pathname: '/cart' as any,
+              params: { offerRedemptionCode: voucher.code },
+            }),
+          'Go to Checkout',
+        );
+      } catch (error) {
+        logger.error('Error validating voucher:', error);
+        // Fallback to old behavior - just copy code
+        if (!isMounted()) return;
+        await Clipboard.setStringAsync(voucher.code);
+        platformAlertConfirm(
+          'Voucher Code Copied!',
+          `Voucher code "${voucher.code}" has been copied. Apply it at checkout.`,
+          () => router.push('/cart' as any),
+          'Go to Cart',
+        );
       }
+    },
+    [cartState.items, currencySymbol, router],
+  );
 
-      // Copy voucher code to clipboard
-      if (!isMounted()) return;
-      await Clipboard.setStringAsync(voucher.code);
+  const handleShareVoucher = useCallback(
+    async (voucher: UserVoucher) => {
+      try {
+        const message =
+          `🎁 Check out this amazing voucher!\n\n` +
+          `${voucher.brandName} - ${currencySymbol}${voucher.value}\n` +
+          `Code: ${voucher.code}\n` +
+          `Valid till: ${new Date(voucher.expiryDate).toLocaleDateString()}\n\n` +
+          `Download REZ app to get exclusive vouchers and cashback!`;
 
-      // Show confirmation with cashback details
-      platformAlertConfirm(
-        'Apply Voucher?',
-        `${offer?.title || voucher.brandName}\n\n` +
-        `Cashback: ${cashbackPercentage}%\n` +
-        `Estimated Cashback: ${currencySymbol}${estimatedCashback}\n` +
-        (maxDiscount ? `Max Cashback: ${currencySymbol}${maxDiscount}\n` : '') +
-        `\nVoucher code copied to clipboard!`,
-        () => router.push({
-          pathname: '/cart' as any,
-          params: { offerRedemptionCode: voucher.code }
-        }),
-        'Go to Checkout'
-      );
-    } catch (error) {
-      logger.error('Error validating voucher:', error);
-      // Fallback to old behavior - just copy code
-      if (!isMounted()) return;
-      await Clipboard.setStringAsync(voucher.code);
-      platformAlertConfirm(
-        'Voucher Code Copied!',
-        `Voucher code "${voucher.code}" has been copied. Apply it at checkout.`,
-        () => router.push('/cart' as any),
-        'Go to Cart'
-      );
-    }
-  }, [cartState.items, currencySymbol, router]);
-
-  const handleShareVoucher = useCallback(async (voucher: UserVoucher) => {
-    try {
-      const message = `🎁 Check out this amazing voucher!\n\n` +
-        `${voucher.brandName} - ${currencySymbol}${voucher.value}\n` +
-        `Code: ${voucher.code}\n` +
-        `Valid till: ${new Date(voucher.expiryDate).toLocaleDateString()}\n\n` +
-        `Download REZ app to get exclusive vouchers and cashback!`;
-
-      await Share.share({
-        message,
-        title: `${voucher.brandName} Voucher`
-      });
-    } catch (error) {
-      logger.error('Error sharing voucher:', error);
-    }
-  }, [currencySymbol]);
+        await Share.share({
+          message,
+          title: `${voucher.brandName} Voucher`,
+        });
+      } catch (error) {
+        logger.error('Error sharing voucher:', error);
+      }
+    },
+    [currencySymbol],
+  );
 
   const handleUseVoucher = useCallback((voucher: UserVoucher) => {
     setSelectedVoucher(voucher);
     setShowQRModal(true);
   }, []);
 
-  const handleUseOnline = useCallback((voucher: UserVoucher) => {
-    // For cashback vouchers (RED-xxx), redirect to apply flow instead
-    if (voucher.voucherType === 'cashback') {
-      platformAlertConfirm(
-        'Cashback Voucher',
-        'This is a cashback voucher. To use it:\n\n' +
-        '1. Add items to your cart\n' +
-        '2. Go to checkout\n' +
-        '3. Your cashback will be credited after purchase\n\n' +
-        'Would you like to apply it now?',
-        () => handleApplyVoucher(voucher),
-        'Apply to Cart'
-      );
-      return;
-    }
+  const handleUseOnline = useCallback(
+    (voucher: UserVoucher) => {
+      // For cashback vouchers (RED-xxx), redirect to apply flow instead
+      if (voucher.voucherType === 'cashback') {
+        platformAlertConfirm(
+          'Cashback Voucher',
+          'This is a cashback voucher. To use it:\n\n' +
+            '1. Add items to your cart\n' +
+            '2. Go to checkout\n' +
+            '3. Your cashback will be credited after purchase\n\n' +
+            'Would you like to apply it now?',
+          () => handleApplyVoucher(voucher),
+          'Apply to Cart',
+        );
+        return;
+      }
 
-    // Show online redemption modal for gift cards
-    setSelectedVoucher(voucher);
-    setShowRedemptionModal(true);
-  }, [handleApplyVoucher]);
+      // Show online redemption modal for gift cards
+      setSelectedVoucher(voucher);
+      setShowRedemptionModal(true);
+    },
+    [handleApplyVoucher],
+  );
 
   const handleMarkAsUsed = async (voucherId: string) => {
     try {
       // Find the voucher to determine its type
-      const voucher = vouchers.find(v => v.id === voucherId);
+      const voucher = vouchers.find((v) => v.id === voucherId);
 
       if (voucher?.voucherType === 'cashback') {
         // For cashback vouchers, use the offer redemption API
         // Note: This should rarely be called since cashback vouchers redirect to checkout
         await realOffersApi.markRedemptionAsUsed(voucherId, {
           orderAmount: 0, // External usage - no order amount tracked
-          usageType: 'external'
+          usageType: 'external',
         });
       } else {
         // For gift cards, use the voucher service API
         await vouchersService.useVoucher(voucherId, {
-          usageLocation: 'online'
+          usageLocation: 'online',
         });
       }
 
@@ -434,182 +449,172 @@ const MyVouchersPage = () => {
     }
   };
 
-  const renderVoucher = useCallback(({ item }: { item: UserVoucher }) => {
-    const isExpired = item.status === 'expired';
-    const isUsed = item.status === 'used';
-    const isActive = item.status === 'active';
+  const renderVoucher = useCallback(
+    ({ item }: { item: UserVoucher }) => {
+      const isExpired = item.status === 'expired';
+      const isUsed = item.status === 'used';
+      const isActive = item.status === 'active';
 
-    return (
-      <Pressable
-        style={[styles.voucherCard, isExpired && styles.expiredCard]}
-
-        disabled={!isActive}
-      >
-        <LinearGradient
-          colors={isActive ? [Colors.warning, colors.brand.orange] : [colors.border.default, colors.text.tertiary]}
-          style={styles.voucherGradient}
-        >
-          {/* Brand Section */}
-          <View style={styles.brandSection}>
-            {item.brandLogo && (item.brandLogo.startsWith('http://') || item.brandLogo.startsWith('https://')) ? (
-              <CachedImage source={item.brandLogo} style={styles.brandLogo} />
-            ) : (
-              <View style={styles.brandLogoPlaceholder}>
-                <Ionicons name="ticket" size={24} color={colors.text.inverse} />
+      return (
+        <Pressable style={[styles.voucherCard, isExpired && styles.expiredCard]} disabled={!isActive}>
+          <LinearGradient
+            colors={isActive ? [Colors.warning, colors.brand.orange] : [colors.border.default, colors.text.tertiary]}
+            style={styles.voucherGradient}
+          >
+            {/* Brand Section */}
+            <View style={styles.brandSection}>
+              {item.brandLogo && (item.brandLogo.startsWith('http://') || item.brandLogo.startsWith('https://')) ? (
+                <CachedImage source={item.brandLogo} style={styles.brandLogo} />
+              ) : (
+                <View style={styles.brandLogoPlaceholder}>
+                  <Ionicons name="ticket" size={24} color={colors.text.inverse} />
+                </View>
+              )}
+              <View style={styles.brandInfo}>
+                <Text style={styles.brandName}>{item.brandName}</Text>
+                <Text style={styles.category}>{item.category}</Text>
               </View>
-            )}
-            <View style={styles.brandInfo}>
-              <Text style={styles.brandName}>{item.brandName}</Text>
-              <Text style={styles.category}>{item.category}</Text>
             </View>
-          </View>
 
-          {/* Value Section */}
-          <View style={styles.valueSection}>
-            <Text style={styles.valueAmount}>
-              {item.category?.includes('Cashback') && !item.usedAt ? `${item.value}%` : `${currencySymbol}${item.value}`}
-            </Text>
-            {isExpired && (
-              <View style={styles.expiredBadge}>
-                <Text style={styles.expiredText}>EXPIRED</Text>
-              </View>
-            )}
-            {isUsed && (
-              <View style={styles.usedBadge}>
-                <Text style={styles.usedText}>USED</Text>
-              </View>
-            )}
-          </View>
-
-          {/* Code Section */}
-          <View style={styles.codeSection}>
-            <View style={styles.codeContainer}>
-              <Text style={styles.codeLabel}>Code:</Text>
-              <Text style={styles.codeText}>{item.code}</Text>
+            {/* Value Section */}
+            <View style={styles.valueSection}>
+              <Text style={styles.valueAmount}>
+                {item.category?.includes('Cashback') && !item.usedAt
+                  ? `${item.value}%`
+                  : `${currencySymbol}${item.value}`}
+              </Text>
+              {isExpired && (
+                <View style={styles.expiredBadge}>
+                  <Text style={styles.expiredText}>EXPIRED</Text>
+                </View>
+              )}
+              {isUsed && (
+                <View style={styles.usedBadge}>
+                  <Text style={styles.usedText}>USED</Text>
+                </View>
+              )}
             </View>
-            <Pressable
-              style={styles.copyButton}
-              onPress={() => handleCopyCode(item.code)}
-            >
-              <Ionicons name="copy-outline" size={18} color={colors.text.inverse} />
-            </Pressable>
-          </View>
 
-          {/* Description */}
-          <Text style={styles.description}>{item.description}</Text>
+            {/* Code Section */}
+            <View style={styles.codeSection}>
+              <View style={styles.codeContainer}>
+                <Text style={styles.codeLabel}>Code:</Text>
+                <Text style={styles.codeText}>{item.code}</Text>
+              </View>
+              <Pressable style={styles.copyButton} onPress={() => handleCopyCode(item.code)}>
+                <Ionicons name="copy-outline" size={18} color={colors.text.inverse} />
+              </Pressable>
+            </View>
 
-          {/* Coupon Applicability - Only for spin wheel coupons with metadata */}
-          {item.metadata && item.metadata.storeName && (
-            <View style={styles.applicabilityContainer}>
-              <View style={styles.applicabilityHeader}>
-                <Ionicons
-                  name={item.metadata.isProductSpecific ? "cube-outline" : "storefront-outline"}
-                  size={16}
-                  color="rgba(255, 255, 255, 0.9)"
-                />
-                <Text style={styles.applicabilityTitle}>
-                  {item.metadata.isProductSpecific ? 'Product-Specific Coupon' : 'Store-Wide Coupon'}
+            {/* Description */}
+            <Text style={styles.description}>{item.description}</Text>
+
+            {/* Coupon Applicability - Only for spin wheel coupons with metadata */}
+            {item.metadata && item.metadata.storeName && (
+              <View style={styles.applicabilityContainer}>
+                <View style={styles.applicabilityHeader}>
+                  <Ionicons
+                    name={item.metadata.isProductSpecific ? 'cube-outline' : 'storefront-outline'}
+                    size={16}
+                    color="rgba(255, 255, 255, 0.9)"
+                  />
+                  <Text style={styles.applicabilityTitle}>
+                    {item.metadata.isProductSpecific ? 'Product-Specific Coupon' : 'Store-Wide Coupon'}
+                  </Text>
+                </View>
+                <Text style={styles.applicabilityText}>
+                  {item.metadata.isProductSpecific
+                    ? `Valid only on ${item.metadata.productName} from ${item.metadata.storeName}`
+                    : `Valid on any product from ${item.metadata.storeName}`}
                 </Text>
               </View>
-              <Text style={styles.applicabilityText}>
-                {item.metadata.isProductSpecific
-                  ? `Valid only on ${item.metadata.productName} from ${item.metadata.storeName}`
-                  : `Valid on any product from ${item.metadata.storeName}`}
-              </Text>
-            </View>
-          )}
+            )}
 
-          {/* Terms & Conditions - Only for cashback offers */}
-          {item.restrictions && (item.restrictions.minOrderValue || item.restrictions.maxDiscountAmount) && (
-            <View style={styles.termsContainer}>
-              <Text style={styles.termsTitle}>Terms & Conditions:</Text>
-              {item.restrictions.minOrderValue && (
-                <View style={styles.termItem}>
-                  <Ionicons name="checkmark-circle" size={14} color="rgba(255, 255, 255, 0.9)" />
-                  <Text style={styles.termText}>
-                    Min. order: {currencySymbol}{item.restrictions.minOrderValue}
-                  </Text>
-                </View>
-              )}
-              {item.restrictions.maxDiscountAmount && (
-                <View style={styles.termItem}>
-                  <Ionicons name="checkmark-circle" size={14} color="rgba(255, 255, 255, 0.9)" />
-                  <Text style={styles.termText}>
-                    Max. discount: {currencySymbol}{item.restrictions.maxDiscountAmount}
-                  </Text>
-                </View>
-              )}
-              {item.restrictions.usageLimitPerUser && (
-                <View style={styles.termItem}>
-                  <Ionicons name="checkmark-circle" size={14} color="rgba(255, 255, 255, 0.9)" />
-                  <Text style={styles.termText}>
-                    Can be used {item.restrictions.usageLimitPerUser} time{item.restrictions.usageLimitPerUser > 1 ? 's' : ''} per user
-                  </Text>
-                </View>
-              )}
-            </View>
-          )}
-
-          {/* Expiry Date */}
-          <Text style={styles.expiryDate}>
-            Valid till: {new Date(item.expiryDate).toLocaleDateString()}
-          </Text>
-
-          {/* Action Buttons */}
-          {isActive && (
-            <View style={styles.actionButtonsContainer}>
-              <View style={styles.actionButtons}>
-                <Pressable
-                  style={styles.applyButton}
-                  onPress={() => handleApplyVoucher(item)}
-                >
-                  <Ionicons name="cart-outline" size={16} color={Colors.warning} />
-                  <Text style={styles.applyButtonText}>Apply to Cart</Text>
-                </Pressable>
-
-                <Pressable
-                  style={styles.shareButton}
-                  onPress={() => handleShareVoucher(item)}
-                >
-                  <Ionicons name="share-social-outline" size={18} color={Colors.warning} />
-                </Pressable>
-              </View>
-
-              <View style={styles.actionButtonsRow}>
-                {item.voucherType === 'cashback' ? (
-                  // Cashback vouchers - show checkout flow button
-                  <Pressable
-                    style={[styles.useVoucherButton, styles.useOnlineButton, { flex: 1 }]}
-                    onPress={() => handleApplyVoucher(item)}
-                  >
-                    <Ionicons name="cart-outline" size={18} color={colors.text.inverse} />
-                    <Text style={styles.useVoucherButtonText}>Use at Checkout</Text>
-                  </Pressable>
-                ) : (
-                  // Gift cards - show online redemption option
-                  <Pressable
-                    style={[styles.useVoucherButton, styles.useOnlineButton]}
-                    onPress={() => handleUseOnline(item)}
-                  >
-                    <Ionicons name="globe-outline" size={18} color={colors.text.inverse} />
-                    <Text style={styles.useVoucherButtonText}>Use Online</Text>
-                  </Pressable>
+            {/* Terms & Conditions - Only for cashback offers */}
+            {item.restrictions && (item.restrictions.minOrderValue || item.restrictions.maxDiscountAmount) && (
+              <View style={styles.termsContainer}>
+                <Text style={styles.termsTitle}>Terms & Conditions:</Text>
+                {item.restrictions.minOrderValue && (
+                  <View style={styles.termItem}>
+                    <Ionicons name="checkmark-circle" size={14} color="rgba(255, 255, 255, 0.9)" />
+                    <Text style={styles.termText}>
+                      Min. order: {currencySymbol}
+                      {item.restrictions.minOrderValue}
+                    </Text>
+                  </View>
                 )}
-
-                <Pressable
-                  style={styles.useVoucherButton}
-                  onPress={() => handleUseVoucher(item)}
-                >
-                  <Ionicons name="qr-code-outline" size={18} color={colors.text.inverse} />
-                  <Text style={styles.useVoucherButtonText}>Use at Store</Text>
-                </Pressable>
+                {item.restrictions.maxDiscountAmount && (
+                  <View style={styles.termItem}>
+                    <Ionicons name="checkmark-circle" size={14} color="rgba(255, 255, 255, 0.9)" />
+                    <Text style={styles.termText}>
+                      Max. discount: {currencySymbol}
+                      {item.restrictions.maxDiscountAmount}
+                    </Text>
+                  </View>
+                )}
+                {item.restrictions.usageLimitPerUser && (
+                  <View style={styles.termItem}>
+                    <Ionicons name="checkmark-circle" size={14} color="rgba(255, 255, 255, 0.9)" />
+                    <Text style={styles.termText}>
+                      Can be used {item.restrictions.usageLimitPerUser} time
+                      {item.restrictions.usageLimitPerUser > 1 ? 's' : ''} per user
+                    </Text>
+                  </View>
+                )}
               </View>
-            </View>
-          )}
-        </LinearGradient>
-      </Pressable>
-    );
-  }, [currencySymbol, handleCopyCode, handleApplyVoucher, handleShareVoucher, handleUseOnline, handleUseVoucher]);
+            )}
+
+            {/* Expiry Date */}
+            <Text style={styles.expiryDate}>Valid till: {new Date(item.expiryDate).toLocaleDateString()}</Text>
+
+            {/* Action Buttons */}
+            {isActive && (
+              <View style={styles.actionButtonsContainer}>
+                <View style={styles.actionButtons}>
+                  <Pressable style={styles.applyButton} onPress={() => handleApplyVoucher(item)}>
+                    <Ionicons name="cart-outline" size={16} color={Colors.warning} />
+                    <Text style={styles.applyButtonText}>Apply to Cart</Text>
+                  </Pressable>
+
+                  <Pressable style={styles.shareButton} onPress={() => handleShareVoucher(item)}>
+                    <Ionicons name="share-social-outline" size={18} color={Colors.warning} />
+                  </Pressable>
+                </View>
+
+                <View style={styles.actionButtonsRow}>
+                  {item.voucherType === 'cashback' ? (
+                    // Cashback vouchers - show checkout flow button
+                    <Pressable
+                      style={[styles.useVoucherButton, styles.useOnlineButton, { flex: 1 }]}
+                      onPress={() => handleApplyVoucher(item)}
+                    >
+                      <Ionicons name="cart-outline" size={18} color={colors.text.inverse} />
+                      <Text style={styles.useVoucherButtonText}>Use at Checkout</Text>
+                    </Pressable>
+                  ) : (
+                    // Gift cards - show online redemption option
+                    <Pressable
+                      style={[styles.useVoucherButton, styles.useOnlineButton]}
+                      onPress={() => handleUseOnline(item)}
+                    >
+                      <Ionicons name="globe-outline" size={18} color={colors.text.inverse} />
+                      <Text style={styles.useVoucherButtonText}>Use Online</Text>
+                    </Pressable>
+                  )}
+
+                  <Pressable style={styles.useVoucherButton} onPress={() => handleUseVoucher(item)}>
+                    <Ionicons name="qr-code-outline" size={18} color={colors.text.inverse} />
+                    <Text style={styles.useVoucherButtonText}>Use at Store</Text>
+                  </Pressable>
+                </View>
+              </View>
+            )}
+          </LinearGradient>
+        </Pressable>
+      );
+    },
+    [currencySymbol, handleCopyCode, handleApplyVoucher, handleShareVoucher, handleUseOnline, handleUseVoucher],
+  );
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
@@ -665,16 +670,9 @@ const MyVouchersPage = () => {
       {/* Header */}
       <LinearGradient colors={[Colors.warning, colors.brand.orange]} style={styles.header}>
         <View style={styles.headerContent}>
-          <HeaderBackButton
-            onPress={handleBackPress}
-            iconColor={colors.background.primary}
-            style={styles.backButton}
-          />
+          <HeaderBackButton onPress={handleBackPress} iconColor={colors.background.primary} style={styles.backButton} />
           <Text style={styles.headerTitle}>My Vouchers</Text>
-          <Pressable
-            style={styles.addButton}
-            onPress={() => router.push('/online-voucher' as any)}
-          >
+          <Pressable style={styles.addButton} onPress={() => router.push('/online-voucher' as any)}>
             <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
@@ -687,14 +685,7 @@ const MyVouchersPage = () => {
               style={[styles.tab, activeTab === tab.key && styles.activeTab]}
               onPress={() => setActiveTab(tab.key)}
             >
-              <Text
-                style={[
-                  styles.tabText,
-                  activeTab === tab.key && styles.activeTabText,
-                ]}
-              >
-                {tab.label}
-              </Text>
+              <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>{tab.label}</Text>
             </Pressable>
           ))}
         </View>
@@ -721,9 +712,7 @@ const MyVouchersPage = () => {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
           estimatedItemSize={140}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
           ListEmptyComponent={renderEmptyState}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.3}

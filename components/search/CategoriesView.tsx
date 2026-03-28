@@ -145,7 +145,7 @@ function CategoriesView({
 
           {/* Premium Categories Grid */}
           <View style={styles.categoriesGrid}>
-            {section.categories.map((category) => (
+            {(section.categories ?? []).map((category) => (
               <Pressable
                 key={category.id}
                 style={styles.categoryCard}

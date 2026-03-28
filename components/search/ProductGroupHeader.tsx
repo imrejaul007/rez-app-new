@@ -20,7 +20,7 @@ function ProductGroupHeader({ product }: ProductGroupHeaderProps) {
           />
         )}
         <View style={styles.textContainer}>
-          <Text style={styles.productName}>{product.productName}</Text>
+          <Text style={styles.productName}>{product.productName ?? 'Product'}</Text>
           <Text style={styles.sellerCount}>
             {product.sellerCount} {product.sellerCount === 1 ? 'seller' : 'sellers'} available
           </Text>

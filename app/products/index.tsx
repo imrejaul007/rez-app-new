@@ -30,19 +30,22 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 // Category configurations
-const categoryConfigs: Record<string, {
-  title: string;
-  color: string;
-  tags: string[];
-  icon: string;
-}> = {
+const categoryConfigs: Record<
+  string,
+  {
+    title: string;
+    color: string;
+    tags: string[];
+    icon: string;
+  }
+> = {
   'beauty-wellness': {
     title: 'Beauty Products',
     color: colors.brand.pink,
     tags: ['beauty', 'cosmetics', 'skincare', 'makeup'],
     icon: '💄',
   },
-  'fashion': {
+  fashion: {
     title: 'Fashion',
     color: colors.brand.purple,
     tags: ['fashion', 'clothing', 'apparel', 'accessories'],
@@ -54,13 +57,13 @@ const categoryConfigs: Record<string, {
     tags: ['grocery', 'food', 'essentials'],
     icon: '🛒',
   },
-  'healthcare': {
+  healthcare: {
     title: 'Healthcare Products',
     color: colors.error,
     tags: ['healthcare', 'medicine', 'supplements'],
     icon: '💊',
   },
-  'default': {
+  default: {
     title: 'All Products',
     color: colors.gold,
     tags: [],
@@ -136,9 +139,7 @@ const ProductsPage: React.FC = () => {
       price: salePrice,
       originalPrice: basePrice,
       discount,
-      cashback: product.cashback?.percentage
-        ? `${product.cashback.percentage}%`
-        : '10%',
+      cashback: product.cashback?.percentage ? `${product.cashback.percentage}%` : '10%',
       image: product.images?.[0]?.url || product.images?.[0] || product.image,
       inStock: product.inventory?.quantity > 0 || product.inStock !== false,
     };
@@ -196,10 +197,10 @@ const ProductsPage: React.FC = () => {
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
-        product =>
+        (product) =>
           product.name.toLowerCase().includes(query) ||
           product.brand.toLowerCase().includes(query) ||
-          product.category.toLowerCase().includes(query)
+          product.category.toLowerCase().includes(query),
       );
     }
 
@@ -212,7 +213,7 @@ const ProductsPage: React.FC = () => {
       // In a real app, sort by date added
       result = result.slice().reverse();
     } else if (selectedFilter === 'on-sale') {
-      result = result.filter(product => product.discount > 0);
+      result = result.filter((product) => product.discount > 0);
     }
 
     // Apply sorting
@@ -231,12 +232,12 @@ const ProductsPage: React.FC = () => {
 
   // Handle product press
   const handleProductPress = (product: DisplayProduct) => {
-    router.push(`/product-page?productId=${product.id}` as any);
+    router.push(`/product-page?cardId=${product.id}&cardType=product` as any);
   };
 
   // Handle add to cart
   const handleAddToCart = (product: DisplayProduct) => {
-    router.push(`/product-page?productId=${product.id}&action=buy` as any);
+    router.push(`/product-page?cardId=${product.id}&cardType=product&action=buy` as any);
   };
 
   // Loading state
@@ -251,16 +252,18 @@ const ProductsPage: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient
-        colors={[config.color, config.color + 'DD']}
-        style={styles.header}
-      >
+      <LinearGradient colors={[config.color, config.color + 'DD']} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle}>{config.icon} {config.title}</Text>
+            <Text style={styles.headerTitle}>
+              {config.icon} {config.title}
+            </Text>
             <Text style={styles.headerSubtitle}>{filteredProducts.length} products available</Text>
           </View>
           <Pressable onPress={() => router.push('/cart' as any)} style={styles.cartButton}>
@@ -293,20 +296,14 @@ const ProductsPage: React.FC = () => {
             <Pressable
               key={filter.id}
               onPress={() => setSelectedFilter(filter.id)}
-              style={[
-                styles.filterChip,
-                selectedFilter === filter.id && { backgroundColor: config.color }
-              ]}
+              style={[styles.filterChip, selectedFilter === filter.id && { backgroundColor: config.color }]}
             >
               <Ionicons
                 name={filter.icon as any}
                 size={14}
                 color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />
-              <Text style={[
-                styles.filterChipText,
-                selectedFilter === filter.id && styles.filterChipTextActive
-              ]}>
+              <Text style={[styles.filterChipText, selectedFilter === filter.id && styles.filterChipTextActive]}>
                 {filter.label}
               </Text>
             </Pressable>
@@ -322,15 +319,9 @@ const ProductsPage: React.FC = () => {
             <Pressable
               key={option.id}
               onPress={() => setSortBy(option.id as any)}
-              style={[
-                styles.sortChip,
-                sortBy === option.id && styles.sortChipActive
-              ]}
+              style={[styles.sortChip, sortBy === option.id && styles.sortChipActive]}
             >
-              <Text style={[
-                styles.sortChipText,
-                sortBy === option.id && styles.sortChipTextActive
-              ]}>
+              <Text style={[styles.sortChipText, sortBy === option.id && styles.sortChipTextActive]}>
                 {option.label}
               </Text>
             </Pressable>
@@ -341,13 +332,7 @@ const ProductsPage: React.FC = () => {
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            colors={[config.color]}
-          />
-        }
+        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} colors={[config.color]} />}
       >
         {/* Error State */}
         {error && (
@@ -366,7 +351,7 @@ const ProductsPage: React.FC = () => {
             <Text style={styles.emptyIcon}>🛍️</Text>
             <Text style={styles.emptyTitle}>No Products Found</Text>
             <Text style={styles.emptySubtitle}>
-              {searchQuery ? 'Try a different search term' : 'We\'re adding more products soon!'}
+              {searchQuery ? 'Try a different search term' : "We're adding more products soon!"}
             </Text>
           </View>
         )}
@@ -375,12 +360,7 @@ const ProductsPage: React.FC = () => {
         {filteredProducts.length > 0 && (
           <View style={styles.productsGrid}>
             {filteredProducts.map((product) => (
-              <Pressable
-                key={product.id}
-                style={styles.productCard}
-                onPress={() => handleProductPress(product)}
-               
-              >
+              <Pressable key={product.id} style={styles.productCard} onPress={() => handleProductPress(product)}>
                 <View style={styles.productImageContainer}>
                   <CachedImage source={product.image} style={styles.productImage} />
 
@@ -406,7 +386,9 @@ const ProductsPage: React.FC = () => {
 
                 <View style={styles.productInfo}>
                   <Text style={styles.productBrand}>{product.brand}</Text>
-                  <Text style={styles.productName} numberOfLines={2}>{product.name}</Text>
+                  <Text style={styles.productName} numberOfLines={2}>
+                    {product.name}
+                  </Text>
 
                   <View style={styles.ratingContainer}>
                     <Ionicons name="star" size={12} color={Colors.warning} />
@@ -415,24 +397,27 @@ const ProductsPage: React.FC = () => {
                   </View>
 
                   <View style={styles.priceContainer}>
-                    <Text style={styles.price}>{currencySymbol}{product.price.toLocaleString()}</Text>
+                    <Text style={styles.price}>
+                      {currencySymbol}
+                      {product.price.toLocaleString()}
+                    </Text>
                     {product.discount > 0 && (
-                      <Text style={styles.originalPrice}>{currencySymbol}{product.originalPrice.toLocaleString()}</Text>
+                      <Text style={styles.originalPrice}>
+                        {currencySymbol}
+                        {product.originalPrice.toLocaleString()}
+                      </Text>
                     )}
                   </View>
 
                   <Pressable
                     style={[
                       styles.addToCartButton,
-                      { backgroundColor: product.inStock ? config.color : colors.border.default }
+                      { backgroundColor: product.inStock ? config.color : colors.border.default },
                     ]}
                     onPress={() => product.inStock && handleAddToCart(product)}
                     disabled={!product.inStock}
                   >
-                    <Text style={[
-                      styles.addToCartText,
-                      !product.inStock && { color: colors.text.tertiary }
-                    ]}>
+                    <Text style={[styles.addToCartText, !product.inStock && { color: colors.text.tertiary }]}>
                       {product.inStock ? 'Add to Cart' : 'Notify Me'}
                     </Text>
                   </Pressable>

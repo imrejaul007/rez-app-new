@@ -44,8 +44,20 @@ function buildTimelineSteps(tx: TransactionResponse): TimelineStep[] {
 
   return [
     { label: 'Transaction Recorded', isComplete: true, isCurrent: false, timestamp: tx.createdAt },
-    { label: 'Verification', isComplete: isCompleted, isCurrent: isPending, estimate: isPending ? '~1-2 hours' : undefined, timestamp: isCompleted ? tx.createdAt : undefined },
-    { label: 'Credited to Wallet', isComplete: isCompleted, isCurrent: false, timestamp: isCompleted ? tx.createdAt : undefined, estimate: !isCompleted ? '~24 hours' : undefined },
+    {
+      label: 'Verification',
+      isComplete: isCompleted,
+      isCurrent: isPending,
+      estimate: isPending ? '~1-2 hours' : undefined,
+      timestamp: isCompleted ? tx.createdAt : undefined,
+    },
+    {
+      label: 'Credited to Wallet',
+      isComplete: isCompleted,
+      isCurrent: false,
+      timestamp: isCompleted ? tx.createdAt : undefined,
+      estimate: !isCompleted ? '~24 hours' : undefined,
+    },
   ];
 }
 
@@ -53,18 +65,27 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress,
   const getTransactionIcon = (category: string, type: string) => {
     if (type === 'credit') {
       switch (category) {
-        case 'topup': return 'add-circle';
-        case 'cashback': return 'cash';
-        case 'bonus': return 'gift';
-        case 'refund': return 'return-up-back';
-        default: return 'arrow-down-circle';
+        case 'topup':
+          return 'add-circle';
+        case 'cashback':
+          return 'cash';
+        case 'bonus':
+          return 'gift';
+        case 'refund':
+          return 'return-up-back';
+        default:
+          return 'arrow-down-circle';
       }
     } else {
       switch (category) {
-        case 'spending': return 'card';
-        case 'withdrawal': return 'arrow-up-circle';
-        case 'penalty': return 'warning';
-        default: return 'arrow-up-circle';
+        case 'spending':
+          return 'card';
+        case 'withdrawal':
+          return 'arrow-up-circle';
+        case 'penalty':
+          return 'warning';
+        default:
+          return 'arrow-up-circle';
       }
     }
   };
@@ -87,75 +108,86 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress,
     if (diffDays === 1) return 'Today';
     if (diffDays === 2) return 'Yesterday';
     if (diffDays <= 7) return `${diffDays - 1} days ago`;
-    
+
     return date.toLocaleDateString();
   };
 
   return (
     <>
-    <Pressable
-      style={styles.transactionItem}
-      onPress={() => {
-        const steps = buildTimelineSteps(transaction);
-        if (steps.length > 0 && onToggleExpand) {
-          onToggleExpand();
-        } else {
-          onPress(transaction);
-        }
-      }}
-    >
-      <View style={styles.transactionIcon}>
-        <Ionicons 
-          name={getTransactionIcon(transaction.category, transaction.type) as any}
-          size={24} 
-          color={getTransactionColor(transaction.type)} 
-        />
-      </View>
-      
-      <View style={styles.transactionContent}>
-        <Text style={styles.transactionTitle} numberOfLines={1}>
-          {transaction.description}
-        </Text>
-        <Text style={styles.transactionDate}>
-          {formatDate(transaction.createdAt)}
-        </Text>
-        <View style={styles.transactionStatus}>
-          <View style={[
-            styles.statusBadge,
-            { backgroundColor: transaction.status.current === 'completed' ? colors.tint.green : colors.tint.amberLight }
-          ]}>
-            <Text style={[
-              styles.statusText,
-              { color: transaction.status.current === 'completed' ? '#065F46' : colors.brand.amberDark }
-            ]}>
-              {transaction.status.current.toUpperCase()}
-            </Text>
+      <Pressable
+        style={styles.transactionItem}
+        onPress={() => {
+          const steps = buildTimelineSteps(transaction);
+          if (steps.length > 0 && onToggleExpand) {
+            onToggleExpand();
+          } else {
+            onPress(transaction);
+          }
+        }}
+      >
+        <View style={styles.transactionIcon}>
+          <Ionicons
+            name={getTransactionIcon(transaction.category, transaction.type) as any}
+            size={24}
+            color={getTransactionColor(transaction.type)}
+          />
+        </View>
+
+        <View style={styles.transactionContent}>
+          <Text style={styles.transactionTitle} numberOfLines={1}>
+            {transaction.description}
+          </Text>
+          <Text style={styles.transactionDate}>{formatDate(transaction.createdAt)}</Text>
+          <View style={styles.transactionStatus}>
+            <View
+              style={[
+                styles.statusBadge,
+                {
+                  backgroundColor:
+                    transaction.status.current === 'completed' ? colors.tint.green : colors.tint.amberLight,
+                },
+              ]}
+            >
+              <Text
+                style={[
+                  styles.statusText,
+                  { color: transaction.status.current === 'completed' ? '#065F46' : colors.brand.amberDark },
+                ]}
+              >
+                {transaction.status.current.toUpperCase()}
+              </Text>
+            </View>
           </View>
         </View>
-      </View>
-      
-      <View style={styles.transactionAmount}>
-        <Text style={[
-          styles.amountText,
-          { color: getTransactionColor(transaction.type) }
-        ]}>
-          {formatAmount(transaction.amount, transaction.currency, transaction.type)}
-        </Text>
-        <Text style={styles.balanceText}>
-          Balance: {transaction.currency} {transaction.balanceAfter.toLocaleString()}
-        </Text>
-      </View>
-      
-      <Ionicons name={isExpanded ? "chevron-down" : "chevron-forward"} size={20} color={colors.border.default} />
-    </Pressable>
-    {isExpanded && (() => {
-      const steps = buildTimelineSteps(transaction);
-      return steps.length > 0 ? (
-        <View style={{ paddingHorizontal: 16, paddingBottom: 12, backgroundColor: colors.neutral[50], borderBottomLeftRadius: 12, borderBottomRightRadius: 12 }}>
-          <CashbackTimeline steps={steps} />
+
+        <View style={styles.transactionAmount}>
+          <Text style={[styles.amountText, { color: getTransactionColor(transaction.type) }]}>
+            {formatAmount(transaction.amount, transaction.currency, transaction.type)}
+          </Text>
+          <Text style={styles.balanceText}>
+            Balance: {transaction.currency} {transaction.balanceAfter.toLocaleString()}
+          </Text>
         </View>
-      ) : null;
-    })()}
+
+        <Ionicons name={isExpanded ? 'chevron-down' : 'chevron-forward'} size={20} color={colors.border.default} />
+      </Pressable>
+      {isExpanded &&
+        (() => {
+          const steps = buildTimelineSteps(transaction);
+          return steps.length > 0 ? (
+            <View
+              style={{
+                paddingHorizontal: 16,
+                paddingBottom: 12,
+                backgroundColor: colors.neutral[50],
+                borderBottomLeftRadius: 12,
+                borderBottomRightRadius: 12,
+              }}
+            >
+              <CashbackTimeline steps={steps} />
+            </View>
+          ) : null;
+        })()}
     </>
   );
 };
@@ -182,43 +214,48 @@ function TransactionsPage() {
     hasPrev: false,
   });
 
-  const loadTransactions = useCallback(async (page = 1, refresh = false) => {
-    try {
-      if (refresh) {
-        setIsRefreshing(true);
-      } else {
-        setIsLoading(true);
-      }
-      setError(null);
+  const isMounted = useIsMounted();
 
-      const response = await walletApi.getTransactions({
-        ...filters,
-        page,
-      });
-
-      if (response.success && response.data) {
-        if (page === 1) {
-          if (!isMounted()) return;
-          setTransactions(response.data.transactions);
+  const loadTransactions = useCallback(
+    async (page = 1, refresh = false) => {
+      try {
+        if (refresh) {
+          setIsRefreshing(true);
         } else {
-          if (!isMounted()) return;
-          setTransactions(prev => [...prev, ...response.data!.transactions]);
+          setIsLoading(true);
         }
+        setError(null);
+
+        const response = await walletApi.getTransactions({
+          ...filters,
+          page,
+        });
+
         if (!isMounted()) return;
-        setPagination(response.data.pagination);
-      } else {
-        throw new Error(response.error || 'Failed to load transactions');
+
+        if (response.success && response.data) {
+          if (page === 1) {
+            setTransactions(response.data.transactions);
+          } else {
+            setTransactions((prev) => [...prev, ...response.data!.transactions]);
+          }
+          setPagination(response.data.pagination);
+        } else {
+          throw new Error(response.message || response.error || 'Failed to load transactions');
+        }
+      } catch (err) {
+        if (isMounted()) {
+          setError(err instanceof Error ? err.message : 'Failed to load transactions');
+        }
+      } finally {
+        if (isMounted()) {
+          setIsLoading(false);
+          setIsRefreshing(false);
+        }
       }
-    } catch (err) {
-      if (!isMounted()) return;
-      setError(err instanceof Error ? err.message : 'Failed to load transactions');
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-    }
-  }, [filters]);
+    },
+    [filters, isMounted],
+  );
 
   const handleRefresh = useCallback(() => {
     loadTransactions(1, true);
@@ -239,23 +276,25 @@ function TransactionsPage() {
   }, [router]);
 
   const handleFilterChange = useCallback((newFilters: Partial<TransactionFilters>) => {
-    setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
+    setFilters((prev) => ({ ...prev, ...newFilters, page: 1 }));
     setShowFilters(false);
   }, []);
-  const isMounted = useIsMounted();
 
   useEffect(() => {
     loadTransactions();
   }, [loadTransactions]);
 
-  const renderTransactionItem = useCallback(({ item }: { item: TransactionResponse }) => (
-    <TransactionItem
-      transaction={item}
-      onPress={handleTransactionPress}
-      isExpanded={expandedTxId === item.id}
-      onToggleExpand={() => setExpandedTxId(prev => prev === item.id ? null : item.id)}
-    />
-  ), [handleTransactionPress, expandedTxId]);
+  const renderTransactionItem = useCallback(
+    ({ item }: { item: TransactionResponse }) => (
+      <TransactionItem
+        transaction={item}
+        onPress={handleTransactionPress}
+        isExpanded={expandedTxId === item.id}
+        onToggleExpand={() => setExpandedTxId((prev) => (prev === item.id ? null : item.id))}
+      />
+    ),
+    [handleTransactionPress, expandedTxId],
+  );
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
@@ -291,10 +330,7 @@ function TransactionsPage() {
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>Transaction History</Text>
-          <Pressable 
-            style={styles.filterButton} 
-            onPress={() => setShowFilters(true)}
-          >
+          <Pressable style={styles.filterButton} onPress={() => setShowFilters(true)}>
             <Ionicons name="filter" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
@@ -349,21 +385,15 @@ function TransactionsPage() {
                     <Ionicons name="close" size={24} color={colors.text.tertiary} />
                   </Pressable>
                 </View>
-                
+
                 <View style={styles.modalBody}>
-                  <Text style={styles.modalDescription}>
-                    {selectedTransaction.description}
-                  </Text>
+                  <Text style={styles.modalDescription}>{selectedTransaction.description}</Text>
                   <Text style={styles.modalAmount}>
                     {selectedTransaction.type === 'credit' ? '+' : '-'}
                     {selectedTransaction.currency} {selectedTransaction.amount.toLocaleString()}
                   </Text>
-                  <Text style={styles.modalDate}>
-                    {new Date(selectedTransaction.createdAt).toLocaleString()}
-                  </Text>
-                  <Text style={styles.modalStatus}>
-                    Status: {selectedTransaction.status.current.toUpperCase()}
-                  </Text>
+                  <Text style={styles.modalDate}>{new Date(selectedTransaction.createdAt).toLocaleString()}</Text>
+                  <Text style={styles.modalStatus}>Status: {selectedTransaction.status.current.toUpperCase()}</Text>
                 </View>
               </>
             )}

@@ -43,10 +43,11 @@ interface SearchResultsViewProps {
 }
 
 function StoreCard({ store }: { store: any }) {
+  const storeId = store.storeId || store._id || store.id;
   return (
     <Pressable
       style={styles.storeResultCard}
-      onPress={() => router.push(`/MainStorePage?storeId=${store.storeId}`)}
+      onPress={() => storeId && router.push(`/MainStorePage?storeId=${storeId}`)}
     >
       <View style={styles.storeResultContent}>
         {store.logo ? (
@@ -259,17 +260,17 @@ function SearchResultsView({
                 <LinearGradient
                   colors={[NUQTA.lavenderMist, NUQTA.lavenderDark]}
                   style={styles.resultImagePlaceholder}
-                  accessibilityLabel={`${result.title} placeholder image`}
+                  accessibilityLabel={`${result.title ?? 'Product'} placeholder image`}
                 >
-                  <Text style={styles.resultImageText}>{result.title.charAt(0)}</Text>
+                  <Text style={styles.resultImageText}>{result.title?.charAt(0) ?? '?'}</Text>
                 </LinearGradient>
               )}
             </View>
 
             <View style={styles.resultInfo}>
-              <Text style={styles.resultTitle} numberOfLines={2}>{result.title}</Text>
+              <Text style={styles.resultTitle} numberOfLines={2}>{result.title ?? ''}</Text>
               <Text style={styles.resultDescription} numberOfLines={2}>
-                {result.description}
+                {result.description ?? ''}
               </Text>
               {result.cashbackPercentage > 0 && (
                 <Text style={styles.resultSaveAmount}>

@@ -155,13 +155,13 @@ const MyEarningsPage = () => {
         if (!isMounted()) return;
         setError('Failed to load earnings. Please try again.');
       } finally {
-        if (!isMounted()) return;
-        setLoading(false);
-        if (!isMounted()) return;
-        setRefreshing(false);
+        if (isMounted()) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       }
     },
-    [authLoading, isAuthenticated, selectedPeriod, refreshing],
+    [authLoading, isAuthenticated, selectedPeriod, refreshing, isMounted],
   );
 
   useEffect(() => {

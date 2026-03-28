@@ -69,7 +69,11 @@ function TransferPage() {
   const [idempotencyKey, setIdempotencyKey] = useState(() => generateIdempotencyKey('transfer'));
   const submittingRef = useRef(false);
   const mountedRef = useRef(true);
-  useEffect(() => { return () => { mountedRef.current = false; }; }, []);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   // Fetch recent recipients (and re-fetch on search)
   const fetchRecipients = useCallback(async (search?: string) => {
@@ -77,12 +81,14 @@ function TransferPage() {
     try {
       const res = await walletApi.getRecentRecipients(search || undefined);
       const list = res.data?.recipients || [];
-      setRecipients(list.map((r: any) => ({
-        id: r._id || r.id,
-        name: r.fullName || r.name || r.phoneNumber || r.phone || 'User',
-        phone: r.phoneNumber || r.phone || '',
-        avatar: r.avatar,
-      })));
+      setRecipients(
+        list.map((r: any) => ({
+          id: r._id || r.id,
+          name: r.fullName || r.name || r.phoneNumber || r.phone || 'User',
+          phone: r.phoneNumber || r.phone || '',
+          avatar: r.avatar,
+        })),
+      );
     } catch (error) {
       setRecipients([]);
     } finally {
@@ -176,7 +182,9 @@ function TransferPage() {
     platformAlertConfirm(
       'Confirm Transfer',
       `Send ${numAmount.toLocaleString()} ${BRAND.CURRENCY_CODE} to ${recipientName}?`,
-      () => { executeTransfer(); },
+      () => {
+        executeTransfer();
+      },
       'Send',
       'Cancel',
     );
@@ -202,7 +210,7 @@ function TransferPage() {
         recipientId: selectedRecipient.id,
         recipientPhone: selectedRecipient.phone,
         amount: numAmount,
-        coinType: 'nuqta',
+        coinType: 'rez',
         note: note || undefined,
         idempotencyKey,
       });
@@ -231,7 +239,10 @@ function TransferPage() {
       if (parsed.code === 'REAUTH_REQUIRED') {
         setPendingTransferId('');
         setStep('otp');
-        platformAlertSimple('Verification Required', `Transfers above ${parsed.threshold || 5000} ${BRAND.CURRENCY_CODE} require OTP verification.`);
+        platformAlertSimple(
+          'Verification Required',
+          `Transfers above ${parsed.threshold || 5000} ${BRAND.CURRENCY_CODE} require OTP verification.`,
+        );
       } else {
         handleWalletError(error, 'Transfer Failed');
       }
@@ -255,7 +266,7 @@ function TransferPage() {
           recipientId: selectedRecipient.id,
           recipientPhone: selectedRecipient.phone,
           amount: Number(amount),
-          coinType: 'nuqta',
+          coinType: 'rez',
           note: note || undefined,
           idempotencyKey,
         });
@@ -319,35 +330,23 @@ function TransferPage() {
 
       {/* Recent Recipients */}
       <View style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>
-          {searchQuery ? 'Results' : 'Recent'}
-        </ThemedText>
+        <ThemedText style={styles.sectionTitle}>{searchQuery ? 'Results' : 'Recent'}</ThemedText>
         {recipientsLoading ? (
           <ActivityIndicator color={Colors.primary[600]} style={{ marginVertical: Spacing.lg }} />
         ) : recipients.length === 0 ? (
           <View style={styles.emptyState}>
             <Ionicons name="people-outline" size={40} color={colors.text.tertiary} />
-            <ThemedText style={styles.emptyText}>
-              {searchQuery ? 'No users found' : 'No recent recipients'}
-            </ThemedText>
+            <ThemedText style={styles.emptyText}>{searchQuery ? 'No users found' : 'No recent recipients'}</ThemedText>
           </View>
         ) : (
-          recipients.map(recipient => (
-            <Pressable
-              key={recipient.id}
-              style={styles.recipientCard}
-              onPress={() => handleSelectRecipient(recipient)}
-            >
+          recipients.map((recipient) => (
+            <Pressable key={recipient.id} style={styles.recipientCard} onPress={() => handleSelectRecipient(recipient)}>
               <View style={styles.recipientAvatar}>
-                <ThemedText style={styles.avatarText}>
-                  {(recipient.name || '?').charAt(0).toUpperCase()}
-                </ThemedText>
+                <ThemedText style={styles.avatarText}>{(recipient.name || '?').charAt(0).toUpperCase()}</ThemedText>
               </View>
               <View style={styles.recipientInfo}>
                 <ThemedText style={styles.recipientName}>{recipient.name}</ThemedText>
-                {recipient.phone ? (
-                  <ThemedText style={styles.recipientPhone}>{recipient.phone}</ThemedText>
-                ) : null}
+                {recipient.phone ? <ThemedText style={styles.recipientPhone}>{recipient.phone}</ThemedText> : null}
               </View>
               <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
             </Pressable>
@@ -356,10 +355,7 @@ function TransferPage() {
       </View>
 
       {/* Scan QR Code */}
-      <Pressable
-        style={styles.qrButton}
-        onPress={handleQRScan}
-      >
+      <Pressable style={styles.qrButton} onPress={handleQRScan}>
         <Ionicons name="qr-code" size={22} color={colors.nileBlue} />
         <ThemedText style={styles.qrButtonText}>Scan QR Code</ThemedText>
       </Pressable>
@@ -413,7 +409,9 @@ function TransferPage() {
         <CachedImage source={nuqtaCoinImage} style={styles.coinImage} />
         <View style={styles.balanceInfo}>
           <ThemedText style={styles.balanceLabel}>Available Balance</ThemedText>
-          <ThemedText style={styles.balanceValue}>{nuqtaBalance.toLocaleString()} {BRAND.CURRENCY_CODE}</ThemedText>
+          <ThemedText style={styles.balanceValue}>
+            {nuqtaBalance.toLocaleString()} {BRAND.CURRENCY_CODE}
+          </ThemedText>
         </View>
       </View>
 
@@ -435,19 +433,15 @@ function TransferPage() {
 
       {/* Quick Amounts */}
       <View style={styles.quickAmounts}>
-        {QUICK_AMOUNTS.map(quickAmount => (
+        {QUICK_AMOUNTS.map((quickAmount) => (
           <Pressable
             key={quickAmount}
-            style={[
-              styles.quickAmountButton,
-              amount === quickAmount.toString() && styles.quickAmountButtonSelected,
-            ]}
+            style={[styles.quickAmountButton, amount === quickAmount.toString() && styles.quickAmountButtonSelected]}
             onPress={() => handleQuickAmount(quickAmount)}
           >
-            <ThemedText style={[
-              styles.quickAmountText,
-              amount === quickAmount.toString() && styles.quickAmountTextSelected,
-            ]}>
+            <ThemedText
+              style={[styles.quickAmountText, amount === quickAmount.toString() && styles.quickAmountTextSelected]}
+            >
               {quickAmount}
             </ThemedText>
           </Pressable>
@@ -540,13 +534,11 @@ function TransferPage() {
       <View style={styles.successIconContainer}>
         <Ionicons name="checkmark-circle" size={72} color={Colors.success} />
       </View>
-      <ThemedText style={styles.successTitle}>{Number(amount).toLocaleString()} {BRAND.CURRENCY_CODE} Sent!</ThemedText>
-      <ThemedText style={styles.successSubtitle}>
-        To {selectedRecipient?.name}
+      <ThemedText style={styles.successTitle}>
+        {Number(amount).toLocaleString()} {BRAND.CURRENCY_CODE} Sent!
       </ThemedText>
-      {selectedRecipient?.phone ? (
-        <ThemedText style={styles.successPhone}>{selectedRecipient.phone}</ThemedText>
-      ) : null}
+      <ThemedText style={styles.successSubtitle}>To {selectedRecipient?.name}</ThemedText>
+      {selectedRecipient?.phone ? <ThemedText style={styles.successPhone}>{selectedRecipient.phone}</ThemedText> : null}
 
       <View style={styles.transactionCard}>
         <View style={styles.transactionRow}>
@@ -560,7 +552,9 @@ function TransferPage() {
           <ThemedText style={styles.transactionLabel}>Amount</ThemedText>
           <View style={styles.transactionAmountRow}>
             <CachedImage source={nuqtaCoinImage} style={styles.transactionCoinIcon} />
-            <ThemedText style={styles.transactionValue}>{Number(amount).toLocaleString()} {BRAND.CURRENCY_CODE}</ThemedText>
+            <ThemedText style={styles.transactionValue}>
+              {Number(amount).toLocaleString()} {BRAND.CURRENCY_CODE}
+            </ThemedText>
           </View>
         </View>
         {note ? (
@@ -601,14 +595,19 @@ function TransferPage() {
       <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
       {/* Header */}
-      <LinearGradient
-        colors={Gradients.nileBlue}
-        style={styles.header}
-      >
+      <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => step === 'amount' ? setStep('recipient') : step === 'otp' ? setStep('amount') : router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() =>
+              step === 'amount'
+                ? setStep('recipient')
+                : step === 'otp'
+                  ? setStep('amount')
+                  : router.canGoBack()
+                    ? router.back()
+                    : router.replace('/(tabs)')
+            }
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
@@ -619,14 +618,8 @@ function TransferPage() {
         </View>
       </LinearGradient>
 
-      <KeyboardAvoidingView
-        style={styles.content}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
+      <KeyboardAvoidingView style={styles.content} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {step === 'recipient' && renderRecipientStep()}
           {step === 'amount' && renderAmountStep()}
           {step === 'otp' && renderOtpStep()}

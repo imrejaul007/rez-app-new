@@ -89,7 +89,7 @@ function CartPage() {
 
   // Use real cart items from CartContext - separate products and services
   const productItems = useMemo(() => {
-    return cartState.items
+    return (cartState.items ?? [])
       .filter((item) => (item as any).itemType !== 'service') // Only non-service items
       .map((item) => {
         // Preserve metadata for event items
@@ -119,7 +119,7 @@ function CartPage() {
 
   // Service items from cart
   const serviceItems = useMemo(() => {
-    return cartState.items
+    return (cartState.items ?? [])
       .filter((item) => (item as any).itemType === 'service')
       .map((item) => {
         const bookingDetails = (item as any).serviceBookingDetails || {};

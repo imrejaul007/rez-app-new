@@ -24,6 +24,7 @@ import { ThemedText } from '@/components/ThemedText';
 import { colors } from '@/constants/theme';
 import walletApi, { TransactionResponse } from '@/services/walletApi';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useRouter } from 'expo-router';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -204,6 +205,7 @@ function TransactionHistory({
   onRefresh,
   maxHeight,
 }: TransactionHistoryProps) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [transactions, setTransactions] = useState<TransactionResponse[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -328,7 +330,11 @@ function TransactionHistory({
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Recent Transactions</Text>
-        <Pressable accessibilityRole="button" accessibilityLabel="View all transactions">
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="View all transactions"
+          onPress={() => router.push('/earnings-history' as any)}
+        >
           <Text style={styles.viewAllLink}>View All</Text>
         </Pressable>
       </View>
@@ -363,7 +369,12 @@ function TransactionHistory({
             <Text style={styles.emptySubtitle}>
               Start earning coins by shopping!
             </Text>
-            <Pressable style={styles.exploreBtn} accessibilityRole="button" accessibilityLabel="Explore stores">
+            <Pressable
+              style={styles.exploreBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Explore stores"
+              onPress={() => router.push('/explore' as any)}
+            >
               <Text style={styles.exploreBtnText}>Explore Stores</Text>
             </Pressable>
           </View>

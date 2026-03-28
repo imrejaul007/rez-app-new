@@ -30,7 +30,7 @@ import {
 import { FormPageSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter, Stack } from 'expo-router';
+import { useRouter, Stack, useFocusEffect } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useAuthUser } from '@/stores/selectors';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -88,17 +88,37 @@ function AccountProfilePage() {
   const [editedFirstName, setEditedFirstName] = useState(user?.profile?.firstName || '');
   const [editedLastName, setEditedLastName] = useState(user?.profile?.lastName || '');
   const [savingProfile, setSavingProfile] = useState(false);
+  // Local display names — updated after a successful save so the UI reflects
+  // the new values immediately without waiting for the auth store to re-hydrate
+  const [savedFirstName, setSavedFirstName] = useState(user?.profile?.firstName || '');
+  const [savedLastName, setSavedLastName] = useState(user?.profile?.lastName || '');
 
   const handleSaveProfile = async () => {
+    const trimmedFirst = editedFirstName.trim();
+    const trimmedLast = editedLastName.trim();
+
+    if (!trimmedFirst) {
+      platformAlertSimple('Validation', 'First name cannot be empty.');
+      return;
+    }
+    if (trimmedFirst.length > 50 || trimmedLast.length > 50) {
+      platformAlertSimple('Validation', 'Name must be 50 characters or fewer.');
+      return;
+    }
+
     setSavingProfile(true);
     try {
       const response = await profileApi.updateProfile({
         profile: {
-          firstName: editedFirstName.trim(),
-          lastName: editedLastName.trim(),
+          firstName: trimmedFirst,
+          lastName: trimmedLast,
         },
       } as any);
       if (response.success) {
+        // Update local display names immediately — the auth store may not
+        // re-hydrate synchronously after a profile save
+        setSavedFirstName(trimmedFirst);
+        setSavedLastName(trimmedLast);
         setIsEditing(false);
         platformAlertSimple('Success', 'Profile updated successfully.');
       } else {
@@ -148,6 +168,23 @@ function AccountProfilePage() {
   useEffect(() => {
     loadSettings();
   }, []);
+
+  // Keep display names in sync if the auth store updates independently
+  // (e.g. after a login refresh or a store-initiated profile sync)
+  useEffect(() => {
+    if (!isEditing) {
+      setSavedFirstName(user?.profile?.firstName || '');
+      setSavedLastName(user?.profile?.lastName || '');
+    }
+  }, [user?.profile?.firstName, user?.profile?.lastName, isEditing]);
+
+  // Refresh settings whenever the screen comes back into focus
+  // (e.g. user edits a setting on a sub-screen and returns here)
+  useFocusEffect(
+    React.useCallback(() => {
+      loadSettings();
+    }, []),
+  );
 
   const loadSettings = async () => {
     try {
@@ -307,8 +344,8 @@ function AccountProfilePage() {
                   />
                 ) : (
                   <ThemedText style={styles.avatarText}>
-                    {user.profile?.firstName?.[0]}
-                    {user.profile?.lastName?.[0]}
+                    {savedFirstName?.[0]}
+                    {savedLastName?.[0]}
                   </ThemedText>
                 )}
               </View>
@@ -355,7 +392,7 @@ function AccountProfilePage() {
               ) : (
                 <>
                   <ThemedText style={styles.userName}>
-                    {user.profile?.firstName} {user.profile?.lastName}
+                    {savedFirstName} {savedLastName}
                   </ThemedText>
                   <ThemedText style={styles.userEmail}>{user.email}</ThemedText>
                   <ThemedText style={styles.userPhone}>{user.phoneNumber}</ThemedText>

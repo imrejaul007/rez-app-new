@@ -3,20 +3,9 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Green & Gold color theme following TASK.md
 
 import { colors } from '@/constants/theme';
-import React, { useEffect, useState} from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  Dimensions,
-  Platform
-} from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring } from 'react-native-reanimated';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, Dimensions, Platform } from 'react-native';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import { ProductGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter } from 'expo-router';
@@ -46,19 +35,20 @@ const GLASS = {
 
   // Gold Tinted Glass
   tintedGoldBg: 'rgba(255, 200, 87, 0.1)',
-  tintedGoldBorder: 'rgba(255, 200, 87, 0.3)' };
+  tintedGoldBorder: 'rgba(255, 200, 87, 0.3)',
+};
 
 const COLORS = {
   primary: Colors.gold,
-  primaryDark: colors.brand.goldRich,   // Mustard Dark — brand-specific
-  gold: colors.brand.goldWarm,          // Sun Gold — brand-specific
-  goldDark: '#E5A500',      // Darker Gold — brand-specific
+  primaryDark: colors.brand.goldRich, // Mustard Dark — brand-specific
+  gold: colors.brand.goldWarm, // Sun Gold — brand-specific
+  goldDark: '#E5A500', // Darker Gold — brand-specific
   navy: colors.nileBlue,
   textPrimary: colors.text.primary,
   textSecondary: colors.text.tertiary,
   white: colors.background.primary,
-  surface: colors.linen,       // Brand linen — keep unique
-  discount: colors.lightPeach,      // Light Peach for discount badges — brand-specific
+  surface: colors.linen, // Brand linen — keep unique
+  discount: colors.lightPeach, // Light Peach for discount badges — brand-specific
 };
 
 interface StoreProductsProps {
@@ -100,12 +90,7 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
 
       const response = await productsApi.getProductsByStore(storeId, {});
 
-      if (
-        response.success &&
-        response.data &&
-        Array.isArray(response.data) &&
-        response.data.length > 0
-      ) {
+      if (response.success && response.data && Array.isArray(response.data) && response.data.length > 0) {
         const storeData = response.data[0];
         if (
           storeData &&
@@ -134,14 +119,14 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
     const productId = product._id || product.id;
     router.push({
       pathname: '/product-page',
-      params: { cardId: productId, cardType: 'product' }
+      params: { cardId: productId, cardType: 'product' },
     } as any);
   };
 
   const handleViewAll = () => {
     router.push({
       pathname: '/StoreProductsPage',
-      params: { storeId, storeName: storeName || 'Store' }
+      params: { storeId, storeName: storeName || 'Store' },
     } as any);
   };
 
@@ -152,19 +137,19 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
   };
 
   const renderProduct = ({ item, index }: { item: any; index: number }) => {
-    const imageUrl = Array.isArray(item.images) && item.images.length > 0
-      ? (typeof item.images[0] === 'string' ? item.images[0] : item.images[0]?.url)
-      : null;
+    const imageUrl =
+      Array.isArray(item.images) && item.images.length > 0
+        ? typeof item.images[0] === 'string'
+          ? item.images[0]
+          : item.images[0]?.url
+        : null;
 
     const price = item.pricing?.selling || item.pricing?.salePrice || item.pricing?.basePrice || 0;
     const comparePrice = item.pricing?.original || item.pricing?.mrp;
-    const discount = comparePrice && comparePrice > price
-      ? Math.round(((comparePrice - price) / comparePrice) * 100)
-      : 0;
+    const discount =
+      comparePrice && comparePrice > price ? Math.round(((comparePrice - price) / comparePrice) * 100) : 0;
 
-    const displayName = item.name?.length > 30
-      ? item.name.substring(0, 30) + '...'
-      : item.name;
+    const displayName = (item.name ?? '').length > 30 ? (item.name ?? '').substring(0, 30) + '...' : (item.name ?? '');
 
     const cardScaleStyle = index === 0 ? cardScale1Style : cardScale2Style;
 
@@ -175,7 +160,6 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
           onPress={() => handleProductPress(item)}
           onPressIn={() => animateCard(index === 0 ? cardScale1 : cardScale2, 0.96)}
           onPressOut={() => animateCard(index === 0 ? cardScale1 : cardScale2, 1)}
-         
         >
           {/* Glass Card Effect */}
           {Platform.OS === 'ios' ? (
@@ -183,9 +167,7 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
               {renderCardContent()}
             </BlurView>
           ) : (
-            <View style={[styles.cardBlur, styles.cardBlurAndroid]}>
-              {renderCardContent()}
-            </View>
+            <View style={[styles.cardBlur, styles.cardBlurAndroid]}>{renderCardContent()}</View>
           )}
         </Pressable>
       </Animated.View>
@@ -200,11 +182,7 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
           {/* Product Image */}
           <View style={styles.imageContainer}>
             {imageUrl ? (
-              <CachedImage
-                source={imageUrl}
-                style={styles.productImage}
-                contentFit="cover"
-              />
+              <CachedImage source={imageUrl} style={styles.productImage} contentFit="cover" />
             ) : (
               <View style={styles.placeholderImage}>
                 <Ionicons name="image-outline" size={32} color={COLORS.textSecondary} />
@@ -232,9 +210,15 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
 
             {/* Price Section */}
             <View style={styles.priceContainer}>
-              <Text style={styles.price}>{currencySymbol}{formatPrice(price)}</Text>
+              <Text style={styles.price}>
+                {currencySymbol}
+                {formatPrice(price)}
+              </Text>
               {comparePrice && comparePrice > price && (
-                <Text style={styles.comparePrice}>{currencySymbol}{formatPrice(comparePrice)}</Text>
+                <Text style={styles.comparePrice}>
+                  {currencySymbol}
+                  {formatPrice(comparePrice)}
+                </Text>
               )}
             </View>
 
@@ -242,18 +226,14 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
             {item.ratings?.average > 0 && (
               <View style={styles.ratingBadge}>
                 <Ionicons name="star" size={11} color={COLORS.goldDark} />
-                <Text style={styles.ratingText}>
-                  {item.ratings.average.toFixed(1)}
-                </Text>
+                <Text style={styles.ratingText}>{item.ratings.average.toFixed(1)}</Text>
               </View>
             )}
 
             {/* ReZ Coin Earnings */}
             <View style={styles.coinEarningsRow}>
               <Text style={styles.coinEmoji}>🪙</Text>
-              <Text style={styles.coinEarningsText}>
-                Earn {Math.round(price * 0.05)} coins
-              </Text>
+              <Text style={styles.coinEarningsText}>Earn {Math.round(price * 0.05)} coins</Text>
             </View>
           </View>
         </>
@@ -340,20 +320,14 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
       {/* Premium Glass Header */}
       <View style={styles.header}>
         <View style={styles.headerTitleRow}>
-          <LinearGradient
-            colors={[COLORS.primary, COLORS.primaryDark]}
-            style={styles.headerIconBg}
-          >
+          <LinearGradient colors={[COLORS.primary, COLORS.primaryDark]} style={styles.headerIconBg}>
             <Ionicons name="cube" size={16} color={COLORS.white} />
           </LinearGradient>
           <Text style={styles.title}>Store Products</Text>
         </View>
 
         {products.length >= 2 && (
-          <Pressable
-            onPress={handleViewAll}
-            style={styles.viewAllButton}
-          >
+          <Pressable onPress={handleViewAll} style={styles.viewAllButton}>
             <Text style={styles.viewAllText}>View All ({products.length})</Text>
             <Ionicons name="chevron-forward" size={14} color={COLORS.primary} />
           </Pressable>
@@ -363,9 +337,7 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
       {/* Products Grid */}
       <View style={styles.productsRow}>
         {displayProducts.map((product, index) => (
-          <View key={product._id || product.id}>
-            {renderProduct({ item: product, index })}
-          </View>
+          <View key={product._id || product.id}>{renderProduct({ item: product, index })}</View>
         ))}
       </View>
     </View>
@@ -374,32 +346,37 @@ function StoreProducts({ storeId, storeName }: StoreProductsProps) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 16 },
+    paddingVertical: 16,
+  },
 
   // Header Styles
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16 },
+    marginBottom: 16,
+  },
 
   headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10 },
+    gap: 10,
+  },
 
   headerIconBg: {
     width: 32,
     height: 32,
     borderRadius: 10,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
 
   title: {
     fontSize: 18,
     fontWeight: '700',
     color: COLORS.textPrimary,
-    letterSpacing: -0.3 },
+    letterSpacing: -0.3,
+  },
 
   viewAllButton: {
     flexDirection: 'row',
@@ -410,19 +387,22 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: GLASS.tintedGreenBorder },
+    borderColor: GLASS.tintedGreenBorder,
+  },
 
   viewAllText: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.primary },
+    color: COLORS.primary,
+  },
 
   // Products Grid — 2-column with consistent 16px outer padding
   productsRow: {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     gap: 12,
-    paddingHorizontal: 0 },
+    paddingHorizontal: 0,
+  },
 
   // Product Card - Glass Effect
   productCard: {
@@ -434,18 +414,24 @@ const styles = StyleSheet.create({
         shadowColor: COLORS.navy,
         shadowOffset: { width: 0, height: 3 },
         shadowOpacity: 0.08,
-        shadowRadius: 8 },
+        shadowRadius: 8,
+      },
       android: {
-        elevation: 3 } }) },
+        elevation: 3,
+      },
+    }),
+  },
 
   cardBlur: {
     borderRadius: 20,
     borderWidth: 1,
     borderColor: GLASS.lightBorder,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
 
   cardBlurAndroid: {
-    backgroundColor: GLASS.lightBg },
+    backgroundColor: GLASS.lightBg,
+  },
 
   glassHighlight: {
     position: 'absolute',
@@ -454,25 +440,29 @@ const styles = StyleSheet.create({
     right: 0,
     height: 1,
     backgroundColor: GLASS.lightHighlight,
-    zIndex: 1 },
+    zIndex: 1,
+  },
 
   // Image Container — fixed 120px height for consistent cards
   imageContainer: {
     width: '100%',
     height: 120,
     backgroundColor: COLORS.surface,
-    position: 'relative' },
+    position: 'relative',
+  },
 
   productImage: {
     width: '100%',
-    height: '100%' },
+    height: '100%',
+  },
 
   placeholderImage: {
     width: '100%',
     height: '100%',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: COLORS.surface },
+    backgroundColor: COLORS.surface,
+  },
 
   // Premium Gold Discount Badge
   discountBadge: {
@@ -487,20 +477,26 @@ const styles = StyleSheet.create({
         shadowColor: COLORS.gold,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.4,
-        shadowRadius: 6 },
+        shadowRadius: 6,
+      },
       android: {
-        elevation: 4 } }) },
+        elevation: 4,
+      },
+    }),
+  },
 
   discountText: {
     fontSize: 10,
     fontWeight: '700',
     color: COLORS.navy,
-    letterSpacing: 0.3 },
+    letterSpacing: 0.3,
+  },
 
   // Product Info
   productInfo: {
     padding: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)' },
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+  },
 
   productName: {
     fontSize: 13,
@@ -508,24 +504,28 @@ const styles = StyleSheet.create({
     color: COLORS.textPrimary,
     marginBottom: 6,
     lineHeight: 17,
-    minHeight: 34 },
+    minHeight: 34,
+  },
 
   priceContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     flexWrap: 'wrap',
-    gap: 6 },
+    gap: 6,
+  },
 
   price: {
     fontSize: 16,
     fontWeight: '800',
-    color: COLORS.primary },
+    color: COLORS.primary,
+  },
 
   comparePrice: {
     fontSize: 12,
     fontWeight: '500',
     color: COLORS.textSecondary,
-    textDecorationLine: 'line-through' },
+    textDecorationLine: 'line-through',
+  },
 
   // Glass Rating Badge
   ratingBadge: {
@@ -538,13 +538,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: GLASS.tintedGoldBorder },
+    borderColor: GLASS.tintedGoldBorder,
+  },
 
   ratingText: {
     fontSize: 11,
     color: COLORS.goldDark,
     marginLeft: 4,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
 
   // Loading State
   loadingContainer: {
@@ -554,13 +556,15 @@ const styles = StyleSheet.create({
     backgroundColor: GLASS.frostedBg,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: GLASS.frostedBorder },
+    borderColor: GLASS.frostedBorder,
+  },
 
   loadingText: {
     marginTop: 12,
     fontSize: 14,
     color: COLORS.textSecondary,
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
 
   // Empty State
   emptyContainer: {
@@ -570,7 +574,8 @@ const styles = StyleSheet.create({
     backgroundColor: GLASS.frostedBg,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: GLASS.frostedBorder },
+    borderColor: GLASS.frostedBorder,
+  },
 
   emptyIconBg: {
     width: 72,
@@ -579,13 +584,15 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surface,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12 },
+    marginBottom: 12,
+  },
 
   emptyText: {
     fontSize: 14,
     color: COLORS.textSecondary,
     fontWeight: '500',
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
 
   // Coin Earnings Row
   coinEarningsRow: {
@@ -598,15 +605,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignSelf: 'flex-start',
     borderWidth: 1,
-    borderColor: GLASS.tintedGreenBorder },
+    borderColor: GLASS.tintedGreenBorder,
+  },
 
   coinEmoji: {
     fontSize: 12,
-    marginRight: 4 },
+    marginRight: 4,
+  },
 
   coinEarningsText: {
     fontSize: 11,
     color: COLORS.primary,
-    fontWeight: '700' } });
+    fontWeight: '700',
+  },
+});
 
 export default withErrorBoundary(StoreProducts, 'MainStoreSectionStoreProducts');
