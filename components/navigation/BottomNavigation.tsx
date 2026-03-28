@@ -323,8 +323,8 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   // Render a regular tab item
   const renderTab = (tab: { name: string; route: string; icon: string; isActive: boolean; showBadge?: boolean }, index?: number) => {
     // Theme-aware tab colors
-    const activeColor = isPriveActive ? colors.brand.goldAccent : isDark ? colors.lightMustard : colors.secondary[600];
-    const inactiveColor = isPriveActive ? '#A0A0A0' : isDark ? colors.neutral[400] : colors.neutral[500];
+    const activeColor = isPriveActive ? colors.brand.goldAccent : isDark ? colors.lightMustard : colors.nileBlue;
+    const inactiveColor = isPriveActive ? '#A0A0A0' : isDark ? colors.neutral[400] : colors.neutral[400];
 
     return (
       <Pressable
@@ -613,45 +613,51 @@ const styles = StyleSheet.create({
 
   // Circle container for the coin icon
   floatingButtonCircle: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'transparent',
+    backgroundColor: '#1a3a52',  // navy — matches GIF background so it looks clean
+    borderWidth: 3,
+    borderColor: '#FFC857',       // mustard ring for brand identity
     // Shadow for depth
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 8,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 10,
+      },
+      android: { elevation: 8 },
+    }),
     overflow: 'hidden',
   },
 
   // White backing disc behind coin button — blocks page bleed-through the SVG gap
   floatingButtonBacking: {
     position: 'absolute',
-    width: 66,
-    height: 66,
-    borderRadius: 33,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     backgroundColor: 'white',
     zIndex: -1,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOpacity: 0.12,
-        shadowRadius: 8,
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
         shadowOffset: { width: 0, height: -2 },
       },
       android: { elevation: 8 },
     }),
   },
 
-  // Pay in Store icon (Nuqta coin) - fills the circle completely
+  // Pay in Store icon (Nuqta coin) - fills the circle
   payInStoreGif: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
   },
 
   // Label below floating button
