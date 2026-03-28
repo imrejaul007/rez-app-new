@@ -56,12 +56,12 @@ const TAB_THEMES: Record<TabId, {
   containerBg: string;
 }> = {
   'near-u': {
-    heroGradient: ['#fff0c4', '#ffe8a8', colors.lightMustard],
+    heroGradient: ['#F9F6F1', '#F3EDE3', '#EDE5D8'],
     tabActiveColor: colors.nileBlue,
     tabActiveTextColor: colors.background.primary,
     tabInactiveTextColor: colors.nileBlue,
     categoryIconColor: colors.lightMustard,
-    containerBg: colors.linen,
+    containerBg: '#EDE5D8',
   },
   'mall': {
     heroGradient: [colors.lavenderMist, '#e0edf7', colors.lavenderMist],
@@ -189,7 +189,7 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
       ? colors.lavenderMist
       : activeTab === 'cash'
         ? colors.lightPeach
-        : colors.linen;
+        : '#EDE5D8';
 
   return (
     <View style={[styles.container, { backgroundColor: containerBg }]} onLayout={handleContainerLayout}>

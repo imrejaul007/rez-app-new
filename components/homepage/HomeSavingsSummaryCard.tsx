@@ -57,7 +57,7 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
     <Pressable onPress={onPress} style={({ pressed }) => [pressed && styles.pressed]}>
       <View style={styles.wrapper}>
         <LinearGradient
-          colors={[colors.linen, colors.lavenderMist]}
+          colors={['#0F1923', '#1A3040']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
@@ -66,7 +66,7 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
             /* Empty / first-time state */
             <View style={styles.emptyContainer}>
               <View style={styles.emptyIconCircle}>
-                <Ionicons name="wallet-outline" size={28} color={colors.nuqta.nileBlue} />
+                <Ionicons name="wallet-outline" size={28} color="#D4AF37" />
               </View>
               <Text style={styles.emptyTitle}>Start saving today!</Text>
               <Text style={styles.emptySubtitle}>
@@ -103,18 +103,20 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     borderRadius: 14,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(212,175,55,0.25)',
     ...Platform.select({
       ios: {
-        shadowColor: colors.nuqta.nileBlue,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.1,
+        shadowOpacity: 0.25,
         shadowRadius: 10,
       },
       android: {
-        elevation: 4,
+        elevation: 6,
       },
       web: {
-        boxShadow: '0 3px 10px rgba(26, 58, 82, 0.1)',
+        boxShadow: '0 3px 10px rgba(0,0,0,0.25)',
       } as any,
     }),
   },
@@ -130,13 +132,13 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '500',
-    color: colors.text.secondary,
+    color: 'rgba(255,255,255,0.55)',
     marginBottom: 4,
   },
   amount: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#B45309',
+    color: '#D4AF37',
     marginBottom: 6,
   },
   unlockRow: {
@@ -144,7 +146,7 @@ const styles = StyleSheet.create({
   },
   unlockText: {
     fontSize: 12,
-    color: colors.brand.purple,
+    color: 'rgba(255,255,255,0.5)',
     fontWeight: '500',
   },
 
@@ -157,7 +159,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: 'rgba(26, 58, 82, 0.08)',
+    backgroundColor: 'rgba(212,175,55,0.12)',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: spacing.sm,
@@ -165,12 +167,12 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.text.secondary,
+    color: 'rgba(255,255,255,0.85)',
     marginBottom: 4,
   },
   emptySubtitle: {
     fontSize: 13,
-    color: colors.text.secondary,
+    color: 'rgba(255,255,255,0.5)',
     textAlign: 'center',
     lineHeight: 18,
   },

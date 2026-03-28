@@ -1163,8 +1163,7 @@ function HomeScreen() {
             accessibilityHint="Tap to explore products you can try risk-free and earn coins"
           >
             <LinearGradient
-              // MEERA: design token — hardcoded '#0d2035' -> colors.secondary[900] (darker nile blue for gradient)
-              colors={[colors.nileBlue, colors.secondary[900]]}
+              colors={['#0A1520', '#0F2035', '#1a3a52']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={viewStyles.tryBannerGradient}
@@ -1174,11 +1173,10 @@ function HomeScreen() {
                   <Text style={viewStyles.tryBannerTitle}>Try Before You Buy</Text>
                   <Text style={viewStyles.tryBannerSubtitle}>Experience products risk-free, earn coins</Text>
                 </View>
-                {/* MEERA: design token — hardcoded 'rgba(255,255,255,0.6)' -> colors.overlay.light (white with subtle opacity) */}
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color={colors.overlay.light}
+                  color="rgba(212,175,55,0.8)"
                   style={viewStyles.tryBannerChevron}
                 />
               </View>
@@ -1202,7 +1200,7 @@ function HomeScreen() {
             accessibilityHint="Tap to start earning coins"
           >
             <LinearGradient
-              colors={[colors.lightMustard, colors.linen]}
+              colors={['#1A1209', '#2A1F0E']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={viewStyles.day1ChallengeGradient}
@@ -1218,7 +1216,7 @@ function HomeScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Dismiss challenge"
                 >
-                  <Ionicons name="close" size={20} color={colors.text.tertiary} />
+                  <Ionicons name="close" size={20} color="rgba(255,255,255,0.45)" />
                 </Pressable>
               </View>
             </LinearGradient>
@@ -1227,21 +1225,17 @@ function HomeScreen() {
 
         {/* Phase 1: Habit Engine — Streak + Score + Nearby Offers */}
         {activeTab === 'near-u' && (
-          <View
-            style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 8, gap: 12 }}
-          >
+          <View style={viewStyles.streakScoreRow}>
             {streakCount > 0 && (
               <Pressable
                 onPress={() => router.push('/smart-spending')}
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
-                android_ripple={{ color: 'rgba(0,0,0,0.06)', borderless: false }}
+                android_ripple={{ color: 'rgba(212,175,55,0.12)', borderless: false }}
                 accessibilityRole="button"
                 accessibilityLabel={`${streakCount}-day streak. Tap to view smart spending.`}
               >
                 <StreakFireIcon streakDays={streakCount} size="small" />
-                <Text style={{ fontSize: 13, fontWeight: '600', color: colors.text.primary }}>
-                  {streakCount}d streak
-                </Text>
+                <Text style={{ fontSize: 13, fontWeight: '700', color: '#D4AF37' }}>{streakCount}d streak</Text>
               </Pressable>
             )}
             <View style={{ flex: 1 }}>
@@ -1722,6 +1716,8 @@ const viewStyles = StyleSheet.create({
     marginBottom: spacing.md,
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(212,175,55,0.3)',
   },
   tryBannerGradient: {
     paddingVertical: spacing.lg,
@@ -1739,15 +1735,13 @@ const viewStyles = StyleSheet.create({
   tryBannerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    // MEERA: design token — hardcoded '#fff' -> colors.text.inverse (white text on dark backgrounds)
-    color: colors.text.inverse,
+    color: '#D4AF37',
     marginBottom: spacing.xs,
   },
   tryBannerSubtitle: {
     fontSize: 14,
     fontWeight: '500',
-    // MEERA: design token — hardcoded 'rgba(255, 255, 255, 0.9)' -> colors.text.secondary (but inverse variant is white)
-    color: colors.text.inverse,
+    color: 'rgba(255,255,255,0.7)',
   },
   tryBannerChevron: {
     marginLeft: spacing.md,
@@ -1759,6 +1753,8 @@ const viewStyles = StyleSheet.create({
     marginBottom: spacing.md,
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: 'rgba(212,175,55,0.3)',
   },
   day1ChallengeGradient: {
     paddingVertical: spacing.md,
@@ -1776,13 +1772,35 @@ const viewStyles = StyleSheet.create({
   day1ChallengeTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.nileBlue,
+    color: '#D4AF37',
     marginBottom: spacing.xs,
   },
   day1ChallengeSub: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.text.secondary,
+    color: 'rgba(255,255,255,0.7)',
+  },
+  // Phase 1: Habit Engine — dark glass card wrapping streak + rez score
+  streakScoreRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: spacing.md,
+    marginBottom: spacing.sm,
+    padding: 12,
+    gap: 12,
+    backgroundColor: '#0F1923',
+    borderRadius: borderRadius.lg,
+    borderWidth: 1,
+    borderColor: 'rgba(212,175,55,0.2)',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 8,
+      },
+      android: { elevation: 4 },
+    }),
   },
   // CARLOS: retention — streak display styles
   streakCard: {
