@@ -159,10 +159,10 @@ const TryBeforeYouBuyCard: React.FC<TryBeforeYouBuyCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: spacing.base,
-    marginBottom: spacing.md,
+    marginHorizontal: 0,
+    marginBottom: 0,
     backgroundColor: NAVY,
-    borderRadius: borderRadius.lg,
+    borderRadius: 0,
     padding: 16,
     ...Platform.select({
       ios: {

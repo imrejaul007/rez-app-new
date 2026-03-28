@@ -99,11 +99,12 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginHorizontal: spacing.base,
-    marginBottom: 12,
-    borderRadius: 14,
+    marginHorizontal: 0,
+    marginBottom: 0,
+    borderRadius: 0,
     overflow: 'hidden',
-    borderWidth: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
     borderColor: 'rgba(255,200,87,0.3)',
     ...Platform.select({
       ios: {

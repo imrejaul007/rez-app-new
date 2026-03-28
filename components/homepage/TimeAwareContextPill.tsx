@@ -140,14 +140,15 @@ const TimeAwareContextPill: React.FC<TimeAwareContextPillProps> = ({
 
 const styles = StyleSheet.create({
   pill: {
-    marginHorizontal: spacing.base,
-    marginBottom: spacing.md,
+    marginHorizontal: 0,
+    marginBottom: 0,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: LINEN,
-    borderWidth: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
     borderColor: colors.border.default,   // #E8DCC4
-    borderRadius: 10,
+    borderRadius: 0,
     paddingHorizontal: 12,
     paddingVertical: 9,
     ...Platform.select({

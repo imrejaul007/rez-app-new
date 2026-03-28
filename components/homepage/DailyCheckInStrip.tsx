@@ -84,15 +84,16 @@ const DailyCheckInStrip: React.FC<DailyCheckInStripProps> = ({
 
 const styles = StyleSheet.create({
   strip: {
-    marginHorizontal: spacing.base,
-    marginBottom: spacing.md,
+    marginHorizontal: 0,
+    marginBottom: 0,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: colors.background.primary,
-    borderWidth: 1,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
     borderColor: MUSTARD,
-    borderRadius: 12,
+    borderRadius: 0,
     paddingHorizontal: 14,
     paddingVertical: 10,
     ...Platform.select({
