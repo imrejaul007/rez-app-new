@@ -39,21 +39,21 @@ const PERSONAS: {
     id: 'student',
     emoji: '🎓',
     label: 'Student',
-    subtext: 'Campus deals & hangouts',
+    subtext: 'Cashback on campus food, chai & hangouts',
     icon: 'school-outline',
   },
   {
     id: 'corporate',
     emoji: '💼',
     label: 'Employee',
-    subtext: 'Office lunch & grooming',
+    subtext: 'Cashback on every office meal & grooming',
     icon: 'briefcase-outline',
   },
   {
     id: 'general',
     emoji: '🏠',
     label: 'General',
-    subtext: 'Everyday savings',
+    subtext: 'Cashback on every nearby deal',
     icon: 'home-outline',
   },
 ];
@@ -85,9 +85,9 @@ const PersonaDetectionOnboarding: React.FC = () => {
         {/* Header */}
         <View style={styles.header}>
           <View style={styles.headerTextBlock}>
-            <Text style={styles.title}>Personalise your deals</Text>
+            <Text style={styles.title}>Personalise your cashback</Text>
             <Text style={styles.subtitle}>
-              We'll show you the most relevant offers for your lifestyle
+              We'll show you cashback deals most relevant to your lifestyle
             </Text>
           </View>
           <View style={styles.sparkBadge}>

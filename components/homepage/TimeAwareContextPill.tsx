@@ -39,22 +39,22 @@ interface TimeAwareContextPillProps {
 // replaced at render time with the live nearbyOfferCount prop value.
 const COPY: Record<TimeAwarePersona, Record<TimeSlot, string>> = {
   general: {
-    morning: 'Morning deals live',
-    lunch:   'Lunch deals live — {{count}} offers within 1 km',
-    evening: 'Evening hangout deals',
-    night:   'Late night offers',
+    morning: 'Cashback deals live near you — earn on every visit',
+    lunch:   '{{count}} cashback deals within 1 km — lunch time',
+    evening: 'Evening cashback deals — dining, grooming & more',
+    night:   'Cashback offers open now near you',
   },
   student: {
-    morning: 'Morning campus deals — chai & print shops',
-    lunch:   'Budget lunch deals — top 5 near campus',
-    evening: 'Hangout deals — gaming & cafés',
-    night:   'Late night campus food',
+    morning: 'Morning cashback deals near campus — chai & essentials',
+    lunch:   'Top cashback lunch deals near campus — from ₹79',
+    evening: 'Cashback on hangouts — cafés, gaming & chill spots',
+    night:   'Late-night cashback on campus food',
   },
   employee: {
-    morning: 'Grab & go — coffee near office',
-    lunch:   'Lunch near office — express slots filling',
-    evening: 'After-work deals — grooming, gym',
-    night:   'Weekend planning — home services',
+    morning: 'Cashback on breakfast near office — grab & go',
+    lunch:   'Cashback lunch near office — express slots filling',
+    evening: 'After-work cashback — grooming, gym & dining',
+    night:   'Weekend cashback deals — dining & home services',
   },
 };
 
@@ -159,7 +159,8 @@ const styles = StyleSheet.create({
     borderColor: '#E2E8F0',
     borderRadius: 12,
     paddingHorizontal: 14,
-    paddingVertical: 10,
+    paddingVertical: 12,
+    minHeight: 44,
     ...Platform.select({
       ios: {
         shadowColor: '#000',

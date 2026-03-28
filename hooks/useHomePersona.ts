@@ -56,8 +56,8 @@ export interface PersonaConfig {
 
 const STUDENT_PERSONA: PersonaConfig = {
   id: 'student',
-  greeting: '🎓 Hey {name}! Campus life awaits',
-  tagline: 'Budget-friendly deals, coins & TRY experiences near you',
+  greeting: '🎓 Hey {name}! Your cashback is ready',
+  tagline: 'Earn cashback on every campus deal — food, chai, grooming & hangouts',
   gradientColors: ['#F97316', '#FBBF24'] as const,
   accentColor: '#EA580C',
   sectionTitle: 'Built for campus life ✨',
@@ -96,14 +96,14 @@ const STUDENT_PERSONA: PersonaConfig = {
       color: '#FFF7ED',
     },
   ],
-  highlightText: 'Verified Student — 20% extra coins on every order',
+  highlightText: 'Verified Student — earn cashback on every campus purchase',
   highlightIcon: 'school',
 };
 
 const CORPORATE_PERSONA: PersonaConfig = {
   id: 'corporate',
   greeting: '💼 Good to see you, {name}',
-  tagline: 'Premium services, wellness & time-saving picks for professionals',
+  tagline: 'Cashback on lunch, grooming & wellness — every office day',
   gradientColors: ['#1a3a52', '#2A5577'] as const,
   accentColor: '#47779F',
   sectionTitle: 'Made for your workday ⚡',
@@ -142,14 +142,14 @@ const CORPORATE_PERSONA: PersonaConfig = {
       color: '#F0F9FF',
     },
   ],
-  highlightText: 'Corporate Member — Priority booking & expense-friendly receipts',
+  highlightText: 'Corporate Member — cashback on every meal, gym & grooming visit',
   highlightIcon: 'briefcase',
 };
 
 const GENERAL_PERSONA: PersonaConfig = {
   id: 'general',
   greeting: '👋 Welcome back, {name}',
-  tagline: 'Discover deals, earn coins & try new experiences near you',
+  tagline: 'Earn cashback on every purchase at stores near you',
   gradientColors: ['#7C3AED', '#A78BFA'] as const,
   accentColor: '#6D28D9',
   sectionTitle: 'Your ReZ picks today ✨',
@@ -188,7 +188,7 @@ const GENERAL_PERSONA: PersonaConfig = {
       color: '#F0FDF4',
     },
   ],
-  highlightText: 'Explore new deals, earn coins & save more every day',
+  highlightText: 'Earn cashback on every deal — food, grooming & more near you',
   highlightIcon: 'sparkles',
 };
 

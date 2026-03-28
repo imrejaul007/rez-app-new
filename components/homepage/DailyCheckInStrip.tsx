@@ -55,8 +55,8 @@ const DailyCheckInStrip: React.FC<DailyCheckInStripProps> = ({
     <View style={styles.strip}>
       {/* Text block */}
       <View style={styles.textBlock}>
-        <Text style={styles.title}>Check in today → earn 10 RC</Text>
-        <Text style={styles.subtitle}>Daily streak bonus · resets at midnight</Text>
+        <Text style={styles.title}>Check in today → earn ₹10 cashback</Text>
+        <Text style={styles.subtitle}>Free cashback · visit a store to redeem · resets midnight</Text>
       </View>
 
       {/* CTA pill */}
@@ -122,13 +122,14 @@ const styles = StyleSheet.create({
     color: colors.neutral[500],
     fontWeight: '400',
   },
-  // Unclaimed CTA
+  // Unclaimed CTA (44pt minimum touch target)
   claimPill: {
     backgroundColor: MUSTARD,
     borderRadius: 99,
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     minWidth: 76,
+    minHeight: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -137,14 +138,16 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: NAVY,
   },
-  // Claimed state
+  // Claimed state (44pt minimum touch target)
   claimedPill: {
     backgroundColor: colors.neutral[200],
     borderRadius: 99,
     paddingHorizontal: 14,
-    paddingVertical: 8,
+    paddingVertical: 10,
     minWidth: 76,
+    minHeight: 44,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   claimedText: {
     fontSize: 12,

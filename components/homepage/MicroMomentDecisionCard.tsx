@@ -39,8 +39,8 @@ const BODY    = '#475569';
 const SLOT_THEME = {
   morning: { accent: '#059669', bg: '#F0FDF4', border: '#BBF7D0', label: 'Morning deals' },
   lunch:   { accent: '#D97706', bg: '#FFFBEB', border: '#FDE68A', label: 'Lunch deals'   },
-  evening: { accent: '#7C3AED', bg: '#F5F3FF', border: '#DDD6FE', label: 'Evening deals' },
-  night:   { accent: '#1D4ED8', bg: '#EFF6FF', border: '#BFDBFE', label: 'Night deals'   },
+  evening: { accent: '#1a3a52', bg: '#EDF3F8', border: '#C8D8E4', label: 'Evening deals' },
+  night:   { accent: '#1a3a52', bg: '#EDF3F8', border: '#C8D8E4', label: 'Night deals'   },
 } as const;
 
 type TimeSlot = keyof typeof SLOT_THEME;
@@ -48,22 +48,22 @@ type TimeSlot = keyof typeof SLOT_THEME;
 // ─── Copy map ─────────────────────────────────────────────────────────────────
 const COPY: Record<TimeAwarePersona, Record<TimeSlot, { headline: string; sub: string }>> = {
   student: {
-    morning: { headline: 'Morning deals near campus',  sub: 'Chai, breakfast & quick needs' },
-    lunch:   { headline: 'Budget lunch near campus',   sub: 'Top combos from ₹79 · sorted by savings' },
-    evening: { headline: 'Hangout deals near campus',  sub: 'Cafés, gaming & chill spots' },
-    night:   { headline: 'Late-night near campus',     sub: 'Open now · quick snacks & food' },
+    morning: { headline: 'Morning cashback deals near campus', sub: 'Earn cashback on chai, breakfast & quick needs' },
+    lunch:   { headline: 'Budget lunch cashback near campus',  sub: 'Top combos from ₹79 · cashback on every order' },
+    evening: { headline: 'Cashback on hangouts near campus',   sub: 'Earn at cafés, gaming spots & chill places' },
+    night:   { headline: 'Late-night cashback near campus',    sub: 'Open now · earn cashback on snacks & food' },
   },
   employee: {
-    morning: { headline: 'Grab & go near office',     sub: 'Coffee & breakfast · 3-min walk' },
-    lunch:   { headline: 'Lunch near office',          sub: 'Sorted by speed · express slots' },
-    evening: { headline: 'After-work deals',           sub: 'Grooming, gym & happy hour' },
-    night:   { headline: 'Weekend planning',           sub: 'Home services & dining deals' },
+    morning: { headline: 'Cashback on breakfast near office',  sub: 'Earn on coffee & breakfast · 3-min walk' },
+    lunch:   { headline: 'Cashback lunch near office',         sub: 'Earn on every meal · express slots filling' },
+    evening: { headline: 'After-work cashback deals',          sub: 'Earn at grooming, gym & dining spots' },
+    night:   { headline: 'Weekend cashback deals near you',    sub: 'Earn on dining, home services & more' },
   },
   general: {
-    morning: { headline: 'Morning deals near you',    sub: 'Start saving from today' },
-    lunch:   { headline: 'Lunch deals near you',       sub: 'Best value options nearby' },
-    evening: { headline: 'Evening deals near you',    sub: 'Dining, grooming & more' },
-    night:   { headline: 'Night deals near you',       sub: 'Open now & ready for you' },
+    morning: { headline: 'Morning cashback deals near you',    sub: 'Earn cashback from your first visit today' },
+    lunch:   { headline: 'Lunch cashback deals near you',      sub: 'Best cashback options within 750m' },
+    evening: { headline: 'Evening cashback deals near you',    sub: 'Earn on dining, grooming & more tonight' },
+    night:   { headline: 'Cashback deals open now near you',   sub: 'Earn cashback tonight at stores near you' },
   },
 };
 
@@ -202,7 +202,7 @@ const MicroMomentDecisionCard: React.FC<MicroMomentDecisionCardProps> = ({
           accessibilityRole="button"
           accessibilityLabel={`See all ${stores.length} deals`}
         >
-          <Text style={styles.ctaText}>See all {stores.length} deals</Text>
+          <Text style={styles.ctaText}>See all {stores.length} cashback deals</Text>
           <Ionicons name="arrow-forward" size={13} color={NAVY} />
         </Pressable>
         <Text style={styles.ctaHint}>Tap to explore →</Text>
