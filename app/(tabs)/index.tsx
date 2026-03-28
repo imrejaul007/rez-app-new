@@ -66,7 +66,7 @@ import { useLoyaltySection } from '@/hooks/useLoyaltySection';
 import { PersonalizedHeroBanner } from '@/components/home/PersonalizedHeroBanner';
 import * as insightsApi from '@/services/insightsApi';
 import streakApi from '@/services/streakApi';
-import HeroCard from '@/components/homepage/HeroCard';
+// HeroCard replaced by redesigned HeroBanner — see HeroBanner.tsx
 import CoinExpiryBanner from '@/components/wallet/CoinExpiryBanner';
 
 // NOTE: PersonaDetectionOnboarding, MicroMomentDecisionCard, StreakToDealConnector,
@@ -260,7 +260,7 @@ function HomeScreen() {
   const savingsInsights = useSavingsInsights();
   const totalSaved = savingsInsights?.totalSaved ?? 0;
 
-  // Wire missing API on mount — Section 12 / HeroCard missedAmount
+  // Wire missing API on mount — missed savings for insight data
   const { data: missedSavings } = useQuery({
     queryKey: ['missed-savings'],
     queryFn: () => insightsApi.getMissedSavings(),
@@ -1065,20 +1065,13 @@ function HomeScreen() {
             </View>
           </ReAnimated.View>
 
-          {/* Section 4 / HeroCard: shown in header gradient for Near U tab.
-              HeroCard (Agent 1) replaces the old HeroBanner for near-u. */}
+          {/* Hero Banner: time-aware bold gradient hero for Near U tab */}
           {activeTab === 'near-u' && (
-            <FeatureErrorBoundary featureName="Hero Card" compact={true}>
-              <HeroCard
+            <FeatureErrorBoundary featureName="Hero Banner" compact={true}>
+              <HeroBanner
                 totalSaved={walletData?.savingsInsights?.totalSaved ?? 0}
-                savingsThisMonth={walletData?.savingsInsights?.thisMonth ?? 0}
-                unlockAmount={580}
-                missedAmount={missedSavings?.totalMissedThisMonth ?? 0}
-                expiringCoins={(walletData as any)?.promoCoinBalance ?? 0}
-                onScanPay={handleSearchPress}
-                onViewWallet={handleCoinPress}
-                onClaimPress={() => router.push('/offers' as any)}
-                onUseCoinPress={handleCoinPress}
+                onScanPayPress={handleSearchPress}
+                onViewWalletPress={handleCoinPress}
               />
             </FeatureErrorBoundary>
           )}

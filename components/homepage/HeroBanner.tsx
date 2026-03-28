@@ -1,5 +1,11 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
-import { BRAND } from '@/constants/brand';
+/**
+ * HeroBanner — Bold, time-aware hero section.
+ *
+ * Design: full-width Nile Blue gradient, large typography, mustard CTA.
+ * Inspired by Zomato/Dineout-style hero panels — clean, premium, zero clutter.
+ */
+
+import React, { memo, useMemo } from 'react';
 import {
   View,
   Text,
@@ -8,286 +14,277 @@ import {
   Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import platformApi from '@/services/platformApi';
-import { colors, typography, iconSize, spacing } from '@/constants/theme';
-import { isSmallDevice, responsiveFontSize } from '@/utils/responsive';
+import { spacing } from '@/constants/theme';
 
 const { width: SCREEN_W } = Dimensions.get('window');
-const HORIZONTAL_PADDING = 2;
 
+// ── Brand tokens ────────────────────────────────────────────────────────────
+const NILE_BLUE        = '#1a3a52';
+const NILE_BLUE_MID    = '#1e4463';
+const NILE_BLUE_LIGHT  = '#2a5a7c';
+const MUSTARD          = '#FFC857';
+const MUSTARD_DARK     = '#E6A800';
+const WHITE            = '#FFFFFF';
+const WHITE_70         = 'rgba(255,255,255,0.70)';
+const WHITE_15         = 'rgba(255,255,255,0.15)';
+const WHITE_08         = 'rgba(255,255,255,0.08)';
+
+// ── Time-of-day content ─────────────────────────────────────────────────────
+interface TimeSlot {
+  greeting: string;
+  headline: string;
+  subline: string;
+}
+
+function getTimeSlot(): TimeSlot {
+  const hour = new Date().getHours();
+  if (hour >= 6 && hour < 11) {
+    return {
+      greeting: 'Good Morning! ☀️',
+      headline: 'Start Your Day\nWith Savings',
+      subline: 'Best breakfast & coffee deals nearby',
+    };
+  }
+  if (hour >= 11 && hour < 14) {
+    return {
+      greeting: 'Lunch Time! 🍽️',
+      headline: 'Nearby Deals\nWaiting For You',
+      subline: 'Up to 40% cashback on lunch orders',
+    };
+  }
+  if (hour >= 14 && hour < 20) {
+    return {
+      greeting: 'Evening Treats! 🌆',
+      headline: 'Explore Cashback\nOffers Near You',
+      subline: 'Cafes, shopping & wellness deals',
+    };
+  }
+  return {
+    greeting: 'Late Night Cravings? 🌙',
+    headline: 'Order Now,\nSave More',
+    subline: 'Midnight deals from top restaurants',
+  };
+}
+
+// ── Props ────────────────────────────────────────────────────────────────────
 interface HeroBannerProps {
   totalSaved?: number;
   onScanPayPress?: () => void;
   onViewWalletPress?: () => void;
 }
 
-interface PlatformStats {
-  rating: number;
-  storeCount: number;
-  nearbyText: string;
-}
-
-function HeroBanner({ totalSaved = 0, onScanPayPress, onViewWalletPress }: HeroBannerProps) {
+// ── Component ────────────────────────────────────────────────────────────────
+function HeroBanner({ onScanPayPress, onViewWalletPress }: HeroBannerProps) {
   const router = useRouter();
-  const isNewUser = totalSaved === 0;
+  const slot = useMemo(() => getTimeSlot(), []);
 
-  const [stats, setStats] = useState<PlatformStats | null>(null);
+  const handleExploreDeals = () => {
+    router.push('/offers' as any);
+  };
 
-  useEffect(() => {
-    let cancelled = false;
-    platformApi.getPlatformStats().then((result) => {
-      if (!cancelled && result) {
-        setStats({
-          rating: result.averageRating,
-          storeCount: result.totalStores,
-          nearbyText: 'Near you',
-        });
-      }
-    }).catch(() => {});
-    return () => { cancelled = true; };
-  }, []);
-
-  const handleScanPayPress = useCallback(() => {
+  const handleScanPay = () => {
     if (onScanPayPress) {
       onScanPayPress();
     } else {
       router.push('/pay-in-store/' as any);
     }
-  }, [onScanPayPress, router]);
-
-  const handleViewWalletPress = useCallback(() => {
-    if (onViewWalletPress) {
-      onViewWalletPress();
-    } else {
-      router.push('/wallet-screen' as any);
-    }
-  }, [onViewWalletPress, router]);
-
-  const formatSavings = (amount: number): string => {
-    if (amount >= 100000) {
-      return `${(amount / 100000).toFixed(1)}L`;
-    } else if (amount >= 1000) {
-      return `${(amount / 1000).toFixed(1)}K`;
-    }
-    return amount.toLocaleString();
-  };
-
-  const formatStoreCount = (count: number): string => {
-    if (count >= 1000) {
-      return `${Math.floor(count / 1000)}K+`;
-    }
-    return `${count}+`;
   };
 
   return (
-    <View style={styles.container}>
-      <LinearGradient
-        colors={[colors.nileBlue, colors.brand.nileBlueLight, '#2d5c7e']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradientContainer}
-      >
-        {/* Header Row - Icon + Title */}
-        <View style={styles.headerRow}>
-          <View style={styles.iconBadge}>
-            <Ionicons
-              name={isNewUser ? "wallet-outline" : "gift-outline"}
-              size={iconSize.md}
-              color={colors.lightMustard}
-            />
-          </View>
-          <View style={styles.titleContainer}>
-            <Text style={styles.mainTitle} numberOfLines={2}>
-              {isNewUser
-                ? 'Save money on everything you buy'
-                : `You've saved ${formatSavings(totalSaved)} ${BRAND.CURRENCY_CODE} with ${BRAND.APP_NAME}`}
-            </Text>
-            <Text style={styles.subtitle} numberOfLines={1} ellipsizeMode="tail">
-              {isNewUser ? `Online & in-store with ${BRAND.APP_NAME}` : "That's smarter spending"}
-            </Text>
-          </View>
-        </View>
+    <LinearGradient
+      colors={[NILE_BLUE, NILE_BLUE_MID, NILE_BLUE_LIGHT]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.gradient}
+    >
+      {/* Decorative circles — depth effect */}
+      <View style={styles.decorCircleLarge} />
+      <View style={styles.decorCircleSmall} />
 
-        {/* Subline */}
-        <Text style={styles.subline}>
-          One wallet. All rewards. Zero effort.
-        </Text>
+      {/* Greeting pill */}
+      <View style={styles.greetingPill}>
+        <Text style={styles.greetingText}>{slot.greeting}</Text>
+      </View>
 
-        {/* CTA Cards Row */}
-        <View style={styles.ctaContainer}>
-          <Pressable
-            style={[styles.ctaCard, styles.ctaCardPrimary]}
-            onPress={handleScanPayPress}
-            accessibilityLabel="Scan and pay at store"
-            accessibilityRole="button"
-            accessibilityHint="Double tap to open the QR code scanner and pay at a participating store"
-          >
-            <Ionicons name="qr-code-outline" size={iconSize.md} color={colors.nileBlue} />
-            <Text style={[styles.ctaText, styles.ctaTextPrimary]}>Scan & Pay</Text>
-            <Ionicons name="chevron-forward" size={iconSize.sm} color={colors.nileBlue} />
-          </Pressable>
+      {/* Headline */}
+      <Text style={styles.headline}>{slot.headline}</Text>
 
-          <Pressable
-            style={styles.ctaCard}
-            onPress={handleViewWalletPress}
-            accessibilityLabel="View wallet balance"
-            accessibilityRole="button"
-            accessibilityHint="Double tap to view your REZ wallet balance and transaction history"
-          >
-            <Ionicons name="wallet-outline" size={iconSize.md} color={colors.background.primary} />
-            <Text style={styles.ctaText}>View Wallet</Text>
-            <Ionicons name="chevron-forward" size={iconSize.sm} color="rgba(255,255,255,0.9)" />
-          </Pressable>
-        </View>
+      {/* Subline */}
+      <Text style={styles.subline}>{slot.subline}</Text>
 
-        {/* Social Proof Section — reserve height even when loading to prevent CLS */}
-        <View style={[styles.socialProofContainer, !stats && styles.socialProofPlaceholder]}>
-        {stats && (
-          <View style={{ width: '100%' }}>
-            {/* Rating */}
-            {stats.rating > 0 && (
-              <>
-                <View style={styles.proofItem}>
-                  <Ionicons name="star" size={14} color={colors.warningScale[400]} />
-                  <Text style={styles.proofText}>{stats.rating} rated</Text>
-                </View>
-                <View style={styles.proofDivider} />
-              </>
-            )}
+      {/* CTA Row */}
+      <View style={styles.ctaRow}>
+        {/* Primary CTA — Mustard */}
+        <Pressable
+          style={({ pressed }) => [styles.ctaPrimary, pressed && styles.ctaPrimaryPressed]}
+          onPress={handleExploreDeals}
+          accessibilityRole="button"
+          accessibilityLabel="Explore deals"
+          accessibilityHint="Tap to browse all available cashback deals"
+        >
+          <Text style={styles.ctaPrimaryText}>Explore Deals →</Text>
+        </Pressable>
 
-            {/* Store Count */}
-            <View style={styles.proofItem}>
-              <Ionicons name="storefront-outline" size={14} color="rgba(255,255,255,0.8)" />
-              <Text style={styles.proofText}>{formatStoreCount(stats.storeCount)} stores</Text>
-            </View>
+        {/* Secondary CTA — Scan & Pay */}
+        <Pressable
+          style={({ pressed }) => [styles.ctaSecondary, pressed && { opacity: 0.75 }]}
+          onPress={handleScanPay}
+          accessibilityRole="button"
+          accessibilityLabel="Scan and pay"
+          accessibilityHint="Tap to open QR scanner and pay at a store"
+        >
+          <Text style={styles.ctaSecondaryText}>Scan & Pay</Text>
+        </Pressable>
+      </View>
 
-            {/* Divider */}
-            <View style={styles.proofDivider} />
-
-            {/* Near You */}
-            <View style={styles.proofItem}>
-              <Ionicons name="people-outline" size={14} color="rgba(255,255,255,0.8)" />
-              <Text style={styles.proofText}>{stats.nearbyText}</Text>
-            </View>
-          </View>
-        )}
-        </View>
-      </LinearGradient>
-    </View>
+      {/* Bottom trust strip */}
+      <View style={styles.trustStrip}>
+        <View style={styles.trustDot} />
+        <Text style={styles.trustText}>2,400+ stores · Instant cashback · Zero fees</Text>
+      </View>
+    </LinearGradient>
   );
 }
 
+// ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: {
-    paddingHorizontal: HORIZONTAL_PADDING,
-    paddingTop: spacing.xs,
-    paddingBottom: spacing.sm,
+  gradient: {
+    marginHorizontal: spacing.base,
+    marginTop: spacing.xs,
+    marginBottom: spacing.sm,
+    borderRadius: 16,
+    paddingHorizontal: 20,
+    paddingTop: 20,
+    paddingBottom: 16,
+    overflow: 'hidden',
+    // Shadow
+    shadowColor: NILE_BLUE,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.28,
+    shadowRadius: 12,
+    elevation: 8,
   },
-  gradientContainer: {
-    borderRadius: 14,
-    paddingHorizontal: spacing.base,
-    paddingTop: spacing.sm,
-    paddingBottom: spacing.sm,
-    shadowColor: colors.nileBlue,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
-    elevation: 5,
+
+  // Decorative background circles
+  decorCircleLarge: {
+    position: 'absolute',
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: WHITE_08,
+    right: -40,
+    top: -50,
   },
-  headerRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: spacing.xs,
+  decorCircleSmall: {
+    position: 'absolute',
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: WHITE_08,
+    right: 60,
+    top: 40,
   },
-  iconBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: colors.background.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: spacing.md,
-    marginTop: 2,
+
+  // Greeting pill
+  greetingPill: {
+    alignSelf: 'flex-start',
+    backgroundColor: WHITE_15,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    marginBottom: 12,
   },
-  titleContainer: {
-    flex: 1,
+  greetingText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: WHITE,
+    letterSpacing: 0.2,
   },
-  mainTitle: {
-    ...typography.h4,
-    color: colors.background.primary,
-    fontSize: isSmallDevice ? 16 : responsiveFontSize(18),
-    lineHeight: isSmallDevice ? 22 : 24,
-    marginBottom: spacing.xs,
+
+  // Main headline
+  headline: {
+    fontSize: 30,
+    fontWeight: '900',
+    color: WHITE,
+    letterSpacing: -0.8,
+    lineHeight: 36,
+    marginBottom: 8,
   },
-  subtitle: {
-    ...typography.caption,
-    color: 'rgba(255, 255, 255, 0.85)',
-    lineHeight: 18,
-  },
+
+  // Subline
   subline: {
     fontSize: 13,
     fontWeight: '500',
-    color: 'rgba(255, 255, 255, 0.65)',
-    marginBottom: spacing.md,
-    marginLeft: 44,
+    color: WHITE_70,
+    lineHeight: 19,
+    marginBottom: 20,
   },
-  ctaContainer: {
+
+  // CTA Row
+  ctaRow: {
     flexDirection: 'row',
-    gap: isSmallDevice ? spacing.xs : spacing.sm,
-    marginBottom: spacing.sm,
+    gap: 10,
+    marginBottom: 16,
   },
-  ctaCard: {
+
+  // Primary mustard CTA
+  ctaPrimary: {
     flex: 1,
-    flexDirection: 'row',
+    backgroundColor: MUSTARD,
+    borderRadius: 12,
+    paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.18)',
-    borderRadius: 10,
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.sm,
-    minHeight: 44,
-    gap: spacing.xs,
   },
-  ctaCardPrimary: {
-    backgroundColor: colors.background.primary,
+  ctaPrimaryPressed: {
+    backgroundColor: MUSTARD_DARK,
   },
-  ctaText: {
+  ctaPrimaryText: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: NILE_BLUE,
+    letterSpacing: 0.2,
+  },
+
+  // Secondary ghost CTA
+  ctaSecondary: {
     flex: 1,
-    ...typography.button,
-    fontSize: isSmallDevice ? 12 : 14,
-    color: colors.background.primary,
-  },
-  ctaTextPrimary: {
-    color: colors.nileBlue,
-  },
-  // Social Proof Styles
-  socialProofContainer: {
-    flexDirection: 'row',
+    backgroundColor: WHITE_15,
+    borderRadius: 12,
+    paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: spacing.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.25)',
+  },
+  ctaSecondaryText: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: WHITE,
+    letterSpacing: 0.1,
+  },
+
+  // Bottom trust strip
+  trustStrip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.15)',
+    borderTopColor: 'rgba(255,255,255,0.12)',
   },
-  socialProofPlaceholder: {
-    minHeight: 32,
+  trustDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#4ADE80',
   },
-  proofItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.xs,
-  },
-  proofText: {
-    ...typography.caption,
-    color: 'rgba(255, 255, 255, 0.85)',
-  },
-  proofDivider: {
-    width: 1,
-    height: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    marginHorizontal: spacing.md,
+  trustText: {
+    fontSize: 11,
+    fontWeight: '500',
+    color: WHITE_70,
+    letterSpacing: 0.1,
   },
 });
 

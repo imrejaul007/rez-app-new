@@ -24,7 +24,7 @@
  *  16. StoriesRow / What's New     → moved to index.tsx (was duplicating)
  *  17. PersonalizedHeroBanner      → moved to index.tsx (was duplicating)
  *  18. StreakFireIcon + RezScoreCard → moved to index.tsx (was duplicating)
- *  19. HomeSavingsSummaryCard      (Always) — wired with unlockAmount
+ *  19. Savings Strip               (Always) — compact single-line, wired with thisMonthSaved/totalSaved
  *  20. QuickReorderSection         (featureLevel >= 3)
  *  21. BonusZoneHighlight + FlashDealCountdown (Always)
  *  22. TrendingNearYou             (Always)
@@ -33,14 +33,15 @@
  */
 
 import React, { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { SharedValue } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors } from '@/constants/theme';
 
 import LazySection from '@/components/homepage/LazySection';
-import HomeSavingsSummaryCard from '@/components/homepage/HomeSavingsSummaryCard';
+// HomeSavingsSummaryCard replaced by compact inline savings strip below
+import CategoryQuickAccess from '@/components/homepage/CategoryQuickAccess';
 import EarnRezCoinsSection from '@/components/homepage/EarnRezCoinsSection';
 import BonusZoneHighlight from '@/components/homepage/BonusZoneHighlight';
 import GlobeBanner from '@/components/homepage/GlobeBanner';
@@ -153,7 +154,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
   const _isLunchWindow = _currentHour >= 11 && _currentHour < 14;
   const _isAfterWorkWindow = _isWeekend || _currentHour >= 17;
 
-  // Wallet data for HomeSavingsSummaryCard unlockAmount
+  // Wallet data for unlockAmount (used by other sections)
   const walletData = useWalletStore();
   const unlockAmount = (walletData as any)?.unlockAmount ?? (walletData as any)?.lockedBalance ?? undefined;
 
@@ -283,6 +284,9 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
         />
       )}
 
+      {/* ── Category Quick Access Grid (Always) ─────────────────────────── */}
+      <CategoryQuickAccess />
+
       {/* ── Section 1: TimeAwareContextPill (Near U only) ──────────────────── */}
       <LazySection sectionId="time-aware-context-pill" scrollY={scrollY} height={56}
         renderSection={() => {
@@ -406,16 +410,26 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
         </>
       )}
 
-      {/* ── Section 19: HomeSavingsSummaryCard (Always) ─────────────────────── */}
+      {/* ── Section 19: Savings Strip (Always) — compact single-line version ── */}
       {/* NOTE: StoriesRow (16), PersonalizedHeroBanner (17), RezScoreCard (18)
           are rendered by index.tsx above the content area to avoid duplication */}
-      <HomeSavingsSummaryCard
-        totalSaved={totalSaved ?? 0}
-        thisMonthSaved={thisMonthSaved ?? 0}
-        currencySymbol={currencySymbol ?? '\u20B9'}
-        unlockAmount={unlockAmount}
+      <Pressable
+        style={savingsStrip.wrapper}
         onPress={() => router.push('/wallet-screen')}
-      />
+        accessibilityRole="button"
+        accessibilityLabel={`You've saved ${currencySymbol ?? '₹'}${(thisMonthSaved ?? 0).toLocaleString()} this month`}
+        accessibilityHint="Tap to view your wallet and savings history"
+      >
+        <Text style={savingsStrip.emoji}>💰</Text>
+        <Text style={savingsStrip.text} numberOfLines={1}>
+          You've saved{' '}
+          <Text style={savingsStrip.amount}>
+            {currencySymbol ?? '₹'}{((thisMonthSaved ?? 0) > 0 ? thisMonthSaved : totalSaved ?? 0).toLocaleString()}
+          </Text>
+          {' '}this month
+        </Text>
+        <Text style={savingsStrip.cta}>View →</Text>
+      </Pressable>
 
       {/* ── Section 20: QuickReorderSection (featureLevel >= 3) ────────────── */}
       {(featureLevel >= 3 || hasCompletedFirstOrder) && (
@@ -448,5 +462,41 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
     return null;
   }
 };
+
+// ── Savings strip styles ───────────────────────────────────────────────────
+const savingsStrip = StyleSheet.create({
+  wrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginBottom: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 11,
+    backgroundColor: '#FFFBEB',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
+    gap: 6,
+  },
+  emoji: {
+    fontSize: 15,
+    lineHeight: 18,
+  },
+  text: {
+    flex: 1,
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#475569',
+  },
+  amount: {
+    fontWeight: '800',
+    color: '#1a3a52',
+  },
+  cta: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#1a3a52',
+  },
+});
 
 export default React.memo(NearUTabContent);
