@@ -17,16 +17,17 @@ import { colors } from '@/constants/theme';
 const { width } = Dimensions.get('window');
 const CARD_GAP = 10;
 
-// Brand Colors - matching other homepage components
+// Brand Colors — premium dark palette
 const COLORS = {
-  primary: colors.lightMustard,
-  primaryDark: colors.brand.goldRich,
-  primaryLight: colors.lavenderMist,
+  primary: '#D4AF37',       // gold
+  primaryDark: '#B8922A',   // deep gold
+  primaryLight: '#F0D98A',  // light gold shimmer
   white: colors.background.primary,
-  textDark: colors.deepNavy,
-  textMuted: colors.neutral[500],
-  border: 'rgba(255, 205, 87, 0.15)',
-  cardBg: 'rgba(255, 255, 255, 0.95)',
+  textDark: '#FFFFFF',
+  textMuted: 'rgba(255,255,255,0.55)',
+  border: 'rgba(212,175,55,0.22)',
+  cardBg: '#0F1923',        // deep navy charcoal
+  cardBgAlt: '#141E2A',     // slightly lighter variant
 };
 
 const EarnNuqtaCoinsSection: React.FC = () => {
@@ -52,10 +53,10 @@ const EarnNuqtaCoinsSection: React.FC = () => {
         <View style={styles.headerLeft}>
           <View style={styles.headerIconContainer}>
             <LinearGradient
-              colors={[COLORS.primary, COLORS.primaryDark]}
+              colors={['#D4AF37', '#B8922A']}
               style={styles.headerIconGradient}
             >
-              <Ionicons name="wallet" size={18} color={COLORS.white} />
+              <Ionicons name="wallet" size={18} color="#0F1923" />
             </LinearGradient>
           </View>
           <View>
@@ -77,15 +78,14 @@ const EarnNuqtaCoinsSection: React.FC = () => {
           <Pressable
             style={styles.largeCard}
             onPress={handleOnlineShoppingPress}
-           
           >
             <LinearGradient
-              colors={['rgba(255, 255, 255, 0.98)', 'rgba(255, 255, 255, 0.92)']}
+              colors={['#141E2A', '#0F1923']}
               style={styles.largeCardGradient}
             >
-              {/* Subtle mustard overlay */}
+              {/* Gold shimmer overlay */}
               <LinearGradient
-                colors={['rgba(255, 205, 87, 0.06)', 'rgba(255, 205, 87, 0.02)']}
+                colors={['rgba(212,175,55,0.08)', 'rgba(212,175,55,0.02)']}
                 style={StyleSheet.absoluteFillObject}
               />
 
@@ -99,7 +99,7 @@ const EarnNuqtaCoinsSection: React.FC = () => {
                   <Text style={styles.largeEmoji}>🛒</Text>
                 </View>
                 <View style={styles.popularBadge}>
-                  <Ionicons name="star" size={10} color={colors.lightMustard} />
+                  <Ionicons name="star" size={10} color="#D4AF37" />
                   <Text style={styles.popularText}>Popular</Text>
                 </View>
               </View>
@@ -121,20 +121,14 @@ const EarnNuqtaCoinsSection: React.FC = () => {
             <Pressable
               style={styles.payCard}
               onPress={() => router.push('/pay-in-store' as any)}
-             
             >
               <LinearGradient
-                colors={['rgba(255, 255, 255, 0.98)', 'rgba(255, 255, 255, 0.92)']}
+                colors={['#141E2A', '#0F1923']}
                 style={styles.payCardGradient}
               >
-                {/* Nile Blue tint overlay */}
-                <LinearGradient
-                  colors={['rgba(26, 58, 82, 0.08)', 'rgba(26, 58, 82, 0.03)']}
-                  style={StyleSheet.absoluteFillObject}
-                />
                 <View style={styles.payCardContent}>
                   <View style={styles.payIconBox}>
-                    <Ionicons name="card-outline" size={20} color={colors.nileBlue} />
+                    <Ionicons name="card-outline" size={20} color="#D4AF37" />
                   </View>
                   <View style={styles.payTextContent}>
                     <Text style={styles.payCardTitle}>Pay in Store</Text>
@@ -142,7 +136,7 @@ const EarnNuqtaCoinsSection: React.FC = () => {
                   </View>
                 </View>
                 <View style={styles.payArrow}>
-                  <Ionicons name="chevron-forward" size={16} color={colors.nileBlue} />
+                  <Ionicons name="chevron-forward" size={16} color="#D4AF37" />
                 </View>
               </LinearGradient>
             </Pressable>
@@ -153,17 +147,11 @@ const EarnNuqtaCoinsSection: React.FC = () => {
               <Pressable
                 style={styles.smallCard}
                 onPress={() => router.push('/playandearn' as any)}
-               
               >
                 <LinearGradient
-                  colors={['rgba(255, 255, 255, 0.98)', 'rgba(255, 255, 255, 0.92)']}
+                  colors={['#1A2535', '#0F1923']}
                   style={styles.smallCardGradient}
                 >
-                  {/* Mustard tint */}
-                  <LinearGradient
-                    colors={['rgba(255, 205, 87, 0.15)', 'rgba(255, 205, 87, 0.06)']}
-                    style={StyleSheet.absoluteFillObject}
-                  />
                   <Text style={styles.smallEmoji}>🎮</Text>
                   <Text style={styles.smallCardText}>Play</Text>
                 </LinearGradient>
@@ -173,17 +161,11 @@ const EarnNuqtaCoinsSection: React.FC = () => {
               <Pressable
                 style={styles.smallCard}
                 onPress={() => router.push('/referral' as any)}
-               
               >
                 <LinearGradient
-                  colors={['rgba(255, 255, 255, 0.98)', 'rgba(255, 255, 255, 0.92)']}
+                  colors={['#1A2535', '#0F1923']}
                   style={styles.smallCardGradient}
                 >
-                  {/* Peach tint */}
-                  <LinearGradient
-                    colors={['rgba(255, 215, 181, 0.25)', 'rgba(255, 215, 181, 0.1)']}
-                    style={StyleSheet.absoluteFillObject}
-                  />
                   <Text style={styles.smallEmoji}>👥</Text>
                   <Text style={styles.smallCardText}>Refer</Text>
                 </LinearGradient>
@@ -198,17 +180,11 @@ const EarnNuqtaCoinsSection: React.FC = () => {
           <Pressable
             style={styles.socialCard}
             onPress={() => router.push('/social-impact' as any)}
-           
           >
             <LinearGradient
-              colors={['rgba(255, 255, 255, 0.98)', 'rgba(255, 255, 255, 0.92)']}
+              colors={['#141E2A', '#0F1923']}
               style={styles.socialCardGradient}
             >
-              {/* Nile Blue tint */}
-              <LinearGradient
-                colors={['rgba(26, 58, 82, 0.1)', 'rgba(26, 58, 82, 0.04)']}
-                style={StyleSheet.absoluteFillObject}
-              />
               <View style={styles.socialIconBox}>
                 <Text style={styles.socialEmoji}>🤝</Text>
               </View>
@@ -223,17 +199,11 @@ const EarnNuqtaCoinsSection: React.FC = () => {
           <Pressable
             style={styles.miniCard}
             onPress={() => router.push('/surveys' as any)}
-           
           >
             <LinearGradient
-              colors={['rgba(255, 255, 255, 0.98)', 'rgba(255, 255, 255, 0.92)']}
+              colors={['#1A2535', '#0F1923']}
               style={styles.miniCardGradient}
             >
-              {/* Lavender Mist tint */}
-              <LinearGradient
-                colors={['rgba(223, 235, 247, 0.4)', 'rgba(223, 235, 247, 0.15)']}
-                style={StyleSheet.absoluteFillObject}
-              />
               <Text style={styles.miniEmoji}>📋</Text>
               <Text style={styles.miniCardText}>Surveys</Text>
             </LinearGradient>
@@ -243,17 +213,11 @@ const EarnNuqtaCoinsSection: React.FC = () => {
           <Pressable
             style={styles.miniCard}
             onPress={() => router.push('/my-reviews' as any)}
-           
           >
             <LinearGradient
-              colors={['rgba(255, 255, 255, 0.98)', 'rgba(255, 255, 255, 0.92)']}
+              colors={['#1A2535', '#0F1923']}
               style={styles.miniCardGradient}
             >
-              {/* Mustard tint */}
-              <LinearGradient
-                colors={['rgba(255, 205, 87, 0.15)', 'rgba(255, 205, 87, 0.06)']}
-                style={StyleSheet.absoluteFillObject}
-              />
               <Text style={styles.miniEmoji}>⭐</Text>
               <Text style={styles.miniCardText}>Reviews</Text>
             </LinearGradient>
@@ -301,19 +265,17 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.2)',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: COLORS.textDark,
+    color: colors.text.primary,
     marginBottom: 4,
     letterSpacing: -0.3,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: COLORS.textMuted,
+    color: colors.text.secondary,
     fontWeight: '400',
   },
   viewAllButton: {
@@ -323,14 +285,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
-    backgroundColor: 'rgba(255, 205, 87, 0.08)',
+    backgroundColor: 'rgba(212,175,55,0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.15)',
+    borderColor: 'rgba(212,175,55,0.25)',
   },
   viewAllText: {
     fontSize: 13,
     fontWeight: '600',
-    color: COLORS.primary,
+    color: '#D4AF37',
   },
 
   // Bento Grid
@@ -354,16 +316,16 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: 'rgba(212,175,55,0.22)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.2,
         shadowRadius: 8,
       },
       android: {
-        elevation: 3,
+        elevation: 5,
       },
     }),
   },
@@ -381,7 +343,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(255, 205, 87, 0.08)',
+    backgroundColor: 'rgba(212,175,55,0.07)',
   },
   decorCircle2: {
     position: 'absolute',
@@ -390,7 +352,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: 'rgba(255, 205, 87, 0.05)',
+    backgroundColor: 'rgba(212,175,55,0.04)',
   },
   largeCardHeader: {
     flexDirection: 'row',
@@ -401,11 +363,11 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 12,
-    backgroundColor: 'rgba(255, 205, 87, 0.12)',
+    backgroundColor: 'rgba(212,175,55,0.12)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.2)',
+    borderColor: 'rgba(212,175,55,0.22)',
   },
   largeEmoji: {
     fontSize: 22,
@@ -414,17 +376,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(255, 205, 87, 0.15)',
+    backgroundColor: 'rgba(212,175,55,0.15)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.25)',
+    borderColor: 'rgba(212,175,55,0.3)',
   },
   popularText: {
     fontSize: 10,
     fontWeight: '600',
-    color: colors.nileBlue,
+    color: '#D4AF37',
   },
   largeCardFooter: {
     gap: 3,
@@ -442,18 +404,18 @@ const styles = StyleSheet.create({
   },
   cashbackBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255, 205, 87, 0.12)',
+    backgroundColor: 'rgba(212,175,55,0.15)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
     marginTop: 6,
     borderWidth: 1,
-    borderColor: 'rgba(255, 205, 87, 0.2)',
+    borderColor: 'rgba(212,175,55,0.3)',
   },
   cashbackText: {
     fontSize: 11,
     fontWeight: '600',
-    color: COLORS.primaryDark,
+    color: '#D4AF37',
   },
 
   // Right Column
@@ -468,16 +430,16 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(26, 58, 82, 0.15)',
+    borderColor: 'rgba(212,175,55,0.2)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
+        shadowOpacity: 0.18,
         shadowRadius: 6,
       },
       android: {
-        elevation: 2,
+        elevation: 4,
       },
     }),
   },
@@ -498,11 +460,11 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: 'rgba(26, 58, 82, 0.12)',
+    backgroundColor: 'rgba(212,175,55,0.12)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(26, 58, 82, 0.2)',
+    borderColor: 'rgba(212,175,55,0.25)',
   },
   payTextContent: {
     flex: 1,
@@ -521,7 +483,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: 'rgba(26, 58, 82, 0.1)',
+    backgroundColor: 'rgba(212,175,55,0.12)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -537,16 +499,16 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
+    borderColor: 'rgba(212,175,55,0.18)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.04,
+        shadowOpacity: 0.15,
         shadowRadius: 4,
       },
       android: {
-        elevation: 2,
+        elevation: 3,
       },
     }),
   },
@@ -572,16 +534,16 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(26, 58, 82, 0.15)',
+    borderColor: 'rgba(212,175,55,0.2)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.04,
+        shadowOpacity: 0.15,
         shadowRadius: 4,
       },
       android: {
-        elevation: 2,
+        elevation: 3,
       },
     }),
   },
@@ -596,11 +558,11 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: 'rgba(26, 58, 82, 0.12)',
+    backgroundColor: 'rgba(212,175,55,0.12)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(26, 58, 82, 0.2)',
+    borderColor: 'rgba(212,175,55,0.22)',
   },
   socialEmoji: {
     fontSize: 18,
@@ -625,16 +587,16 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(0, 0, 0, 0.06)',
+    borderColor: 'rgba(212,175,55,0.18)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.04,
+        shadowOpacity: 0.15,
         shadowRadius: 4,
       },
       android: {
-        elevation: 2,
+        elevation: 3,
       },
     }),
   },
