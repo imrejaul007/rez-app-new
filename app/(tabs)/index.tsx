@@ -781,9 +781,9 @@ function HomeScreen() {
       case 'prive':
         return [colors.neutral[800], colors.neutral[800], colors.neutral[900], colors.neutral[900]];
       case 'mall':
-        return [colors.infoScale[200], colors.tint.blueLight, colors.tint.blue, colors.background.primary];
+        return ['#FFFBEB', '#FFF8E1', '#FFFBEB', colors.background.primary];
       case 'cash':
-        return [colors.lightPeach, colors.background.peach, colors.background.accent, colors.background.primary];
+        return ['#FFFBEB', '#FFF8E1', '#FFFBEB', colors.background.primary];
       default:
         return [colors.primary[300], colors.primary[200], colors.linen, colors.background.primary];
     }
@@ -792,56 +792,20 @@ function HomeScreen() {
   // Memoize tab-dependent styles to avoid creating new objects every render
   const tabStyles = useMemo(() => {
     const isPrive = activeTab === 'prive';
-    const isMall = activeTab === 'mall';
-    const isCash = activeTab === 'cash';
     return {
-      locationIconBg: isPrive
-        ? { backgroundColor: colors.brand.goldAccent }
-        : isMall
-          ? { backgroundColor: colors.brand.sky }
-          : isCash
-            ? { backgroundColor: colors.brand.caramel }
-            : undefined,
+      locationIconBg: isPrive ? { backgroundColor: '#FFC857' } : undefined,
       locationText: isPrive
         ? { color: colors.text.inverse, ...typography.body, fontWeight: '600' as const }
         : undefined,
-      chevronColor: isPrive
-        ? colors.brand.goldAccent
-        : isMall
-          ? colors.brand.sky
-          : isCash
-            ? colors.brand.caramel
-            : colors.text.tertiary,
+      chevronColor: isPrive ? '#FFC857' : colors.text.tertiary,
       coinContainerStyle: isPrive
-        ? { backgroundColor: 'rgba(201, 169, 98, 0.2)', borderColor: 'rgba(201, 169, 98, 0.4)' }
-        : isMall
-          ? { backgroundColor: 'rgba(2, 132, 199, 0.15)', borderColor: 'rgba(2, 132, 199, 0.3)' }
-          : isCash
-            ? { backgroundColor: 'rgba(212, 160, 122, 0.15)', borderColor: 'rgba(212, 160, 122, 0.3)' }
-            : undefined,
-      coinTextColor: isPrive
-        ? { color: colors.brand.goldAccent }
-        : isMall
-          ? { color: colors.brand.sky }
-          : isCash
-            ? { color: colors.brand.caramel }
-            : undefined,
-      iconColor: isPrive ? colors.text.inverse : isMall ? colors.brand.sky : colors.text.primary,
-      whatsNewVariant: (isMall ? 'blue' : isPrive ? 'gold' : 'green') as 'blue' | 'gold' | 'green',
-      savedPillBg: isPrive
-        ? { backgroundColor: 'rgba(201, 169, 98, 0.25)' }
-        : isMall
-          ? { backgroundColor: 'rgba(2, 132, 199, 0.2)' }
-          : isCash
-            ? { backgroundColor: 'rgba(212, 160, 122, 0.2)' }
-            : undefined,
-      savedTextColor: isPrive
-        ? { color: colors.brand.goldAccent }
-        : isMall
-          ? { color: colors.brand.sky }
-          : isCash
-            ? { color: colors.brand.caramel }
-            : undefined,
+        ? { backgroundColor: 'rgba(255, 200, 87, 0.2)', borderColor: 'rgba(255, 200, 87, 0.4)' }
+        : undefined,
+      coinTextColor: isPrive ? { color: '#FFC857' } : undefined,
+      iconColor: isPrive ? colors.text.inverse : colors.text.primary,
+      whatsNewVariant: (isPrive ? 'gold' : 'green') as 'blue' | 'gold' | 'green',
+      savedPillBg: isPrive ? { backgroundColor: 'rgba(255, 200, 87, 0.25)' } : undefined,
+      savedTextColor: isPrive ? { color: '#FFC857' } : undefined,
     };
   }, [activeTab]);
 
@@ -1001,17 +965,7 @@ function HomeScreen() {
               {/* Full Address Section */}
               <View style={viewStyles.addressSection}>
                 <View style={viewStyles.addressHeader}>
-                  <Ionicons
-                    name="location"
-                    size={16}
-                    color={
-                      activeTab === 'mall'
-                        ? colors.brand.sky
-                        : activeTab === 'cash'
-                          ? colors.brand.caramel
-                          : colors.lightMustard
-                    }
-                  />
+                  <Ionicons name="location" size={16} color={colors.lightMustard} />
                   <Text style={viewStyles.addressHeaderText}>Current Location</Text>
                 </View>
                 <LocationDisplay
@@ -1026,41 +980,17 @@ function HomeScreen() {
 
               {/* Change Location Button */}
               <Pressable
-                style={[
-                  viewStyles.changeLocationButton,
-                  activeTab === 'mall' && {
-                    // MEERA: design token — hardcoded '#E0F2FE' -> colors.tint.blue (sky blue tint for mall tab)
-                    backgroundColor: colors.tint.blueLight,
-                    // MEERA: design token — hardcoded '#BAE6FD' -> colors.infoScale[200] (lighter sky blue border)
-                    borderColor: colors.infoScale[200],
-                  },
-                ]}
+                style={viewStyles.changeLocationButton}
                 onPress={handleChangeLocationPress}
                 accessibilityRole="button"
                 accessibilityLabel="Change location"
                 accessibilityHint="Tap to search and change your current location"
               >
-                <View
-                  style={[
-                    viewStyles.changeLocationIconWrapper,
-                    // MEERA: design token — hardcoded '#0EA5E9' -> colors.brand.sky (sky blue for mall tab accent)
-                    activeTab === 'mall' && { backgroundColor: colors.brand.sky },
-                  ]}
-                >
+                <View style={viewStyles.changeLocationIconWrapper}>
                   <Ionicons name="search" size={12} color={colors.text.inverse} />
                 </View>
                 <Text style={viewStyles.changeLocationText}>Change Location</Text>
-                <Ionicons
-                  name="chevron-forward"
-                  size={14}
-                  color={
-                    activeTab === 'mall'
-                      ? colors.brand.sky
-                      : activeTab === 'cash'
-                        ? colors.brand.caramel
-                        : colors.lightMustard
-                  }
-                />
+                <Ionicons name="chevron-forward" size={14} color={colors.lightMustard} />
               </Pressable>
             </View>
           </ReAnimated.View>
@@ -1409,12 +1339,12 @@ const viewStyles = StyleSheet.create({
       default: {}, // Web: no constraint, flexShrink handles it
     }),
   },
-  // Section 4: 22x22 circle with rgba(255,178,60,.9) background
+  // Section 4: 22x22 circle with mustard background
   locationIconWrapper: {
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: 'rgba(255,178,60,0.9)',
+    backgroundColor: '#FFC857',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.sm,
@@ -1439,11 +1369,11 @@ const viewStyles = StyleSheet.create({
       default: { gap: spacing.xs }, // Web: use gap (well-supported)
     }),
   },
-  // Section 4: Streak pill — solid orange card rgba(255,152,40,.82)
+  // Section 4: Streak pill — mustard card
   headerStreakPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,152,40,0.82)',
+    backgroundColor: '#FFC857',
     borderRadius: 10,
     paddingVertical: 6,
     paddingHorizontal: 9,
@@ -1453,11 +1383,11 @@ const viewStyles = StyleSheet.create({
   headerStreakEmoji: {
     fontSize: 13,
   },
-  // Section 4: bold dark number on streak pill
+  // Section 4: bold navy number on streak pill
   headerStreakText: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#7a2800',
+    color: '#1a3a52',
   },
   // What's New Badge
   // Section 4: Coin pill — white card rgba(255,255,255,.9), coin circle + navy number
@@ -1541,11 +1471,11 @@ const viewStyles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '600',
   },
-  // Orange square avatar (right side) — flush against pill, no gap
+  // Mustard square avatar (right side) — flush against pill, no gap
   savedAvatarBox: {
     width: 30,
     height: 30,
-    backgroundColor: 'rgba(255,152,40,0.85)',
+    backgroundColor: '#FFC857',
     justifyContent: 'center',
     alignItems: 'center',
     borderTopRightRadius: 8,
@@ -1608,12 +1538,12 @@ const viewStyles = StyleSheet.create({
   changeLocationButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.successScale[50],
+    backgroundColor: '#FFFBEB',
     borderRadius: borderRadius.md,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     borderWidth: 1,
-    borderColor: colors.successScale[200],
+    borderColor: '#FDE68A',
   },
   changeLocationIconWrapper: {
     width: 24,

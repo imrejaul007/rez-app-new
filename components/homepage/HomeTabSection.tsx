@@ -64,27 +64,27 @@ const TAB_THEMES: Record<TabId, {
     containerBg: '#EDE5D8',
   },
   'mall': {
-    heroGradient: [colors.lavenderMist, '#e0edf7', colors.lavenderMist],
-    tabActiveColor: colors.brand.sky,
+    heroGradient: ['#FFFBEB', '#FFF8E1', '#FFFBEB'],
+    tabActiveColor: colors.nileBlue,
     tabActiveTextColor: colors.background.primary,
-    tabInactiveTextColor: colors.brand.sky,
-    categoryIconColor: colors.brand.sky,
-    containerBg: colors.lavenderMist,
+    tabInactiveTextColor: colors.nileBlue,
+    categoryIconColor: colors.lightMustard,
+    containerBg: '#FFFBEB',
   },
   'cash': {
-    heroGradient: ['#FFF5EE', '#FFE5D0', colors.lightPeach], // Soft Peach gradient
-    tabActiveColor: colors.lightPeach, // Light Peach
-    tabActiveTextColor: colors.nileBlue, // Nile Blue for contrast
-    tabInactiveTextColor: colors.brand.caramel, // Peach Dark
-    categoryIconColor: colors.brand.caramel, // Peach Dark
-    containerBg: colors.lightPeach, // Match hero gradient bottom for seamless transition
+    heroGradient: ['#FFFBEB', '#FFF8E1', '#FFFBEB'],
+    tabActiveColor: colors.nileBlue,
+    tabActiveTextColor: colors.nileBlue,
+    tabInactiveTextColor: colors.nileBlue,
+    categoryIconColor: colors.nileBlue,
+    containerBg: '#FFFBEB',
   },
   'prive': {
     heroGradient: [colors.neutral[800], colors.neutral[700], colors.neutral[600]],
-    tabActiveColor: colors.brand.goldAccent,
-    tabActiveTextColor: colors.brand.goldAccent,
-    tabInactiveTextColor: colors.brand.goldAccent,
-    categoryIconColor: colors.brand.goldAccent,
+    tabActiveColor: '#FFC857',
+    tabActiveTextColor: '#FFC857',
+    tabInactiveTextColor: '#FFC857',
+    categoryIconColor: '#FFC857',
     containerBg: colors.neutral[900],
   },
 };
@@ -186,9 +186,9 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
   const containerBg = isPriveMode
     ? colors.neutral[900]
     : activeTab === 'mall'
-      ? colors.lavenderMist
+      ? '#FFFBEB'
       : activeTab === 'cash'
-        ? colors.lightPeach
+        ? '#FFFBEB'
         : '#EDE5D8';
 
   return (
@@ -248,12 +248,12 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
             <Ionicons
               name={TAB_CONFIG['mall'].iconName}
               size={16}
-              color={colors.brand.sky}
+              color={colors.nileBlue}
               style={styles.tabIcon}
             />
             <Text
               numberOfLines={1}
-              style={[styles.tabText, { color: colors.brand.sky }]}
+              style={[styles.tabText, { color: colors.nileBlue }]}
             >{TAB_CONFIG['mall'].label}</Text>
           </View>
         </Pressable>
@@ -272,12 +272,12 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
             <Ionicons
               name={TAB_CONFIG['cash'].iconName}
               size={16}
-              color={colors.brand.caramel}
+              color={colors.nileBlue}
               style={styles.tabIcon}
             />
             <Text
               numberOfLines={1}
-              style={[styles.tabText, { color: colors.brand.caramel }]}
+              style={[styles.tabText, { color: colors.nileBlue }]}
             >{TAB_CONFIG['cash'].label}</Text>
           </View>
         </Pressable>
@@ -300,13 +300,13 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
                 <Ionicons
                   name="lock-closed-outline"
                   size={12}
-                  color={colors.brand.goldAccent}
+                  color='#FFC857'
                   style={styles.lockIcon}
                 />
               )}
               <Text
                 numberOfLines={1}
-                style={[styles.tabText, { color: colors.brand.goldAccent }]}
+                style={[styles.tabText, { color: '#FFC857' }]}
               >{TAB_CONFIG['prive'].label}</Text>
             </View>
           </View>
@@ -326,12 +326,8 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
             styles.descriptionText,
             {
               color: isPriveMode
-                ? colors.brand.goldAccent
-                : activeTab === 'mall'
-                  ? colors.brand.sky
-                  : activeTab === 'cash'
-                    ? colors.brand.caramel // Nuqta Peach Dark
-                    : colors.nileBlue
+                ? '#FFC857'
+                : colors.nileBlue
             }
           ]}>
             {TAB_CONFIG[activeTab].description}
@@ -363,7 +359,7 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
               </Text>
             </Pressable>
 
-            {/* Section 6: TRY button — purple pill, color changes per tab */}
+            {/* Section 6: TRY button — brand pill, Nile Blue background */}
             <Pressable
               style={styles.promoBannerContainer}
               onPress={() => {
@@ -373,20 +369,14 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
               }}
             >
               {isPriveMode ? (
-                // Privé: #1a1a1a
-                <View style={[styles.promoBannerGradientDeals, { backgroundColor: '#1a1a1a' }]}>
+                // Privé: mustard on dark
+                <View style={[styles.promoBannerGradientDeals, { backgroundColor: '#0d2133' }]}>
                   <Text style={styles.dealsIcon}>✦</Text>
-                  <Text style={styles.dealsText}>TRY</Text>
-                </View>
-              ) : activeTab === 'mall' ? (
-                // Mall: #185FA5
-                <View style={[styles.promoBannerGradientDeals, { backgroundColor: '#185FA5' }]}>
-                  <Text style={styles.dealsIcon}>🔥</Text>
-                  <Text style={styles.dealsText}>TRY</Text>
+                  <Text style={[styles.dealsText, { color: '#FFC857' }]}>TRY</Text>
                 </View>
               ) : (
-                // Near U: #6C3FD4 (purple)
-                <View style={[styles.promoBannerGradientDeals, { backgroundColor: '#6C3FD4' }]}>
+                // Near U / Mall: Nile Blue
+                <View style={[styles.promoBannerGradientDeals, { backgroundColor: '#1a3a52' }]}>
                   <Text style={styles.dealsIcon}>🔥</Text>
                   <Text style={styles.dealsText}>TRY</Text>
                 </View>
@@ -534,7 +524,7 @@ const styles = StyleSheet.create({
     opacity: 0.45,
   },
   descriptionTextPrive: {
-    color: colors.brand.goldAccent,
+    color: '#FFC857',
   },
   // Search
   searchRow: {
@@ -636,12 +626,12 @@ const styles = StyleSheet.create({
   },
   priveTeaserIcon: {
     fontSize: 16,
-    color: colors.brand.goldAccent,
+    color: '#FFC857',
   },
   priveTeaserText: {
     fontSize: 14,
     fontWeight: '500',
-    color: colors.brand.goldAccent,
+    color: '#FFC857',
     letterSpacing: 0.3,
   },
 });

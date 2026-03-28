@@ -66,17 +66,17 @@ const BonusZoneHighlight: React.FC = () => {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <View style={styles.iconWrapper}>
-            <Ionicons name="gift" size={16} color={colors.brand.orange} />
+            <Ionicons name="gift" size={16} color='#FFC857' />
           </View>
           <Text style={styles.headerTitle}>Bonus Zone</Text>
         </View>
         <Pressable
           style={styles.viewAllButton}
           onPress={() => router.push('/bonus-zone')}
-         
+
         >
           <Text style={styles.viewAllText}>View All</Text>
-          <Ionicons name="chevron-forward" size={14} color={colors.brand.orange} />
+          <Ionicons name="chevron-forward" size={14} color='#FFC857' />
         </Pressable>
       </View>
 
@@ -116,7 +116,7 @@ const styles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 8,
-    backgroundColor: colors.tint.orange,
+    backgroundColor: '#FFFBEB',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   viewAllText: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.brand.orange,
+    color: '#FFC857',
   },
   subtitle: {
     fontSize: 12,

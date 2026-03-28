@@ -226,14 +226,14 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
           alignItems: 'center',
           gap: 10,
           borderBottomWidth: 1,
-          borderColor: '#FFD54F',
+          borderColor: '#FFC857',
         }}>
-          <Ionicons name="location-outline" size={22} color="#5D4037" />
+          <Ionicons name="location-outline" size={22} color="#1a3a52" />
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: '#5D4037' }}>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: '#1a3a52' }}>
               Near U is coming soon{areaName ? ` in ${areaName}` : ' in your area'}
             </Text>
-            <Text style={{ fontSize: 12, color: '#795548', marginTop: 3 }}>
+            <Text style={{ fontSize: 12, color: '#475569', marginTop: 3 }}>
               Meanwhile, shop from top brands across India on REZ Mall.
             </Text>
           </View>

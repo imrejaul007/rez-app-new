@@ -31,17 +31,17 @@ const COLORS = {
   nileBlue: colors.nileBlue,
   nileBlueLight: colors.brand.nileBlueLight,
   mustard: colors.lightMustard,
-  amber500: colors.warningScale[400],
-  amber600: colors.warningScale[700],
-  amber400: colors.warningScale[400],
+  amber500: '#FFC857',
+  amber600: '#E6A830',
+  amber400: '#FFC857',
   // Gradients
   nileBlueGradientStart: 'rgba(26, 58, 82, 0.2)',
   nileBlueGradientEnd: 'rgba(35, 75, 104, 0.1)',
-  amberGradientStart: 'rgba(245, 158, 11, 0.2)',
-  amberGradientEnd: 'rgba(249, 115, 22, 0.1)',
+  amberGradientStart: 'rgba(255, 200, 87, 0.2)',
+  amberGradientEnd: 'rgba(255, 200, 87, 0.1)',
   // Borders
   nileBlueBorder: 'rgba(26, 58, 82, 0.3)',
-  amberBorder: 'rgba(245, 158, 11, 0.3)',
+  amberBorder: 'rgba(255, 200, 87, 0.3)',
 };
 
 interface GameCardProps {

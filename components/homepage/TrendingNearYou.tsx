@@ -427,7 +427,7 @@ const TrendingNearYou: React.FC<TrendingNearYouProps> = ({
                 {store.cashback} cashback
               </Text>
               <View style={styles.coinsContainer}>
-                <Ionicons name="star" size={12} color={colors.warningScale[400]} />
+                <Ionicons name="star" size={12} color='#FFC857' />
                 <Text style={styles.coinsText}>Coins</Text>
               </View>
             </View>
@@ -490,11 +490,11 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 14,
-    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+    backgroundColor: 'rgba(255, 200, 87, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(249, 115, 22, 0.2)',
+    borderColor: 'rgba(255, 200, 87, 0.3)',
   },
   headerTextContainer: {
     flex: 1,
@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(249, 115, 22, 0.9)',
+    backgroundColor: '#1a3a52',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
   coinsText: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.warningScale[400],
+    color: '#FFC857',
   },
   // Skeleton styles
   skeletonImage: {
