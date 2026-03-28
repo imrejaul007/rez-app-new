@@ -1163,7 +1163,7 @@ function HomeScreen() {
             accessibilityHint="Tap to explore products you can try risk-free and earn coins"
           >
             <LinearGradient
-              colors={['#0A1520', '#0F2035', '#1a3a52']}
+              colors={['#1a3a52', '#0d2741', '#1a3a52']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={viewStyles.tryBannerGradient}
@@ -1176,7 +1176,7 @@ function HomeScreen() {
                 <Ionicons
                   name="chevron-forward"
                   size={20}
-                  color="rgba(212,175,55,0.8)"
+                  color="rgba(255,200,87,0.85)"
                   style={viewStyles.tryBannerChevron}
                 />
               </View>
@@ -1200,7 +1200,7 @@ function HomeScreen() {
             accessibilityHint="Tap to start earning coins"
           >
             <LinearGradient
-              colors={['#1A1209', '#2A1F0E']}
+              colors={['#1a3a52', '#0d2741']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={viewStyles.day1ChallengeGradient}
@@ -1235,7 +1235,7 @@ function HomeScreen() {
                 accessibilityLabel={`${streakCount}-day streak. Tap to view smart spending.`}
               >
                 <StreakFireIcon streakDays={streakCount} size="small" />
-                <Text style={{ fontSize: 13, fontWeight: '700', color: '#D4AF37' }}>{streakCount}d streak</Text>
+                <Text style={{ fontSize: 13, fontWeight: '700', color: '#FFC857' }}>{streakCount}d streak</Text>
               </Pressable>
             )}
             <View style={{ flex: 1 }}>
@@ -1661,8 +1661,9 @@ const viewStyles = StyleSheet.create({
     lineHeight: 20,
   },
   content: {
-    padding: spacing.lg,
+    paddingTop: spacing.sm,
     paddingBottom: 100,
+    paddingHorizontal: 0,
     backgroundColor: colors.background.primary,
   },
   mallContent: {
@@ -1711,18 +1712,18 @@ const viewStyles = StyleSheet.create({
   },
   // ReZ TRY Banner Styles
   tryBanner: {
-    marginHorizontal: spacing.md,
-    marginTop: spacing.md,
-    marginBottom: spacing.md,
-    borderRadius: borderRadius.lg,
+    marginHorizontal: 0,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
+    borderRadius: 0,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.3)',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(255,200,87,0.25)',
   },
   tryBannerGradient: {
     paddingVertical: spacing.lg,
-    paddingHorizontal: spacing.lg,
-    borderRadius: borderRadius.lg,
+    paddingHorizontal: spacing.base,
   },
   tryBannerContent: {
     flexDirection: 'row',
@@ -1735,26 +1736,27 @@ const viewStyles = StyleSheet.create({
   tryBannerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#D4AF37',
+    color: '#FFC857',
     marginBottom: spacing.xs,
   },
   tryBannerSubtitle: {
     fontSize: 14,
     fontWeight: '500',
-    color: 'rgba(255,255,255,0.7)',
+    color: 'rgba(255,255,255,0.75)',
   },
   tryBannerChevron: {
     marginLeft: spacing.md,
   },
   // CARLOS: retention — day-1 challenge card styles
   day1ChallengeCard: {
-    marginHorizontal: spacing.md,
-    marginTop: spacing.md,
-    marginBottom: spacing.md,
-    borderRadius: borderRadius.lg,
+    marginHorizontal: 0,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
+    borderRadius: 0,
     overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.3)',
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: 'rgba(255,200,87,0.25)',
   },
   day1ChallengeGradient: {
     paddingVertical: spacing.md,
@@ -1772,31 +1774,31 @@ const viewStyles = StyleSheet.create({
   day1ChallengeTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#D4AF37',
+    color: '#FFC857',
     marginBottom: spacing.xs,
   },
   day1ChallengeSub: {
     fontSize: 14,
     fontWeight: '500',
-    color: 'rgba(255,255,255,0.7)',
+    color: 'rgba(255,255,255,0.75)',
   },
-  // Phase 1: Habit Engine — dark glass card wrapping streak + rez score
+  // Phase 1: Habit Engine — Nile Blue card wrapping streak + rez score
   streakScoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: spacing.md,
+    marginHorizontal: spacing.base,
     marginBottom: spacing.sm,
     padding: 12,
     gap: 12,
-    backgroundColor: '#0F1923',
+    backgroundColor: '#1a3a52',
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.2)',
+    borderColor: 'rgba(255,200,87,0.25)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
+        shadowOpacity: 0.2,
         shadowRadius: 8,
       },
       android: { elevation: 4 },

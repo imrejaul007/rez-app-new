@@ -19,15 +19,15 @@ const CARD_GAP = 10;
 
 // Brand Colors — premium dark palette
 const COLORS = {
-  primary: '#D4AF37',       // gold
-  primaryDark: '#B8922A',   // deep gold
+  primary: '#FFC857',       // gold
+  primaryDark: '#c89a00',   // deep gold
   primaryLight: '#F0D98A',  // light gold shimmer
   white: colors.background.primary,
   textDark: '#FFFFFF',
   textMuted: 'rgba(255,255,255,0.55)',
-  border: 'rgba(212,175,55,0.22)',
-  cardBg: '#0F1923',        // deep navy charcoal
-  cardBgAlt: '#141E2A',     // slightly lighter variant
+  border: 'rgba(255,200,87,0.22)',
+  cardBg: '#1a3a52',        // deep navy charcoal
+  cardBgAlt: '#16334d',     // slightly lighter variant
 };
 
 const EarnNuqtaCoinsSection: React.FC = () => {
@@ -53,10 +53,10 @@ const EarnNuqtaCoinsSection: React.FC = () => {
         <View style={styles.headerLeft}>
           <View style={styles.headerIconContainer}>
             <LinearGradient
-              colors={['#D4AF37', '#B8922A']}
+              colors={['#FFC857', '#c89a00']}
               style={styles.headerIconGradient}
             >
-              <Ionicons name="wallet" size={18} color="#0F1923" />
+              <Ionicons name="wallet" size={18} color="#1a3a52" />
             </LinearGradient>
           </View>
           <View>
@@ -80,12 +80,12 @@ const EarnNuqtaCoinsSection: React.FC = () => {
             onPress={handleOnlineShoppingPress}
           >
             <LinearGradient
-              colors={['#141E2A', '#0F1923']}
+              colors={['#16334d', '#1a3a52']}
               style={styles.largeCardGradient}
             >
               {/* Gold shimmer overlay */}
               <LinearGradient
-                colors={['rgba(212,175,55,0.08)', 'rgba(212,175,55,0.02)']}
+                colors={['rgba(255,200,87,0.08)', 'rgba(255,200,87,0.02)']}
                 style={StyleSheet.absoluteFillObject}
               />
 
@@ -99,7 +99,7 @@ const EarnNuqtaCoinsSection: React.FC = () => {
                   <Text style={styles.largeEmoji}>🛒</Text>
                 </View>
                 <View style={styles.popularBadge}>
-                  <Ionicons name="star" size={10} color="#D4AF37" />
+                  <Ionicons name="star" size={10} color="#FFC857" />
                   <Text style={styles.popularText}>Popular</Text>
                 </View>
               </View>
@@ -123,12 +123,12 @@ const EarnNuqtaCoinsSection: React.FC = () => {
               onPress={() => router.push('/pay-in-store' as any)}
             >
               <LinearGradient
-                colors={['#141E2A', '#0F1923']}
+                colors={['#16334d', '#1a3a52']}
                 style={styles.payCardGradient}
               >
                 <View style={styles.payCardContent}>
                   <View style={styles.payIconBox}>
-                    <Ionicons name="card-outline" size={20} color="#D4AF37" />
+                    <Ionicons name="card-outline" size={20} color="#FFC857" />
                   </View>
                   <View style={styles.payTextContent}>
                     <Text style={styles.payCardTitle}>Pay in Store</Text>
@@ -136,7 +136,7 @@ const EarnNuqtaCoinsSection: React.FC = () => {
                   </View>
                 </View>
                 <View style={styles.payArrow}>
-                  <Ionicons name="chevron-forward" size={16} color="#D4AF37" />
+                  <Ionicons name="chevron-forward" size={16} color="#FFC857" />
                 </View>
               </LinearGradient>
             </Pressable>
@@ -149,7 +149,7 @@ const EarnNuqtaCoinsSection: React.FC = () => {
                 onPress={() => router.push('/playandearn' as any)}
               >
                 <LinearGradient
-                  colors={['#1A2535', '#0F1923']}
+                  colors={['#1e3f5e', '#1a3a52']}
                   style={styles.smallCardGradient}
                 >
                   <Text style={styles.smallEmoji}>🎮</Text>
@@ -163,7 +163,7 @@ const EarnNuqtaCoinsSection: React.FC = () => {
                 onPress={() => router.push('/referral' as any)}
               >
                 <LinearGradient
-                  colors={['#1A2535', '#0F1923']}
+                  colors={['#1e3f5e', '#1a3a52']}
                   style={styles.smallCardGradient}
                 >
                   <Text style={styles.smallEmoji}>👥</Text>
@@ -182,7 +182,7 @@ const EarnNuqtaCoinsSection: React.FC = () => {
             onPress={() => router.push('/social-impact' as any)}
           >
             <LinearGradient
-              colors={['#141E2A', '#0F1923']}
+              colors={['#16334d', '#1a3a52']}
               style={styles.socialCardGradient}
             >
               <View style={styles.socialIconBox}>
@@ -201,7 +201,7 @@ const EarnNuqtaCoinsSection: React.FC = () => {
             onPress={() => router.push('/surveys' as any)}
           >
             <LinearGradient
-              colors={['#1A2535', '#0F1923']}
+              colors={['#1e3f5e', '#1a3a52']}
               style={styles.miniCardGradient}
             >
               <Text style={styles.miniEmoji}>📋</Text>
@@ -215,7 +215,7 @@ const EarnNuqtaCoinsSection: React.FC = () => {
             onPress={() => router.push('/my-reviews' as any)}
           >
             <LinearGradient
-              colors={['#1A2535', '#0F1923']}
+              colors={['#1e3f5e', '#1a3a52']}
               style={styles.miniCardGradient}
             >
               <Text style={styles.miniEmoji}>⭐</Text>
@@ -285,14 +285,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 8,
-    backgroundColor: 'rgba(212,175,55,0.1)',
+    backgroundColor: 'rgba(255,200,87,0.1)',
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.25)',
+    borderColor: 'rgba(255,200,87,0.25)',
   },
   viewAllText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#D4AF37',
+    color: '#FFC857',
   },
 
   // Bento Grid
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.22)',
+    borderColor: 'rgba(255,200,87,0.22)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -343,7 +343,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: 'rgba(212,175,55,0.07)',
+    backgroundColor: 'rgba(255,200,87,0.07)',
   },
   decorCircle2: {
     position: 'absolute',
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: 'rgba(212,175,55,0.04)',
+    backgroundColor: 'rgba(255,200,87,0.04)',
   },
   largeCardHeader: {
     flexDirection: 'row',
@@ -363,11 +363,11 @@ const styles = StyleSheet.create({
     width: 42,
     height: 42,
     borderRadius: 12,
-    backgroundColor: 'rgba(212,175,55,0.12)',
+    backgroundColor: 'rgba(255,200,87,0.12)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.22)',
+    borderColor: 'rgba(255,200,87,0.22)',
   },
   largeEmoji: {
     fontSize: 22,
@@ -376,17 +376,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(212,175,55,0.15)',
+    backgroundColor: 'rgba(255,200,87,0.15)',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.3)',
+    borderColor: 'rgba(255,200,87,0.3)',
   },
   popularText: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#D4AF37',
+    color: '#FFC857',
   },
   largeCardFooter: {
     gap: 3,
@@ -404,18 +404,18 @@ const styles = StyleSheet.create({
   },
   cashbackBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(212,175,55,0.15)',
+    backgroundColor: 'rgba(255,200,87,0.15)',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 8,
     marginTop: 6,
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.3)',
+    borderColor: 'rgba(255,200,87,0.3)',
   },
   cashbackText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#D4AF37',
+    color: '#FFC857',
   },
 
   // Right Column
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.2)',
+    borderColor: 'rgba(255,200,87,0.2)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -460,11 +460,11 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: 'rgba(212,175,55,0.12)',
+    backgroundColor: 'rgba(255,200,87,0.12)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.25)',
+    borderColor: 'rgba(255,200,87,0.25)',
   },
   payTextContent: {
     flex: 1,
@@ -483,7 +483,7 @@ const styles = StyleSheet.create({
     width: 26,
     height: 26,
     borderRadius: 13,
-    backgroundColor: 'rgba(212,175,55,0.12)',
+    backgroundColor: 'rgba(255,200,87,0.12)',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.18)',
+    borderColor: 'rgba(255,200,87,0.18)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.2)',
+    borderColor: 'rgba(255,200,87,0.2)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -558,11 +558,11 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: 'rgba(212,175,55,0.12)',
+    backgroundColor: 'rgba(255,200,87,0.12)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.22)',
+    borderColor: 'rgba(255,200,87,0.22)',
   },
   socialEmoji: {
     fontSize: 18,
@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.18)',
+    borderColor: 'rgba(255,200,87,0.18)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',

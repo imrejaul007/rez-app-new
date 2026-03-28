@@ -229,11 +229,17 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
 
       {/* ── Section 1: TimeAwareContextPill (Near U only) ──────────────────── */}
       <LazySection sectionId="time-aware-context-pill" scrollY={scrollY} height={56}
-        renderSection={() => <TimeAwareContextPill persona={isStudent ? 'student' : isEmployee ? 'employee' : 'general'} />} />
+        renderSection={() => {
+          try { return <TimeAwareContextPill persona={isStudent ? 'student' : isEmployee ? 'employee' : 'general'} />; }
+          catch { return null; }
+        }} />
 
       {/* ── Section 2: DailyCheckInStrip (Near U only) ─────────────────────── */}
       <LazySection sectionId="daily-check-in-strip" scrollY={scrollY} height={80}
-        renderSection={() => <DailyCheckInStrip isClaimed={false} />} />
+        renderSection={() => {
+          try { return <DailyCheckInStrip isClaimed={false} />; }
+          catch { return null; }
+        }} />
 
       {/* ── Section 3: CampusLeaderboardTeaser (Student only) ──────────────── */}
       {isStudent && (
@@ -243,11 +249,17 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
 
       {/* ── Section 4: VisitStreakCard (Near U only) ────────────────────────── */}
       <LazySection sectionId="visit-streak-card" scrollY={scrollY} height={120}
-        renderSection={() => <VisitStreakCard />} />
+        renderSection={() => {
+          try { return <VisitStreakCard />; }
+          catch { return null; }
+        }} />
 
       {/* ── Section 5: TryBeforeYouBuyCard (Near U only) ───────────────────── */}
       <LazySection sectionId="try-before-you-buy" scrollY={scrollY} height={180}
-        renderSection={() => <TryBeforeYouBuyCard />} />
+        renderSection={() => {
+          try { return <TryBeforeYouBuyCard />; }
+          catch { return null; }
+        }} />
 
       {/* ── Section 6: NearbyOffersCarousel (Near U only) — with urgency tags ─ */}
       <LazySection sectionId="nearby-offers-carousel" scrollY={scrollY} height={240}

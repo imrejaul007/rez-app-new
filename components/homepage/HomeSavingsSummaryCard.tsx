@@ -57,7 +57,7 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
     <Pressable onPress={onPress} style={({ pressed }) => [pressed && styles.pressed]}>
       <View style={styles.wrapper}>
         <LinearGradient
-          colors={['#0F1923', '#1A3040']}
+          colors={['#1a3a52', '#0d2741']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.gradient}
@@ -66,7 +66,7 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
             /* Empty / first-time state */
             <View style={styles.emptyContainer}>
               <View style={styles.emptyIconCircle}>
-                <Ionicons name="wallet-outline" size={28} color="#D4AF37" />
+                <Ionicons name="wallet-outline" size={28} color="#FFC857" />
               </View>
               <Text style={styles.emptyTitle}>Start saving today!</Text>
               <Text style={styles.emptySubtitle}>
@@ -99,12 +99,12 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginHorizontal: 16,
+    marginHorizontal: spacing.base,
     marginBottom: 12,
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(212,175,55,0.25)',
+    borderColor: 'rgba(255,200,87,0.3)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   amount: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#D4AF37',
+    color: '#FFC857',
     marginBottom: 6,
   },
   unlockRow: {
