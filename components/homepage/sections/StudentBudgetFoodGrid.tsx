@@ -140,17 +140,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
   },
   viewAllButton: {
-    backgroundColor: 'rgba(249, 115, 22, 0.08)',
+    backgroundColor: 'rgba(255, 200, 87, 0.08)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(249, 115, 22, 0.2)',
+    borderColor: 'rgba(255, 200, 87, 0.2)',
   },
   viewAllText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#F97316',
+    color: '#FFC857',
     fontFamily: 'Inter-SemiBold',
   },
   listContent: {
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
   },
   offersBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(249, 115, 22, 0.12)',
+    backgroundColor: 'rgba(255, 200, 87, 0.12)',
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderRadius: 8,
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   offersText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#EA580C',
+    color: '#FFC857',
     fontFamily: 'Inter-SemiBold',
   },
 });

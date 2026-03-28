@@ -31,7 +31,7 @@ const STATUS_INFO: Record<string, { label: string; icon: string; color: string; 
   confirmed: {
     label: 'Order Confirmed',
     icon: 'checkmark-circle-outline',
-    color: '#7C3AED',
+    color: '#1a3a52',
     bg: '#F5F3FF',
     msg: 'Your order has been received by the kitchen!',
   },
@@ -81,14 +81,14 @@ function StatusTracker({ currentStatus }: { currentStatus: WebOrderStatus['statu
             <View
               style={[
                 trackerStyles.dot,
-                done ? { backgroundColor: '#7C3AED' } : { backgroundColor: '#E5E7EB' },
+                done ? { backgroundColor: '#1a3a52' } : { backgroundColor: '#E5E7EB' },
                 active && trackerStyles.dotActive,
               ]}
             >
               {done && <Ionicons name={active ? 'ellipse' : 'checkmark'} size={active ? 8 : 12} color="#fff" />}
             </View>
             {idx < STATUS_STEPS.length - 1 && (
-              <View style={[trackerStyles.line, done && idx < currentIdx ? { backgroundColor: '#7C3AED' } : null]} />
+              <View style={[trackerStyles.line, done && idx < currentIdx ? { backgroundColor: '#1a3a52' } : null]} />
             )}
             <Text style={[trackerStyles.label, active && trackerStyles.labelActive]}>{info.label}</Text>
           </View>
@@ -106,8 +106,8 @@ const trackerStyles = StyleSheet.create({
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#7C3AED',
-    shadowColor: '#7C3AED',
+    backgroundColor: '#1a3a52',
+    shadowColor: '#1a3a52',
     shadowOpacity: 0.5,
     shadowRadius: 6,
     elevation: 4,
@@ -122,7 +122,7 @@ const trackerStyles = StyleSheet.create({
     zIndex: -1,
   },
   label: { fontSize: 9, color: '#9CA3AF', textAlign: 'center', fontWeight: '500' },
-  labelActive: { color: '#7C3AED', fontWeight: '700' },
+  labelActive: { color: '#1a3a52', fontWeight: '700' },
 });
 
 // ─── Main Screen ──────────────────────────────────────────────────────────────
@@ -174,7 +174,7 @@ export default function ConfirmationScreen() {
     return (
       <SafeAreaView style={styles.screen} edges={['top']}>
         <View style={styles.center}>
-          <ActivityIndicator size="large" color="#7C3AED" />
+          <ActivityIndicator size="large" color="#1a3a52" />
           <Text style={styles.loadingText}>Loading order…</Text>
         </View>
       </SafeAreaView>
@@ -203,7 +203,7 @@ export default function ConfirmationScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
       {/* Header */}
-      <LinearGradient colors={['#7C3AED', '#6366F1']} style={styles.header}>
+      <LinearGradient colors={['#1a3a52', '#1a3a52']} style={styles.header}>
         <View style={{ flex: 1 }}>
           <Text style={styles.headerTitle}>Order #{order.orderNumber}</Text>
           <Text style={styles.headerSub}>{order.storeName}</Text>
@@ -237,7 +237,7 @@ export default function ConfirmationScreen() {
         {/* Table info */}
         {order.tableNumber && (
           <Animated.View entering={FadeInDown.delay(150).springify()} style={styles.tableCard}>
-            <Ionicons name="restaurant" size={18} color="#7C3AED" />
+            <Ionicons name="restaurant" size={18} color="#1a3a52" />
             <Text style={styles.tableText}>Table {order.tableNumber}</Text>
           </Animated.View>
         )}
@@ -267,7 +267,7 @@ export default function ConfirmationScreen() {
           </View>
           <View style={[styles.itemRow, { marginTop: 4 }]}>
             <Text style={[styles.itemName, { fontWeight: '800', fontSize: 15, flex: 1 }]}>Total Paid</Text>
-            <Text style={[styles.itemPrice, { fontWeight: '800', fontSize: 16, color: '#7C3AED' }]}>
+            <Text style={[styles.itemPrice, { fontWeight: '800', fontSize: 16, color: '#1a3a52' }]}>
               ₹{order.total.toFixed(2)}
             </Text>
           </View>
@@ -309,7 +309,7 @@ const styles = StyleSheet.create({
   loadingText: { fontSize: 14, color: '#6B7280', marginTop: 8 },
   errorTitle: { fontSize: 17, fontWeight: '700', color: '#374151' },
   errorSub: { fontSize: 13, color: '#9CA3AF', textAlign: 'center' },
-  backLink: { fontSize: 14, color: '#7C3AED', fontWeight: '600', marginTop: 8 },
+  backLink: { fontSize: 14, color: '#1a3a52', fontWeight: '600', marginTop: 8 },
 
   header: { flexDirection: 'row', alignItems: 'center', padding: 16 },
   headerTitle: { fontSize: 17, fontWeight: '700', color: '#fff' },
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#DDD6FE',
   },
-  tableText: { fontSize: 14, fontWeight: '700', color: '#7C3AED' },
+  tableText: { fontSize: 14, fontWeight: '700', color: '#1a3a52' },
 
   itemRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 6 },
   itemQty: {
@@ -398,7 +398,7 @@ const styles = StyleSheet.create({
   readyCTAText: { flex: 1, fontSize: 13, fontWeight: '600', color: '#065F46', lineHeight: 18 },
 
   orderAgainBtn: {
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#1a3a52',
     borderRadius: 14,
     paddingVertical: 14,
     flexDirection: 'row',

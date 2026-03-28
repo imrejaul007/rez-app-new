@@ -102,7 +102,7 @@ const StudentUtilityDealsSection: React.FC = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color="#F97316" />
+          <ActivityIndicator size="small" color="#FFC857" />
         </View>
       ) : (
         <FlatList
@@ -121,11 +121,11 @@ const StudentUtilityDealsSection: React.FC = () => {
 
       {/* Bottom nudge */}
       <Pressable style={styles.nudge} onPress={() => router.push('/near-u/student-offers' as any)}>
-        <Ionicons name="sparkles" size={14} color="#F97316" />
+        <Ionicons name="sparkles" size={14} color="#FFC857" />
         <Text style={styles.nudgeText}>
           More student-only deals waiting for you
         </Text>
-        <Ionicons name="chevron-forward" size={14} color="#F97316" />
+        <Ionicons name="chevron-forward" size={14} color="#FFC857" />
       </Pressable>
     </View>
   );
@@ -158,17 +158,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
   },
   viewAllButton: {
-    backgroundColor: 'rgba(249, 115, 22, 0.08)',
+    backgroundColor: 'rgba(255, 200, 87, 0.08)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(249, 115, 22, 0.2)',
+    borderColor: 'rgba(255, 200, 87, 0.2)',
   },
   viewAllText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#F97316',
+    color: '#FFC857',
     fontFamily: 'Inter-SemiBold',
   },
   loadingContainer: {
@@ -244,15 +244,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 12,
     paddingVertical: 10,
-    backgroundColor: 'rgba(249, 115, 22, 0.06)',
+    backgroundColor: 'rgba(255, 200, 87, 0.06)',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(249, 115, 22, 0.15)',
+    borderColor: 'rgba(255, 200, 87, 0.15)',
   },
   nudgeText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#EA580C',
+    color: '#FFC857',
     fontFamily: 'Inter-SemiBold',
   },
 });

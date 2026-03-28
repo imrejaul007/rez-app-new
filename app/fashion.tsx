@@ -698,7 +698,7 @@ const styles = StyleSheet.create({
     width: 48,
     height: 48,
     borderRadius: BorderRadius['2xl'],
-    backgroundColor: '#EC489920',
+    backgroundColor: '#FFC85720',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.sm,

@@ -106,7 +106,7 @@ const CATEGORY_CONFIG: Record<
   WellnessCategory,
   { emoji: string; label: string; bg: string; accent: string }
 > = {
-  salon: { emoji: '💇', label: 'Salon', bg: '#F3E8FF', accent: '#7C3AED' },
+  salon: { emoji: '💇', label: 'Salon', bg: '#F3E8FF', accent: '#1a3a52' },
   spa: { emoji: '🧖', label: 'Spa', bg: '#ECFDF5', accent: '#059669' },
   grooming: { emoji: '✂️', label: 'Grooming', bg: '#EFF6FF', accent: '#2563EB' },
   skin_clinic: { emoji: '🧴', label: 'Skin Clinic', bg: '#FCE7F3', accent: '#DB2777' },

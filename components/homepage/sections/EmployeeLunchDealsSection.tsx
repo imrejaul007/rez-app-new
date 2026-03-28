@@ -110,10 +110,10 @@ function formatCountdown(minutes: number): string {
 }
 
 const CATEGORY_COLORS: Record<LunchDeal['category'], string> = {
-  buffet: '#F97316',
+  buffet: '#FFC857',
   combo: '#2A5577',
   express: '#16A34A',
-  prepaid: '#7C3AED',
+  prepaid: '#1a3a52',
 };
 
 const CATEGORY_LABELS: Record<LunchDeal['category'], string> = {

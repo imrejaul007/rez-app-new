@@ -94,8 +94,8 @@ const TYPE_CONFIG: Record<
   { emoji: string; label: string; color: string }
 > = {
   casual_dining: { emoji: '🍽️', label: 'Casual Dining', color: '#2A5577' },
-  rooftop: { emoji: '🌇', label: 'Rooftop', color: '#7C3AED' },
-  happy_hour: { emoji: '🍺', label: 'Happy Hour', color: '#F97316' },
+  rooftop: { emoji: '🌇', label: 'Rooftop', color: '#1a3a52' },
+  happy_hour: { emoji: '🍺', label: 'Happy Hour', color: '#FFC857' },
   date_night: { emoji: '🕯️', label: 'Date Night', color: '#DB2777' },
   weekend_special: { emoji: '🎉', label: 'Weekend Special', color: '#16A34A' },
 };

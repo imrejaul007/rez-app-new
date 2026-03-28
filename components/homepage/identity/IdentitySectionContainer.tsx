@@ -205,13 +205,13 @@ function IdentitySectionContainer() {
         subtitle: 'Exclusive defence benefits + fitness deals',
         secondaryLabel: 'Fitness & Sports',
         secondaryRoute: '/offers/zones/defence',
-        accentColor: '#6366F1',
+        accentColor: '#1a3a52',
       },
       verified_teacher: {
         label: 'Teacher Verified',
         dealsRoute: '/offers/zones/teacher',
         subtitle: 'Education, books & stationery deals unlocked',
-        accentColor: '#8B5CF6',
+        accentColor: '#2a5a7c',
       },
       verified_government: {
         label: 'Government Verified',

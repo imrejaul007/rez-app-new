@@ -50,7 +50,7 @@ const ENTERTAINMENT_VENUES: EntertainmentVenue[] = [
     category: 'Gaming',
     categorySlug: 'gaming-zones',
     icon: '🎮',
-    gradientColors: ['#7C3AED', '#A78BFA'],
+    gradientColors: ['#1a3a52', '#A78BFA'],
     distance: '0.5 km',
     cashbackPercent: 15,
     hasGroupDeal: true,
@@ -205,7 +205,7 @@ const StudentEntertainmentSection: React.FC = () => {
       {/* Group booking CTA */}
       <Pressable style={styles.groupCTA} onPress={handleGroupInvite}>
         <LinearGradient
-          colors={['rgba(249,115,22,0.1)', 'rgba(251,191,36,0.1)']}
+          colors={['rgba(255,200,87,0.1)', 'rgba(255,200,87,0.1)']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.groupCTAGradient}
@@ -215,7 +215,7 @@ const StudentEntertainmentSection: React.FC = () => {
             <Text style={styles.groupCTATitle}>Invite 2 friends → unlock extra cashback</Text>
             <Text style={styles.groupCTASub}>Group of 3 saves more on movies, bowling & more</Text>
           </View>
-          <Ionicons name="chevron-forward" size={16} color="#F97316" />
+          <Ionicons name="chevron-forward" size={16} color="#FFC857" />
         </LinearGradient>
       </Pressable>
     </View>
@@ -249,17 +249,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
   },
   viewAllButton: {
-    backgroundColor: 'rgba(249, 115, 22, 0.08)',
+    backgroundColor: 'rgba(255, 200, 87, 0.08)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(249, 115, 22, 0.2)',
+    borderColor: 'rgba(255, 200, 87, 0.2)',
   },
   viewAllText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#F97316',
+    color: '#FFC857',
     fontFamily: 'Inter-SemiBold',
   },
   scrollContent: {
@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: 'rgba(249, 115, 22, 0.2)',
+    borderColor: 'rgba(255, 200, 87, 0.2)',
   },
   groupCTAGradient: {
     flexDirection: 'row',
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
   groupCTATitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#EA580C',
+    color: '#FFC857',
     marginBottom: 2,
     fontFamily: 'Inter-Bold',
   },

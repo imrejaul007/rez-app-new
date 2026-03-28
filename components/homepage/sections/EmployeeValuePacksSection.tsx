@@ -41,7 +41,7 @@ const STATIC_PACKS: ValuePack[] = [
     validityDays: 90,
     highlights: ['Haircut + styling', 'Facial & cleanup', 'Manicure / pedicure'],
     ctaLabel: 'Buy Pack',
-    badgeColor: '#7C3AED',
+    badgeColor: '#1a3a52',
   },
   {
     id: 'vp2',
@@ -54,7 +54,7 @@ const STATIC_PACKS: ValuePack[] = [
     validityDays: 60,
     highlights: ['₹1500 dining wallet', '12% extra cashback', '200+ partner restaurants'],
     ctaLabel: 'Load Credits',
-    badgeColor: '#F97316',
+    badgeColor: '#FFC857',
   },
   {
     id: 'vp3',
@@ -77,7 +77,7 @@ const PACK_GRADIENTS: Record<
   ValuePack['category'],
   readonly [string, string]
 > = {
-  salon: ['#4C1D95', '#7C3AED'],
+  salon: ['#4C1D95', '#1a3a52'],
   dining: ['#7C2D12', '#EA580C'],
   wellness: ['#064E3B', '#059669'],
 };

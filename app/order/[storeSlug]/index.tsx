@@ -525,7 +525,7 @@ const styles = StyleSheet.create({
   itemImagePlaceholder: { backgroundColor: '#F9FAFB', justifyContent: 'center', alignItems: 'center' },
   addBtn: {
     borderWidth: 1.5,
-    borderColor: '#7C3AED',
+    borderColor: '#1a3a52',
     borderRadius: 8,
     paddingHorizontal: 12,
     paddingVertical: 5,
@@ -535,7 +535,7 @@ const styles = StyleSheet.create({
     gap: 2,
     justifyContent: 'center',
   },
-  addBtnText: { fontSize: 12, fontWeight: '700', color: '#7C3AED' },
+  addBtnText: { fontSize: 12, fontWeight: '700', color: '#1a3a52' },
   unavailableChip: { backgroundColor: '#FEE2E2', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 4 },
   unavailableText: { fontSize: 11, fontWeight: '600', color: '#DC2626' }, // min readable font size
   stepper: {
@@ -546,10 +546,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     overflow: 'hidden',
     borderWidth: 1.5,
-    borderColor: '#7C3AED',
+    borderColor: '#1a3a52',
   },
   stepperBtn: { minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' },
-  stepperCount: { minWidth: 22, textAlign: 'center', fontSize: 13, fontWeight: '700', color: '#7C3AED' },
+  stepperCount: { minWidth: 22, textAlign: 'center', fontSize: 13, fontWeight: '700', color: '#1a3a52' },
 
   // Empty search
   emptySearch: { alignItems: 'center', paddingTop: 40 },
@@ -563,11 +563,11 @@ const styles = StyleSheet.create({
     right: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#1a3a52',
     borderRadius: 16,
     padding: 12,
     minHeight: 60,
-    shadowColor: '#7C3AED',
+    shadowColor: '#1a3a52',
     shadowOpacity: 0.35,
     shadowRadius: 12,
     shadowOffset: { width: 0, height: 4 },

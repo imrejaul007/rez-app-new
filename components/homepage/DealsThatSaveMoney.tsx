@@ -1266,7 +1266,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
                 })}
                 cashbackPercent={offer.cashbackPercentage}
                 badges={[
-                  offer.exclusiveZone && { label: 'Exclusive', color: '#7C3AED' },
+                  offer.exclusiveZone && { label: 'Exclusive', color: '#1a3a52' },
                   offer.metadata?.featured && { label: 'Featured', color: '#059669' },
                 ].filter(Boolean) as any}
                 expiryDate={offer.validity?.endDate}

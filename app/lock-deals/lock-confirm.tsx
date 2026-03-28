@@ -233,7 +233,7 @@ function LockConfirmPage() {
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* Success Icon */}
           <Animated.View style={[styles.successIconContainer, scaleAnimStyle]}>
-            <LinearGradient colors={['#8B5CF6', '#6D28D9']} style={styles.successIconGradient}>
+            <LinearGradient colors={['#2a5a7c', '#0d2133']} style={styles.successIconGradient}>
               <Ionicons name={isBalancePayment ? 'checkmark-done' : 'lock-closed'} size={48} color="#fff" />
             </LinearGradient>
           </Animated.View>
@@ -262,7 +262,7 @@ function LockConfirmPage() {
                   <Ionicons
                     name={copiedCode ? 'checkmark' : 'copy-outline'}
                     size={20}
-                    color={copiedCode ? Colors.success : colors.brand.purple || '#8B5CF6'}
+                    color={copiedCode ? Colors.success : colors.brand.purple || '#2a5a7c'}
                   />
                 </Pressable>
               </View>
@@ -353,7 +353,7 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   supportButton: {
-    backgroundColor: '#8B5CF6',
+    backgroundColor: '#2a5a7c',
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xl,
     borderRadius: BorderRadius.full,
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.xl,
   },
   myLocksButtonText: {
-    color: '#8B5CF6',
+    color: '#2a5a7c',
     fontWeight: '500',
     fontSize: Typography.body.medium,
   },
@@ -485,7 +485,7 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     width: '100%',
-    backgroundColor: '#8B5CF6',
+    backgroundColor: '#2a5a7c',
     paddingVertical: Spacing.md + 2,
     borderRadius: BorderRadius.full,
     alignItems: 'center',

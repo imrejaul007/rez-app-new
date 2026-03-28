@@ -100,7 +100,7 @@ const otpStyles = StyleSheet.create({
     color: '#111827',
     backgroundColor: '#F9FAFB',
   },
-  cellFilled: { borderColor: '#7C3AED', backgroundColor: '#F5F3FF' },
+  cellFilled: { borderColor: '#1a3a52', backgroundColor: '#F5F3FF' },
 });
 
 // ─── Order Summary section ────────────────────────────────────────────────────
@@ -316,7 +316,7 @@ export default function CheckoutScreen() {
     <SafeAreaView style={styles.screen} edges={['top']}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         {/* Header */}
-        <LinearGradient colors={['#7C3AED', '#6366F1']} style={styles.header}>
+        <LinearGradient colors={['#1a3a52', '#1a3a52']} style={styles.header}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
             <Ionicons name="arrow-back" size={22} color="#fff" />
           </TouchableOpacity>
@@ -352,7 +352,7 @@ export default function CheckoutScreen() {
 
             {params.table ? (
               <View style={styles.tableRow}>
-                <Ionicons name="restaurant-outline" size={15} color="#7C3AED" />
+                <Ionicons name="restaurant-outline" size={15} color="#1a3a52" />
                 <Text style={styles.tableLabel}>Table {params.table}</Text>
               </View>
             ) : null}
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: '#F9FAFB' },
   centerScreen: { flex: 1, justifyContent: 'center', alignItems: 'center', gap: 12 },
   emptyTitle: { fontSize: 17, fontWeight: '700', color: '#374151' },
-  backLink: { fontSize: 14, color: '#7C3AED', fontWeight: '600' },
+  backLink: { fontSize: 14, color: '#1a3a52', fontWeight: '600' },
 
   // Header
   header: { flexDirection: 'row', alignItems: 'center', padding: 16, gap: 12 },
@@ -518,13 +518,13 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { fontSize: 15, fontWeight: '800', color: '#111827', marginBottom: 12 },
   summaryRow: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 5 },
-  summaryQty: { width: 28, fontSize: 13, fontWeight: '700', color: '#7C3AED', textAlign: 'center' },
+  summaryQty: { width: 28, fontSize: 13, fontWeight: '700', color: '#1a3a52', textAlign: 'center' },
   summaryName: { flex: 1, fontSize: 13, color: '#374151' },
   summaryPrice: { fontSize: 13, fontWeight: '600', color: '#111827' },
   divider: { height: 1, backgroundColor: '#F3F4F6', marginVertical: 8 },
   totalRow: { paddingTop: 4 },
   totalLabel: { flex: 1, fontSize: 15, fontWeight: '800', color: '#111827' },
-  totalAmount: { fontSize: 16, fontWeight: '800', color: '#7C3AED' },
+  totalAmount: { fontSize: 16, fontWeight: '800', color: '#1a3a52' },
 
   // Form
   fieldLabel: {
@@ -548,7 +548,7 @@ const styles = StyleSheet.create({
   },
   inputMulti: { minHeight: 72, textAlignVertical: 'top' },
   tableRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 12 },
-  tableLabel: { fontSize: 13, fontWeight: '600', color: '#7C3AED' },
+  tableLabel: { fontSize: 13, fontWeight: '600', color: '#1a3a52' },
 
   // Phone
   phoneRow: { flexDirection: 'row', gap: 8, alignItems: 'stretch', marginBottom: 12 },
@@ -563,9 +563,9 @@ const styles = StyleSheet.create({
   phonePrefixText: { fontSize: 14, fontWeight: '600', color: '#374151' },
 
   // Buttons
-  primaryBtn: { backgroundColor: '#7C3AED', borderRadius: 12, paddingVertical: 13, alignItems: 'center', marginTop: 4 },
+  primaryBtn: { backgroundColor: '#1a3a52', borderRadius: 12, paddingVertical: 13, alignItems: 'center', marginTop: 4 },
   primaryBtnText: { color: '#fff', fontWeight: '700', fontSize: 15 },
-  resendText: { fontSize: 13, color: '#7C3AED', fontWeight: '600' },
+  resendText: { fontSize: 13, color: '#1a3a52', fontWeight: '600' },
 
   // Verified
   verifiedRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
@@ -574,7 +574,7 @@ const styles = StyleSheet.create({
   // Place order bar
   placeOrderBar: { padding: 16, backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: '#F3F4F6' },
   placeOrderBtn: {
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#1a3a52',
     borderRadius: 14,
     paddingVertical: 15,
     flexDirection: 'row',

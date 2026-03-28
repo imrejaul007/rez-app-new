@@ -80,7 +80,7 @@ const TrendingCard: React.FC<TrendingCardProps> = memo(({ item, onPress }) => (
 
       {/* Students visited today */}
       <View style={styles.visitsRow}>
-        <Ionicons name="people" size={11} color="#F97316" />
+        <Ionicons name="people" size={11} color="#FFC857" />
         <Text style={styles.visitsText}>
           {item.studentVisitsToday} students today
         </Text>
@@ -150,7 +150,7 @@ const CampusHotDealsStrip: React.FC<CampusHotDealsStripProps> = ({ campusId = ''
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color="#F97316" />
+          <ActivityIndicator size="small" color="#FFC857" />
           <Text style={styles.loadingText}>Loading campus deals...</Text>
         </View>
       ) : (
@@ -198,17 +198,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter-Regular',
   },
   viewAllButton: {
-    backgroundColor: 'rgba(249, 115, 22, 0.08)',
+    backgroundColor: 'rgba(255, 200, 87, 0.08)',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: 'rgba(249, 115, 22, 0.2)',
+    borderColor: 'rgba(255, 200, 87, 0.2)',
   },
   viewAllText: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#F97316',
+    color: '#FFC857',
     fontFamily: 'Inter-SemiBold',
   },
   loadingContainer: {
@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
   },
   visitsText: {
     fontSize: 11,
-    color: '#F97316',
+    color: '#FFC857',
     fontWeight: '600',
     fontFamily: 'Inter-SemiBold',
   },

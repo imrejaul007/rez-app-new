@@ -68,7 +68,7 @@ function CampusSavingsBoard({
         <Pressable
           onPress={onSeeAll}
           style={{
-            backgroundColor: '#7C3AED',
+            backgroundColor: '#1a3a52',
             paddingVertical: 10,
             borderRadius: 10,
             alignItems: 'center',

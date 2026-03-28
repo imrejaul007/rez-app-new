@@ -38,11 +38,11 @@ interface PackCardProps {
 const PackCard: React.FC<PackCardProps> = memo(({ pack, onPress }) => {
   // Gradient based on pack category
   const gradients: Record<string, [string, string]> = {
-    food: ['#F97316', '#FBBF24'],
+    food: ['#FFC857', '#FBBF24'],
     grooming: ['#9333EA', '#C084FC'],
     entertainment: ['#D97706', '#F59E0B'],
   };
-  const gradient = gradients[pack.category] ?? ['#F97316', '#FBBF24'];
+  const gradient = gradients[pack.category] ?? ['#FFC857', '#FBBF24'];
 
   return (
     <Pressable
@@ -120,7 +120,7 @@ const StudentMicroPrepaidPacks: React.FC = () => {
 
       {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color="#F97316" />
+          <ActivityIndicator size="small" color="#FFC857" />
         </View>
       ) : (
         <ScrollView

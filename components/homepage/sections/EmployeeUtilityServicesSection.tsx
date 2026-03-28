@@ -68,7 +68,7 @@ const UTILITY_SERVICES: UtilityService[] = [
     nextSlot: 'Tomorrow 8 AM',
     cashbackPercent: 12,
     route: '/services/car-service',
-    accentColor: '#7C3AED',
+    accentColor: '#1a3a52',
     bgColor: '#F3E8FF',
   },
   {
