@@ -1,7 +1,8 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useEffect } from 'react';
 import { useIsMounted } from '@/hooks/useIsMounted';
-import { View, StyleSheet, StatusBar, ScrollView } from 'react-native';
+import { View, StyleSheet, StatusBar, ScrollView, Pressable } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -113,7 +114,16 @@ function IdentitySelectPage() {
     setIdentity({ statedIdentity: 'general' });
     identityApi.setStatedIdentity('general').catch(() => {});
 
-    await completeOnboardingIfNeeded();
+    // Complete onboarding but ALWAYS go to home, even if the API call fails.
+    // The user is authenticated — failing to mark isOnboarded on the backend
+    // should not block them from using the app.
+    try {
+      await completeOnboardingIfNeeded();
+    } catch {
+      // Silently continue — home screen has retry logic
+    }
+    // Mark locally so navigation guard doesn't redirect back
+    await AsyncStorage.setItem('onboarding_completed', 'true').catch(() => {});
     if (!isMounted()) return;
     router.replace('/(tabs)');
   };

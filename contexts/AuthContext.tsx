@@ -541,10 +541,11 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         preferences: data.preferences
       });
 
-      // Check if API returned an error
+      // Check if API returned an error — but do NOT dispatch AUTH_FAILURE here.
+      // The user IS authenticated (has valid token). A failed onboarding call
+      // should not reset isAuthenticated and kick them back to sign-in.
       if (!response.success) {
         const errorMessage = response.error || response.message || 'Onboarding completion failed';
-        dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
         throw new Error(errorMessage);
       }
 
@@ -561,10 +562,9 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       dispatch({ type: 'UPDATE_USER', payload: response.data });
 
     } catch (error: any) {
-      dispatch({
-        type: 'AUTH_FAILURE',
-        payload: error?.message || 'Onboarding completion failed'
-      });
+      // Do NOT dispatch AUTH_FAILURE — user is still authenticated.
+      // Just log and re-throw so callers can handle gracefully.
+      logger.error('[AUTH] completeOnboarding failed:', error?.message);
 
       // Re-throw error so calling components know it failed
       throw error;
