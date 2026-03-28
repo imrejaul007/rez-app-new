@@ -15,7 +15,6 @@ import { useUserIdentityStore } from '@/stores/userIdentityStore';
 import { useAuthUser, useAuthActions } from '@/stores/selectors';
 import * as identityApi from '@/services/identityApi';
 import analyticsService, { IdentityAnalyticsEvents } from '@/services/analyticsService';
-import { Pressable } from 'react-native';
 
 const IDENTITIES = [
   {
