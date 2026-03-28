@@ -1164,25 +1164,15 @@ function HomeScreen() {
             accessibilityRole="button"
             accessibilityHint="Tap to explore products you can try risk-free and earn coins"
           >
-            <LinearGradient
-              colors={['#1a3a52', '#0d2741', '#1a3a52']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
-              style={viewStyles.tryBannerGradient}
-            >
+            <View style={viewStyles.tryBannerGradient}>
               <View style={viewStyles.tryBannerContent}>
                 <View style={viewStyles.tryBannerTextSection}>
                   <Text style={viewStyles.tryBannerTitle}>Try Before You Buy</Text>
                   <Text style={viewStyles.tryBannerSubtitle}>Experience products risk-free, earn coins</Text>
                 </View>
-                <Ionicons
-                  name="chevron-forward"
-                  size={20}
-                  color="rgba(255,200,87,0.85)"
-                  style={viewStyles.tryBannerChevron}
-                />
+                <Ionicons name="chevron-forward" size={20} color="#1a3a52" style={viewStyles.tryBannerChevron} />
               </View>
-            </LinearGradient>
+            </View>
           </Pressable>
         )}
 
@@ -1205,12 +1195,7 @@ function HomeScreen() {
             accessibilityLabel="Today's challenge: earn your first coins"
             accessibilityHint="Tap to start earning coins"
           >
-            <LinearGradient
-              colors={['#1a3a52', '#0d2741']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={viewStyles.day1ChallengeGradient}
-            >
+            <View style={viewStyles.day1ChallengeGradient}>
               <View style={viewStyles.day1ChallengeContent}>
                 <View style={viewStyles.day1ChallengeText}>
                   <Text style={viewStyles.day1ChallengeTitle}>🎯 Today's Challenge</Text>
@@ -1222,10 +1207,10 @@ function HomeScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Dismiss challenge"
                 >
-                  <Ionicons name="close" size={20} color="rgba(255,255,255,0.45)" />
+                  <Ionicons name="close" size={20} color="#94A3B8" />
                 </Pressable>
               </View>
-            </LinearGradient>
+            </View>
           </Pressable>
         )}
 
@@ -1242,7 +1227,7 @@ function HomeScreen() {
                   accessibilityLabel={`${streakCount}-day streak. Tap to view smart spending.`}
                 >
                   <StreakFireIcon streakDays={streakCount} size="small" />
-                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#FFC857' }}>{streakCount}d streak</Text>
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#1a3a52' }}>{streakCount}d streak</Text>
                 </Pressable>
               )}
               <View style={{ flex: 1 }}>
@@ -1720,16 +1705,27 @@ const viewStyles = StyleSheet.create({
   },
   // ReZ TRY Banner Styles
   tryBanner: {
-    marginHorizontal: 0,
+    marginHorizontal: 16,
     marginTop: spacing.sm,
     marginBottom: spacing.sm,
-    borderRadius: 0,
+    borderRadius: 16,
     overflow: 'hidden',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(255,200,87,0.25)',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+      },
+      android: { elevation: 2 },
+    }),
   },
   tryBannerGradient: {
+    backgroundColor: '#FFFFFF',
+    borderLeftWidth: 4,
+    borderLeftColor: '#FFC857',
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.base,
   },
@@ -1742,34 +1738,44 @@ const viewStyles = StyleSheet.create({
     flex: 1,
   },
   tryBannerTitle: {
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: '700',
-    color: '#FFC857',
+    color: '#1a3a52',
     marginBottom: spacing.xs,
   },
   tryBannerSubtitle: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
-    color: 'rgba(255,255,255,0.75)',
+    color: '#475569',
   },
   tryBannerChevron: {
     marginLeft: spacing.md,
   },
   // CARLOS: retention — day-1 challenge card styles
   day1ChallengeCard: {
-    marginHorizontal: 0,
+    marginHorizontal: 16,
     marginTop: spacing.sm,
     marginBottom: spacing.sm,
-    borderRadius: 0,
+    borderRadius: 16,
     overflow: 'hidden',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(255,200,87,0.25)',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
+      },
+      android: { elevation: 2 },
+    }),
   },
   day1ChallengeGradient: {
+    backgroundColor: '#FFFFFF',
+    borderLeftWidth: 4,
+    borderLeftColor: '#FFC857',
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
-    borderRadius: borderRadius.lg,
   },
   day1ChallengeContent: {
     flexDirection: 'row',
@@ -1780,17 +1786,17 @@ const viewStyles = StyleSheet.create({
     flex: 1,
   },
   day1ChallengeTitle: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '700',
-    color: '#FFC857',
+    color: '#1a3a52',
     marginBottom: spacing.xs,
   },
   day1ChallengeSub: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
-    color: 'rgba(255,255,255,0.75)',
+    color: '#475569',
   },
-  // Phase 1: Habit Engine — Nile Blue card wrapping streak + rez score
+  // Phase 1: Habit Engine — clean white card wrapping streak + rez score
   streakScoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1798,18 +1804,18 @@ const viewStyles = StyleSheet.create({
     marginBottom: spacing.sm,
     padding: 12,
     gap: 12,
-    backgroundColor: '#1a3a52',
+    backgroundColor: '#FFFFFF',
     borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.25)',
+    borderColor: '#E2E8F0',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.06,
         shadowRadius: 8,
       },
-      android: { elevation: 4 },
+      android: { elevation: 2 },
     }),
   },
   // CARLOS: retention — streak display styles

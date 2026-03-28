@@ -140,22 +140,21 @@ const TimeAwareContextPill: React.FC<TimeAwareContextPillProps> = ({
 
 const styles = StyleSheet.create({
   pill: {
-    marginHorizontal: 0,
-    marginBottom: 0,
+    marginHorizontal: 16,
+    marginBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: LINEN,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.border.default,   // #E8DCC4
-    borderRadius: 0,
-    paddingHorizontal: 12,
-    paddingVertical: 9,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E2E8F0',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     ...Platform.select({
       ios: {
-        shadowColor: NAVY,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.06,
+        shadowOpacity: 0.05,
         shadowRadius: 4,
       },
       android: { elevation: 1 },

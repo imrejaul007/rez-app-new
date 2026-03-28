@@ -1,12 +1,7 @@
 /**
- * VisitStreakCard — Nile Blue card showing the user's 7-visit streak progress
- * towards a coin reward.
+ * VisitStreakCard — Clean white card showing the user's 7-visit streak progress.
  *
- * Dot states:
- *   done    — mustard filled + checkmark
- *   current — transparent with mustard ring
- *   next    — 8% white bg + 10% white border
- *   reward  — mustard filled + 🎁 when not reached, checkmark when done
+ * Design: white card, navy text, mustard for completed dots only.
  */
 
 import React from 'react';
@@ -19,16 +14,17 @@ import {
 } from 'react-native';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 
-const MUSTARD = colors.lightMustard;  // #ffcd57
-const NAVY    = colors.nileBlue;       // #1a3a52
+const MUSTARD = '#FFC857';
+const NAVY    = '#1a3a52';
+const BORDER  = '#E2E8F0';
+const BODY    = '#475569';
+const MUTED   = '#94A3B8';
+const LIGHT   = '#F8F9FA';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface VisitStreakCardProps {
-  /** Number of visits completed so far (0–7) */
   currentVisits?: number;
-  /** Total visits required for the reward (typically 7) */
   totalRequired?: number;
-  /** Coin reward amount unlocked at the final dot */
   rewardAmount?: number;
   onEarnMore?: () => void;
 }
@@ -77,9 +73,9 @@ const StreakDot: React.FC<DotProps> = ({ state, isRewardDot, rewardDone }) => {
 
 const dot = StyleSheet.create({
   base: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: 26,
+    height: 26,
+    borderRadius: 13,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -92,7 +88,7 @@ const dot = StyleSheet.create({
   currentOuter: {
     borderWidth: 2,
     borderColor: MUSTARD,
-    backgroundColor: 'transparent',
+    backgroundColor: '#FFFBEB',
   },
   currentInner: {
     width: 10,
@@ -101,9 +97,9 @@ const dot = StyleSheet.create({
     backgroundColor: MUSTARD,
   },
   next: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: LIGHT,
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.10)',
+    borderColor: BORDER,
   },
   checkmark: {
     fontSize: 11,
@@ -121,8 +117,8 @@ const Connector: React.FC<{ done: boolean }> = ({ done }) => (
     style={[
       conn.line,
       done
-        ? { backgroundColor: 'rgba(255,205,87,0.5)' }
-        : { backgroundColor: 'rgba(255,255,255,0.08)' },
+        ? { backgroundColor: MUSTARD }
+        : { backgroundColor: BORDER },
     ]}
   />
 );
@@ -130,8 +126,9 @@ const Connector: React.FC<{ done: boolean }> = ({ done }) => (
 const conn = StyleSheet.create({
   line: {
     flex: 1,
-    height: 1.5,
+    height: 2,
     marginHorizontal: 3,
+    borderRadius: 1,
   },
 });
 
@@ -149,7 +146,7 @@ const VisitStreakCard: React.FC<VisitStreakCardProps> = ({
   const rewardReached = safeVisits >= TOTAL_DOTS;
 
   const getDotState = (index: number): DotState => {
-    if (index < safeVisits)  return 'done';
+    if (index < safeVisits)   return 'done';
     if (index === safeVisits) return 'current';
     return 'next';
   };
@@ -159,12 +156,12 @@ const VisitStreakCard: React.FC<VisitStreakCardProps> = ({
       {/* Top row */}
       <View style={styles.topRow}>
         <View style={styles.topTextBlock}>
+          <Text style={styles.topLabel}>Visit Streak</Text>
           <Text style={styles.topMain}>
-            {safeVisits} visit{safeVisits !== 1 ? 's' : ''} done
+            {safeVisits} of {totalRequired} visits
             {remaining > 0 ? ` · ${remaining} more → ${rewardAmount} RC` : ' · Reward unlocked!'}
           </Text>
         </View>
-        {/* Mustard icon box */}
         <View style={styles.iconBox}>
           <Text style={styles.iconEmoji}>⭐</Text>
         </View>
@@ -173,9 +170,9 @@ const VisitStreakCard: React.FC<VisitStreakCardProps> = ({
       {/* Progress dots row */}
       <View style={styles.dotsRow}>
         {Array.from({ length: TOTAL_DOTS }).map((_, i) => {
-          const isReward   = i === TOTAL_DOTS - 1;
-          const state      = getDotState(i);
-          const isLastDot  = i === TOTAL_DOTS - 1;
+          const isReward  = i === TOTAL_DOTS - 1;
+          const state     = getDotState(i);
+          const isLastDot = i === TOTAL_DOTS - 1;
 
           return (
             <React.Fragment key={i}>
@@ -184,9 +181,7 @@ const VisitStreakCard: React.FC<VisitStreakCardProps> = ({
                 isRewardDot={isReward}
                 rewardDone={rewardReached}
               />
-              {!isLastDot && (
-                <Connector done={i < safeVisits} />
-              )}
+              {!isLastDot && <Connector done={i < safeVisits} />}
             </React.Fragment>
           );
         })}
@@ -215,22 +210,23 @@ const VisitStreakCard: React.FC<VisitStreakCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: 0,
-    marginBottom: 0,
-    backgroundColor: NAVY,
-    borderRadius: 0,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 16,
+    borderWidth: 1,
+    borderColor: BORDER,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.18,
-        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
       },
-      android: { elevation: 6 },
+      android: { elevation: 2 },
     }),
   },
-  // Top row
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -241,34 +237,45 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingRight: 10,
   },
+  topLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    color: MUTED,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
+    marginBottom: 2,
+  },
   topMain: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#ffffff',
+    color: NAVY,
     lineHeight: 18,
   },
   iconBox: {
-    width: 34,
-    height: 34,
+    width: 36,
+    height: 36,
     borderRadius: 10,
-    backgroundColor: MUSTARD,
+    backgroundColor: '#FFFBEB',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FDE68A',
   },
   iconEmoji: {
-    fontSize: 16,
+    fontSize: 18,
   },
-  // Dots
   dotsRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
   },
-  // Footer
   footer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: BORDER,
   },
   footerDot: {
     width: 6,
@@ -279,23 +286,23 @@ const styles = StyleSheet.create({
   },
   footerText: {
     flex: 1,
-    fontSize: 10,
-    color: 'rgba(255,255,255,0.65)',
-    lineHeight: 14,
+    fontSize: 11,
+    color: BODY,
+    lineHeight: 15,
   },
   earnPill: {
-    backgroundColor: 'rgba(255,205,87,0.15)',
-    borderRadius: borderRadius.full,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    backgroundColor: '#FFFBEB',
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderWidth: 1,
-    borderColor: 'rgba(255,205,87,0.3)',
+    borderColor: MUSTARD,
     flexShrink: 0,
   },
   earnText: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '700',
-    color: MUSTARD,
+    color: NAVY,
   },
 });
 

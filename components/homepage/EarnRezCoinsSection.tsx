@@ -7,7 +7,6 @@ import {
   Platform,
   Dimensions,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useHomeTab } from '@/contexts/HomeTabContext';
@@ -17,18 +16,13 @@ import { colors } from '@/constants/theme';
 const { width } = Dimensions.get('window');
 const CARD_GAP = 10;
 
-// Brand Colors — premium dark palette
-const COLORS = {
-  primary: '#FFC857',       // gold
-  primaryDark: '#c89a00',   // deep gold
-  primaryLight: '#F0D98A',  // light gold shimmer
-  white: colors.background.primary,
-  textDark: '#FFFFFF',
-  textMuted: 'rgba(255,255,255,0.55)',
-  border: 'rgba(255,200,87,0.22)',
-  cardBg: '#1a3a52',        // deep navy charcoal
-  cardBgAlt: '#16334d',     // slightly lighter variant
-};
+const NAVY    = '#1a3a52';
+const MUSTARD = '#FFC857';
+const BORDER  = '#E2E8F0';
+const BODY    = '#475569';
+const MUTED   = '#94A3B8';
+const LIGHT   = '#F8F9FA';
+const CARD_BG = '#FFFFFF';
 
 const EarnNuqtaCoinsSection: React.FC = () => {
   const router = useRouter();
@@ -42,26 +36,18 @@ const EarnNuqtaCoinsSection: React.FC = () => {
 
   const handleOnlineShoppingPress = () => {
     setActiveTab?.('cash');
-    // Scroll to top after switching tab
     if (scrollToTop) {
-      setTimeout(() => {
-        scrollToTop();
-      }, 100);
+      setTimeout(() => scrollToTop(), 100);
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Header Section */}
+      {/* Header */}
       <View style={styles.headerContainer}>
         <View style={styles.headerLeft}>
-          <View style={styles.headerIconContainer}>
-            <LinearGradient
-              colors={['#FFC857', '#c89a00']}
-              style={styles.headerIconGradient}
-            >
-              <Ionicons name="wallet" size={18} color="#1a3a52" />
-            </LinearGradient>
+          <View style={styles.headerIconBox}>
+            <Ionicons name="wallet" size={20} color={NAVY} />
           </View>
           <View>
             <Text style={styles.headerTitle}>Earn {BRAND.COIN_NAME}</Text>
@@ -70,11 +56,11 @@ const EarnNuqtaCoinsSection: React.FC = () => {
         </View>
         <Pressable style={styles.viewAllButton} onPress={handleViewAll}>
           <Text style={styles.viewAllText}>View All</Text>
-          <Ionicons name="arrow-forward" size={14} color={COLORS.primary} />
+          <Ionicons name="arrow-forward" size={14} color={NAVY} />
         </Pressable>
       </View>
 
-      {/* Bento Box Grid */}
+      {/* Bento Grid */}
       <View style={styles.bentoGrid}>
         {/* Top Row */}
         <View style={styles.topRow}>
@@ -83,32 +69,17 @@ const EarnNuqtaCoinsSection: React.FC = () => {
             style={styles.largeCard}
             onPress={handleOnlineShoppingPress}
           >
-            <LinearGradient
-              colors={['#16334d', '#1a3a52']}
-              style={styles.largeCardGradient}
-            >
-              {/* Gold shimmer overlay */}
-              <LinearGradient
-                colors={['rgba(255,200,87,0.08)', 'rgba(255,200,87,0.02)']}
-                style={StyleSheet.absoluteFillObject}
-              />
-
-              {/* Decorative circles */}
-              <View style={styles.decorCircle1} />
-              <View style={styles.decorCircle2} />
-
-              {/* Header with badge */}
+            {/* Mustard accent top bar */}
+            <View style={styles.largeCardAccent} />
+            <View style={styles.largeCardInner}>
               <View style={styles.largeCardHeader}>
                 <View style={styles.emojiContainer}>
                   <Text style={styles.largeEmoji}>🛒</Text>
                 </View>
                 <View style={styles.popularBadge}>
-                  <Ionicons name="star" size={10} color="#FFC857" />
-                  <Text style={styles.popularText}>Popular</Text>
+                  <Text style={styles.popularText}>⭐ Popular</Text>
                 </View>
               </View>
-
-              {/* Content */}
               <View style={styles.largeCardFooter}>
                 <Text style={styles.largeCardTitle}>Online Shopping</Text>
                 <Text style={styles.largeCardDesc}>2500+ brands available</Text>
@@ -116,63 +87,41 @@ const EarnNuqtaCoinsSection: React.FC = () => {
                   <Text style={styles.cashbackText}>Up to 25% cashback</Text>
                 </View>
               </View>
-            </LinearGradient>
+            </View>
           </Pressable>
 
           {/* Right Column */}
           <View style={styles.rightColumn}>
-            {/* Pay in Store Card */}
+            {/* Pay in Store */}
             <Pressable
               style={styles.payCard}
               onPress={() => router.push('/pay-in-store' as any)}
             >
-              <LinearGradient
-                colors={['#16334d', '#1a3a52']}
-                style={styles.payCardGradient}
-              >
-                <View style={styles.payCardContent}>
-                  <View style={styles.payIconBox}>
-                    <Ionicons name="card-outline" size={20} color="#FFC857" />
-                  </View>
-                  <View style={styles.payTextContent}>
-                    <Text style={styles.payCardTitle}>Pay in Store</Text>
-                    <Text style={styles.payCardDesc}>Scan & earn instantly</Text>
-                  </View>
-                </View>
-                <View style={styles.payArrow}>
-                  <Ionicons name="chevron-forward" size={16} color="#FFC857" />
-                </View>
-              </LinearGradient>
+              <View style={styles.payIconBox}>
+                <Ionicons name="card-outline" size={20} color={NAVY} />
+              </View>
+              <View style={styles.payTextContent}>
+                <Text style={styles.payCardTitle}>Pay in Store</Text>
+                <Text style={styles.payCardDesc}>Scan & earn instantly</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={16} color={MUTED} />
             </Pressable>
 
             {/* Small Cards Row */}
             <View style={styles.smallCardsRow}>
-              {/* Play Games */}
               <Pressable
                 style={styles.smallCard}
                 onPress={() => router.push('/playandearn' as any)}
               >
-                <LinearGradient
-                  colors={['#1e3f5e', '#1a3a52']}
-                  style={styles.smallCardGradient}
-                >
-                  <Text style={styles.smallEmoji}>🎮</Text>
-                  <Text style={styles.smallCardText}>Play</Text>
-                </LinearGradient>
+                <Text style={styles.smallEmoji}>🎮</Text>
+                <Text style={styles.smallCardText}>Play</Text>
               </Pressable>
-
-              {/* Refer */}
               <Pressable
                 style={styles.smallCard}
                 onPress={() => router.push('/referral' as any)}
               >
-                <LinearGradient
-                  colors={['#1e3f5e', '#1a3a52']}
-                  style={styles.smallCardGradient}
-                >
-                  <Text style={styles.smallEmoji}>👥</Text>
-                  <Text style={styles.smallCardText}>Refer</Text>
-                </LinearGradient>
+                <Text style={styles.smallEmoji}>👥</Text>
+                <Text style={styles.smallCardText}>Refer</Text>
               </Pressable>
             </View>
           </View>
@@ -180,51 +129,33 @@ const EarnNuqtaCoinsSection: React.FC = () => {
 
         {/* Bottom Row */}
         <View style={styles.bottomRow}>
-          {/* Social Impact */}
           <Pressable
             style={styles.socialCard}
             onPress={() => router.push('/social-impact' as any)}
           >
-            <LinearGradient
-              colors={['#16334d', '#1a3a52']}
-              style={styles.socialCardGradient}
-            >
-              <View style={styles.socialIconBox}>
-                <Text style={styles.socialEmoji}>🤝</Text>
-              </View>
-              <View style={styles.socialTextContent}>
-                <Text style={styles.socialTitle}>Social Impact</Text>
-                <Text style={styles.socialDesc}>CSR events</Text>
-              </View>
-            </LinearGradient>
+            <View style={styles.socialIconBox}>
+              <Text style={styles.socialEmoji}>🤝</Text>
+            </View>
+            <View style={styles.socialTextContent}>
+              <Text style={styles.socialTitle}>Social Impact</Text>
+              <Text style={styles.socialDesc}>CSR events</Text>
+            </View>
           </Pressable>
 
-          {/* Surveys */}
           <Pressable
             style={styles.miniCard}
             onPress={() => router.push('/surveys' as any)}
           >
-            <LinearGradient
-              colors={['#1e3f5e', '#1a3a52']}
-              style={styles.miniCardGradient}
-            >
-              <Text style={styles.miniEmoji}>📋</Text>
-              <Text style={styles.miniCardText}>Surveys</Text>
-            </LinearGradient>
+            <Text style={styles.miniEmoji}>📋</Text>
+            <Text style={styles.miniCardText}>Surveys</Text>
           </Pressable>
 
-          {/* Reviews */}
           <Pressable
             style={styles.miniCard}
             onPress={() => router.push('/my-reviews' as any)}
           >
-            <LinearGradient
-              colors={['#1e3f5e', '#1a3a52']}
-              style={styles.miniCardGradient}
-            >
-              <Text style={styles.miniEmoji}>⭐</Text>
-              <Text style={styles.miniCardText}>Reviews</Text>
-            </LinearGradient>
+            <Text style={styles.miniEmoji}>⭐</Text>
+            <Text style={styles.miniCardText}>Reviews</Text>
           </Pressable>
         </View>
       </View>
@@ -232,71 +163,71 @@ const EarnNuqtaCoinsSection: React.FC = () => {
   );
 };
 
+const cardShadow = Platform.select({
+  ios: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.06,
+    shadowRadius: 6,
+  },
+  android: { elevation: 2 },
+}) ?? {};
+
 const styles = StyleSheet.create({
   container: {
+    marginHorizontal: 16,
     marginVertical: 12,
   },
 
-  // Header - matching PlayAndEarnSection style
+  // Header
   headerContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     justifyContent: 'space-between',
     marginBottom: 16,
   },
   headerLeft: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    flex: 1,
+    alignItems: 'center',
     gap: 12,
+    flex: 1,
   },
-  headerIconContainer: {
-    ...Platform.select({
-      ios: {
-        shadowColor: COLORS.primary,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  headerIconGradient: {
+  headerIconBox: {
     width: 44,
     height: 44,
     borderRadius: 14,
-    alignItems: 'center',
+    backgroundColor: '#FFFBEB',
     justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#FDE68A',
   },
   headerTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.text.primary,
-    marginBottom: 4,
+    color: NAVY,
     letterSpacing: -0.3,
   },
   headerSubtitle: {
     fontSize: 12,
-    color: colors.text.secondary,
-    fontWeight: '400',
+    color: BODY,
+    marginTop: 1,
   },
   viewAllButton: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 8,
-    backgroundColor: 'rgba(255,200,87,0.1)',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: 10,
+    backgroundColor: LIGHT,
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.25)',
+    borderColor: BORDER,
   },
   viewAllText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#FFC857',
+    color: NAVY,
   },
 
   // Bento Grid
@@ -314,49 +245,24 @@ const styles = StyleSheet.create({
     height: 70,
   },
 
-  // Large Card - Online Shopping
+  // Large Card
   largeCard: {
     flex: 1,
-    borderRadius: 18,
+    borderRadius: 16,
     overflow: 'hidden',
+    backgroundColor: CARD_BG,
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.22)',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 5,
-      },
-    }),
+    borderColor: BORDER,
+    ...cardShadow,
   },
-  largeCardGradient: {
+  largeCardAccent: {
+    height: 4,
+    backgroundColor: MUSTARD,
+  },
+  largeCardInner: {
     flex: 1,
     padding: 14,
     justifyContent: 'space-between',
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  decorCircle1: {
-    position: 'absolute',
-    top: -20,
-    right: -20,
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: 'rgba(255,200,87,0.07)',
-  },
-  decorCircle2: {
-    position: 'absolute',
-    bottom: 10,
-    left: -30,
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: 'rgba(255,200,87,0.04)',
   },
   largeCardHeader: {
     flexDirection: 'row',
@@ -364,62 +270,57 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   emojiContainer: {
-    width: 42,
-    height: 42,
+    width: 44,
+    height: 44,
     borderRadius: 12,
-    backgroundColor: 'rgba(255,200,87,0.12)',
+    backgroundColor: LIGHT,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.22)',
+    borderColor: BORDER,
   },
   largeEmoji: {
     fontSize: 22,
   },
   popularBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    backgroundColor: 'rgba(255,200,87,0.15)',
+    backgroundColor: '#FFFBEB',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.3)',
+    borderColor: '#FDE68A',
   },
   popularText: {
     fontSize: 10,
     fontWeight: '600',
-    color: '#FFC857',
+    color: '#92400E',
   },
   largeCardFooter: {
     gap: 3,
   },
   largeCardTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '700',
-    color: COLORS.textDark,
-    lineHeight: 20,
+    color: NAVY,
   },
   largeCardDesc: {
     fontSize: 11,
-    color: COLORS.textMuted,
-    fontWeight: '500',
+    color: BODY,
   },
   cashbackBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(255,200,87,0.15)',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    backgroundColor: LIGHT,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 8,
-    marginTop: 6,
+    marginTop: 4,
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.3)',
+    borderColor: BORDER,
   },
   cashbackText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '600',
-    color: '#FFC857',
+    color: NAVY,
   },
 
   // Right Column
@@ -428,47 +329,28 @@ const styles = StyleSheet.create({
     gap: CARD_GAP,
   },
 
-  // Pay in Store Card
+  // Pay in Store
   payCard: {
     height: 66,
     borderRadius: 14,
-    overflow: 'hidden',
+    backgroundColor: CARD_BG,
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.2)',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.18,
-        shadowRadius: 6,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
-  },
-  payCardGradient: {
-    flex: 1,
+    borderColor: BORDER,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: 12,
-  },
-  payCardContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
     gap: 10,
-    flex: 1,
+    ...cardShadow,
   },
   payIconBox: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: 'rgba(255,200,87,0.12)',
+    backgroundColor: '#FFFBEB',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.25)',
+    borderColor: '#FDE68A',
   },
   payTextContent: {
     flex: 1,
@@ -476,23 +358,15 @@ const styles = StyleSheet.create({
   payCardTitle: {
     fontSize: 13,
     fontWeight: '700',
-    color: COLORS.textDark,
+    color: NAVY,
   },
   payCardDesc: {
     fontSize: 10,
-    color: COLORS.textMuted,
+    color: BODY,
     marginTop: 1,
   },
-  payArrow: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: 'rgba(255,200,87,0.12)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
 
-  // Small Cards Row (Play & Refer)
+  // Small Cards
   smallCardsRow: {
     flex: 1,
     flexDirection: 'row',
@@ -501,72 +375,45 @@ const styles = StyleSheet.create({
   smallCard: {
     flex: 1,
     borderRadius: 14,
-    overflow: 'hidden',
+    backgroundColor: CARD_BG,
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.18)',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  smallCardGradient: {
-    flex: 1,
+    borderColor: BORDER,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 8,
+    gap: 4,
+    ...cardShadow,
   },
   smallEmoji: {
     fontSize: 22,
-    marginBottom: 4,
   },
   smallCardText: {
     fontSize: 11,
     fontWeight: '600',
-    color: COLORS.textDark,
+    color: NAVY,
   },
 
-  // Social Impact Card
+  // Social Impact
   socialCard: {
     flex: 1.5,
     borderRadius: 14,
-    overflow: 'hidden',
+    backgroundColor: CARD_BG,
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.2)',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  socialCardGradient: {
-    flex: 1,
+    borderColor: BORDER,
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 12,
     gap: 10,
+    ...cardShadow,
   },
   socialIconBox: {
     width: 36,
     height: 36,
     borderRadius: 10,
-    backgroundColor: 'rgba(255,200,87,0.12)',
+    backgroundColor: LIGHT,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.22)',
+    borderColor: BORDER,
   },
   socialEmoji: {
     fontSize: 18,
@@ -577,47 +424,33 @@ const styles = StyleSheet.create({
   socialTitle: {
     fontSize: 12,
     fontWeight: '700',
-    color: COLORS.textDark,
+    color: NAVY,
   },
   socialDesc: {
     fontSize: 10,
-    color: COLORS.textMuted,
+    color: BODY,
     marginTop: 1,
   },
 
-  // Mini Cards (Surveys & Reviews)
+  // Mini Cards
   miniCard: {
     flex: 1,
     borderRadius: 14,
-    overflow: 'hidden',
+    backgroundColor: CARD_BG,
     borderWidth: 1,
-    borderColor: 'rgba(255,200,87,0.18)',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.15,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  miniCardGradient: {
-    flex: 1,
+    borderColor: BORDER,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 8,
+    gap: 3,
+    ...cardShadow,
   },
   miniEmoji: {
     fontSize: 20,
-    marginBottom: 2,
   },
   miniCardText: {
     fontSize: 10,
     fontWeight: '600',
-    color: COLORS.textDark,
+    color: NAVY,
   },
 });
 

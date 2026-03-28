@@ -1,11 +1,7 @@
 /**
- * TryBeforeYouBuyCard — Nile Blue card promoting the risk-free trial feature.
+ * TryBeforeYouBuyCard — Clean white card promoting the risk-free trial feature.
  *
- * Shows:
- *   • Eyebrow + title with "2 new today" badge
- *   • Subtitle
- *   • "Explore →" CTA pill
- *   • 4 trial category icons: Cafés, Grooming, Fitness, Beauty
+ * Design: white card, navy text, mustard CTA only.
  */
 
 import React from 'react';
@@ -18,8 +14,12 @@ import {
 } from 'react-native';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 
-const MUSTARD = colors.lightMustard;  // #ffcd57
-const NAVY    = colors.nileBlue;       // #1a3a52
+const MUSTARD = '#FFC857';
+const NAVY    = '#1a3a52';
+const BORDER  = '#E2E8F0';
+const BODY    = '#475569';
+const MUTED   = '#94A3B8';
+const LIGHT   = '#F8F9FA';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface TrialCounts {
@@ -57,7 +57,7 @@ interface CategoryTileProps {
 
 const CategoryTile: React.FC<CategoryTileProps> = ({ emoji, label, count, onPress }) => (
   <Pressable
-    style={({ pressed }) => [tile.wrapper, pressed && { opacity: 0.78 }]}
+    style={({ pressed }) => [tile.wrapper, pressed && { opacity: 0.75 }]}
     onPress={onPress}
     hitSlop={{ top: 6, bottom: 6, left: 4, right: 4 }}
   >
@@ -76,26 +76,28 @@ const tile = StyleSheet.create({
     gap: 4,
   },
   iconBox: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.07)',
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: LIGHT,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 2,
+    marginBottom: 4,
+    borderWidth: 1,
+    borderColor: BORDER,
   },
   emoji: {
-    fontSize: 16,
+    fontSize: 20,
   },
   label: {
-    fontSize: 10,
+    fontSize: 11,
     fontWeight: '600',
-    color: 'rgba(255,255,255,0.85)',
+    color: NAVY,
     textAlign: 'center',
   },
   sub: {
-    fontSize: 9,
-    color: 'rgba(255,255,255,0.45)',
+    fontSize: 10,
+    color: MUTED,
     textAlign: 'center',
   },
 });
@@ -111,24 +113,18 @@ const TryBeforeYouBuyCard: React.FC<TryBeforeYouBuyCardProps> = ({
       {/* Header row */}
       <View style={styles.headerRow}>
         <View style={styles.headerLeft}>
-          {/* Eyebrow */}
-          <Text style={styles.eyebrow}>TRY BEFORE YOU BUY</Text>
-
-          {/* Title + badge */}
+          <Text style={styles.eyebrow}>Try Before You Buy</Text>
           <View style={styles.titleRow}>
             <Text style={styles.title}>Risk-free trials</Text>
             <View style={styles.badge}>
               <Text style={styles.badgeText}>2 new today</Text>
             </View>
           </View>
-
-          {/* Subtitle */}
           <Text style={styles.subtitle}>
             Experience first. Pay only if you love it.
           </Text>
         </View>
 
-        {/* Explore CTA */}
         <Pressable
           style={({ pressed }) => [styles.explorePill, pressed && { opacity: 0.82 }]}
           onPress={onExplore}
@@ -159,22 +155,23 @@ const TryBeforeYouBuyCard: React.FC<TryBeforeYouBuyCardProps> = ({
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: 0,
-    marginBottom: 0,
-    backgroundColor: NAVY,
-    borderRadius: 0,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
     padding: 16,
+    borderWidth: 1,
+    borderColor: BORDER,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.18,
-        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
       },
-      android: { elevation: 6 },
+      android: { elevation: 2 },
     }),
   },
-  // Header
   headerRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
@@ -187,8 +184,8 @@ const styles = StyleSheet.create({
   eyebrow: {
     fontSize: 10,
     fontWeight: '700',
-    color: `rgba(255,205,87,0.7)`,
-    letterSpacing: 1.2,
+    color: MUTED,
+    letterSpacing: 0.5,
     textTransform: 'uppercase',
     marginBottom: 6,
   },
@@ -199,52 +196,47 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   title: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '800',
-    color: '#ffffff',
+    color: NAVY,
     letterSpacing: -0.3,
   },
   badge: {
-    backgroundColor: 'rgba(255,205,87,0.18)',
-    borderRadius: borderRadius.full,
+    backgroundColor: '#FFFBEB',
+    borderRadius: 20,
     paddingHorizontal: 8,
     paddingVertical: 3,
     borderWidth: 1,
-    borderColor: 'rgba(255,205,87,0.35)',
+    borderColor: MUSTARD,
   },
   badgeText: {
     fontSize: 9,
     fontWeight: '700',
-    color: MUSTARD,
+    color: '#92400E',
   },
   subtitle: {
-    fontSize: 11,
-    color: 'rgba(255,255,255,0.45)',
-    lineHeight: 16,
+    fontSize: 12,
+    color: BODY,
+    lineHeight: 17,
   },
-  // Explore CTA
   explorePill: {
-    backgroundColor: 'rgba(255,205,87,0.15)',
-    borderRadius: borderRadius.full,
-    paddingHorizontal: 12,
-    paddingVertical: 7,
-    borderWidth: 1,
-    borderColor: 'rgba(255,205,87,0.3)',
+    backgroundColor: MUSTARD,
+    borderRadius: 20,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     alignSelf: 'flex-start',
     flexShrink: 0,
   },
   exploreText: {
     fontSize: 12,
     fontWeight: '700',
-    color: MUSTARD,
+    color: NAVY,
   },
-  // Divider
   divider: {
     height: 1,
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: BORDER,
     marginVertical: 14,
   },
-  // Categories
   categoriesRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',

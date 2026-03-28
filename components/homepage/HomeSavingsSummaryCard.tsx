@@ -1,16 +1,21 @@
 /**
  * HomeSavingsSummaryCard — Home page savings anchor card.
  *
- * Displayed at the top of the Near-U feed to anchor the user on savings.
- * LinearGradient linen-to-lavender, prominent month savings, unlock CTA.
+ * Design: clean white card, navy text, mustard accent only.
  */
 
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
-import { borderRadius, colors, spacing, typography } from '@/constants/theme';
+import { borderRadius, colors, spacing } from '@/constants/theme';
 import { useUserIdentityStore, IdentitySegment } from '@/stores/userIdentityStore';
+
+const NAVY    = '#1a3a52';
+const MUSTARD = '#FFC857';
+const BORDER  = '#E2E8F0';
+const BODY    = '#475569';
+const MUTED   = '#94A3B8';
+const LIGHT   = '#F8F9FA';
 
 const SEGMENT_SAVINGS_LABEL: Partial<Record<IdentitySegment, string>> = {
   verified_student: 'Student savings this month',
@@ -54,128 +59,147 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
   const isEmptyState = thisMonthSaved === 0 && totalSaved === 0;
 
   return (
-    <Pressable onPress={onPress} style={({ pressed }) => [pressed && styles.pressed]}>
-      <View style={styles.wrapper}>
-        <LinearGradient
-          colors={['#1a3a52', '#0d2741']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradient}
-        >
-          {isEmptyState ? (
-            /* Empty / first-time state */
-            <View style={styles.emptyContainer}>
-              <View style={styles.emptyIconCircle}>
-                <Ionicons name="wallet-outline" size={28} color="#FFC857" />
+    <Pressable onPress={onPress} style={({ pressed }) => [styles.wrapper, pressed && styles.pressed]}>
+      {isEmptyState ? (
+        /* Empty / first-time state */
+        <View style={styles.emptyContainer}>
+          <View style={styles.emptyIconCircle}>
+            <Ionicons name="wallet-outline" size={28} color={MUSTARD} />
+          </View>
+          <Text style={styles.emptyTitle}>Start saving today!</Text>
+          <Text style={styles.emptySubtitle}>
+            {SEGMENT_EMPTY_SUBTITLE[segment] ?? 'Shop at nearby stores and earn cashback on every purchase.'}
+          </Text>
+        </View>
+      ) : (
+        /* Savings state */
+        <View style={styles.savingsContent}>
+          <View style={styles.savingsLeft}>
+            <Text style={styles.label}>{savingsLabel}</Text>
+            <Text style={styles.amount}>
+              {currencySymbol}{(thisMonthSaved ?? 0).toLocaleString()}
+            </Text>
+            {unlockAmount != null && unlockAmount > 0 && (
+              <View style={styles.unlockRow}>
+                <Text style={styles.unlockText}>
+                  Unlock {currencySymbol}{unlockAmount.toLocaleString()} more
+                  {nearbyStoreCount ? ` at ${nearbyStoreCount} stores` : ''} →
+                </Text>
               </View>
-              <Text style={styles.emptyTitle}>Start saving today!</Text>
-              <Text style={styles.emptySubtitle}>
-                {SEGMENT_EMPTY_SUBTITLE[segment] ?? 'Shop at nearby stores and earn cashback on every purchase.'}
-              </Text>
-            </View>
-          ) : (
-            /* Savings state */
-            <>
-              <Text style={styles.label}>{savingsLabel}</Text>
-              <Text style={styles.amount}>
-                {currencySymbol}{(thisMonthSaved ?? 0).toLocaleString()}
-              </Text>
-
-              {unlockAmount != null && unlockAmount > 0 && (
-                <View style={styles.unlockRow}>
-                  <Text style={styles.unlockText}>
-                    Unlock {currencySymbol}{unlockAmount.toLocaleString()} more
-                    {nearbyStoreCount ? ` at ${nearbyStoreCount} nearby stores` : ''} →
-                  </Text>
-                </View>
-              )}
-            </>
-          )}
-        </LinearGradient>
-      </View>
+            )}
+          </View>
+          <View style={styles.arrowBox}>
+            <Ionicons name="chevron-forward" size={18} color={NAVY} />
+          </View>
+        </View>
+      )}
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   wrapper: {
-    marginHorizontal: 0,
-    marginBottom: 0,
-    borderRadius: 0,
+    marginHorizontal: 16,
+    marginBottom: 12,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: BORDER,
     overflow: 'hidden',
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: 'rgba(255,200,87,0.3)',
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.25,
-        shadowRadius: 10,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.06,
+        shadowRadius: 8,
       },
-      android: {
-        elevation: 6,
-      },
-      web: {
-        boxShadow: '0 3px 10px rgba(0,0,0,0.25)',
-      } as any,
+      android: { elevation: 2 },
     }),
   },
-  gradient: {
-    padding: 16,
-    borderRadius: 14,
-  },
   pressed: {
-    opacity: 0.92,
+    opacity: 0.95,
   },
 
   // Savings state
+  savingsContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 20,
+  },
+  savingsLeft: {
+    flex: 1,
+  },
   label: {
-    fontSize: 13,
-    fontWeight: '500',
-    color: 'rgba(255,255,255,0.55)',
+    fontSize: 11,
+    fontWeight: '600',
+    color: MUTED,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
     marginBottom: 4,
   },
   amount: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#FFC857',
+    fontSize: 32,
+    fontWeight: '800',
+    color: NAVY,
+    letterSpacing: -0.5,
     marginBottom: 6,
   },
   unlockRow: {
-    marginTop: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFBEB',
+    alignSelf: 'flex-start',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: MUSTARD,
   },
   unlockText: {
-    fontSize: 12,
-    color: 'rgba(255,255,255,0.5)',
-    fontWeight: '500',
+    fontSize: 11,
+    color: NAVY,
+    fontWeight: '600',
+  },
+  arrowBox: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: LIGHT,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 12,
+    borderWidth: 1,
+    borderColor: BORDER,
   },
 
   // Empty state
   emptyContainer: {
     alignItems: 'center',
-    paddingVertical: 8,
+    paddingVertical: 24,
+    paddingHorizontal: 20,
   },
   emptyIconCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: 'rgba(212,175,55,0.12)',
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#FFFBEB',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: 14,
+    borderWidth: 1,
+    borderColor: '#FDE68A',
   },
   emptyTitle: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '700',
-    color: 'rgba(255,255,255,0.85)',
-    marginBottom: 4,
+    color: NAVY,
+    marginBottom: 6,
   },
   emptySubtitle: {
     fontSize: 13,
-    color: 'rgba(255,255,255,0.5)',
+    color: BODY,
     textAlign: 'center',
-    lineHeight: 18,
+    lineHeight: 19,
   },
 });
 

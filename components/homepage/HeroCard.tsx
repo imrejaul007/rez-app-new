@@ -1,12 +1,8 @@
 /**
  * HeroCard — Home page hero card with two states.
  *
- * First-time state (totalSaved === 0 or undefined): nile-blue background,
- * stacked layout, store-count pill, welcome reward CTA, social proof column,
- * bottom strip with scan & pay prompt.
- *
- * Returning user state (totalSaved > 0): dark navy, savings summary,
- * scan & pay / view wallet CTAs, coin expiry row.
+ * Design: clean white card, navy text, mustard CTA only.
+ * No dark backgrounds.
  */
 
 import React from 'react';
@@ -16,15 +12,16 @@ import {
   StyleSheet,
   Pressable,
   Platform,
-  Animated,
 } from 'react-native';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 
 // ─── Brand constants ────────────────────────────────────────────────────────
-const MUSTARD = colors.lightMustard;   // #ffcd57
-const NAVY    = colors.nileBlue;        // #1a3a52
-const PEACH   = colors.lightPeach;      // #ffd7b5
-const LINEN   = '#faf1e0';              // #faf1e0
+const MUSTARD = '#FFC857';
+const NAVY    = '#1a3a52';
+const BORDER  = '#E2E8F0';
+const LIGHT   = '#F8F9FA';
+const BODY    = '#475569';
+const MUTED   = '#94A3B8';
 
 // ─── Props ───────────────────────────────────────────────────────────────────
 interface HeroCardProps {
@@ -42,45 +39,38 @@ interface HeroCardProps {
 // ─── First-time state ─────────────────────────────────────────────────────────
 const FirstTimeState: React.FC<{ onClaimPress?: () => void }> = ({ onClaimPress }) => (
   <View style={first.wrapper}>
-    {/* Decorative radial glow — mustard top */}
-    <View style={first.glowTop} pointerEvents="none" />
-    {/* Decorative radial glow — mustard right */}
-    <View style={first.glowRight} pointerEvents="none" />
-
-    {/* Main content padding */}
     <View style={first.inner}>
-      {/* ── Top row: eyebrow + store-count pill ── */}
+      {/* Top row */}
       <View style={first.headerRow}>
-        <Text style={first.eyebrow}>WELCOME TO REZ</Text>
-        <View style={first.storePill}>
+        <View style={first.liveBadge}>
           <View style={first.pulseDot} />
+          <Text style={first.liveText}>Welcome to REZ</Text>
+        </View>
+        <View style={first.storePill}>
           <Text style={first.storePillText}>24 stores near you</Text>
         </View>
       </View>
 
-      {/* ── Title ── */}
+      {/* Title */}
       <Text style={first.title}>
         {'Save money on\n'}
         <Text style={first.titleAccent}>everything</Text>
         {' you buy'}
       </Text>
 
-      {/* ── Subtitle ── */}
+      {/* Subtitle */}
       <Text style={first.subtitle}>
         Cashback, coins & free trials at 2,400+ stores. Zero effort.
       </Text>
 
-      {/* ── CTA row ── */}
+      {/* CTA row */}
       <View style={first.ctaRow}>
-        {/* Claim button */}
         <Pressable
           style={({ pressed }) => [first.ctaBtn, pressed && { opacity: 0.85 }]}
           onPress={onClaimPress}
         >
           <Text style={first.ctaText}>🎁  Claim your welcome reward</Text>
         </Pressable>
-
-        {/* Social proof */}
         <View style={first.socialProof}>
           <Text style={first.proofAmount}>₹0</Text>
           <Text style={first.proofLabel}>saved so far</Text>
@@ -88,177 +78,125 @@ const FirstTimeState: React.FC<{ onClaimPress?: () => void }> = ({ onClaimPress 
       </View>
     </View>
 
-    {/* ── Bottom strip ── */}
+    {/* Bottom strip */}
     <View style={first.bottomStrip}>
       <Text style={first.stripText}>
         <Text style={first.stripBold}>Scan & Pay</Text>
         {' at any nearby store to start earning'}
       </Text>
-      <View style={first.activityDots}>
-        {[0, 1, 2, 3, 4].map(i => (
-          <View
-            key={i}
-            style={[
-              first.activityDot,
-              { backgroundColor: i < 3 ? 'rgba(255,205,87,.7)' : 'rgba(255,205,87,.2)' },
-            ]}
-          />
-        ))}
-      </View>
     </View>
   </View>
 );
 
 const first = StyleSheet.create({
   wrapper: {
-    backgroundColor: '#0a1e2e',
+    backgroundColor: '#FFFFFF',
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: BORDER,
   },
-  // Decorative glows
-  glowTop: {
-    position: 'absolute',
-    top: -60,
-    left: '10%' as any,
-    width: 220,
-    height: 220,
-    borderRadius: 110,
-    backgroundColor: 'rgba(255,205,87,.08)',
-  },
-  glowRight: {
-    position: 'absolute',
-    top: 0,
-    right: -40,
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: 'rgba(255,205,87,.05)',
-  },
-  // Inner padded area
   inner: {
     padding: 20,
     paddingBottom: 16,
   },
-  // Header row
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 14,
   },
-  eyebrow: {
-    fontSize: 9,
-    fontWeight: '700',
-    color: 'rgba(255,205,87,.6)',
-    letterSpacing: 1.4,
-    textTransform: 'uppercase',
-  },
-  // Store count pill
-  storePill: {
+  liveBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: LINEN,
-    borderWidth: 1,
-    borderColor: 'rgba(255,205,87,.2)',
-    borderRadius: borderRadius.full,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    gap: 5,
+    gap: 6,
   },
   pulseDot: {
-    width: 5,
-    height: 5,
+    width: 6,
+    height: 6,
     borderRadius: 3,
-    backgroundColor: MUSTARD,
+    backgroundColor: '#10B981',
+  },
+  liveText: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: BODY,
+  },
+  storePill: {
+    backgroundColor: LIGHT,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderWidth: 1,
+    borderColor: BORDER,
   },
   storePillText: {
     fontSize: 10,
     fontWeight: '600',
-    color: MUSTARD,
+    color: NAVY,
   },
-  // Title
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: '800',
-    color: '#ffffff',
-    letterSpacing: -0.3,
-    lineHeight: 32,
+    color: NAVY,
+    letterSpacing: -0.5,
+    lineHeight: 34,
     marginBottom: 8,
   },
   titleAccent: {
     color: MUSTARD,
   },
-  // Subtitle
   subtitle: {
-    fontSize: 12,
-    color: 'rgba(255,255,255,.45)',
-    lineHeight: 18,
-    marginBottom: 16,
+    fontSize: 13,
+    color: BODY,
+    lineHeight: 19,
+    marginBottom: 20,
   },
-  // CTA row
   ctaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: 14,
   },
   ctaBtn: {
     flex: 1,
     backgroundColor: MUSTARD,
     borderRadius: 12,
-    paddingVertical: 12,
+    paddingVertical: 13,
     alignItems: 'center',
-    justifyContent: 'center',
   },
   ctaText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '800',
-    color: '#1a3a52',
+    color: NAVY,
   },
-  // Social proof
   socialProof: {
     alignItems: 'center',
   },
   proofAmount: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '800',
-    color: MUSTARD,
-    lineHeight: 22,
+    color: NAVY,
+    lineHeight: 24,
   },
   proofLabel: {
     fontSize: 9,
-    color: 'rgba(255,255,255,.35)',
+    color: MUTED,
     textAlign: 'center',
   },
-  // Bottom strip
   bottomStrip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    backgroundColor: LIGHT,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255,205,87,.1)',
+    borderTopColor: BORDER,
     paddingHorizontal: 20,
-    paddingVertical: 8,
+    paddingVertical: 11,
   },
   stripText: {
-    fontSize: 10,
-    color: 'rgba(255,255,255,.4)',
-    flex: 1,
-    flexWrap: 'wrap',
+    fontSize: 11,
+    color: BODY,
   },
   stripBold: {
     fontWeight: '700',
-    color: 'rgba(255,205,87,.8)',
-  },
-  activityDots: {
-    flexDirection: 'row',
-    gap: 4,
-    alignItems: 'center',
-    marginLeft: 8,
-  },
-  activityDot: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    color: NAVY,
   },
 });
 
@@ -291,19 +229,19 @@ const ReturningState: React.FC<ReturningProps> = ({
         <Text style={ret.label}>SAVED THIS MONTH</Text>
         <Text style={ret.amount}>{formatted}</Text>
 
-        {/* Next unlock box */}
         <View style={ret.unlockBox}>
           <Text style={ret.unlockText}>
-            ₹{unlockAmount.toLocaleString('en-IN')} away from VIP tier
+            ₹{unlockAmount.toLocaleString('en-IN')} more → VIP tier
           </Text>
         </View>
 
-        {/* Missed savings row */}
-        <View style={ret.missedRow}>
-          <View style={ret.missedPill}>
-            <Text style={ret.missedText}>₹{missedAmount} missed yesterday</Text>
+        {missedAmount > 0 && (
+          <View style={ret.missedRow}>
+            <View style={ret.missedPill}>
+              <Text style={ret.missedText}>₹{missedAmount} missed yesterday</Text>
+            </View>
           </View>
-        </View>
+        )}
       </View>
 
       {/* CTA row */}
@@ -323,49 +261,53 @@ const ReturningState: React.FC<ReturningProps> = ({
       </View>
 
       {/* Coin expiry row */}
-      <Pressable
-        style={({ pressed }) => [ret.expiryRow, pressed && { opacity: 0.85 }]}
-        onPress={onUseCoinPress}
-      >
-        <Text style={ret.expiryText}>
-          {expiringCoins} coins expiring in 12h — use them now ›
-        </Text>
-      </Pressable>
+      {expiringCoins > 0 && (
+        <Pressable
+          style={({ pressed }) => [ret.expiryRow, pressed && { opacity: 0.85 }]}
+          onPress={onUseCoinPress}
+        >
+          <Text style={ret.expiryText}>
+            ⚡ {expiringCoins} coins expiring — use them now ›
+          </Text>
+        </Pressable>
+      )}
     </View>
   );
 };
 
 const ret = StyleSheet.create({
   wrapper: {
-    backgroundColor: '#0a1e2e',
+    backgroundColor: '#FFFFFF',
     borderRadius: borderRadius.lg,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: BORDER,
   },
   topSection: {
-    padding: 16,
-    paddingBottom: 12,
+    padding: 20,
+    paddingBottom: 16,
   },
   label: {
-    fontSize: 9,
+    fontSize: 10,
     fontWeight: '700',
-    color: MUSTARD,
-    letterSpacing: 1.4,
+    color: MUTED,
+    letterSpacing: 1.2,
     textTransform: 'uppercase',
     marginBottom: 4,
   },
   amount: {
-    fontSize: 30,
+    fontSize: 34,
     fontWeight: '800',
-    color: '#ffffff',
+    color: NAVY,
     letterSpacing: -0.5,
-    marginBottom: 10,
+    marginBottom: 12,
   },
-  // Next unlock box
   unlockBox: {
     alignSelf: 'flex-start',
+    backgroundColor: '#FFFBEB',
+    borderRadius: 8,
     borderWidth: 1,
     borderColor: MUSTARD,
-    borderRadius: borderRadius.sm,
     paddingHorizontal: 10,
     paddingVertical: 5,
     marginBottom: 10,
@@ -373,35 +315,33 @@ const ret = StyleSheet.create({
   unlockText: {
     fontSize: 11,
     fontWeight: '600',
-    color: MUSTARD,
+    color: NAVY,
   },
-  // Missed savings
   missedRow: {
     flexDirection: 'row',
   },
   missedPill: {
-    backgroundColor: 'rgba(255,255,255,0.10)',
-    borderRadius: borderRadius.full,
+    backgroundColor: '#FEF2F2',
+    borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 5,
   },
   missedText: {
     fontSize: 11,
-    color: '#ffffff',
+    color: '#EF4444',
     fontWeight: '500',
   },
-  // CTAs
   ctaRow: {
     flexDirection: 'row',
     gap: 10,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
   scanBtn: {
     flex: 1,
     backgroundColor: MUSTARD,
-    borderRadius: borderRadius.full,
-    paddingVertical: 10,
+    borderRadius: 12,
+    paddingVertical: 12,
     alignItems: 'center',
   },
   scanText: {
@@ -412,27 +352,28 @@ const ret = StyleSheet.create({
   walletBtn: {
     flex: 1,
     borderWidth: 1.5,
-    borderColor: 'rgba(255,255,255,0.7)',
-    borderRadius: borderRadius.full,
-    paddingVertical: 10,
+    borderColor: BORDER,
+    borderRadius: 12,
+    paddingVertical: 12,
     alignItems: 'center',
   },
   walletText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#ffffff',
+    color: NAVY,
   },
-  // Coin expiry
   expiryRow: {
-    backgroundColor: PEACH,
-    paddingHorizontal: 16,
-    paddingVertical: 9,
+    backgroundColor: '#FFFBEB',
+    borderTopWidth: 1,
+    borderTopColor: '#FDE68A',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
     alignItems: 'center',
   },
   expiryText: {
     fontSize: 11,
     fontWeight: '600',
-    color: NAVY,
+    color: '#92400E',
   },
 });
 
@@ -471,17 +412,17 @@ const HeroCard: React.FC<HeroCardProps> = ({
 
 const styles = StyleSheet.create({
   shadow: {
-    marginHorizontal: 0,
+    marginHorizontal: spacing.base,
     marginBottom: spacing.md,
-    borderRadius: 0,
+    borderRadius: borderRadius.lg,
     ...Platform.select({
       ios: {
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.18,
-        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
       },
-      android: { elevation: 6 },
+      android: { elevation: 3 },
     }),
   },
 });
