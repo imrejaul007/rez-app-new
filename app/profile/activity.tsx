@@ -45,16 +45,7 @@ function ActivityFeedPage() {
   const currencySymbol = getCurrencySymbol();
   const [selectedFilter, setSelectedFilter] = useState<ActivityType | 'all'>('all');
 
-  const {
-    activities,
-    pagination,
-    summary,
-    isLoading,
-    refresh,
-    loadMore,
-    setFilterType,
-    hasMore,
-  } = useActivities({
+  const { activities, pagination, summary, isLoading, refresh, loadMore, setFilterType, hasMore } = useActivities({
     autoFetch: true,
     initialPage: 1,
     initialLimit: 20,
@@ -85,38 +76,41 @@ function ActivityFeedPage() {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
-  const renderActivityItem = useCallback(({ item }: { item: Activity }) => (
-    <Pressable style={styles.activityCard}>
-      <View style={[styles.activityIcon, { backgroundColor: `${item.color}20` }]}>
-        <Ionicons name={item.icon as any} size={24} color={item.color} />
-      </View>
-
-      <View style={styles.activityContent}>
-        <View style={styles.activityHeader}>
-          <ThemedText style={styles.activityTitle} numberOfLines={1}>
-            {item.title}
-          </ThemedText>
-          <ThemedText style={styles.activityTime}>
-            {formatDate(item.createdAt)}
-          </ThemedText>
+  const renderActivityItem = useCallback(
+    ({ item }: { item: Activity }) => (
+      <Pressable style={styles.activityCard}>
+        <View style={[styles.activityIcon, { backgroundColor: `${item.color}20` }]}>
+          <Ionicons name={item.icon as any} size={24} color={item.color} />
         </View>
 
-        {item.description && (
-          <ThemedText style={styles.activityDescription} numberOfLines={2}>
-            {item.description}
-          </ThemedText>
-        )}
-
-        {item.amount !== undefined && item.amount !== null && (
-          <View style={styles.activityAmount}>
-            <ThemedText style={[styles.amountText, { color: item.color }]}>
-              {item.amount > 0 ? '+' : ''}{currencySymbol}{item.amount.toFixed(2)}
+        <View style={styles.activityContent}>
+          <View style={styles.activityHeader}>
+            <ThemedText style={styles.activityTitle} numberOfLines={1}>
+              {item.title}
             </ThemedText>
+            <ThemedText style={styles.activityTime}>{formatDate(item.createdAt)}</ThemedText>
           </View>
-        )}
-      </View>
-    </Pressable>
-  ), [currencySymbol]);
+
+          {item.description && (
+            <ThemedText style={styles.activityDescription} numberOfLines={2}>
+              {item.description}
+            </ThemedText>
+          )}
+
+          {item.amount !== undefined && item.amount !== null && (
+            <View style={styles.activityAmount}>
+              <ThemedText style={[styles.amountText, { color: item.color }]}>
+                {item.amount > 0 ? '+' : ''}
+                {currencySymbol}
+                {item.amount.toFixed(2)}
+              </ThemedText>
+            </View>
+          )}
+        </View>
+      </Pressable>
+    ),
+    [currencySymbol],
+  );
 
   const renderFooter = () => {
     if (!hasMore) return null;
@@ -133,9 +127,7 @@ function ActivityFeedPage() {
     <View style={styles.emptyContainer}>
       <Ionicons name="calendar-outline" size={64} color={colors.border.default} />
       <ThemedText style={styles.emptyText}>No activities yet</ThemedText>
-      <ThemedText style={styles.emptySubtext}>
-        Your activity timeline will appear here
-      </ThemedText>
+      <ThemedText style={styles.emptySubtext}>Your activity timeline will appear here</ThemedText>
     </View>
   );
 
@@ -147,12 +139,11 @@ function ActivityFeedPage() {
       {/* Header */}
       <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable 
-            style={styles.backButton} 
+          <Pressable
+            style={styles.backButton}
             onPress={() => {
-              // Check if we can go back, otherwise navigate to profile
               if (router.canGoBack()) {
-                router.canGoBack() ? router.back() : router.replace('/(tabs)');
+                router.back();
               } else {
                 router.push('/profile');
               }
@@ -163,9 +154,7 @@ function ActivityFeedPage() {
 
           <View style={styles.headerTextContainer}>
             <ThemedText style={styles.headerTitle}>Activity Feed</ThemedText>
-            <ThemedText style={styles.headerSubtitle}>
-              {pagination?.total || 0} total activities
-            </ThemedText>
+            <ThemedText style={styles.headerSubtitle}>{pagination?.total || 0} total activities</ThemedText>
           </View>
 
           <View style={styles.placeholder} />
@@ -190,7 +179,8 @@ function ActivityFeedPage() {
                 {stat.totalAmount > 0 && (
                   <View style={styles.amountBadge}>
                     <ThemedText style={styles.summaryAmount}>
-                      {currencySymbol}{stat.totalAmount.toFixed(0)}
+                      {currencySymbol}
+                      {stat.totalAmount.toFixed(0)}
                     </ThemedText>
                   </View>
                 )}
@@ -202,26 +192,15 @@ function ActivityFeedPage() {
 
       {/* Filter Pills */}
       <View style={styles.filterContainer}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterContent}
-        >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterContent}>
           {ACTIVITY_TYPE_FILTERS.map((filter) => (
             <Pressable
               key={filter.value}
-              style={[
-                styles.filterPill,
-                selectedFilter === filter.value && styles.filterPillActive,
-              ]}
+              style={[styles.filterPill, selectedFilter === filter.value && styles.filterPillActive]}
               onPress={() => handleFilterChange(filter.value)}
-             
             >
               <ThemedText
-                style={[
-                  styles.filterPillText,
-                  selectedFilter === filter.value && styles.filterPillTextActive,
-                ]}
+                style={[styles.filterPillText, selectedFilter === filter.value && styles.filterPillTextActive]}
               >
                 {filter.label}
               </ThemedText>
@@ -251,9 +230,7 @@ function ActivityFeedPage() {
         showsVerticalScrollIndicator={false}
       />
 
-      {isLoading && activities.length === 0 && (
-        <TransactionListSkeleton />
-      )}
+      {isLoading && activities.length === 0 && <TransactionListSkeleton />}
     </View>
   );
 }

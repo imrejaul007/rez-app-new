@@ -390,10 +390,10 @@ export const profileMenuListItems: ProfileMenuListItem[] = [
     showArrow: true,
   },
   {
-    id: 'nuqtacoin',
+    id: 'rezcoin',
     title: BRAND.COIN_NAME,
     icon: 'diamond',
-    route: '/wallet',
+    route: '/wallet-screen',
     showArrow: true,
   },
   {

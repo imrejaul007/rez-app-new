@@ -323,12 +323,18 @@ function ProfileEditPage() {
       // BEFORE calling checkAuthStatus. Previously the code cleared lastProfileSync and called
       // checkAuthStatus — but checkAuthStatus re-reads from SecureStore which still contained
       // the OLD user, and then dispatched UPDATE_USER with stale data overwriting the edit.
+      const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
       if (response.data) {
         const { saveUser } = await import('@/utils/authStorage');
         await saveUser(response.data);
+        // Stamp lastProfileSync so background fetch within checkAuthStatus skips API
+        // (we already have fresh data in SecureStore)
+        await AsyncStorage.setItem('lastProfileSync', Date.now().toString());
+      } else {
+        // No data returned — clear lastProfileSync so checkAuthStatus performs a fresh
+        // background API fetch instead of using the old cached user
+        await AsyncStorage.removeItem('lastProfileSync');
       }
-      const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
-      await AsyncStorage.setItem('lastProfileSync', Date.now().toString());
       await authActions.checkAuthStatus();
 
       // Update initial data so hasChanges resets

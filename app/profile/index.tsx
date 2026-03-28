@@ -5,14 +5,31 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
-import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, SafeAreaView, RefreshControl, ActivityIndicator } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  StatusBar,
+  Platform,
+  SafeAreaView,
+  RefreshControl,
+  ActivityIndicator,
+} from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { useProfile } from '@/contexts/ProfileContext';
-import { useIsAuthenticated, useAuthLoading, useAuthActions, useRezBalance, useRefreshWallet, useGetCurrencySymbol } from '@/stores/selectors';
+import {
+  useIsAuthenticated,
+  useAuthLoading,
+  useAuthActions,
+  useRezBalance,
+  useRefreshWallet,
+  useGetCurrencySymbol,
+} from '@/stores/selectors';
 import { useSafeNavigation } from '@/hooks/useSafeNavigation';
 import { HeaderBackButton } from '@/components/navigation/SafeBackButton';
 import {
@@ -20,13 +37,10 @@ import {
   PROFILE_SPACING,
   PROFILE_RADIUS,
   ProfileIconGridItem,
-  ProfileMenuListItem
+  ProfileMenuListItem,
 } from '@/types/profile.types';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
-import {
-  profileIconGridItems,
-  profileMenuListItems
-} from '@/data/profileData';
+import { profileIconGridItems, profileMenuListItems } from '@/data/profileData';
 import LocationDisplay from '@/components/location/LocationDisplay';
 import TimeDisplay from '@/components/location/TimeDisplay';
 import { useUserStatistics } from '@/hooks/useUserStatistics';
@@ -49,23 +63,33 @@ function ProfilePage() {
 
   // SS-006 FIX: Fetch real user data on every screen focus so edits from
   // profile/edit.tsx are visible immediately when navigating back here.
-  const [liveUserData, setLiveUserData] = useState<{ name: string; email: string; avatar?: string | null; initials: string } | null>(null);
+  const [liveUserData, setLiveUserData] = useState<{
+    name: string;
+    email: string;
+    avatar?: string | null;
+    initials: string;
+  } | null>(null);
   const fetchLiveProfile = useCallback(() => {
     let cancelled = false;
-    authService.getProfile().then(res => {
-      if (cancelled || !res.success || !res.data) return;
-      const d = res.data as any;
-      const fn = d.profile?.firstName || '';
-      const ln = d.profile?.lastName || '';
-      const name = fn && ln ? `${fn} ${ln}` : fn || d.name || d.email?.split('@')[0] || '';
-      setLiveUserData({
-        name,
-        email: d.email || '',
-        avatar: d.profile?.avatar,
-        initials: fn ? (fn.charAt(0) + (ln?.charAt(0) || '')).toUpperCase() : 'U',
-      });
-    }).catch(() => {});
-    return () => { cancelled = true; };
+    authService
+      .getProfile()
+      .then((res) => {
+        if (cancelled || !res.success || !res.data) return;
+        const d = res.data as any;
+        const fn = d.profile?.firstName || '';
+        const ln = d.profile?.lastName || '';
+        const name = fn && ln ? `${fn} ${ln}` : fn || d.name || d.email?.split('@')[0] || '';
+        setLiveUserData({
+          name,
+          email: d.email || '',
+          avatar: d.profile?.avatar,
+          initials: fn ? (fn.charAt(0) + (ln?.charAt(0) || '')).toUpperCase() : 'U',
+        });
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Initial fetch on mount
@@ -77,17 +101,19 @@ function ProfilePage() {
   useFocusEffect(
     useCallback(() => {
       return fetchLiveProfile();
-    }, [fetchLiveProfile])
+    }, [fetchLiveProfile]),
   );
 
   // Merge live API data over context user
-  const user = contextUser ? {
-    ...contextUser,
-    name: liveUserData?.name || contextUser.name,
-    email: liveUserData?.email || contextUser.email,
-    avatar: liveUserData?.avatar !== undefined ? liveUserData.avatar : contextUser.avatar,
-    initials: liveUserData?.initials || contextUser.initials,
-  } : null;
+  const user = contextUser
+    ? {
+        ...contextUser,
+        name: liveUserData?.name || contextUser.name,
+        email: liveUserData?.email || contextUser.email,
+        avatar: liveUserData?.avatar !== undefined ? liveUserData.avatar : contextUser.avatar,
+        initials: liveUserData?.initials || contextUser.initials,
+      }
+    : null;
   const isAuthenticated = useIsAuthenticated();
   const authLoading = useAuthLoading();
   const authActions = useAuthActions();
@@ -104,18 +130,21 @@ function ProfilePage() {
   useEffect(() => {
     if (!isAuthenticated || authLoading) return;
     let cancelled = false;
-    getReferralStats().then(stats => {
-      if (!cancelled && stats) {
-        setReferralCount(stats.totalReferrals);
-      }
-    }).catch(() => {});
-    return () => { cancelled = true; };
+    getReferralStats()
+      .then((stats) => {
+        if (!cancelled && stats) {
+          setReferralCount(stats.totalReferrals);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
   }, [isAuthenticated, authLoading]);
 
   // Removed - using SafeBackButton component instead
 
   const handleIconGridItemPress = (item: ProfileIconGridItem) => {
-
     // Handle icon grid navigation
     switch (item.id) {
       case 'product':
@@ -141,7 +170,6 @@ function ProfilePage() {
   };
 
   const handleMenuItemPress = (item: ProfileMenuListItem) => {
-
     // Enhanced navigation logic for profile menu items
     switch (item.id) {
       case 'order_transaction_history':
@@ -219,11 +247,10 @@ function ProfilePage() {
         authActions.checkAuthStatus(),
         refetchStats(),
         refreshCompletionStatus(),
-        getReferralStats().then(stats => {
+        getReferralStats().then((stats) => {
           if (stats) setReferralCount(stats.totalReferrals);
         }),
       ]);
-
     } catch (error) {
       // silently handle
     } finally {
@@ -237,26 +264,25 @@ function ProfilePage() {
     useCallback(() => {
       if (!isAuthenticated || authLoading) return;
       onRefresh();
-    }, [isAuthenticated, authLoading, onRefresh])
+    }, [isAuthenticated, authLoading, onRefresh]),
   );
 
   // Handle profile image upload
   const handleImageUpload = async () => {
-
     try {
       const ImagePicker = await getImagePicker();
 
       // Request permission (not needed on web)
       if (Platform.OS !== 'web') {
-
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
         if (status !== 'granted') {
-
-          platformAlertSimple('Permission Required', 'Please allow access to your photo library to upload a profile picture.');
+          platformAlertSimple(
+            'Permission Required',
+            'Please allow access to your photo library to upload a profile picture.',
+          );
           return;
         }
-
       }
 
       // Pick image
@@ -268,14 +294,12 @@ function ProfilePage() {
         quality: 0.8,
       });
       if (!result.canceled && result.assets[0]) {
-
         if (!isMounted()) return;
         setUploadingImage(true);
 
         const uploadResult = await uploadProfileImage(result.assets[0].uri);
 
         if (uploadResult.success) {
-
           // Refresh user data to show new avatar
           await authActions.checkAuthStatus();
 
@@ -284,10 +308,12 @@ function ProfilePage() {
           platformAlertSimple('Upload Failed', uploadResult.error || 'Failed to upload image');
         }
       } else {
-
       }
     } catch (error) {
-      platformAlertSimple('Error', error instanceof Error ? error.message : 'An error occurred while uploading the image');
+      platformAlertSimple(
+        'Error',
+        error instanceof Error ? error.message : 'An error occurred while uploading the image',
+      );
     } finally {
       if (!isMounted()) return;
       setUploadingImage(false);
@@ -342,9 +368,7 @@ function ProfilePage() {
       website: 'Website',
     };
 
-    return completionStatus.missingFields
-      .map(field => fieldLabels[field] || field)
-      .slice(0, 3); // Show max 3 to keep UI clean
+    return completionStatus.missingFields.map((field) => fieldLabels[field] || field).slice(0, 3); // Show max 3 to keep UI clean
   };
 
   // Map statistics to icon grid items with real data
@@ -381,16 +405,10 @@ function ProfilePage() {
       accessibilityHint={`${item.count || 0} items. Double tap to view your ${item.title.toLowerCase()}`}
     >
       <View style={[styles.iconContainer, { backgroundColor: item.backgroundColor }]}>
-        <Ionicons
-          name={item.icon as any}
-          size={24}
-          color={item.color}
-        />
+        <Ionicons name={item.icon as any} size={24} color={item.color} />
       </View>
       <ThemedText style={styles.iconLabel}>{item.title}</ThemedText>
-      {item.count && (
-        <ThemedText style={styles.iconCount}>{item.count}</ThemedText>
-      )}
+      {item.count && <ThemedText style={styles.iconCount}>{item.count}</ThemedText>}
     </Pressable>
   );
 
@@ -399,21 +417,22 @@ function ProfilePage() {
     if (!statistics) return undefined;
 
     switch (itemId) {
-      case 'incomplete_transaction':
+      case 'incomplete_transaction': {
         // Count of pending orders
-        const pendingCount = statistics.orders?.total - (statistics.orders?.completed || 0) - (statistics.orders?.cancelled || 0);
+        const pendingCount =
+          statistics.orders?.total - (statistics.orders?.completed || 0) - (statistics.orders?.cancelled || 0);
         return pendingCount > 0 ? pendingCount.toString() : undefined;
-
-      case 'rezcoin':
+      }
+      case 'rezcoin': {
         // RezCoin balance
         const balance = Math.round(statistics.wallet?.balance || 0);
         return balance > 0 ? balance.toString() : undefined;
-
-      case 'achievements':
+      }
+      case 'achievements': {
         // Achievement count
         const unlockedCount = statistics.achievements?.unlocked || 0;
         return unlockedCount > 0 ? unlockedCount.toString() : undefined;
-
+      }
       default:
         return undefined;
     }
@@ -429,52 +448,31 @@ function ProfilePage() {
         key={item.id}
         style={styles.menuItem}
         onPress={() => handleMenuItemPress(item)}
-       
         accessibilityLabel={`${item.title}${badgeValue ? `, ${badgeValue} ${item.isNew ? '' : 'items'}` : ''}${item.description ? `, ${item.description}` : ''}`}
         accessibilityRole="button"
         accessibilityHint={`Double tap to navigate to ${item.title.toLowerCase()}`}
       >
         <View style={styles.menuItemLeft}>
           <View style={styles.menuIconContainer}>
-            <Ionicons
-              name={item.icon as any}
-              size={22}
-              color={PROFILE_COLORS.primary}
-            />
+            <Ionicons name={item.icon as any} size={22} color={PROFILE_COLORS.primary} />
           </View>
 
           <View style={styles.menuTextContainer}>
             <ThemedText style={styles.menuTitle}>{item.title}</ThemedText>
-            {item.description && (
-              <ThemedText style={styles.menuDescription}>
-                {item.description}
-              </ThemedText>
-            )}
+            {item.description && <ThemedText style={styles.menuDescription}>{item.description}</ThemedText>}
           </View>
         </View>
 
         <View style={styles.menuItemRight}>
           {badgeValue && (
-            <View style={[
-              styles.menuBadge,
-              item.isNew ? styles.newBadge : styles.numericBadge
-            ]}>
-              <ThemedText style={[
-                styles.menuBadgeText,
-                item.isNew && styles.newBadgeText
-              ]}>
+            <View style={[styles.menuBadge, item.isNew ? styles.newBadge : styles.numericBadge]}>
+              <ThemedText style={[styles.menuBadgeText, item.isNew && styles.newBadgeText]}>
                 {item.isNew ? 'New' : badgeValue}
               </ThemedText>
             </View>
           )}
 
-          {item.showArrow && (
-            <Ionicons
-              name="chevron-forward"
-              size={18}
-              color={PROFILE_COLORS.textSecondary}
-            />
-          )}
+          {item.showArrow && <Ionicons name="chevron-forward" size={18} color={PROFILE_COLORS.textSecondary} />}
         </View>
       </Pressable>
     );
@@ -482,12 +480,8 @@ function ProfilePage() {
 
   return (
     <View style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={PROFILE_COLORS.primary}
-        translucent={true}
-      />
-      
+      <StatusBar barStyle="light-content" backgroundColor={PROFILE_COLORS.primary} translucent={true} />
+
       {/* Modern Profile Header */}
       <LinearGradient
         colors={[PROFILE_COLORS.primary, PROFILE_COLORS.primaryDark]}
@@ -496,21 +490,13 @@ function ProfilePage() {
         style={styles.header}
       >
         <View style={styles.headerContent}>
-          {canGoBack && (
-            <HeaderBackButton
-              fallbackRoute="/(tabs)"
-              light={true}
-              iconSize={22}
-            />
-          )}
+          {canGoBack && <HeaderBackButton fallbackRoute="/(tabs)" light={true} iconSize={22} />}
 
           <View style={styles.headerTitleSection}>
             <ThemedText style={styles.headerTitle}>My Profile</ThemedText>
-            <ThemedText style={styles.headerSubtitle}>
-              Personal information and preferences
-            </ThemedText>
+            <ThemedText style={styles.headerSubtitle}>Personal information and preferences</ThemedText>
           </View>
-          
+
           <View style={styles.headerActions}>
             <Pressable
               style={styles.actionButton}
@@ -565,23 +551,18 @@ function ProfilePage() {
               style={styles.avatarContainer}
               onPress={handleImageUpload}
               disabled={uploadingImage}
-             
-              accessibilityLabel={uploadingImage ? "Uploading profile picture" : "Change profile picture"}
+              accessibilityLabel={uploadingImage ? 'Uploading profile picture' : 'Change profile picture'}
               accessibilityRole="button"
-              accessibilityHint={uploadingImage ? "Please wait while image uploads" : "Double tap to upload a new profile picture"}
+              accessibilityHint={
+                uploadingImage ? 'Please wait while image uploads' : 'Double tap to upload a new profile picture'
+              }
               accessibilityState={{ disabled: uploadingImage, busy: uploadingImage }}
             >
               <View style={styles.avatar}>
                 {user?.avatar ? (
-                  <CachedImage
-                    source={{ uri: user.avatar }}
-                    style={styles.avatarImage}
-                    cachePolicy="memory-disk"
-                  />
+                  <CachedImage source={{ uri: user.avatar }} style={styles.avatarImage} cachePolicy="memory-disk" />
                 ) : (
-                  <ThemedText style={styles.avatarText}>
-                    {user?.initials || 'U'}
-                  </ThemedText>
+                  <ThemedText style={styles.avatarText}>{user?.initials || 'U'}</ThemedText>
                 )}
                 {uploadingImage && (
                   <View style={styles.uploadingOverlay}>
@@ -595,12 +576,8 @@ function ProfilePage() {
             </Pressable>
 
             <View style={styles.userInfo}>
-              <ThemedText style={styles.userName}>
-                {user?.name || ''}
-              </ThemedText>
-              <ThemedText style={styles.userEmail}>
-                {user?.email || ''}
-              </ThemedText>
+              <ThemedText style={styles.userName}>{user?.name || ''}</ThemedText>
+              <ThemedText style={styles.userEmail}>{user?.email || ''}</ThemedText>
 
               {user?.isVerified && (
                 <View style={styles.verifiedBadge}>
@@ -625,55 +602,73 @@ function ProfilePage() {
           {/* Identity Status Banner */}
           {identitySegment !== 'normal' && (
             <View style={styles.identityBanner}>
-              <View style={[
-                styles.identityBannerInner,
-                {
-                  backgroundColor: verificationSegment === 'verified'
-                    ? colors.successScale[50]
-                    : verificationSegment === 'provisional' || verificationSegment === 'pending'
-                      ? colors.warningScale[50]
-                      : colors.infoScale[50],
-                },
-              ]}>
-                <View style={[
-                  styles.identityIconCircle,
+              <View
+                style={[
+                  styles.identityBannerInner,
                   {
-                    backgroundColor: verificationSegment === 'verified'
-                      ? colors.successScale[100]
-                      : verificationSegment === 'provisional' || verificationSegment === 'pending'
-                        ? colors.warningScale[100]
-                        : colors.infoScale[100],
+                    backgroundColor:
+                      verificationSegment === 'verified'
+                        ? colors.successScale[50]
+                        : verificationSegment === 'provisional' || verificationSegment === 'pending'
+                          ? colors.warningScale[50]
+                          : colors.infoScale[50],
                   },
-                ]}>
+                ]}
+              >
+                <View
+                  style={[
+                    styles.identityIconCircle,
+                    {
+                      backgroundColor:
+                        verificationSegment === 'verified'
+                          ? colors.successScale[100]
+                          : verificationSegment === 'provisional' || verificationSegment === 'pending'
+                            ? colors.warningScale[100]
+                            : colors.infoScale[100],
+                    },
+                  ]}
+                >
                   <Ionicons
                     name={
-                      identitySegment === 'verified_student' ? 'school' :
-                      identitySegment === 'verified_employee' ? 'briefcase' :
-                      'shield-checkmark'
+                      identitySegment === 'verified_student'
+                        ? 'school'
+                        : identitySegment === 'verified_employee'
+                          ? 'briefcase'
+                          : 'shield-checkmark'
                     }
                     size={20}
                     color={
-                      verificationSegment === 'verified' ? colors.successScale[600] :
-                      verificationSegment === 'provisional' || verificationSegment === 'pending' ? colors.warningScale[600] :
-                      colors.infoScale[600]
+                      verificationSegment === 'verified'
+                        ? colors.successScale[600]
+                        : verificationSegment === 'provisional' || verificationSegment === 'pending'
+                          ? colors.warningScale[600]
+                          : colors.infoScale[600]
                     }
                   />
                 </View>
                 <View style={styles.identityTextContainer}>
-                  <ThemedText style={[
-                    styles.identityTitle,
-                    {
-                      color: verificationSegment === 'verified' ? colors.successScale[700] :
-                        verificationSegment === 'provisional' || verificationSegment === 'pending' ? colors.warningScale[700] :
-                        colors.infoScale[700],
-                    },
-                  ]}>
+                  <ThemedText
+                    style={[
+                      styles.identityTitle,
+                      {
+                        color:
+                          verificationSegment === 'verified'
+                            ? colors.successScale[700]
+                            : verificationSegment === 'provisional' || verificationSegment === 'pending'
+                              ? colors.warningScale[700]
+                              : colors.infoScale[700],
+                      },
+                    ]}
+                  >
                     {verificationSegment === 'verified'
-                      ? identitySegment === 'verified_student' ? 'Student Verified'
-                        : identitySegment === 'verified_employee' ? 'Corporate Verified'
-                        : 'Identity Verified'
-                      : verificationSegment === 'provisional' ? 'Provisional Access'
-                      : 'Verification Pending'}
+                      ? identitySegment === 'verified_student'
+                        ? 'Student Verified'
+                        : identitySegment === 'verified_employee'
+                          ? 'Corporate Verified'
+                          : 'Identity Verified'
+                      : verificationSegment === 'provisional'
+                        ? 'Provisional Access'
+                        : 'Verification Pending'}
                   </ThemedText>
                   <ThemedText style={styles.identitySubtitle}>
                     {identitySegment === 'verified_student' && instituteName
@@ -694,24 +689,17 @@ function ProfilePage() {
             <Pressable
               style={styles.completionCard}
               onPress={() => router.push('/profile/edit')}
-             
               accessibilityLabel={`Profile completion ${profileCompletion} percent`}
               accessibilityRole="button"
               accessibilityHint="Double tap to complete your profile"
             >
               <View style={styles.completionHeader}>
                 <View style={styles.completionInfo}>
-                  <ThemedText style={styles.completionTitle}>
-                    Profile Completion
-                  </ThemedText>
-                  <ThemedText style={styles.completionMessage}>
-                    {getCompletionMessage(profileCompletion)}
-                  </ThemedText>
+                  <ThemedText style={styles.completionTitle}>Profile Completion</ThemedText>
+                  <ThemedText style={styles.completionMessage}>{getCompletionMessage(profileCompletion)}</ThemedText>
                 </View>
                 <View style={styles.completionPercentage}>
-                  <ThemedText style={styles.percentageText}>
-                    {profileCompletion}%
-                  </ThemedText>
+                  <ThemedText style={styles.percentageText}>{profileCompletion}%</ThemedText>
                 </View>
               </View>
 
@@ -723,11 +711,7 @@ function ProfilePage() {
                     {
                       width: `${profileCompletion}%`,
                       backgroundColor:
-                        profileCompletion >= 80
-                          ? Colors.gold
-                          : profileCompletion >= 50
-                          ? Colors.warning
-                          : Colors.error,
+                        profileCompletion >= 80 ? Colors.gold : profileCompletion >= 50 ? Colors.warning : Colors.error,
                     },
                   ]}
                 />
@@ -736,9 +720,7 @@ function ProfilePage() {
               {/* Missing Fields */}
               {getMissingFields().length > 0 && (
                 <View style={styles.missingFields}>
-                  <ThemedText style={styles.missingFieldsLabel}>
-                    Add: {getMissingFields().join(', ')}
-                  </ThemedText>
+                  <ThemedText style={styles.missingFieldsLabel}>Add: {getMissingFields().join(', ')}</ThemedText>
                   <Ionicons name="chevron-forward" size={16} color={PROFILE_COLORS.primary} />
                 </View>
               )}
@@ -749,7 +731,6 @@ function ProfilePage() {
           <Pressable
             style={styles.referralCard}
             onPress={() => router.push('/referral' as any)}
-           
             accessibilityLabel="Refer and Earn 100 rupees"
             accessibilityRole="button"
             accessibilityHint="Double tap to invite friends and get rewards"
@@ -765,9 +746,7 @@ function ProfilePage() {
                   <Ionicons name="gift" size={28} color="white" />
                 </View>
                 <View style={styles.referralText}>
-                  <ThemedText style={styles.referralTitle}>
-                    Refer & Earn {currencySymbol}100
-                  </ThemedText>
+                  <ThemedText style={styles.referralTitle}>Refer & Earn {currencySymbol}100</ThemedText>
                   <ThemedText style={styles.referralSubtitle}>
                     {referralCount !== null && referralCount > 0
                       ? `Friends joined: ${referralCount}`
@@ -783,7 +762,6 @@ function ProfilePage() {
           <Pressable
             style={styles.loyaltyCard}
             onPress={() => router.push('/profile/achievements' as any)}
-           
             accessibilityLabel={`${userPoints} loyalty points. Gold tier`}
             accessibilityRole="button"
             accessibilityHint="Double tap to view your loyalty rewards and achievements"
@@ -794,9 +772,7 @@ function ProfilePage() {
                   <Ionicons name="diamond" size={24} color={Colors.warning} />
                 </View>
                 <View style={styles.loyaltyText}>
-                  <ThemedText style={styles.loyaltyPoints}>
-                    {userPoints} Points
-                  </ThemedText>
+                  <ThemedText style={styles.loyaltyPoints}>{userPoints} Points</ThemedText>
                   <ThemedText style={styles.loyaltyLabel}>Loyalty Rewards</ThemedText>
                 </View>
               </View>
@@ -814,7 +790,6 @@ function ProfilePage() {
           <Pressable
             style={styles.partnerCard}
             onPress={() => router.push('/profile/partner' as any)}
-           
             accessibilityLabel="Partner Program, Level 1"
             accessibilityRole="button"
             accessibilityHint="Double tap to unlock exclusive rewards and benefits"
@@ -831,12 +806,8 @@ function ProfilePage() {
                     <Ionicons name="trophy" size={28} color={colors.nileBlue} />
                   </View>
                   <View style={styles.partnerText}>
-                    <ThemedText style={styles.partnerTitle}>
-                      Partner Program
-                    </ThemedText>
-                    <ThemedText style={styles.partnerSubtitle}>
-                      Unlock exclusive rewards & benefits
-                    </ThemedText>
+                    <ThemedText style={styles.partnerTitle}>Partner Program</ThemedText>
+                    <ThemedText style={styles.partnerSubtitle}>Unlock exclusive rewards & benefits</ThemedText>
                   </View>
                 </View>
                 <View style={styles.partnerRight}>
@@ -861,27 +832,18 @@ function ProfilePage() {
               style={styles.locationCard}
               onPress={handleLocationSettingsPress}
             />
-            <TimeDisplay
-              showDate={true}
-              showTimezone={true}
-              showTimeOfDay={true}
-              style={styles.timeCard}
-            />
+            <TimeDisplay showDate={true} showTimezone={true} showTimeOfDay={true} style={styles.timeCard} />
           </View>
         </View>
 
         {/* Icon Grid Section */}
         <View style={styles.section}>
-          <View style={styles.iconGrid}>
-            {iconGridData.map(renderIconGridItem)}
-          </View>
+          <View style={styles.iconGrid}>{iconGridData.map(renderIconGridItem)}</View>
         </View>
 
         {/* Menu List Section */}
         <View style={styles.section}>
-          <View style={styles.menuList}>
-            {profileMenuListItems.map(renderMenuListItem)}
-          </View>
+          <View style={styles.menuList}>{profileMenuListItems.map(renderMenuListItem)}</View>
         </View>
 
         {/* Stats Section */}
@@ -921,7 +883,10 @@ function ProfilePage() {
                   accessibilityRole="button"
                   accessibilityHint="Double tap to view wallet details"
                 >
-                  <ThemedText style={styles.statNumber}>{currencySymbol}{statistics.wallet?.totalSpent || 0}</ThemedText>
+                  <ThemedText style={styles.statNumber}>
+                    {currencySymbol}
+                    {statistics.wallet?.totalSpent || 0}
+                  </ThemedText>
                   <ThemedText style={styles.statLabel}>Spent</ThemedText>
                 </Pressable>
                 <Pressable
@@ -931,7 +896,9 @@ function ProfilePage() {
                   accessibilityRole="button"
                   accessibilityHint="Double tap to view achievements and badges"
                 >
-                  <ThemedText style={styles.statNumber}>{statistics.achievements?.unlocked || 0}/{statistics.achievements?.total || 0}</ThemedText>
+                  <ThemedText style={styles.statNumber}>
+                    {statistics.achievements?.unlocked || 0}/{statistics.achievements?.total || 0}
+                  </ThemedText>
                   <ThemedText style={styles.statLabel}>Badges</ThemedText>
                 </Pressable>
                 <View style={styles.statItem}>
@@ -940,9 +907,7 @@ function ProfilePage() {
                 </View>
               </View>
             ) : (
-              <ThemedText style={styles.errorText}>
-                {statsError || 'Unable to load stats'}
-              </ThemedText>
+              <ThemedText style={styles.errorText}>{statsError || 'Unable to load stats'}</ThemedText>
             )}
           </View>
         </View>
@@ -951,7 +916,7 @@ function ProfilePage() {
         <View style={styles.footer} />
       </ScrollView>
     </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({

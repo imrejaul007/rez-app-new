@@ -50,7 +50,7 @@ const QRCodePage = () => {
   };
 
   const handleScan = () => {
-    router.push('/pay-in-store' as any);
+    router.push('/wallet-screen' as any);
   };
 
   return (
@@ -60,11 +60,11 @@ const QRCodePage = () => {
       {/* Header */}
       <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable 
-            style={styles.backButton} 
+          <Pressable
+            style={styles.backButton}
             onPress={() => {
               if (router.canGoBack()) {
-                router.canGoBack() ? router.back() : router.replace('/(tabs)');
+                router.back();
               } else {
                 router.push('/profile');
               }
@@ -84,28 +84,16 @@ const QRCodePage = () => {
             style={[styles.tab, activeTab === 'profile' && styles.tabActive]}
             onPress={() => setActiveTab('profile')}
           >
-            <Ionicons
-              name="person"
-              size={20}
-              color={activeTab === 'profile' ? Colors.gold : 'rgba(255,255,255,0.7)'}
-            />
-            <ThemedText style={[styles.tabText, activeTab === 'profile' && styles.tabTextActive]}>
-              Profile
-            </ThemedText>
+            <Ionicons name="person" size={20} color={activeTab === 'profile' ? Colors.gold : 'rgba(255,255,255,0.7)'} />
+            <ThemedText style={[styles.tabText, activeTab === 'profile' && styles.tabTextActive]}>Profile</ThemedText>
           </Pressable>
 
           <Pressable
             style={[styles.tab, activeTab === 'wallet' && styles.tabActive]}
             onPress={() => setActiveTab('wallet')}
           >
-            <Ionicons
-              name="wallet"
-              size={20}
-              color={activeTab === 'wallet' ? Colors.gold : 'rgba(255,255,255,0.7)'}
-            />
-            <ThemedText style={[styles.tabText, activeTab === 'wallet' && styles.tabTextActive]}>
-              Wallet
-            </ThemedText>
+            <Ionicons name="wallet" size={20} color={activeTab === 'wallet' ? Colors.gold : 'rgba(255,255,255,0.7)'} />
+            <ThemedText style={[styles.tabText, activeTab === 'wallet' && styles.tabTextActive]}>Wallet</ThemedText>
           </Pressable>
         </View>
       </LinearGradient>
@@ -134,7 +122,7 @@ const QRCodePage = () => {
                   </View>
                   <View style={styles.infoText}>
                     <ThemedText style={styles.infoName}>
-                      {user?.profile?.firstName && user?.profile?.lastName 
+                      {user?.profile?.firstName && user?.profile?.lastName
                         ? `${user.profile.firstName} ${user.profile.lastName}`
                         : user?.profile?.firstName || user?.email || 'User Name'}
                     </ThemedText>
@@ -154,7 +142,8 @@ const QRCodePage = () => {
                   <Ionicons name="wallet" size={32} color={Colors.gold} />
                   <ThemedText style={styles.walletId}>{walletId}</ThemedText>
                   <ThemedText style={styles.walletBalance}>
-                    Balance: {currencySymbol}{user?.wallet?.balance || 0}
+                    Balance: {currencySymbol}
+                    {user?.wallet?.balance || 0}
                   </ThemedText>
                 </View>
                 <View style={styles.instructionBox}>
@@ -197,27 +186,21 @@ const QRCodePage = () => {
                 <View style={styles.featureIcon}>
                   <Ionicons name="people" size={20} color={Colors.gold} />
                 </View>
-                <ThemedText style={styles.featureText}>
-                  Share your profile with friends and family
-                </ThemedText>
+                <ThemedText style={styles.featureText}>Share your profile with friends and family</ThemedText>
               </View>
 
               <View style={styles.featureItem}>
                 <View style={styles.featureIcon}>
                   <Ionicons name="star" size={20} color={Colors.warning} />
                 </View>
-                <ThemedText style={styles.featureText}>
-                  Show your reviews and ratings
-                </ThemedText>
+                <ThemedText style={styles.featureText}>Show your reviews and ratings</ThemedText>
               </View>
 
               <View style={styles.featureItem}>
                 <View style={styles.featureIcon}>
                   <Ionicons name="gift" size={20} color={colors.brand.pink} />
                 </View>
-                <ThemedText style={styles.featureText}>
-                  Earn referral bonus when they sign up
-                </ThemedText>
+                <ThemedText style={styles.featureText}>Earn referral bonus when they sign up</ThemedText>
               </View>
             </>
           ) : (
@@ -226,27 +209,21 @@ const QRCodePage = () => {
                 <View style={styles.featureIcon}>
                   <Ionicons name="flash" size={20} color={Colors.gold} />
                 </View>
-                <ThemedText style={styles.featureText}>
-                  Instant payment to your wallet
-                </ThemedText>
+                <ThemedText style={styles.featureText}>Instant payment to your wallet</ThemedText>
               </View>
 
               <View style={styles.featureItem}>
                 <View style={styles.featureIcon}>
                   <Ionicons name="shield-checkmark" size={20} color={Colors.info} />
                 </View>
-                <ThemedText style={styles.featureText}>
-                  Secure and encrypted transactions
-                </ThemedText>
+                <ThemedText style={styles.featureText}>Secure and encrypted transactions</ThemedText>
               </View>
 
               <View style={styles.featureItem}>
                 <View style={styles.featureIcon}>
                   <Ionicons name="cash" size={20} color={Colors.warning} />
                 </View>
-                <ThemedText style={styles.featureText}>
-                  No transaction fees for REZ users
-                </ThemedText>
+                <ThemedText style={styles.featureText}>No transaction fees for REZ users</ThemedText>
               </View>
             </>
           )}

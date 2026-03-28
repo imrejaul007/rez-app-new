@@ -4,7 +4,17 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Displays user badges and achievements with progress tracking
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, RefreshControl, Modal, Dimensions } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  StatusBar,
+  Platform,
+  RefreshControl,
+  Modal,
+  Dimensions,
+} from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -58,29 +68,24 @@ function AchievementsPage() {
     if (!isMounted()) return;
     setIsRecalculating(false);
     if (success) {
-
     }
   };
 
   const handleAuthRefresh = async () => {
     try {
-
       await authActions.checkAuthStatus();
       if (!isMounted()) return;
       setAuthError(null);
       // Retry achievements fetch after auth refresh
       await refetch();
     } catch (error) {
-      platformAlertDestructive(
-        'Authentication Error',
-        'Please log out and log back in to continue.',
-        'Logout',
-        () => authActions.logout()
+      platformAlertDestructive('Authentication Error', 'Please log out and log back in to continue.', 'Logout', () =>
+        authActions.logout(),
       );
     }
   };
 
-  const filteredAchievements = achievements.filter(ach => {
+  const filteredAchievements = achievements.filter((ach) => {
     if (filter === 'unlocked') return ach.unlocked;
     if (filter === 'locked') return !ach.unlocked;
     return true;
@@ -94,21 +99,19 @@ function AchievementsPage() {
     return (
       <Pressable
         key={achievement.id}
-        style={[
-          styles.achievementCard,
-          isLocked && styles.achievementCardLocked,
-        ]}
+        style={[styles.achievementCard, isLocked && styles.achievementCardLocked]}
         onPress={() => setSelectedAchievement(achievement)}
-       
         accessibilityLabel={`${achievement.title}. ${achievement.description}. Progress: ${achievement.progress}%${achievement.unlocked ? '. Unlocked' : '. Locked'}`}
         accessibilityRole="button"
         accessibilityState={{ disabled: isLocked }}
         accessibilityHint={`Double tap to view ${achievement.unlocked ? 'details' : 'requirements'}`}
       >
-        <View style={[
-          styles.iconContainer,
-          { backgroundColor: isLocked ? colors.background.secondary : `${achievement.color}20` }
-        ]}>
+        <View
+          style={[
+            styles.iconContainer,
+            { backgroundColor: isLocked ? colors.background.secondary : `${achievement.color}20` },
+          ]}
+        >
           <Ionicons
             name={achievement.icon as any}
             size={32}
@@ -116,10 +119,7 @@ function AchievementsPage() {
           />
         </View>
 
-        <ThemedText style={[
-          styles.achievementTitle,
-          isLocked && styles.achievementTitleLocked
-        ]} numberOfLines={2}>
+        <ThemedText style={[styles.achievementTitle, isLocked && styles.achievementTitleLocked]} numberOfLines={2}>
           {achievement.title}
         </ThemedText>
 
@@ -132,13 +132,11 @@ function AchievementsPage() {
                 {
                   width: `${achievement.progress}%`,
                   backgroundColor: isLocked ? colors.border.default : achievement.color,
-                }
+                },
               ]}
             />
           </View>
-          <ThemedText style={styles.progressText}>
-            {achievement.progress}%
-          </ThemedText>
+          <ThemedText style={styles.progressText}>{achievement.progress}%</ThemedText>
         </View>
 
         {achievement.unlocked && achievement.unlockedDate && (
@@ -156,16 +154,9 @@ function AchievementsPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.gold} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.gold, colors.nileBlue, '#00695C']}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.gold, colors.nileBlue, '#00695C']} style={styles.header}>
         <View style={styles.headerContent}>
-          <HeaderBackButton
-            fallbackRoute="/profile"
-            light={true}
-            iconSize={24}
-          />
+          <HeaderBackButton fallbackRoute="/profile" light={true} iconSize={24} />
 
           <View style={styles.headerTextContainer}>
             <ThemedText style={styles.headerTitle}>Achievements</ThemedText>
@@ -178,17 +169,12 @@ function AchievementsPage() {
             style={styles.recalculateButton}
             onPress={handleRecalculate}
             disabled={isRecalculating}
-            accessibilityLabel={isRecalculating ? "Recalculating achievements" : "Recalculate achievements"}
+            accessibilityLabel={isRecalculating ? 'Recalculating achievements' : 'Recalculate achievements'}
             accessibilityRole="button"
             accessibilityState={{ disabled: isRecalculating, busy: isRecalculating }}
             accessibilityHint="Double tap to refresh achievement progress"
           >
-            <Ionicons
-              name="refresh"
-              size={22}
-              color="white"
-              style={isRecalculating ? styles.rotating : undefined}
-            />
+            <Ionicons name="refresh" size={22} color="white" style={isRecalculating ? styles.rotating : undefined} />
           </Pressable>
         </View>
 
@@ -200,23 +186,17 @@ function AchievementsPage() {
             accessibilityRole="summary"
           >
             <View style={styles.summaryItem}>
-              <ThemedText style={styles.summaryNumber}>
-                {progress.summary.completionPercentage.toFixed(0)}%
-              </ThemedText>
+              <ThemedText style={styles.summaryNumber}>{progress.summary.completionPercentage.toFixed(0)}%</ThemedText>
               <ThemedText style={styles.summaryLabel}>Complete</ThemedText>
             </View>
             <View style={styles.summaryDivider} />
             <View style={styles.summaryItem}>
-              <ThemedText style={styles.summaryNumber}>
-                {progress.summary.unlocked}
-              </ThemedText>
+              <ThemedText style={styles.summaryNumber}>{progress.summary.unlocked}</ThemedText>
               <ThemedText style={styles.summaryLabel}>Unlocked</ThemedText>
             </View>
             <View style={styles.summaryDivider} />
             <View style={styles.summaryItem}>
-              <ThemedText style={styles.summaryNumber}>
-                {progress.summary.inProgress}
-              </ThemedText>
+              <ThemedText style={styles.summaryNumber}>{progress.summary.inProgress}</ThemedText>
               <ThemedText style={styles.summaryLabel}>In Progress</ThemedText>
             </View>
           </View>
@@ -240,25 +220,25 @@ function AchievementsPage() {
         <Pressable
           style={[styles.filterTab, filter === 'unlocked' && styles.filterTabActive]}
           onPress={() => setFilter('unlocked')}
-          accessibilityLabel={`Show unlocked achievements. ${achievements.filter(a => a.unlocked).length} unlocked`}
+          accessibilityLabel={`Show unlocked achievements. ${achievements.filter((a) => a.unlocked).length} unlocked`}
           accessibilityRole="button"
           accessibilityState={{ selected: filter === 'unlocked' }}
           accessibilityHint="Double tap to show only unlocked achievements"
         >
           <ThemedText style={[styles.filterText, filter === 'unlocked' && styles.filterTextActive]}>
-            Unlocked ({achievements.filter(a => a.unlocked).length})
+            Unlocked ({achievements.filter((a) => a.unlocked).length})
           </ThemedText>
         </Pressable>
         <Pressable
           style={[styles.filterTab, filter === 'locked' && styles.filterTabActive]}
           onPress={() => setFilter('locked')}
-          accessibilityLabel={`Show locked achievements. ${achievements.filter(a => !a.unlocked).length} locked`}
+          accessibilityLabel={`Show locked achievements. ${achievements.filter((a) => !a.unlocked).length} locked`}
           accessibilityRole="button"
           accessibilityState={{ selected: filter === 'locked' }}
           accessibilityHint="Double tap to show only locked achievements"
         >
           <ThemedText style={[styles.filterText, filter === 'locked' && styles.filterTextActive]}>
-            Locked ({achievements.filter(a => !a.unlocked).length})
+            Locked ({achievements.filter((a) => !a.unlocked).length})
           </ThemedText>
         </Pressable>
       </View>
@@ -272,10 +252,7 @@ function AchievementsPage() {
               <ThemedText style={styles.errorTitle}>Authentication Issue</ThemedText>
               <ThemedText style={styles.errorMessage}>{authError}</ThemedText>
             </View>
-            <Pressable
-              style={styles.errorButton}
-              onPress={handleAuthRefresh}
-            >
+            <Pressable style={styles.errorButton} onPress={handleAuthRefresh}>
               <ThemedText style={styles.errorButtonText}>Fix</ThemedText>
             </Pressable>
           </View>
@@ -290,10 +267,7 @@ function AchievementsPage() {
           <ThemedText style={styles.errorMessage}>
             There's an issue with your authentication. Please log out and log back in to continue.
           </ThemedText>
-          <Pressable
-            style={styles.primaryButton}
-            onPress={() => authActions.logout()}
-          >
+          <Pressable style={styles.primaryButton} onPress={() => authActions.logout()}>
             <ThemedText style={styles.primaryButtonText}>Logout & Login Again</ThemedText>
           </Pressable>
         </View>
@@ -304,15 +278,13 @@ function AchievementsPage() {
       ) : (
         <FlashList
           data={filteredAchievements}
-          keyExtractor={(item) => item._id}
+          keyExtractor={(item) => item.id || (item as any)._id || String(Math.random())}
           estimatedItemSize={150}
           renderItem={renderAchievementItem}
           numColumns={2}
           style={styles.content}
           contentContainerStyle={[styles.scrollContent, { paddingBottom: 120 }]}
-          refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={refetch} />
-          }
+          refreshControl={<RefreshControl refreshing={isLoading} onRefresh={refetch} />}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons name="trophy-outline" size={64} color={colors.border.default} />
@@ -320,8 +292,8 @@ function AchievementsPage() {
                 {filter === 'unlocked'
                   ? 'No achievements unlocked yet'
                   : filter === 'locked'
-                  ? 'All achievements unlocked!'
-                  : 'No achievements found'}
+                    ? 'All achievements unlocked!'
+                    : 'No achievements found'}
               </ThemedText>
             </View>
           }
@@ -336,34 +308,17 @@ function AchievementsPage() {
         animationType="fade"
         onRequestClose={() => setSelectedAchievement(null)}
       >
-        <Pressable
-          style={styles.modalOverlay}
-         
-          onPress={() => setSelectedAchievement(null)}
-        >
+        <Pressable style={styles.modalOverlay} onPress={() => setSelectedAchievement(null)}>
           <View style={styles.modalContent}>
             {selectedAchievement && (
               <>
-                <View
-                  style={[
-                    styles.modalIconContainer,
-                    { backgroundColor: `${selectedAchievement.color}20` }
-                  ]}
-                >
-                  <Ionicons
-                    name={selectedAchievement.icon as any}
-                    size={48}
-                    color={selectedAchievement.color}
-                  />
+                <View style={[styles.modalIconContainer, { backgroundColor: `${selectedAchievement.color}20` }]}>
+                  <Ionicons name={selectedAchievement.icon as any} size={48} color={selectedAchievement.color} />
                 </View>
 
-                <ThemedText style={styles.modalTitle}>
-                  {selectedAchievement.title}
-                </ThemedText>
+                <ThemedText style={styles.modalTitle}>{selectedAchievement.title}</ThemedText>
 
-                <ThemedText style={styles.modalDescription}>
-                  {selectedAchievement.description}
-                </ThemedText>
+                <ThemedText style={styles.modalDescription}>{selectedAchievement.description}</ThemedText>
 
                 {/* Progress Details */}
                 <View style={styles.modalProgressContainer}>
@@ -374,12 +329,13 @@ function AchievementsPage() {
                         {
                           width: `${selectedAchievement.progress}%`,
                           backgroundColor: selectedAchievement.color,
-                        }
+                        },
                       ]}
                     />
                   </View>
                   <ThemedText style={styles.modalProgressText}>
-                    {selectedAchievement.currentValue || 0} / {selectedAchievement.targetValue} ({selectedAchievement.progress}%)
+                    {selectedAchievement.currentValue || 0} / {selectedAchievement.targetValue} (
+                    {selectedAchievement.progress}%)
                   </ThemedText>
                 </View>
 
@@ -392,10 +348,7 @@ function AchievementsPage() {
                   </View>
                 )}
 
-                <Pressable
-                  style={styles.modalCloseButton}
-                  onPress={() => setSelectedAchievement(null)}
-                >
+                <Pressable style={styles.modalCloseButton} onPress={() => setSelectedAchievement(null)}>
                   <ThemedText style={styles.modalCloseText}>Close</ThemedText>
                 </Pressable>
               </>
@@ -404,7 +357,7 @@ function AchievementsPage() {
         </Pressable>
       </Modal>
     </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({

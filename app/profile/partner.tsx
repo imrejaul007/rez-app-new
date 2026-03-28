@@ -8,11 +8,11 @@ import {
   StatusBar,
   Pressable,
   Platform,
-  Clipboard,
   Animated,
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
+import * as Clipboard from 'expo-clipboard';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -362,7 +362,7 @@ function PartnerProfilePage() {
             if (Platform.OS === 'web') {
               navigator.clipboard.writeText(voucherCode).catch(() => {});
             } else {
-              Clipboard.setString(voucherCode);
+              Clipboard.setStringAsync(voucherCode).catch(() => {});
             }
           },
           'Copy Code',
@@ -380,7 +380,7 @@ function PartnerProfilePage() {
   };
 
   const handleContactSupport = () => {
-    router.push('/help/chat' as any);
+    router.push('/support/chat' as any);
   };
 
   const handleJackpotMilestonePress = async (milestone: JackpotMilestone) => {

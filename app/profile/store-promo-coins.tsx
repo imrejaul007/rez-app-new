@@ -5,14 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Different from Promo Coins which are admin-provided campaign coins
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  RefreshControl,
-  Pressable,
-  Platform,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, RefreshControl, Pressable, Platform } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { router } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
@@ -105,7 +98,11 @@ function StorePromoCoinsPage() {
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await refreshWallet();
+    try {
+      await refreshWallet();
+    } finally {
+      if (isMounted()) setRefreshing(false);
+    }
   };
 
   const getStoreLogo = (store: StoreCoinItem['store']): string | undefined => {
@@ -131,7 +128,7 @@ function StorePromoCoinsPage() {
       >
         <View style={styles.headerContent}>
           <Pressable
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
             accessibilityLabel="Go back"
             accessibilityRole="button"
@@ -142,20 +139,16 @@ function StorePromoCoinsPage() {
           <ThemedText style={styles.headerTitle}>Store Promo Coins</ThemedText>
           <View style={styles.headerPlaceholder} />
         </View>
-        
+
         <View style={styles.headerInfo}>
-          <ThemedText style={styles.headerSubtitle}>
-            Earn & redeem exclusive store coins
-          </ThemedText>
+          <ThemedText style={styles.headerSubtitle}>Earn & redeem exclusive store coins</ThemedText>
         </View>
       </LinearGradient>
 
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       >
         {/* Summary Cards */}
         <View style={styles.summaryContainer}>
@@ -166,9 +159,7 @@ function StorePromoCoinsPage() {
               accessibilityRole="summary"
             >
               <Ionicons name="diamond" size={24} color={colors.text.inverse} />
-              <ThemedText style={styles.summaryValue}>
-                {summary.totalAvailable}
-              </ThemedText>
+              <ThemedText style={styles.summaryValue}>{summary.totalAvailable}</ThemedText>
               <ThemedText style={styles.summaryLabel}>Available</ThemedText>
             </View>
 
@@ -178,9 +169,7 @@ function StorePromoCoinsPage() {
               accessibilityRole="summary"
             >
               <Ionicons name="trending-up" size={24} color={colors.text.inverse} />
-              <ThemedText style={styles.summaryValue}>
-                {summary.totalEarned}
-              </ThemedText>
+              <ThemedText style={styles.summaryValue}>{summary.totalEarned}</ThemedText>
               <ThemedText style={styles.summaryLabel}>Earned</ThemedText>
             </View>
           </View>
@@ -192,9 +181,7 @@ function StorePromoCoinsPage() {
               accessibilityRole="summary"
             >
               <Ionicons name="cart" size={24} color={colors.text.inverse} />
-              <ThemedText style={styles.summaryValue}>
-                {summary.totalUsed}
-              </ThemedText>
+              <ThemedText style={styles.summaryValue}>{summary.totalUsed}</ThemedText>
               <ThemedText style={styles.summaryLabel}>Used</ThemedText>
             </View>
 
@@ -204,9 +191,7 @@ function StorePromoCoinsPage() {
               accessibilityRole="summary"
             >
               <Ionicons name="storefront" size={24} color={colors.text.inverse} />
-              <ThemedText style={styles.summaryValue}>
-                {summary.storeCount}
-              </ThemedText>
+              <ThemedText style={styles.summaryValue}>{summary.storeCount}</ThemedText>
               <ThemedText style={styles.summaryLabel}>Stores</ThemedText>
             </View>
           </View>
@@ -232,9 +217,7 @@ function StorePromoCoinsPage() {
             <View style={styles.emptyContainer}>
               <Ionicons name="storefront-outline" size={64} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyTitle}>No Store Coins Yet</ThemedText>
-              <ThemedText style={styles.emptySubtitle}>
-                Complete orders to earn store-specific coins!
-              </ThemedText>
+              <ThemedText style={styles.emptySubtitle}>Complete orders to earn store-specific coins!</ThemedText>
             </View>
           ) : (
             storeCoins.map((storeCoin) => (
@@ -246,10 +229,7 @@ function StorePromoCoinsPage() {
               >
                 <View style={styles.storeCardHeader}>
                   {getStoreLogo(storeCoin.store) ? (
-                    <CachedImage
-                      source={getStoreLogo(storeCoin.store)}
-                      style={styles.storeLogo}
-                    />
+                    <CachedImage source={getStoreLogo(storeCoin.store)} style={styles.storeLogo} />
                   ) : (
                     <View style={[styles.storeLogo, styles.storeLogoPlaceholder]}>
                       <Ionicons name="storefront" size={24} color={Colors.gold} />
@@ -257,9 +237,7 @@ function StorePromoCoinsPage() {
                   )}
 
                   <View style={styles.storeCardInfo}>
-                    <ThemedText style={styles.storeName}>
-                      {getStoreName(storeCoin.store)}
-                    </ThemedText>
+                    <ThemedText style={styles.storeName}>{getStoreName(storeCoin.store)}</ThemedText>
                     <ThemedText style={styles.storeLastEarned}>
                       {storeCoin.lastEarnedAt
                         ? `Last earned: ${new Date(storeCoin.lastEarnedAt).toLocaleDateString()}`
@@ -269,35 +247,27 @@ function StorePromoCoinsPage() {
 
                   <View style={styles.coinBadge}>
                     <Ionicons name="diamond" size={16} color={colors.brand.goldBright} />
-                    <ThemedText style={styles.coinBadgeText}>
-                      {storeCoin.amount}
-                    </ThemedText>
+                    <ThemedText style={styles.coinBadgeText}>{storeCoin.amount}</ThemedText>
                   </View>
                 </View>
 
                 <View style={styles.storeCardStats}>
                   <View style={styles.statItem}>
-                    <ThemedText style={styles.statValue}>
-                      {storeCoin.earned}
-                    </ThemedText>
+                    <ThemedText style={styles.statValue}>{storeCoin.earned}</ThemedText>
                     <ThemedText style={styles.statLabel}>Earned</ThemedText>
                   </View>
 
                   <View style={styles.statDivider} />
 
                   <View style={styles.statItem}>
-                    <ThemedText style={styles.statValue}>
-                      {storeCoin.used}
-                    </ThemedText>
+                    <ThemedText style={styles.statValue}>{storeCoin.used}</ThemedText>
                     <ThemedText style={styles.statLabel}>Used</ThemedText>
                   </View>
 
                   <View style={styles.statDivider} />
 
                   <View style={styles.statItem}>
-                    <ThemedText style={styles.statValue}>
-                      {storeCoin.transactions.length}
-                    </ThemedText>
+                    <ThemedText style={styles.statValue}>{storeCoin.transactions.length}</ThemedText>
                     <ThemedText style={styles.statLabel}>Txns</ThemedText>
                   </View>
                 </View>
@@ -545,6 +515,5 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
 });
-
 
 export default withErrorBoundary(StorePromoCoinsPage, 'ProfileStorePromoCoins');
