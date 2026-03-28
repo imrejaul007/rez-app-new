@@ -69,6 +69,13 @@ import streakApi from '@/services/streakApi';
 import HeroCard from '@/components/homepage/HeroCard';
 import CoinExpiryBanner from '@/components/wallet/CoinExpiryBanner';
 
+// ── Habit loop UI plan components ────────────────────────────────────────────
+import PersonaDetectionOnboarding from '@/components/homepage/PersonaDetectionOnboarding';
+import MicroMomentDecisionCard from '@/components/homepage/MicroMomentDecisionCard';
+import StreakToDealConnector from '@/components/homepage/StreakToDealConnector';
+import CoinExpiryUrgencyBanner from '@/components/homepage/CoinExpiryUrgencyBanner';
+import type { TimeAwarePersona } from '@/components/homepage/TimeAwareContextPill';
+
 function lazyWithRetry<T extends React.ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
 ): React.LazyExoticComponent<T> {
@@ -249,7 +256,16 @@ function HomeScreen() {
   const isAuthenticated = useIsAuthenticated();
   const authActions = useAuthActions();
   const userPoints = useRezBalance();
-  const { featureLevel } = useUserIdentityStore();
+  const { featureLevel, statedIdentity } = useUserIdentityStore();
+
+  // Derive TimeAwarePersona from statedIdentity for personalized copy
+  // 'corporate' → 'employee', 'student' → 'student', everything else → 'general'
+  const persona: TimeAwarePersona = React.useMemo(() => {
+    if (statedIdentity === 'student') return 'student';
+    if (statedIdentity === 'corporate') return 'employee';
+    return 'general';
+  }, [statedIdentity]);
+
   const walletData = useWalletData();
   const refreshWallet = useRefreshWallet();
   const isWalletLoading = useWalletLoading();

@@ -71,8 +71,15 @@ import TryBeforeYouBuyCard from '@/components/homepage/TryBeforeYouBuyCard';
 import NearbyOffersCarousel from '@/components/discovery/NearbyOffersCarousel';
 // StoriesRow, PersonalizedHeroBanner, RezScoreCard removed — rendered by index.tsx to avoid duplicates
 
+import PersonaDetectionOnboarding from '@/components/homepage/PersonaDetectionOnboarding';
+import MicroMomentDecisionCard from '@/components/homepage/MicroMomentDecisionCard';
+import StreakToDealConnector from '@/components/homepage/StreakToDealConnector';
+import CoinExpiryUrgencyBanner from '@/components/homepage/CoinExpiryUrgencyBanner';
+import type { TimeAwarePersona } from '@/components/homepage/TimeAwareContextPill';
+
 import { useHomePersona } from '@/hooks/useHomePersona';
 import { useWalletStore } from '@/stores/walletStore';
+import { useGamificationStore } from '@/stores/gamificationStore';
 
 // ─── Placeholder data ─────────────────────────────────────────────────────────
 
@@ -156,6 +163,32 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
   const walletData = useWalletStore();
   const unlockAmount = (walletData as any)?.unlockAmount ?? (walletData as any)?.lockedBalance ?? undefined;
 
+  // Gamification — streak count for StreakToDealConnector
+  const dailyStreak = useGamificationStore((s) => s.dailyStreak ?? 0);
+
+  // Map homePersona id → TimeAwarePersona for MicroMomentDecisionCard
+  const microMomentPersona: TimeAwarePersona =
+    persona.id === 'student'   ? 'student'  :
+    persona.id === 'corporate' ? 'employee' : 'general';
+
+  // Promo coin expiry — derived from coins of type 'promo' in wallet
+  const promoCoinData = React.useMemo(() => {
+    const coins = walletData?.walletData?.coins ?? [];
+    const promoCoins = coins.filter((c: any) => c.type === 'promo' && c.amount > 0);
+    if (promoCoins.length === 0) return { expiringCount: 0, daysLeft: 99 };
+    const totalPromo = promoCoins.reduce((sum: number, c: any) => sum + c.amount, 0);
+    // Find earliest expiry
+    const now = new Date();
+    const earliest = promoCoins
+      .map((c: any) => c.expiryDate ? new Date(c.expiryDate) : null)
+      .filter(Boolean)
+      .sort((a: Date, b: Date) => a.getTime() - b.getTime())[0];
+    if (!earliest) return { expiringCount: 0, daysLeft: 99 };
+    const msLeft = earliest.getTime() - now.getTime();
+    const daysLeft = Math.max(0, Math.floor(msLeft / (1000 * 60 * 60 * 24)));
+    return { expiringCount: totalPromo, daysLeft };
+  }, [walletData?.walletData?.coins]);
+
   // Area not-serviceable dismissible banner
   const [bannerDismissed, setBannerDismissed] = useState(false);
   const [renderError, setRenderError] = useState<Error | null>(null);
@@ -227,6 +260,25 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
         </View>
       )}
 
+      {/* ── P0 New: PersonaDetectionOnboarding (first-open, statedIdentity=null) ── */}
+      <PersonaDetectionOnboarding />
+
+      {/* ── P0 New: MicroMomentDecisionCard — "where should I go right now?" ── */}
+      <LazySection sectionId="micro-moment-decision" scrollY={scrollY} height={200}
+        renderSection={() => {
+          try { return <MicroMomentDecisionCard persona={microMomentPersona} />; }
+          catch { return null; }
+        }} />
+
+      {/* ── P1 New: CoinExpiryUrgencyBanner (loss-aversion — promo coins expiring) ── */}
+      {promoCoinData.expiringCount > 0 && promoCoinData.daysLeft <= 2 && (
+        <CoinExpiryUrgencyBanner
+          expiringCount={promoCoinData.expiringCount}
+          daysLeft={promoCoinData.daysLeft}
+          onPress={() => router.push('/wallet-screen' as any)}
+        />
+      )}
+
       {/* ── Section 1: TimeAwareContextPill (Near U only) ──────────────────── */}
       <LazySection sectionId="time-aware-context-pill" scrollY={scrollY} height={56}
         renderSection={() => {
@@ -238,6 +290,13 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
       <LazySection sectionId="daily-check-in-strip" scrollY={scrollY} height={80}
         renderSection={() => {
           try { return <DailyCheckInStrip isClaimed={false} />; }
+          catch { return null; }
+        }} />
+
+      {/* ── P1 New: StreakToDealConnector (streak ≥ 3 → today's best nearby deal) ── */}
+      <LazySection sectionId="streak-to-deal" scrollY={scrollY} height={120}
+        renderSection={() => {
+          try { return <StreakToDealConnector streakCount={dailyStreak} />; }
           catch { return null; }
         }} />
 
