@@ -207,4 +207,10 @@ export const queryKeys = {
     popular: () => ['paymentStore', 'popular'] as const,
     search: (query: string) => ['paymentStore', 'search', query] as const,
   },
+
+  // Users
+  users: {
+    all: ['users'] as const,
+    visitStreak: () => ['users', 'visitStreak'] as const,
+  },
 };

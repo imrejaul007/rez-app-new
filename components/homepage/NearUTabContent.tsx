@@ -80,15 +80,10 @@ import type { TimeAwarePersona } from '@/components/homepage/TimeAwareContextPil
 import { useHomePersona } from '@/hooks/useHomePersona';
 import { useWalletStore } from '@/stores/walletStore';
 import { useGamificationStore } from '@/stores/gamificationStore';
-
-// ─── Placeholder data ─────────────────────────────────────────────────────────
-
-const PLACEHOLDER_OFFERS = [
-  { id: '1', merchantName: 'Starbucks', distance: '120m', savings: 80, description: '15% cashback on every order', urgencyLabel: 'Open', closingSoon: false },
-  { id: '2', merchantName: 'Naturals', distance: '0.3km', savings: 0, description: 'Free haircut trial today', urgencyLabel: '3 slots left', slotsLeft: 3 },
-  { id: '3', merchantName: 'PVR', distance: '0.4km', savings: 50, description: 'Buy 2 get 1 — lunch show', urgencyLabel: 'Closes 3 PM', closingSoon: true },
-  { id: '4', merchantName: 'Cult.fit', distance: '1.2km', savings: 0, description: 'Free trial class, 5 PM batch', urgencyLabel: '1 slot', slotsLeft: 1 },
-];
+import { useCheckinStatus } from '@/hooks/useCheckinStatus';
+import { useVisitStreak } from '@/hooks/useVisitStreak';
+import { useLiveContext } from '@/hooks/queries/useLiveContext';
+import { useNearbyOffers } from '@/hooks/queries/useNearbyOffers';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -165,6 +160,16 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
 
   // Gamification — streak count for StreakToDealConnector
   const dailyStreak = useGamificationStore((s) => s.dailyStreak ?? 0);
+
+  // API-backed check-in status and visit streak
+  const { data: checkinStatus } = useCheckinStatus();
+  const { data: visitStreak } = useVisitStreak();
+
+  // Live context (nearby offer count, time slot) for TimeAwareContextPill
+  const { data: liveCtx } = useLiveContext();
+
+  // Real nearby offers for NearbyOffersCarousel — falls back to empty (carousel hides itself)
+  const { data: nearbyOffers } = useNearbyOffers();
 
   // Map homePersona id → TimeAwarePersona for MicroMomentDecisionCard
   const microMomentPersona: TimeAwarePersona =
@@ -282,14 +287,21 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
       {/* ── Section 1: TimeAwareContextPill (Near U only) ──────────────────── */}
       <LazySection sectionId="time-aware-context-pill" scrollY={scrollY} height={56}
         renderSection={() => {
-          try { return <TimeAwareContextPill persona={isStudent ? 'student' : isEmployee ? 'employee' : 'general'} />; }
+          try {
+            return (
+              <TimeAwareContextPill
+                persona={isStudent ? 'student' : isEmployee ? 'employee' : 'general'}
+                nearbyOfferCount={liveCtx?.nearbyOfferCount}
+              />
+            );
+          }
           catch { return null; }
         }} />
 
       {/* ── Section 2: DailyCheckInStrip (Near U only) ─────────────────────── */}
       <LazySection sectionId="daily-check-in-strip" scrollY={scrollY} height={80}
         renderSection={() => {
-          try { return <DailyCheckInStrip isClaimed={false} />; }
+          try { return <DailyCheckInStrip isClaimed={checkinStatus?.checkedInToday ?? false} />; }
           catch { return null; }
         }} />
 
@@ -300,7 +312,18 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
           catch { return null; }
         }} />
 
-      {/* ── Section 3: CampusLeaderboardTeaser (Student only) ──────────────── */}
+      {/* ── Section 3: NearbyOffersCarousel (Near U only) — with urgency tags ─ */}
+      <LazySection sectionId="nearby-offers-carousel" scrollY={scrollY} height={240}
+        renderSection={() => (
+          <NearbyOffersCarousel
+            offers={nearbyOffers ?? []}
+            onOfferPress={() => {}}
+            onSeeAllPress={() => router.push('/near-u/map' as any)}
+            showUrgencyTags
+          />
+        )} />
+
+      {/* ── Section 4: CampusLeaderboardTeaser (Student only) ──────────────── */}
       {isStudent && (
         <LazySection sectionId="campus-leaderboard-teaser" scrollY={scrollY} height={160}
           renderSection={() => <CampusLeaderboardTeaser />} />
@@ -309,7 +332,15 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
       {/* ── Section 4: VisitStreakCard (Near U only) ────────────────────────── */}
       <LazySection sectionId="visit-streak-card" scrollY={scrollY} height={120}
         renderSection={() => {
-          try { return <VisitStreakCard />; }
+          try {
+            return (
+              <VisitStreakCard
+                currentVisits={visitStreak?.totalVisits ?? 0}
+                totalRequired={visitStreak?.nextMilestone?.totalRequired ?? 7}
+                rewardAmount={visitStreak?.nextMilestone?.reward ?? 200}
+              />
+            );
+          }
           catch { return null; }
         }} />
 
@@ -319,17 +350,6 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
           try { return <TryBeforeYouBuyCard />; }
           catch { return null; }
         }} />
-
-      {/* ── Section 6: NearbyOffersCarousel (Near U only) — with urgency tags ─ */}
-      <LazySection sectionId="nearby-offers-carousel" scrollY={scrollY} height={240}
-        renderSection={() => (
-          <NearbyOffersCarousel
-            offers={PLACEHOLDER_OFFERS}
-            onOfferPress={() => {}}
-            onSeeAllPress={() => router.push('/near-u/map' as any)}
-            showUrgencyTags
-          />
-        )} />
 
       {/* ── Section 7-11: Student persona sections ─────────────────────────── */}
       {isStudent && (

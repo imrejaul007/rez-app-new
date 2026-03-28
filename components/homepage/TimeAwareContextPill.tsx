@@ -30,13 +30,17 @@ interface TimeAwareContextPillProps {
   onPress?: () => void;
   /** Override current hour (0–23) — useful for testing */
   overrideHour?: number;
+  /** Live nearby offer count from API — replaces hardcoded number when provided */
+  nearbyOfferCount?: number;
 }
 
 // ─── Copy map ────────────────────────────────────────────────────────────────
+// NOTE: The general-lunch entry uses a placeholder token {{count}} that is
+// replaced at render time with the live nearbyOfferCount prop value.
 const COPY: Record<TimeAwarePersona, Record<TimeSlot, string>> = {
   general: {
     morning: 'Morning deals live',
-    lunch:   'Lunch deals live — 14 offers within 1 km',
+    lunch:   'Lunch deals live — {{count}} offers within 1 km',
     evening: 'Evening hangout deals',
     night:   'Late night offers',
   },
@@ -121,10 +125,16 @@ const TimeAwareContextPill: React.FC<TimeAwareContextPillProps> = ({
   persona      = 'general',
   onPress,
   overrideHour,
+  nearbyOfferCount,
 }) => {
   const hour     = overrideHour ?? new Date().getHours();
   const timeSlot = getTimeSlot(hour);
-  const text     = COPY[persona]?.[timeSlot] ?? COPY.general[timeSlot];
+  const rawText  = COPY[persona]?.[timeSlot] ?? COPY.general[timeSlot];
+  // Replace placeholder with live count when available, otherwise strip token
+  const text = rawText.replace(
+    '{{count}}',
+    nearbyOfferCount != null ? String(nearbyOfferCount) : '—'
+  );
 
   return (
     <Pressable
