@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
 import Svg, { Path } from 'react-native-svg';
 // CategoryCashbackGrid removed per Section 6 handoff (category chips row removed)
 import { colors, spacing } from '@/constants/theme';
@@ -121,7 +120,6 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
   isPriveEligible = false,
   onPriveLockedPress,
 }) => {
-  const router = useRouter();
   const theme = TAB_THEMES[activeTab];
   const isPriveMode = activeTab === 'prive';
   const [containerWidth, setContainerWidth] = useState(0);
@@ -334,10 +332,11 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
           </Text>
         </View>
 
-        {/* Section 6: Search row — pill search (~65% width) + TRY button. Hide for Cash tab. */}
+        {/* Section 6: Search row — pill search (~65% width). Hide for Cash tab. */}
+        {/* TRY button removed — TryBeforeYouBuyCard in NearUTabContent handles this */}
         {activeTab !== 'cash' && (
           <View style={styles.searchRow}>
-            {/* Section 6: pill shape search bar, 99px radius, ~65% width */}
+            {/* Section 6: pill shape search bar, 99px radius, full width */}
             <Pressable
               style={[
                 styles.searchContainerCompact,
@@ -357,30 +356,6 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
               ]}>
                 {isPriveMode ? 'Search exclusive offers...' : 'Search products...'}
               </Text>
-            </Pressable>
-
-            {/* Section 6: TRY button — brand pill, Nile Blue background */}
-            <Pressable
-              style={styles.promoBannerContainer}
-              onPress={() => {
-                isPriveMode
-                  ? router.push('/offers' as any)
-                  : router.push('/try' as any);
-              }}
-            >
-              {isPriveMode ? (
-                // Privé: mustard on dark
-                <View style={[styles.promoBannerGradientDeals, { backgroundColor: '#0d2133' }]}>
-                  <Text style={styles.dealsIcon}>✦</Text>
-                  <Text style={[styles.dealsText, { color: '#FFC857' }]}>TRY</Text>
-                </View>
-              ) : (
-                // Near U / Mall: Nile Blue
-                <View style={[styles.promoBannerGradientDeals, { backgroundColor: '#1a3a52' }]}>
-                  <Text style={styles.dealsIcon}>🔥</Text>
-                  <Text style={styles.dealsText}>TRY</Text>
-                </View>
-              )}
             </Pressable>
           </View>
         )}
@@ -535,9 +510,9 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     gap: 10,
   },
-  // Section 6: pill shape (99px radius), ~65% width
+  // Section 6: pill shape (99px radius), full width
   searchContainerCompact: {
-    flex: 2,
+    flex: 1,
     backgroundColor: colors.background.primary,
     flexDirection: 'row',
     alignItems: 'center',
@@ -574,45 +549,6 @@ const styles = StyleSheet.create({
   },
   searchPlaceholderPrive: {
     color: colors.neutral[500],
-  },
-  // Promotional Banner
-  // Section 6: TRY button right of search
-  promoBannerContainer: {
-    flex: 1,
-    borderRadius: 99,
-    overflow: 'hidden',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.12,
-        shadowRadius: 4,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  // Section 6: TRY pill button
-  promoBannerGradientDeals: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderRadius: 99,
-    gap: 5,
-  },
-  // Deals Button Styles (Orange Gradient)
-  dealsIcon: {
-    marginRight: 0,
-  },
-  // Section 6: TRY label — 800 weight
-  dealsText: {
-    fontSize: 13,
-    fontWeight: '800',
-    color: colors.background.primary,
-    letterSpacing: 0.5,
   },
   // categoryCashbackGrid removed per Section 6 handoff
   // Privé teaser

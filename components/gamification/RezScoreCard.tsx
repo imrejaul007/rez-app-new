@@ -13,6 +13,7 @@ import {
   StyleSheet,
   Pressable,
   Animated,
+  Text,
 } from 'react-native';
 import { ThemedText } from '@/components/ThemedText';
 import { Ionicons } from '@expo/vector-icons';
@@ -115,17 +116,18 @@ function ScoreGauge({ score, accentColor }: { score: number; accentColor: string
 
 const gaugeStyles = StyleSheet.create({
   wrapper: {
-    width: 72,
-    height: 72,
+    width: 58,
+    height: 58,
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
   ring: {
     position: 'absolute',
-    width: 68,
-    height: 68,
-    borderRadius: 34,
-    borderWidth: 5,
+    width: 54,
+    height: 54,
+    borderRadius: 27,
+    borderWidth: 4,
     borderColor: 'transparent',
   },
   fillRing: {
@@ -136,7 +138,7 @@ const gaugeStyles = StyleSheet.create({
     justifyContent: 'center',
   },
   scoreText: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '900',
     letterSpacing: -0.5,
   },
@@ -169,24 +171,29 @@ const RezScoreCard: React.FC<RezScoreCardProps> = ({
       {/* Center: info */}
       <View style={styles.info}>
         <View style={[styles.tierBadge, { backgroundColor: tierConfig.bg }]}>
-          <ThemedText style={[styles.tierText, { color: tierConfig.text }]}>
-            {tier}
-          </ThemedText>
+          <Text
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.7}
+            style={[styles.tierText, { color: tierConfig.text }]}
+          >
+            {tier.toUpperCase()}
+          </Text>
         </View>
-        <ThemedText style={styles.percentileText}>
-          Higher than {percentile}% of users nearby
-        </ThemedText>
+        <Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8} style={styles.percentileText}>
+          Higher than {percentile}% nearby
+        </Text>
       </View>
 
       {/* Right: trend + chevron */}
       <View style={styles.rightCol}>
         <View style={styles.trendRow}>
-          <Ionicons name={trendConfig.icon as any} size={16} color={trendConfig.color} />
-          <ThemedText style={[styles.trendLabel, { color: trendConfig.color }]}>
-            {trendConfig.label}
-          </ThemedText>
+          <Ionicons name={trendConfig.icon as any} size={14} color={trendConfig.color} />
+          <Text numberOfLines={1} style={[styles.trendLabel, { color: trendConfig.color }]}>
+            — {trendConfig.label}
+          </Text>
         </View>
-        <Ionicons name="chevron-forward" size={16} color={colors.gray[400]} style={styles.chevron} />
+        <Ionicons name="chevron-forward" size={14} color={colors.gray[400]} style={styles.chevron} />
       </View>
     </Pressable>
   );
@@ -201,14 +208,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.background.primary,
-    borderRadius: 16,
-    padding: 14,
-    gap: 12,
+    borderRadius: 12,
+    padding: 10,
+    gap: 10,
     shadowColor: colors.nileBlue,
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.09,
-    shadowRadius: 8,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.07,
+    shadowRadius: 6,
+    elevation: 2,
     borderWidth: 1,
     borderColor: colors.gray[200],
   },
@@ -217,33 +224,36 @@ const styles = StyleSheet.create({
   },
   info: {
     flex: 1,
-    gap: 5,
+    gap: 4,
+    minWidth: 0, // allows flex children to shrink below their content size
   },
   tierBadge: {
     alignSelf: 'flex-start',
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    paddingVertical: 3,
+    paddingHorizontal: 8,
     borderRadius: 20,
+    maxWidth: '100%',
   },
   tierText: {
-    fontSize: 11,
+    fontSize: 10,
     fontWeight: '700',
-    letterSpacing: 0.4,
-    textTransform: 'uppercase',
+    letterSpacing: 0.3,
   },
   percentileText: {
-    fontSize: 12,
+    fontSize: 11,
     color: colors.gray[500],
-    lineHeight: 16,
+    lineHeight: 15,
   },
   rightCol: {
     alignItems: 'flex-end',
-    gap: 8,
+    gap: 6,
+    flexShrink: 0,
+    minWidth: 64,
   },
   trendRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
+    gap: 2,
   },
   trendLabel: {
     fontSize: 11,
