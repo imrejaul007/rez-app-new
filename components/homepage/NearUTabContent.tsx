@@ -21,9 +21,9 @@
  *  13. EmployeeAfterWorkSection    (Employee only, 17h+)
  *  14. EmployeeWellnessBookingSection (Employee only)
  *  15. EmployeeValuePacksSection   (Employee only)
- *  16. StoriesRow / What's New     (General + Employee)
- *  17. PersonalizedHeroBanner      (tiles ALL; banner card Student only)
- *  18. StreakFireIcon + RezScoreCard row (Near U only)
+ *  16. StoriesRow / What's New     → moved to index.tsx (was duplicating)
+ *  17. PersonalizedHeroBanner      → moved to index.tsx (was duplicating)
+ *  18. StreakFireIcon + RezScoreCard → moved to index.tsx (was duplicating)
  *  19. HomeSavingsSummaryCard      (Always) — wired with unlockAmount
  *  20. QuickReorderSection         (featureLevel >= 3)
  *  21. BonusZoneHighlight + FlashDealCountdown (Always)
@@ -69,9 +69,7 @@ import CampusLeaderboardTeaser from '@/components/homepage/CampusLeaderboardTeas
 import VisitStreakCard from '@/components/homepage/VisitStreakCard';
 import TryBeforeYouBuyCard from '@/components/homepage/TryBeforeYouBuyCard';
 import NearbyOffersCarousel from '@/components/discovery/NearbyOffersCarousel';
-import StoriesRow from '@/components/whats-new/StoriesRow';
-import PersonalizedHeroBanner from '@/components/home/PersonalizedHeroBanner';
-import RezScoreCard from '@/components/gamification/RezScoreCard';
+// StoriesRow, PersonalizedHeroBanner, RezScoreCard removed — rendered by index.tsx to avoid duplicates
 
 import { useHomePersona } from '@/hooks/useHomePersona';
 import { useWalletStore } from '@/stores/walletStore';
@@ -318,30 +316,9 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
         </>
       )}
 
-      {/* ── Section 16: StoriesRow / What's New (General + Employee) ───────── */}
-      {(isGeneral || isEmployee) && (
-        <LazySection sectionId="stories-row" scrollY={scrollY} height={200}
-          renderSection={() => <StoriesRow />} />
-      )}
-
-      {/* ── Section 17: PersonalizedHeroBanner ─────────────────────────────── */}
-      {/* Banner card rendered for Student only; tiles rendered for ALL personas */}
-      <LazySection sectionId="personalized-hero-banner" scrollY={scrollY} height={isStudent ? 420 : 200}
-        renderSection={() => <PersonalizedHeroBanner />} />
-
-      {/* ── Section 18: StreakFireIcon + RezScoreCard row (Near U only) ─────── */}
-      <LazySection sectionId="rez-score-row" scrollY={scrollY} height={160}
-        renderSection={() => (
-          <RezScoreCard
-            score={0}
-            tier="Beginner"
-            trend="stable"
-            percentile={50}
-            onPress={() => router.push('/rez-score' as any)}
-          />
-        )} />
-
       {/* ── Section 19: HomeSavingsSummaryCard (Always) ─────────────────────── */}
+      {/* NOTE: StoriesRow (16), PersonalizedHeroBanner (17), RezScoreCard (18)
+          are rendered by index.tsx above the content area to avoid duplication */}
       <HomeSavingsSummaryCard
         totalSaved={totalSaved ?? 0}
         thisMonthSaved={thisMonthSaved ?? 0}
