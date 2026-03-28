@@ -17,6 +17,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { colors, spacing, borderRadius } from '@/constants/theme';
+import gamificationApi from '@/services/gamificationApi';
 
 const MUSTARD = colors.lightMustard;  // #ffcd57
 const NAVY    = colors.nileBlue;       // #1a3a52
@@ -40,8 +41,7 @@ const DailyCheckInStrip: React.FC<DailyCheckInStripProps> = ({
 
     setLoading(true);
     try {
-      // Placeholder API call — replace with real endpoint integration
-      await fetch('/api/gamification/daily-checkin', { method: 'POST' });
+      await gamificationApi.performCheckIn();
       setClaimed(true);
       await onClaim?.();
     } catch {
