@@ -107,7 +107,7 @@ const otpStyles = StyleSheet.create({
 
 function OrderSummary({ cart, gstPercent }: { cart: CartItem[]; gstPercent: number }) {
   const subtotal = cart.reduce((s, c) => s + c.item.price * c.quantity, 0);
-  const taxes = Math.round(subtotal * gstPercent) / 100;
+  const taxes = Math.round((subtotal * gstPercent) / 100);
   const total = subtotal + taxes;
 
   return (

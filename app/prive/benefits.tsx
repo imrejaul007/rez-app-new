@@ -1,9 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, ScrollView, Pressable,
-  ActivityIndicator, RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS } from '@/components/prive/priveTheme';
@@ -21,6 +18,8 @@ function BenefitsScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isMounted = useIsMounted();
+
   const fetchData = useCallback(async () => {
     try {
       setError(null);
@@ -31,18 +30,26 @@ function BenefitsScreen() {
     } catch (err: any) {
       if (!isMounted()) return;
       setError(err?.message || 'Failed to load benefits');
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
     }
-    finally { setIsLoading(false); setIsRefreshing(false); }
-  }, []);
-
-  const isMounted = useIsMounted();
-  useEffect(() => { fetchData(); }, [fetchData]);
-  const onRefresh = () => { setIsRefreshing(true); fetchData(); };
+  }, [isMounted]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    fetchData();
+  };
 
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <SectionListSkeleton />
       </View>
     );
@@ -51,13 +58,26 @@ function BenefitsScreen() {
   if (!data) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         {error ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-            <Text style={{ color: PRIVE_COLORS.status.error, fontSize: 14, textAlign: 'center', marginBottom: 16 }}>{error}</Text>
+            <Text style={{ color: PRIVE_COLORS.status.error, fontSize: 14, textAlign: 'center', marginBottom: 16 }}>
+              {error}
+            </Text>
             <Pressable
-              style={{ paddingHorizontal: 24, paddingVertical: 12, backgroundColor: PRIVE_COLORS.transparent.gold15, borderRadius: PRIVE_RADIUS.lg }}
-              onPress={() => { setIsLoading(true); fetchData(); }}
+              style={{
+                paddingHorizontal: 24,
+                paddingVertical: 12,
+                backgroundColor: PRIVE_COLORS.transparent.gold15,
+                borderRadius: PRIVE_RADIUS.lg,
+              }}
+              onPress={() => {
+                setIsLoading(true);
+                fetchData();
+              }}
             >
               <Text style={{ color: PRIVE_COLORS.gold.primary, fontSize: 14, fontWeight: '600' }}>Retry</Text>
             </Pressable>
@@ -75,12 +95,17 @@ function BenefitsScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+      <LinearGradient
+        colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+        style={StyleSheet.absoluteFill}
+      />
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />
+        }
       >
         {/* Current Tier Card */}
         {currentTierData && (
@@ -113,28 +138,20 @@ function BenefitsScreen() {
         <Text style={styles.sectionTitle}>All Tier Benefits</Text>
         {tiers.map((tier: any) => {
           const isCurrent = tier.isCurrent;
-          const isLocked = !isCurrent && (
-            (tier.tier === 'signature' && currentTier === 'entry') ||
-            (tier.tier === 'elite' && currentTier !== 'elite')
-          );
+          const isLocked =
+            !isCurrent &&
+            ((tier.tier === 'signature' && currentTier === 'entry') ||
+              (tier.tier === 'elite' && currentTier !== 'elite'));
 
           return (
             <View
               key={tier.tier}
-              style={[
-                styles.tierCard,
-                isCurrent && { borderColor: tier.color },
-                isLocked && styles.tierLocked,
-              ]}
+              style={[styles.tierCard, isCurrent && { borderColor: tier.color }, isLocked && styles.tierLocked]}
             >
               <View style={styles.tierHeader}>
                 <View style={[styles.tierDot, { backgroundColor: tier.color }]} />
-                <Text style={[styles.tierName, isLocked && styles.lockedText]}>
-                  {tier.displayName}
-                </Text>
-                <Text style={[styles.tierMultiplier, { color: tier.color }]}>
-                  {tier.coinMultiplier}x coins
-                </Text>
+                <Text style={[styles.tierName, isLocked && styles.lockedText]}>{tier.displayName}</Text>
+                <Text style={[styles.tierMultiplier, { color: tier.color }]}>{tier.coinMultiplier}x coins</Text>
                 {isCurrent && (
                   <View style={[styles.currentBadge, { backgroundColor: `${tier.color}30` }]}>
                     <Text style={[styles.currentBadgeText, { color: tier.color }]}>Current</Text>
@@ -145,9 +162,7 @@ function BenefitsScreen() {
               <View style={styles.benefitsList}>
                 {(tier.benefits || []).map((b: string, i: number) => (
                   <View key={i} style={styles.benefitRow}>
-                    <Text style={[styles.checkIcon, isLocked && styles.lockedText]}>
-                      {isLocked ? '○' : '✓'}
-                    </Text>
+                    <Text style={[styles.checkIcon, isLocked && styles.lockedText]}>{isLocked ? '○' : '✓'}</Text>
                     <Text style={[styles.benefitText, isLocked && styles.lockedText]}>{b}</Text>
                   </View>
                 ))}
@@ -162,11 +177,7 @@ function BenefitsScreen() {
         })}
 
         {/* CTA */}
-        <Pressable
-          style={styles.ctaButton}
-          onPress={() => router.push('/prive/next-actions' as any)}
-         
-        >
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/prive/next-actions' as any)}>
           <Text style={styles.ctaText}>See How to Level Up</Text>
         </Pressable>
 

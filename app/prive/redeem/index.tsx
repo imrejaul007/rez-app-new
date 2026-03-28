@@ -109,6 +109,8 @@ function RedeemScreen() {
   const availableCoins = userData?.priveCoins || 0;
   const isLoading = priveLoading || configLoading;
 
+  const isMounted = useIsMounted();
+
   // Fetch redemption config from backend
   const fetchConfig = useCallback(async () => {
     try {
@@ -125,8 +127,7 @@ function RedeemScreen() {
       if (!isMounted()) return;
       setConfigLoading(false);
     }
-  }, []);
-  const isMounted = useIsMounted();
+  }, [isMounted]);
 
   useEffect(() => {
     fetchConfig();

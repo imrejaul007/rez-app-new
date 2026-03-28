@@ -136,7 +136,7 @@ function CartLockedItemCard({
       {/* Header Badge */}
       <View style={styles.headerBadge}>
         <View style={styles.lockBadge}>
-          <Ionicons name="lock-closed" size={14} color={colors.brand.purple} />
+          <Ionicons name="lock-closed" size={14} color={colors.nileBlue} />
           <ThemedText style={styles.lockBadgeText}>PRICE LOCKED</ThemedText>
         </View>
         <View style={[styles.timerBadge, { backgroundColor: countdownColor + '15' }]}>
@@ -266,7 +266,7 @@ const styles = StyleSheet.create({
   lockBadgeText: {
     fontSize: 11,
     fontWeight: '700',
-    color: colors.brand.purple,
+    color: colors.nileBlue,
     letterSpacing: 0.5,
   },
   timerBadge: {
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   lockedPrice: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.brand.purple,
+    color: colors.nileBlue,
   },
   originalPrice: {
     fontSize: 13,
@@ -373,7 +373,7 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.md,
-    backgroundColor: colors.brand.purple,
+    backgroundColor: colors.nileBlue,
   },
   purchaseButtonDisabled: {
     backgroundColor: colors.neutral[400],

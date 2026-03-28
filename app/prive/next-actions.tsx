@@ -1,9 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, ScrollView, Pressable,
-  ActivityIndicator, RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
@@ -22,6 +19,8 @@ function NextActionsScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isMounted = useIsMounted();
+
   const fetchData = useCallback(async () => {
     try {
       setError(null);
@@ -32,18 +31,26 @@ function NextActionsScreen() {
     } catch (err: any) {
       if (!isMounted()) return;
       setError(err?.message || 'Failed to load actions');
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
     }
-    finally { setIsLoading(false); setIsRefreshing(false); }
-  }, []);
+  }, [isMounted]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  const isMounted = useIsMounted();
-  useEffect(() => { fetchData(); }, [fetchData]);
-
-  const onRefresh = () => { setIsRefreshing(true); fetchData(); };
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    fetchData();
+  };
 
   const getEffortBadge = (effort: string) => {
     const colors: Record<string, string> = { low: Colors.success, medium: Colors.warning, high: Colors.error };
-    return { color: colors[effort] || PRIVE_COLORS.text.tertiary, label: effort.charAt(0).toUpperCase() + effort.slice(1) };
+    return {
+      color: colors[effort] || PRIVE_COLORS.text.tertiary,
+      label: effort.charAt(0).toUpperCase() + effort.slice(1),
+    };
   };
 
   const getUrgencyColor = (urgency: string) => {
@@ -55,7 +62,10 @@ function NextActionsScreen() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <CardGridSkeleton />
       </View>
     );
@@ -64,13 +74,26 @@ function NextActionsScreen() {
   if (!data) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         {error ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-            <Text style={{ color: PRIVE_COLORS.status.error, fontSize: 14, textAlign: 'center', marginBottom: 16 }}>{error}</Text>
+            <Text style={{ color: PRIVE_COLORS.status.error, fontSize: 14, textAlign: 'center', marginBottom: 16 }}>
+              {error}
+            </Text>
             <Pressable
-              style={{ paddingHorizontal: 24, paddingVertical: 12, backgroundColor: PRIVE_COLORS.transparent.gold15, borderRadius: PRIVE_RADIUS.lg }}
-              onPress={() => { setIsLoading(true); fetchData(); }}
+              style={{
+                paddingHorizontal: 24,
+                paddingVertical: 12,
+                backgroundColor: PRIVE_COLORS.transparent.gold15,
+                borderRadius: PRIVE_RADIUS.lg,
+              }}
+              onPress={() => {
+                setIsLoading(true);
+                fetchData();
+              }}
             >
               <Text style={{ color: PRIVE_COLORS.gold.primary, fontSize: 14, fontWeight: '600' }}>Retry</Text>
             </Pressable>
@@ -82,17 +105,24 @@ function NextActionsScreen() {
     );
   }
 
-  const scoreProgress = data.currentTier === 'elite' ? 100 :
-    Math.min(100, ((data.pointsToNextTier > 0 ? (100 - data.pointsToNextTier) : 100) / 100) * 100);
+  const scoreProgress =
+    data.currentTier === 'elite'
+      ? 100
+      : Math.min(100, ((data.pointsToNextTier > 0 ? 100 - data.pointsToNextTier : 100) / 100) * 100);
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+      <LinearGradient
+        colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+        style={StyleSheet.absoluteFill}
+      />
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />
+        }
       >
         {/* Tier Distance Card */}
         <View style={styles.tierCard}>
@@ -105,19 +135,25 @@ function NextActionsScreen() {
               sublabel="Score"
             />
             <View style={styles.tierInfo}>
-              <Text style={styles.tierLabel}>Current: <Text style={styles.tierValue}>{data.currentTier}</Text></Text>
-              <Text style={styles.tierLabel}>Next: <Text style={styles.tierValue}>{data.nextTier}</Text></Text>
+              <Text style={styles.tierLabel}>
+                Current: <Text style={styles.tierValue}>{data.currentTier}</Text>
+              </Text>
+              <Text style={styles.tierLabel}>
+                Next: <Text style={styles.tierValue}>{data.nextTier}</Text>
+              </Text>
               <Text style={styles.pointsGap}>
                 {data.pointsToNextTier > 0
                   ? `${data.pointsToNextTier.toFixed(1)} points to ${data.nextTier}`
-                  : 'You\'re at the top!'}
+                  : "You're at the top!"}
               </Text>
             </View>
           </View>
           {data.weakestPillar && (
             <View style={styles.weakestPillar}>
               <Text style={styles.weakestLabel}>Focus Area:</Text>
-              <Text style={styles.weakestValue}>{data.weakestPillar.id} (score: {data.weakestPillar.score})</Text>
+              <Text style={styles.weakestValue}>
+                {data.weakestPillar.id} (score: {data.weakestPillar.score})
+              </Text>
             </View>
           )}
         </View>
@@ -131,7 +167,6 @@ function NextActionsScreen() {
               key={action.id || index}
               style={styles.actionCard}
               onPress={() => router.push(action.deepLink as any)}
-             
             >
               <View style={styles.actionHeader}>
                 <Text style={styles.actionTitle}>{action.title}</Text>
@@ -200,7 +235,12 @@ const styles = StyleSheet.create({
     borderColor: PRIVE_COLORS.border.primary,
     marginBottom: PRIVE_SPACING.md,
   },
-  actionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: PRIVE_SPACING.sm },
+  actionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: PRIVE_SPACING.sm,
+  },
   actionTitle: { fontSize: 15, fontWeight: '600', color: PRIVE_COLORS.text.primary, flex: 1 },
   effortBadge: { paddingHorizontal: PRIVE_SPACING.sm, paddingVertical: 2, borderRadius: PRIVE_RADIUS.sm },
   effortText: { fontSize: 11, fontWeight: '600' },

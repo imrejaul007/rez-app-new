@@ -1,9 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, ScrollView, Pressable,
-  ActivityIndicator, RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS } from '@/components/prive/priveTheme';
@@ -17,7 +14,7 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const COMPARISON_ROWS = [
   { label: 'Coin Multiplier', key: 'coinMultiplier', format: (v: number) => `${v}x` },
-  { label: 'Concierge Access', key: 'conciergeAccess', format: (v: boolean) => v ? '✓' : '✗' },
+  { label: 'Concierge Access', key: 'conciergeAccess', format: (v: boolean) => (v ? '✓' : '✗') },
   { label: 'Concierge SLA', key: 'conciergeResponseSLA', format: (v: number) => `${v}h` },
   { label: 'Invite Codes', key: 'inviteCodesLimit', format: (v: number) => `${v}` },
   { label: 'Min Score', key: 'threshold', format: (v: number) => `${v}+` },
@@ -30,23 +27,37 @@ function TierComparisonScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isMounted = useIsMounted();
+
   const fetchData = useCallback(async () => {
     try {
       const response = await priveApi.getTierComparison();
       if (!isMounted()) return;
       if (response.success && response.data) setData(response.data);
-    } catch (e) { if (!isMounted()) return; catchAndReport(e, setError, 'TierComparison/fetchData'); }
-    finally { if (!isMounted()) return; setIsLoading(false); setIsRefreshing(false); }
-  }, []);
-
-  const isMounted = useIsMounted();
-  useEffect(() => { fetchData(); }, [fetchData]);
-  const onRefresh = () => { setIsRefreshing(true); fetchData(); };
+    } catch (e) {
+      if (!isMounted()) return;
+      catchAndReport(e, setError, 'TierComparison/fetchData');
+    } finally {
+      if (!isMounted()) return;
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  }, [isMounted]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    fetchData();
+  };
 
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <CardGridSkeleton />
       </View>
     );
@@ -55,7 +66,10 @@ function TierComparisonScreen() {
   if (!data?.tiers?.length) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <PriveEmptyState icon="◈" title="Comparison unavailable" />
       </View>
     );
@@ -65,12 +79,17 @@ function TierComparisonScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+      <LinearGradient
+        colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+        style={StyleSheet.absoluteFill}
+      />
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />
+        }
       >
         {/* Score indicator */}
         <View style={styles.scoreRow}>
@@ -104,12 +123,14 @@ function TierComparisonScreen() {
               const isCross = formatted === '✗';
               return (
                 <View key={t.tier} style={[styles.tierCol, t.isCurrent && { backgroundColor: `${t.color}08` }]}>
-                  <Text style={[
-                    styles.cellText,
-                    isCheck && styles.checkText,
-                    isCross && styles.crossText,
-                    t.isCurrent && { color: t.color },
-                  ]}>
+                  <Text
+                    style={[
+                      styles.cellText,
+                      isCheck && styles.checkText,
+                      isCross && styles.crossText,
+                      t.isCurrent && { color: t.color },
+                    ]}
+                  >
                     {formatted}
                   </Text>
                 </View>
@@ -124,17 +145,15 @@ function TierComparisonScreen() {
           <View key={t.tier} style={[styles.benefitTierBlock, { borderLeftColor: t.color }]}>
             <Text style={[styles.benefitTierName, { color: t.color }]}>{t.displayName}</Text>
             {(t.benefits || []).map((b: string, i: number) => (
-              <Text key={i} style={styles.benefitItem}>• {b}</Text>
+              <Text key={i} style={styles.benefitItem}>
+                • {b}
+              </Text>
             ))}
           </View>
         ))}
 
         {/* CTA */}
-        <Pressable
-          style={styles.ctaButton}
-          onPress={() => router.push('/prive/next-actions' as any)}
-         
-        >
+        <Pressable style={styles.ctaButton} onPress={() => router.push('/prive/next-actions' as any)}>
           <Text style={styles.ctaText}>See How to Level Up</Text>
         </Pressable>
 

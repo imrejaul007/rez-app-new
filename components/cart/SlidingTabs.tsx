@@ -55,14 +55,15 @@ function SlidingTabs({
 
   const { fontSize: tabFontSize, iconSize: tabIconSize, spacing: iconSpacing } = getResponsiveTabSizes();
 
-  useEffect(() => {
-    const activeIndex = tabs.findIndex(tab => tab.key === activeTab);
-    animateUnderline(activeIndex);
-  }, [activeTab, tabs]);
-
   const animateUnderline = (tabIndex: number) => {
     underlinePosition.value = withTiming(tabIndex, { duration: 200 });
   };
+
+  useEffect(() => {
+    const activeIndex = tabs.findIndex(tab => tab.key === activeTab);
+    animateUnderline(activeIndex);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab, tabs]);
 
   const handleTabPress = (tabKey: string) => {
     if (tabKey !== activeTab) {

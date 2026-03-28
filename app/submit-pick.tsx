@@ -82,47 +82,51 @@ function SubmitPickPage() {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [videoProgress, setVideoProgress] = useState(0);
 
-  const pickMedia = useCallback(async (type: 'image' | 'video') => {
-    try {
-      const ImagePicker = await getImagePicker();
-      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permission.granted) {
-        setError('Permission to access media library is required');
-        return;
-      }
+  const isMounted = useIsMounted();
 
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: type === 'video' ? 'videos' : 'images',
-        allowsEditing: type === 'image',
-        quality: type === 'image' ? 0.8 : 1,
-        videoMaxDuration: 60,
-      });
-
-      if (!result.canceled && result.assets[0]) {
-        const asset = result.assets[0];
-        if (!isMounted()) return;
-        setError(null);
-
-        if (type === 'image') {
-          if (!isMounted()) return;
-          setPhotoUri(asset.uri);
-          if (!isMounted()) return;
-          setUploadedPhotoUrl(null);
-        } else {
-          if (!isMounted()) return;
-          setVideoUri(asset.uri);
-          if (!isMounted()) return;
-          setUploadedVideoUrl(null);
+  const pickMedia = useCallback(
+    async (type: 'image' | 'video') => {
+      try {
+        const ImagePicker = await getImagePicker();
+        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (!permission.granted) {
+          setError('Permission to access media library is required');
+          return;
         }
 
-        await uploadToCloudinary(asset.uri, type, asset.fileName, asset.mimeType);
+        const result = await ImagePicker.launchImageLibraryAsync({
+          mediaTypes: type === 'video' ? 'videos' : 'images',
+          allowsEditing: type === 'image',
+          quality: type === 'image' ? 0.8 : 1,
+          videoMaxDuration: 60,
+        });
+
+        if (!result.canceled && result.assets[0]) {
+          const asset = result.assets[0];
+          if (!isMounted()) return;
+          setError(null);
+
+          if (type === 'image') {
+            if (!isMounted()) return;
+            setPhotoUri(asset.uri);
+            if (!isMounted()) return;
+            setUploadedPhotoUrl(null);
+          } else {
+            if (!isMounted()) return;
+            setVideoUri(asset.uri);
+            if (!isMounted()) return;
+            setUploadedVideoUrl(null);
+          }
+
+          await uploadToCloudinary(asset.uri, type, asset.fileName, asset.mimeType);
+        }
+      } catch (err: any) {
+        if (!isMounted()) return;
+        setError('Failed to pick media: ' + err.message);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError('Failed to pick media: ' + err.message);
-    }
-  }, []);
-  const isMounted = useIsMounted();
+    },
+    [isMounted],
+  );
 
   const uploadToCloudinary = async (
     uri: string,
@@ -205,57 +209,60 @@ function SubmitPickPage() {
   const hasAnyMedia = !!(uploadedPhotoUrl || uploadedVideoUrl);
   const isAnyUploading = uploadingPhoto || uploadingVideo;
 
-  const searchProducts = useCallback(async (query: string, page: number = 1) => {
-    if (query.trim().length < 2) {
-      setSearchResults([]);
-      setHasMore(false);
-      setTotalPages(0);
-      return;
-    }
-
-    const isFirstPage = page === 1;
-    if (isFirstPage) {
-      setSearching(true);
-    } else {
-      setLoadingMore(true);
-    }
-
-    try {
-      const response = await apiClient.get<any>('/products/search', {
-        q: query.trim(),
-        limit: PAGE_SIZE,
-        page,
-      });
-
-      if (response.success && response.data) {
-        const products = Array.isArray(response.data) ? response.data : [];
-        const pagination = response.meta?.pagination;
-        const total = pagination?.pages || 1;
-
-        if (isFirstPage) {
-          if (!isMounted()) return;
-          setSearchResults(products);
-        } else {
-          if (!isMounted()) return;
-          setSearchResults((prev) => [...prev, ...products]);
-        }
-
-        if (!isMounted()) return;
-        setCurrentPage(page);
-        if (!isMounted()) return;
-        setTotalPages(total);
-        if (!isMounted()) return;
-        setHasMore(page < total);
+  const searchProducts = useCallback(
+    async (query: string, page: number = 1) => {
+      if (query.trim().length < 2) {
+        setSearchResults([]);
+        setHasMore(false);
+        setTotalPages(0);
+        return;
       }
-    } catch (err) {
-      // silently handle
-    } finally {
-      if (!isMounted()) return;
-      setSearching(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, []);
+
+      const isFirstPage = page === 1;
+      if (isFirstPage) {
+        setSearching(true);
+      } else {
+        setLoadingMore(true);
+      }
+
+      try {
+        const response = await apiClient.get<any>('/products/search', {
+          q: query.trim(),
+          limit: PAGE_SIZE,
+          page,
+        });
+
+        if (response.success && response.data) {
+          const products = Array.isArray(response.data) ? response.data : [];
+          const pagination = response.meta?.pagination;
+          const total = pagination?.pages || 1;
+
+          if (isFirstPage) {
+            if (!isMounted()) return;
+            setSearchResults(products);
+          } else {
+            if (!isMounted()) return;
+            setSearchResults((prev) => [...prev, ...products]);
+          }
+
+          if (!isMounted()) return;
+          setCurrentPage(page);
+          if (!isMounted()) return;
+          setTotalPages(total);
+          if (!isMounted()) return;
+          setHasMore(page < total);
+        }
+      } catch (err) {
+        // silently handle
+      } finally {
+        if (!isMounted()) return;
+        setSearching(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
+      }
+    },
+    [isMounted],
+  );
 
   const handleSearchChange = useCallback(
     (text: string) => {

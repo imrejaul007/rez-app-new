@@ -5,12 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS } from '@/components/prive/priveTheme';
@@ -28,30 +23,34 @@ function ActivityHistoryScreen() {
   const [hasMore, setHasMore] = useState(true);
   const [stats, setStats] = useState({ active: 0, completed: 0, avgRating: null as number | null });
 
-  const fetchData = useCallback(async (pageNum: number) => {
-    try {
-      if (pageNum > 1) setLoadingMore(true);
-      const response = await priveApi.getTransactions({ page: pageNum, limit: 20 });
-      if (response.success && response.data) {
-        const newItems = response.data.transactions || [];
-        if (pageNum === 1) {
-          setTransactions(newItems);
-        } else {
-          setTransactions(prev => [...prev, ...newItems]);
-        }
-        setHasMore(newItems.length === 20);
-      }
-    } catch (err) {
-      if (!isMounted()) return;
-      setError('Failed to load activity data');
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, []);
   const isMounted = useIsMounted();
+
+  const fetchData = useCallback(
+    async (pageNum: number) => {
+      try {
+        if (pageNum > 1) setLoadingMore(true);
+        const response = await priveApi.getTransactions({ page: pageNum, limit: 20 });
+        if (response.success && response.data) {
+          const newItems = response.data.transactions || [];
+          if (pageNum === 1) {
+            setTransactions(newItems);
+          } else {
+            setTransactions((prev) => [...prev, ...newItems]);
+          }
+          setHasMore(newItems.length === 20);
+        }
+      } catch (err) {
+        if (!isMounted()) return;
+        setError('Failed to load activity data');
+      } finally {
+        if (!isMounted()) return;
+        setIsLoading(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
+      }
+    },
+    [isMounted],
+  );
 
   useEffect(() => {
     // Fetch stats from dashboard
@@ -94,24 +93,28 @@ function ActivityHistoryScreen() {
     }
   };
 
-  const renderActivityItem = useCallback(({ item }: { item: TransactionItem }) => (
-    <View style={styles.activityCard}>
-      <View style={styles.activityLeft}>
-        <Text style={styles.activityTitle}>{item.description}</Text>
-        <Text style={styles.activityDate}>{item.date}</Text>
-      </View>
-      <View style={styles.activityRight}>
-        <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(item.status)}20` }]}>
-          <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
-            {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+  const renderActivityItem = useCallback(
+    ({ item }: { item: TransactionItem }) => (
+      <View style={styles.activityCard}>
+        <View style={styles.activityLeft}>
+          <Text style={styles.activityTitle}>{item.description}</Text>
+          <Text style={styles.activityDate}>{item.date}</Text>
+        </View>
+        <View style={styles.activityRight}>
+          <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(item.status)}20` }]}>
+            <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+              {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
+            </Text>
+          </View>
+          <Text style={[styles.rewardText, item.type === 'spent' && styles.spentText]}>
+            {item.type === 'spent' ? '-' : '+'}
+            {item.amount}
           </Text>
         </View>
-        <Text style={[styles.rewardText, item.type === 'spent' && styles.spentText]}>
-          {item.type === 'spent' ? '-' : '+'}{item.amount}
-        </Text>
       </View>
-    </View>
-  ), []);
+    ),
+    [],
+  );
 
   return (
     <View style={styles.container}>
@@ -120,62 +123,60 @@ function ActivityHistoryScreen() {
         style={StyleSheet.absoluteFill}
       />
 
-        {isLoading && transactions.length === 0 ? (
-          <TransactionListSkeleton />
-        ) : error && transactions.length === 0 ? (
-          <View style={styles.errorContainer}>
-            <Text style={styles.errorText}>{error}</Text>
-          </View>
-        ) : (
-          <FlashList
-            data={transactions}
-            keyExtractor={(item) => item.id}
-            contentContainerStyle={{ paddingBottom: 120 }}
-            showsVerticalScrollIndicator={false}
-            estimatedItemSize={80}
-            ListHeaderComponent={
-              <>
-                <View style={styles.statsCard}>
-                  <View style={styles.statItem}>
-                    <Text style={styles.statValue}>{stats.active}</Text>
-                    <Text style={styles.statLabel}>Active</Text>
-                  </View>
-                  <View style={styles.statDivider} />
-                  <View style={styles.statItem}>
-                    <Text style={styles.statValue}>{stats.completed}</Text>
-                    <Text style={styles.statLabel}>Completed</Text>
-                  </View>
-                  <View style={styles.statDivider} />
-                  <View style={styles.statItem}>
-                    <Text style={styles.statValue}>{stats.avgRating != null ? stats.avgRating.toFixed(1) : 'N/A'}</Text>
-                    <Text style={styles.statLabel}>Avg Rating</Text>
-                  </View>
+      {isLoading && transactions.length === 0 ? (
+        <TransactionListSkeleton />
+      ) : error && transactions.length === 0 ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
+        </View>
+      ) : (
+        <FlashList
+          data={transactions}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={{ paddingBottom: 120 }}
+          showsVerticalScrollIndicator={false}
+          estimatedItemSize={80}
+          ListHeaderComponent={
+            <>
+              <View style={styles.statsCard}>
+                <View style={styles.statItem}>
+                  <Text style={styles.statValue}>{stats.active}</Text>
+                  <Text style={styles.statLabel}>Active</Text>
                 </View>
-                {transactions.length > 0 && (
-                  <Text style={styles.sectionTitle}>All Activity</Text>
-                )}
-              </>
-            }
-            ListEmptyComponent={
-              !isLoading ? (
-                <View style={styles.emptyContainer}>
-                  <Text style={styles.emptyText}>No activity yet</Text>
-                  <Text style={styles.emptySubtext}>Your transaction history will appear here</Text>
+                <View style={styles.statDivider} />
+                <View style={styles.statItem}>
+                  <Text style={styles.statValue}>{stats.completed}</Text>
+                  <Text style={styles.statLabel}>Completed</Text>
                 </View>
-              ) : null
-            }
-            renderItem={renderActivityItem}
-            onEndReached={loadMore}
-            onEndReachedThreshold={0.3}
-            ListFooterComponent={
-              hasMore && transactions.length > 0 ? (
-                <View style={{ padding: 16, alignItems: 'center' }}>
-                  <ActivityIndicator size="small" color={PRIVE_COLORS.gold.primary} />
+                <View style={styles.statDivider} />
+                <View style={styles.statItem}>
+                  <Text style={styles.statValue}>{stats.avgRating != null ? stats.avgRating.toFixed(1) : 'N/A'}</Text>
+                  <Text style={styles.statLabel}>Avg Rating</Text>
                 </View>
-              ) : null
-            }
-          />
-        )}
+              </View>
+              {transactions.length > 0 && <Text style={styles.sectionTitle}>All Activity</Text>}
+            </>
+          }
+          ListEmptyComponent={
+            !isLoading ? (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>No activity yet</Text>
+                <Text style={styles.emptySubtext}>Your transaction history will appear here</Text>
+              </View>
+            ) : null
+          }
+          renderItem={renderActivityItem}
+          onEndReached={loadMore}
+          onEndReachedThreshold={0.3}
+          ListFooterComponent={
+            hasMore && transactions.length > 0 ? (
+              <View style={{ padding: 16, alignItems: 'center' }}>
+                <ActivityIndicator size="small" color={PRIVE_COLORS.gold.primary} />
+              </View>
+            ) : null
+          }
+        />
+      )}
     </View>
   );
 }

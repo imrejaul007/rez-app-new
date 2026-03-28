@@ -190,6 +190,19 @@ function CartPage() {
     return recalculatedCartTotal + serviceTotal + lockedTotal;
   }, [productItems, serviceItems, lockedProducts]);
 
+  // Memoize FlashList contentContainerStyle outside JSX to avoid Rules of Hooks violation
+  const listContentContainerStyle = useMemo(
+    () => [
+      {
+        paddingHorizontal: isSmallDevice ? 12 : 16,
+        paddingTop: 16,
+        paddingBottom: insets.bottom + (currentItems.length < 3 ? 80 : 120),
+      },
+      currentItems.length === 0 && styles.emptyListContent,
+    ],
+    [currentItems.length, insets.bottom],
+  );
+
   const overallItemCount = useMemo(() => {
     // ✅ FIX: Add type checking for item count calculation
     const cartCount =
@@ -586,17 +599,7 @@ function CartPage() {
             renderItem={renderCartItem}
             keyExtractor={(item) => `${item.id}`}
             // ROHAN: Removed index from keyExtractor — indexes change on reorder/delete, breaking React key stability and list reconciliation
-            contentContainerStyle={useMemo(
-              () => [
-                {
-                  paddingHorizontal: isSmallDevice ? 12 : 16,
-                  paddingTop: 16,
-                  paddingBottom: insets.bottom + (currentItems.length < 3 ? 80 : 120),
-                },
-                currentItems.length === 0 && styles.emptyListContent,
-              ],
-              [currentItems.length, insets.bottom],
-            )}
+            contentContainerStyle={listContentContainerStyle}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}

@@ -1,9 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, ScrollView,
-  ActivityIndicator, RefreshControl, Pressable,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, ActivityIndicator, RefreshControl, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Colors, Spacing, BorderRadius, Typography } from '@/constants/DesignSystem';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS, PILLAR_CONFIG } from '@/components/prive/priveTheme';
@@ -25,25 +22,40 @@ function AnalyticsScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isMounted = useIsMounted();
+
   const fetchData = useCallback(async () => {
     try {
       const response = await priveApi.getAnalytics(period);
       if (!isMounted()) return;
       if (response.success && response.data) setData(response.data);
-    } catch (e) { if (!isMounted()) return; catchAndReport(e, setError, 'Analytics/fetchData'); }
-    finally { if (!isMounted()) return; setIsLoading(false); setIsRefreshing(false); }
-  }, [period]);
-
-  const isMounted = useIsMounted();
-  useEffect(() => { setIsLoading(true); fetchData(); }, [fetchData]);
-  const onRefresh = () => { setIsRefreshing(true); fetchData(); };
+    } catch (e) {
+      if (!isMounted()) return;
+      catchAndReport(e, setError, 'Analytics/fetchData');
+    } finally {
+      if (!isMounted()) return;
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  }, [period, isMounted]);
+  useEffect(() => {
+    setIsLoading(true);
+    fetchData();
+  }, [fetchData]);
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    fetchData();
+  };
 
   const periods = [30, 60, 90];
 
   if (tierRank[tier] < 2) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <PriveEmptyState
           icon="📊"
           title="Analytics is available for Signature and Elite members"
@@ -56,7 +68,10 @@ function AnalyticsScreen() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <TransactionListSkeleton />
       </View>
     );
@@ -65,7 +80,10 @@ function AnalyticsScreen() {
   if (!data) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <PriveEmptyState icon="📊" title="Analytics unavailable" subtitle="Start earning coins to see your analytics" />
       </View>
     );
@@ -85,16 +103,21 @@ function AnalyticsScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+      <LinearGradient
+        colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+        style={StyleSheet.absoluteFill}
+      />
       <ScrollView
         contentContainerStyle={{ paddingBottom: 120 }}
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />
+        }
       >
         {/* Period Toggle */}
         <View style={styles.periodBar}>
-          {periods.map(p => (
+          {periods.map((p) => (
             <Pressable
               key={p}
               style={[styles.periodTab, period === p && styles.periodTabActive]}
@@ -121,10 +144,17 @@ function AnalyticsScreen() {
               </View>
               <View style={styles.velocityDivider} />
               <View style={styles.velocityItem}>
-                <Text style={[styles.velocityValue, {
-                  color: (data.earningsVelocity.changePercent || 0) >= 0
-                    ? PRIVE_COLORS.status.success : PRIVE_COLORS.status.error
-                }]}>
+                <Text
+                  style={[
+                    styles.velocityValue,
+                    {
+                      color:
+                        (data.earningsVelocity.changePercent || 0) >= 0
+                          ? PRIVE_COLORS.status.success
+                          : PRIVE_COLORS.status.error,
+                    },
+                  ]}
+                >
                   {(data.earningsVelocity.changePercent || 0) >= 0 ? '+' : ''}
                   {(data.earningsVelocity.changePercent || 0).toFixed(0)}%
                 </Text>
@@ -148,7 +178,7 @@ function AnalyticsScreen() {
             <Text style={styles.cardTitle}>Pillar Momentum</Text>
             {Object.entries(data.pillarMomentum).map(([pillarId, info]: [string, any]) => {
               const pillarConfig = Object.values(PILLAR_CONFIG).find(
-                (p: any) => p.id === pillarId || p.label?.toLowerCase().includes(pillarId.toLowerCase())
+                (p: any) => p.id === pillarId || p.label?.toLowerCase().includes(pillarId.toLowerCase()),
               ) as any;
               const color = pillarConfig?.color || PRIVE_COLORS.text.secondary;
               return (
@@ -157,7 +187,8 @@ function AnalyticsScreen() {
                   <Text style={styles.pillarName}>{pillarId}</Text>
                   <Text style={styles.pillarScore}>{info.current || 0}</Text>
                   <Text style={[styles.pillarDelta, { color: getTrendColor(info.direction) }]}>
-                    {getTrendArrow(info.direction)} {info.delta != null ? `${info.delta > 0 ? '+' : ''}${info.delta}` : ''}
+                    {getTrendArrow(info.direction)}{' '}
+                    {info.delta != null ? `${info.delta > 0 ? '+' : ''}${info.delta}` : ''}
                   </Text>
                 </View>
               );
@@ -170,7 +201,8 @@ function AnalyticsScreen() {
           <View style={styles.card}>
             <Text style={styles.cardTitle}>Reputation Trend</Text>
             <Text style={styles.trendDirection}>
-              Overall: <Text style={{ color: getTrendColor(data.reputationTrend.direction) }}>
+              Overall:{' '}
+              <Text style={{ color: getTrendColor(data.reputationTrend.direction) }}>
                 {getTrendArrow(data.reputationTrend.direction)} {data.reputationTrend.direction}
               </Text>
             </Text>
@@ -186,14 +218,23 @@ function AnalyticsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1 },
   scroll: { flex: 1, paddingHorizontal: PRIVE_SPACING.xl },
-  periodBar: { flexDirection: 'row', gap: PRIVE_SPACING.sm, paddingVertical: PRIVE_SPACING.lg, justifyContent: 'center' },
+  periodBar: {
+    flexDirection: 'row',
+    gap: PRIVE_SPACING.sm,
+    paddingVertical: PRIVE_SPACING.lg,
+    justifyContent: 'center',
+  },
   periodTab: {
     paddingHorizontal: PRIVE_SPACING.xl,
     paddingVertical: PRIVE_SPACING.sm,
     borderRadius: PRIVE_RADIUS.full,
     backgroundColor: PRIVE_COLORS.transparent.white05,
   },
-  periodTabActive: { backgroundColor: PRIVE_COLORS.transparent.gold15, borderWidth: 1, borderColor: PRIVE_COLORS.gold.primary },
+  periodTabActive: {
+    backgroundColor: PRIVE_COLORS.transparent.gold15,
+    borderWidth: 1,
+    borderColor: PRIVE_COLORS.gold.primary,
+  },
   periodText: { fontSize: 13, color: PRIVE_COLORS.text.tertiary, fontWeight: '500' },
   periodTextActive: { color: PRIVE_COLORS.gold.primary, fontWeight: '600' },
   card: {

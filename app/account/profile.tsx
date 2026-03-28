@@ -149,6 +149,13 @@ function AccountProfilePage() {
     });
 
     if (!result.canceled && result.assets[0]) {
+      // Validate file size before upload (5 MB limit matches backend multer config)
+      const MAX_AVATAR_BYTES = 5 * 1024 * 1024;
+      if (result.assets[0].fileSize && result.assets[0].fileSize > MAX_AVATAR_BYTES) {
+        platformAlertSimple('File Too Large', 'Please choose an image under 5 MB.');
+        return;
+      }
+
       setUploadingPhoto(true);
       try {
         const response = await profileApi.uploadProfilePicture(result.assets[0].uri);
@@ -398,11 +405,17 @@ function AccountProfilePage() {
                   <ThemedText style={styles.userPhone}>{user.phoneNumber}</ThemedText>
                 </>
               )}
-              {/* Verified identity badge */}
+              {/* Verified identity badge — falls back to a generic badge for
+                  segments not yet in SEGMENT_BADGES so new programs render
+                  something rather than silently hiding the verification */}
               {(user as any).segment &&
-                SEGMENT_BADGES[(user as any).segment] &&
                 (() => {
-                  const badge = SEGMENT_BADGES[(user as any).segment!];
+                  const badge = SEGMENT_BADGES[(user as any).segment] ?? {
+                    label: 'Verified Member',
+                    icon: '✅',
+                    bg: '#F3F4F6',
+                    text: '#374151',
+                  };
                   return (
                     <View
                       style={{

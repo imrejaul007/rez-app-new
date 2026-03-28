@@ -76,19 +76,19 @@ function CartValidation({
 
   const renderIssueCard = (issue: ValidationIssue, index: number) => {
     const iconName = VALIDATION_ISSUE_ICONS[issue.type] as keyof typeof Ionicons.glyphMap;
-    const colors = VALIDATION_ISSUE_COLORS[issue.type];
+    const issueColors = VALIDATION_ISSUE_COLORS[issue.type];
 
     const iconColor = issue.severity === 'error'
-      ? (colors as any).error
+      ? (issueColors as any).error
       : issue.severity === 'warning'
-      ? (colors as any).warning
-      : (colors as any).info;
+      ? (issueColors as any).warning
+      : (issueColors as any).info;
 
     return (
       <View key={`${issue.itemId}-${index}`} style={[styles.issueCard, { borderLeftColor: iconColor }]}>
         <View style={styles.issueHeader}>
           <View style={styles.issueIconContainer}>
-            <View style={[styles.issueIcon, { backgroundColor: colors.bg }]}>
+            <View style={[styles.issueIcon, { backgroundColor: (issueColors as any).bg }]}>
               <Ionicons name={iconName} size={20} color={iconColor} />
             </View>
             {issue.image && (
@@ -146,7 +146,7 @@ function CartValidation({
         <View style={styles.modalContainer}>
           {/* Header */}
           <LinearGradient
-            colors={hasErrors ? [colors.error, colors.errorScale[700]] : [colors.brand.purpleLight, colors.brand.purple]}
+            colors={hasErrors ? [colors.error, colors.errorScale[700]] : [colors.nileBlue, colors.brand.nileBlueLight]}
             style={styles.header}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
@@ -188,7 +188,7 @@ function CartValidation({
           >
             {loading ? (
               <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color={colors.brand.purpleLight} />
+                <ActivityIndicator size="large" color={colors.nileBlue} />
                 <ThemedText style={styles.loadingText}>Validating cart items...</ThemedText>
               </View>
             ) : validationResult ? (
@@ -285,8 +285,8 @@ function CartValidation({
                 onPress={onRefresh}
                
               >
-                <Ionicons name="refresh" size={18} color={colors.brand.purpleLight} />
-                <ThemedText style={[styles.buttonText, { color: colors.brand.purpleLight }]}>
+                <Ionicons name="refresh" size={18} color={colors.nileBlue} />
+                <ThemedText style={[styles.buttonText, { color: colors.nileBlue }]}>
                   Refresh
                 </ThemedText>
               </Pressable>
@@ -501,12 +501,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   buttonPrimary: {
-    backgroundColor: colors.brand.purpleLight,
+    backgroundColor: colors.nileBlue,
   },
   buttonSecondary: {
     backgroundColor: 'white',
     borderWidth: 1.5,
-    borderColor: colors.brand.purpleLight,
+    borderColor: colors.nileBlue,
   },
   buttonDanger: {
     backgroundColor: colors.error,

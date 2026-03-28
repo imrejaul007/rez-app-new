@@ -48,6 +48,7 @@ function UploadPage() {
   const router = useRouter();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
+  const isMounted = useIsMounted();
   const [contentType, setContentType] = useState<ContentType>('post');
   const [media, setMedia] = useState<string[]>([]);
   const [caption, setCaption] = useState('');
@@ -90,7 +91,6 @@ function UploadPage() {
   const [storeSearchResults, setStoreSearchResults] = useState<TaggedStore[]>([]);
   const [showStoreSearch, setShowStoreSearch] = useState(false);
   const [searchingStores, setSearchingStores] = useState(false);
-  const isMounted = useIsMounted();
 
   // Product search with debounce
   React.useEffect(() => {

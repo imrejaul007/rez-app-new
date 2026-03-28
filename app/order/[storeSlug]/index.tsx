@@ -304,7 +304,7 @@ function WebOrderMenuScreen() {
   const total = cartTotal(cart);
   const count = cartCount(cart);
   const gstPercent = storeData?.store.gstPercent ?? 5;
-  const taxes = Math.round(total * gstPercent) / 100;
+  const taxes = Math.round((total * gstPercent) / 100);
 
   if (loading) {
     return (
@@ -330,7 +330,7 @@ function WebOrderMenuScreen() {
   return (
     <SafeAreaView style={styles.screen} edges={['top']}>
       {/* Store header */}
-      <LinearGradient colors={[themeColors.brand.purple, themeColors.brand.purpleMuted]} style={styles.header}>
+      <LinearGradient colors={[themeColors.brand.purple, themeColors.brand.purpleSoft]} style={styles.header}>
         <TouchableOpacity
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backBtn}

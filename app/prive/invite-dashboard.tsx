@@ -8,16 +8,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  Pressable,
-  StyleSheet,
-  ActivityIndicator,
-  RefreshControl,
-  Share,
-  Platform,
-} from 'react-native';
+import { View, Text, Pressable, StyleSheet, ActivityIndicator, RefreshControl, Share, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ProfileSkeleton } from '@/components/skeletons';
@@ -53,6 +44,8 @@ function PriveInviteDashboard() {
   const [generatingCode, setGeneratingCode] = useState(false);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
+  const isMounted = useIsMounted();
+
   const loadData = useCallback(async () => {
     try {
       const [statsRes, leaderboardRes] = await Promise.allSettled([
@@ -77,8 +70,7 @@ function PriveInviteDashboard() {
       if (!isMounted()) return;
       setLoading(false);
     }
-  }, []);
-  const isMounted = useIsMounted();
+  }, [isMounted]);
 
   useEffect(() => {
     loadData();
@@ -132,21 +124,19 @@ function PriveInviteDashboard() {
     );
   }
 
-  const renderLeaderboardItem = useCallback(({ item }: { item: any }) => (
-    <View style={styles.leaderboardRow}>
-      <Text style={[
-        styles.rankText,
-        item.rank <= 3 && { color: PRIVE_COLORS.gold.primary }
-      ]}>
-        #{item.rank}
-      </Text>
-      <View style={styles.leaderboardInfo}>
-        <Text style={styles.leaderboardName}>{item.name}</Text>
-        <Text style={styles.leaderboardTier}>{item.tier}</Text>
+  const renderLeaderboardItem = useCallback(
+    ({ item }: { item: any }) => (
+      <View style={styles.leaderboardRow}>
+        <Text style={[styles.rankText, item.rank <= 3 && { color: PRIVE_COLORS.gold.primary }]}>#{item.rank}</Text>
+        <View style={styles.leaderboardInfo}>
+          <Text style={styles.leaderboardName}>{item.name}</Text>
+          <Text style={styles.leaderboardTier}>{item.tier}</Text>
+        </View>
+        <Text style={styles.leaderboardCount}>{item.activeInvites} invites</Text>
       </View>
-      <Text style={styles.leaderboardCount}>{item.activeInvites} invites</Text>
-    </View>
-  ), []);
+    ),
+    [],
+  );
 
   return (
     <View style={[styles.container, { paddingBottom: insets.bottom }]}>
@@ -233,20 +223,14 @@ function PriveInviteDashboard() {
                       </Text>
                     </View>
                     <View style={styles.codeActions}>
-                      <Pressable
-                        style={styles.codeActionBtn}
-                        onPress={() => handleCopyCode(codeItem.code)}
-                      >
+                      <Pressable style={styles.codeActionBtn} onPress={() => handleCopyCode(codeItem.code)}>
                         <Ionicons
                           name={copiedCode === codeItem.code ? 'checkmark' : 'copy-outline'}
                           size={18}
                           color={copiedCode === codeItem.code ? PRIVE_COLORS.status.success : PRIVE_COLORS.gold.primary}
                         />
                       </Pressable>
-                      <Pressable
-                        style={styles.codeActionBtn}
-                        onPress={() => handleShareCode(codeItem.code)}
-                      >
+                      <Pressable style={styles.codeActionBtn} onPress={() => handleShareCode(codeItem.code)}>
                         <Ionicons name="share-outline" size={18} color={PRIVE_COLORS.gold.primary} />
                       </Pressable>
                     </View>
@@ -258,9 +242,7 @@ function PriveInviteDashboard() {
             {/* Leaderboard Title */}
             <View style={styles.leaderboardHeader}>
               <Text style={styles.sectionTitle}>Leaderboard</Text>
-              {myRank && (
-                <Text style={styles.myRank}>Your rank: #{myRank.rank}</Text>
-              )}
+              {myRank && <Text style={styles.myRank}>Your rank: #{myRank.rank}</Text>}
             </View>
           </>
         }

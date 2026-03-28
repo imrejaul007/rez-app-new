@@ -79,7 +79,7 @@ function PaymentBottomSheet({
               accessibilityRole="button"
               accessibilityHint={`Available balance: ${totalWalletBalance} coins`}
             >
-              <View style={[styles.quickPayIcon, { backgroundColor: colors.brand.purpleLight }]}>
+              <View style={[styles.quickPayIcon, { backgroundColor: colors.nileBlue }]}>
                 <CachedImage
                   source={BRAND.COIN_IMAGE}
                   style={styles.coinIconMedium}

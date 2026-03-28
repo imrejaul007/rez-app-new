@@ -416,7 +416,7 @@ function ProductVariantModal({
                             <Ionicons
                               name="checkmark"
                               size={18}
-                              color={colorHex === colors.background.primary || colorHex === colors.neutral[50] ? colors.brand.purple : colors.background.primary}
+                              color={colorHex === colors.background.primary || colorHex === colors.neutral[50] ? colors.nileBlue : colors.background.primary}
                             />
                           )}
                           {!available && (
@@ -466,7 +466,7 @@ function ProductVariantModal({
             {/* Selection Prompt */}
             {!selectedSize && !selectedColor && (
               <View style={styles.promptContainer}>
-                <Ionicons name="information-circle-outline" size={20} color={colors.brand.purpleLight} />
+                <Ionicons name="information-circle-outline" size={20} color={colors.nileBlue} />
                 <Text style={styles.promptText}>
                   Please select {displaySizes.length > 0 ? 'size' : ''}
                   {displaySizes.length > 0 && displayColors.length > 0 ? ' and ' : ''}
@@ -509,7 +509,7 @@ function ProductVariantModal({
                 </View>
               ) : (
                 <LinearGradient
-                  colors={loading ? [colors.neutral[400], colors.neutral[500]] : [colors.brand.purpleLight, colors.brand.purple]}
+                  colors={loading ? [colors.neutral[400], colors.neutral[500]] : [colors.nileBlue, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.confirmGradient}
@@ -630,7 +630,7 @@ const styles = StyleSheet.create({
   currentPrice: {
     fontSize: 20,
     fontWeight: '800',
-    color: colors.brand.purple,
+    color: colors.nileBlue,
   },
   originalPrice: {
     fontSize: 14,
@@ -682,7 +682,7 @@ const styles = StyleSheet.create({
   selectedLabel: {
     fontSize: 13,
     fontWeight: '600',
-    color: colors.brand.purple,
+    color: colors.nileBlue,
   },
   optionsGrid: {
     flexDirection: 'row',
@@ -702,7 +702,7 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   sizeOptionSelected: {
-    borderColor: colors.brand.purple,
+    borderColor: colors.nileBlue,
     backgroundColor: colors.tint.purpleLight,
   },
   sizeOptionDisabled: {
@@ -715,7 +715,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[600],
   },
   sizeTextSelected: {
-    color: colors.brand.purple,
+    color: colors.nileBlue,
     fontWeight: '700',
   },
   sizeTextDisabled: {
@@ -740,7 +740,7 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   colorOptionSelected: {
-    borderColor: colors.brand.purple,
+    borderColor: colors.nileBlue,
     backgroundColor: colors.tint.purpleLight,
   },
   colorOptionDisabled: {
@@ -774,7 +774,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   colorTextSelected: {
-    color: colors.brand.purple,
+    color: colors.nileBlue,
     fontWeight: '700',
   },
   colorTextDisabled: {
@@ -817,7 +817,7 @@ const styles = StyleSheet.create({
   },
   promptText: {
     fontSize: 13,
-    color: colors.brand.purple,
+    color: colors.nileBlue,
     fontWeight: '600',
     flex: 1,
   },
@@ -848,7 +848,7 @@ const styles = StyleSheet.create({
     flex: 2,
     borderRadius: 14,
     overflow: 'hidden',
-    shadowColor: colors.brand.purpleLight,
+    shadowColor: colors.nileBlue,
     shadowOffset: {
       width: 0,
       height: 4,

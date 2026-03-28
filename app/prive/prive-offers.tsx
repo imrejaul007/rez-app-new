@@ -5,15 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ActivityIndicator,
-  RefreshControl,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ActivityIndicator, RefreshControl, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
@@ -33,30 +25,34 @@ function PriveOffersScreen() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchOffers = useCallback(async (pageNum: number, refresh = false) => {
-    try {
-      const response = await priveApi.getOffers({ page: pageNum, limit: 20 });
-      if (response.success && response.data) {
-        const newOffers = response.data.offers || [];
-        if (refresh) {
-          setOffers(newOffers);
-        } else {
-          setOffers(prev => [...prev, ...newOffers]);
-        }
-        setHasMore(pageNum < (response.data.pagination?.pages || 1));
-        setError(null);
-      }
-    } catch (err) {
-      if (!isMounted()) return;
-      setError('Failed to load offers');
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-    }
-  }, []);
   const isMounted = useIsMounted();
+
+  const fetchOffers = useCallback(
+    async (pageNum: number, refresh = false) => {
+      try {
+        const response = await priveApi.getOffers({ page: pageNum, limit: 20 });
+        if (response.success && response.data) {
+          const newOffers = response.data.offers || [];
+          if (refresh) {
+            setOffers(newOffers);
+          } else {
+            setOffers((prev) => [...prev, ...newOffers]);
+          }
+          setHasMore(pageNum < (response.data.pagination?.pages || 1));
+          setError(null);
+        }
+      } catch (err) {
+        if (!isMounted()) return;
+        setError('Failed to load offers');
+      } finally {
+        if (!isMounted()) return;
+        setIsLoading(false);
+        if (!isMounted()) return;
+        setIsRefreshing(false);
+      }
+    },
+    [isMounted],
+  );
 
   useEffect(() => {
     fetchOffers(1, true);
@@ -75,32 +71,37 @@ function PriveOffersScreen() {
     fetchOffers(nextPage);
   }, [hasMore, isLoading, page, fetchOffers]);
 
-  const renderOffer = useCallback(({ item }: { item: PriveOffer }) => (
-    <Pressable style={styles.offerCard} onPress={() => router.push(`/prive-offers/${item.id}` as any)}>
-      <View style={styles.offerHeader}>
-        <View style={styles.brandBadge}>
-          <Text style={styles.brandText}>{item.brand}</Text>
+  const renderOffer = useCallback(
+    ({ item }: { item: PriveOffer }) => (
+      <Pressable style={styles.offerCard} onPress={() => router.push(`/prive-offers/${item.id}` as any)}>
+        <View style={styles.offerHeader}>
+          <View style={styles.brandBadge}>
+            <Text style={styles.brandText}>{item.brand}</Text>
+          </View>
+          {item.isExclusive && (
+            <View style={styles.exclusiveBadge}>
+              <Ionicons name="diamond" size={10} color={PRIVE_COLORS.gold.primary} />
+              <Text style={styles.exclusiveText}>Exclusive</Text>
+            </View>
+          )}
         </View>
-        {item.isExclusive && (
-          <View style={styles.exclusiveBadge}>
-            <Ionicons name="diamond" size={10} color={PRIVE_COLORS.gold.primary} />
-            <Text style={styles.exclusiveText}>Exclusive</Text>
+        <Text style={styles.offerTitle}>{item.title}</Text>
+        <Text style={styles.offerSubtitle}>{item.subtitle}</Text>
+        <View style={styles.offerFooter}>
+          <Text style={styles.rewardText}>{item.reward}</Text>
+          <Text style={styles.expiryText}>{item.expiresIn}</Text>
+        </View>
+        {item.tierRequired && item.tierRequired !== 'none' && (
+          <View style={styles.tierBadge}>
+            <Text style={styles.tierText}>
+              {item.tierRequired.charAt(0).toUpperCase() + item.tierRequired.slice(1)}+
+            </Text>
           </View>
         )}
-      </View>
-      <Text style={styles.offerTitle}>{item.title}</Text>
-      <Text style={styles.offerSubtitle}>{item.subtitle}</Text>
-      <View style={styles.offerFooter}>
-        <Text style={styles.rewardText}>{item.reward}</Text>
-        <Text style={styles.expiryText}>{item.expiresIn}</Text>
-      </View>
-      {item.tierRequired && item.tierRequired !== 'none' && (
-        <View style={styles.tierBadge}>
-          <Text style={styles.tierText}>{item.tierRequired.charAt(0).toUpperCase() + item.tierRequired.slice(1)}+</Text>
-        </View>
-      )}
-    </Pressable>
-  ), [router]);
+      </Pressable>
+    ),
+    [router],
+  );
 
   if (isLoading && offers.length === 0) {
     return (
@@ -130,11 +131,7 @@ function PriveOffersScreen() {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            tintColor={PRIVE_COLORS.gold.primary}
-          />
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={PRIVE_COLORS.gold.primary} />
         }
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.3}

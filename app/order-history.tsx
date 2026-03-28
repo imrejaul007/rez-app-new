@@ -93,14 +93,7 @@ function OrderHistoryPage() {
   const [refreshing, setRefreshing] = useState(false);
   const searchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const {
-    orders,
-    isLoading,
-    error,
-    hasMore,
-    loadMore,
-    refresh,
-  } = useOrderHistory();
+  const { orders, isLoading, error, hasMore, loadMore, refresh } = useOrderHistory();
 
   const buildServerFilter = useCallback((filter: OrderFilter, search?: string): OrderFilterParams => {
     const dates = dateRangeToISO(filter.dateRange);
@@ -129,34 +122,49 @@ function OrderHistoryPage() {
     }
   }, [refresh, selectedFilter, searchQuery, buildServerFilter]);
 
-  const handleOrderPress = useCallback((order: any) => {
-    const orderId = order.id || order._id;
-    router.push(`/tracking/${orderId}` as any);
-  }, [router]);
+  const handleOrderPress = useCallback(
+    (order: any) => {
+      const orderId = order.id || order._id;
+      router.push(`/tracking/${orderId}` as any);
+    },
+    [router],
+  );
 
-  const handleReorder = useCallback((orderId: string) => {
-    // Navigate to tracking page with reorder intent — the tracking page has reorder functionality
-    router.push(`/tracking/${orderId}` as any);
-  }, [router]);
+  const handleReorder = useCallback(
+    (orderId: string) => {
+      // Navigate to tracking page with reorder intent — the tracking page has reorder functionality
+      router.push(`/tracking/${orderId}` as any);
+    },
+    [router],
+  );
 
-  const handleTrack = useCallback((orderId: string) => {
-    router.push(`/tracking/${orderId}` as any);
-  }, [router]);
+  const handleTrack = useCallback(
+    (orderId: string) => {
+      router.push(`/tracking/${orderId}` as any);
+    },
+    [router],
+  );
 
-  const handleFilterApply = useCallback((filter: OrderFilter) => {
-    setSelectedFilter(filter);
-    setShowFilterModal(false);
-    refresh(buildServerFilter(filter, searchQuery));
-  }, [refresh, searchQuery, buildServerFilter]);
+  const handleFilterApply = useCallback(
+    (filter: OrderFilter) => {
+      setSelectedFilter(filter);
+      setShowFilterModal(false);
+      refresh(buildServerFilter(filter, searchQuery));
+    },
+    [refresh, searchQuery, buildServerFilter],
+  );
 
-  const handleSearchChange = useCallback((text: string) => {
-    setSearchQuery(text);
-    // Debounce server search by 400ms
-    if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
-    searchTimerRef.current = setTimeout(() => {
-      refresh(buildServerFilter(selectedFilter, text));
-    }, 400);
-  }, [refresh, selectedFilter, buildServerFilter]);
+  const handleSearchChange = useCallback(
+    (text: string) => {
+      setSearchQuery(text);
+      // Debounce server search by 400ms
+      if (searchTimerRef.current) clearTimeout(searchTimerRef.current);
+      searchTimerRef.current = setTimeout(() => {
+        refresh(buildServerFilter(selectedFilter, text));
+      }, 400);
+    },
+    [refresh, selectedFilter, buildServerFilter],
+  );
 
   const handleLoadMore = useCallback(() => {
     if (hasMore && !isLoading) {
@@ -164,14 +172,17 @@ function OrderHistoryPage() {
     }
   }, [hasMore, isLoading, loadMore]);
 
-  const renderOrderItem = useCallback(({ item }: { item: any }) => (
-    <OrderHistoryItem
-      order={item}
-      onPress={() => handleOrderPress(item)}
-      onReorder={handleReorder}
-      onTrack={handleTrack}
-    />
-  ), [handleOrderPress, handleReorder, handleTrack]);
+  const renderOrderItem = useCallback(
+    ({ item }: { item: any }) => (
+      <OrderHistoryItem
+        order={item}
+        onPress={() => handleOrderPress(item)}
+        onReorder={handleReorder}
+        onTrack={handleTrack}
+      />
+    ),
+    [handleOrderPress, handleReorder, handleTrack],
+  );
 
   const renderEmptyState = () => {
     if (isLoading) return null;
@@ -180,15 +191,12 @@ function OrderHistoryPage() {
         <Ionicons name="receipt-outline" size={80} color={colors.neutral[200]} />
         <ThemedText style={styles.emptyTitle}>No Orders Found</ThemedText>
         <ThemedText style={styles.emptyDescription}>
-          {searchQuery.trim()
-            ? 'No orders match your search criteria'
-            : "You haven't placed any orders yet"
-          }
+          {searchQuery.trim() ? 'No orders match your search criteria' : "You haven't placed any orders yet"}
         </ThemedText>
         {!searchQuery.trim() && selectedFilter.status === 'all' && (
           <Pressable
             style={styles.shopButton}
-            onPress={() => router.push('/')}
+            onPress={() => router.push('/(tabs)')}
             accessibilityLabel="Start shopping"
             accessibilityRole="button"
           >
@@ -203,7 +211,7 @@ function OrderHistoryPage() {
     if (!isLoading || !hasMore) return null;
     return (
       <View style={styles.loadingFooter}>
-        <ActivityIndicator size="small" color={colors.brand.green} />
+        <ActivityIndicator size="small" color={colors.nileBlue} />
         <ThemedText style={styles.loadingText}>Loading more orders...</ThemedText>
       </View>
     );
@@ -211,18 +219,24 @@ function OrderHistoryPage() {
 
   const renderSkeletons = () => (
     <View style={styles.listContainer}>
-      {[0, 1, 2, 3].map(i => <OrderSkeleton key={i} />)}
+      {[0, 1, 2, 3].map((i) => (
+        <OrderSkeleton key={i} />
+      ))}
     </View>
   );
 
   if (error && !orders.length) {
     return (
       <ThemedView style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={colors.brand.green} />
-        <LinearGradient colors={[colors.brand.green, colors.brand.teal]} style={styles.headerBg}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
+        <LinearGradient colors={[colors.nileBlue, colors.brand.nileBlueLight]} style={styles.headerBg}>
           <View style={styles.headerContainer}>
-            <Pressable style={styles.backButton} onPress={handleBackPress}
-              accessibilityLabel="Go back" accessibilityRole="button">
+            <Pressable
+              style={styles.backButton}
+              onPress={handleBackPress}
+              accessibilityLabel="Go back"
+              accessibilityRole="button"
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Order History</ThemedText>
@@ -233,8 +247,12 @@ function OrderHistoryPage() {
           <Ionicons name="alert-circle-outline" size={48} color={Colors.error} />
           <ThemedText style={styles.errorTitle}>Unable to load orders</ThemedText>
           <ThemedText style={styles.errorDetails}>{error}</ThemedText>
-          <Pressable style={styles.retryButton} onPress={handleRefresh}
-            accessibilityLabel="Try again" accessibilityRole="button">
+          <Pressable
+            style={styles.retryButton}
+            onPress={handleRefresh}
+            accessibilityLabel="Try again"
+            accessibilityRole="button"
+          >
             <ThemedText style={styles.retryButtonText}>Try Again</ThemedText>
           </Pressable>
         </View>
@@ -243,82 +261,92 @@ function OrderHistoryPage() {
   }
 
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{flex:1}}>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
       <ThemedView style={styles.container}>
-        <StatusBar barStyle="light-content" backgroundColor={colors.brand.green} />
+        <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
         {/* Header */}
-        <LinearGradient colors={[colors.brand.green, colors.brand.teal]} style={styles.headerBg}>
-        <View style={styles.headerContainer}>
-          <Pressable style={styles.backButton} onPress={handleBackPress}
-            accessibilityLabel="Go back" accessibilityRole="button">
-            <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
-          </Pressable>
-          <ThemedText style={styles.headerTitle}>Order History</ThemedText>
-          <Pressable style={styles.filterButton}
-            onPress={() => setShowFilterModal(true)}
-            accessibilityLabel="Open filter options" accessibilityRole="button">
-            <Ionicons name="filter-outline" size={24} color={colors.text.inverse} />
-          </Pressable>
-        </View>
-      </LinearGradient>
-
-      {/* Search Bar */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Ionicons name="search-outline" size={20} color={colors.text.tertiary} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search orders..."
-            value={searchQuery}
-            onChangeText={handleSearchChange}
-            placeholderTextColor={colors.neutral[400]}
-            accessibilityLabel="Search orders"
-            accessibilityHint="Enter order number, product name, or store name"
-          />
-          {searchQuery.length > 0 && (
-            <Pressable onPress={() => handleSearchChange('')}
-              accessibilityLabel="Clear search" accessibilityRole="button">
-              <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
+        <LinearGradient colors={[colors.nileBlue, colors.brand.nileBlueLight]} style={styles.headerBg}>
+          <View style={styles.headerContainer}>
+            <Pressable
+              style={styles.backButton}
+              onPress={handleBackPress}
+              accessibilityLabel="Go back"
+              accessibilityRole="button"
+            >
+              <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
-          )}
-        </View>
-      </View>
+            <ThemedText style={styles.headerTitle}>Order History</ThemedText>
+            <Pressable
+              style={styles.filterButton}
+              onPress={() => setShowFilterModal(true)}
+              accessibilityLabel="Open filter options"
+              accessibilityRole="button"
+            >
+              <Ionicons name="filter-outline" size={24} color={colors.text.inverse} />
+            </Pressable>
+          </View>
+        </LinearGradient>
 
-      {/* Skeleton or Orders List */}
-      {isLoading && orders.length === 0 ? (
-        renderSkeletons()
-      ) : (
-        <FlashList
-          data={orders}
-          keyExtractor={(item: any) => item.id || item._id || item.orderNumber}
-          renderItem={renderOrderItem}
-          contentContainerStyle={styles.listContainer}
-          showsVerticalScrollIndicator={false}
-          estimatedItemSize={120}
-          keyboardShouldPersistTaps="handled"
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={handleRefresh}
-              tintColor={colors.brand.green}
-              colors={[colors.brand.green]}
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <Ionicons name="search-outline" size={20} color={colors.text.tertiary} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search orders..."
+              value={searchQuery}
+              onChangeText={handleSearchChange}
+              placeholderTextColor={colors.neutral[400]}
+              accessibilityLabel="Search orders"
+              accessibilityHint="Enter order number, product name, or store name"
             />
-          }
-          onEndReached={handleLoadMore}
-          onEndReachedThreshold={0.1}
-          ListEmptyComponent={renderEmptyState}
-          ListFooterComponent={renderFooter}
-        />
-      )}
+            {searchQuery.length > 0 && (
+              <Pressable
+                onPress={() => handleSearchChange('')}
+                accessibilityLabel="Clear search"
+                accessibilityRole="button"
+              >
+                <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
+              </Pressable>
+            )}
+          </View>
+        </View>
 
-      {/* Filter Modal */}
-      <OrderFilterModal
-        visible={showFilterModal}
-        onClose={() => setShowFilterModal(false)}
-        onApply={handleFilterApply}
-        currentFilter={selectedFilter}
-      />
+        {/* Skeleton or Orders List */}
+        {isLoading && orders.length === 0 ? (
+          renderSkeletons()
+        ) : (
+          <FlashList
+            data={orders}
+            keyExtractor={(item: any) => item.id || item._id || item.orderNumber}
+            renderItem={renderOrderItem}
+            contentContainerStyle={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+            estimatedItemSize={120}
+            keyboardShouldPersistTaps="handled"
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                tintColor={colors.nileBlue}
+                colors={[colors.nileBlue]}
+              />
+            }
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.1}
+            ListEmptyComponent={renderEmptyState}
+            ListFooterComponent={renderFooter}
+          />
+        )}
+
+        {/* Filter Modal */}
+        <OrderFilterModal
+          visible={showFilterModal}
+          onClose={() => setShowFilterModal(false)}
+          onApply={handleFilterApply}
+          currentFilter={selectedFilter}
+        />
       </ThemedView>
     </KeyboardAvoidingView>
   );
@@ -438,7 +466,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 40,
   },
   shopButton: {
-    backgroundColor: colors.brand.green,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,
@@ -479,7 +507,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   retryButton: {
-    backgroundColor: colors.brand.green,
+    backgroundColor: colors.nileBlue,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     borderRadius: BorderRadius.md,

@@ -60,7 +60,7 @@ function transformComment(raw: any): Comment {
       verified: raw.user?.isVerified || false,
     },
     text: raw.content || raw.comment || raw.text || '',
-    likes: typeof raw.likes === 'number' ? raw.likes : (Array.isArray(raw.likes) ? raw.likes.length : 0),
+    likes: typeof raw.likes === 'number' ? raw.likes : Array.isArray(raw.likes) ? raw.likes.length : 0,
     time: raw.timestamp || raw.createdAt ? formatTimeAgo(raw.timestamp || raw.createdAt) : '',
     isLiked: raw.isLiked || false,
     replies: replies.length > 0 ? replies : undefined,
@@ -86,43 +86,47 @@ function CommentsPage() {
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<TextInput>(null);
 
-  const fetchComments = useCallback(async (pageNum: number, append = false) => {
-    if (!videoId || authLoading) return;
-
-    if (pageNum === 1) setLoading(true);
-    else setLoadingMore(true);
-
-    try {
-      const response = await reelApi.getComments(videoId, { page: pageNum, limit: COMMENTS_PER_PAGE });
-
-      if (response.success && response.data) {
-        const rawComments = response.data.comments || [];
-        const transformed = rawComments.map(transformComment);
-        if (!isMounted()) return;
-        setComments(prev => append ? [...prev, ...transformed] : transformed);
-
-        const pagination = response.data.pagination;
-        if (!isMounted()) return;
-        setHasMore(pagination?.hasNext ?? transformed.length >= COMMENTS_PER_PAGE);
-        if (!isMounted()) return;
-        setPage(pageNum);
-        if (!isMounted()) return;
-        setError(null);
-      } else {
-        if (!isMounted()) return;
-        setError(response.error || 'Failed to load comments');
-      }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Failed to load comments');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [videoId, authLoading, isAuthenticated]);
   const isMounted = useIsMounted();
+
+  const fetchComments = useCallback(
+    async (pageNum: number, append = false) => {
+      if (!videoId || authLoading) return;
+
+      if (pageNum === 1) setLoading(true);
+      else setLoadingMore(true);
+
+      try {
+        const response = await reelApi.getComments(videoId, { page: pageNum, limit: COMMENTS_PER_PAGE });
+
+        if (response.success && response.data) {
+          const rawComments = response.data.comments || [];
+          const transformed = rawComments.map(transformComment);
+          if (!isMounted()) return;
+          setComments((prev) => (append ? [...prev, ...transformed] : transformed));
+
+          const pagination = response.data.pagination;
+          if (!isMounted()) return;
+          setHasMore(pagination?.hasNext ?? transformed.length >= COMMENTS_PER_PAGE);
+          if (!isMounted()) return;
+          setPage(pageNum);
+          if (!isMounted()) return;
+          setError(null);
+        } else {
+          if (!isMounted()) return;
+          setError(response.error || 'Failed to load comments');
+        }
+      } catch (err: any) {
+        if (!isMounted()) return;
+        setError(err.message || 'Failed to load comments');
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
+      }
+    },
+    [videoId, authLoading, isAuthenticated, isMounted],
+  );
 
   useEffect(() => {
     fetchComments(1);
@@ -134,45 +138,13 @@ function CommentsPage() {
     }
   }, [loadingMore, hasMore, page, fetchComments]);
 
-  const handleLike = useCallback(async (commentId: string) => {
-    if (!videoId) return;
+  const handleLike = useCallback(
+    async (commentId: string) => {
+      if (!videoId) return;
 
-    // Optimistic update
-    setComments(prev =>
-      prev.map(comment => {
-        if (comment.id === commentId) {
-          return {
-            ...comment,
-            isLiked: !comment.isLiked,
-            likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1,
-          };
-        }
-        if (comment.replies) {
-          return {
-            ...comment,
-            replies: comment.replies.map(reply => {
-              if (reply.id === commentId) {
-                return {
-                  ...reply,
-                  isLiked: !reply.isLiked,
-                  likes: reply.isLiked ? reply.likes - 1 : reply.likes + 1,
-                };
-              }
-              return reply;
-            }),
-          };
-        }
-        return comment;
-      })
-    );
-
-    const response = await reelApi.toggleCommentLike(videoId, commentId);
-
-    if (!response.success) {
-      // Revert on error
-      if (!isMounted()) return;
-      setComments(prev =>
-        prev.map(comment => {
+      // Optimistic update
+      setComments((prev) =>
+        prev.map((comment) => {
           if (comment.id === commentId) {
             return {
               ...comment,
@@ -183,7 +155,7 @@ function CommentsPage() {
           if (comment.replies) {
             return {
               ...comment,
-              replies: comment.replies.map(reply => {
+              replies: comment.replies.map((reply) => {
                 if (reply.id === commentId) {
                   return {
                     ...reply,
@@ -196,10 +168,45 @@ function CommentsPage() {
             };
           }
           return comment;
-        })
+        }),
       );
-    }
-  }, [videoId]);
+
+      const response = await reelApi.toggleCommentLike(videoId, commentId);
+
+      if (!response.success) {
+        // Revert on error
+        if (!isMounted()) return;
+        setComments((prev) =>
+          prev.map((comment) => {
+            if (comment.id === commentId) {
+              return {
+                ...comment,
+                isLiked: !comment.isLiked,
+                likes: comment.isLiked ? comment.likes - 1 : comment.likes + 1,
+              };
+            }
+            if (comment.replies) {
+              return {
+                ...comment,
+                replies: comment.replies.map((reply) => {
+                  if (reply.id === commentId) {
+                    return {
+                      ...reply,
+                      isLiked: !reply.isLiked,
+                      likes: reply.isLiked ? reply.likes - 1 : reply.likes + 1,
+                    };
+                  }
+                  return reply;
+                }),
+              };
+            }
+            return comment;
+          }),
+        );
+      }
+    },
+    [videoId],
+  );
 
   const handleReply = useCallback((commentId: string, userName: string) => {
     setReplyingTo(commentId);
@@ -230,8 +237,8 @@ function CommentsPage() {
 
         if (replyingTo) {
           if (!isMounted()) return;
-          setComments(prev =>
-            prev.map(comment => {
+          setComments((prev) =>
+            prev.map((comment) => {
               if (comment.id === replyingTo) {
                 return {
                   ...comment,
@@ -239,11 +246,11 @@ function CommentsPage() {
                 };
               }
               return comment;
-            })
+            }),
           );
         } else {
           if (!isMounted()) return;
-          setComments(prev => [addedComment, ...prev]);
+          setComments((prev) => [addedComment, ...prev]);
         }
       }
     } catch {
@@ -258,76 +265,69 @@ function CommentsPage() {
     }
   }, [newComment, videoId, sending, replyingTo, user]);
 
-  const renderComment = useCallback((comment: Comment, isReply = false) => (
-    <View key={comment.id} style={[styles.commentItem, isReply && styles.replyItem]}>
-      <View style={styles.avatar}>
-        <ThemedText style={styles.avatarText}>{comment.user.avatar}</ThemedText>
-      </View>
-      <View style={styles.commentContent}>
-        <View style={styles.commentHeader}>
-          <ThemedText style={styles.userName}>
-            {comment.user.name}
-            {comment.user.verified && (
-              <Ionicons name="checkmark-circle" size={12} color={Colors.info} />
-            )}
-          </ThemedText>
-          <ThemedText style={styles.commentTime}>{comment.time}</ThemedText>
+  const renderComment = useCallback(
+    (comment: Comment, isReply = false) => (
+      <View key={comment.id} style={[styles.commentItem, isReply && styles.replyItem]}>
+        <View style={styles.avatar}>
+          <ThemedText style={styles.avatarText}>{comment.user.avatar}</ThemedText>
         </View>
-        <ThemedText style={styles.commentText}>{comment.text}</ThemedText>
-        <View style={styles.commentActions}>
-          <Pressable
-            style={styles.actionButton}
-            onPress={() => handleLike(comment.id)}
-          >
-            <Ionicons
-              name={comment.isLiked ? 'heart' : 'heart-outline'}
-              size={16}
-              color={comment.isLiked ? Colors.error : colors.text.tertiary}
-            />
-            <ThemedText style={[
-              styles.actionText,
-              comment.isLiked && { color: Colors.error },
-            ]}>
-              {comment.likes}
+        <View style={styles.commentContent}>
+          <View style={styles.commentHeader}>
+            <ThemedText style={styles.userName}>
+              {comment.user.name}
+              {comment.user.verified && <Ionicons name="checkmark-circle" size={12} color={Colors.info} />}
             </ThemedText>
-          </Pressable>
-          {!isReply && (
-            <Pressable
-              style={styles.actionButton}
-              onPress={() => handleReply(comment.id, comment.user.name)}
-            >
-              <ThemedText style={styles.replyText}>Reply</ThemedText>
+            <ThemedText style={styles.commentTime}>{comment.time}</ThemedText>
+          </View>
+          <ThemedText style={styles.commentText}>{comment.text}</ThemedText>
+          <View style={styles.commentActions}>
+            <Pressable style={styles.actionButton} onPress={() => handleLike(comment.id)}>
+              <Ionicons
+                name={comment.isLiked ? 'heart' : 'heart-outline'}
+                size={16}
+                color={comment.isLiked ? Colors.error : colors.text.tertiary}
+              />
+              <ThemedText style={[styles.actionText, comment.isLiked && { color: Colors.error }]}>
+                {comment.likes}
+              </ThemedText>
             </Pressable>
-          )}
-          <Pressable style={styles.actionButton}>
-            <Ionicons name="ellipsis-horizontal" size={16} color={colors.text.tertiary} />
-          </Pressable>
+            {!isReply && (
+              <Pressable style={styles.actionButton} onPress={() => handleReply(comment.id, comment.user.name)}>
+                <ThemedText style={styles.replyText}>Reply</ThemedText>
+              </Pressable>
+            )}
+            <Pressable style={styles.actionButton}>
+              <Ionicons name="ellipsis-horizontal" size={16} color={colors.text.tertiary} />
+            </Pressable>
+          </View>
         </View>
       </View>
-    </View>
-  ), [handleLike, handleReply]);
+    ),
+    [handleLike, handleReply],
+  );
 
-  const renderCommentWithReplies = useCallback(({ item }: { item: Comment }) => (
-    <View>
-      {renderComment(item)}
-      {item.replies && item.replies.length > 0 && (
-        <View style={styles.repliesContainer}>
-          {item.replies.map(reply => renderComment(reply, true))}
-        </View>
-      )}
-    </View>
-  ), [renderComment]);
+  const renderCommentWithReplies = useCallback(
+    ({ item }: { item: Comment }) => (
+      <View>
+        {renderComment(item)}
+        {item.replies && item.replies.length > 0 && (
+          <View style={styles.repliesContainer}>{item.replies.map((reply) => renderComment(reply, true))}</View>
+        )}
+      </View>
+    ),
+    [renderComment],
+  );
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="close" size={24} color={colors.text.primary} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Comments</ThemedText>
@@ -340,7 +340,7 @@ function CommentsPage() {
       <FlashList
         data={comments}
         renderItem={renderCommentWithReplies}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
@@ -384,12 +384,14 @@ function CommentsPage() {
       {replyingTo && (
         <View style={styles.replyIndicator}>
           <ThemedText style={styles.replyIndicatorText}>
-            Replying to {comments.find(c => c.id === replyingTo)?.user.name}
+            Replying to {comments.find((c) => c.id === replyingTo)?.user.name}
           </ThemedText>
-          <Pressable onPress={() => {
-            setReplyingTo(null);
-            setNewComment('');
-          }}>
+          <Pressable
+            onPress={() => {
+              setReplyingTo(null);
+              setNewComment('');
+            }}
+          >
             <Ionicons name="close" size={18} color={colors.text.tertiary} />
           </Pressable>
         </View>
@@ -417,11 +419,7 @@ function CommentsPage() {
           {sending ? (
             <ActivityIndicator size="small" color={Colors.primary[600]} />
           ) : (
-            <Ionicons
-              name="send"
-              size={20}
-              color={newComment.trim() ? Colors.primary[600] : colors.text.tertiary}
-            />
+            <Ionicons name="send" size={20} color={newComment.trim() ? Colors.primary[600] : colors.text.tertiary} />
           )}
         </Pressable>
       </View>

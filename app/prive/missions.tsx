@@ -1,9 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View, Text, StyleSheet, ScrollView, Pressable,
-  ActivityIndicator, RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS } from '@/components/prive/priveTheme';
 import { PriveEmptyState } from '@/components/prive/PriveEmptyState';
@@ -28,6 +25,8 @@ function MissionsScreen() {
   const [claiming, setClaiming] = useState<string | null>(null);
   const [completing, setCompleting] = useState<string | null>(null);
 
+  const isMounted = useIsMounted();
+
   const fetchData = useCallback(async () => {
     try {
       setError(null);
@@ -42,22 +41,30 @@ function MissionsScreen() {
     } catch (err: any) {
       if (!isMounted()) return;
       setError(err?.message || 'Failed to load missions');
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
     }
-    finally { setIsLoading(false); setIsRefreshing(false); }
-  }, []);
+  }, [isMounted]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
-  const isMounted = useIsMounted();
-  useEffect(() => { fetchData(); }, [fetchData]);
-
-  const onRefresh = () => { setIsRefreshing(true); fetchData(); };
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    fetchData();
+  };
 
   const handleClaim = async (id: string) => {
     setClaiming(id);
     try {
       const res = await priveApi.claimMission(id);
       if (res.success) await fetchData();
-    } catch (e) { catchAndReport(e, setError, 'Missions/claimMission'); }
-    finally { setClaiming(null); }
+    } catch (e) {
+      catchAndReport(e, setError, 'Missions/claimMission');
+    } finally {
+      setClaiming(null);
+    }
   };
 
   const handleComplete = async (id: string) => {
@@ -65,8 +72,11 @@ function MissionsScreen() {
     try {
       const res = await priveApi.completeMission(id);
       if (res.success) await fetchData();
-    } catch (e) { catchAndReport(e, setError, 'Missions/completeMission'); }
-    finally { setCompleting(null); }
+    } catch (e) {
+      catchAndReport(e, setError, 'Missions/completeMission');
+    } finally {
+      setCompleting(null);
+    }
   };
 
   const tabs: { key: Tab; label: string; count: number }[] = [
@@ -93,7 +103,10 @@ function MissionsScreen() {
   if (isLoading) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <CardGridSkeleton />
       </View>
     );
@@ -102,12 +115,25 @@ function MissionsScreen() {
   if (error && !available.length && !active.length && !completed.length) {
     return (
       <View style={styles.container}>
-        <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+        <LinearGradient
+          colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+          style={StyleSheet.absoluteFill}
+        />
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
-          <Text style={{ color: PRIVE_COLORS.status.error, fontSize: 14, textAlign: 'center', marginBottom: 16 }}>{error}</Text>
+          <Text style={{ color: PRIVE_COLORS.status.error, fontSize: 14, textAlign: 'center', marginBottom: 16 }}>
+            {error}
+          </Text>
           <Pressable
-            style={{ paddingHorizontal: 24, paddingVertical: 12, backgroundColor: PRIVE_COLORS.transparent.gold15, borderRadius: PRIVE_RADIUS.lg }}
-            onPress={() => { setIsLoading(true); fetchData(); }}
+            style={{
+              paddingHorizontal: 24,
+              paddingVertical: 12,
+              backgroundColor: PRIVE_COLORS.transparent.gold15,
+              borderRadius: PRIVE_RADIUS.lg,
+            }}
+            onPress={() => {
+              setIsLoading(true);
+              fetchData();
+            }}
           >
             <Text style={{ color: PRIVE_COLORS.gold.primary, fontSize: 14, fontWeight: '600' }}>Retry</Text>
           </Pressable>
@@ -118,11 +144,14 @@ function MissionsScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]} style={StyleSheet.absoluteFill} />
+      <LinearGradient
+        colors={[colors.neutral[800], colors.neutral[900], colors.midGrayAlt]}
+        style={StyleSheet.absoluteFill}
+      />
 
       {/* Tab Switcher */}
       <View style={styles.tabBar}>
-        {tabs.map(tab => (
+        {tabs.map((tab) => (
           <Pressable
             key={tab.key}
             style={[styles.tab, activeTab === tab.key && styles.tabActive]}
@@ -139,7 +168,9 @@ function MissionsScreen() {
         contentContainerStyle={{ paddingBottom: 120 }}
         style={styles.scroll}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} tintColor={PRIVE_COLORS.gold.primary} />
+        }
       >
         {getMissionData().length === 0 ? (
           <PriveEmptyState
@@ -166,7 +197,13 @@ function MissionsScreen() {
                     <Text style={styles.missionDesc}>{mission.shortDescription || mission.description}</Text>
                   </View>
                   {isActive && (
-                    <PriveProgressRing progress={progressPct} size={44} strokeWidth={4} label={`${progress}`} sublabel={`/${target}`} />
+                    <PriveProgressRing
+                      progress={progressPct}
+                      size={44}
+                      strokeWidth={4}
+                      label={`${progress}`}
+                      sublabel={`/${target}`}
+                    />
                   )}
                 </View>
 
@@ -180,9 +217,7 @@ function MissionsScreen() {
                   {mission.endDate && !isCompleted && (
                     <Text style={styles.timerText}>{getRemainingTime(mission.endDate)}</Text>
                   )}
-                  {mission.targetPillar && (
-                    <Text style={styles.pillarBadge}>{mission.targetPillar}</Text>
-                  )}
+                  {mission.targetPillar && <Text style={styles.pillarBadge}>{mission.targetPillar}</Text>}
                 </View>
 
                 {/* CTA */}
@@ -192,9 +227,7 @@ function MissionsScreen() {
                     onPress={() => handleClaim(mission._id)}
                     disabled={claiming === mission._id}
                   >
-                    <Text style={styles.ctaText}>
-                      {claiming === mission._id ? 'Claiming...' : 'Claim Mission'}
-                    </Text>
+                    <Text style={styles.ctaText}>{claiming === mission._id ? 'Claiming...' : 'Claim Mission'}</Text>
                   </Pressable>
                 )}
                 {isActive && item.status === 'completed' && !item.rewardDistributed && (

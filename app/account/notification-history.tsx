@@ -3,7 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Pressable, ActivityIndicator, RefreshControl, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import notificationService from '../../services/notificationService';
 import { NotificationListSkeleton } from '@/components/skeletons';
@@ -36,6 +36,14 @@ function NotificationHistoryScreen() {
   useEffect(() => {
     loadNotificationHistory();
   }, []);
+
+  // Refresh when screen regains focus so new notifications from other screens
+  // (e.g. a push tap that opened a different screen) appear immediately
+  useFocusEffect(
+    useCallback(() => {
+      loadNotificationHistory(1, true);
+    }, []),
+  );
 
   const loadNotificationHistory = async (pageNum = 1, isRefresh = false) => {
     try {

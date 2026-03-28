@@ -166,7 +166,7 @@ function AddedToCartModal({
               accessibilityHint="Double tap to view your shopping cart"
             >
               <LinearGradient
-                colors={[colors.brand.purpleLight, colors.brand.purple]}
+                colors={[colors.nileBlue, colors.brand.nileBlueLight]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.viewCartGradient}
@@ -190,7 +190,7 @@ function AddedToCartModal({
 
           {/* Related Products Suggestion */}
           <View style={styles.suggestionContainer}>
-            <Ionicons name="gift-outline" size={18} color={colors.brand.purpleLight} />
+            <Ionicons name="gift-outline" size={18} color={colors.nileBlue} />
             <Text style={styles.suggestionText}>
               Frequently bought together items available
             </Text>
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
   productPrice: {
     fontSize: 18,
     fontWeight: '700',
-    color: colors.brand.purpleLight,
+    color: colors.nileBlue,
     marginBottom: 4,
   },
   productQuantity: {
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   viewCartButton: {
     borderRadius: 14,
     overflow: 'hidden',
-    shadowColor: colors.brand.purpleLight,
+    shadowColor: colors.nileBlue,
     shadowOffset: {
       width: 0,
       height: 4,
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
   },
   suggestionText: {
     fontSize: 13,
-    color: colors.brand.purpleLight,
+    color: colors.nileBlue,
     fontWeight: '500',
   },
 });

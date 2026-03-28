@@ -188,9 +188,15 @@ export default function ConfirmationScreen() {
           <Ionicons name="alert-circle-outline" size={52} color="#EF4444" />
           <Text style={styles.errorTitle}>Order not found</Text>
           <Text style={styles.errorSub}>{error}</Text>
-          <TouchableOpacity onPress={() => router.replace(`/order/${storeSlug}`)}>
-            <Text style={styles.backLink}>← Back to menu</Text>
-          </TouchableOpacity>
+          {storeSlug ? (
+            <TouchableOpacity onPress={() => router.replace(`/order/${storeSlug}`)}>
+              <Text style={styles.backLink}>← Back to menu</Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => router.replace('/(tabs)')}>
+              <Text style={styles.backLink}>← Go home</Text>
+            </TouchableOpacity>
+          )}
         </View>
       </SafeAreaView>
     );
@@ -282,7 +288,7 @@ export default function ConfirmationScreen() {
             </View>
           )}
 
-          {isTerminal && order.status === 'completed' && (
+          {isTerminal && order.status === 'completed' && storeSlug && (
             <TouchableOpacity
               style={styles.orderAgainBtn}
               onPress={() =>

@@ -41,7 +41,7 @@ const METHODS: {
     subtitle: `Use your ${BRAND.COIN_NAME} balance`,
     icon: 'wallet-outline',
     iconColor: colors.background.primary,
-    iconBg: colors.brand.purpleLight,
+    iconBg: colors.nileBlue,
   },
   {
     key: 'razorpay',
@@ -268,7 +268,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
     width: '100%',
-    backgroundColor: colors.brand.purple,
+    backgroundColor: colors.nileBlue,
     borderRadius: 12,
     paddingVertical: 14,
   },
