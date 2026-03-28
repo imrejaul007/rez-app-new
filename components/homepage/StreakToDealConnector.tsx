@@ -132,7 +132,10 @@ const StreakToDealConnector: React.FC<StreakToDealConnectorProps> = ({ streakCou
         <View style={styles.dealInfo}>
           <Text style={styles.dealName} numberOfLines={1}>{dealStore.name}</Text>
           <Text style={styles.dealSub} numberOfLines={1}>
-            {dealStore.earningOpportunities?.[0]?.title ?? `${dealStore.totalCashbackPercent}% cashback`}
+            {dealStore.earningOpportunities?.[0]?.title ??
+              (dealStore.totalCashbackPercent > 0
+                ? `${dealStore.totalCashbackPercent}% cashback`
+                : 'Earn REZ coins here')}
           </Text>
           <View style={styles.streakBonusPill}>
             <Ionicons name="flame" size={11} color={NAVY} />

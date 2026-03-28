@@ -69,12 +69,8 @@ import streakApi from '@/services/streakApi';
 import HeroCard from '@/components/homepage/HeroCard';
 import CoinExpiryBanner from '@/components/wallet/CoinExpiryBanner';
 
-// ── Habit loop UI plan components ────────────────────────────────────────────
-import PersonaDetectionOnboarding from '@/components/homepage/PersonaDetectionOnboarding';
-import MicroMomentDecisionCard from '@/components/homepage/MicroMomentDecisionCard';
-import StreakToDealConnector from '@/components/homepage/StreakToDealConnector';
-import CoinExpiryUrgencyBanner from '@/components/homepage/CoinExpiryUrgencyBanner';
-import type { TimeAwarePersona } from '@/components/homepage/TimeAwareContextPill';
+// NOTE: PersonaDetectionOnboarding, MicroMomentDecisionCard, StreakToDealConnector,
+// CoinExpiryUrgencyBanner are rendered inside NearUTabContent — not here.
 
 function lazyWithRetry<T extends React.ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
@@ -257,14 +253,6 @@ function HomeScreen() {
   const authActions = useAuthActions();
   const userPoints = useRezBalance();
   const { featureLevel, statedIdentity } = useUserIdentityStore();
-
-  // Derive TimeAwarePersona from statedIdentity for personalized copy
-  // 'corporate' → 'employee', 'student' → 'student', everything else → 'general'
-  const persona: TimeAwarePersona = React.useMemo(() => {
-    if (statedIdentity === 'student') return 'student';
-    if (statedIdentity === 'corporate') return 'employee';
-    return 'general';
-  }, [statedIdentity]);
 
   const walletData = useWalletData();
   const refreshWallet = useRefreshWallet();
@@ -1095,18 +1083,9 @@ function HomeScreen() {
             </FeatureErrorBoundary>
           )}
 
-          {/* CoinExpiryBanner — shown when wallet has expiring promo coins (near-u tab only) */}
-          {activeTab === 'near-u' &&
-            (walletData as any)?.promoCoinBalance > 0 &&
-            (walletData as any)?.promoCoinDaysLeft != null && (
-              <View style={{ paddingHorizontal: spacing.base, paddingBottom: spacing.sm }}>
-                <CoinExpiryBanner
-                  expiringCount={(walletData as any).promoCoinBalance}
-                  daysLeft={(walletData as any).promoCoinDaysLeft}
-                  onPress={handleCoinPress}
-                />
-              </View>
-            )}
+          {/* CoinExpiryUrgencyBanner is now rendered inside NearUTabContent
+              using walletData.coins (typed) instead of promoCoinBalance (untyped any cast).
+              The old CoinExpiryBanner above was silently broken — field doesn't exist on WalletData. */}
 
           {/* Mall Hero Banner */}
           {activeTab === 'mall' && (

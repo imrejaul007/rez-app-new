@@ -144,7 +144,6 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
   // Derive persona flags from the hook
   const isStudent = persona.id === 'student';
   const isEmployee = persona.id === 'corporate';
-  const isGeneral = persona.id === 'general';
 
   // Time-aware flags for employee sections
   const _now = new Date();

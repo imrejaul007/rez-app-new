@@ -104,8 +104,9 @@ const MicroMomentDecisionCard: React.FC<MicroMomentDecisionCardProps> = ({
   const locationState = useLocationStore(s => s.state);
   const coords = locationState.currentLocation?.coordinates;
 
-  const [stores, setStores]     = useState<NearbyStore[]>([]);
-  const [loading, setLoading]   = useState(true);
+  const [stores, setStores]       = useState<NearbyStore[]>([]);
+  // Start as loading only if we already have coords — prevents a flash when location is unknown
+  const [loading, setLoading]     = useState(() => !!(coords?.latitude && coords?.longitude));
   const [fetchedAt, setFetchedAt] = useState(0);
 
   const timeSlot = overrideHour != null
