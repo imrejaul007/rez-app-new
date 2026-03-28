@@ -54,8 +54,8 @@ const STATE_BADGE_CONFIG: Record<UserCampaignState, { label: string; bg: string;
 // ============================================
 
 function getRewardDisplay(campaign: BonusZoneCampaign): string {
-  const { type, value } = campaign.reward;
-  const badge = campaign.display.badgeText;
+  const { type, value } = campaign.reward ?? {};
+  const badge = campaign.display?.badgeText;
   if (badge) return badge;
 
   switch (type) {
@@ -94,8 +94,9 @@ interface BonusZoneCardProps {
 
 function BonusZoneCard({ campaign, currencySymbol = 'د.إ' }: BonusZoneCardProps) {
   const router = useRouter();
+  const scheduleEndTime = campaign.schedule?.endTime ?? new Date(Date.now() + 86400000).toISOString();
   const [timeRemaining, setTimeRemaining] = useState(() =>
-    getTimeRemaining(campaign.schedule.endTime)
+    getTimeRemaining(scheduleEndTime)
   );
   const urgentRef = useRef(timeRemaining.urgent);
   urgentRef.current = timeRemaining.urgent;
@@ -105,7 +106,7 @@ function BonusZoneCard({ campaign, currencySymbol = 'د.إ' }: BonusZoneCardProp
     let timerId: ReturnType<typeof setTimeout>;
 
     const tick = () => {
-      const next = getTimeRemaining(campaign.schedule.endTime);
+      const next = getTimeRemaining(scheduleEndTime);
       setTimeRemaining(next);
       if (!next.expired) {
         timerId = setTimeout(tick, next.urgent ? 1000 : 60000);
@@ -116,7 +117,7 @@ function BonusZoneCard({ campaign, currencySymbol = 'د.إ' }: BonusZoneCardProp
     timerId = setTimeout(tick, urgentRef.current ? 1000 : 60000);
 
     return () => clearTimeout(timerId);
-  }, [campaign.schedule.endTime]);
+  }, [scheduleEndTime]);
 
   const handlePress = useCallback(() => {
     // Navigate to campaign detail page — even for not_eligible (shows reasons)
@@ -136,7 +137,7 @@ function BonusZoneCard({ campaign, currencySymbol = 'د.إ' }: BonusZoneCardProp
   const showScarcity = globalRemaining != null && globalRemaining > 0 && globalRemaining <= 100;
 
   // Determine icon: emoji or partner logo
-  const hasPartnerLogo = campaign.fundingSource?.partnerLogo || campaign.display.partnerLogo;
+  const hasPartnerLogo = campaign.fundingSource?.partnerLogo || campaign.display?.partnerLogo;
 
   return (
     <Pressable
@@ -156,7 +157,7 @@ function BonusZoneCard({ campaign, currencySymbol = 'د.إ' }: BonusZoneCardProp
             cachePolicy="memory-disk"
           />
         ) : (
-          <Text style={styles.iconEmoji}>{campaign.display.icon || '🎁'}</Text>
+          <Text style={styles.iconEmoji}>{campaign.display?.icon || '🎁'}</Text>
         )}
       </View>
 

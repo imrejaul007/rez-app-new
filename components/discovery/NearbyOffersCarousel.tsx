@@ -132,11 +132,13 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, onPress, showUrgencyTags }
         )}
 
         {/* Savings chip */}
-        <View style={styles.savingsChip}>
-          <ThemedText style={styles.savingsText}>
-            Save Rs.{offer.savings.toLocaleString('en-IN')}
-          </ThemedText>
-        </View>
+        {offer.savings != null && (
+          <View style={styles.savingsChip}>
+            <ThemedText style={styles.savingsText}>
+              Save Rs.{(offer.savings ?? 0).toLocaleString('en-IN')}
+            </ThemedText>
+          </View>
+        )}
       </View>
     </Pressable>
   );

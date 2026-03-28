@@ -85,23 +85,12 @@ const WebVideoPlayer: React.FC<{ uri: string; poster?: string }> = ({ uri, poste
   );
 };
 
-// Video component that works on both web and native
-const AutoPlayVideo: React.FC<{
+// Native-only video player — hooks are always called (no conditional hooks violation)
+const NativeVideoPlayer: React.FC<{
   uri: string;
   poster?: string;
   style?: any;
 }> = ({ uri, poster, style }) => {
-
-  // For web, use native HTML5 video element
-  if (Platform.OS === 'web') {
-    return (
-      <View style={[styles.storeVideo, style]}>
-        <WebVideoPlayer uri={uri} poster={poster} />
-      </View>
-    );
-  }
-
-  // For native (iOS/Android), use expo-av Video
   const videoRef = useRef<Video>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [showPoster, setShowPoster] = useState(true);
@@ -122,6 +111,7 @@ const AutoPlayVideo: React.FC<{
           if (!isMounted()) return;
           setShowPoster(false);
         } catch (err) {
+          // ignore playback errors
         }
       }
     };
@@ -155,6 +145,27 @@ const AutoPlayVideo: React.FC<{
   );
 };
 
+// Video component that works on both web and native
+// NOTE: All hooks are called unconditionally in the child component above to
+// comply with the Rules of Hooks (no hooks after a conditional return).
+const AutoPlayVideo: React.FC<{
+  uri: string;
+  poster?: string;
+  style?: any;
+}> = ({ uri, poster, style }) => {
+  // For web, use native HTML5 video element
+  if (Platform.OS === 'web') {
+    return (
+      <View style={[styles.storeVideo, style]}>
+        <WebVideoPlayer uri={uri} poster={poster} />
+      </View>
+    );
+  }
+
+  // For native (iOS/Android), delegate to NativeVideoPlayer which owns all hooks
+  return <NativeVideoPlayer uri={uri} poster={poster} style={style} />;
+};
+
 interface TrendingStore {
   id: string;
   name: string;
@@ -186,7 +197,7 @@ const transformStoreData = (backendStore: any): TrendingStore => {
     image = backendStore.banner[0];
   } else if (backendStore.banner && typeof backendStore.banner === 'string' && backendStore.banner) {
     image = backendStore.banner;
-  } else if (backendStore.logo && backendStore.logo.trim()) {
+  } else if (backendStore.logo && typeof backendStore.logo === 'string' && backendStore.logo.trim()) {
     image = backendStore.logo;
   } else if (backendStore.image) {
     image = Array.isArray(backendStore.image) && backendStore.image.length > 0
@@ -282,9 +293,16 @@ const TrendingNearYou: React.FC<TrendingNearYouProps> = ({
       });
 
       if (response.success && response.data?.stores) {
-        const transformedStores = response.data.stores
+        const transformedStores = (response.data.stores ?? [])
           .filter((store: any) => store && store._id) // Filter out undefined/null stores
-          .map(transformStoreData);
+          .map((store: any) => {
+            try {
+              return transformStoreData(store);
+            } catch {
+              return null;
+            }
+          })
+          .filter(Boolean) as TrendingStore[];
         if (!isMounted()) return;
         setStores(transformedStores);
       } else {

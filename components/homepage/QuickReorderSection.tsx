@@ -106,7 +106,7 @@ const QuickReorderSection: React.FC<QuickReorderSectionProps> = ({ limit = 5 }) 
               </ThemedText>
 
               <ThemedText style={styles.price}>
-                {currencySymbol}{item.currentPrice?.toFixed(2)}
+                {currencySymbol}{item.currentPrice != null ? item.currentPrice.toFixed(2) : '–'}
               </ThemedText>
 
               {item.isAvailable ? (

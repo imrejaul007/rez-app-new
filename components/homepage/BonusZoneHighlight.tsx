@@ -39,8 +39,8 @@ const BonusZoneHighlight: React.FC = () => {
       try {
         const response = await bonusZoneApi.getBonusCampaigns(regionState?.currentRegion);
         if (!cancelled && response.success && response.data?.campaigns) {
-          const featuredCampaigns = response.data.campaigns
-            .filter(c => c.display.featured)
+          const featuredCampaigns = (response.data.campaigns ?? [])
+            .filter(c => c && c.display?.featured)
             .slice(0, MAX_FEATURED);
           setFeatured(featuredCampaigns);
         }

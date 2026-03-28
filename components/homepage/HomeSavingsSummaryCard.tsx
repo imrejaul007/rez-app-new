@@ -78,7 +78,7 @@ const HomeSavingsSummaryCard: React.FC<HomeSavingsSummaryCardProps> = ({
             <>
               <Text style={styles.label}>{savingsLabel}</Text>
               <Text style={styles.amount}>
-                {currencySymbol}{thisMonthSaved.toLocaleString()}
+                {currencySymbol}{(thisMonthSaved ?? 0).toLocaleString()}
               </Text>
 
               {unlockAmount != null && unlockAmount > 0 && (

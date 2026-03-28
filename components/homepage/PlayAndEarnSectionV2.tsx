@@ -141,6 +141,7 @@ const PlayAndEarnSectionV2: React.FC = () => {
   };
 
   const handleGamePress = (game: AvailableGame) => {
+    if (!game?.path) return;
     router.push(game.path as any);
   };
 

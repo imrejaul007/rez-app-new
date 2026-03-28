@@ -32,18 +32,22 @@ const COLORS = {
 
 const EarnNuqtaCoinsSection: React.FC = () => {
   const router = useRouter();
-  const { setActiveTab, scrollToTop } = useHomeTab();
+  const homeTab = useHomeTab();
+  const setActiveTab = homeTab?.setActiveTab;
+  const scrollToTop = homeTab?.scrollToTop;
 
   const handleViewAll = () => {
     router.push('/(tabs)/earn');
   };
 
   const handleOnlineShoppingPress = () => {
-    setActiveTab('cash');
+    setActiveTab?.('cash');
     // Scroll to top after switching tab
-    setTimeout(() => {
-      scrollToTop();
-    }, 100);
+    if (scrollToTop) {
+      setTimeout(() => {
+        scrollToTop();
+      }, 100);
+    }
   };
 
   return (

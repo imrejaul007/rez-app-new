@@ -113,7 +113,10 @@ const CampusHotDealsStrip: React.FC<CampusHotDealsStripProps> = ({ campusId = ''
     getCampusTrending(campusId)
       .then((data) => {
         if (!isMounted()) return;
-        setItems(data);
+        setItems(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        // silently fail — placeholder returned by service, or empty state shown
       })
       .finally(() => {
         if (!isMounted()) return;

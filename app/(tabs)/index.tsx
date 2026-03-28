@@ -1064,17 +1064,19 @@ function HomeScreen() {
           {/* Section 4 / HeroCard: shown in header gradient for Near U tab.
               HeroCard (Agent 1) replaces the old HeroBanner for near-u. */}
           {activeTab === 'near-u' && (
-            <HeroCard
-              totalSaved={walletData?.savingsInsights?.totalSaved ?? 0}
-              savingsThisMonth={walletData?.savingsInsights?.thisMonth ?? 0}
-              unlockAmount={580}
-              missedAmount={missedSavings?.totalMissedThisMonth ?? 0}
-              expiringCoins={(walletData as any)?.promoCoinBalance ?? 0}
-              onScanPay={handleSearchPress}
-              onViewWallet={handleCoinPress}
-              onClaimPress={() => router.push('/offers' as any)}
-              onUseCoinPress={handleCoinPress}
-            />
+            <FeatureErrorBoundary featureName="Hero Card" compact={true}>
+              <HeroCard
+                totalSaved={walletData?.savingsInsights?.totalSaved ?? 0}
+                savingsThisMonth={walletData?.savingsInsights?.thisMonth ?? 0}
+                unlockAmount={580}
+                missedAmount={missedSavings?.totalMissedThisMonth ?? 0}
+                expiringCoins={(walletData as any)?.promoCoinBalance ?? 0}
+                onScanPay={handleSearchPress}
+                onViewWallet={handleCoinPress}
+                onClaimPress={() => router.push('/offers' as any)}
+                onUseCoinPress={handleCoinPress}
+              />
+            </FeatureErrorBoundary>
           )}
 
           {/* CoinExpiryBanner — shown when wallet has expiring promo coins (near-u tab only) */}
@@ -1185,7 +1187,11 @@ function HomeScreen() {
         )}
 
         {/* Stories Row — What's New (Instagram-style) */}
-        {activeTab !== 'prive' && <StoriesRow variant={tabStyles.whatsNewVariant} />}
+        {activeTab !== 'prive' && (
+          <FeatureErrorBoundary featureName="Stories" compact={true}>
+            <StoriesRow variant={tabStyles.whatsNewVariant} />
+          </FeatureErrorBoundary>
+        )}
 
         {/* PersonalizedHeroBanner moved to header as HeroCard (Section 4).
             Kept here for non-near-u tabs if needed by other agents. */}
@@ -1225,29 +1231,31 @@ function HomeScreen() {
 
         {/* Phase 1: Habit Engine — Streak + Score + Nearby Offers */}
         {activeTab === 'near-u' && (
-          <View style={viewStyles.streakScoreRow}>
-            {streakCount > 0 && (
-              <Pressable
-                onPress={() => router.push('/smart-spending')}
-                style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
-                android_ripple={{ color: 'rgba(212,175,55,0.12)', borderless: false }}
-                accessibilityRole="button"
-                accessibilityLabel={`${streakCount}-day streak. Tap to view smart spending.`}
-              >
-                <StreakFireIcon streakDays={streakCount} size="small" />
-                <Text style={{ fontSize: 13, fontWeight: '700', color: '#FFC857' }}>{streakCount}d streak</Text>
-              </Pressable>
-            )}
-            <View style={{ flex: 1 }}>
-              <RezScoreCard
-                score={0}
-                tier="Beginner"
-                trend="stable"
-                percentile={0}
-                onPress={() => router.push('/rez-score')}
-              />
+          <FeatureErrorBoundary featureName="Habit Engine" compact={true}>
+            <View style={viewStyles.streakScoreRow}>
+              {streakCount > 0 && (
+                <Pressable
+                  onPress={() => router.push('/smart-spending')}
+                  style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+                  android_ripple={{ color: 'rgba(212,175,55,0.12)', borderless: false }}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${streakCount}-day streak. Tap to view smart spending.`}
+                >
+                  <StreakFireIcon streakDays={streakCount} size="small" />
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#FFC857' }}>{streakCount}d streak</Text>
+                </Pressable>
+              )}
+              <View style={{ flex: 1 }}>
+                <RezScoreCard
+                  score={0}
+                  tier="Beginner"
+                  trend="stable"
+                  percentile={0}
+                  onPress={() => router.push('/rez-score')}
+                />
+              </View>
             </View>
-          </View>
+          </FeatureErrorBoundary>
         )}
 
         {/* Content */}
