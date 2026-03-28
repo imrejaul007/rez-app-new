@@ -471,9 +471,9 @@ const HeroCard: React.FC<HeroCardProps> = ({
 
 const styles = StyleSheet.create({
   shadow: {
-    marginHorizontal: spacing.base,
+    marginHorizontal: 0,
     marginBottom: spacing.md,
-    borderRadius: borderRadius.lg,
+    borderRadius: 0,
     ...Platform.select({
       ios: {
         shadowColor: '#000',

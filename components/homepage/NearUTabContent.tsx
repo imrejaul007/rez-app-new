@@ -179,15 +179,15 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
       {!isAreaServiceable && !bannerDismissed && (
         <View style={{
           backgroundColor: '#FFF8E1',
-          borderRadius: 14,
+          borderRadius: 0,
           padding: 14,
-          marginHorizontal: 16,
-          marginTop: 12,
+          marginHorizontal: 0,
+          marginTop: 0,
           marginBottom: 4,
           flexDirection: 'row',
           alignItems: 'center',
           gap: 10,
-          borderWidth: 1,
+          borderBottomWidth: 1,
           borderColor: '#FFD54F',
         }}>
           <Ionicons name="location-outline" size={22} color="#5D4037" />
