@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Platform,
   Dimensions,
+  Animated,
 } from 'react-native';
 import { Image as ExpoImage } from 'expo-image';
 import { useRouter, usePathname } from 'expo-router';
@@ -22,7 +23,32 @@ import { useTheme } from '@/hooks/useTheme';
 import { colors } from '@/constants/theme';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
 
-// Segment-aware Deals tab config — routes verified users to their exclusive offers page
+// ─── Icon pairs: filled (active) / outline (inactive) ────────────────────────
+const ICON_MAP: Record<string, { active: string; inactive: string }> = {
+  // Default tabs
+  'home':                   { active: 'home',            inactive: 'home-outline' },
+  'compass-outline':        { active: 'compass',         inactive: 'compass-outline' },
+  'flash-outline':          { active: 'flash',           inactive: 'flash-outline' },
+  'person-circle-outline':  { active: 'person-circle',   inactive: 'person-circle-outline' },
+  // Mall tabs
+  'search':                 { active: 'search',          inactive: 'search-outline' },
+  'pricetag':               { active: 'pricetag',        inactive: 'pricetag-outline' },
+  'person':                 { active: 'person',          inactive: 'person-outline' },
+  // Cash Store tabs
+  'wallet-outline':         { active: 'wallet',          inactive: 'wallet-outline' },
+  'server-outline':         { active: 'server',          inactive: 'server-outline' },
+  'person-outline':         { active: 'person',          inactive: 'person-outline' },
+  // Segment-specific
+  'school-outline':         { active: 'school',          inactive: 'school-outline' },
+  'briefcase-outline':      { active: 'briefcase',       inactive: 'briefcase-outline' },
+  'medkit-outline':         { active: 'medkit',          inactive: 'medkit-outline' },
+  'shield-outline':         { active: 'shield',          inactive: 'shield-outline' },
+  'book-outline':           { active: 'book',            inactive: 'book-outline' },
+  'heart-outline':          { active: 'heart',           inactive: 'heart-outline' },
+  'business-outline':       { active: 'business',        inactive: 'business-outline' },
+};
+
+// ─── Segment-aware Deals tab config — routes verified users to their exclusive offers page
 const SEGMENT_DEALS_TAB: Record<string, { name: string; route: string; icon: string }> = {
   verified_student:    { name: 'Student',  route: '/offers/student',          icon: 'school-outline' },
   verified_employee:   { name: 'My Perks', route: '/offers/corporate',        icon: 'briefcase-outline' },
@@ -323,8 +349,12 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   // Render a regular tab item
   const renderTab = (tab: { name: string; route: string; icon: string; isActive: boolean; showBadge?: boolean }, index?: number) => {
     // Theme-aware tab colors
-    const activeColor = isPriveActive ? colors.brand.goldAccent : isDark ? colors.lightMustard : colors.nileBlue;
-    const inactiveColor = isPriveActive ? '#A0A0A0' : isDark ? colors.neutral[400] : colors.neutral[400];
+    const activeColor   = isPriveActive ? colors.brand.goldAccent : isDark ? colors.lightMustard : colors.nileBlue;
+    const inactiveColor = isPriveActive ? '#A0A0A0'               : isDark ? colors.neutral[400] : '#94A3B8';
+
+    // Resolved icon: filled when active, outline when inactive
+    const iconPair = ICON_MAP[tab.icon] ?? { active: tab.icon, inactive: tab.icon };
+    const resolvedIcon = tab.isActive ? iconPair.active : iconPair.inactive;
 
     return (
       <Pressable
@@ -336,24 +366,48 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
         accessibilityRole="tab"
         accessibilityState={{ selected: tab.isActive }}
       >
-        <View>
+        {/* Active background pill */}
+        {tab.isActive && (
+          <View style={[
+            styles.activePill,
+            isPriveActive && { backgroundColor: 'rgba(201,169,98,0.12)' },
+            isDark && !isPriveActive && { backgroundColor: 'rgba(255,200,87,0.10)' },
+          ]} />
+        )}
+
+        {/* Icon + badge */}
+        <View style={styles.iconWrapper}>
           <Ionicons
-            name={tab.icon as any}
-            size={24}
+            name={resolvedIcon as any}
+            size={22}
             color={tab.isActive ? activeColor : inactiveColor}
           />
           {tab.showBadge && (
             <View style={styles.badgeDot} />
           )}
         </View>
+
+        {/* Label */}
         <Text
           numberOfLines={1}
           style={[
-          styles.tabLabelText,
-          { color: tab.isActive ? activeColor : inactiveColor }
-        ]}>
+            styles.tabLabelText,
+            {
+              color: tab.isActive ? activeColor : inactiveColor,
+              fontWeight: tab.isActive ? '700' : '500',
+            },
+          ]}
+        >
           {tab.name}
         </Text>
+
+        {/* Active indicator dot below label */}
+        {tab.isActive && (
+          <View style={[
+            styles.activeIndicatorDot,
+            { backgroundColor: isPriveActive ? colors.brand.goldAccent : isDark ? colors.lightMustard : '#FFC857' },
+          ]} />
+        )}
       </Pressable>
     );
   };
@@ -540,7 +594,7 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
         <Text style={[
           styles.floatingButtonLabel,
           isPriveActive && styles.floatingButtonLabelPrive,
-          isDark && !isPriveActive && { color: '#9A9A9A' },
+          isDark && !isPriveActive && { color: '#B0B0B0' },
         ]}>{centerTab.name}</Text>
       </View>
 
@@ -662,11 +716,12 @@ const styles = StyleSheet.create({
 
   // Label below floating button
   floatingButtonLabel: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: colors.midGray,
-    marginTop: 6,
+    fontSize: 10,
+    fontWeight: '700',
+    color: '#1a3a52',  // navy — matches active tab style
+    marginTop: 4,
     textAlign: 'center',
+    letterSpacing: 0.2,
   },
 
   // Privé theme - gold border for floating button
@@ -721,17 +776,43 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 8,
-    paddingHorizontal: 12,
+    paddingHorizontal: 10,
     minWidth: 60,
     minHeight: 48, // Android recommends 48px minimum touch target
+    position: 'relative',
+  },
+
+  // Subtle background pill behind active icon+label
+  activePill: {
+    position: 'absolute',
+    top: 6,
+    left: 2,
+    right: 2,
+    height: 34,
+    borderRadius: 10,
+    backgroundColor: 'rgba(26,58,82,0.08)', // very subtle navy tint
+  },
+
+  // Wrapper so badge can be positioned relative to icon
+  iconWrapper: {
+    position: 'relative',
   },
 
   // Tab label text
   tabLabelText: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: 10,
     marginTop: 2,
     textAlign: 'center',
+    letterSpacing: 0.1,
+  },
+
+  // Small mustard dot below label — active indicator
+  activeIndicatorDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    marginTop: 2,
+    backgroundColor: '#FFC857',
   },
 
   // Orange badge dot for unverified users on You tab
@@ -806,6 +887,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingVertical: 8,
     minHeight: 50,
+    position: 'relative',
   },
 });
 
