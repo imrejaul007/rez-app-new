@@ -441,7 +441,7 @@ function SignInScreen() {
           {/* Brand Underline */}
           <View style={styles.underlineContainer}>
             <LinearGradient
-              colors={[colors.brand.purple, colors.brand.purpleLight]}
+              colors={['#FFC857', '#FFB020']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.underline}
@@ -460,7 +460,7 @@ function SignInScreen() {
               />
               <View style={styles.phoneDivider} />
               <View style={styles.phoneNumberInput}>
-                <Ionicons name="call-outline" size={18} color={colors.brand.purple} style={styles.phoneIcon} />
+                <Ionicons name="call-outline" size={18} color="#1a3a52" style={styles.phoneIcon} />
                 <TextInput
                   style={styles.phoneTextInput}
                   placeholder="Mobile number"
@@ -484,9 +484,7 @@ function SignInScreen() {
             accessibilityLabel={isSending ? 'Sending OTP' : 'Send OTP to phone number'}
             accessibilityRole="button"
           >
-            <View
-              style={[styles.primaryButton, { backgroundColor: isSending ? colors.neutral[300] : colors.brand.purple }]}
-            >
+            <View style={[styles.primaryButton, { backgroundColor: isSending ? colors.neutral[300] : '#1a3a52' }]}>
               {isSending ? (
                 <LoadingSpinner size="small" color={colors.text.inverse} />
               ) : (
@@ -529,13 +527,13 @@ function SignInScreen() {
             accessibilityRole="button"
           >
             <View style={styles.backButtonInner}>
-              <Ionicons name="arrow-back" size={20} color={colors.brand.purple} />
+              <Ionicons name="arrow-back" size={20} color="#1a3a52" />
             </View>
           </Pressable>
 
           {/* Shield Icon */}
           <View style={styles.shieldIconContainer}>
-            <LinearGradient colors={[colors.brand.purple, colors.brand.purpleDeep]} style={styles.shieldIcon}>
+            <LinearGradient colors={['#1a3a52', '#0d2133']} style={styles.shieldIcon}>
               <Ionicons name="shield-checkmark" size={28} color={colors.text.inverse} />
             </LinearGradient>
           </View>
@@ -551,7 +549,7 @@ function SignInScreen() {
           {/* Brand Underline */}
           <View style={styles.underlineContainer}>
             <LinearGradient
-              colors={[colors.brand.purple, colors.brand.purpleLight]}
+              colors={['#FFC857', '#FFB020']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.underline}
@@ -621,9 +619,7 @@ function SignInScreen() {
             accessibilityLabel={isSending ? 'Verifying OTP' : 'Verify OTP and sign in'}
             accessibilityRole="button"
           >
-            <View
-              style={[styles.primaryButton, { backgroundColor: isSending ? colors.neutral[300] : colors.brand.purple }]}
-            >
+            <View style={[styles.primaryButton, { backgroundColor: isSending ? colors.neutral[300] : '#1a3a52' }]}>
               {isSending ? (
                 <LoadingSpinner size="small" color={colors.text.inverse} />
               ) : (
@@ -658,12 +654,12 @@ function SignInScreen() {
             accessibilityRole="button"
           >
             <View style={styles.backButtonInner}>
-              <Ionicons name="arrow-back" size={20} color={colors.brand.purple} />
+              <Ionicons name="arrow-back" size={20} color="#1a3a52" />
             </View>
           </Pressable>
 
           <View style={styles.shieldIconContainer}>
-            <LinearGradient colors={[colors.brand.purple, colors.brand.purpleDeep]} style={styles.shieldIcon}>
+            <LinearGradient colors={['#1a3a52', '#0d2133']} style={styles.shieldIcon}>
               <Ionicons name="keypad" size={28} color={colors.text.inverse} />
             </LinearGradient>
           </View>
@@ -678,7 +674,7 @@ function SignInScreen() {
 
           <View style={styles.underlineContainer}>
             <LinearGradient
-              colors={[colors.brand.purple, colors.brand.purpleLight]}
+              colors={['#FFC857', '#FFB020']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.underline}
@@ -725,7 +721,7 @@ function SignInScreen() {
               style={[
                 styles.primaryButton,
                 {
-                  backgroundColor: isSending || formData.pin.length !== 4 ? colors.neutral[300] : colors.brand.purple,
+                  backgroundColor: isSending || formData.pin.length !== 4 ? colors.neutral[300] : '#1a3a52',
                 },
               ]}
             >
@@ -747,9 +743,7 @@ function SignInScreen() {
             accessibilityLabel="Forgot PIN? Login with OTP instead"
             accessibilityRole="button"
           >
-            <Text style={{ color: colors.brand.purple, fontWeight: '600', fontSize: 14 }}>
-              Forgot PIN? Login with OTP
-            </Text>
+            <Text style={{ color: '#1a3a52', fontWeight: '600', fontSize: 14 }}>Forgot PIN? Login with OTP</Text>
           </Pressable>
         </View>
       </View>
@@ -758,9 +752,9 @@ function SignInScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-      {/* Hero Gradient Background - Brand Purple */}
+      {/* Hero Gradient Background - Nile Blue */}
       <LinearGradient
-        colors={[colors.brand.purple, colors.brand.purpleDeep, colors.brand.purpleDeep]}
+        colors={['#1a3a52', '#0d2133', '#0d2133']}
         style={StyleSheet.absoluteFill}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -855,7 +849,7 @@ const styles = StyleSheet.create({
     height: 300,
     top: -80,
     right: -100,
-    backgroundColor: 'rgba(139, 92, 246, 0.15)',
+    backgroundColor: 'rgba(255, 200, 87, 0.15)',
   },
   circleGreenMedium: {
     width: 200,
@@ -869,14 +863,14 @@ const styles = StyleSheet.create({
     height: 100,
     top: 150,
     left: 20,
-    backgroundColor: 'rgba(139, 92, 246, 0.12)',
+    backgroundColor: 'rgba(255, 200, 87, 0.10)',
   },
   circleGreenTiny: {
     width: 60,
     height: 60,
     bottom: 200,
     right: 30,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: 'rgba(255, 255, 255, 0.08)',
   },
 
   // Step Container
@@ -886,18 +880,18 @@ const styles = StyleSheet.create({
 
   // Glass Card
   glassCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 28,
+    backgroundColor: 'rgba(255, 255, 255, 0.97)',
+    borderRadius: 24,
     padding: Spacing['2xl'],
     overflow: 'hidden',
     // Glass border
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.8)',
     // Glass shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 16 },
-    shadowOpacity: 0.15,
-    shadowRadius: 32,
+    shadowColor: '#0d2133',
+    shadowOffset: { width: 0, height: 20 },
+    shadowOpacity: 0.18,
+    shadowRadius: 36,
     elevation: 20,
     // Web blur effect
     ...(Platform.OS === 'web' && {
@@ -911,8 +905,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 120,
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
   },
 
   // Header
@@ -926,6 +920,15 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    backgroundColor: 'rgba(255, 200, 87, 0.12)',
+    shadowColor: '#FFC857',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 20,
+    elevation: 8,
   },
   logoImage: {
     width: 70,
@@ -935,7 +938,7 @@ const styles = StyleSheet.create({
   // Shield Icon (OTP step)
   shieldIconContainer: {
     marginBottom: Spacing.lg,
-    shadowColor: colors.brand.purple,
+    shadowColor: '#1a3a52',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.3,
     shadowRadius: 16,
@@ -957,32 +960,32 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: BorderRadius.md,
-    backgroundColor: 'rgba(124, 58, 237, 0.1)',
+    backgroundColor: 'rgba(26, 58, 82, 0.08)',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(124, 58, 237, 0.2)',
+    borderColor: 'rgba(26, 58, 82, 0.18)',
   },
 
   // Typography
   title: {
     ...Typography.h1,
     fontWeight: '800',
-    color: colors.text.primary,
+    color: '#1a3a52',
     marginBottom: Spacing.sm,
     textAlign: 'center',
     letterSpacing: -0.5,
   },
   subtitle: {
     ...Typography.body,
-    color: colors.text.tertiary,
+    color: '#6B7280',
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: Spacing.base,
   },
   phoneNumber: {
     fontWeight: '700',
-    color: colors.brand.purple,
+    color: '#1a3a52',
     ...Typography.bodyLarge,
   },
 
@@ -1077,7 +1080,7 @@ const styles = StyleSheet.create({
   },
   resendText: {
     ...Typography.body,
-    color: colors.brand.purple,
+    color: '#1a3a52',
     fontWeight: '700',
   },
   resendTextDisabled: {
@@ -1088,7 +1091,7 @@ const styles = StyleSheet.create({
   primaryButtonWrapper: {
     borderRadius: 26,
     overflow: 'hidden',
-    shadowColor: colors.brand.purple,
+    shadowColor: '#1a3a52',
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.35,
     shadowRadius: 16,
@@ -1119,19 +1122,19 @@ const styles = StyleSheet.create({
   secondaryButton: {
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.xl,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'rgba(255, 255, 255, 0.12)',
     borderRadius: BorderRadius.lg,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.25)',
+    borderColor: 'rgba(255, 255, 255, 0.22)',
   },
   secondaryButtonText: {
-    color: 'rgba(255, 255, 255, 0.9)',
+    color: 'rgba(255, 255, 255, 0.88)',
     ...Typography.body,
     fontWeight: '500',
     textAlign: 'center',
   },
   signUpText: {
-    color: colors.brand.purple,
+    color: '#FFC857',
     fontWeight: '700',
   },
   recoveryLink: {
