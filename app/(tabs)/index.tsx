@@ -828,21 +828,11 @@ function HomeScreen() {
         scrollEnabled={true}
         onScroll={scrollHandler}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.lightMustard}
-            colors={[colors.lightMustard]}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={MUSTARD} colors={[MUSTARD]} />
         }
       >
-        {/* Header - Dynamic gradient based on active tab */}
-        <LinearGradient
-          colors={gradientColors as any}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 0, y: 1 }}
-          style={viewStyles.header}
-        >
+        {/* Header - Flat dark background (CRED-style, no gradient) */}
+        <View style={viewStyles.header}>
           <View style={viewStyles.headerTop}>
             {/* Modern Location Pill - Tap to expand details */}
             <Pressable
@@ -865,10 +855,10 @@ function HomeScreen() {
                 showLastUpdated={false}
                 showRefreshButton={false}
                 style={viewStyles.locationDisplay}
-                textStyle={tabStyles.locationText || textStyles.locationText}
+                textStyle={textStyles.locationText}
               />
-              {/* Section 4: ⌄ character at 55% opacity, replaces Ionicons chevron */}
-              <Text style={[viewStyles.locationChevronChar, { color: tabStyles.chevronColor }]}>⌄</Text>
+              {/* ⌄ chevron */}
+              <Text style={viewStyles.locationChevronChar}>⌄</Text>
             </Pressable>
 
             {/* Modern Header Actions */}
@@ -910,7 +900,7 @@ function HomeScreen() {
                 </ReAnimated.Text>
               </Pressable>
 
-              {/* Section 4: Cart icon — dark navy stroke #1a3a52, no background */}
+              {/* Cart icon — white on dark */}
               <Pressable
                 onPress={handleCartPress}
                 accessibilityLabel={`Shopping cart: ${cartItemCount} items`}
@@ -918,7 +908,7 @@ function HomeScreen() {
                 accessibilityHint="Double tap to view your shopping cart"
                 style={viewStyles.headerIconButton}
               >
-                <Ionicons name="cart-outline" size={24} color="#1a3a52" />
+                <Ionicons name="cart-outline" size={24} color={NILE_BLUE} />
                 {cartItemCount > 0 && (
                   <LinearGradient colors={[colors.error, colors.errorScale[400]]} style={viewStyles.cartBadgeModern}>
                     <Text style={viewStyles.cartBadgeTextModern}>{cartItemCount > 9 ? '9+' : cartItemCount}</Text>
@@ -934,7 +924,7 @@ function HomeScreen() {
                 accessibilityHint="Tap to view your notifications"
                 style={viewStyles.headerIconButton}
               >
-                <Ionicons name="notifications-outline" size={22} color={tabStyles.iconColor} />
+                <Ionicons name="notifications-outline" size={22} color={NILE_BLUE} />
               </Pressable>
 
               {/* Section 4: Saved pill — white half pill + orange square avatar joined (no gap) */}
@@ -953,7 +943,7 @@ function HomeScreen() {
                 </View>
                 {/* Orange square avatar on right — flush against pill, no gap */}
                 <View style={viewStyles.savedAvatarBox}>
-                  <Ionicons name="person" size={13} color={colors.nileBlue} />
+                  <Ionicons name="person" size={13} color={NILE_BLUE} />
                 </View>
               </Pressable>
             </View>
@@ -965,7 +955,7 @@ function HomeScreen() {
               {/* Full Address Section */}
               <View style={viewStyles.addressSection}>
                 <View style={viewStyles.addressHeader}>
-                  <Ionicons name="location" size={16} color={colors.lightMustard} />
+                  <Ionicons name="location" size={16} color={NILE_BLUE} />
                   <Text style={viewStyles.addressHeaderText}>Current Location</Text>
                 </View>
                 <LocationDisplay
@@ -990,7 +980,7 @@ function HomeScreen() {
                   <Ionicons name="search" size={12} color={colors.text.inverse} />
                 </View>
                 <Text style={viewStyles.changeLocationText}>Change Location</Text>
-                <Ionicons name="chevron-forward" size={14} color={colors.lightMustard} />
+                <Ionicons name="chevron-forward" size={14} color={NILE_BLUE} />
               </Pressable>
             </View>
           </ReAnimated.View>
@@ -1035,9 +1025,9 @@ function HomeScreen() {
               <PriveHeaderWrapper />
             </Suspense>
           )}
-        </LinearGradient>
+        </View>
 
-        {/* Home Tab Section with 4 Tabs - Outside gradient */}
+        {/* Home Tab Section with 4 Tabs */}
         <Suspense fallback={<View style={{ height: 44 }} />}>
           <HomeTabSection
             activeTab={activeTab}
@@ -1055,7 +1045,7 @@ function HomeScreen() {
         {/* Deferred location permission banner */}
         {!locationBannerDismissed && permissionStatus !== 'granted' && permissionStatus !== 'denied' && (
           <View style={viewStyles.locationBanner}>
-            <Ionicons name="location" size={20} color={colors.lightMustard} />
+            <Ionicons name="location" size={20} color={NILE_BLUE} />
             <Text style={viewStyles.locationBannerText}>Enable location to find deals near you</Text>
             <Pressable
               style={viewStyles.locationBannerBtn}
@@ -1073,7 +1063,7 @@ function HomeScreen() {
               accessibilityLabel="Dismiss location request"
               accessibilityHint="Tap to close this notification"
             >
-              <Ionicons name="close" size={18} color={colors.text.tertiary} />
+              <Ionicons name="close" size={18} color="rgba(0,0,0,0.30)" />
             </Pressable>
           </View>
         )}
@@ -1093,7 +1083,7 @@ function HomeScreen() {
                   <Text style={viewStyles.tryBannerTitle}>Try Before You Buy</Text>
                   <Text style={viewStyles.tryBannerSubtitle}>Experience products risk-free, earn coins</Text>
                 </View>
-                <Ionicons name="chevron-forward" size={20} color="#1a3a52" style={viewStyles.tryBannerChevron} />
+                <Ionicons name="chevron-forward" size={20} color={NILE_BLUE} style={viewStyles.tryBannerChevron} />
               </View>
             </View>
           </Pressable>
@@ -1130,7 +1120,7 @@ function HomeScreen() {
                   accessibilityRole="button"
                   accessibilityLabel="Dismiss challenge"
                 >
-                  <Ionicons name="close" size={20} color="#94A3B8" />
+                  <Ionicons name="close" size={20} color="rgba(0,0,0,0.30)" />
                 </Pressable>
               </View>
             </View>
@@ -1145,12 +1135,12 @@ function HomeScreen() {
                 <Pressable
                   onPress={() => router.push('/smart-spending')}
                   style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
-                  android_ripple={{ color: 'rgba(212,175,55,0.12)', borderless: false }}
+                  android_ripple={{ color: 'rgba(255,200,87,0.15)', borderless: false }}
                   accessibilityRole="button"
                   accessibilityLabel={`${streakCount}-day streak. Tap to view smart spending.`}
                 >
                   <StreakFireIcon streakDays={streakCount} size="small" />
-                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#1a3a52' }}>{streakCount}d streak</Text>
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: NILE_BLUE }}>{streakCount}d streak</Text>
                 </Pressable>
               )}
               <View style={{ flex: 1 }}>
@@ -1284,45 +1274,56 @@ function HomeScreen() {
    --------------------------- */
 
 const textStyles = StyleSheet.create({
-  // Section 4: single line, truncated, maxWidth enforced by locationDisplay container
+  // Single line, truncated — Nile Blue text on cream header
   locationText: {
-    color: colors.text.primary,
+    color: '#1a3a52',
     fontSize: 13,
     fontWeight: '600',
     numberOfLines: 1,
   } as any,
 });
 
+// ── CRED Light design tokens ───────────────────────────────────────────────
+const CREAM_BG = '#F5F5F0';
+const WHITE = '#FFFFFF';
+const NILE_BLUE = '#1a3a52';
+const MUSTARD = '#FFC857';
+const PRIMARY_TEXT = '#1a1a1a';
+const MUTED_TEXT = '#6B7280';
+const CARD_BORDER = 'rgba(0,0,0,0.06)';
+const DIVIDER = '#E8E8E8';
+
 const viewStyles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: CREAM_BG,
   },
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: CREAM_BG,
     ...Platform.select({
       web: {
-        touchAction: 'pan-y', // Only handle vertical scrolling, let children handle horizontal
+        touchAction: 'pan-y',
         WebkitOverflowScrolling: 'touch',
       },
     }),
   },
   scrollContentContainer: {
     flexGrow: 1,
-    paddingBottom: 120, // Ensure content is visible above bottom tab navbar
+    paddingBottom: 120,
+    backgroundColor: CREAM_BG,
     ...Platform.select({
       web: {
         minHeight: '100%',
       },
     }),
   },
+  // Flat white header on cream page
   header: {
     paddingTop: Platform.OS === 'ios' ? 56 : 50,
     paddingHorizontal: spacing.lg,
     paddingBottom: 0,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
+    backgroundColor: WHITE,
   },
   headerTop: {
     flexDirection: 'row',
@@ -1330,81 +1331,92 @@ const viewStyles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.md,
   },
-  // Modern Location Pill Style
+  // Location pill — white with thin gray border
   locationPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.xs,
+    backgroundColor: WHITE,
+    borderWidth: 1,
+    borderColor: DIVIDER,
+    borderRadius: 20,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
     flexShrink: 1,
     flexGrow: 0,
     ...Platform.select({
-      android: { maxWidth: '35%', overflow: 'hidden' as const },
-      ios: { maxWidth: '40%' },
-      default: {}, // Web: no constraint, flexShrink handles it
+      android: { maxWidth: '40%', overflow: 'hidden' as const },
+      ios: { maxWidth: '45%' },
+      default: {},
     }),
   },
-  // Section 4: 22x22 circle with mustard background
+  // Nile Blue circle for location icon (matches accent)
   locationIconWrapper: {
     width: 22,
     height: 22,
     borderRadius: 11,
-    backgroundColor: '#FFC857',
+    backgroundColor: NILE_BLUE,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.sm,
     flexShrink: 0,
   },
-  // Section 4: ⌄ text chevron at 55% opacity
   locationChevronChar: {
     marginLeft: spacing.xs,
     fontSize: 16,
     fontWeight: '700',
+    color: NILE_BLUE,
     opacity: 0.55,
     lineHeight: 16,
     flexShrink: 0,
   },
-  // Modern Header Actions
+  // Header actions row
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
     ...Platform.select({
       android: { flexShrink: 0, flexGrow: 0, marginLeft: 4 },
       ios: { flexShrink: 0, marginLeft: 4 },
-      default: { gap: spacing.xs }, // Web: use gap (well-supported)
+      default: { gap: spacing.xs },
     }),
   },
-  // Section 4: Streak pill — mustard card (44pt min touch target)
+  // Streak pill — very subtle on light header
   headerStreakPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFC857',
+    backgroundColor: '#FFFBEB',
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 10,
     minHeight: 36,
     minWidth: 44,
     gap: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(255,200,87,0.40)',
   },
   headerStreakEmoji: {
     fontSize: 13,
   },
-  // Section 4: bold navy number on streak pill
   headerStreakText: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#1a3a52',
+    color: '#B8860B',
   },
-  // What's New Badge
-  // Section 4: Coin pill — white card rgba(255,255,255,.9), coin circle + navy number (44pt min touch target)
+  // Coin pill — white card, Nile Blue number
   headerCoinContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.9)',
+    backgroundColor: WHITE,
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 9,
     minHeight: 30,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1,
     ...Platform.select({
       android: { flexShrink: 0 },
       ios: { flexShrink: 0 },
@@ -1416,13 +1428,12 @@ const viewStyles = StyleSheet.create({
     height: 18,
     marginRight: 4,
   },
-  // Section 4: navy number on coin pill
   headerCoinText: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#1a3a52',
+    color: NILE_BLUE,
   },
-  // 44pt minimum touch target for icon buttons
+  // Icon buttons — transparent on white header
   headerIconButton: {
     width: 44,
     height: 44,
@@ -1433,7 +1444,7 @@ const viewStyles = StyleSheet.create({
     ...Platform.select({
       android: { marginLeft: 0, flexShrink: 0 },
       ios: { marginLeft: 0, flexShrink: 0 },
-      default: {}, // Web: gap handles spacing
+      default: {},
     }),
   },
   cartBadgeModern: {
@@ -1448,11 +1459,11 @@ const viewStyles = StyleSheet.create({
     paddingHorizontal: 4,
   },
   cartBadgeTextModern: {
-    color: colors.text.inverse,
+    color: WHITE,
     fontSize: 10,
     fontWeight: '700',
   },
-  // Section 4: Saved pill — white half pill + orange square avatar joined, no gap
+  // Profile savings pill — white card + mustard avatar
   profileSavingsContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1464,9 +1475,8 @@ const viewStyles = StyleSheet.create({
       default: {},
     }),
   },
-  // White half-pill (left side) — rounded on left only (44pt min height via paddingVertical)
   savedTextPill: {
-    backgroundColor: 'rgba(255,255,255,0.88)',
+    backgroundColor: WHITE,
     borderTopLeftRadius: 8,
     borderBottomLeftRadius: 8,
     paddingVertical: 8,
@@ -1474,23 +1484,24 @@ const viewStyles = StyleSheet.create({
     paddingRight: 7,
     minHeight: 36,
     justifyContent: 'center',
+    borderWidth: 1,
+    borderRightWidth: 0,
+    borderColor: CARD_BORDER,
   },
   savedText: {
-    color: colors.nileBlue,
+    color: MUTED_TEXT,
     fontSize: 10,
     fontWeight: '600',
   },
-  // Mustard square avatar (right side) — flush against pill, no gap (min 36pt height)
   savedAvatarBox: {
     width: 36,
     height: 36,
-    backgroundColor: '#FFC857',
+    backgroundColor: MUSTARD,
     justifyContent: 'center',
     alignItems: 'center',
     borderTopRightRadius: 8,
     borderBottomRightRadius: 8,
   },
-  // Section 4: single line location text, maxWidth 80, ellipsis
   locationDisplay: {
     backgroundColor: 'transparent',
     shadowOpacity: 0,
@@ -1503,29 +1514,19 @@ const viewStyles = StyleSheet.create({
       default: {},
     }),
   },
+  // Detailed location dropdown — white card on cream
   detailedLocationContainer: {
-    // MEERA: design token — hardcoded 'rgba(255, 255, 255, 0.95)' -> colors.background.primary (white, nearly opaque)
-    backgroundColor: colors.background.primary,
+    backgroundColor: WHITE,
     marginHorizontal: spacing.lg,
     marginTop: spacing.sm,
     borderRadius: borderRadius.lg,
-    ...Platform.select({
-      ios: {
-        shadowColor: colors.nileBlue,
-        shadowOffset: {
-          width: 0,
-          height: 4,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 4,
-      },
-    }),
     borderWidth: 1,
-    // MEERA: design token — hardcoded 'rgba(255, 205, 87, 0.1)' -> colors.border.accent (mustard-tinted border, light)
-    borderColor: colors.border.accent,
+    borderColor: CARD_BORDER,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 1,
   },
   detailedLocationContent: {
     padding: spacing.base,
@@ -1541,24 +1542,24 @@ const viewStyles = StyleSheet.create({
   addressHeaderText: {
     ...typography.body,
     fontWeight: '600',
-    color: colors.nileBlue,
+    color: PRIMARY_TEXT,
     marginLeft: spacing.xs,
   },
   changeLocationButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFBEB',
+    backgroundColor: 'rgba(26,58,82,0.04)',
     borderRadius: borderRadius.md,
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.md,
     borderWidth: 1,
-    borderColor: '#FDE68A',
+    borderColor: 'rgba(26,58,82,0.12)',
   },
   changeLocationIconWrapper: {
     width: 24,
     height: 24,
     borderRadius: borderRadius.md,
-    backgroundColor: colors.lightMustard,
+    backgroundColor: NILE_BLUE,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: spacing.sm,
@@ -1567,7 +1568,7 @@ const viewStyles = StyleSheet.create({
     flex: 1,
     ...typography.bodySmall,
     fontWeight: '600',
-    color: colors.lightMustard,
+    color: NILE_BLUE,
   },
   detailedLocationDisplay: {
     backgroundColor: 'transparent',
@@ -1576,12 +1577,11 @@ const viewStyles = StyleSheet.create({
     padding: 0,
   },
   detailedLocationText: {
-    color: colors.text.primary,
+    color: MUTED_TEXT,
     ...typography.body,
     lineHeight: 20,
   },
-  // Breaks the HeroBanner out of the header's paddingHorizontal (spacing.lg = 20)
-  // so the gradient fills screen edge-to-edge.
+  // Hero banner breakout — edge-to-edge
   heroBannerBreakout: {
     marginHorizontal: -spacing.lg,
   },
@@ -1589,7 +1589,7 @@ const viewStyles = StyleSheet.create({
     paddingTop: spacing.sm,
     paddingBottom: 100,
     paddingHorizontal: 0,
-    backgroundColor: colors.background.primary,
+    backgroundColor: CREAM_BG,
   },
   mallContent: {
     padding: 0,
@@ -1606,6 +1606,7 @@ const viewStyles = StyleSheet.create({
     paddingBottom: 0,
     backgroundColor: 'transparent',
   },
+  // Location banner — white card on cream
   locationBanner: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1613,29 +1614,30 @@ const viewStyles = StyleSheet.create({
     marginTop: spacing.sm,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    backgroundColor: colors.background.primary,
+    backgroundColor: WHITE,
     borderRadius: borderRadius.md,
+    borderWidth: 1,
+    borderColor: CARD_BORDER,
     gap: spacing.sm,
-    ...shadows.subtle,
   },
   locationBannerText: {
     flex: 1,
     fontSize: 13,
     fontWeight: '500',
-    color: colors.text.primary,
+    color: MUTED_TEXT,
   },
   locationBannerBtn: {
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.xs,
-    backgroundColor: colors.lightMustard,
+    backgroundColor: MUSTARD,
     borderRadius: borderRadius.sm,
   },
   locationBannerBtnText: {
     fontSize: 12,
     fontWeight: '700',
-    color: colors.nileBlue,
+    color: NILE_BLUE,
   },
-  // ReZ TRY Banner Styles
+  // Try Banner — white card with mustard left border
   tryBanner: {
     marginHorizontal: 16,
     marginTop: spacing.sm,
@@ -1643,21 +1645,17 @@ const viewStyles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-      },
-      android: { elevation: 2 },
-    }),
+    borderColor: CARD_BORDER,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 1,
   },
   tryBannerGradient: {
-    backgroundColor: '#FFFFFF',
-    borderLeftWidth: 4,
-    borderLeftColor: '#FFC857',
+    backgroundColor: WHITE,
+    borderLeftWidth: 3,
+    borderLeftColor: MUSTARD,
     paddingVertical: spacing.lg,
     paddingHorizontal: spacing.base,
   },
@@ -1672,18 +1670,18 @@ const viewStyles = StyleSheet.create({
   tryBannerTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: '#1a3a52',
+    color: PRIMARY_TEXT,
     marginBottom: spacing.xs,
   },
   tryBannerSubtitle: {
     fontSize: 13,
-    fontWeight: '500',
-    color: '#475569',
+    fontWeight: '400',
+    color: MUTED_TEXT,
   },
   tryBannerChevron: {
     marginLeft: spacing.md,
   },
-  // CARLOS: retention — day-1 challenge card styles
+  // Day-1 challenge card — white card
   day1ChallengeCard: {
     marginHorizontal: 16,
     marginTop: spacing.sm,
@@ -1691,21 +1689,17 @@ const viewStyles = StyleSheet.create({
     borderRadius: 16,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-      },
-      android: { elevation: 2 },
-    }),
+    borderColor: CARD_BORDER,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 1,
   },
   day1ChallengeGradient: {
-    backgroundColor: '#FFFFFF',
-    borderLeftWidth: 4,
-    borderLeftColor: '#FFC857',
+    backgroundColor: WHITE,
+    borderLeftWidth: 3,
+    borderLeftColor: MUSTARD,
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.lg,
   },
@@ -1720,37 +1714,33 @@ const viewStyles = StyleSheet.create({
   day1ChallengeTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#1a3a52',
+    color: PRIMARY_TEXT,
     marginBottom: spacing.xs,
   },
   day1ChallengeSub: {
     fontSize: 13,
-    fontWeight: '500',
-    color: '#475569',
+    fontWeight: '400',
+    color: MUTED_TEXT,
   },
-  // Phase 1: Habit Engine — clean white card wrapping streak + rez score
+  // Streak + Score row — white card on cream
   streakScoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: spacing.base,
-    marginBottom: spacing.sm,
-    padding: 12,
-    gap: 12,
-    backgroundColor: '#FFFFFF',
-    borderRadius: borderRadius.lg,
+    marginBottom: spacing.md,
+    padding: 14,
+    gap: 14,
+    backgroundColor: WHITE,
+    borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-      },
-      android: { elevation: 2 },
-    }),
+    borderColor: CARD_BORDER,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 1,
   },
-  // CARLOS: retention — streak display styles
+  // Streak display
   streakCard: {
     marginHorizontal: spacing.md,
     marginVertical: spacing.md,
@@ -1771,7 +1761,7 @@ const viewStyles = StyleSheet.create({
   streakText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.text.inverse,
+    color: PRIMARY_TEXT,
     textAlign: 'center',
   },
 });

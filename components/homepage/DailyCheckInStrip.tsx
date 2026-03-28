@@ -19,8 +19,15 @@ import {
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import gamificationApi from '@/services/gamificationApi';
 
-const MUSTARD = colors.lightMustard;  // #ffcd57
-const NAVY    = colors.nileBlue;       // #1a3a52
+// CRED Light palette
+const MUSTARD       = '#FFC857';
+const MUSTARD_DARK  = '#E6A800';
+const NILE_BLUE     = '#1a3a52';
+const CARD_BG       = '#FFFFFF';
+const CARD_BORDER   = 'rgba(0,0,0,0.06)';
+const PRIMARY_TEXT  = '#1a1a1a';
+const MUTED_TEXT    = '#6B7280';
+const CARD_BG_CLAIMED = '#F3F4F6';
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 interface DailyCheckInStripProps {
@@ -72,7 +79,7 @@ const DailyCheckInStrip: React.FC<DailyCheckInStripProps> = ({
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         >
           {loading ? (
-            <ActivityIndicator size="small" color={NAVY} />
+            <ActivityIndicator size="small" color={NILE_BLUE} />
           ) : (
             <Text style={styles.claimText}>Claim ›</Text>
           )}
@@ -85,48 +92,44 @@ const DailyCheckInStrip: React.FC<DailyCheckInStripProps> = ({
 const styles = StyleSheet.create({
   strip: {
     marginHorizontal: 16,
-    marginBottom: 12,
+    marginBottom: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: CARD_BG,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderLeftWidth: 4,
+    borderColor: CARD_BORDER,
+    borderLeftWidth: 3,
     borderLeftColor: MUSTARD,
-    borderRadius: 14,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.06,
-        shadowRadius: 8,
-      },
-      android: { elevation: 2 },
-    }),
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 1,
   },
   textBlock: {
     flex: 1,
-    paddingRight: 10,
+    paddingRight: 12,
   },
   title: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: '700',
-    color: NAVY,
-    marginBottom: 2,
+    color: PRIMARY_TEXT,
+    marginBottom: 3,
   },
   subtitle: {
-    fontSize: 10,
-    color: colors.neutral[500],
+    fontSize: 11,
+    color: MUTED_TEXT,
     fontWeight: '400',
   },
-  // Unclaimed CTA (44pt minimum touch target)
+  // Unclaimed CTA — Nile Blue button (primary CTA color)
   claimPill: {
-    backgroundColor: MUSTARD,
+    backgroundColor: NILE_BLUE,
     borderRadius: 99,
-    paddingHorizontal: 16,
+    paddingHorizontal: 18,
     paddingVertical: 10,
     minWidth: 76,
     minHeight: 44,
@@ -135,12 +138,12 @@ const styles = StyleSheet.create({
   },
   claimText: {
     fontSize: 12,
-    fontWeight: '700',
-    color: NAVY,
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
-  // Claimed state (44pt minimum touch target)
+  // Claimed state — muted gray pill
   claimedPill: {
-    backgroundColor: colors.neutral[200],
+    backgroundColor: CARD_BG_CLAIMED,
     borderRadius: 99,
     paddingHorizontal: 14,
     paddingVertical: 10,
@@ -148,11 +151,13 @@ const styles = StyleSheet.create({
     minHeight: 44,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.08)',
   },
   claimedText: {
     fontSize: 12,
     fontWeight: '600',
-    color: colors.neutral[500],
+    color: MUTED_TEXT,
   },
 });
 

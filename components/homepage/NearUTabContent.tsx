@@ -202,8 +202,8 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
   // graceful fallback instead of crashing the whole screen.
   if (renderError) {
     return (
-      <View style={{ padding: 24, alignItems: 'center' }}>
-        <Text style={{ fontSize: 14, color: '#94a3b8', textAlign: 'center' }}>
+      <View style={{ padding: 24, alignItems: 'center', backgroundColor: '#F5F5F0' }}>
+        <Text style={{ fontSize: 14, color: '#9CA3AF', textAlign: 'center' }}>
           Near-U content couldn't load. Please refresh.
         </Text>
       </View>
@@ -216,7 +216,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
       {/* Coming-soon banner — shown when user is outside serviceable area */}
       {!isAreaServiceable && !bannerDismissed && (
         <View style={{
-          backgroundColor: '#FFF8E1',
+          backgroundColor: '#FFFFFF',
           borderRadius: 0,
           padding: 14,
           marginHorizontal: 0,
@@ -226,14 +226,14 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
           alignItems: 'center',
           gap: 10,
           borderBottomWidth: 1,
-          borderColor: '#FFC857',
+          borderColor: 'rgba(0,0,0,0.06)',
         }}>
           <Ionicons name="location-outline" size={22} color="#1a3a52" />
           <View style={{ flex: 1 }}>
-            <Text style={{ fontSize: 14, fontWeight: '700', color: '#1a3a52' }}>
+            <Text style={{ fontSize: 14, fontWeight: '700', color: '#1a1a1a' }}>
               Near U is coming soon{areaName ? ` in ${areaName}` : ' in your area'}
             </Text>
-            <Text style={{ fontSize: 12, color: '#475569', marginTop: 3 }}>
+            <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 3 }}>
               Meanwhile, shop from top brands across India on REZ Mall.
             </Text>
           </View>
@@ -241,16 +241,16 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
             <Pressable
               onPress={onSwitchToMall}
               style={{
-                backgroundColor: colors.nileBlue,
+                backgroundColor: '#FFC857',
                 borderRadius: 8,
                 paddingHorizontal: 10,
                 paddingVertical: 6,
               }}
-              android_ripple={{ color: 'rgba(255,255,255,0.2)', borderless: false }}
+              android_ripple={{ color: 'rgba(0,0,0,0.2)', borderless: false }}
               accessibilityRole="button"
               accessibilityLabel="Switch to REZ Mall"
             >
-              <Text style={{ color: '#fff', fontSize: 12, fontWeight: '700' }}>Mall</Text>
+              <Text style={{ color: '#1a3a52', fontSize: 12, fontWeight: '700' }}>Mall</Text>
             </Pressable>
           )}
           <Pressable
@@ -260,7 +260,7 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
             accessibilityLabel="Dismiss banner"
             hitSlop={8}
           >
-            <Ionicons name="close" size={16} color="#94a3b8" />
+            <Ionicons name="close" size={16} color="#9CA3AF" />
           </Pressable>
         </View>
       )}
@@ -463,20 +463,20 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
   }
 };
 
-// ── Savings strip styles ───────────────────────────────────────────────────
+// ── Savings strip styles (CRED Light) ─────────────────────────────────────
 const savingsStrip = StyleSheet.create({
   wrapper: {
     flexDirection: 'row',
     alignItems: 'center',
     marginHorizontal: 16,
-    marginBottom: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 11,
+    marginBottom: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 13,
     backgroundColor: '#FFFBEB',
-    borderRadius: 12,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#FDE68A',
-    gap: 6,
+    borderColor: 'rgba(0,0,0,0.06)',
+    gap: 8,
   },
   emoji: {
     fontSize: 15,
@@ -485,8 +485,8 @@ const savingsStrip = StyleSheet.create({
   text: {
     flex: 1,
     fontSize: 13,
-    fontWeight: '500',
-    color: '#475569',
+    fontWeight: '400',
+    color: '#1a1a1a',
   },
   amount: {
     fontWeight: '800',

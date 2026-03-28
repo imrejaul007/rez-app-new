@@ -8,7 +8,6 @@ import {
   LayoutChangeEvent,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path } from 'react-native-svg';
 // CategoryCashbackGrid removed per Section 6 handoff (category chips row removed)
 import { colors, spacing } from '@/constants/theme';
@@ -45,7 +44,17 @@ const TAB_CONFIG: Record<TabId, {
   },
 };
 
-// Comprehensive theme configuration for each tab
+// CRED Light: clean white/cream tab bar — Nile Blue active indicator
+const LIGHT_BG      = '#FFFFFF';
+const NILE_BLUE     = '#1a3a52';
+const MUSTARD_HEX   = '#FFC857';
+const MUTED_TEXT    = '#9CA3AF';
+const CARD_BORDER   = 'rgba(0,0,0,0.06)';
+const SEARCH_BG     = '#FFFFFF';
+const SEARCH_BORDER = '#E8E8E8';
+const DESCRIPTION_TEXT = '#6B7280';
+
+// Comprehensive theme configuration for each tab (light mode)
 const TAB_THEMES: Record<TabId, {
   heroGradient: string[];
   tabActiveColor: string;
@@ -55,36 +64,36 @@ const TAB_THEMES: Record<TabId, {
   containerBg: string;
 }> = {
   'near-u': {
-    heroGradient: ['#F9F6F1', '#F3EDE3', '#EDE5D8'],
-    tabActiveColor: colors.nileBlue,
-    tabActiveTextColor: colors.background.primary,
-    tabInactiveTextColor: colors.nileBlue,
-    categoryIconColor: colors.lightMustard,
-    containerBg: '#EDE5D8',
+    heroGradient: [LIGHT_BG, LIGHT_BG, LIGHT_BG],
+    tabActiveColor: NILE_BLUE,
+    tabActiveTextColor: NILE_BLUE,
+    tabInactiveTextColor: MUTED_TEXT,
+    categoryIconColor: NILE_BLUE,
+    containerBg: LIGHT_BG,
   },
   'mall': {
-    heroGradient: ['#FFFBEB', '#FFF8E1', '#FFFBEB'],
-    tabActiveColor: colors.nileBlue,
-    tabActiveTextColor: colors.background.primary,
-    tabInactiveTextColor: colors.nileBlue,
-    categoryIconColor: colors.lightMustard,
-    containerBg: '#FFFBEB',
+    heroGradient: [LIGHT_BG, LIGHT_BG, LIGHT_BG],
+    tabActiveColor: NILE_BLUE,
+    tabActiveTextColor: NILE_BLUE,
+    tabInactiveTextColor: MUTED_TEXT,
+    categoryIconColor: NILE_BLUE,
+    containerBg: LIGHT_BG,
   },
   'cash': {
-    heroGradient: ['#FFFBEB', '#FFF8E1', '#FFFBEB'],
-    tabActiveColor: colors.nileBlue,
-    tabActiveTextColor: colors.nileBlue,
-    tabInactiveTextColor: colors.nileBlue,
-    categoryIconColor: colors.nileBlue,
-    containerBg: '#FFFBEB',
+    heroGradient: [LIGHT_BG, LIGHT_BG, LIGHT_BG],
+    tabActiveColor: NILE_BLUE,
+    tabActiveTextColor: NILE_BLUE,
+    tabInactiveTextColor: MUTED_TEXT,
+    categoryIconColor: NILE_BLUE,
+    containerBg: LIGHT_BG,
   },
   'prive': {
-    heroGradient: [colors.neutral[800], colors.neutral[700], colors.neutral[600]],
-    tabActiveColor: '#FFC857',
-    tabActiveTextColor: '#FFC857',
-    tabInactiveTextColor: '#FFC857',
-    categoryIconColor: '#FFC857',
-    containerBg: colors.neutral[900],
+    heroGradient: [LIGHT_BG, LIGHT_BG, LIGHT_BG],
+    tabActiveColor: NILE_BLUE,
+    tabActiveTextColor: NILE_BLUE,
+    tabInactiveTextColor: MUTED_TEXT,
+    categoryIconColor: NILE_BLUE,
+    containerBg: LIGHT_BG,
   },
 };
 
@@ -180,14 +189,8 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
     return path;
   }, [activeTab, tabLayouts, containerWidth]);
 
-  // Get container background based on mode
-  const containerBg = isPriveMode
-    ? colors.neutral[900]
-    : activeTab === 'mall'
-      ? '#FFFBEB'
-      : activeTab === 'cash'
-        ? '#FFFBEB'
-        : '#EDE5D8';
+  // CRED Light: always white background regardless of tab
+  const containerBg = LIGHT_BG;
 
   return (
     <View style={[styles.container, { backgroundColor: containerBg }]} onLayout={handleContainerLayout}>
@@ -216,19 +219,19 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
           <View style={[
             styles.tab,
             styles.tabPill,
-            activeTab === 'near-u' ? styles.tabActiveTransparent : styles.tabInactive,
+            activeTab === 'near-u' ? styles.tabActive : styles.tabInactive,
           ]}>
-            {/* Section 6: icon 16x16 */}
             <Ionicons
               name={TAB_CONFIG['near-u'].iconName}
               size={16}
-              color={colors.nileBlue}
+              color={activeTab === 'near-u' ? NILE_BLUE : MUTED_TEXT}
               style={styles.tabIcon}
             />
             <Text
               numberOfLines={1}
-              style={[styles.tabText, { color: colors.nileBlue }]}
+              style={[styles.tabText, { color: activeTab === 'near-u' ? NILE_BLUE : MUTED_TEXT }]}
             >{TAB_CONFIG['near-u'].label}</Text>
+            {activeTab === 'near-u' && <View style={styles.activeUnderline} />}
           </View>
         </Pressable>
 
@@ -241,18 +244,19 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
           <View style={[
             styles.tab,
             styles.tabPill,
-            activeTab === 'mall' ? styles.tabActiveTransparent : styles.tabInactive,
+            activeTab === 'mall' ? styles.tabActive : styles.tabInactive,
           ]}>
             <Ionicons
               name={TAB_CONFIG['mall'].iconName}
               size={16}
-              color={colors.nileBlue}
+              color={activeTab === 'mall' ? NILE_BLUE : MUTED_TEXT}
               style={styles.tabIcon}
             />
             <Text
               numberOfLines={1}
-              style={[styles.tabText, { color: colors.nileBlue }]}
+              style={[styles.tabText, { color: activeTab === 'mall' ? NILE_BLUE : MUTED_TEXT }]}
             >{TAB_CONFIG['mall'].label}</Text>
+            {activeTab === 'mall' && <View style={styles.activeUnderline} />}
           </View>
         </Pressable>
 
@@ -265,18 +269,19 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
           <View style={[
             styles.tab,
             styles.tabPill,
-            activeTab === 'cash' ? styles.tabActiveTransparent : styles.tabInactive,
+            activeTab === 'cash' ? styles.tabActive : styles.tabInactive,
           ]}>
             <Ionicons
               name={TAB_CONFIG['cash'].iconName}
               size={16}
-              color={colors.nileBlue}
+              color={activeTab === 'cash' ? NILE_BLUE : MUTED_TEXT}
               style={styles.tabIcon}
             />
             <Text
               numberOfLines={1}
-              style={[styles.tabText, { color: colors.nileBlue }]}
+              style={[styles.tabText, { color: activeTab === 'cash' ? NILE_BLUE : MUTED_TEXT }]}
             >{TAB_CONFIG['cash'].label}</Text>
+            {activeTab === 'cash' && <View style={styles.activeUnderline} />}
           </View>
         </Pressable>
 
@@ -289,80 +294,57 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
           <View style={[
             styles.tab,
             styles.tabPill,
-            activeTab === 'prive'
-              ? styles.tabActiveTransparent
-              : [styles.tabInactive, !isPriveEligible && styles.tabLocked],
+            activeTab === 'prive' ? styles.tabActive : styles.tabInactive,
           ]}>
             <View style={styles.priveTabContent}>
               {!isPriveEligible && activeTab !== 'prive' && (
                 <Ionicons
                   name="lock-closed-outline"
                   size={12}
-                  color='#FFC857'
+                  color={NILE_BLUE}
                   style={styles.lockIcon}
                 />
               )}
               <Text
                 numberOfLines={1}
-                style={[styles.tabText, { color: '#FFC857' }]}
+                style={[styles.tabText, { color: activeTab === 'prive' ? NILE_BLUE : MUTED_TEXT }]}
               >{TAB_CONFIG['prive'].label}</Text>
             </View>
+            {activeTab === 'prive' && <View style={styles.activeUnderline} />}
           </View>
         </Pressable>
       </View>
 
-      {/* Middle section with dynamic gradient based on active tab */}
-      <LinearGradient
-        colors={theme.heroGradient as [string, string, ...string[]]}
-        start={{ x: 0.5, y: 0 }}
-        end={{ x: 0.5, y: 1 }}
-        style={styles.middleSection}
-      >
-        {/* Tab Description Section - Center */}
+      {/* Middle section — flat dark background, CRED-style */}
+      <View style={styles.middleSection}>
+        {/* Tab Description — muted white */}
         <View style={styles.descriptionSection}>
-          <Text style={[
-            styles.descriptionText,
-            {
-              color: isPriveMode
-                ? '#FFC857'
-                : colors.nileBlue
-            }
-          ]}>
+          <Text style={styles.descriptionText}>
             {TAB_CONFIG[activeTab].description}
           </Text>
         </View>
 
-        {/* Section 6: Search row — pill search (~65% width). Hide for Cash tab. */}
-        {/* TRY button removed — TryBeforeYouBuyCard in NearUTabContent handles this */}
+        {/* Search row — pill search. Hide for Cash tab. */}
         {activeTab !== 'cash' && (
           <View style={styles.searchRow}>
-            {/* Section 6: pill shape search bar, 99px radius, full width */}
             <Pressable
-              style={[
-                styles.searchContainerCompact,
-                isPriveMode && styles.searchContainerPrive,
-              ]}
+              style={styles.searchContainerCompact}
               onPress={onSearchPress}
             >
               <Ionicons
                 name="search"
                 size={16}
-                color={isPriveMode ? '#A0A0A0' : colors.neutral[400]}
+                color="#9CA3AF"
                 style={styles.searchIcon}
               />
-              <Text style={[
-                styles.searchPlaceholderCompact,
-                isPriveMode && styles.searchPlaceholderPrive,
-              ]}>
+              <Text style={styles.searchPlaceholderCompact}>
                 {isPriveMode ? 'Search exclusive offers...' : 'Search products...'}
               </Text>
             </Pressable>
           </View>
         )}
 
-        {/* Section 6: Category chips row REMOVED per handoff spec */}
-
-        {/* Privé mode exclusive content teaser */}
+        {/* Privé mode teaser */}
         {isPriveMode && (
           <View style={styles.priveTeaser}>
             <Text style={styles.priveTeaserIcon}>✦</Text>
@@ -371,22 +353,24 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
             </Text>
           </View>
         )}
-      </LinearGradient>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'transparent',
+    backgroundColor: LIGHT_BG,
     paddingTop: 8,
     paddingBottom: 0,
-    marginTop: -1,
+    marginTop: 0,
     marginBottom: 0,
     position: 'relative',
     overflow: 'visible',
+    borderTopWidth: 1,
+    borderTopColor: '#E8E8E8',
   },
-  // SVG curved background
+  // SVG curved background (layout only — transparent on light)
   svgContainer: {
     position: 'absolute',
     top: 0,
@@ -400,76 +384,71 @@ const styles = StyleSheet.create({
     left: 0,
   },
   middleSection: {
-    paddingTop: 8,
-    paddingBottom: 6,
-    marginBottom: -1,
+    paddingTop: 4,
+    paddingBottom: 10,
+    marginBottom: 0,
     marginTop: 0,
     zIndex: 1,
-    borderBottomWidth: 0,
+    backgroundColor: LIGHT_BG,
   },
   // Tabs
   tabsRow: {
     flexDirection: 'row',
     paddingHorizontal: spacing.base,
-    gap: 6,
-    marginBottom: 4,
+    gap: 0,
+    marginBottom: 0,
     zIndex: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E8E8E8',
   },
   tabItem: {
     flex: 1,
   },
-  // Section 6: horizontal pill — icon (16x16) + label side by side (44pt min touch target)
+  // CRED Light tab: flat white bg, Nile Blue active text + thin Nile Blue underline
   tab: {
-    borderRadius: 12,
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 8,
     alignItems: 'center',
     justifyContent: 'center',
     minHeight: 44,
-    flexDirection: 'row',
-    gap: 5,
+    flexDirection: 'column',
+    gap: 4,
+    position: 'relative',
   },
   tabPill: {
-    borderRadius: 12,
-    paddingVertical: 10,
-    paddingHorizontal: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 8,
     minHeight: 44,
   },
   tabIcon: {
     // Icon size controlled by Ionicons size prop (16)
   },
-  // Section 6: active tab — white card bg + shadow, 12px radius
-  tabActiveTransparent: {
-    backgroundColor: colors.background.primary,
-    borderRadius: 12,
-    ...Platform.select({
-      ios: {
-        shadowColor: 'rgba(26,58,82,1)',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.12,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 3,
-      },
-      web: {
-        boxShadow: '0px 1px 8px rgba(26,58,82,0.12)',
-      },
-    }),
+  // Active tab: transparent bg, Nile Blue text + thin Nile Blue underline
+  tabActive: {
+    backgroundColor: 'transparent',
   },
-  // Section 6: inactive tab — no background, 35% opacity on text+icon
+  // Inactive tab: transparent, muted gray text
   tabInactive: {
     backgroundColor: 'transparent',
-    opacity: 0.35,
   },
   tabLocked: {
-    opacity: 0.25,
+    opacity: 0.5,
   },
   tabText: {
     fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 0.2,
+    fontWeight: '700',
+    letterSpacing: 0.3,
     flexShrink: 1,
+  },
+  // Nile Blue underline for active tab (2px — clean segmented control)
+  activeUnderline: {
+    position: 'absolute',
+    bottom: 0,
+    left: '15%',
+    right: '15%',
+    height: 2,
+    borderRadius: 1,
+    backgroundColor: NILE_BLUE,
   },
   priveTabContent: {
     flexDirection: 'row',
@@ -480,28 +459,22 @@ const styles = StyleSheet.create({
   lockIcon: {
     marginLeft: 0,
   },
-  // Description Section
-  // Section 6: 11px centered tagline at 45% opacity
+  // Description — muted gray center tagline
   descriptionSection: {
     paddingHorizontal: 16,
-    paddingTop: 0,
+    paddingTop: 8,
     paddingBottom: 4,
-    marginTop: -4,
     alignItems: 'center',
     justifyContent: 'center',
   },
   descriptionText: {
     fontSize: 11,
-    fontWeight: '500',
-    color: colors.nileBlue,
+    fontWeight: '400',
+    color: DESCRIPTION_TEXT,
     textAlign: 'center',
     letterSpacing: 0.2,
-    opacity: 0.45,
   },
-  descriptionTextPrive: {
-    color: '#FFC857',
-  },
-  // Search
+  // Search — white with gray border, subtle shadow
   searchRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -510,64 +483,47 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     gap: 10,
   },
-  // Section 6: pill shape (99px radius), full width
   searchContainerCompact: {
     flex: 1,
-    backgroundColor: colors.background.primary,
+    backgroundColor: SEARCH_BG,
     flexDirection: 'row',
     alignItems: 'center',
     borderRadius: 99,
     paddingHorizontal: spacing.base,
-    paddingVertical: 8,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-      },
-      android: {
-        elevation: 1,
-      },
-      web: {
-        boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.08)',
-      },
-    }),
-  },
-  searchContainerPrive: {
-    backgroundColor: '#1F1F1F',
+    paddingVertical: 10,
     borderWidth: 1,
-    borderColor: '#2A2A2A',
+    borderColor: SEARCH_BORDER,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1,
   },
   searchIcon: {
     marginRight: 8,
   },
   searchPlaceholderCompact: {
     fontSize: 13,
-    color: colors.neutral[400],
+    color: '#9CA3AF',
     flex: 1,
   },
-  searchPlaceholderPrive: {
-    color: colors.neutral[500],
-  },
-  // categoryCashbackGrid removed per Section 6 handoff
-  // Privé teaser
+  // Privé teaser — Nile Blue accent on light bg
   priveTeaser: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 4,
+    paddingTop: 6,
     paddingBottom: 6,
     gap: 6,
   },
   priveTeaserIcon: {
-    fontSize: 16,
-    color: '#FFC857',
+    fontSize: 14,
+    color: MUSTARD_HEX,
   },
   priveTeaserText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '500',
-    color: '#FFC857',
+    color: NILE_BLUE,
     letterSpacing: 0.3,
   },
 });

@@ -16,11 +16,14 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 
-// ── Brand tokens ─────────────────────────────────────────────────────────────
-const NILE_BLUE = '#1a3a52';
-const MUSTARD   = '#FFC857';
-const BORDER    = '#E8EDF2';
-const BG        = '#FFFFFF';
+// ── Brand tokens (CRED Light palette) ────────────────────────────────────────
+const NILE_BLUE     = '#1a3a52';
+const MUSTARD       = '#FFC857';
+const CARD_BG       = '#FFFFFF';
+const CARD_BORDER   = 'rgba(0,0,0,0.06)';
+const EMOJI_BOX_BG  = '#F3F4F6';
+const PRIMARY_TEXT  = '#1a1a1a';
+const SECONDARY_TEXT = '#6B7280';
 
 // ── Category data ─────────────────────────────────────────────────────────────
 interface Category {
@@ -117,7 +120,7 @@ const CategoryQuickAccess: React.FC = () => {
   );
 };
 
-// ── Styles ────────────────────────────────────────────────────────────────────
+// ── Styles (CRED Light) ───────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   container: {
     marginBottom: 8,
@@ -128,18 +131,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    marginBottom: 10,
+    marginBottom: 14,
   },
   sectionTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: '700',
-    color: NILE_BLUE,
+    color: PRIMARY_TEXT,
     letterSpacing: -0.2,
   },
   seeAll: {
     fontSize: 12,
     fontWeight: '600',
-    color: MUSTARD,
+    color: NILE_BLUE,
   },
 
   scrollContent: {
@@ -149,27 +152,23 @@ const styles = StyleSheet.create({
   },
 
   chip: {
-    backgroundColor: BG,
-    borderRadius: 14,
+    backgroundColor: CARD_BG,
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: BORDER,
+    borderColor: CARD_BORDER,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1,
     alignItems: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
     paddingHorizontal: 12,
     minWidth: 72,
     maxWidth: 88,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.07,
-        shadowRadius: 4,
-      },
-      android: { elevation: 2 },
-    }),
   },
   chipPressed: {
-    opacity: 0.80,
+    opacity: 0.82,
     transform: [{ scale: 0.96 }],
   },
 
@@ -177,10 +176,10 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: '#F3F7FA',
+    backgroundColor: EMOJI_BOX_BG,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   emoji: {
     fontSize: 20,
@@ -189,7 +188,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 10,
     fontWeight: '600',
-    color: NILE_BLUE,
+    color: SECONDARY_TEXT,
     textAlign: 'center',
     letterSpacing: 0.1,
   },

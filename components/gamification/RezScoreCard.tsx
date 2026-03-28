@@ -44,14 +44,17 @@ export interface RezScoreCardProps {
 // HELPERS
 // ============================================================================
 
+// CRED Light: Nile Blue accent on white card — tiers use muted colored badges
+const NILE_BLUE = '#1a3a52';
+
 function getTierColor(tier: ScoreTier): { bg: string; text: string; accent: string } {
   switch (tier) {
-    case 'Smart Saver':  return { bg: colors.tint.blue, text: colors.brand.sky, accent: colors.brand.sky };
-    case 'Super Saver':  return { bg: colors.tint.amber, text: colors.brand.amberDark, accent: colors.lightMustard };
-    case 'Elite Saver':  return { bg: colors.tint.orange, text: colors.brand.orangeDark, accent: colors.brand.orange };
-    case 'Legend':       return { bg: '#FFF8E1', text: colors.nileBlue, accent: '#FFC857' };
+    case 'Smart Saver':  return { bg: 'rgba(26,58,82,0.08)',  text: NILE_BLUE,   accent: NILE_BLUE };
+    case 'Super Saver':  return { bg: 'rgba(255,200,87,0.15)', text: '#B8860B',  accent: '#FFC857' };
+    case 'Elite Saver':  return { bg: 'rgba(251,146,60,0.10)', text: '#C2621A',  accent: '#FB923C' };
+    case 'Legend':       return { bg: 'rgba(255,200,87,0.20)', text: '#B8860B',  accent: '#FFC857' };
     case 'Beginner':
-    default:             return { bg: colors.tint.slate, text: colors.gray[600], accent: colors.gray[400] };
+    default:             return { bg: 'rgba(26,58,82,0.06)',  text: '#6B7280',   accent: NILE_BLUE };
   }
 }
 
@@ -60,7 +63,7 @@ function getTrendConfig(trend: ScoreTrend): { icon: string; color: string; label
     case 'up':     return { icon: 'trending-up',   color: colors.success, label: 'Rising' };
     case 'down':   return { icon: 'trending-down', color: colors.error,   label: 'Falling' };
     case 'stable':
-    default:       return { icon: 'remove',        color: colors.gray[400], label: 'Stable' };
+    default:       return { icon: 'remove',        color: '#9CA3AF',      label: 'Stable' };
   }
 }
 
@@ -80,8 +83,8 @@ function ScoreGauge({ score, accentColor }: { score: number; accentColor: string
 
   return (
     <View style={gaugeStyles.wrapper}>
-      {/* Background ring */}
-      <View style={[gaugeStyles.ring, { borderColor: colors.gray[200] }]} />
+      {/* Background ring — light gray track on white */}
+      <View style={[gaugeStyles.ring, { borderColor: '#E5E7EB' }]} />
       {/* Filled arc simulation via colored border-top trick */}
       <Animated.View
         style={[
@@ -128,10 +131,13 @@ const gaugeStyles = StyleSheet.create({
     height: 54,
     borderRadius: 27,
     borderWidth: 4,
-    borderColor: 'transparent',
+    // Light gray track — clean on white card
+    borderColor: '#E8E8E8',
   },
   fillRing: {
     transform: [{ rotate: '-90deg' }],
+    // Active arc uses accentColor passed in from parent (Nile Blue)
+    borderColor: 'transparent',
   },
   center: {
     alignItems: 'center',
@@ -141,6 +147,7 @@ const gaugeStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '900',
     letterSpacing: -0.5,
+    // Color is set inline via accentColor prop
   },
 });
 
@@ -193,39 +200,39 @@ const RezScoreCard: React.FC<RezScoreCardProps> = ({
             — {trendConfig.label}
           </Text>
         </View>
-        <Ionicons name="chevron-forward" size={14} color={colors.gray[400]} style={styles.chevron} />
+        <Ionicons name="chevron-forward" size={14} color="rgba(0,0,0,0.25)" style={styles.chevron} />
       </View>
     </Pressable>
   );
 };
 
 // ============================================================================
-// STYLES
+// STYLES (CRED Light)
 // ============================================================================
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.primary,
-    borderRadius: 12,
-    padding: 10,
-    gap: 10,
-    shadowColor: colors.nileBlue,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.07,
-    shadowRadius: 6,
-    elevation: 2,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 14,
+    gap: 12,
     borderWidth: 1,
-    borderColor: colors.gray[200],
+    borderColor: 'rgba(0,0,0,0.06)',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 3,
+    elevation: 1,
   },
   containerPressed: {
-    opacity: 0.9,
+    opacity: 0.88,
   },
   info: {
     flex: 1,
     gap: 4,
-    minWidth: 0, // allows flex children to shrink below their content size
+    minWidth: 0,
   },
   tierBadge: {
     alignSelf: 'flex-start',
@@ -237,11 +244,11 @@ const styles = StyleSheet.create({
   tierText: {
     fontSize: 10,
     fontWeight: '700',
-    letterSpacing: 0.3,
+    letterSpacing: 0.5,
   },
   percentileText: {
     fontSize: 11,
-    color: colors.gray[500],
+    color: '#9CA3AF',
     lineHeight: 15,
   },
   rightCol: {
@@ -260,7 +267,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   chevron: {
-    opacity: 0.6,
+    opacity: 0.3,
   },
 });
 

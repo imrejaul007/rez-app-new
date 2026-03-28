@@ -17,8 +17,12 @@ import {
 } from 'react-native';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 
-const NAVY   = colors.nileBlue;   // #1a3a52
-const LINEN  = colors.linen;      // #faf1e0
+// CRED Light palette
+const MUSTARD    = '#FFC857';
+const NILE_BLUE  = '#1a3a52';
+const CARD_BG    = '#FFFFFF';
+const CARD_BORDER = 'rgba(0,0,0,0.06)';
+const BODY_TEXT  = '#6B7280';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export type TimeAwarePersona = 'general' | 'student' | 'employee';
@@ -110,13 +114,13 @@ const pulse = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: 'rgba(26,58,82,0.25)',
+    backgroundColor: 'rgba(255,200,87,0.30)',
   },
   core: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: NAVY,
+    backgroundColor: MUSTARD,
   },
 });
 
@@ -151,39 +155,35 @@ const TimeAwareContextPill: React.FC<TimeAwareContextPillProps> = ({
 const styles = StyleSheet.create({
   pill: {
     marginHorizontal: 16,
-    marginBottom: 12,
+    marginBottom: 14,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: CARD_BG,
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: 12,
+    borderColor: CARD_BORDER,
+    borderRadius: 14,
     paddingHorizontal: 14,
-    paddingVertical: 12,
+    paddingVertical: 13,
     minHeight: 44,
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-      },
-      android: { elevation: 1 },
-    }),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.04,
+    shadowRadius: 2,
+    elevation: 1,
   },
   text: {
     flex: 1,
     fontSize: 12,
-    fontWeight: '600',
-    color: NAVY,
+    fontWeight: '500',
+    color: NILE_BLUE,
     lineHeight: 16,
   },
   arrow: {
     fontSize: 14,
-    fontWeight: '700',
-    color: NAVY,
+    fontWeight: '600',
+    color: NILE_BLUE,
     marginLeft: 6,
-    opacity: 0.6,
+    opacity: 0.7,
   },
 });
 

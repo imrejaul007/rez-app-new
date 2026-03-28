@@ -11,13 +11,9 @@ import {
   Text,
   StyleSheet,
   Pressable,
-  Dimensions,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { spacing } from '@/constants/theme';
-
-const { width: SCREEN_W } = Dimensions.get('window');
 
 // ── Brand tokens ────────────────────────────────────────────────────────────
 const NILE_BLUE        = '#1a3a52';
@@ -28,7 +24,6 @@ const MUSTARD_DARK     = '#E6A800';
 const WHITE            = '#FFFFFF';
 const WHITE_70         = 'rgba(255,255,255,0.70)';
 const WHITE_15         = 'rgba(255,255,255,0.15)';
-const WHITE_08         = 'rgba(255,255,255,0.08)';
 
 // ── Time-of-day content ─────────────────────────────────────────────────────
 interface TimeSlot {
@@ -92,15 +87,8 @@ function HeroBanner({ onScanPayPress, onViewWalletPress }: HeroBannerProps) {
   };
 
   return (
-    <LinearGradient
-      colors={[NILE_BLUE, NILE_BLUE_MID, NILE_BLUE_LIGHT]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.gradient}
-    >
-      {/* Decorative circles — depth effect */}
-      <View style={styles.decorCircleLarge} />
-      <View style={styles.decorCircleSmall} />
+    <View style={styles.gradient}>
+      {/* No decorative circles — clean flat hero */}
 
       {/* Greeting pill */}
       <View style={styles.greetingPill}>
@@ -143,93 +131,73 @@ function HeroBanner({ onScanPayPress, onViewWalletPress }: HeroBannerProps) {
         <View style={styles.trustDot} />
         <Text style={styles.trustText}>2,400+ stores · Instant cashback · Zero fees</Text>
       </View>
-    </LinearGradient>
+    </View>
   );
 }
 
-// ── Styles ────────────────────────────────────────────────────────────────────
+// ── Styles (CRED Light — one bold dark section) ───────────────────────────────
 const styles = StyleSheet.create({
   gradient: {
-    // Full-bleed: no horizontal margin, no border radius — edge-to-edge background.
-    // Content inside uses paddingHorizontal to keep text/buttons inset from edges.
+    // Full-bleed: edge-to-edge Nile Blue — the ONE dark section on the page.
     marginHorizontal: 0,
     marginTop: 0,
     marginBottom: 0,
     borderRadius: 0,
-    paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 16,
+    paddingHorizontal: 24,
+    paddingTop: 32,
+    paddingBottom: 28,
+    backgroundColor: NILE_BLUE,
     overflow: 'hidden',
   },
 
-  // Decorative background circles
-  decorCircleLarge: {
-    position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: WHITE_08,
-    right: -40,
-    top: -50,
-  },
-  decorCircleSmall: {
-    position: 'absolute',
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: WHITE_08,
-    right: 60,
-    top: 40,
-  },
-
-  // Greeting pill
+  // Greeting pill — subtle white translucent on Nile Blue
   greetingPill: {
     alignSelf: 'flex-start',
     backgroundColor: WHITE_15,
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 5,
-    marginBottom: 12,
+    marginBottom: 14,
   },
   greetingText: {
     fontSize: 12,
     fontWeight: '600',
     color: WHITE,
-    letterSpacing: 0.2,
+    letterSpacing: 0.3,
   },
 
-  // Main headline
+  // Main headline — large, bold, white
   headline: {
-    fontSize: 30,
-    fontWeight: '900',
+    fontSize: 32,
+    fontWeight: '800',
     color: WHITE,
     letterSpacing: -0.8,
-    lineHeight: 36,
-    marginBottom: 8,
+    lineHeight: 40,
+    marginBottom: 10,
   },
 
-  // Subline
+  // Subline — softer white
   subline: {
-    fontSize: 13,
-    fontWeight: '500',
+    fontSize: 14,
+    fontWeight: '400',
     color: WHITE_70,
-    lineHeight: 19,
-    marginBottom: 20,
+    lineHeight: 20,
+    marginBottom: 24,
   },
 
   // CTA Row
   ctaRow: {
     flexDirection: 'row',
-    gap: 10,
-    marginBottom: 16,
+    gap: 12,
+    marginBottom: 20,
   },
 
-  // Primary mustard CTA
+  // Primary mustard CTA — the only mustard on the hero
   ctaPrimary: {
     flex: 1,
     backgroundColor: MUSTARD,
-    borderRadius: 12,
-    paddingVertical: 14,
+    borderRadius: 14,
+    paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -240,23 +208,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '800',
     color: NILE_BLUE,
-    letterSpacing: 0.2,
+    letterSpacing: 0.3,
   },
 
-  // Secondary ghost CTA
+  // Secondary ghost CTA — white outline on Nile Blue
   ctaSecondary: {
     flex: 1,
     backgroundColor: WHITE_15,
-    borderRadius: 12,
-    paddingVertical: 14,
+    borderRadius: 14,
+    paddingVertical: 16,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.25)',
+    borderColor: 'rgba(255,255,255,0.22)',
   },
   ctaSecondaryText: {
     fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '600',
     color: WHITE,
     letterSpacing: 0.1,
   },
@@ -266,9 +234,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    paddingTop: 12,
+    paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.12)',
+    borderTopColor: 'rgba(255,255,255,0.10)',
   },
   trustDot: {
     width: 6,
@@ -280,7 +248,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '500',
     color: WHITE_70,
-    letterSpacing: 0.1,
+    letterSpacing: 0.2,
   },
 });
 
