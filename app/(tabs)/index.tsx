@@ -441,7 +441,7 @@ function HomeScreen() {
           const emoji = count >= 30 ? '🔥' : count >= 7 ? '⚡' : '✨';
           setStreakDisplay({ emoji, text: `${count}d` });
         } else {
-          setStreakDisplay(null);
+          setStreakDisplay({ emoji: '', text: '' });
         }
       })
       .catch(() => {
