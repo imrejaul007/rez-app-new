@@ -53,7 +53,7 @@ function TrialCountdownCircle({
       accessibilityRole="progressbar"
       accessibilityValue={{ min: 0, max: 7, now: daysLeft }}
     >
-      <Svg width={size} height={size} style={styles.svg}>
+      <Svg width={size} height={size} style={styles.svg} pointerEvents="none">
         <Defs>
           <SvgLinearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <Stop offset="0%" stopColor={color} stopOpacity="1" />

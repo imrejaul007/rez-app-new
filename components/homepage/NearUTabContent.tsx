@@ -331,7 +331,15 @@ const NearUTabContent: React.FC<NearUTabContentProps> = ({
 
       {/* ── Section 18: StreakFireIcon + RezScoreCard row (Near U only) ─────── */}
       <LazySection sectionId="rez-score-row" scrollY={scrollY} height={160}
-        renderSection={() => <RezScoreCard />} />
+        renderSection={() => (
+          <RezScoreCard
+            score={0}
+            tier="Beginner"
+            trend="stable"
+            percentile={50}
+            onPress={() => router.push('/rez-score' as any)}
+          />
+        )} />
 
       {/* ── Section 19: HomeSavingsSummaryCard (Always) ─────────────────────── */}
       <HomeSavingsSummaryCard

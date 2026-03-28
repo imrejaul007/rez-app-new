@@ -44,57 +44,60 @@ function SmartSpendScreen() {
   const isMounted = useIsMounted();
 
   // Fetch catalog
-  const fetchCatalog = useCallback(async (pageNum: number = 1, refresh: boolean = false) => {
-    try {
-      if (refresh) setIsRefreshing(true);
-      if (pageNum === 1 && !refresh) setIsLoading(true);
-      if (pageNum > 1) setIsLoadingMore(true);
-      setError(null);
+  const fetchCatalog = useCallback(
+    async (pageNum: number = 1, refresh: boolean = false) => {
+      try {
+        if (refresh) setIsRefreshing(true);
+        if (pageNum === 1 && !refresh) setIsLoading(true);
+        if (pageNum > 1) setIsLoadingMore(true);
+        setError(null);
 
-      const params: any = { page: pageNum, limit: 20 };
-      if (selectedSection !== 'All') {
-        params.section = selectedSection;
-      }
+        const params: any = { page: pageNum, limit: 20 };
+        if (selectedSection !== 'All') {
+          params.section = selectedSection;
+        }
 
-      const response = await priveApi.getSmartSpendCatalog(params);
+        const response = await priveApi.getSmartSpendCatalog(params);
 
-      if (response.success && response.data) {
-        const newItems = response.data.items || [];
-        if (pageNum === 1) {
-          setItems(newItems);
+        if (response.success && response.data) {
+          const newItems = response.data.items || [];
+          if (pageNum === 1) {
+            setItems(newItems);
+          } else {
+            if (!isMounted()) return;
+            setItems((prev) => {
+              const existingIds = new Set(prev.map((i) => i._id));
+              const unique = newItems.filter((i) => !existingIds.has(i._id));
+              return [...prev, ...unique];
+            });
+          }
+
+          if (pageNum === 1 && response.data.sections) {
+            if (!isMounted()) return;
+            setSections(response.data.sections);
+          }
+
+          const pagination = response.data.pagination;
+          if (!isMounted()) return;
+          setHasMore(pageNum < (pagination?.totalPages || 1));
+          if (!isMounted()) return;
+          setPage(pageNum);
         } else {
-          if (!isMounted()) return;
-          setItems(prev => {
-            const existingIds = new Set(prev.map(i => i._id));
-            const unique = newItems.filter(i => !existingIds.has(i._id));
-            return [...prev, ...unique];
-          });
+          if (pageNum === 1) setError('Failed to load Smart Spend catalog');
         }
-
-        if (pageNum === 1 && response.data.sections) {
-          if (!isMounted()) return;
-          setSections(response.data.sections);
-        }
-
-        const pagination = response.data.pagination;
+      } catch (err) {
+        if (pageNum === 1) setError('Something went wrong. Please try again.');
+      } finally {
         if (!isMounted()) return;
-        setHasMore(pageNum < (pagination?.totalPages || 1));
+        setIsLoading(false);
         if (!isMounted()) return;
-        setPage(pageNum);
-      } else {
-        if (pageNum === 1) setError('Failed to load Smart Spend catalog');
+        setIsRefreshing(false);
+        if (!isMounted()) return;
+        setIsLoadingMore(false);
       }
-    } catch (err) {
-      if (pageNum === 1) setError('Something went wrong. Please try again.');
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-      if (!isMounted()) return;
-      setIsLoadingMore(false);
-    }
-  }, [selectedSection]);
+    },
+    [selectedSection],
+  );
 
   useEffect(() => {
     fetchCatalog(1);
@@ -119,25 +122,34 @@ function SmartSpendScreen() {
   }, []);
 
   // Navigate to store/product
-  const handleItemPress = useCallback((item: SmartSpendItem) => {
-    // Track click analytics
-    priveApi.trackSmartSpendClick(item._id).catch(() => {});
+  const handleItemPress = useCallback(
+    (item: SmartSpendItem) => {
+      // Track click analytics
+      priveApi.trackSmartSpendClick(item._id).catch(() => {});
 
-    if (item.itemType === 'store' && item.store?.slug) {
-      router.push(`/explore/stores/${item.store.slug}?source=smart_spend&ssId=${item._id}` as any);
-    } else if (item.itemType === 'product' && item.product?.store?.slug) {
-      router.push(`/explore/stores/${item.product.store.slug}?source=smart_spend&ssId=${item._id}` as any);
-    }
-  }, [router]);
+      if (item.itemType === 'store' && (item.store?._id || item.store?.id)) {
+        router.push(
+          `/MainStorePage?storeId=${item.store._id || item.store.id}&source=smart_spend&ssId=${item._id}` as any,
+        );
+      } else if (item.itemType === 'product' && (item.product?.store?._id || item.product?.store?.id)) {
+        router.push(
+          `/MainStorePage?storeId=${item.product.store._id || item.product.store.id}&source=smart_spend&ssId=${item._id}` as any,
+        );
+      } else if (item.itemType === 'product' && item.product?._id) {
+        router.push(`/product-page?cardId=${item.product._id}&cardType=product` as any);
+      }
+    },
+    [router],
+  );
 
   // Featured item (first featured item)
-  const featuredItem = useMemo(() => items.find(i => i.isFeatured), [items]);
-  const gridItems = useMemo(() => items.filter(i => i !== featuredItem), [items, featuredItem]);
+  const featuredItem = useMemo(() => items.find((i) => i.isFeatured), [items]);
+  const gridItems = useMemo(() => items.filter((i) => i !== featuredItem), [items, featuredItem]);
 
   // Section tabs
   const allSections = useMemo(() => {
     const tabs: { label: string; count?: number }[] = [{ label: 'All' }];
-    sections.forEach(s => tabs.push({ label: s.label, count: s.count }));
+    sections.forEach((s) => tabs.push({ label: s.label, count: s.count }));
     return tabs;
   }, [sections]);
 
@@ -148,16 +160,33 @@ function SmartSpendScreen() {
         <ScrollView contentContainerStyle={styles.scrollContent}>
           {/* Section tabs skeleton */}
           <View style={styles.sectionTabs}>
-            {[1, 2, 3].map(i => (
-              <PriveSkeletonBlock key={i} width={80} height={32} borderRadius={PRIVE_RADIUS.full} style={{ marginRight: PRIVE_SPACING.sm }} />
+            {[1, 2, 3].map((i) => (
+              <PriveSkeletonBlock
+                key={i}
+                width={80}
+                height={32}
+                borderRadius={PRIVE_RADIUS.full}
+                style={{ marginRight: PRIVE_SPACING.sm }}
+              />
             ))}
           </View>
           {/* Featured skeleton */}
-          <PriveSkeletonBlock width="100%" height={180} borderRadius={PRIVE_RADIUS.lg} style={{ marginBottom: PRIVE_SPACING.lg }} />
+          <PriveSkeletonBlock
+            width="100%"
+            height={180}
+            borderRadius={PRIVE_RADIUS.lg}
+            style={{ marginBottom: PRIVE_SPACING.lg }}
+          />
           {/* Grid skeleton */}
           <View style={styles.grid}>
-            {[1, 2, 3, 4].map(i => (
-              <PriveSkeletonBlock key={i} width={CARD_WIDTH} height={200} borderRadius={PRIVE_RADIUS.lg} style={{ marginBottom: PRIVE_SPACING.md }} />
+            {[1, 2, 3, 4].map((i) => (
+              <PriveSkeletonBlock
+                key={i}
+                width={CARD_WIDTH}
+                height={200}
+                borderRadius={PRIVE_RADIUS.lg}
+                style={{ marginBottom: PRIVE_SPACING.md }}
+              />
             ))}
           </View>
         </ScrollView>
@@ -185,11 +214,7 @@ function SmartSpendScreen() {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            tintColor={PRIVE_COLORS.gold.primary}
-          />
+          <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} tintColor={PRIVE_COLORS.gold.primary} />
         }
         onScroll={({ nativeEvent }) => {
           const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
@@ -207,19 +232,13 @@ function SmartSpendScreen() {
             style={styles.sectionTabs}
             contentContainerStyle={styles.sectionTabsContent}
           >
-            {allSections.map(tab => (
+            {allSections.map((tab) => (
               <Pressable
                 key={tab.label}
-                style={[
-                  styles.sectionTab,
-                  selectedSection === tab.label && styles.sectionTabActive,
-                ]}
+                style={[styles.sectionTab, selectedSection === tab.label && styles.sectionTabActive]}
                 onPress={() => handleSectionChange(tab.label)}
               >
-                <Text style={[
-                  styles.sectionTabText,
-                  selectedSection === tab.label && styles.sectionTabTextActive,
-                ]}>
+                <Text style={[styles.sectionTabText, selectedSection === tab.label && styles.sectionTabTextActive]}>
                   {tab.label}
                 </Text>
               </Pressable>
@@ -229,11 +248,7 @@ function SmartSpendScreen() {
 
         {/* Featured Banner */}
         {featuredItem && (
-          <Pressable
-            style={styles.featuredCard}
-            onPress={() => handleItemPress(featuredItem)}
-           
-          >
+          <Pressable style={styles.featuredCard} onPress={() => handleItemPress(featuredItem)}>
             {featuredItem.bannerImage ? (
               <CachedImage source={featuredItem.bannerImage} style={styles.featuredImage} />
             ) : (
@@ -243,9 +258,7 @@ function SmartSpendScreen() {
             )}
             <View style={styles.featuredOverlay}>
               <View style={styles.featuredBadge}>
-                <Text style={styles.featuredBadgeText}>
-                  {featuredItem.badgeText || 'Featured'}
-                </Text>
+                <Text style={styles.featuredBadgeText}>{featuredItem.badgeText || 'Featured'}</Text>
               </View>
               <Text style={styles.featuredTitle} numberOfLines={1}>
                 {featuredItem.displayTitle || getItemName(featuredItem)}
@@ -263,13 +276,8 @@ function SmartSpendScreen() {
         {/* Items Grid */}
         {gridItems.length > 0 ? (
           <View style={styles.grid}>
-            {gridItems.map(item => (
-              <Pressable
-                key={item._id}
-                style={styles.itemCard}
-                onPress={() => handleItemPress(item)}
-               
-              >
+            {gridItems.map((item) => (
+              <Pressable key={item._id} style={styles.itemCard} onPress={() => handleItemPress(item)}>
                 {/* Image */}
                 <View style={styles.itemImageContainer}>
                   {getItemImage(item) ? (
@@ -308,7 +316,9 @@ function SmartSpendScreen() {
                         </View>
                       )}
                       {item.store.location?.city && (
-                        <Text style={styles.metaText} numberOfLines={1}>{item.store.location.city}</Text>
+                        <Text style={styles.metaText} numberOfLines={1}>
+                          {item.store.location.city}
+                        </Text>
                       )}
                       {item.store.isVerified && (
                         <Ionicons name="checkmark-circle" size={14} color={PRIVE_COLORS.status.success} />
@@ -318,9 +328,7 @@ function SmartSpendScreen() {
                   {item.itemType === 'product' && item.product && (
                     <View style={styles.itemMeta}>
                       <Text style={styles.priceText}>
-                        {item.product.pricing?.selling != null
-                          ? `AED ${item.product.pricing.selling}`
-                          : ''}
+                        {item.product.pricing?.selling != null ? `AED ${item.product.pricing.selling}` : ''}
                       </Text>
                       {item.product.store?.name && (
                         <Text style={styles.metaText} numberOfLines={1}>
@@ -330,14 +338,18 @@ function SmartSpendScreen() {
                     </View>
                   )}
                   {item.sectionLabel && (
-                    <Text style={styles.sectionLabelText} numberOfLines={1}>{item.sectionLabel}</Text>
+                    <Text style={styles.sectionLabelText} numberOfLines={1}>
+                      {item.sectionLabel}
+                    </Text>
                   )}
                 </View>
               </Pressable>
             ))}
           </View>
         ) : (
-          !isLoading && items.length === 0 && !featuredItem && (
+          !isLoading &&
+          items.length === 0 &&
+          !featuredItem && (
             <View style={styles.emptyState}>
               <Ionicons name="diamond-outline" size={48} color={PRIVE_COLORS.gold.muted} />
               <Text style={styles.emptyTitle}>Premium Selections Coming Soon</Text>

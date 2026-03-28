@@ -118,8 +118,33 @@ function UpgradeConfirmationPage() {
         setUpgradeId(result.upgradeId);
         if (!isMounted()) return;
         setProratedAmount(result.proratedAmount);
-        // TODO: open Razorpay payment flow for subscription upgrades
-        platformAlertSimple('Upgrade Initiated', 'Please complete payment via the Razorpay flow.');
+
+        // Navigate to the Razorpay payment hub for subscription upgrade payment
+        const razorpayOrderId = (result as any).razorpayOrderId;
+        const razorpayKeyId = (result as any).razorpayKeyId;
+
+        if (razorpayOrderId) {
+          router.push({
+            pathname: '/payment-razorpay' as any,
+            params: {
+              bookingType: 'subscription',
+              razorpayOrderId,
+              razorpayKeyId: razorpayKeyId || '',
+              amount: String(result.proratedAmount),
+              currency: 'INR',
+              bookingId: result.upgradeId,
+              // Pass tier info for success screen
+              subscriptionTier: newTier,
+              billingCycle: result.billingCycle || billingCycle,
+            },
+          });
+        } else {
+          // Backend didn't return Razorpay order — show instructions to contact support
+          platformAlertSimple(
+            'Payment Pending',
+            'Your upgrade is initiated. Please contact support to complete payment.',
+          );
+        }
       }
     } catch (error: any) {
       platformAlertSimple('Upgrade Failed', error.message || 'Failed to process upgrade');

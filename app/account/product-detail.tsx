@@ -124,7 +124,7 @@ function ProductDetailScreen() {
   };
 
   const handleCreateServiceRequest = () => {
-    router.push(`/account/service-request?productId=${product?._id}` as any);
+    router.push(`/support/create-ticket?category=service&productId=${product?._id}` as any);
   };
 
   if (loading) {

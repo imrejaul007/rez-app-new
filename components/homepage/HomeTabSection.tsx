@@ -193,10 +193,12 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
 
   return (
     <View style={[styles.container, { backgroundColor: containerBg }]} onLayout={handleContainerLayout}>
-      {/* SVG Curved Background */}
+      {/* SVG Curved Background — pointerEvents="none" is CRITICAL on Android.
+          Without it the SVG bounding box (350px tall) swallows every touch in
+          the content area below the tab row, making all buttons unresponsive. */}
       {containerWidth > 0 && (
-        <View style={styles.svgContainer}>
-          <Svg width={containerWidth} height={350} style={styles.svg}>
+        <View style={styles.svgContainer} pointerEvents="none">
+          <Svg width={containerWidth} height={350} style={styles.svg} pointerEvents="none">
             <Path
               d={generateCurvedPath()}
               fill={theme.heroGradient[0]}

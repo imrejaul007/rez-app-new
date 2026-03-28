@@ -65,7 +65,10 @@ export default function StudentOffersScreen() {
             </View>
           )}
           {!isStudent && (
-            <Pressable style={styles.verifyBtn} onPress={() => router.push('/account/verify-identity' as any)}>
+            <Pressable
+              style={styles.verifyBtn}
+              onPress={() => router.push('/profile/verification?zone=student' as any)}
+            >
               <Text style={styles.verifyBtnText}>Verify Student ID →</Text>
             </Pressable>
           )}

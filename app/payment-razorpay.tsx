@@ -47,6 +47,15 @@ function PaymentPage() {
   const isTravelPayment = bookingType === 'travel';
   const isDealPayment = bookingType === 'deal';
   const isFlashSalePayment = bookingType === 'flash_sale';
+  const isLockDealPayment = bookingType === 'lock_deal';
+  const isSubscriptionPayment = bookingType === 'subscription';
+  // For lock deals: dealId (deposit) or bookingId (balance payment lockId)
+  const dealId = params.dealId as string;
+  const paymentType = (params.paymentType as string) || 'deposit'; // 'deposit' | 'balance'
+  const preCreatedRazorpayOrderId = params.razorpayOrderId as string;
+  // For subscription upgrades
+  const subscriptionTier = (params.subscriptionTier as string) || 'premium';
+  const subscriptionBillingCycle = (params.billingCycle as string) || 'monthly';
 
   // Track navigation timeouts so they can be cancelled on unmount
   const navTimeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
@@ -176,13 +185,23 @@ function PaymentPage() {
       return { razorpayOrderId, razorpayKeyId };
     }
 
-    // For deals and flash sales, the Razorpay order is pre-created by the backend.
+    // For deals, flash sales, and lock deals, the Razorpay order is pre-created by the backend.
     // The order ID and key arrive via URL params — skip the create-order API call.
     if ((isDealPayment || isFlashSalePayment) && orderId) {
       setPaymentStartedAt(Date.now());
       setOrderCreated(true);
       return {
         razorpayOrderId: orderId,
+        razorpayKeyId: preCreatedKeyId,
+        amount,
+        currency,
+      };
+    }
+    if ((isLockDealPayment || isSubscriptionPayment) && preCreatedRazorpayOrderId) {
+      setPaymentStartedAt(Date.now());
+      setOrderCreated(true);
+      return {
+        razorpayOrderId: preCreatedRazorpayOrderId,
         razorpayKeyId: preCreatedKeyId,
         amount,
         currency,
@@ -276,9 +295,15 @@ function PaymentPage() {
         ? 'REZ - Deal Purchase'
         : isFlashSalePayment
           ? 'REZ - Flash Sale Purchase'
-          : isTravelPayment
-            ? 'REZ - Travel Booking'
-            : 'REZ App Payment',
+          : isLockDealPayment
+            ? paymentType === 'balance'
+              ? 'REZ - Lock Deal Balance Payment'
+              : 'REZ - Lock Deal Deposit'
+            : isSubscriptionPayment
+              ? `REZ - ${subscriptionTier} Subscription`
+              : isTravelPayment
+                ? 'REZ - Travel Booking'
+                : 'REZ App Payment',
       image: 'https://your-logo-url.com/logo.png',
       currency: orderData.currency,
       key: orderData.razorpayKeyId,
@@ -348,6 +373,50 @@ function PaymentPage() {
           router.replace(
             `/flash-sale-success?purchaseId=${bookingId}&razorpay_order_id=${paymentData.razorpay_order_id}&razorpay_payment_id=${paymentData.razorpay_payment_id}&razorpay_signature=${paymentData.razorpay_signature}` as any,
           );
+        }, 500);
+        navTimeoutsRef.current.add(t);
+        return;
+      }
+
+      // Lock deals: navigate to lock-confirm page — it handles signature verification
+      if (isLockDealPayment) {
+        if (!isMounted()) return;
+        setIsProcessing(false);
+        const t = setTimeout(() => {
+          navTimeoutsRef.current.delete(t);
+          const lockConfirmParams = new URLSearchParams({
+            razorpay_order_id: paymentData.razorpay_order_id,
+            razorpay_payment_id: paymentData.razorpay_payment_id,
+            razorpay_signature: paymentData.razorpay_signature,
+            paymentType,
+            ...(paymentType === 'balance' ? { lockId: bookingId } : { dealId }),
+          }).toString();
+          router.replace(`/lock-deals/lock-confirm?${lockConfirmParams}` as any);
+        }, 500);
+        navTimeoutsRef.current.add(t);
+        return;
+      }
+
+      // Subscription upgrades: route to payment confirmation screen (which confirms upgrade)
+      if (isSubscriptionPayment) {
+        if (!isMounted()) return;
+        setIsProcessing(false);
+        const t = setTimeout(() => {
+          navTimeoutsRef.current.delete(t);
+          router.replace({
+            pathname: '/subscription/payment-confirmation' as any,
+            params: {
+              status: 'success',
+              tier: subscriptionTier,
+              amount: String(amount),
+              billingCycle: subscriptionBillingCycle,
+              transactionId: paymentData.razorpay_payment_id,
+              upgradeId: bookingId,
+              razorpay_order_id: paymentData.razorpay_order_id,
+              razorpay_payment_id: paymentData.razorpay_payment_id,
+              razorpay_signature: paymentData.razorpay_signature,
+            },
+          });
         }, 500);
         navTimeoutsRef.current.add(t);
         return;

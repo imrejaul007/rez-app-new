@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Shows user's service bookings or video projects (as service-like feature)
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  StatusBar,
-  Platform,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, RefreshControl, StatusBar, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -51,10 +43,10 @@ const MyServicesPage = () => {
 
   const mapSubmissionStatus = (status: string): 'active' | 'completed' | 'pending' | 'cancelled' => {
     const statusMap: Record<string, 'active' | 'completed' | 'pending' | 'cancelled'> = {
-      'approved': 'completed',
-      'pending': 'pending',
-      'under_review': 'active',
-      'rejected': 'cancelled'
+      approved: 'completed',
+      pending: 'pending',
+      under_review: 'active',
+      rejected: 'cancelled',
     };
     return statusMap[status] || 'pending';
   };
@@ -76,8 +68,11 @@ const MyServicesPage = () => {
           status: mapSubmissionStatus(submission.status),
           createdAt: submission.submittedAt || submission.createdAt,
           reward: submission.paidAmount || submission.project?.reward?.amount || 0,
-          type: (submission.content?.type === 'video' ? 'video' :
-                 submission.content?.type === 'text' ? 'content' : 'review') as 'video' | 'content' | 'review'
+          type: (submission.content?.type === 'video'
+            ? 'video'
+            : submission.content?.type === 'text'
+              ? 'content'
+              : 'review') as 'video' | 'content' | 'review',
         }));
 
         if (!isMounted()) return;
@@ -153,52 +148,48 @@ const MyServicesPage = () => {
     }
   };
 
-  const renderProject = useCallback(({ item }: { item: ServiceProject }) => (
-    <Pressable
-      style={styles.projectCard}
-      onPress={() => {
-        router.push(`/earning-projects/${item._id || item.id}` as any);
-      }}
-     
-    >
-      <View style={[styles.iconContainer, { backgroundColor: Colors.success + '20' }]}>
-        <Ionicons name={getTypeIcon(item.type) as any} size={28} color={Colors.success} />
-      </View>
+  const renderProject = useCallback(
+    ({ item }: { item: ServiceProject }) => (
+      <Pressable
+        style={styles.projectCard}
+        onPress={() => {
+          router.push(`/earn/my-submissions?projectId=${item._id || item.id}` as any);
+        }}
+      >
+        <View style={[styles.iconContainer, { backgroundColor: Colors.success + '20' }]}>
+          <Ionicons name={getTypeIcon(item.type) as any} size={28} color={Colors.success} />
+        </View>
 
-      <View style={styles.projectInfo}>
-        <Text style={styles.projectTitle} numberOfLines={1}>
-          {item.title}
-        </Text>
-        <Text style={styles.projectDescription} numberOfLines={2}>
-          {item.description}
-        </Text>
+        <View style={styles.projectInfo}>
+          <Text style={styles.projectTitle} numberOfLines={1}>
+            {item.title}
+          </Text>
+          <Text style={styles.projectDescription} numberOfLines={2}>
+            {item.description}
+          </Text>
 
-        <View style={styles.projectMeta}>
-          <View style={styles.statusBadge}>
-            <View
-              style={[
-                styles.statusDot,
-                { backgroundColor: getStatusColor(item.status) },
-              ]}
-            />
-            <Text
-              style={[styles.statusText, { color: getStatusColor(item.status) }]}
-            >
-              {getStatusText(item.status)}
+          <View style={styles.projectMeta}>
+            <View style={styles.statusBadge}>
+              <View style={[styles.statusDot, { backgroundColor: getStatusColor(item.status) }]} />
+              <Text style={[styles.statusText, { color: getStatusColor(item.status) }]}>
+                {getStatusText(item.status)}
+              </Text>
+            </View>
+
+            <Text style={styles.rewardText}>
+              {currencySymbol}
+              {item.reward}
             </Text>
           </View>
 
-          <Text style={styles.rewardText}>{currencySymbol}{item.reward}</Text>
+          <Text style={styles.dateText}>{new Date(item.createdAt).toLocaleDateString()}</Text>
         </View>
 
-        <Text style={styles.dateText}>
-          {new Date(item.createdAt).toLocaleDateString()}
-        </Text>
-      </View>
-
-      <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-    </Pressable>
-  ), [currencySymbol]);
+        <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
+      </Pressable>
+    ),
+    [currencySymbol],
+  );
 
   const renderEmptyState = () => (
     <View style={styles.emptyContainer}>
@@ -206,13 +197,8 @@ const MyServicesPage = () => {
         <Ionicons name="construct-outline" size={36} color={Colors.success} />
       </View>
       <Text style={styles.emptyTitle}>No Services Yet</Text>
-      <Text style={styles.emptyText}>
-        Start creating content and earning rewards{'\n'}by taking on projects.
-      </Text>
-      <Pressable
-        style={styles.createButton}
-        onPress={() => router.push('/(tabs)/earn' as any)}
-      >
+      <Text style={styles.emptyText}>Start creating content and earning rewards{'\n'}by taking on projects.</Text>
+      <Pressable style={styles.createButton} onPress={() => router.push('/(tabs)/earn' as any)}>
         <Ionicons name="add" size={20} color={colors.text.inverse} />
         <Text style={styles.createButtonText}>Explore Projects</Text>
       </Pressable>
@@ -234,27 +220,18 @@ const MyServicesPage = () => {
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>My Services</Text>
-          <Pressable
-            style={styles.addButton}
-            onPress={() => router.push('/(tabs)/earn' as any)}
-          >
+          <Pressable style={styles.addButton} onPress={() => router.push('/(tabs)/earn' as any)}>
             <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
 
-        <Text style={styles.headerSubtitle}>
-          Video projects and content creation
-        </Text>
+        <Text style={styles.headerSubtitle}>Video projects and content creation</Text>
       </LinearGradient>
 
       {/* Error Banner */}
       {errorMessage && (
         <View style={styles.infoBanner}>
-          <Ionicons
-            name="alert-circle"
-            size={20}
-            color={Colors.warning}
-          />
+          <Ionicons name="alert-circle" size={20} color={Colors.warning} />
           <Text style={styles.infoBannerText}>{errorMessage}</Text>
         </View>
       )}
@@ -265,13 +242,7 @@ const MyServicesPage = () => {
         renderItem={renderProject}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContainer}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={Colors.success}
-          />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={Colors.success} />}
         ListEmptyComponent={renderEmptyState}
         estimatedItemSize={100}
       />

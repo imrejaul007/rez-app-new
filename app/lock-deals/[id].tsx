@@ -8,16 +8,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  ActivityIndicator,
-  Dimensions,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, ActivityIndicator, Dimensions } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -65,10 +56,14 @@ const LockDealDetailPage: React.FC = () => {
 
   const getCurrencySymbol = (currency: string) => {
     switch (currency) {
-      case 'INR': return '\u20B9';
-      case 'AED': return 'AED ';
-      case 'USD': return '$';
-      default: return '\u20B9';
+      case 'INR':
+        return '\u20B9';
+      case 'AED':
+        return 'AED ';
+      case 'USD':
+        return '$';
+      default:
+        return '\u20B9';
     }
   };
 
@@ -83,7 +78,7 @@ const LockDealDetailPage: React.FC = () => {
     const currSymbol = getCurrencySymbol(deal.currency);
     const confirmed = await platformAlertConfirm(
       'Lock This Deal?',
-      `You'll pay ${currSymbol}${deal.depositAmount} (${deal.depositPercent}%) as deposit.\n\nRemaining ${currSymbol}${deal.balanceAmount} to be paid on pickup.\n\nYou'll earn ${deal.lockReward.amount * deal.earningsMultiplier} coins immediately!`
+      `You'll pay ${currSymbol}${deal.depositAmount} (${deal.depositPercent}%) as deposit.\n\nRemaining ${currSymbol}${deal.balanceAmount} to be paid on pickup.\n\nYou'll earn ${deal.lockReward.amount * deal.earningsMultiplier} coins immediately!`,
     );
 
     if (!confirmed) return;
@@ -94,17 +89,22 @@ const LockDealDetailPage: React.FC = () => {
       const response = await lockDealApi.initiateLock(deal._id);
 
       if (response?.data) {
-        // Navigate to payment page with clientSecret
+        // Navigate to the universal Razorpay payment hub
         router.push({
-          pathname: '/lock-deals/lock-payment' as any,
+          pathname: '/payment-razorpay' as any,
           params: {
+            bookingType: 'lock_deal',
+            // Pre-created Razorpay order (no need for hub to call API again)
+            razorpayOrderId: response.data.razorpayOrderId,
+            razorpayKeyId: response.data.razorpayKeyId,
+            // Deal context for the payment hub
             dealId: deal._id,
-            clientSecret: response.data.clientSecret,
-            paymentIntentId: response.data.paymentIntentId,
             dealTitle: deal.title,
-            depositAmount: deal.depositAmount.toString(),
+            amount: deal.depositAmount.toString(),
             currency: deal.currency,
             storeName: deal.storeName,
+            // For success screen routing
+            paymentType: 'deposit',
           },
         });
       }
@@ -126,7 +126,10 @@ const LockDealDetailPage: React.FC = () => {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Deal Details</Text>
@@ -141,7 +144,10 @@ const LockDealDetailPage: React.FC = () => {
     return (
       <View style={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
           <Text style={styles.headerTitle}>Deal Not Found</Text>
@@ -156,9 +162,8 @@ const LockDealDetailPage: React.FC = () => {
   }
 
   const currSymbol = getCurrencySymbol(deal.currency);
-  const discount = deal.originalPrice > 0
-    ? Math.round(((deal.originalPrice - deal.lockedPrice) / deal.originalPrice) * 100)
-    : 0;
+  const discount =
+    deal.originalPrice > 0 ? Math.round(((deal.originalPrice - deal.lockedPrice) / deal.originalPrice) * 100) : 0;
   const lockReward = deal.lockReward.amount * deal.earningsMultiplier;
   const pickupReward = deal.pickupReward.amount * deal.earningsMultiplier;
   const totalReward = lockReward + pickupReward;
@@ -173,10 +178,15 @@ const LockDealDetailPage: React.FC = () => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
-        <Text style={styles.headerTitle} numberOfLines={1}>Deal Details</Text>
+        <Text style={styles.headerTitle} numberOfLines={1}>
+          Deal Details
+        </Text>
         <View style={{ width: 40 }} />
       </View>
 
@@ -215,7 +225,9 @@ const LockDealDetailPage: React.FC = () => {
           {daysLeft > 0 && daysLeft <= 7 && (
             <View style={styles.urgencyRow}>
               <Ionicons name="time" size={14} color={Colors.error} />
-              <Text style={styles.urgencyText}>Only {daysLeft} day{daysLeft !== 1 ? 's' : ''} left!</Text>
+              <Text style={styles.urgencyText}>
+                Only {daysLeft} day{daysLeft !== 1 ? 's' : ''} left!
+              </Text>
             </View>
           )}
         </View>
@@ -227,11 +239,17 @@ const LockDealDetailPage: React.FC = () => {
           <View style={styles.priceMainRow}>
             <View>
               <Text style={styles.priceLabel}>Locked Price</Text>
-              <Text style={styles.priceValue}>{currSymbol}{deal.lockedPrice}</Text>
+              <Text style={styles.priceValue}>
+                {currSymbol}
+                {deal.lockedPrice}
+              </Text>
             </View>
             <View style={styles.priceOriginal}>
               <Text style={styles.priceLabel}>Original Price</Text>
-              <Text style={styles.priceStrike}>{currSymbol}{deal.originalPrice}</Text>
+              <Text style={styles.priceStrike}>
+                {currSymbol}
+                {deal.originalPrice}
+              </Text>
             </View>
           </View>
 
@@ -242,7 +260,10 @@ const LockDealDetailPage: React.FC = () => {
               <View style={[styles.breakdownDot, { backgroundColor: Colors.warning }]} />
               <Text style={styles.breakdownLabel}>Deposit ({deal.depositPercent}%)</Text>
             </View>
-            <Text style={styles.breakdownValue}>{currSymbol}{deal.depositAmount}</Text>
+            <Text style={styles.breakdownValue}>
+              {currSymbol}
+              {deal.depositAmount}
+            </Text>
           </View>
 
           <View style={styles.breakdownRow}>
@@ -250,7 +271,10 @@ const LockDealDetailPage: React.FC = () => {
               <View style={[styles.breakdownDot, { backgroundColor: Colors.info }]} />
               <Text style={styles.breakdownLabel}>Balance on Pickup</Text>
             </View>
-            <Text style={styles.breakdownValue}>{currSymbol}{deal.balanceAmount}</Text>
+            <Text style={styles.breakdownValue}>
+              {currSymbol}
+              {deal.balanceAmount}
+            </Text>
           </View>
 
           {deal.maxLocks > 0 && (
@@ -312,8 +336,8 @@ const LockDealDetailPage: React.FC = () => {
             <View style={styles.multiplierNote}>
               <Ionicons name="flash" size={14} color={Colors.warning} />
               <Text style={styles.multiplierNoteText}>
-                {deal.earningsMultiplier}x earnings multiplier applied!
-                (Base: {deal.lockReward.amount} + {deal.pickupReward.amount} = {deal.lockReward.amount + deal.pickupReward.amount} coins)
+                {deal.earningsMultiplier}x earnings multiplier applied! (Base: {deal.lockReward.amount} +{' '}
+                {deal.pickupReward.amount} = {deal.lockReward.amount + deal.pickupReward.amount} coins)
               </Text>
             </View>
           )}
@@ -324,10 +348,25 @@ const LockDealDetailPage: React.FC = () => {
           <Text style={styles.cardTitle}>How It Works</Text>
 
           {[
-            { step: 1, icon: 'lock-closed' as const, title: 'Lock the Deal', desc: `Pay ${deal.depositPercent}% deposit (${currSymbol}${deal.depositAmount}) to lock the price` },
+            {
+              step: 1,
+              icon: 'lock-closed' as const,
+              title: 'Lock the Deal',
+              desc: `Pay ${deal.depositPercent}% deposit (${currSymbol}${deal.depositAmount}) to lock the price`,
+            },
             { step: 2, icon: 'flash' as const, title: 'Earn Lock Reward', desc: `Get ${lockReward} coins instantly!` },
-            { step: 3, icon: 'storefront' as const, title: 'Visit & Pay Balance', desc: `Pay remaining ${currSymbol}${deal.balanceAmount} at the store within ${deal.pickupWindowDays} days` },
-            { step: 4, icon: 'gift' as const, title: 'Pickup & Earn More', desc: `Get ${pickupReward} more coins on pickup!` },
+            {
+              step: 3,
+              icon: 'storefront' as const,
+              title: 'Visit & Pay Balance',
+              desc: `Pay remaining ${currSymbol}${deal.balanceAmount} at the store within ${deal.pickupWindowDays} days`,
+            },
+            {
+              step: 4,
+              icon: 'gift' as const,
+              title: 'Pickup & Earn More',
+              desc: `Get ${pickupReward} more coins on pickup!`,
+            },
           ].map((item, index) => (
             <View key={item.step} style={styles.stepRow}>
               <View style={styles.stepNumberContainer}>
@@ -372,15 +411,11 @@ const LockDealDetailPage: React.FC = () => {
         <View style={styles.card}>
           <View style={styles.infoRow}>
             <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
-            <Text style={styles.infoText}>
-              Pickup within {deal.pickupWindowDays} days after locking
-            </Text>
+            <Text style={styles.infoText}>Pickup within {deal.pickupWindowDays} days after locking</Text>
           </View>
           <View style={styles.infoRow}>
             <Ionicons name="shield-checkmark-outline" size={16} color={colors.text.tertiary} />
-            <Text style={styles.infoText}>
-              Full deposit refund if you cancel before pickup
-            </Text>
+            <Text style={styles.infoText}>Full deposit refund if you cancel before pickup</Text>
           </View>
         </View>
 
@@ -460,7 +495,8 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingBottom: Spacing.xl,
-  paddingBottom: 120, },
+    paddingBottom: 120,
+  },
 
   // Deal Image
   dealImage: {

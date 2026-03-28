@@ -750,7 +750,7 @@ function HomeScreen() {
       switch (action) {
         case 'booking':
           sessionTrackingService.trackFeatureTouch('booking');
-          router.push('/book' as any);
+          router.push('/booking' as any);
           break;
         case 'earn':
           sessionTrackingService.trackFeatureTouch('earn');
@@ -1267,7 +1267,7 @@ function HomeScreen() {
         >
           {/* Near-U Tab Content - All sections with viewport-based lazy loading */}
           {activeTab === 'near-u' && (
-            <FeatureErrorBoundary featureName="Near-U" compact={false}>
+            <FeatureErrorBoundary featureName="Near-U" compact={true}>
               <Suspense fallback={<TabContentFallback />}>
                 <NearUTabContent
                   state={state}

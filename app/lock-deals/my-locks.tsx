@@ -8,15 +8,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Platform,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Platform, ActivityIndicator, RefreshControl } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter } from 'expo-router';
@@ -44,6 +36,7 @@ const MyLocksPage: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>('active');
   const [cancellingId, setCancellingId] = useState<string | null>(null);
+  const [payingBalanceId, setPayingBalanceId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchLocks();
@@ -52,7 +45,7 @@ const MyLocksPage: React.FC = () => {
   const fetchLocks = async () => {
     try {
       setIsLoading(true);
-      const tab = TABS.find(t => t.key === activeTab)!;
+      const tab = TABS.find((t) => t.key === activeTab)!;
       // Pass comma-separated statuses
       const response = await lockDealApi.getMyLocks(tab.statuses as any);
 
@@ -75,40 +68,86 @@ const MyLocksPage: React.FC = () => {
     fetchLocks();
   }, [activeTab]);
 
-  const handleCancelLock = useCallback(async (lock: UserLockDeal) => {
-    const confirmed = await platformAlertConfirm(
-      'Cancel Lock?',
-      `Are you sure you want to cancel your lock on "${lock.dealSnapshot.title}"?\n\nYour deposit of ${getCurrencySymbol(lock.dealSnapshot.currency)}${lock.depositAmount} will be refunded.`
-    );
+  const handlePayBalance = useCallback(
+    async (lock: UserLockDeal) => {
+      const currSymbol = getCurrencySymbol(lock.dealSnapshot.currency);
+      const confirmed = await platformAlertConfirm(
+        'Pay Balance?',
+        `Pay ${currSymbol}${lock.balanceAmount} to complete your lock on "${lock.dealSnapshot.title}"?`,
+      );
+      if (!confirmed) return;
 
-    if (!confirmed) return;
+      try {
+        if (!isMounted()) return;
+        setPayingBalanceId(lock._id);
+        const response = await lockDealApi.initiateBalancePayment(lock._id);
 
-    try {
-      if (!isMounted()) return;
-      setCancellingId(lock._id);
-      const response = await lockDealApi.cancelLock(lock._id, 'User cancelled');
-
-      if (response?.data?.cancelled) {
-        platformAlertSimple(
-          'Lock Cancelled',
-          `Refund of ${getCurrencySymbol(lock.dealSnapshot.currency)}${response.data.refundAmount} will be processed.`
-        );
-        fetchLocks();
+        if (!isMounted()) return;
+        if (response?.data) {
+          router.push({
+            pathname: '/payment-razorpay' as any,
+            params: {
+              bookingType: 'lock_deal',
+              razorpayOrderId: response.data.razorpayOrderId,
+              razorpayKeyId: response.data.razorpayKeyId,
+              amount: lock.balanceAmount.toString(),
+              currency: lock.dealSnapshot.currency,
+              bookingId: lock._id, // lockId passed as bookingId for success routing
+              paymentType: 'balance',
+            },
+          });
+        }
+      } catch (error: any) {
+        platformAlertSimple('Error', error?.message || 'Failed to initiate balance payment. Please try again.');
+      } finally {
+        if (!isMounted()) return;
+        setPayingBalanceId(null);
       }
-    } catch (error: any) {
-      platformAlertSimple('Error', error?.message || 'Failed to cancel lock');
-    } finally {
-      if (!isMounted()) return;
-      setCancellingId(null);
-    }
-  }, [fetchLocks]);
+    },
+    [router, isMounted],
+  );
+
+  const handleCancelLock = useCallback(
+    async (lock: UserLockDeal) => {
+      const confirmed = await platformAlertConfirm(
+        'Cancel Lock?',
+        `Are you sure you want to cancel your lock on "${lock.dealSnapshot.title}"?\n\nYour deposit of ${getCurrencySymbol(lock.dealSnapshot.currency)}${lock.depositAmount} will be refunded.`,
+      );
+
+      if (!confirmed) return;
+
+      try {
+        if (!isMounted()) return;
+        setCancellingId(lock._id);
+        const response = await lockDealApi.cancelLock(lock._id, 'User cancelled');
+
+        if (response?.data?.cancelled) {
+          platformAlertSimple(
+            'Lock Cancelled',
+            `Refund of ${getCurrencySymbol(lock.dealSnapshot.currency)}${response.data.refundAmount} will be processed.`,
+          );
+          fetchLocks();
+        }
+      } catch (error: any) {
+        platformAlertSimple('Error', error?.message || 'Failed to cancel lock');
+      } finally {
+        if (!isMounted()) return;
+        setCancellingId(null);
+      }
+    },
+    [fetchLocks],
+  );
 
   const getCurrencySymbol = (currency: string) => {
     switch (currency) {
-      case 'INR': return '\u20B9';
-      case 'AED': return 'AED ';
-      case 'USD': return '$';
-      default: return '\u20B9';
+      case 'INR':
+        return '\u20B9';
+      case 'AED':
+        return 'AED ';
+      case 'USD':
+        return '$';
+      default:
+        return '\u20B9';
     }
   };
 
@@ -128,153 +167,185 @@ const MyLocksPage: React.FC = () => {
       case 'expired':
         return { label: 'Expired', color: Colors.error, bg: Colors.errorScale[50], icon: 'time' as const };
       case 'refunded':
-        return { label: 'Refunded', color: colors.text.tertiary, bg: colors.background.secondary, icon: 'arrow-undo' as const };
+        return {
+          label: 'Refunded',
+          color: colors.text.tertiary,
+          bg: colors.background.secondary,
+          icon: 'arrow-undo' as const,
+        };
       case 'cancelled':
-        return { label: 'Cancelled', color: colors.text.tertiary, bg: colors.background.secondary, icon: 'close-circle' as const };
+        return {
+          label: 'Cancelled',
+          color: colors.text.tertiary,
+          bg: colors.background.secondary,
+          icon: 'close-circle' as const,
+        };
       default:
-        return { label: status, color: colors.text.tertiary, bg: colors.background.secondary, icon: 'help-circle' as const };
+        return {
+          label: status,
+          color: colors.text.tertiary,
+          bg: colors.background.secondary,
+          icon: 'help-circle' as const,
+        };
     }
   };
 
-  const renderLockCard = useCallback(({ item: lock }: { item: UserLockDeal }) => {
-    const snap = lock.dealSnapshot;
-    const currSymbol = getCurrencySymbol(snap.currency);
-    const statusConfig = getStatusConfig(lock.status);
-    const daysLeft = getDaysUntilExpiry(lock.expiresAt);
-    const isActive = ['locked', 'paid_balance'].includes(lock.status);
-    const isCancelling = cancellingId === lock._id;
+  const renderLockCard = useCallback(
+    ({ item: lock }: { item: UserLockDeal }) => {
+      const snap = lock.dealSnapshot;
+      const currSymbol = getCurrencySymbol(snap.currency);
+      const statusConfig = getStatusConfig(lock.status);
+      const daysLeft = getDaysUntilExpiry(lock.expiresAt);
+      const isActive = ['locked', 'paid_balance'].includes(lock.status);
+      const isCancelling = cancellingId === lock._id;
 
-    return (
-      <View style={styles.lockCard}>
-        {/* Top Row: Image + Info */}
-        <View style={styles.lockCardTop}>
-          <CachedImage source={snap.image} style={styles.lockImage} contentFit="cover" />
-          <View style={styles.lockInfo}>
-            <Text style={styles.lockTitle} numberOfLines={2}>{snap.title}</Text>
-            <Text style={styles.lockStore} numberOfLines={1}>{snap.storeName}</Text>
+      return (
+        <View style={styles.lockCard}>
+          {/* Top Row: Image + Info */}
+          <View style={styles.lockCardTop}>
+            <CachedImage source={snap.image} style={styles.lockImage} contentFit="cover" />
+            <View style={styles.lockInfo}>
+              <Text style={styles.lockTitle} numberOfLines={2}>
+                {snap.title}
+              </Text>
+              <Text style={styles.lockStore} numberOfLines={1}>
+                {snap.storeName}
+              </Text>
 
-            <View style={styles.lockPriceRow}>
-              <Text style={styles.lockPrice}>{currSymbol}{snap.lockedPrice}</Text>
-              <Text style={styles.lockOriginal}>{currSymbol}{snap.originalPrice}</Text>
-            </View>
-
-            {/* Status Badge */}
-            <View style={[styles.statusBadge, { backgroundColor: statusConfig.bg }]}>
-              <Ionicons name={statusConfig.icon} size={12} color={statusConfig.color} />
-              <Text style={[styles.statusText, { color: statusConfig.color }]}>{statusConfig.label}</Text>
-            </View>
-          </View>
-        </View>
-
-        {/* Details Section */}
-        <View style={styles.lockDetails}>
-          {/* Deposit & Balance */}
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>Deposit Paid</Text>
-            <Text style={styles.detailValue}>{currSymbol}{lock.depositAmount}</Text>
-          </View>
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>
-              {lock.status === 'paid_balance' || lock.status === 'picked_up' ? 'Balance Paid' : 'Balance Due'}
-            </Text>
-            <Text style={[styles.detailValue, isActive && lock.status === 'locked' && { color: Colors.warning }]}>
-              {currSymbol}{lock.balanceAmount}
-            </Text>
-          </View>
-
-          {/* Rewards */}
-          {(lock.lockRewardCredited || lock.pickupRewardCredited) && (
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Rewards Earned</Text>
-              <View style={styles.rewardBadge}>
-                <CoinIcon size={12} />
-                <Text style={styles.rewardText}>
-                  {(lock.lockRewardCredited ? lock.lockRewardAmount : 0) +
-                   (lock.pickupRewardCredited ? lock.pickupRewardAmount : 0)}
+              <View style={styles.lockPriceRow}>
+                <Text style={styles.lockPrice}>
+                  {currSymbol}
+                  {snap.lockedPrice}
+                </Text>
+                <Text style={styles.lockOriginal}>
+                  {currSymbol}
+                  {snap.originalPrice}
                 </Text>
               </View>
-            </View>
-          )}
 
-          {/* Pickup Code (for active locks) */}
-          {isActive && (
-            <View style={styles.pickupCodeSection}>
-              <Text style={styles.pickupCodeLabel}>Pickup Code</Text>
-              <View style={styles.pickupCodeContainer}>
-                <Text style={styles.pickupCode}>{lock.pickupCode}</Text>
+              {/* Status Badge */}
+              <View style={[styles.statusBadge, { backgroundColor: statusConfig.bg }]}>
+                <Ionicons name={statusConfig.icon} size={12} color={statusConfig.color} />
+                <Text style={[styles.statusText, { color: statusConfig.color }]}>{statusConfig.label}</Text>
               </View>
             </View>
-          )}
+          </View>
 
-          {/* Expiry countdown */}
+          {/* Details Section */}
+          <View style={styles.lockDetails}>
+            {/* Deposit & Balance */}
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Deposit Paid</Text>
+              <Text style={styles.detailValue}>
+                {currSymbol}
+                {lock.depositAmount}
+              </Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>
+                {lock.status === 'paid_balance' || lock.status === 'picked_up' ? 'Balance Paid' : 'Balance Due'}
+              </Text>
+              <Text style={[styles.detailValue, isActive && lock.status === 'locked' && { color: Colors.warning }]}>
+                {currSymbol}
+                {lock.balanceAmount}
+              </Text>
+            </View>
+
+            {/* Rewards */}
+            {(lock.lockRewardCredited || lock.pickupRewardCredited) && (
+              <View style={styles.detailRow}>
+                <Text style={styles.detailLabel}>Rewards Earned</Text>
+                <View style={styles.rewardBadge}>
+                  <CoinIcon size={12} />
+                  <Text style={styles.rewardText}>
+                    {(lock.lockRewardCredited ? lock.lockRewardAmount : 0) +
+                      (lock.pickupRewardCredited ? lock.pickupRewardAmount : 0)}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+            {/* Pickup Code (for active locks) */}
+            {isActive && (
+              <View style={styles.pickupCodeSection}>
+                <Text style={styles.pickupCodeLabel}>Pickup Code</Text>
+                <View style={styles.pickupCodeContainer}>
+                  <Text style={styles.pickupCode}>{lock.pickupCode}</Text>
+                </View>
+              </View>
+            )}
+
+            {/* Expiry countdown */}
+            {isActive && (
+              <View style={styles.expiryRow}>
+                <Ionicons name="time-outline" size={14} color={daysLeft <= 2 ? Colors.error : colors.text.tertiary} />
+                <Text style={[styles.expiryText, daysLeft <= 2 && { color: Colors.error, fontWeight: '600' }]}>
+                  {daysLeft === 0 ? 'Expires today!' : `${daysLeft} day${daysLeft !== 1 ? 's' : ''} to pick up`}
+                </Text>
+              </View>
+            )}
+
+            {/* Picked up info */}
+            {lock.status === 'picked_up' && lock.pickedUpAt && (
+              <View style={styles.expiryRow}>
+                <Ionicons name="checkmark-circle" size={14} color={Colors.success} />
+                <Text style={[styles.expiryText, { color: Colors.success }]}>
+                  Picked up on {new Date(lock.pickedUpAt).toLocaleDateString()}
+                </Text>
+              </View>
+            )}
+
+            {/* Refund info */}
+            {lock.refundAmount && lock.refundAmount > 0 && (
+              <View style={styles.expiryRow}>
+                <Ionicons name="arrow-undo" size={14} color={colors.text.tertiary} />
+                <Text style={styles.expiryText}>
+                  Refund: {currSymbol}
+                  {lock.refundAmount}
+                </Text>
+              </View>
+            )}
+          </View>
+
+          {/* Actions */}
           {isActive && (
-            <View style={styles.expiryRow}>
-              <Ionicons
-                name="time-outline"
-                size={14}
-                color={daysLeft <= 2 ? Colors.error : colors.text.tertiary}
-              />
-              <Text style={[styles.expiryText, daysLeft <= 2 && { color: Colors.error, fontWeight: '600' }]}>
-                {daysLeft === 0 ? 'Expires today!' : `${daysLeft} day${daysLeft !== 1 ? 's' : ''} to pick up`}
-              </Text>
-            </View>
-          )}
-
-          {/* Picked up info */}
-          {lock.status === 'picked_up' && lock.pickedUpAt && (
-            <View style={styles.expiryRow}>
-              <Ionicons name="checkmark-circle" size={14} color={Colors.success} />
-              <Text style={[styles.expiryText, { color: Colors.success }]}>
-                Picked up on {new Date(lock.pickedUpAt).toLocaleDateString()}
-              </Text>
-            </View>
-          )}
-
-          {/* Refund info */}
-          {lock.refundAmount && lock.refundAmount > 0 && (
-            <View style={styles.expiryRow}>
-              <Ionicons name="arrow-undo" size={14} color={colors.text.tertiary} />
-              <Text style={styles.expiryText}>Refund: {currSymbol}{lock.refundAmount}</Text>
+            <View style={styles.lockActions}>
+              {lock.status === 'locked' && (
+                <Pressable
+                  style={styles.payBalanceButton}
+                  onPress={() => handlePayBalance(lock)}
+                  disabled={payingBalanceId === lock._id}
+                >
+                  {payingBalanceId === lock._id ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.payBalanceText}>Pay Balance</Text>
+                  )}
+                </Pressable>
+              )}
+              <Pressable style={styles.cancelButton} onPress={() => handleCancelLock(lock)} disabled={isCancelling}>
+                {isCancelling ? (
+                  <ActivityIndicator size="small" color={Colors.error} />
+                ) : (
+                  <Text style={styles.cancelText}>Cancel</Text>
+                )}
+              </Pressable>
             </View>
           )}
         </View>
-
-        {/* Actions */}
-        {isActive && (
-          <View style={styles.lockActions}>
-            {lock.status === 'locked' && (
-              <Pressable
-                style={styles.payBalanceButton}
-                onPress={() => router.push({
-                  pathname: '/lock-deals/balance-payment' as any,
-                  params: { lockId: lock._id },
-                })}
-              >
-                <Text style={styles.payBalanceText}>Pay Balance</Text>
-              </Pressable>
-            )}
-            <Pressable
-              style={styles.cancelButton}
-              onPress={() => handleCancelLock(lock)}
-              disabled={isCancelling}
-            >
-              {isCancelling ? (
-                <ActivityIndicator size="small" color={Colors.error} />
-              ) : (
-                <Text style={styles.cancelText}>Cancel</Text>
-              )}
-            </Pressable>
-          </View>
-        )}
-      </View>
-    );
-  }, [cancellingId, router, handleCancelLock]);
+      );
+    },
+    [cancellingId, router, handleCancelLock],
+  );
 
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
         </Pressable>
         <Text style={styles.headerTitle}>My Locked Deals</Text>
@@ -289,9 +360,7 @@ const MyLocksPage: React.FC = () => {
             style={[styles.tab, activeTab === tab.key && styles.tabActive]}
             onPress={() => setActiveTab(tab.key)}
           >
-            <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>
-              {tab.label}
-            </Text>
+            <Text style={[styles.tabText, activeTab === tab.key && styles.tabTextActive]}>{tab.label}</Text>
           </Pressable>
         ))}
       </View>
@@ -308,26 +377,31 @@ const MyLocksPage: React.FC = () => {
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons
-                name={activeTab === 'active' ? 'lock-open-outline' : activeTab === 'completed' ? 'bag-check-outline' : 'time-outline'}
+                name={
+                  activeTab === 'active'
+                    ? 'lock-open-outline'
+                    : activeTab === 'completed'
+                      ? 'bag-check-outline'
+                      : 'time-outline'
+                }
                 size={48}
                 color={colors.text.tertiary}
               />
               <Text style={styles.emptyTitle}>
-                {activeTab === 'active' ? 'No active locks' : activeTab === 'completed' ? 'No picked up deals yet' : 'No cancelled or expired deals'}
+                {activeTab === 'active'
+                  ? 'No active locks'
+                  : activeTab === 'completed'
+                    ? 'No picked up deals yet'
+                    : 'No cancelled or expired deals'}
               </Text>
               {activeTab === 'active' && (
-                <Pressable
-                  style={styles.browseCta}
-                  onPress={() => router.push('/lock-deals' as any)}
-                >
+                <Pressable style={styles.browseCta} onPress={() => router.push('/lock-deals' as any)}>
                   <Text style={styles.browseCtaText}>Browse Lock Deals</Text>
                 </Pressable>
               )}
             </View>
           }
-          refreshControl={
-            <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
-          }
+          refreshControl={<RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
         />

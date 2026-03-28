@@ -125,8 +125,8 @@ const GroceryPage: React.FC = () => {
 
       // Process categories
       if (categoriesRes.success && categoriesRes.data) {
-        const groceryCategory = categoriesRes.data.find((cat: any) =>
-          cat.slug === 'grocery' || cat.name?.toLowerCase().includes('grocery')
+        const groceryCategory = categoriesRes.data.find(
+          (cat: any) => cat.slug === 'grocery' || cat.name?.toLowerCase().includes('grocery'),
         );
 
         if (groceryCategory && groceryCategory.subcategories?.length > 0) {
@@ -153,11 +153,11 @@ const GroceryPage: React.FC = () => {
         const mappedStores: Store[] = stores.map((store: any) => ({
           id: store.id || store._id,
           name: store.name,
-          rating: (store.ratings?.average || store.rating?.average) || 4.5,
+          rating: store.ratings?.average || store.rating?.average || 4.5,
           deliveryTime: store.operationalInfo?.deliveryTime
-            ? store.operationalInfo?.deliveryTime || "15-30 min"
+            ? store.operationalInfo?.deliveryTime || '15-30 min'
             : '30-45 min',
-          cashback: `${(store.offers?.cashback || store.maxCashback) || 15}%`,
+          cashback: `${store.offers?.cashback || store.maxCashback || 15}%`,
           image: store.banner || store.image || undefined,
           logo: store.logo,
         }));
@@ -167,18 +167,20 @@ const GroceryPage: React.FC = () => {
 
         // Filter quick delivery stores
         const quick = stores
-          .filter((s: any) =>
-            s.deliveryCategories?.fastDelivery ||
-            (s.operationalInfo?.deliveryTime?.includes("-") && parseInt(s.operationalInfo.deliveryTime.split("-")[1]) <= 30)
+          .filter(
+            (s: any) =>
+              s.deliveryCategories?.fastDelivery ||
+              (s.operationalInfo?.deliveryTime?.includes('-') &&
+                parseInt(s.operationalInfo.deliveryTime.split('-')[1]) <= 30),
           )
           .map((store: any) => ({
             id: store.id || store._id,
             name: store.name,
-            rating: (store.ratings?.average || store.rating?.average) || 4.5,
+            rating: store.ratings?.average || store.rating?.average || 4.5,
             deliveryTime: store.operationalInfo?.deliveryTime
-              ? store.operationalInfo?.deliveryTime?.split("-")[0] + " min" || "15 min"
+              ? store.operationalInfo?.deliveryTime?.split('-')[0] + ' min' || '15 min'
               : '15 min',
-            cashback: `${(store.offers?.cashback || store.maxCashback) || 15}%`,
+            cashback: `${store.offers?.cashback || store.maxCashback || 15}%`,
             image: store.banner || store.image || undefined,
             logo: store.logo,
           }));
@@ -187,10 +189,7 @@ const GroceryPage: React.FC = () => {
 
         // Calculate stats
         const maxCashback = Math.max(...stores.map((s: any) => s.maxCashback || 0), 25);
-        const fastestTime = Math.min(
-          ...stores.map((s: any) => s.operationalInfo?.deliveryTime?.min || 30),
-          10
-        );
+        const fastestTime = Math.min(...stores.map((s: any) => s.operationalInfo?.deliveryTime?.min || 30), 10);
         if (!isMounted()) return;
         setStats({
           storeCount: stores.length,
@@ -247,17 +246,17 @@ const GroceryPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Grocery & Essentials</Text>
             <Text style={styles.headerSubtitle}>Fresh groceries delivered</Text>
           </View>
-          <Pressable
-            style={styles.searchButton}
-            onPress={() => setShowSearch(!showSearch)}
-          >
+          <Pressable style={styles.searchButton} onPress={() => setShowSearch(!showSearch)}>
             <Ionicons name={showSearch ? 'close' : 'search'} size={24} color={COLORS.white} />
           </Pressable>
         </View>
@@ -319,15 +318,12 @@ const GroceryPage: React.FC = () => {
                 key={cat.id}
                 style={styles.categoryCard}
                 onPress={() => router.push(`/grocery/${cat.id}` as any)}
-               
               >
                 <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                   <Text style={styles.categoryEmoji}>{cat.icon}</Text>
                 </View>
                 <Text style={styles.categoryTitle}>{cat.title}</Text>
-                <Text style={styles.categoryCount}>
-                  {cat.count > 0 ? `${cat.count} items` : 'Browse'}
-                </Text>
+                <Text style={styles.categoryCount}>{cat.count > 0 ? `${cat.count} items` : 'Browse'}</Text>
               </Pressable>
             ))}
           </View>
@@ -337,7 +333,7 @@ const GroceryPage: React.FC = () => {
         <View style={styles.quickActionsContainer}>
           <Pressable
             style={[styles.quickAction, { backgroundColor: colors.tint.amberLight }]}
-            onPress={() => router.push('/grocery/deals' as any)}
+            onPress={() => router.push('/deals' as any)}
           >
             <Text style={styles.quickActionIcon}>🔥</Text>
             <Text style={styles.quickActionTitle}>Hot Deals</Text>
@@ -378,17 +374,15 @@ const GroceryPage: React.FC = () => {
                 key={store.id}
                 style={styles.quickStoreCard}
                 onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as any)}
-               
               >
                 <View style={styles.quickBadge}>
                   <Ionicons name="flash" size={10} color="#FCD34D" />
                   <Text style={styles.quickBadgeText}>{store.deliveryTime}</Text>
                 </View>
-                <CachedImage
-                  source={store.logo || store.image}
-                  style={styles.quickStoreLogo}
-                />
-                <Text style={styles.quickStoreName} numberOfLines={1}>{store.name}</Text>
+                <CachedImage source={store.logo || store.image} style={styles.quickStoreLogo} />
+                <Text style={styles.quickStoreName} numberOfLines={1}>
+                  {store.name}
+                </Text>
                 <Text style={styles.quickStoreCashback}>{store.cashback} cashback</Text>
               </Pressable>
             ))}
@@ -409,7 +403,6 @@ const GroceryPage: React.FC = () => {
                 key={store.id}
                 style={styles.storeCard}
                 onPress={() => router.push(`/MainStorePage?storeId=${store.id}` as any)}
-               
               >
                 <CachedImage source={store.image} style={styles.storeImage} />
                 <View style={styles.cashbackBadge}>
@@ -441,10 +434,7 @@ const GroceryPage: React.FC = () => {
             <Text style={styles.promoEmoji}>🛒</Text>
             <Text style={styles.promoTitle}>First Order? Get {currencySymbol}100 Off</Text>
             <Text style={styles.promoSubtitle}>+ Free delivery on orders above {currencySymbol}199</Text>
-            <Pressable
-              style={styles.promoButton}
-              onPress={() => router.push('/grocery/deals' as any)}
-            >
+            <Pressable style={styles.promoButton} onPress={() => router.push('/deals' as any)}>
               <Text style={styles.promoButtonText}>Order Now</Text>
             </Pressable>
           </LinearGradient>

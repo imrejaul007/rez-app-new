@@ -314,7 +314,10 @@ const BottomNavigation: React.FC<BottomNavigationProps> = ({ style }) => {
   const activeTab = getActiveTab();
 
   const handleTabPress = (route: string) => {
-    router.push(route as any);
+    // Use navigate instead of push so tabs don't stack in the history.
+    // navigate() is a no-op when already on the target route, making it
+    // safe to call repeatedly (e.g. tapping Home while on Home).
+    router.navigate(route as any);
   };
 
   // Render a regular tab item

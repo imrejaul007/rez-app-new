@@ -173,8 +173,8 @@ const AnimatedCheckmark = React.memo(
     }), [progress]);
 
     return (
-      <Animated.View style={[animatedPathStyle, { position: 'absolute' }]}>
-        <Svg width={24} height={24} viewBox="0 0 24 24" fill="none">
+      <Animated.View style={[animatedPathStyle, { position: 'absolute' }]} pointerEvents="none">
+        <Svg width={24} height={24} viewBox="0 0 24 24" fill="none" pointerEvents="none">
           <Path
             d={path}
             stroke={stroke}

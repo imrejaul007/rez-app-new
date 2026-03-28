@@ -122,8 +122,8 @@ export interface LockDealFilters {
 }
 
 export interface InitiateLockResponse {
-  clientSecret: string;
-  paymentIntentId: string;
+  razorpayOrderId: string;
+  razorpayKeyId: string;
   deal: {
     _id: string;
     title: string;
@@ -157,8 +157,8 @@ export interface ConfirmLockResponse {
 }
 
 export interface BalancePaymentResponse {
-  clientSecret: string;
-  paymentIntentId: string;
+  razorpayOrderId: string;
+  razorpayKeyId: string;
   balanceAmount: number;
   currency: string;
   dealTitle: string;
@@ -228,10 +228,19 @@ export const lockDealApi = {
   },
 
   /**
-   * Confirm lock after deposit payment succeeds
+   * Confirm lock after deposit payment succeeds (Razorpay signature verification)
    */
-  async confirmLock(dealId: string, paymentIntentId: string): Promise<ApiResponse<ConfirmLockResponse>> {
-    return apiClient.post(`${BASE_URL}/${dealId}/confirm-lock`, { paymentIntentId });
+  async confirmLock(
+    dealId: string,
+    razorpayOrderId: string,
+    razorpayPaymentId: string,
+    razorpaySignature: string,
+  ): Promise<ApiResponse<ConfirmLockResponse>> {
+    return apiClient.post(`${BASE_URL}/${dealId}/confirm-lock`, {
+      razorpayOrderId,
+      razorpayPaymentId,
+      razorpaySignature,
+    });
   },
 
   /**
@@ -242,10 +251,19 @@ export const lockDealApi = {
   },
 
   /**
-   * Confirm balance payment after payment succeeds
+   * Confirm balance payment after payment succeeds (Razorpay signature verification)
    */
-  async confirmBalancePayment(lockId: string, paymentIntentId: string): Promise<ApiResponse<ConfirmBalanceResponse>> {
-    return apiClient.post(`${BASE_URL}/${lockId}/confirm-balance`, { paymentIntentId });
+  async confirmBalancePayment(
+    lockId: string,
+    razorpayOrderId: string,
+    razorpayPaymentId: string,
+    razorpaySignature: string,
+  ): Promise<ApiResponse<ConfirmBalanceResponse>> {
+    return apiClient.post(`${BASE_URL}/${lockId}/confirm-balance`, {
+      razorpayOrderId,
+      razorpayPaymentId,
+      razorpaySignature,
+    });
   },
 
   /**

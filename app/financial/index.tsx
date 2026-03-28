@@ -6,16 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  Dimensions,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, Dimensions, RefreshControl } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -66,7 +57,7 @@ const FinancialPage: React.FC = () => {
   const { trackEvent, trackScreen } = useComprehensiveAnalytics();
   const { isOffline } = useNetworkStatus();
   const startTimeRef = useRef<number>(Date.now());
-  
+
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [categories, setCategories] = useState<FinancialServiceCategory[]>([]);
@@ -189,7 +180,10 @@ const FinancialPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -229,14 +223,9 @@ const FinancialPage: React.FC = () => {
           <Text style={styles.sectionTitle}>Services</Text>
           <View style={styles.categoriesGrid}>
             {(categories.length > 0 ? categories : FALLBACK_CATEGORIES).map((cat) => {
-              const category = categories.find(c => c.slug === cat.id) || cat;
+              const category = categories.find((c) => c.slug === cat.id) || cat;
               return (
-                <Pressable
-                  key={cat.id}
-                  style={styles.categoryCard}
-                  onPress={() => handleCategoryPress(cat.id)}
-                 
-                >
+                <Pressable key={cat.id} style={styles.categoryCard} onPress={() => handleCategoryPress(cat.id)}>
                   <View style={[styles.categoryIcon, { backgroundColor: `${category.color || cat.color}20` }]}>
                     <Text style={styles.categoryEmoji}>{category.icon || cat.icon}</Text>
                   </View>
@@ -253,18 +242,13 @@ const FinancialPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Quick Pay</Text>
-            <Pressable onPress={() => router.push('/financial/bills' as any)}>
+            <Pressable onPress={() => router.push('/bill-payment' as any)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {featuredServices.map((service) => (
-              <Pressable
-                key={service.id}
-                style={styles.serviceCard}
-                onPress={() => handleServicePress(service.id)}
-               
-              >
+              <Pressable key={service.id} style={styles.serviceCard} onPress={() => handleServicePress(service.id)}>
                 <CachedImage source={service.image} style={styles.serviceImage} />
                 <View style={styles.cashbackBadge}>
                   <Text style={styles.cashbackText}>{service.cashback}</Text>
@@ -288,10 +272,7 @@ const FinancialPage: React.FC = () => {
             <Text style={styles.promoEmoji}>🪙</Text>
             <Text style={styles.promoTitle}>Digital Gold</Text>
             <Text style={styles.promoSubtitle}>Start with just {currencySymbol}10 • 24K purity guaranteed</Text>
-            <Pressable
-              style={styles.promoButton}
-              onPress={() => router.push('/financial/gold' as any)}
-            >
+            <Pressable style={styles.promoButton} onPress={() => router.push('/gold-savings' as any)}>
               <Text style={styles.promoButtonText}>Buy Gold</Text>
             </Pressable>
           </LinearGradient>

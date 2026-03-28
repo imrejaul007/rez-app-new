@@ -646,11 +646,13 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
           // Refresh succeeded - tryRefreshToken already dispatched AUTH_SUCCESS
           // and updated the API client with new token
+          clearTimeout(authTimeout); // Cancel the 8s safety timeout — refresh succeeded
           setHasExplicitlyLoggedOut(false);
           return;
         }
 
         // Token is still valid - restore auth state immediately
+        clearTimeout(authTimeout); // Cancel the 8s safety timeout — auth succeeded
         authService.setAuthToken(storedToken);
         apiClient.setAuthToken(storedToken);
 

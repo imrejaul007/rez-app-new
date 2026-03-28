@@ -5,15 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Platform,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Platform, Dimensions, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -145,8 +137,6 @@ const ElectronicsPage: React.FC = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
 
-
-
   // --- Fetch subcategories + stores (once) ---
   useEffect(() => {
     if (authLoading) return;
@@ -165,14 +155,16 @@ const ElectronicsPage: React.FC = () => {
         const cats: Subcategory[] = [];
         if (catRes.success && catRes.data) {
           const raw = Array.isArray(catRes.data) ? catRes.data : catRes.data.categories || [];
-          raw.forEach((c: any) => cats.push({
-            _id: c._id,
-            name: c.name,
-            slug: c.slug,
-            icon: c.icon,
-            image: c.image,
-            productCount: c.productCount || c.count || 0,
-          }));
+          raw.forEach((c: any) =>
+            cats.push({
+              _id: c._id,
+              name: c.name,
+              slug: c.slug,
+              icon: c.icon,
+              image: c.image,
+              productCount: c.productCount || c.count || 0,
+            }),
+          );
         }
         if (!isMounted()) return;
         setSubcategories(cats);
@@ -181,15 +173,17 @@ const ElectronicsPage: React.FC = () => {
         const storeList: Store[] = [];
         if (storeRes.success && storeRes.data) {
           const raw = Array.isArray(storeRes.data) ? storeRes.data : storeRes.data.stores || [];
-          raw.forEach((s: any) => storeList.push({
-            _id: s._id,
-            name: s.name,
-            logo: s.logo,
-            image: s.image,
-            rating: s.rating || s.averageRating,
-            maxCashback: s.maxCashback || s.cashbackPercentage || 0,
-            tags: s.tags,
-          }));
+          raw.forEach((s: any) =>
+            storeList.push({
+              _id: s._id,
+              name: s.name,
+              logo: s.logo,
+              image: s.image,
+              rating: s.rating || s.averageRating,
+              maxCashback: s.maxCashback || s.cashbackPercentage || 0,
+              tags: s.tags,
+            }),
+          );
         }
         if (!isMounted()) return;
         setStores(storeList);
@@ -213,71 +207,74 @@ const ElectronicsPage: React.FC = () => {
   }, [authLoading]);
 
   // --- Fetch products (on filter / page change) ---
-  const fetchProducts = useCallback(async (pageNum: number, append: boolean) => {
-    if (!append) setLoadingProducts(true);
+  const fetchProducts = useCallback(
+    async (pageNum: number, append: boolean) => {
+      if (!append) setLoadingProducts(true);
 
-    try {
-      const params: Record<string, any> = {
-        category: CATEGORY_SLUG,
-        page: pageNum,
-        limit: PRODUCTS_PER_PAGE,
-        ...getFilterParams(selectedFilter),
-      };
-      const res = await apiClient.get<any>('/products', params);
+      try {
+        const params: Record<string, any> = {
+          category: CATEGORY_SLUG,
+          page: pageNum,
+          limit: PRODUCTS_PER_PAGE,
+          ...getFilterParams(selectedFilter),
+        };
+        const res = await apiClient.get<any>('/products', params);
 
-      if (!isMounted()) return;
+        if (!isMounted()) return;
 
-      if (res.success && res.data) {
-        const raw = Array.isArray(res.data) ? res.data : res.data.products || [];
-        const mapped: Product[] = raw.map((p: any) => ({
-          _id: p._id,
-          name: p.name,
-          brand: p.brand,
-          pricing: p.pricing,
-          price: p.price,
-          images: p.images,
-          image: p.image,
-          rating: p.rating,
-          averageRating: p.averageRating,
-          cashbackPercentage: p.cashbackPercentage || p.cashback || 0,
-          store: p.store,
-        }));
+        if (res.success && res.data) {
+          const raw = Array.isArray(res.data) ? res.data : res.data.products || [];
+          const mapped: Product[] = raw.map((p: any) => ({
+            _id: p._id,
+            name: p.name,
+            brand: p.brand,
+            pricing: p.pricing,
+            price: p.price,
+            images: p.images,
+            image: p.image,
+            rating: p.rating,
+            averageRating: p.averageRating,
+            cashbackPercentage: p.cashbackPercentage || p.cashback || 0,
+            store: p.store,
+          }));
 
-        if (append) {
-          if (!isMounted()) return;
-          setProducts((prev) => [...prev, ...mapped]);
+          if (append) {
+            if (!isMounted()) return;
+            setProducts((prev) => [...prev, ...mapped]);
+          } else {
+            if (!isMounted()) return;
+            setProducts(mapped);
+          }
+
+          // Determine hasMore from pagination meta or item count
+          const totalPages = res.meta?.pagination?.pages || res.meta?.pagination?.totalPages;
+          if (totalPages) {
+            setHasMore(pageNum < totalPages);
+          } else {
+            if (!isMounted()) return;
+            setHasMore(mapped.length >= PRODUCTS_PER_PAGE);
+          }
+
+          // Update total products stat if available
+          if (res.meta?.pagination?.total && !append) {
+            if (!isMounted()) return;
+            setStats((prev) => ({ ...prev, totalProducts: res.meta!.pagination!.total }));
+          }
         } else {
+          if (!append) setProducts([]);
           if (!isMounted()) return;
-          setProducts(mapped);
+          setHasMore(false);
         }
-
-        // Determine hasMore from pagination meta or item count
-        const totalPages = res.meta?.pagination?.pages || res.meta?.pagination?.totalPages;
-        if (totalPages) {
-          setHasMore(pageNum < totalPages);
-        } else {
-          if (!isMounted()) return;
-          setHasMore(mapped.length >= PRODUCTS_PER_PAGE);
-        }
-
-        // Update total products stat if available
-        if (res.meta?.pagination?.total && !append) {
-          if (!isMounted()) return;
-          setStats((prev) => ({ ...prev, totalProducts: res.meta!.pagination!.total }));
-        }
-      } else {
+      } catch {
         if (!append) setProducts([]);
         if (!isMounted()) return;
         setHasMore(false);
+      } finally {
+        if (isMounted()) setLoadingProducts(false);
       }
-    } catch {
-      if (!append) setProducts([]);
-      if (!isMounted()) return;
-      setHasMore(false);
-    } finally {
-      if (isMounted()) setLoadingProducts(false);
-    }
-  }, [selectedFilter]);
+    },
+    [selectedFilter],
+  );
 
   // Initial product fetch + filter change
   useEffect(() => {
@@ -297,199 +294,227 @@ const ElectronicsPage: React.FC = () => {
 
   // --- Render helpers ---
 
-  const renderFilterItem = useCallback(({ item: filter }: { item: FilterType }) => (
-    <Pressable
-      onPress={() => setSelectedFilter(filter)}
-      style={[styles.filterChip, selectedFilter === filter && styles.filterChipActive]}
-    >
-      <Text style={[styles.filterChipText, selectedFilter === filter && styles.filterChipTextActive]}>
-        {filter === 'all' ? 'All' : filter}
-      </Text>
-    </Pressable>
-  ), [selectedFilter]);
-
-  const renderSubcategoryItem = useCallback(({ item }: { item: Subcategory }) => (
-    <Pressable
-      style={styles.categoryCard}
-      onPress={() => router.push(`/products/category/${item.slug}` as any)}
-    >
-      <View style={styles.categoryIcon}>
-        {item.image ? (
-          <CachedImage source={{ uri: item.image }} style={{ width: 28, height: 28 }} />
-        ) : (
-          <Ionicons name="grid-outline" size={24} color={colors.infoScale[400]} />
-        )}
-      </View>
-      <Text style={styles.categoryTitle} numberOfLines={1}>{item.name}</Text>
-      <Text style={styles.categoryCount}>
-        {item.productCount ? `${item.productCount}+ products` : ''}
-      </Text>
-    </Pressable>
-  ), [router]);
-
-  const renderStoreItem = useCallback(({ item }: { item: Store }) => (
-    <Pressable
-      style={styles.brandCard}
-      onPress={() => router.push(`/store/${item._id}` as any)}
-    >
-      {item.logo ? (
-        <CachedImage source={{ uri: item.logo }} style={styles.brandLogoImage} />
-      ) : (
-        <View style={[styles.brandLogoImage, { backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center', borderRadius: 20 }]}>
-          <Ionicons name="storefront-outline" size={24} color={colors.neutral[400]} />
-        </View>
-      )}
-      <Text style={styles.brandName} numberOfLines={1}>{item.name}</Text>
-      {(item.maxCashback ?? 0) > 0 && (
-        <Text style={styles.brandDiscount}>Up to {item.maxCashback}% off</Text>
-      )}
-    </Pressable>
-  ), [router]);
-
-  const renderProductItem = useCallback(({ item }: { item: Product }) => {
-    const selling = getProductPrice(item);
-    const original = getOriginalPrice(item);
-    const imageUri = getProductImage(item);
-    const rating = getRating(item);
-    const cashback = item.cashbackPercentage || 0;
-
-    return (
+  const renderFilterItem = useCallback(
+    ({ item: filter }: { item: FilterType }) => (
       <Pressable
-        style={styles.productCard}
-        onPress={() => router.push(`/product-page?cardId=${item._id}&cardType=product` as any)}
+        onPress={() => setSelectedFilter(filter)}
+        style={[styles.filterChip, selectedFilter === filter && styles.filterChipActive]}
       >
-        {imageUri ? (
-          <CachedImage source={{ uri: imageUri }} style={styles.productImage} />
+        <Text style={[styles.filterChipText, selectedFilter === filter && styles.filterChipTextActive]}>
+          {filter === 'all' ? 'All' : filter}
+        </Text>
+      </Pressable>
+    ),
+    [selectedFilter],
+  );
+
+  const renderSubcategoryItem = useCallback(
+    ({ item }: { item: Subcategory }) => (
+      <Pressable style={styles.categoryCard} onPress={() => router.push(`/category/${item.slug}` as any)}>
+        <View style={styles.categoryIcon}>
+          {item.image ? (
+            <CachedImage source={{ uri: item.image }} style={{ width: 28, height: 28 }} />
+          ) : (
+            <Ionicons name="grid-outline" size={24} color={colors.infoScale[400]} />
+          )}
+        </View>
+        <Text style={styles.categoryTitle} numberOfLines={1}>
+          {item.name}
+        </Text>
+        <Text style={styles.categoryCount}>{item.productCount ? `${item.productCount}+ products` : ''}</Text>
+      </Pressable>
+    ),
+    [router],
+  );
+
+  const renderStoreItem = useCallback(
+    ({ item }: { item: Store }) => (
+      <Pressable style={styles.brandCard} onPress={() => router.push(`/store/${item._id}` as any)}>
+        {item.logo ? (
+          <CachedImage source={{ uri: item.logo }} style={styles.brandLogoImage} />
         ) : (
-          <View style={[styles.productImage, { backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center' }]}>
-            <Ionicons name="cube-outline" size={36} color={colors.neutral[300]} />
+          <View
+            style={[
+              styles.brandLogoImage,
+              {
+                backgroundColor: colors.neutral[100],
+                justifyContent: 'center',
+                alignItems: 'center',
+                borderRadius: 20,
+              },
+            ]}
+          >
+            <Ionicons name="storefront-outline" size={24} color={colors.neutral[400]} />
           </View>
         )}
-        {cashback > 0 && (
-          <View style={styles.cashbackBadge}>
-            <Text style={styles.cashbackText}>{cashback}%</Text>
-          </View>
-        )}
-        <View style={styles.productInfo}>
-          {item.brand ? <Text style={styles.productBrand}>{item.brand}</Text> : null}
-          <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-          {rating > 0 && (
-            <View style={styles.ratingContainer}>
-              <Ionicons name="star" size={12} color={Colors.warning} />
-              <Text style={styles.ratingText}>{rating.toFixed(1)}</Text>
+        <Text style={styles.brandName} numberOfLines={1}>
+          {item.name}
+        </Text>
+        {(item.maxCashback ?? 0) > 0 && <Text style={styles.brandDiscount}>Up to {item.maxCashback}% off</Text>}
+      </Pressable>
+    ),
+    [router],
+  );
+
+  const renderProductItem = useCallback(
+    ({ item }: { item: Product }) => {
+      const selling = getProductPrice(item);
+      const original = getOriginalPrice(item);
+      const imageUri = getProductImage(item);
+      const rating = getRating(item);
+      const cashback = item.cashbackPercentage || 0;
+
+      return (
+        <Pressable
+          style={styles.productCard}
+          onPress={() => router.push(`/product-page?cardId=${item._id}&cardType=product` as any)}
+        >
+          {imageUri ? (
+            <CachedImage source={{ uri: imageUri }} style={styles.productImage} />
+          ) : (
+            <View
+              style={[
+                styles.productImage,
+                { backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center' },
+              ]}
+            >
+              <Ionicons name="cube-outline" size={36} color={colors.neutral[300]} />
             </View>
           )}
-          <View style={styles.priceRow}>
-            <Text style={styles.productPrice}>{formatPrice(selling, currencySymbol)}</Text>
-            {original > selling && (
-              <Text style={styles.originalPrice}>{formatPrice(original, currencySymbol)}</Text>
+          {cashback > 0 && (
+            <View style={styles.cashbackBadge}>
+              <Text style={styles.cashbackText}>{cashback}%</Text>
+            </View>
+          )}
+          <View style={styles.productInfo}>
+            {item.brand ? <Text style={styles.productBrand}>{item.brand}</Text> : null}
+            <Text style={styles.productName} numberOfLines={2}>
+              {item.name}
+            </Text>
+            {rating > 0 && (
+              <View style={styles.ratingContainer}>
+                <Ionicons name="star" size={12} color={Colors.warning} />
+                <Text style={styles.ratingText}>{rating.toFixed(1)}</Text>
+              </View>
             )}
+            <View style={styles.priceRow}>
+              <Text style={styles.productPrice}>{formatPrice(selling, currencySymbol)}</Text>
+              {original > selling && <Text style={styles.originalPrice}>{formatPrice(original, currencySymbol)}</Text>}
+            </View>
           </View>
-        </View>
-      </Pressable>
-    );
-  }, [currencySymbol, router]);
+        </Pressable>
+      );
+    },
+    [currencySymbol, router],
+  );
 
   // Header component for FlatList
-  const ListHeader = useCallback(() => (
-    <>
-      {/* Subcategories */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Categories</Text>
-        {loadingInitial ? (
-          <ActivityIndicator size="small" color={Colors.brand.purple} style={{ marginVertical: 20 }} />
-        ) : subcategories.length === 0 ? (
-          <View style={styles.emptyState}>
-            <View style={styles.emptyIconWrapper}>
-              <Ionicons name="grid-outline" size={32} color={colors.neutral[300]} />
+  const ListHeader = useCallback(
+    () => (
+      <>
+        {/* Subcategories */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Categories</Text>
+          {loadingInitial ? (
+            <ActivityIndicator size="small" color={Colors.brand.purple} style={{ marginVertical: 20 }} />
+          ) : subcategories.length === 0 ? (
+            <View style={styles.emptyState}>
+              <View style={styles.emptyIconWrapper}>
+                <Ionicons name="grid-outline" size={32} color={colors.neutral[300]} />
+              </View>
+              <Text style={styles.emptyTitle}>No subcategories found</Text>
             </View>
-            <Text style={styles.emptyTitle}>No subcategories found</Text>
-          </View>
-        ) : (
-          <View style={styles.categoriesGrid}>
-            {subcategories.map((cat) => (
-              <React.Fragment key={cat._id}>
-                {renderSubcategoryItem({ item: cat })}
-              </React.Fragment>
-            ))}
-          </View>
-        )}
-      </View>
-
-      {/* Top Brands / Stores */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Top Brands</Text>
-          <Pressable onPress={() => router.push(`/stores?category=${CATEGORY_SLUG}` as any)}>
-            <Text style={styles.viewAllText}>View All</Text>
-          </Pressable>
-        </View>
-        {loadingInitial ? (
-          <ActivityIndicator size="small" color={Colors.brand.purple} style={{ marginVertical: 20 }} />
-        ) : stores.length === 0 ? (
-          <View style={styles.emptyState}>
-            <View style={styles.emptyIconWrapper}>
-              <Ionicons name="storefront-outline" size={32} color={colors.neutral[300]} />
+          ) : (
+            <View style={styles.categoriesGrid}>
+              {subcategories.map((cat) => (
+                <React.Fragment key={cat._id}>{renderSubcategoryItem({ item: cat })}</React.Fragment>
+              ))}
             </View>
-            <Text style={styles.emptyTitle}>No brands found</Text>
-          </View>
-        ) : (
-          <FlashList
-        contentContainerStyle={{ paddingBottom: 120 }}
-            data={stores}
-            renderItem={renderStoreItem}
-            keyExtractor={(item) => item._id}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ paddingRight: 8 }}
-            estimatedItemSize={110}
-          />
-        )}
-      </View>
-
-      {/* Featured Products header */}
-      <View style={[styles.section, { paddingBottom: 0 }]}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Featured Products</Text>
-          <Pressable onPress={() => router.push(`/products?category=${CATEGORY_SLUG}` as any)}>
-            <Text style={styles.viewAllText}>View All</Text>
-          </Pressable>
+          )}
         </View>
-      </View>
-    </>
-  ), [loadingInitial, subcategories, stores, renderSubcategoryItem, renderStoreItem, router]);
+
+        {/* Top Brands / Stores */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Top Brands</Text>
+            <Pressable onPress={() => router.push(`/stores?category=${CATEGORY_SLUG}` as any)}>
+              <Text style={styles.viewAllText}>View All</Text>
+            </Pressable>
+          </View>
+          {loadingInitial ? (
+            <ActivityIndicator size="small" color={Colors.brand.purple} style={{ marginVertical: 20 }} />
+          ) : stores.length === 0 ? (
+            <View style={styles.emptyState}>
+              <View style={styles.emptyIconWrapper}>
+                <Ionicons name="storefront-outline" size={32} color={colors.neutral[300]} />
+              </View>
+              <Text style={styles.emptyTitle}>No brands found</Text>
+            </View>
+          ) : (
+            <FlashList
+              contentContainerStyle={{ paddingBottom: 120 }}
+              data={stores}
+              renderItem={renderStoreItem}
+              keyExtractor={(item) => item._id}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={{ paddingRight: 8 }}
+              estimatedItemSize={110}
+            />
+          )}
+        </View>
+
+        {/* Featured Products header */}
+        <View style={[styles.section, { paddingBottom: 0 }]}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Featured Products</Text>
+            <Pressable onPress={() => router.push(`/products?category=${CATEGORY_SLUG}` as any)}>
+              <Text style={styles.viewAllText}>View All</Text>
+            </Pressable>
+          </View>
+        </View>
+      </>
+    ),
+    [loadingInitial, subcategories, stores, renderSubcategoryItem, renderStoreItem, router],
+  );
 
   // Footer component
-  const ListFooter = useCallback(() => (
-    <>
-      {loadingProducts && page > 1 && (
-        <ActivityIndicator size="small" color={Colors.brand.purple} style={{ marginVertical: 16 }} />
-      )}
+  const ListFooter = useCallback(
+    () => (
+      <>
+        {loadingProducts && page > 1 && (
+          <ActivityIndicator size="small" color={Colors.brand.purple} style={{ marginVertical: 16 }} />
+        )}
 
-      {/* Promo Banner */}
-      <View style={styles.promoBanner}>
-        <LinearGradient colors={[colors.warningScale[400], colors.warningScale[700]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.promoGradient}>
-          <Ionicons name="flash" size={40} color={colors.text.inverse} style={{ marginBottom: 12 }} />
-          <Text style={styles.promoTitle}>Flash Sale</Text>
-          <Text style={styles.promoSubtitle}>Up to 50% off on select electronics</Text>
-          <Pressable
-            style={styles.promoButton}
-            onPress={() => router.push(`/products?category=${CATEGORY_SLUG}&sortBy=price_low` as any)}
+        {/* Promo Banner */}
+        <View style={styles.promoBanner}>
+          <LinearGradient
+            colors={[colors.warningScale[400], colors.warningScale[700]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.promoGradient}
           >
-            <Text style={styles.promoButtonText}>Shop Now</Text>
-          </Pressable>
-        </LinearGradient>
-      </View>
-      <View style={{ height: 120 }} />
-    </>
-  ), [loadingProducts, page, router]);
+            <Ionicons name="flash" size={40} color={colors.text.inverse} style={{ marginBottom: 12 }} />
+            <Text style={styles.promoTitle}>Flash Sale</Text>
+            <Text style={styles.promoSubtitle}>Up to 50% off on select electronics</Text>
+            <Pressable
+              style={styles.promoButton}
+              onPress={() => router.push(`/products?category=${CATEGORY_SLUG}&sortBy=price_low` as any)}
+            >
+              <Text style={styles.promoButtonText}>Shop Now</Text>
+            </Pressable>
+          </LinearGradient>
+        </View>
+        <View style={{ height: 120 }} />
+      </>
+    ),
+    [loadingProducts, page, router],
+  );
 
   // Empty product state
   const ListEmpty = useCallback(() => {
     if (loadingProducts && page === 1) {
-      return (
-        <ActivityIndicator size="large" color={Colors.brand.purple} style={{ marginVertical: 40 }} />
-      );
+      return <ActivityIndicator size="large" color={Colors.brand.purple} style={{ marginVertical: 40 }} />;
     }
     return (
       <View style={styles.emptyState}>
@@ -503,17 +528,18 @@ const ElectronicsPage: React.FC = () => {
   }, [loadingProducts, page]);
 
   // Product grid: render two items per row
-  const renderProductRow = useCallback(({ item }: { item: Product[] }) => (
-    <View style={styles.productsRow}>
-      {item.map((product) => (
-        <React.Fragment key={product._id}>
-          {renderProductItem({ item: product })}
-        </React.Fragment>
-      ))}
-      {/* Spacer if odd number */}
-      {item.length === 1 && <View style={styles.productCardSpacer} />}
-    </View>
-  ), [renderProductItem]);
+  const renderProductRow = useCallback(
+    ({ item }: { item: Product[] }) => (
+      <View style={styles.productsRow}>
+        {item.map((product) => (
+          <React.Fragment key={product._id}>{renderProductItem({ item: product })}</React.Fragment>
+        ))}
+        {/* Spacer if odd number */}
+        {item.length === 1 && <View style={styles.productCardSpacer} />}
+      </View>
+    ),
+    [renderProductItem],
+  );
 
   // Group products into pairs for 2-column layout
   const productRows: Product[][] = [];
@@ -524,9 +550,17 @@ const ElectronicsPage: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <LinearGradient colors={[colors.infoScale[400], '#1D4ED8']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
+      <LinearGradient
+        colors={[colors.infoScale[400], '#1D4ED8']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.header}
+      >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -539,23 +573,17 @@ const ElectronicsPage: React.FC = () => {
         </View>
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>
-              {stats.totalProducts > 0 ? `${stats.totalProducts}+` : '--'}
-            </Text>
+            <Text style={styles.statValue}>{stats.totalProducts > 0 ? `${stats.totalProducts}+` : '--'}</Text>
             <Text style={styles.statLabel}>Products</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>
-              {stats.maxCashback > 0 ? `${stats.maxCashback}%` : '--'}
-            </Text>
+            <Text style={styles.statValue}>{stats.maxCashback > 0 ? `${stats.maxCashback}%` : '--'}</Text>
             <Text style={styles.statLabel}>Max Cashback</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>
-              {stats.totalBrands > 0 ? `${stats.totalBrands}+` : '--'}
-            </Text>
+            <Text style={styles.statValue}>{stats.totalBrands > 0 ? `${stats.totalBrands}+` : '--'}</Text>
             <Text style={styles.statLabel}>Brands</Text>
           </View>
         </View>
@@ -613,7 +641,13 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border.default,
   },
-  filterChip: { paddingHorizontal: Spacing.base, paddingVertical: 7, borderRadius: BorderRadius.xl, backgroundColor: colors.neutral[100], marginRight: 8 },
+  filterChip: {
+    paddingHorizontal: Spacing.base,
+    paddingVertical: 7,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: colors.neutral[100],
+    marginRight: 8,
+  },
   filterChipActive: { backgroundColor: Colors.brand.purple },
   filterChipText: { fontSize: 14, color: colors.neutral[500] },
   filterChipTextActive: { color: colors.text.inverse, fontWeight: '600' },
@@ -622,19 +656,55 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 18, fontWeight: '700', color: colors.nileBlue, marginBottom: 12 },
   viewAllText: { fontSize: 14, fontWeight: '600', color: Colors.brand.purple },
   categoriesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  categoryCard: { width: (SCREEN_WIDTH - 56) / 3, alignItems: 'center', padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: 16 },
-  categoryIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], backgroundColor: '#3B82F620', justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
+  categoryCard: {
+    width: (SCREEN_WIDTH - 56) / 3,
+    alignItems: 'center',
+    padding: Spacing.md,
+    backgroundColor: colors.background.secondary,
+    borderRadius: 16,
+  },
+  categoryIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius['2xl'],
+    backgroundColor: '#3B82F620',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
   categoryTitle: { fontSize: 12, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textAlign: 'center' },
   categoryCount: { fontSize: 10, color: colors.neutral[500] },
-  brandCard: { width: 100, alignItems: 'center', padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.lg, marginRight: 12 },
+  brandCard: {
+    width: 100,
+    alignItems: 'center',
+    padding: Spacing.md,
+    backgroundColor: colors.background.secondary,
+    borderRadius: BorderRadius.lg,
+    marginRight: 12,
+  },
   brandLogoImage: { width: 40, height: 40, borderRadius: 20, marginBottom: 8 },
   brandName: { fontSize: 12, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textAlign: 'center' },
   brandDiscount: { fontSize: 10, color: Colors.success, fontWeight: '600' },
   productsRow: { flexDirection: 'row', paddingHorizontal: 16, gap: 12, marginBottom: 12 },
-  productCard: { width: (SCREEN_WIDTH - 44) / 2, backgroundColor: colors.background.primary, borderRadius: BorderRadius.lg, overflow: 'hidden', borderWidth: 1, borderColor: colors.border.default },
+  productCard: {
+    width: (SCREEN_WIDTH - 44) / 2,
+    backgroundColor: colors.background.primary,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   productCardSpacer: { width: (SCREEN_WIDTH - 44) / 2 },
   productImage: { width: '100%', height: 140 },
-  cashbackBadge: { position: 'absolute', top: 8, right: 8, backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: 8 },
+  cashbackBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: Colors.success,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: 8,
+  },
   cashbackText: { fontSize: 11, fontWeight: '700', color: colors.text.inverse },
   productInfo: { padding: 12 },
   productBrand: { fontSize: 11, color: colors.neutral[500], marginBottom: 2 },
@@ -648,11 +718,24 @@ const styles = StyleSheet.create({
   promoGradient: { padding: Spacing.xl, borderRadius: BorderRadius.lg, alignItems: 'center' },
   promoTitle: { fontSize: 18, fontWeight: '700', color: colors.text.inverse, marginBottom: 4 },
   promoSubtitle: { fontSize: 13, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: 16 },
-  promoButton: { backgroundColor: colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: 24 },
+  promoButton: {
+    backgroundColor: colors.background.primary,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: 24,
+  },
   promoButtonText: { fontSize: 14, fontWeight: '700', color: colors.warningScale[400] },
   // Empty states
   emptyState: { alignItems: 'center', paddingVertical: 24 },
-  emptyIconWrapper: { width: 72, height: 72, borderRadius: 36, backgroundColor: colors.neutral[100], justifyContent: 'center', alignItems: 'center', marginBottom: 12 },
+  emptyIconWrapper: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: colors.neutral[100],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
   emptyTitle: { fontSize: 15, fontWeight: '600', color: colors.nileBlue, marginBottom: 4 },
   emptySubtitle: { fontSize: 13, color: colors.neutral[500] },
 });

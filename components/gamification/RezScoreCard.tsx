@@ -45,11 +45,12 @@ export interface RezScoreCardProps {
 
 function getTierColor(tier: ScoreTier): { bg: string; text: string; accent: string } {
   switch (tier) {
-    case 'Beginner':     return { bg: colors.tint.slate, text: colors.gray[600], accent: colors.gray[400] };
     case 'Smart Saver':  return { bg: colors.tint.blue, text: colors.brand.sky, accent: colors.brand.sky };
     case 'Super Saver':  return { bg: colors.tint.amber, text: colors.brand.amberDark, accent: colors.lightMustard };
     case 'Elite Saver':  return { bg: colors.tint.orange, text: colors.brand.orangeDark, accent: colors.brand.orange };
     case 'Legend':       return { bg: '#F0E6FF', text: '#7C3AED', accent: '#A855F7' };
+    case 'Beginner':
+    default:             return { bg: colors.tint.slate, text: colors.gray[600], accent: colors.gray[400] };
   }
 }
 
@@ -57,7 +58,8 @@ function getTrendConfig(trend: ScoreTrend): { icon: string; color: string; label
   switch (trend) {
     case 'up':     return { icon: 'trending-up',   color: colors.success, label: 'Rising' };
     case 'down':   return { icon: 'trending-down', color: colors.error,   label: 'Falling' };
-    case 'stable': return { icon: 'remove',        color: colors.gray[400], label: 'Stable' };
+    case 'stable':
+    default:       return { icon: 'remove',        color: colors.gray[400], label: 'Stable' };
   }
 }
 
