@@ -248,7 +248,11 @@ function ProfileEditPage() {
         }
 
         if (uploadResult?.success) {
-          // Refresh user data to show new avatar
+          // Refresh user data to show new avatar.
+          // Clear lastProfileSync so checkAuthStatus performs a fresh background sync
+          // instead of skipping it (which would leave the old avatar in memory for 5 min).
+          const AS = (await import('@react-native-async-storage/async-storage')).default;
+          await AS.removeItem('lastProfileSync');
           await authActions.checkAuthStatus();
           platformAlertSimple('Success', 'Profile picture updated successfully!');
         } else {
@@ -315,9 +319,16 @@ function ProfileEditPage() {
         throw new Error(response.error || response.message || 'Failed to update profile');
       }
 
-      // Force refresh auth state from backend (clear cache first)
+      // BUG FIX: Persist the returned user directly to SecureStore (via authStorage.saveUser)
+      // BEFORE calling checkAuthStatus. Previously the code cleared lastProfileSync and called
+      // checkAuthStatus — but checkAuthStatus re-reads from SecureStore which still contained
+      // the OLD user, and then dispatched UPDATE_USER with stale data overwriting the edit.
+      if (response.data) {
+        const { saveUser } = await import('@/utils/authStorage');
+        await saveUser(response.data);
+      }
       const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
-      await AsyncStorage.removeItem('lastProfileSync');
+      await AsyncStorage.setItem('lastProfileSync', Date.now().toString());
       await authActions.checkAuthStatus();
 
       // Update initial data so hasChanges resets

@@ -258,10 +258,17 @@ export const ProfileProvider = ({ children }: ProfileProviderProps) => {
         throw new Error(response.error || response.message || 'Failed to update profile');
       }
 
-      // Update user state: clear the profile sync cache so checkAuthStatus
-      // fetches fresh data from the backend instead of using stale cache
+      // BUG FIX: After a successful update, persist the returned user directly into
+      // SecureStore (via authStorage.saveUser) and stamp lastProfileSync so subsequent
+      // checkAuthStatus calls skip the stale-cache overwrite. Previously this called
+      // checkAuthStatus() which re-reads from storage — if SecureStore still held the
+      // old user object the old data would silently overwrite the new in-memory state.
       if (response.data) {
-        await AsyncStorage.removeItem('lastProfileSync');
+        const { saveUser } = await import('@/utils/authStorage');
+        await saveUser(response.data);
+        AsyncStorage.setItem('lastProfileSync', Date.now().toString()).catch(() => {});
+        // Now call checkAuthStatus so Zustand/AuthContext dispatch UPDATE_USER from
+        // the freshly-persisted SecureStore data (not from a stale cached copy).
         await authActions.checkAuthStatus();
         refreshCompletionStatus();
       }

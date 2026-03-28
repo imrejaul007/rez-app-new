@@ -1,12 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  StatusBar,
-  Platform,
-  Pressable,
-} from 'react-native';
+import { View, StyleSheet, StatusBar, Platform, Pressable } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from '@expo/vector-icons';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -96,8 +90,8 @@ function CartPage() {
   // Use real cart items from CartContext - separate products and services
   const productItems = useMemo(() => {
     return cartState.items
-      .filter(item => (item as any).itemType !== 'service') // Only non-service items
-      .map(item => {
+      .filter((item) => (item as any).itemType !== 'service') // Only non-service items
+      .map((item) => {
         // Preserve metadata for event items
         const metadata = (item as any).metadata || {};
         const isEvent = metadata.eventType === 'event';
@@ -126,8 +120,8 @@ function CartPage() {
   // Service items from cart
   const serviceItems = useMemo(() => {
     return cartState.items
-      .filter(item => (item as any).itemType === 'service')
-      .map(item => {
+      .filter((item) => (item as any).itemType === 'service')
+      .map((item) => {
         const bookingDetails = (item as any).serviceBookingDetails || {};
         const bookingDate = bookingDetails.bookingDate ? new Date(bookingDetails.bookingDate) : null;
 
@@ -182,30 +176,25 @@ function CartPage() {
     const recalculatedCartTotal = productItems.reduce((sum, item) => {
       const price = typeof item.price === 'number' ? item.price : 0;
       const qty = typeof item.quantity === 'number' ? item.quantity : 0;
-      return sum + (price * qty);
+      return sum + price * qty;
     }, 0);
 
     const serviceTotal = serviceItems.reduce((sum, item) => {
       const price = typeof item.price === 'number' ? item.price : 0;
       const qty = typeof item.quantity === 'number' ? item.quantity : 0;
-      return sum + (price * qty);
+      return sum + price * qty;
     }, 0);
 
-    const lockedTotal = typeof calculateLockedTotal === 'function'
-      ? calculateLockedTotal(lockedProducts)
-      : 0;
+    const lockedTotal = typeof calculateLockedTotal === 'function' ? calculateLockedTotal(lockedProducts) : 0;
 
     return recalculatedCartTotal + serviceTotal + lockedTotal;
   }, [productItems, serviceItems, lockedProducts]);
 
   const overallItemCount = useMemo(() => {
     // ✅ FIX: Add type checking for item count calculation
-    const cartCount = typeof cartState.totalItems === 'number' && !isNaN(cartState.totalItems)
-      ? cartState.totalItems
-      : 0;
-    const lockedCount = typeof getLockedItemCount === 'function'
-      ? getLockedItemCount(lockedProducts)
-      : 0;
+    const cartCount =
+      typeof cartState.totalItems === 'number' && !isNaN(cartState.totalItems) ? cartState.totalItems : 0;
+    const lockedCount = typeof getLockedItemCount === 'function' ? getLockedItemCount(lockedProducts) : 0;
 
     return cartCount + lockedCount;
   }, [cartState.totalItems, lockedProducts]);
@@ -221,13 +210,11 @@ function CartPage() {
           const expiresAt = new Date(item.expiresAt);
           const remainingTime = expiresAt.getTime() - Date.now();
           const lockDuration = expiresAt.getTime() - lockedAt.getTime();
-          
+
           // Determine status based on remaining time
-          const status: 'active' | 'expiring' | 'expired' = 
-            remainingTime <= 0 ? 'expired' : 
-            remainingTime <= 120000 ? 'expiring' : 
-            'active';
-          
+          const status: 'active' | 'expiring' | 'expired' =
+            remainingTime <= 0 ? 'expired' : remainingTime <= 120000 ? 'expiring' : 'active';
+
           return {
             id: item._id || item.product?._id,
             productId: productId,
@@ -280,76 +267,88 @@ function CartPage() {
   useFocusEffect(
     useCallback(() => {
       loadLockedItems();
-    }, [loadLockedItems])
+    }, [loadLockedItems]),
   );
 
   const handleTabChange = (tabKey: 'products' | 'service' | 'lockedproduct') => {
     setActiveTab(tabKey);
   };
 
-  const handleRemoveItem = useCallback(async (itemId: string) => {
-    if (activeTab === 'products' || activeTab === 'service') {
-      // Use CartContext to remove item (will sync with backend)
-      await cartActions.removeItem(itemId);
-    }
-  }, [activeTab, cartActions]);
-
-  const handleUpdateQuantity = useCallback(async (itemId: string, newQuantity: number) => {
-    if (activeTab === 'products') {
-      await cartActions.updateQuantity(itemId, newQuantity);
-    }
-  }, [activeTab, cartActions]);
-
-  const handleUnlockItem = useCallback(async (itemId: string, productId: string) => {
-    if (!productId) {
-      platformAlertSimple('Error', 'Product ID is missing');
-      return;
-    }
-
-    try {
-      const response = await cartApi.unlockItem(productId);
-
-      if (response.success) {
-        if (!isMounted()) return;
-        setLockedProducts(prev => prev.filter(item => item.id !== itemId));
-        platformAlertSimple('Success', 'Item unlocked successfully');
-      } else {
-        platformAlertSimple('Error', response.message || response.error || 'Failed to unlock item');
+  const handleRemoveItem = useCallback(
+    async (itemId: string) => {
+      if (activeTab === 'products' || activeTab === 'service') {
+        // Use CartContext to remove item (will sync with backend)
+        await cartActions.removeItem(itemId);
       }
-    } catch (error) {
-      platformAlertSimple('Error', 'Unable to unlock item. Please try again.');
-    }
-  }, [isMounted]);
+    },
+    [activeTab, cartActions],
+  );
 
-  const handleMoveToCart = useCallback(async (itemId: string, productId: string) => {
-    try {
-      const response = await cartApi.moveLockedToCart(productId);
-      if (response.success) {
-        // Remove from locked items
-        setLockedProducts(prev => prev.filter(item => item.id !== itemId));
-        // Reload cart to show the moved item
-        await cartActions.loadCart();
-        // Switch to Products tab so user can see the moved item
-        setActiveTab('products');
-        platformAlertSimple(
-          'Moved to Cart!',
-          'Item has been moved to your cart at the locked price.'
-        );
-      } else {
-        platformAlertSimple('Error', response.message || 'Failed to move item to cart');
+  const handleUpdateQuantity = useCallback(
+    async (itemId: string, newQuantity: number) => {
+      if (activeTab === 'products') {
+        await cartActions.updateQuantity(itemId, newQuantity);
       }
-    } catch (error) {
-      platformAlertSimple('Error', 'Unable to move item to cart. Please try again.');
-    }
-  }, [cartActions, isMounted]);
+    },
+    [activeTab, cartActions],
+  );
+
+  const handleUnlockItem = useCallback(
+    async (itemId: string, productId: string) => {
+      if (!productId) {
+        platformAlertSimple('Error', 'Product ID is missing');
+        return;
+      }
+
+      try {
+        const response = await cartApi.unlockItem(productId);
+
+        if (response.success) {
+          if (!isMounted()) return;
+          setLockedProducts((prev) => prev.filter((item) => item.id !== itemId));
+          platformAlertSimple('Success', 'Item unlocked successfully');
+        } else {
+          platformAlertSimple('Error', response.message || response.error || 'Failed to unlock item');
+        }
+      } catch (error) {
+        platformAlertSimple('Error', 'Unable to unlock item. Please try again.');
+      }
+    },
+    [isMounted],
+  );
+
+  const handleMoveToCart = useCallback(
+    async (itemId: string, productId: string) => {
+      try {
+        const response = await cartApi.moveLockedToCart(productId);
+        if (response.success) {
+          // Remove from locked items
+          setLockedProducts((prev) => prev.filter((item) => item.id !== itemId));
+          // Reload cart to show the moved item
+          await cartActions.loadCart();
+          // Switch to Products tab so user can see the moved item
+          setActiveTab('products');
+          platformAlertSimple('Moved to Cart!', 'Item has been moved to your cart at the locked price.');
+        } else {
+          platformAlertSimple('Error', response.message || 'Failed to move item to cart');
+        }
+      } catch (error) {
+        platformAlertSimple('Error', 'Unable to move item to cart. Please try again.');
+      }
+    },
+    [cartActions, isMounted],
+  );
 
   // ROHAN: Move onOfferApplied callback outside of JSX to prevent re-rendering CardOffersSection on every parent render
-  const handleCardOfferApplied = useCallback((offer: any) => {
-    cartActions.setCardOffer(offer);
-  }, [cartActions]);
+  const handleCardOfferApplied = useCallback(
+    (offer: any) => {
+      cartActions.setCardOffer(offer);
+    },
+    [cartActions],
+  );
 
   const handleExpireItem = (itemId: string) => {
-    setLockedProducts(prev => prev.filter(item => item.id !== itemId));
+    setLockedProducts((prev) => prev.filter((item) => item.id !== itemId));
   };
 
   // Timer management for locked products
@@ -359,15 +358,15 @@ function CartPage() {
     // Set up interval only once when component mounts or when we have locked products
     if (lockedProducts.length > 0 && !timerRef.current) {
       timerRef.current = setInterval(() => {
-        setLockedProducts(prev => {
+        setLockedProducts((prev) => {
           // Only update if there are still locked products
           if (prev.length === 0) return prev;
 
           const updated = updateLockedProductTimers(prev);
 
           // Only update state if something actually changed
-          const hasChanges = updated.length !== prev.length ||
-            updated.some((item, i) => item.remainingTime !== prev[i]?.remainingTime);
+          const hasChanges =
+            updated.length !== prev.length || updated.some((item, i) => item.remainingTime !== prev[i]?.remainingTime);
 
           return hasChanges ? updated : prev;
         });
@@ -387,7 +386,6 @@ function CartPage() {
       }
     };
   }, [lockedProducts.length]); // Safe to ignore timeLeft changes
-
 
   const handleBuyNow = async () => {
     // Validate cart before proceeding to checkout
@@ -417,7 +415,9 @@ function CartPage() {
     setShowValidationModal(false);
 
     // Only proceed if we have valid items
-    if (validationState.validationResult?.validItems.length ?? 0 > 0) {
+    // BUG FIX: `?? 0 > 0` was parsed as `?? (0 > 0)` = `?? false` due to operator precedence.
+    // Correct form: `(length ?? 0) > 0`
+    if ((validationState.validationResult?.validItems.length ?? 0) > 0) {
       // Pass offerRedemptionCode if present
       if (params.offerRedemptionCode) {
         router.push({ pathname: '/checkout', params: { offerRedemptionCode: params.offerRedemptionCode } });
@@ -443,27 +443,67 @@ function CartPage() {
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
-  const renderCartItem = useCallback(({ item }: { item: CartItemType }) => {
-    // Null guard: prevent crash if item is somehow undefined
-    if (!item) return null;
+  const renderCartItem = useCallback(
+    ({ item }: { item: CartItemType }) => {
+      // Null guard: prevent crash if item is somehow undefined
+      if (!item) return null;
 
-    // Render locked item if on locked products tab
-    if (activeTab === 'lockedproduct') {
-      return (
-        <View style={styles.cardWrapper}>
-          <LockedItem
-            item={item as any}
-            onMoveToCart={handleMoveToCart}
-            onUnlock={handleUnlockItem}
-            showAnimation={true}
-          />
-        </View>
-      );
-    }
+      // Render locked item if on locked products tab
+      if (activeTab === 'lockedproduct') {
+        return (
+          <View style={styles.cardWrapper}>
+            <LockedItem
+              item={item as any}
+              onMoveToCart={handleMoveToCart}
+              onUnlock={handleUnlockItem}
+              showAnimation={true}
+            />
+          </View>
+        );
+      }
 
-    // Render service item with booking details
-    if (activeTab === 'service') {
-      const serviceItem = item as any;
+      // Render service item with booking details
+      if (activeTab === 'service') {
+        const serviceItem = item as any;
+        return (
+          <View style={styles.cardWrapper}>
+            <CartItem
+              item={item}
+              onRemove={handleRemoveItem}
+              onUpdateQuantity={handleUpdateQuantity}
+              showAnimation={true}
+              hideQuantityControls={true} // Services don't have quantity controls
+            />
+            {/* Service Booking Details */}
+            {serviceItem.serviceBookingDetails && (
+              <View style={styles.serviceBookingDetails}>
+                <View style={styles.serviceBookingRow}>
+                  <Ionicons name="calendar-outline" size={16} color={colors.nileBlue} />
+                  <ThemedText style={styles.serviceBookingText}>
+                    {serviceItem.bookingDateFormatted || 'Date not set'}
+                  </ThemedText>
+                </View>
+                <View style={styles.serviceBookingRow}>
+                  <Ionicons name="time-outline" size={16} color={colors.nileBlue} />
+                  <ThemedText style={styles.serviceBookingText}>
+                    {serviceItem.bookingTimeFormatted || 'Time not set'}
+                  </ThemedText>
+                </View>
+                {serviceItem.serviceBookingDetails.duration && (
+                  <View style={styles.serviceBookingRow}>
+                    <Ionicons name="hourglass-outline" size={16} color={colors.nileBlue} />
+                    <ThemedText style={styles.serviceBookingText}>
+                      {serviceItem.serviceBookingDetails.duration} min
+                    </ThemedText>
+                  </View>
+                )}
+              </View>
+            )}
+          </View>
+        );
+      }
+
+      // Render regular cart item
       return (
         <View style={styles.cardWrapper}>
           <CartItem
@@ -471,65 +511,28 @@ function CartPage() {
             onRemove={handleRemoveItem}
             onUpdateQuantity={handleUpdateQuantity}
             showAnimation={true}
-            hideQuantityControls={true} // Services don't have quantity controls
           />
-          {/* Service Booking Details */}
-          {serviceItem.serviceBookingDetails && (
-            <View style={styles.serviceBookingDetails}>
-              <View style={styles.serviceBookingRow}>
-                <Ionicons name="calendar-outline" size={16} color={colors.nileBlue} />
-                <ThemedText style={styles.serviceBookingText}>
-                  {serviceItem.bookingDateFormatted || 'Date not set'}
-                </ThemedText>
-              </View>
-              <View style={styles.serviceBookingRow}>
-                <Ionicons name="time-outline" size={16} color={colors.nileBlue} />
-                <ThemedText style={styles.serviceBookingText}>
-                  {serviceItem.bookingTimeFormatted || 'Time not set'}
-                </ThemedText>
-              </View>
-              {serviceItem.serviceBookingDetails.duration && (
-                <View style={styles.serviceBookingRow}>
-                  <Ionicons name="hourglass-outline" size={16} color={colors.nileBlue} />
-                  <ThemedText style={styles.serviceBookingText}>
-                    {serviceItem.serviceBookingDetails.duration} min
-                  </ThemedText>
-                </View>
-              )}
-            </View>
-          )}
         </View>
       );
-    }
-
-    // Render regular cart item
-    return (
-      <View style={styles.cardWrapper}>
-        <CartItem
-          item={item}
-          onRemove={handleRemoveItem}
-          onUpdateQuantity={handleUpdateQuantity}
-          showAnimation={true}
-        />
-      </View>
-    );
-  }, [activeTab, handleMoveToCart, handleUnlockItem, handleRemoveItem, handleUpdateQuantity]);
+    },
+    [activeTab, handleMoveToCart, handleUnlockItem, handleRemoveItem, handleUpdateQuantity],
+  );
 
   const renderEmptyState = () => {
-    let title = "Your cart is empty";
-    let subtitle = "Add some items to get started";
-    let icon = "cart-outline";
+    let title = 'Your cart is empty';
+    let subtitle = 'Add some items to get started';
+    let icon = 'cart-outline';
 
     if (activeTab === 'lockedproduct') {
-      title = "No locked products";
-      subtitle = "Lock products to reserve them at current price for 24 hours";
-      icon = "lock-closed-outline";
+      title = 'No locked products';
+      subtitle = 'Lock products to reserve them at current price for 24 hours';
+      icon = 'lock-closed-outline';
     } else if (activeTab === 'products') {
-      subtitle = "Add some products to get started";
+      subtitle = 'Add some products to get started';
     } else if (activeTab === 'service') {
-      title = "No services yet";
-      subtitle = "Add services to your cart";
-      icon = "calendar-outline";
+      title = 'No services yet';
+      subtitle = 'Add services to your cart';
+      icon = 'calendar-outline';
     }
 
     return (
@@ -551,8 +554,7 @@ function CartPage() {
   };
 
   return (
-   <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
-
+    <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
       <StatusBar barStyle="dark-content" backgroundColor={Colors.gold} />
 
       <CartHeader onBack={handleBackPress} />
@@ -572,7 +574,7 @@ function CartPage() {
       <View style={styles.listContainer}>
         {cartState.isLoading && activeTab === 'products' ? (
           <View style={styles.loadingContainer}>
-            {[1, 2, 3].map(i => (
+            {[1, 2, 3].map((i) => (
               <View key={i} style={{ paddingHorizontal: 16 }}>
                 <CartItemSkeleton />
               </View>
@@ -584,14 +586,17 @@ function CartPage() {
             renderItem={renderCartItem}
             keyExtractor={(item) => `${item.id}`}
             // ROHAN: Removed index from keyExtractor — indexes change on reorder/delete, breaking React key stability and list reconciliation
-            contentContainerStyle={useMemo(() => [
-              {
-                paddingHorizontal: isSmallDevice ? 12 : 16,
-                paddingTop: 16,
-                paddingBottom: insets.bottom + (currentItems.length < 3 ? 80 : 120),
-              },
-              currentItems.length === 0 && styles.emptyListContent,
-            ], [currentItems.length, insets.bottom])}
+            contentContainerStyle={useMemo(
+              () => [
+                {
+                  paddingHorizontal: isSmallDevice ? 12 : 16,
+                  paddingTop: 16,
+                  paddingBottom: insets.bottom + (currentItems.length < 3 ? 80 : 120),
+                },
+                currentItems.length === 0 && styles.emptyListContent,
+              ],
+              [currentItems.length, insets.bottom],
+            )}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             ListEmptyComponent={renderEmptyState}
@@ -616,19 +621,19 @@ function CartPage() {
 
       {/* Wallet Balance Banner */}
       {overallItemCount > 0 && isAuthenticated && !walletLoading && totalBalance > 0 && (
-        <Pressable style={styles.walletBanner} onPress={handleBuyNow} accessibilityLabel="Wallet balance" accessibilityRole="button" accessibilityHint={`You have ${totalBalance} coins available. Double tap to apply at checkout`}>
-          <CachedImage
-            source={BRAND.COIN_IMAGE}
-            style={styles.walletBannerCoin}
-            contentFit="contain"
-          />
+        <Pressable
+          style={styles.walletBanner}
+          onPress={handleBuyNow}
+          accessibilityLabel="Wallet balance"
+          accessibilityRole="button"
+          accessibilityHint={`You have ${totalBalance} coins available. Double tap to apply at checkout`}
+        >
+          <CachedImage source={BRAND.COIN_IMAGE} style={styles.walletBannerCoin} contentFit="contain" />
           <View style={styles.walletBannerTextContainer}>
             <ThemedText style={styles.walletBannerTitle}>
               {BRAND.CURRENCY_CODE} {totalBalance.toLocaleString()} available
             </ThemedText>
-            <ThemedText style={styles.walletBannerSubtitle}>
-              Apply at checkout
-            </ThemedText>
+            <ThemedText style={styles.walletBannerSubtitle}>Apply at checkout</ThemedText>
           </View>
           <Ionicons name="chevron-forward" size={18} color={colors.nileBlue} />
         </Pressable>
@@ -654,7 +659,7 @@ function CartPage() {
         onRefresh={handleRefreshValidation}
       />
     </SafeAreaView>
-);
+  );
 }
 
 const styles = StyleSheet.create({

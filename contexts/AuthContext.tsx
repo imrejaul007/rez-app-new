@@ -503,27 +503,28 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         preferences: data.preferences
       });
 
-      // Check if API returned an error
+      // Check if API returned an error — do NOT dispatch AUTH_FAILURE here.
+      // A failed profile update does not mean the user is logged out.
       if (!response.success) {
         const errorMessage = response.error || response.message || 'Profile update failed';
-        dispatch({ type: 'AUTH_FAILURE', payload: errorMessage });
         throw new Error(errorMessage);
       }
 
-      // Update AsyncStorage with proper null check
+      // BUG FIX: Use authStorage.saveUser() (writes to SecureStore on native) instead of
+      // AsyncStorage.setItem(). The old code wrote to AsyncStorage but authStorage.getUser()
+      // reads SecureStore first — so the saved profile was silently ignored on app restart,
+      // causing old data to reload and overwrite the update.
       if (response.data) {
-        await AsyncStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data));
+        await authStorage.saveUser(response.data);
+        // Also stamp lastProfileSync so checkAuthStatus skips a redundant background fetch
+        AsyncStorage.setItem('lastProfileSync', Date.now().toString()).catch(() => {});
         dispatch({ type: 'UPDATE_USER', payload: response.data });
       } else {
         throw new Error('No user data received from server');
       }
     } catch (error: any) {
-      dispatch({
-        type: 'AUTH_FAILURE',
-        payload: error?.message || 'Profile update failed'
-      });
-
-      // Re-throw error so calling components know it failed
+      // Re-throw error so calling components know it failed.
+      // Do NOT dispatch AUTH_FAILURE — the user IS still authenticated.
       throw error;
     }
   };
