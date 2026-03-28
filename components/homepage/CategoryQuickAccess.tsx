@@ -34,14 +34,14 @@ interface Category {
 }
 
 const CATEGORIES: Category[] = [
-  { id: 'food',        emoji: '🍕',  label: 'Food & Dining',      route: '/categories/food-dining' },
-  { id: 'cafes',       emoji: '☕',  label: 'Cafes',              route: '/categories/cafes' },
-  { id: 'shopping',    emoji: '🛍️',  label: 'Shopping',           route: '/categories/shopping' },
-  { id: 'health',      emoji: '💊',  label: 'Health',             route: '/categories/health-wellness' },
-  { id: 'entertain',   emoji: '🎬',  label: 'Entertainment',      route: '/categories/entertainment' },
-  { id: 'beauty',      emoji: '💇',  label: 'Beauty & Salon',     route: '/categories/beauty-salon' },
-  { id: 'fitness',     emoji: '🏋️',  label: 'Fitness',            route: '/categories/fitness' },
-  { id: 'education',   emoji: '📚',  label: 'Education',          route: '/categories/education' },
+  { id: 'food',        emoji: '🍕',  label: 'Food & Dining',      route: '/MainCategory/food-dining' },
+  { id: 'cafes',       emoji: '☕',  label: 'Cafes',              route: '/MainCategory/food-dining' },
+  { id: 'shopping',    emoji: '🛍️',  label: 'Shopping',           route: '/(tabs)/categories' },
+  { id: 'health',      emoji: '💊',  label: 'Health',             route: '/MainCategory/healthcare' },
+  { id: 'entertain',   emoji: '🎬',  label: 'Entertainment',      route: '/MainCategory/entertainment' },
+  { id: 'beauty',      emoji: '💇',  label: 'Beauty & Salon',     route: '/MainCategory/beauty-wellness' },
+  { id: 'fitness',     emoji: '🏋️',  label: 'Fitness',            route: '/MainCategory/fitness-sports' },
+  { id: 'education',   emoji: '📚',  label: 'Education',          route: '/MainCategory/education-learning' },
 ];
 
 // ── Single chip ───────────────────────────────────────────────────────────────
@@ -80,7 +80,7 @@ const CategoryQuickAccess: React.FC = () => {
       router.push(route as any);
     } catch {
       // Route may not exist yet — fail silently
-      router.push('/categories' as any);
+      router.push('/(tabs)/categories' as any);
     }
   }, [router]);
 
@@ -90,7 +90,7 @@ const CategoryQuickAccess: React.FC = () => {
       <View style={styles.header}>
         <Text style={styles.sectionTitle}>Browse Categories</Text>
         <Pressable
-          onPress={() => router.push('/categories' as any)}
+          onPress={() => router.push('/(tabs)/categories' as any)}
           accessibilityRole="button"
           accessibilityLabel="See all categories"
           hitSlop={8}
