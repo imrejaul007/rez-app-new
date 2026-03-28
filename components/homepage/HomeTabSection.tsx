@@ -418,22 +418,22 @@ const styles = StyleSheet.create({
   tabItem: {
     flex: 1,
   },
-  // Section 6: horizontal pill — icon (16x16) + label side by side
+  // Section 6: horizontal pill — icon (16x16) + label side by side (44pt min touch target)
   tab: {
     borderRadius: 12,
-    paddingVertical: 8,
+    paddingVertical: 10,
     paddingHorizontal: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 40,
+    minHeight: 44,
     flexDirection: 'row',
     gap: 5,
   },
   tabPill: {
     borderRadius: 12,
-    paddingVertical: 9,
+    paddingVertical: 10,
     paddingHorizontal: 10,
-    minHeight: 40,
+    minHeight: 44,
   },
   tabIcon: {
     // Icon size controlled by Ionicons size prop (16)

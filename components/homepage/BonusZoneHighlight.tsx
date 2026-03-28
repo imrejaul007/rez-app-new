@@ -129,6 +129,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 2,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    minHeight: 44,
+    minWidth: 44,
   },
   viewAllText: {
     fontSize: 13,

@@ -49,7 +49,7 @@ function getTierColor(tier: ScoreTier): { bg: string; text: string; accent: stri
     case 'Smart Saver':  return { bg: colors.tint.blue, text: colors.brand.sky, accent: colors.brand.sky };
     case 'Super Saver':  return { bg: colors.tint.amber, text: colors.brand.amberDark, accent: colors.lightMustard };
     case 'Elite Saver':  return { bg: colors.tint.orange, text: colors.brand.orangeDark, accent: colors.brand.orange };
-    case 'Legend':       return { bg: '#F0E6FF', text: '#7C3AED', accent: '#A855F7' };
+    case 'Legend':       return { bg: '#FFF8E1', text: colors.nileBlue, accent: '#FFC857' };
     case 'Beginner':
     default:             return { bg: colors.tint.slate, text: colors.gray[600], accent: colors.gray[400] };
   }

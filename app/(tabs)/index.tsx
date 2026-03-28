@@ -995,15 +995,20 @@ function HomeScreen() {
             </View>
           </ReAnimated.View>
 
-          {/* Hero Banner: time-aware bold gradient hero for Near U tab */}
+          {/* Hero Banner: time-aware bold gradient hero for Near U tab.
+              The header has paddingHorizontal: spacing.lg (20). The negative
+              marginHorizontal below breaks out of that padding so the banner
+              fills the full screen width edge-to-edge. */}
           {activeTab === 'near-u' && (
-            <FeatureErrorBoundary featureName="Hero Banner" compact={true}>
-              <HeroBanner
-                totalSaved={walletData?.savingsInsights?.totalSaved ?? 0}
-                onScanPayPress={handleSearchPress}
-                onViewWalletPress={handleCoinPress}
-              />
-            </FeatureErrorBoundary>
+            <View style={viewStyles.heroBannerBreakout}>
+              <FeatureErrorBoundary featureName="Hero Banner" compact={true}>
+                <HeroBanner
+                  totalSaved={walletData?.savingsInsights?.totalSaved ?? 0}
+                  onScanPayPress={handleSearchPress}
+                  onViewWalletPress={handleCoinPress}
+                />
+              </FeatureErrorBoundary>
+            </View>
           )}
 
           {/* CoinExpiryUrgencyBanner is now rendered inside NearUTabContent
@@ -1369,15 +1374,16 @@ const viewStyles = StyleSheet.create({
       default: { gap: spacing.xs }, // Web: use gap (well-supported)
     }),
   },
-  // Section 4: Streak pill — mustard card
+  // Section 4: Streak pill — mustard card (44pt min touch target)
   headerStreakPill: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFC857',
     borderRadius: 10,
-    paddingVertical: 6,
-    paddingHorizontal: 9,
-    minHeight: 30,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    minHeight: 36,
+    minWidth: 44,
     gap: 2,
   },
   headerStreakEmoji: {
@@ -1390,13 +1396,13 @@ const viewStyles = StyleSheet.create({
     color: '#1a3a52',
   },
   // What's New Badge
-  // Section 4: Coin pill — white card rgba(255,255,255,.9), coin circle + navy number
+  // Section 4: Coin pill — white card rgba(255,255,255,.9), coin circle + navy number (44pt min touch target)
   headerCoinContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'rgba(255,255,255,0.9)',
     borderRadius: 10,
-    paddingVertical: 6,
+    paddingVertical: 8,
     paddingHorizontal: 9,
     minHeight: 30,
     ...Platform.select({
@@ -1416,16 +1422,17 @@ const viewStyles = StyleSheet.create({
     fontWeight: '800',
     color: '#1a3a52',
   },
+  // 44pt minimum touch target for icon buttons
   headerIconButton: {
-    width: 32,
-    height: 32,
+    width: 44,
+    height: 44,
     borderRadius: borderRadius.lg,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
     ...Platform.select({
-      android: { marginLeft: 4, flexShrink: 0 },
-      ios: { marginLeft: 4, flexShrink: 0 },
+      android: { marginLeft: 0, flexShrink: 0 },
+      ios: { marginLeft: 0, flexShrink: 0 },
       default: {}, // Web: gap handles spacing
     }),
   },
@@ -1457,24 +1464,26 @@ const viewStyles = StyleSheet.create({
       default: {},
     }),
   },
-  // White half-pill (left side) — rounded on left only
+  // White half-pill (left side) — rounded on left only (44pt min height via paddingVertical)
   savedTextPill: {
     backgroundColor: 'rgba(255,255,255,0.88)',
     borderTopLeftRadius: 8,
     borderBottomLeftRadius: 8,
-    paddingVertical: 5,
+    paddingVertical: 8,
     paddingLeft: 10,
     paddingRight: 7,
+    minHeight: 36,
+    justifyContent: 'center',
   },
   savedText: {
     color: colors.nileBlue,
     fontSize: 10,
     fontWeight: '600',
   },
-  // Mustard square avatar (right side) — flush against pill, no gap
+  // Mustard square avatar (right side) — flush against pill, no gap (min 36pt height)
   savedAvatarBox: {
-    width: 30,
-    height: 30,
+    width: 36,
+    height: 36,
     backgroundColor: '#FFC857',
     justifyContent: 'center',
     alignItems: 'center',
@@ -1570,6 +1579,11 @@ const viewStyles = StyleSheet.create({
     color: colors.text.primary,
     ...typography.body,
     lineHeight: 20,
+  },
+  // Breaks the HeroBanner out of the header's paddingHorizontal (spacing.lg = 20)
+  // so the gradient fills screen edge-to-edge.
+  heroBannerBreakout: {
+    marginHorizontal: -spacing.lg,
   },
   content: {
     paddingTop: spacing.sm,

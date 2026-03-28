@@ -150,20 +150,16 @@ function HeroBanner({ onScanPayPress, onViewWalletPress }: HeroBannerProps) {
 // ── Styles ────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
   gradient: {
-    marginHorizontal: spacing.base,
-    marginTop: spacing.xs,
-    marginBottom: spacing.sm,
-    borderRadius: 16,
+    // Full-bleed: no horizontal margin, no border radius — edge-to-edge background.
+    // Content inside uses paddingHorizontal to keep text/buttons inset from edges.
+    marginHorizontal: 0,
+    marginTop: 0,
+    marginBottom: 0,
+    borderRadius: 0,
     paddingHorizontal: 20,
     paddingTop: 20,
     paddingBottom: 16,
     overflow: 'hidden',
-    // Shadow
-    shadowColor: NILE_BLUE,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.28,
-    shadowRadius: 12,
-    elevation: 8,
   },
 
   // Decorative background circles
