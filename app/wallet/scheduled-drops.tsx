@@ -49,25 +49,30 @@ function ScheduledDropsPage() {
   const [totalUpcoming, setTotalUpcoming] = useState(0);
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const fetchDrops = useCallback(async (isRefresh = false) => {
-    if (isRefresh) setRefreshing(true);
-    else setLoading(true);
-    try {
-      const res = await walletApi.getScheduledDrops();
-      if (res?.data) {
-        setDrops(res.data.drops ?? []);
-        setTotalUpcoming(res.data.totalUpcoming ?? 0);
-      }
-    } catch {
-      // keep existing data
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, []);
   const isMounted = useIsMounted();
+
+  const fetchDrops = useCallback(
+    async (isRefresh = false) => {
+      if (isRefresh) setRefreshing(true);
+      else setLoading(true);
+      try {
+        const res = await walletApi.getScheduledDrops();
+        if (!isMounted()) return;
+        if (res?.data) {
+          setDrops(res.data.drops ?? []);
+          setTotalUpcoming(res.data.totalUpcoming ?? 0);
+        }
+      } catch {
+        // keep existing data
+      } finally {
+        if (isMounted()) {
+          setLoading(false);
+          setRefreshing(false);
+        }
+      }
+    },
+    [isMounted],
+  );
 
   useEffect(() => {
     fetchDrops();
@@ -75,21 +80,31 @@ function ScheduledDropsPage() {
 
   const getTypeColor = (type: string) => {
     switch (type) {
-      case 'daily': return Colors.primary[600];
-      case 'weekly': return Colors.gold;
-      case 'special': return Colors.error;
-      case 'cashback': return Colors.secondary[600];
-      default: return Colors.gray[500];
+      case 'daily':
+        return Colors.primary[600];
+      case 'weekly':
+        return Colors.gold;
+      case 'special':
+        return Colors.error;
+      case 'cashback':
+        return Colors.secondary[600];
+      default:
+        return Colors.gray[500];
     }
   };
 
   const getTypeLabel = (type: string) => {
     switch (type) {
-      case 'daily': return 'Daily';
-      case 'weekly': return 'Weekly';
-      case 'special': return 'Special';
-      case 'cashback': return 'Cashback';
-      default: return type;
+      case 'daily':
+        return 'Daily';
+      case 'weekly':
+        return 'Weekly';
+      case 'special':
+        return 'Special';
+      case 'cashback':
+        return 'Cashback';
+      default:
+        return type;
     }
   };
 
@@ -117,7 +132,7 @@ function ScheduledDropsPage() {
       const date = new Date(today);
       date.setDate(date.getDate() + i);
       const dateString = date.toISOString().split('T')[0];
-      const dropsOnDay = drops.filter(d => {
+      const dropsOnDay = drops.filter((d) => {
         const dropDate = new Date(d.scheduledDate).toISOString().split('T')[0];
         return dropDate === dateString;
       });
@@ -135,51 +150,57 @@ function ScheduledDropsPage() {
 
   const [claimingId, setClaimingId] = useState<string | null>(null);
 
-  const handleDropPress = useCallback(async (drop: ScheduledDrop) => {
-    if (!drop.claimable || claimingId) return;
+  const handleDropPress = useCallback(
+    async (drop: ScheduledDrop) => {
+      if (!drop.claimable || claimingId) return;
 
-    if (drop.source === 'daily_login') {
-      // Daily login — route to check-in
-      try {
-        setClaimingId(drop.id);
-        const result = await gamificationApi.streakCheckin();
-        if (result.success && result.data) {
-          platformAlertSimple('Check-in Complete', `You earned ${result.data.coinsEarned} ${BRAND.CURRENCY_CODE}!`);
-          fetchDrops(true);
-        } else {
-          platformAlertSimple('Check-in Failed', result.error || 'Please try again later.');
+      if (drop.source === 'daily_login') {
+        // Daily login — route to check-in
+        try {
+          setClaimingId(drop.id);
+          const result = await gamificationApi.streakCheckin();
+          if (result.success && result.data) {
+            platformAlertSimple('Check-in Complete', `You earned ${result.data.coinsEarned} ${BRAND.CURRENCY_CODE}!`);
+            fetchDrops(true);
+          } else {
+            platformAlertSimple('Check-in Failed', result.error || 'Please try again later.');
+          }
+        } catch {
+          platformAlertSimple('Error', 'Something went wrong. Please try again.');
+        } finally {
+          if (!isMounted()) return;
+          setClaimingId(null);
         }
-      } catch {
-        platformAlertSimple('Error', 'Something went wrong. Please try again.');
-      } finally {
-        if (!isMounted()) return;
-        setClaimingId(null);
-      }
-    } else if (drop.source === 'surprise_drop') {
-      // Surprise coin drop — claim via gamification API
-      try {
-        if (!isMounted()) return;
-        setClaimingId(drop.id);
-        const result = await gamificationApi.claimSurpriseDrop(drop.id);
-        if (result.success && result.data) {
-          platformAlertSimple('Claimed!', result.data.message || `You got ${result.data.coins} ${BRAND.CURRENCY_CODE}!`);
-          fetchDrops(true);
-        } else {
-          platformAlertSimple('Claim Failed', result.error || 'This drop may have expired.');
+      } else if (drop.source === 'surprise_drop') {
+        // Surprise coin drop — claim via gamification API
+        try {
+          if (!isMounted()) return;
+          setClaimingId(drop.id);
+          const result = await gamificationApi.claimSurpriseDrop(drop.id);
+          if (result.success && result.data) {
+            platformAlertSimple(
+              'Claimed!',
+              result.data.message || `You got ${result.data.coins} ${BRAND.CURRENCY_CODE}!`,
+            );
+            fetchDrops(true);
+          } else {
+            platformAlertSimple('Claim Failed', result.error || 'This drop may have expired.');
+          }
+        } catch {
+          platformAlertSimple('Error', 'Something went wrong. Please try again.');
+        } finally {
+          if (!isMounted()) return;
+          setClaimingId(null);
         }
-      } catch {
-        platformAlertSimple('Error', 'Something went wrong. Please try again.');
-      } finally {
-        if (!isMounted()) return;
-        setClaimingId(null);
       }
-    }
-  }, [claimingId, fetchDrops]);
+    },
+    [claimingId, fetchDrops],
+  );
 
   const calendarDays = generateCalendarDays();
 
   const filteredDrops = selectedDate
-    ? drops.filter(d => new Date(d.scheduledDate).toISOString().split('T')[0] === selectedDate)
+    ? drops.filter((d) => new Date(d.scheduledDate).toISOString().split('T')[0] === selectedDate)
     : drops;
 
   return (
@@ -187,12 +208,12 @@ function ScheduledDropsPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Scheduled Drops</ThemedText>
@@ -202,7 +223,9 @@ function ScheduledDropsPage() {
         {/* Total Upcoming */}
         <View style={styles.totalCard}>
           <ThemedText style={styles.totalLabel}>Claimable Rewards</ThemedText>
-          <ThemedText style={styles.totalAmount}>{totalUpcoming} {BRAND.CURRENCY_CODE}</ThemedText>
+          <ThemedText style={styles.totalAmount}>
+            {totalUpcoming} {BRAND.CURRENCY_CODE}
+          </ThemedText>
           <ThemedText style={styles.totalSubtext}>{drops.length} upcoming drops</ThemedText>
         </View>
       </LinearGradient>
@@ -226,7 +249,7 @@ function ScheduledDropsPage() {
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={styles.calendarContent}
             >
-              {calendarDays.map(day => (
+              {calendarDays.map((day) => (
                 <Pressable
                   key={day.date}
                   style={[
@@ -236,9 +259,7 @@ function ScheduledDropsPage() {
                   ]}
                   onPress={() => setSelectedDate(day.date === selectedDate ? null : day.date)}
                 >
-                  <ThemedText style={[styles.dayName, day.isToday && styles.dayTextToday]}>
-                    {day.dayName}
-                  </ThemedText>
+                  <ThemedText style={[styles.dayName, day.isToday && styles.dayTextToday]}>{day.dayName}</ThemedText>
                   <ThemedText style={[styles.dayNumber, day.isToday && styles.dayTextToday]}>
                     {day.dayNumber}
                   </ThemedText>
@@ -265,13 +286,12 @@ function ScheduledDropsPage() {
                 </ThemedText>
               </View>
             ) : (
-              filteredDrops.map(drop => (
+              filteredDrops.map((drop) => (
                 <Pressable
                   key={drop.id}
                   style={[styles.dropCard, drop.claimable && styles.dropCardClaimable]}
                   onPress={() => handleDropPress(drop)}
                   disabled={!drop.claimable || claimingId === drop.id}
-                 
                 >
                   <View style={[styles.dropIcon, { backgroundColor: getTypeColor(drop.type) + '20' }]}>
                     <Ionicons name={drop.icon as any} size={24} color={getTypeColor(drop.type)} />
@@ -314,8 +334,8 @@ function ScheduledDropsPage() {
             <View style={styles.infoContent}>
               <ThemedText style={styles.infoTitle}>How Coin Drops Work</ThemedText>
               <ThemedText style={styles.infoText}>
-                Scheduled drops include boosted cashback at stores, surprise rewards, and daily login bonuses.
-                Check back regularly to claim your rewards!
+                Scheduled drops include boosted cashback at stores, surprise rewards, and daily login bonuses. Check
+                back regularly to claim your rewards!
               </ThemedText>
             </View>
           </View>

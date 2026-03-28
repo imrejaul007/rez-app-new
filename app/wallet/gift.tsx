@@ -160,8 +160,9 @@ function GiftPage() {
       } catch {
         // Validation failed — allow sending anyway, backend will re-validate
       } finally {
-        if (!isMounted()) return;
-        setValidatingRecipient(false);
+        if (isMounted()) {
+          setValidatingRecipient(false);
+        }
       }
     }, 600);
   }, []);
@@ -225,7 +226,7 @@ function GiftPage() {
       if (response.data) {
         // Refresh wallet balance via context FIRST, then regenerate idempotency key
         await refreshWallet();
-        const newBalance = response.data.newBalance ?? (walletBalance - Number(amount));
+        const newBalance = response.data.newBalance ?? walletBalance - Number(amount);
         if (!isMounted()) return;
         setSuccessData({
           giftId: response.data.giftId,
@@ -245,14 +246,18 @@ function GiftPage() {
       setIdempotencyKey(generateIdempotencyKey('gift'));
       const parsed = parseWalletError(error);
       if (parsed.code === 'REAUTH_REQUIRED') {
-        platformAlertSimple('Verification Required', `Gifts above ${limits.otpAbove} ${BRAND.CURRENCY_CODE} require OTP verification.`);
+        platformAlertSimple(
+          'Verification Required',
+          `Gifts above ${limits.otpAbove} ${BRAND.CURRENCY_CODE} require OTP verification.`,
+        );
       } else {
         handleWalletError(error, 'Gift Failed');
       }
     } finally {
-      if (!isMounted()) return;
-      setLoading(false);
       submittingRef.current = false;
+      if (isMounted()) {
+        setLoading(false);
+      }
     }
   };
 
@@ -261,10 +266,7 @@ function GiftPage() {
     return (
       <View style={styles.container}>
         <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
-        <LinearGradient
-          colors={[Colors.primary[600], Colors.secondary[700]]}
-          style={styles.header}
-        >
+        <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
           <View style={styles.headerContent}>
             <View style={styles.backButton} />
             <ThemedText style={styles.headerTitle}>Gift Sent</ThemedText>
@@ -275,10 +277,7 @@ function GiftPage() {
         <ScrollView contentContainerStyle={styles.successContainer}>
           {/* Animated gift card */}
           <View style={styles.successCardWrapper}>
-            <LinearGradient
-              colors={successData.theme.colors as any}
-              style={styles.successGiftCard}
-            >
+            <LinearGradient colors={successData.theme.colors as any} style={styles.successGiftCard}>
               <ThemedText style={styles.successEmoji}>{successData.theme.emoji}</ThemedText>
               <View style={styles.successAmountRow}>
                 <CachedImage source={nuqtaCoinImage} style={styles.successCoinIcon} />
@@ -297,16 +296,15 @@ function GiftPage() {
             <Ionicons name="checkmark-circle" size={56} color={colors.successScale[400]} />
           </View>
           <ThemedText style={styles.successTitle}>Gift Sent Successfully!</ThemedText>
-          <ThemedText style={styles.successSubtitle}>
-            To {successData.recipientName}
-          </ThemedText>
+          <ThemedText style={styles.successSubtitle}>To {successData.recipientName}</ThemedText>
 
           {/* Transaction details */}
           <View style={styles.transactionCard}>
             <View style={styles.transactionRow}>
               <ThemedText style={styles.transactionLabel}>Gift ID</ThemedText>
               <ThemedText style={styles.transactionValue} numberOfLines={1}>
-                {successData.giftId.slice(0, 16)}...
+                {successData.giftId.slice(0, 16)}
+                {successData.giftId.length > 16 ? '...' : ''}
               </ThemedText>
             </View>
             <View style={styles.divider} />
@@ -314,13 +312,17 @@ function GiftPage() {
               <ThemedText style={styles.transactionLabel}>Amount</ThemedText>
               <View style={styles.transactionAmountRow}>
                 <CachedImage source={nuqtaCoinImage} style={styles.transactionCoinIcon} />
-                <ThemedText style={styles.transactionValue}>{successData.amount.toLocaleString()} {BRAND.CURRENCY_CODE}</ThemedText>
+                <ThemedText style={styles.transactionValue}>
+                  {successData.amount.toLocaleString()} {BRAND.CURRENCY_CODE}
+                </ThemedText>
               </View>
             </View>
             <View style={styles.divider} />
             <View style={styles.transactionRow}>
               <ThemedText style={styles.transactionLabel}>New Balance</ThemedText>
-              <ThemedText style={styles.transactionValue}>{successData.newBalance.toLocaleString()} {BRAND.CURRENCY_CODE}</ThemedText>
+              <ThemedText style={styles.transactionValue}>
+                {successData.newBalance.toLocaleString()} {BRAND.CURRENCY_CODE}
+              </ThemedText>
             </View>
           </View>
 
@@ -354,7 +356,10 @@ function GiftPage() {
             <ThemedText style={styles.sendAnotherText}>Send Another Gift</ThemedText>
           </Pressable>
 
-          <Pressable style={styles.doneButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.doneButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <ThemedText style={styles.doneButtonText}>Done</ThemedText>
           </Pressable>
         </ScrollView>
@@ -368,12 +373,12 @@ function GiftPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Gift Coins</ThemedText>
@@ -382,36 +387,26 @@ function GiftPage() {
         {/* Balance chip */}
         <View style={styles.balanceChip}>
           <CachedImage source={nuqtaCoinImage} style={styles.balanceCoinIcon} />
-          <ThemedText style={styles.balanceChipAmount}>{walletBalance.toLocaleString()} {BRAND.CURRENCY_CODE}</ThemedText>
+          <ThemedText style={styles.balanceChipAmount}>
+            {walletBalance.toLocaleString()} {BRAND.CURRENCY_CODE}
+          </ThemedText>
           <ThemedText style={styles.balanceChipLabel}>available</ThemedText>
         </View>
       </LinearGradient>
 
-      <KeyboardAvoidingView
-        style={styles.content}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
+      <KeyboardAvoidingView style={styles.content} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* Theme Selector */}
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Choose a gift card design</ThemedText>
             <View style={styles.themesGrid}>
-              {themes.map(theme => (
+              {themes.map((theme) => (
                 <Pressable
                   key={theme.id}
-                  style={[
-                    styles.themeCard,
-                    selectedTheme.id === theme.id && styles.themeCardSelected,
-                  ]}
+                  style={[styles.themeCard, selectedTheme.id === theme.id && styles.themeCardSelected]}
                   onPress={() => setSelectedTheme(theme)}
                 >
-                  <LinearGradient
-                    colors={theme.colors as any}
-                    style={styles.themeGradient}
-                  >
+                  <LinearGradient colors={theme.colors as any} style={styles.themeGradient}>
                     <ThemedText style={styles.themeEmoji}>{theme.emoji}</ThemedText>
                   </LinearGradient>
                   <ThemedText style={styles.themeLabel}>{theme.label}</ThemedText>
@@ -438,9 +433,7 @@ function GiftPage() {
                 }}
                 keyboardType="phone-pad"
               />
-              {validatingRecipient && (
-                <ActivityIndicator size="small" color={Colors.primary[600]} />
-              )}
+              {validatingRecipient && <ActivityIndicator size="small" color={Colors.primary[600]} />}
               {recipientInfo?.exists && !recipientInfo.isSelf && (
                 <Ionicons name="checkmark-circle" size={20} color={colors.brand.greenDark} />
               )}
@@ -467,7 +460,7 @@ function GiftPage() {
               />
             </View>
             <View style={styles.quickAmounts}>
-              {denominations.map(quickAmount => (
+              {denominations.map((quickAmount) => (
                 <Pressable
                   key={quickAmount}
                   style={[
@@ -476,10 +469,12 @@ function GiftPage() {
                   ]}
                   onPress={() => handleQuickAmount(quickAmount)}
                 >
-                  <ThemedText style={[
-                    styles.quickAmountText,
-                    amount === quickAmount.toString() && styles.quickAmountTextSelected,
-                  ]}>
+                  <ThemedText
+                    style={[
+                      styles.quickAmountText,
+                      amount === quickAmount.toString() && styles.quickAmountTextSelected,
+                    ]}
+                  >
                     {quickAmount}
                   </ThemedText>
                 </Pressable>
@@ -499,7 +494,9 @@ function GiftPage() {
               multiline
               maxLength={features.messageMaxLength}
             />
-            <ThemedText style={styles.charCount}>{message.length}/{features.messageMaxLength}</ThemedText>
+            <ThemedText style={styles.charCount}>
+              {message.length}/{features.messageMaxLength}
+            </ThemedText>
           </View>
 
           {/* Schedule Section */}
@@ -518,13 +515,15 @@ function GiftPage() {
             </View>
 
             {isScheduled && (
-              <Pressable
-                onPress={() => setShowDatePicker(true)}
-                style={styles.datePickerBtn}
-              >
+              <Pressable onPress={() => setShowDatePicker(true)} style={styles.datePickerBtn}>
                 <ThemedText style={styles.datePickerText}>
-                  📅 {scheduledDate.toLocaleDateString('en-IN', {
-                    weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                  📅{' '}
+                  {scheduledDate.toLocaleDateString('en-IN', {
+                    weekday: 'short',
+                    day: 'numeric',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit',
                   })}
                 </ThemedText>
               </Pressable>
@@ -544,27 +543,19 @@ function GiftPage() {
           </View>
 
           {/* Preview Card */}
-          <Pressable
-            style={styles.previewButton}
-            onPress={() => setShowPreview(!showPreview)}
-          >
+          <Pressable style={styles.previewButton} onPress={() => setShowPreview(!showPreview)}>
             <Ionicons name="eye-outline" size={20} color={Colors.primary[600]} />
             <ThemedText style={styles.previewButtonText}>Preview Gift Card</ThemedText>
           </Pressable>
 
           {showPreview && (
             <View style={styles.previewCard}>
-              <LinearGradient
-                colors={selectedTheme.colors as any}
-                style={styles.previewGradient}
-              >
+              <LinearGradient colors={selectedTheme.colors as any} style={styles.previewGradient}>
                 <ThemedText style={styles.previewEmoji}>{selectedTheme.emoji}</ThemedText>
                 <ThemedText style={styles.previewAmount}>
                   {amount || '0'} {BRAND.CURRENCY_CODE}
                 </ThemedText>
-                <ThemedText style={styles.previewMessage}>
-                  {message || 'Your gift message here...'}
-                </ThemedText>
+                <ThemedText style={styles.previewMessage}>{message || 'Your gift message here...'}</ThemedText>
                 <ThemedText style={styles.previewFrom}>From {senderName}</ThemedText>
               </LinearGradient>
             </View>

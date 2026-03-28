@@ -544,7 +544,7 @@ function TransferPage() {
         <View style={styles.transactionRow}>
           <ThemedText style={styles.transactionLabel}>Transaction ID</ThemedText>
           <ThemedText style={styles.transactionValue} numberOfLines={1}>
-            {transactionId.slice(0, 16)}...
+            {transactionId ? `${transactionId.slice(0, 16)}${transactionId.length > 16 ? '...' : ''}` : 'Processing...'}
           </ThemedText>
         </View>
         <View style={styles.divider} />

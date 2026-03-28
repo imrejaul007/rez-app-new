@@ -35,42 +35,47 @@ const IncompleteTransactionsPage = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchIncompleteOrders = useCallback(async (refresh: boolean = false) => {
-    try {
-      if (refresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      setError(null);
-
-      const response = await ordersApi.getOrders({
-        page: 1,
-        limit: 50,
-      });
-
-      if (response.success && response.data) {
-        // Filter for incomplete orders
-        const incompleteOrders = response.data.orders.filter((order: Order) =>
-          INCOMPLETE_STATUSES.includes(order.status as any)
-        );
-        if (!isMounted()) return;
-        setOrders(incompleteOrders);
-      } else {
-        throw new Error(response.message || 'Failed to fetch orders');
-      }
-    } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch incomplete transactions';
-      if (!isMounted()) return;
-      setError(errorMessage);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, []);
   const isMounted = useIsMounted();
+
+  const fetchIncompleteOrders = useCallback(
+    async (refresh: boolean = false) => {
+      try {
+        if (refresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setError(null);
+
+        const response = await ordersApi.getOrders({
+          page: 1,
+          limit: 50,
+        });
+
+        if (!isMounted()) return;
+
+        if (response.success && response.data) {
+          // Filter for incomplete orders
+          const incompleteOrders = response.data.orders.filter((order: Order) =>
+            INCOMPLETE_STATUSES.includes(order.status as any),
+          );
+          setOrders(incompleteOrders);
+        } else {
+          throw new Error(response.message || 'Failed to fetch orders');
+        }
+      } catch (err: any) {
+        if (!isMounted()) return;
+        const errorMessage = err.response?.data?.message || err.message || 'Failed to fetch incomplete transactions';
+        setError(errorMessage);
+      } finally {
+        if (isMounted()) {
+          setLoading(false);
+          setRefreshing(false);
+        }
+      }
+    },
+    [isMounted],
+  );
 
   React.useEffect(() => {
     fetchIncompleteOrders();
@@ -121,83 +126,88 @@ const IncompleteTransactionsPage = () => {
     }
   };
 
-  const handleAction = useCallback((order: Order) => {
-    switch (order.status as any) {
-      case 'payment_pending':
-      case 'payment_failed':
-        // Navigate to checkout to retry payment
-        router.push(`/checkout?orderId=${order._id}` as any);
-        break;
-      case 'cancelled':
-        // Navigate to order details where user can reorder
-        router.push(`/orders/${order._id}` as any);
-        break;
-      default:
-        // View order details
-        router.push(`/orders/${order._id}` as any);
-        break;
-    }
-  }, [router]);
+  const handleAction = useCallback(
+    (order: Order) => {
+      switch (order.status as any) {
+        case 'payment_pending':
+        case 'payment_failed':
+          // Navigate to checkout to retry payment
+          router.push(`/checkout?orderId=${order._id}` as any);
+          break;
+        case 'cancelled':
+          // Navigate to order details where user can reorder
+          router.push(`/orders/${order._id}` as any);
+          break;
+        default:
+          // View order details
+          router.push(`/orders/${order._id}` as any);
+          break;
+      }
+    },
+    [router],
+  );
 
-  const renderOrderItem = useCallback(({ item }: { item: Order }) => (
-    <View style={styles.orderCard}>
-      <View style={styles.orderHeader}>
-        <View style={styles.orderHeaderLeft}>
-          <Ionicons
-            name={getStatusIcon(item.status as any) as any}
-            size={24}
-            color={getStatusColor(item.status as any)}
-          />
-          <View style={styles.orderInfo}>
-            <ThemedText style={styles.orderId}>Order #{item.orderNumber || item._id.substring(0, 8)}</ThemedText>
-            <ThemedText style={styles.orderDate}>
-              {new Date(item.createdAt).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              })}
-            </ThemedText>
+  const renderOrderItem = useCallback(
+    ({ item }: { item: Order }) => (
+      <View style={styles.orderCard}>
+        <View style={styles.orderHeader}>
+          <View style={styles.orderHeaderLeft}>
+            <Ionicons
+              name={getStatusIcon(item.status as any) as any}
+              size={24}
+              color={getStatusColor(item.status as any)}
+            />
+            <View style={styles.orderInfo}>
+              <ThemedText style={styles.orderId}>Order #{item.orderNumber || item._id.substring(0, 8)}</ThemedText>
+              <ThemedText style={styles.orderDate}>
+                {new Date(item.createdAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </ThemedText>
+            </View>
+          </View>
+          <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(item.status as any)}20` }]}>
+            <Text style={[styles.statusText, { color: getStatusColor(item.status as any) }]}>
+              {(item.status as any).replace('_', ' ').toUpperCase()}
+            </Text>
           </View>
         </View>
-        <View style={[styles.statusBadge, { backgroundColor: `${getStatusColor(item.status as any)}20` }]}>
-          <Text style={[styles.statusText, { color: getStatusColor(item.status as any) }]}>
-            {(item.status as any).replace('_', ' ').toUpperCase()}
+
+        <View style={styles.orderBody}>
+          <View style={styles.orderDetail}>
+            <ThemedText style={styles.orderLabel}>Total Amount</ThemedText>
+            <ThemedText style={styles.orderValue}>
+              {currencySymbol}
+              {(item.totals?.total || item.summary?.total || 0).toFixed(2)}
+            </ThemedText>
+          </View>
+          <View style={styles.orderDetail}>
+            <ThemedText style={styles.orderLabel}>Items</ThemedText>
+            <ThemedText style={styles.orderValue}>{item.items?.length || 0} items</ThemedText>
+          </View>
+        </View>
+
+        <Pressable
+          style={[styles.actionButton, { borderColor: getStatusColor(item.status as any) }]}
+          onPress={() => handleAction(item)}
+        >
+          <Text style={[styles.actionButtonText, { color: getStatusColor(item.status as any) }]}>
+            {getActionLabel(item.status as any)}
           </Text>
-        </View>
+          <Ionicons name="arrow-forward" size={16} color={getStatusColor(item.status as any)} />
+        </Pressable>
       </View>
-
-      <View style={styles.orderBody}>
-        <View style={styles.orderDetail}>
-          <ThemedText style={styles.orderLabel}>Total Amount</ThemedText>
-          <ThemedText style={styles.orderValue}>
-            {currencySymbol}{(item.totals?.total || item.summary?.total || 0).toFixed(2)}
-          </ThemedText>
-        </View>
-        <View style={styles.orderDetail}>
-          <ThemedText style={styles.orderLabel}>Items</ThemedText>
-          <ThemedText style={styles.orderValue}>{item.items?.length || 0} items</ThemedText>
-        </View>
-      </View>
-
-      <Pressable
-        style={[styles.actionButton, { borderColor: getStatusColor(item.status as any) }]}
-        onPress={() => handleAction(item)}
-      >
-        <Text style={[styles.actionButtonText, { color: getStatusColor(item.status as any) }]}>
-          {getActionLabel(item.status as any)}
-        </Text>
-        <Ionicons name="arrow-forward" size={16} color={getStatusColor(item.status as any)} />
-      </Pressable>
-    </View>
-  ), [currencySymbol, handleAction]);
+    ),
+    [currencySymbol, handleAction],
+  );
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
       <Ionicons name="checkmark-circle-outline" size={64} color={Colors.success} />
       <ThemedText style={styles.emptyTitle}>All Clear!</ThemedText>
-      <ThemedText style={styles.emptyMessage}>
-        You don't have any incomplete transactions
-      </ThemedText>
+      <ThemedText style={styles.emptyMessage}>You don't have any incomplete transactions</ThemedText>
     </View>
   );
 
@@ -210,7 +220,7 @@ const IncompleteTransactionsPage = () => {
         <View style={styles.headerContent}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
@@ -253,7 +263,7 @@ const IncompleteTransactionsPage = () => {
       )}
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

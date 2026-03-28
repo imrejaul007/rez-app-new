@@ -547,7 +547,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
             <Text style={styles.headerTitle}>{walletHeaderTitle}</Text>
             <Pressable
               style={styles.settingsButton}
-              onPress={() => router.push('/settings' as any)}
+              onPress={() => router.push('/wallet/settings' as any)}
               accessibilityLabel="Wallet settings"
               accessibilityRole="button"
             >
@@ -752,8 +752,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               <Ionicons name="help-circle-outline" size={20} color={colors.neutral[400]} />
             </Pressable>
           </View>
-          {(walletData.coins ?? []).map((coin) => (
-            <CoinDetailCard key={coin.id} coin={coin} onPress={handleCoinPress} />
+          {(walletData.coins ?? []).map((coin, idx) => (
+            <CoinDetailCard key={coin.id ?? `coin-${idx}`} coin={coin} onPress={handleCoinPress} />
           ))}
 
           {/* Branded Coins Summary */}

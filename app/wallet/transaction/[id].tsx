@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Shows full details for a single wallet transaction
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-  Share,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, ActivityIndicator, Share } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -59,7 +50,10 @@ function TransactionDetailPage() {
         <StatusBar barStyle="light-content" />
         <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Transaction</ThemedText>
@@ -68,7 +62,10 @@ function TransactionDetailPage() {
         </LinearGradient>
         <View style={styles.emptyState}>
           <ThemedText style={styles.errorText}>Transaction not found</ThemedText>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.retryButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.retryButton}
+          >
             <ThemedText style={styles.retryButtonText}>Go Back</ThemedText>
           </Pressable>
         </View>
@@ -86,18 +83,19 @@ function TransactionDetailPage() {
     setError(null);
     try {
       const res = await walletApi.getTransactionById(id!);
+      if (!isMounted()) return;
       if (res?.data?.transaction) {
         setTransaction(res.data.transaction);
       } else {
-        if (!isMounted()) return;
-        setError('Transaction not found');
+        setError(res.message || res.error || 'Transaction not found');
       }
     } catch {
       if (!isMounted()) return;
       setError('Failed to load transaction details');
     } finally {
-      if (!isMounted()) return;
-      setLoading(false);
+      if (isMounted()) {
+        setLoading(false);
+      }
     }
   };
 
@@ -131,7 +129,10 @@ function TransactionDetailPage() {
         <StatusBar barStyle="light-content" />
         <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Transaction</ThemedText>
@@ -149,7 +150,10 @@ function TransactionDetailPage() {
         <StatusBar barStyle="light-content" />
         <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>Transaction</ThemedText>
@@ -179,7 +183,10 @@ function TransactionDetailPage() {
 
       <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Transaction Details</ThemedText>
@@ -196,7 +203,8 @@ function TransactionDetailPage() {
             <Ionicons name={cat.icon as any} size={32} color={cat.color} />
           </View>
           <ThemedText style={[styles.amount, { color: amountColor }]}>
-            {sign}{transaction.amount} {BRAND.CURRENCY_CODE}
+            {sign}
+            {transaction.amount} {BRAND.CURRENCY_CODE}
           </ThemedText>
           <ThemedText style={styles.description}>{transaction.description}</ThemedText>
           <View style={[styles.statusBadge, { backgroundColor: statusStyle.bg }]}>
@@ -212,19 +220,21 @@ function TransactionDetailPage() {
           <DetailRow label="Transaction ID" value={transaction.transactionId} />
           <DetailRow label="Type" value={cat.label} />
           <DetailRow label="Date" value={formatDate(transaction.createdAt)} />
-          {transaction.source?.description && (
-            <DetailRow label="Source" value={transaction.source.description} />
-          )}
-          {transaction.source?.type && (
-            <DetailRow label="Source Type" value={transaction.source.type} />
-          )}
+          {transaction.source?.description && <DetailRow label="Source" value={transaction.source.description} />}
+          {transaction.source?.type && <DetailRow label="Source Type" value={transaction.source.type} />}
         </View>
 
         {/* Balance Section */}
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Balance</ThemedText>
-          <DetailRow label="Before" value={`${Number.isFinite(transaction.balanceBefore) ? transaction.balanceBefore : 0} ${BRAND.CURRENCY_CODE}`} />
-          <DetailRow label="After" value={`${Number.isFinite(transaction.balanceAfter) ? transaction.balanceAfter : 0} ${BRAND.CURRENCY_CODE}`} />
+          <DetailRow
+            label="Before"
+            value={`${Number.isFinite(transaction.balanceBefore) ? transaction.balanceBefore : 0} ${BRAND.CURRENCY_CODE}`}
+          />
+          <DetailRow
+            label="After"
+            value={`${Number.isFinite(transaction.balanceAfter) ? transaction.balanceAfter : 0} ${BRAND.CURRENCY_CODE}`}
+          />
           {Number.isFinite(transaction.fees) && transaction.fees! > 0 && (
             <DetailRow label="Fees" value={`${transaction.fees} ${BRAND.CURRENCY_CODE}`} />
           )}
@@ -250,9 +260,7 @@ function TransactionDetailPage() {
                       {entry.status.charAt(0).toUpperCase() + entry.status.slice(1)}
                     </ThemedText>
                     <ThemedText style={styles.timelineDate}>{formatDate(entry.timestamp)}</ThemedText>
-                    {entry.reason && (
-                      <ThemedText style={styles.timelineReason}>{entry.reason}</ThemedText>
-                    )}
+                    {entry.reason && <ThemedText style={styles.timelineReason}>{entry.reason}</ThemedText>}
                   </View>
                 </View>
               );
@@ -276,7 +284,9 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <View style={styles.detailRow}>
       <ThemedText style={styles.detailLabel}>{label}</ThemedText>
-      <ThemedText style={styles.detailValue} numberOfLines={2}>{value}</ThemedText>
+      <ThemedText style={styles.detailValue} numberOfLines={2}>
+        {value}
+      </ThemedText>
     </View>
   );
 }
