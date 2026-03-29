@@ -3,6 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Create Article Page
 
 import React, { useState } from 'react';
+import apiClient from '@/services/apiClient';
 import {
   View,
   StyleSheet,
@@ -65,10 +66,10 @@ function CreateArticlePage() {
     });
 
     if (!result.canceled) {
-      const newUris = result.assets.map(a => a.uri);
-      setForm(f => ({
+      const newUris = result.assets.map((a) => a.uri);
+      setForm((f) => ({
         ...f,
-        images: [...f.images, ...newUris].slice(0, 5)
+        images: [...f.images, ...newUris].slice(0, 5),
       }));
     }
   };
@@ -77,18 +78,18 @@ function CreateArticlePage() {
     if (tagInput.trim() && form.tags.length < 5) {
       const newTag = tagInput.trim().toLowerCase();
       if (!form.tags.includes(newTag)) {
-        setForm(f => ({ ...f, tags: [...f.tags, newTag] }));
+        setForm((f) => ({ ...f, tags: [...f.tags, newTag] }));
         setTagInput('');
       }
     }
   };
 
   const handleRemoveTag = (tag: string) => {
-    setForm(f => ({ ...f, tags: f.tags.filter(t => t !== tag) }));
+    setForm((f) => ({ ...f, tags: f.tags.filter((t) => t !== tag) }));
   };
 
   const handleRemoveImage = (index: number) => {
-    setForm(f => ({ ...f, images: f.images.filter((_, i) => i !== index) }));
+    setForm((f) => ({ ...f, images: f.images.filter((_, i) => i !== index) }));
   };
 
   const handlePublish = async () => {
@@ -99,28 +100,16 @@ function CreateArticlePage() {
 
     setSubmitting(true);
     try {
-      const response = await fetch('https://api.example.com/consumer/articles', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: form.title.trim(),
-          content: form.content.trim(),
-          category: form.category,
-          tags: form.tags,
-          isPublic: form.isPublic,
-          images: form.images,
-        }),
+      await apiClient.post('/articles', {
+        title: form.title.trim(),
+        content: form.content.trim(),
+        category: form.category,
+        tags: form.tags,
+        isPublic: form.isPublic,
+        images: form.images,
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to publish article');
-      }
-
-      Alert.alert('Published! 🎉', 'Your article is now live.', [
-        { text: 'OK', onPress: () => router.back() }
-      ]);
+      Alert.alert('Published! 🎉', 'Your article is now live.', [{ text: 'OK', onPress: () => router.back() }]);
     } catch (err: any) {
       Alert.alert('Error', err.message || 'Failed to publish. Try again.');
     } finally {
@@ -138,7 +127,7 @@ function CreateArticlePage() {
       {/* Header */}
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Pressable
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
@@ -157,14 +146,8 @@ function CreateArticlePage() {
         </Pressable>
       </View>
 
-      <KeyboardAvoidingView
-        style={styles.content}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
+      <KeyboardAvoidingView style={styles.content} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           {/* Title Input */}
           <View style={styles.section}>
             <TextInput
@@ -172,7 +155,7 @@ function CreateArticlePage() {
               placeholder="What's on your mind?"
               placeholderTextColor={colors.text.tertiary}
               value={form.title}
-              onChangeText={(text) => setForm(f => ({ ...f, title: text }))}
+              onChangeText={(text) => setForm((f) => ({ ...f, title: text }))}
               multiline
             />
           </View>
@@ -181,20 +164,14 @@ function CreateArticlePage() {
           <View style={styles.section}>
             <ThemedText style={styles.sectionTitle}>Category</ThemedText>
             <View style={styles.categoryGrid}>
-              {CATEGORIES.map(cat => (
+              {CATEGORIES.map((cat) => (
                 <Pressable
                   key={cat.id}
-                  style={[
-                    styles.categoryPill,
-                    form.category === cat.id && styles.categoryPillSelected
-                  ]}
-                  onPress={() => setForm(f => ({ ...f, category: cat.id }))}
+                  style={[styles.categoryPill, form.category === cat.id && styles.categoryPillSelected]}
+                  onPress={() => setForm((f) => ({ ...f, category: cat.id }))}
                 >
                   <ThemedText style={styles.categoryEmoji}>{cat.emoji}</ThemedText>
-                  <ThemedText style={[
-                    styles.categoryLabel,
-                    form.category === cat.id && styles.categoryLabelSelected
-                  ]}>
+                  <ThemedText style={[styles.categoryLabel, form.category === cat.id && styles.categoryLabelSelected]}>
                     {cat.label}
                   </ThemedText>
                 </Pressable>
@@ -210,7 +187,7 @@ function CreateArticlePage() {
               placeholder="Write your article here..."
               placeholderTextColor={colors.text.tertiary}
               value={form.content}
-              onChangeText={(text) => setForm(f => ({ ...f, content: text }))}
+              onChangeText={(text) => setForm((f) => ({ ...f, content: text }))}
               multiline
             />
           </View>
@@ -227,10 +204,7 @@ function CreateArticlePage() {
                 {form.images.map((uri, idx) => (
                   <View key={idx} style={styles.imageContainer}>
                     <CachedImage source={{ uri }} style={styles.imageThumbnail} />
-                    <Pressable
-                      style={styles.removeImageButton}
-                      onPress={() => handleRemoveImage(idx)}
-                    >
+                    <Pressable style={styles.removeImageButton} onPress={() => handleRemoveImage(idx)}>
                       <Ionicons name="close-circle" size={24} color={Colors.error} />
                     </Pressable>
                   </View>
@@ -253,7 +227,7 @@ function CreateArticlePage() {
               <Pressable
                 style={[
                   styles.tagAddButton,
-                  (!tagInput.trim() || form.tags.length >= 5) && styles.tagAddButtonDisabled
+                  (!tagInput.trim() || form.tags.length >= 5) && styles.tagAddButtonDisabled,
                 ]}
                 onPress={handleAddTag}
                 disabled={!tagInput.trim() || form.tags.length >= 5}
@@ -280,11 +254,8 @@ function CreateArticlePage() {
             <ThemedText style={styles.sectionTitle}>Visibility</ThemedText>
             <View style={styles.visibilityOptions}>
               <Pressable
-                style={[
-                  styles.visibilityOption,
-                  form.isPublic && styles.visibilityOptionSelected
-                ]}
-                onPress={() => setForm(f => ({ ...f, isPublic: true }))}
+                style={[styles.visibilityOption, form.isPublic && styles.visibilityOptionSelected]}
+                onPress={() => setForm((f) => ({ ...f, isPublic: true }))}
               >
                 <Ionicons
                   name={form.isPublic ? 'radio-button-on' : 'radio-button-off'}
@@ -294,11 +265,8 @@ function CreateArticlePage() {
                 <ThemedText style={styles.visibilityLabel}>Public</ThemedText>
               </Pressable>
               <Pressable
-                style={[
-                  styles.visibilityOption,
-                  !form.isPublic && styles.visibilityOptionSelected
-                ]}
-                onPress={() => setForm(f => ({ ...f, isPublic: false }))}
+                style={[styles.visibilityOption, !form.isPublic && styles.visibilityOptionSelected]}
+                onPress={() => setForm((f) => ({ ...f, isPublic: false }))}
               >
                 <Ionicons
                   name={!form.isPublic ? 'radio-button-on' : 'radio-button-off'}
