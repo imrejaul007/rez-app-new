@@ -183,7 +183,11 @@ function DealList({
   ), [filterBy]);
 
   // Create responsive styles
-  const styles = useMemo(() => createStyles(screenData, isTablet), [screenData, isTablet]);
+  // BUG-044 FIX: Gate style recomputation on isTablet only (derived from screenData.width).
+  // Using full screenData caused the styles to recompute whenever the keyboard opens/closes
+  // (which changes screenData.height), producing unnecessary layout passes during text input.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const styles = useMemo(() => createStyles(screenData, isTablet), [isTablet]);
 
   // Render header with filters and sorting
   const renderHeader = useCallback(() => {

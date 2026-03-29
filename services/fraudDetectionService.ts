@@ -73,9 +73,18 @@ export interface FraudPattern {
 // CONSTANTS
 // ============================================================================
 
+// BUG-060 FIX: MAX_SUBMISSIONS_PER_DAY is now read from the app config env var so it
+// can be adjusted without a code deploy. Falls back to 3 if the env var is absent or invalid.
+const _maxSubmissionsPerDay = parseInt(
+  process.env.EXPO_PUBLIC_FRAUD_MAX_SUBMISSIONS_PER_DAY ?? '3',
+  10,
+);
+
 const FRAUD_CONFIG = {
   // Rate Limiting
-  MAX_SUBMISSIONS_PER_DAY: 3,
+  MAX_SUBMISSIONS_PER_DAY: Number.isFinite(_maxSubmissionsPerDay) && _maxSubmissionsPerDay > 0
+    ? _maxSubmissionsPerDay
+    : 3,
   MAX_SUBMISSIONS_PER_WEEK: 10,
   MAX_SUBMISSIONS_PER_MONTH: 30,
 

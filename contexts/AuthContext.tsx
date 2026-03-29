@@ -295,7 +295,13 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     // local state (including `step`). The sign-in screen manages its own loading state
     // via the `isSending` local flag — no global loading dispatch is needed.
     try {
-      const requestData: any = { phoneNumber, flow };
+      // BUG-065 FIX: Type requestData explicitly instead of `any`.
+      const requestData: {
+        phoneNumber: string;
+        flow: 'login' | 'signup';
+        email?: string;
+        referralCode?: string;
+      } = { phoneNumber, flow };
       if (email) requestData.email = email;
       if (referralCode) requestData.referralCode = referralCode;
 

@@ -318,7 +318,10 @@ function StoreCard({ store, currencySymbol }: { store: any; currencySymbol: stri
   const isPremium = store.tags?.some((t: string) => t.toLowerCase() === 'premium');
   const isBudget = store.tags?.some((t: string) => t.toLowerCase() === 'budget');
   const isOpenNow = store.tags?.some((t: string) => t.toLowerCase() === 'open-now');
-  const cashbackPercent = store.offers?.cashback || 0;
+  // BUG-097 FIX: Guard against non-numeric cashbackPercent producing NaN coins.
+  // store.offers?.cashback may be undefined, a string, or a non-finite number from the API.
+  const _rawCashback = Number(store.offers?.cashback);
+  const cashbackPercent = Number.isFinite(_rawCashback) && _rawCashback > 0 ? _rawCashback : 0;
 
   const serviceTags =
     (store.tags || [])
@@ -417,7 +420,7 @@ function StoreCard({ store, currencySymbol }: { store: any; currencySymbol: stri
             <Ionicons name="star" size={14} color={Colors.warning} />
             <Text style={styles.storeCoinsText}>
               Earn {currencySymbol}
-              {Math.round(cashbackPercent * 4.5)} coins
+              {Math.round(cashbackPercent * 4.5) || 0} coins
             </Text>
           </View>
         )}

@@ -11,6 +11,10 @@
  * - Performance metrics
  */
 
+// BUG-059 FIX: Import regionStore to get the active currency dynamically.
+// Previously, trackAddToCart() hardcoded 'INR' regardless of selected region (AED, etc.).
+import { useRegionStore } from '@/stores/regionStore';
+
 export interface AnalyticsEvent {
   name: string;
   properties?: Record<string, any>;
@@ -132,7 +136,8 @@ class AnalyticsService {
       variant_id: data.variantId,
       variant_details: data.variantDetails,
       total_value: data.totalValue,
-      currency: 'INR',
+      // BUG-059 FIX: Use the active region currency instead of hardcoded 'INR'.
+      currency: useRegionStore.getState().getCurrency(),
     });
   }
 

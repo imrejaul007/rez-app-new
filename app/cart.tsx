@@ -17,13 +17,16 @@ import StockWarningBanner from '@/components/cart/StockWarningBanner';
 import CardOffersSection from '@/components/cart/CardOffersSection';
 import { ThemedText } from '@/components/ThemedText';
 import { CartItem as CartItemType, LockedProduct, LOCK_CONFIG } from '@/types/cart';
+// BUG-076 FIX: Import production cart utilities from cartUtils (not mockCartData).
+// mockCartData.ts also contains test fixtures; mixing production helpers with mock data
+// made it unclear what was safe to ship. cartUtils.ts contains only production utilities.
 import {
   calculateTotal,
   getItemCount,
   calculateLockedTotal,
   getLockedItemCount,
   updateLockedProductTimers,
-} from '@/utils/mockCartData';
+} from '@/utils/cartUtils';
 import { useCartValidation } from '@/hooks/useCartValidation';
 import { useCartStore } from '@/stores/cartStore';
 import { useTotalBalance, useWalletLoading, useIsAuthenticated } from '@/stores';
@@ -229,7 +232,9 @@ function CartPage() {
       },
       currentItems.length === 0 && styles.emptyListContent,
     ],
-    [currentItems.length, insets.bottom],
+    // BUG-047 FIX: Added isSmallDevice to dependency array — it affects paddingHorizontal
+    // but was missing, so the style would not update if device size classification changed.
+    [currentItems.length, insets.bottom, isSmallDevice],
   );
 
   const overallItemCount = useMemo(() => {

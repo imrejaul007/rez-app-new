@@ -73,6 +73,18 @@ const STATUS_CONFIG: Record<string, { color: string; bg: string; icon: string }>
 type BookingType = 'all' | 'table' | 'event' | 'service';
 type StatusFilter = 'all' | 'upcoming' | 'pending' | 'confirmed' | 'completed' | 'cancelled';
 
+// BUG-042 FIX: Type the `raw` field instead of `any` to prevent unsafe property access.
+// `raw` preserves the original API object for cancel/navigation/display operations that
+// need type-specific fields not in the normalized shape (storeId, bookingNumber, etc.).
+interface RawBookingData {
+  _id: string;
+  storeId?: { _id?: string; name?: string; location?: unknown; contact?: unknown } | string;
+  bookingNumber?: string;
+  specialRequests?: string;
+  cancellationReason?: string;
+  [key: string]: unknown; // Allow additional API fields without full `any`
+}
+
 interface UnifiedBooking {
   id: string;
   type: 'table' | 'event' | 'service';
@@ -86,7 +98,7 @@ interface UnifiedBooking {
   referenceNumber: string;
   details: { label: string; value: string }[];
   canCancel: boolean;
-  raw: any;
+  raw: RawBookingData;
 }
 
 // ─── Category tab data ────────────────────────────────────────
