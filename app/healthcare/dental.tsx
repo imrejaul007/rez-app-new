@@ -21,6 +21,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import apiClient from '@/services/apiClient';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
+import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -81,14 +82,62 @@ interface BookingSlot {
 
 // Dental services offered
 const dentalServices: DentalService[] = [
-  { id: 'cleaning', name: 'Teeth Cleaning', icon: 'sparkles', description: 'Professional dental cleaning and polishing', priceRange: '500 - 1,500' },
-  { id: 'filling', name: 'Dental Filling', icon: 'ellipse', description: 'Cavity filling and restoration', priceRange: '800 - 3,000' },
-  { id: 'root_canal', name: 'Root Canal', icon: 'medical', description: 'Root canal treatment (RCT)', priceRange: '3,000 - 8,000' },
-  { id: 'extraction', name: 'Tooth Extraction', icon: 'remove-circle', description: 'Simple and surgical extractions', priceRange: '500 - 2,500' },
-  { id: 'braces', name: 'Dental Braces', icon: 'git-compare', description: 'Orthodontic braces and aligners', priceRange: '25,000 - 80,000' },
-  { id: 'whitening', name: 'Teeth Whitening', icon: 'sunny', description: 'Professional teeth whitening', priceRange: '3,000 - 15,000' },
-  { id: 'implant', name: 'Dental Implants', icon: 'pin', description: 'Permanent tooth replacement', priceRange: '20,000 - 50,000' },
-  { id: 'crown', name: 'Dental Crown', icon: 'shield', description: 'Caps and crown placement', priceRange: '3,000 - 15,000' },
+  {
+    id: 'cleaning',
+    name: 'Teeth Cleaning',
+    icon: 'sparkles',
+    description: 'Professional dental cleaning and polishing',
+    priceRange: '500 - 1,500',
+  },
+  {
+    id: 'filling',
+    name: 'Dental Filling',
+    icon: 'ellipse',
+    description: 'Cavity filling and restoration',
+    priceRange: '800 - 3,000',
+  },
+  {
+    id: 'root_canal',
+    name: 'Root Canal',
+    icon: 'medical',
+    description: 'Root canal treatment (RCT)',
+    priceRange: '3,000 - 8,000',
+  },
+  {
+    id: 'extraction',
+    name: 'Tooth Extraction',
+    icon: 'remove-circle',
+    description: 'Simple and surgical extractions',
+    priceRange: '500 - 2,500',
+  },
+  {
+    id: 'braces',
+    name: 'Dental Braces',
+    icon: 'git-compare',
+    description: 'Orthodontic braces and aligners',
+    priceRange: '25,000 - 80,000',
+  },
+  {
+    id: 'whitening',
+    name: 'Teeth Whitening',
+    icon: 'sunny',
+    description: 'Professional teeth whitening',
+    priceRange: '3,000 - 15,000',
+  },
+  {
+    id: 'implant',
+    name: 'Dental Implants',
+    icon: 'pin',
+    description: 'Permanent tooth replacement',
+    priceRange: '20,000 - 50,000',
+  },
+  {
+    id: 'crown',
+    name: 'Dental Crown',
+    icon: 'shield',
+    description: 'Caps and crown placement',
+    priceRange: '3,000 - 15,000',
+  },
 ];
 
 // Time slots
@@ -113,6 +162,8 @@ const timeSlots: BookingSlot[] = [
 function DentalCarePage() {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const getCurrencySymbol = useGetCurrencySymbol();
+  const currencySymbol = getCurrencySymbol();
   const [searchQuery, setSearchQuery] = useState('');
   const [dentists, setDentists] = useState<DentistStore[]>([]);
   const [filteredDentists, setFilteredDentists] = useState<DentistStore[]>([]);
@@ -133,7 +184,9 @@ function DentalCarePage() {
   const fetchDentists = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get<{ stores: DentistStore[] }>('/stores?category=healthcare&type=doctor&specialty=dentist');
+      const response = await apiClient.get<{ stores: DentistStore[] }>(
+        '/stores?category=healthcare&type=doctor&specialty=dentist',
+      );
 
       if (response.success && response.data?.stores) {
         if (!isMounted()) return;
@@ -142,12 +195,15 @@ function DentalCarePage() {
         setFilteredDentists(response.data.stores);
       } else {
         // Fallback: fetch all doctors and filter for dentists
-        const fallbackResponse = await apiClient.get<{ stores: DentistStore[] }>('/stores?category=healthcare&type=doctor');
+        const fallbackResponse = await apiClient.get<{ stores: DentistStore[] }>(
+          '/stores?category=healthcare&type=doctor',
+        );
         if (fallbackResponse.success && fallbackResponse.data?.stores) {
-          const dentistStores = fallbackResponse.data.stores.filter((store: DentistStore) =>
-            store.metadata?.specialization?.toLowerCase().includes('dent') ||
-            store.name.toLowerCase().includes('dental') ||
-            store.name.toLowerCase().includes('dentist')
+          const dentistStores = fallbackResponse.data.stores.filter(
+            (store: DentistStore) =>
+              store.metadata?.specialization?.toLowerCase().includes('dent') ||
+              store.name.toLowerCase().includes('dental') ||
+              store.name.toLowerCase().includes('dentist'),
           );
           if (!isMounted()) return;
           setDentists(dentistStores);
@@ -177,15 +233,13 @@ function DentalCarePage() {
         (dentist) =>
           dentist.name.toLowerCase().includes(query) ||
           dentist.address.city.toLowerCase().includes(query) ||
-          dentist.metadata?.services?.some(s => s.toLowerCase().includes(query))
+          dentist.metadata?.services?.some((s) => s.toLowerCase().includes(query)),
       );
     }
 
     if (selectedService) {
       filtered = filtered.filter((dentist) =>
-        dentist.metadata?.services?.some(s =>
-          s.toLowerCase().includes(selectedService.toLowerCase())
-        )
+        dentist.metadata?.services?.some((s) => s.toLowerCase().includes(selectedService.toLowerCase())),
       );
     }
 
@@ -257,7 +311,7 @@ function DentalCarePage() {
           'Appointment Booked!',
           `Your dental appointment with ${selectedDentist?.name} is confirmed for ${formatDate(selectedDate).day}, ${formatDate(selectedDate).date} ${formatDate(selectedDate).month} at ${selectedSlot}.`,
           () => setBookingModalVisible(false),
-          'OK'
+          'OK',
         );
       } else {
         throw new Error(response.message || 'Failed to book appointment');
@@ -272,7 +326,11 @@ function DentalCarePage() {
 
   const callDentist = (phone?: string) => {
     if (phone) {
-      try { Linking.openURL(`tel:${phone}`); } catch (_e) { /* silently handle */ }
+      try {
+        Linking.openURL(`tel:${phone}`);
+      } catch (_e) {
+        /* silently handle */
+      }
     } else {
       platformAlertSimple('Not Available', 'Phone number not available for this dentist.');
     }
@@ -288,15 +346,9 @@ function DentalCarePage() {
         onPress={() => setSelectedService(isSelected ? null : service.id)}
       >
         <View style={[styles.serviceIcon, isSelected && styles.serviceIconSelected]}>
-          <Ionicons
-            name={service.icon as any}
-            size={24}
-            color={isSelected ? colors.text.inverse : colors.brand.cyan}
-          />
+          <Ionicons name={service.icon as any} size={24} color={isSelected ? colors.text.inverse : colors.brand.cyan} />
         </View>
-        <Text style={[styles.serviceName, isSelected && styles.serviceNameSelected]}>
-          {service.name}
-        </Text>
+        <Text style={[styles.serviceName, isSelected && styles.serviceNameSelected]}>{service.name}</Text>
         <Text style={styles.servicePrice}>{service.priceRange}</Text>
       </Pressable>
     );
@@ -304,11 +356,7 @@ function DentalCarePage() {
 
   // Render dentist card
   const renderDentistCard = (dentist: DentistStore) => (
-    <Pressable
-      key={dentist._id}
-      style={styles.dentistCard}
-      onPress={() => openBookingModal(dentist)}
-    >
+    <Pressable key={dentist._id} style={styles.dentistCard} onPress={() => openBookingModal(dentist)}>
       <View style={styles.dentistHeader}>
         <View style={styles.dentistImageContainer}>
           {dentist.logo ? (
@@ -321,12 +369,8 @@ function DentalCarePage() {
         </View>
         <View style={styles.dentistInfo}>
           <Text style={styles.dentistName}>{dentist.name}</Text>
-          <Text style={styles.dentistSpecialty}>
-            {dentist.metadata?.qualification || 'BDS, MDS'}
-          </Text>
-          <Text style={styles.dentistExperience}>
-            {dentist.metadata?.experience || '5+ years experience'}
-          </Text>
+          <Text style={styles.dentistSpecialty}>{dentist.metadata?.qualification || 'BDS, MDS'}</Text>
+          <Text style={styles.dentistExperience}>{dentist.metadata?.experience || '5+ years experience'}</Text>
           <View style={styles.ratingContainer}>
             <Ionicons name="star" size={14} color={Colors.warning} />
             <Text style={styles.ratingText}>
@@ -347,16 +391,15 @@ function DentalCarePage() {
           <View style={styles.detailRow}>
             <Ionicons name="cash-outline" size={16} color={colors.text.tertiary} />
             <Text style={styles.detailText}>
-              Consultation: Rs {dentist.metadata.consultationFee}
+              Consultation: {currencySymbol}
+              {dentist.metadata.consultationFee}
             </Text>
           </View>
         )}
         {dentist.metadata?.languages && dentist.metadata.languages.length > 0 && (
           <View style={styles.detailRow}>
             <Ionicons name="chatbubbles-outline" size={16} color={colors.text.tertiary} />
-            <Text style={styles.detailText}>
-              {dentist.metadata.languages.join(', ')}
-            </Text>
+            <Text style={styles.detailText}>{dentist.metadata.languages.join(', ')}</Text>
           </View>
         )}
       </View>
@@ -377,17 +420,11 @@ function DentalCarePage() {
       )}
 
       <View style={styles.cardActions}>
-        <Pressable
-          style={styles.callButton}
-          onPress={() => callDentist(dentist.contact.phone)}
-        >
+        <Pressable style={styles.callButton} onPress={() => callDentist(dentist.contact.phone)}>
           <Ionicons name="call-outline" size={18} color={colors.brand.cyan} />
           <Text style={styles.callButtonText}>Call</Text>
         </Pressable>
-        <Pressable
-          style={styles.bookButton}
-          onPress={() => openBookingModal(dentist)}
-        >
+        <Pressable style={styles.bookButton} onPress={() => openBookingModal(dentist)}>
           <Ionicons name="calendar-outline" size={18} color={colors.text.inverse} />
           <Text style={styles.bookButtonText}>Book Appointment</Text>
         </Pressable>
@@ -400,7 +437,10 @@ function DentalCarePage() {
       {/* Header */}
       <LinearGradient colors={[colors.brand.cyan, colors.cyanDark]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -434,19 +474,13 @@ function DentalCarePage() {
         style={styles.content}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.brand.cyan]} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.brand.cyan]} />}
       >
         {/* Dental Services */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Dental Services</Text>
           <Text style={styles.sectionSubtitle}>Select a service to filter dentists</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.servicesScroll}
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.servicesScroll}>
             {dentalServices.map(renderServiceCard)}
           </ScrollView>
         </View>
@@ -562,10 +596,7 @@ function DentalCarePage() {
                 {dentalServices.map((service) => (
                   <Pressable
                     key={service.id}
-                    style={[
-                      styles.serviceChip,
-                      selectedServiceType === service.name && styles.serviceChipSelected,
-                    ]}
+                    style={[styles.serviceChip, selectedServiceType === service.name && styles.serviceChipSelected]}
                     onPress={() => setSelectedServiceType(service.name)}
                   >
                     <Text
@@ -592,15 +623,9 @@ function DentalCarePage() {
                       style={[styles.dateCard, isSelected && styles.dateCardSelected]}
                       onPress={() => setSelectedDate(date)}
                     >
-                      <Text style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
-                        {formatted.day}
-                      </Text>
-                      <Text style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>
-                        {formatted.date}
-                      </Text>
-                      <Text style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>
-                        {formatted.month}
-                      </Text>
+                      <Text style={[styles.dateDay, isSelected && styles.dateTextSelected]}>{formatted.day}</Text>
+                      <Text style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>{formatted.date}</Text>
+                      <Text style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>{formatted.month}</Text>
                     </Pressable>
                   );
                 })}
@@ -649,7 +674,10 @@ function DentalCarePage() {
               {selectedDentist?.metadata?.consultationFee && (
                 <View style={styles.feeContainer}>
                   <Text style={styles.feeLabel}>Consultation Fee</Text>
-                  <Text style={styles.feeAmount}>Rs {selectedDentist.metadata.consultationFee}</Text>
+                  <Text style={styles.feeAmount}>
+                    {currencySymbol}
+                    {selectedDentist.metadata.consultationFee}
+                  </Text>
                 </View>
               )}
 

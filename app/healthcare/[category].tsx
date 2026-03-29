@@ -14,6 +14,7 @@ import { useRouter, useLocalSearchParams, Redirect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import apiClient from '@/services/apiClient';
 import { platformAlertSimple } from '@/utils/platformAlert';
+import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
@@ -151,6 +152,8 @@ const HealthcareCategoryPage: React.FC = () => {
   const isMounted = useIsMounted();
   const router = useRouter();
   const { category } = useLocalSearchParams<{ category: string }>();
+  const getCurrencySymbol = useGetCurrencySymbol();
+  const currencySymbol = getCurrencySymbol();
   const [selectedFilter, setSelectedFilter] = useState('All');
   const [stores, setStores] = useState<Store[]>([]);
   const [loading, setLoading] = useState(true);
@@ -307,7 +310,10 @@ const HealthcareCategoryPage: React.FC = () => {
           <View style={styles.itemFooter}>
             <View>
               {store.metadata?.consultationFee ? (
-                <Text style={styles.priceText}>Rs {store.metadata.consultationFee}</Text>
+                <Text style={styles.priceText}>
+                  {currencySymbol}
+                  {store.metadata.consultationFee}
+                </Text>
               ) : (
                 <Text style={styles.priceText}>Contact for price</Text>
               )}

@@ -550,12 +550,10 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         throw new Error(errorMessage);
       }
 
-      // Update AsyncStorage with new user data (parallel writes, no verification read)
+      // Update stored user data using authStorage (writes to SecureStore on native)
       if (response.data) {
-        await AsyncStorage.multiSet([
-          [STORAGE_KEYS.USER, JSON.stringify(response.data)],
-          ['onboarding_completed', 'true'],
-        ]);
+        await authStorage.saveUser(response.data);
+        await AsyncStorage.setItem('onboarding_completed', 'true');
       } else {
         throw new Error('No user data received from server');
       }

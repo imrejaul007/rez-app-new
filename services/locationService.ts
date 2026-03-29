@@ -23,10 +23,11 @@ const STORAGE_KEYS = {
 };
 
 // Default configuration
+const _apiBase = process.env.EXPO_PUBLIC_API_BASE_URL || process.env.EXPO_PUBLIC_API_URL || '';
 const DEFAULT_CONFIG: LocationServiceConfig = {
-  apiBaseUrl: process.env.EXPO_PUBLIC_LOCATION_API_URL || 'http://localhost:5001/api/location',
-  geocodingApiUrl: process.env.EXPO_PUBLIC_GEOCODING_API_URL || 'http://localhost:5001/api/location/geocode',
-  storesApiUrl: process.env.EXPO_PUBLIC_STORES_API_URL || 'http://localhost:5001/api/stores',
+  apiBaseUrl: process.env.EXPO_PUBLIC_LOCATION_API_URL || `${_apiBase}/location`,
+  geocodingApiUrl: process.env.EXPO_PUBLIC_GEOCODING_API_URL || `${_apiBase}/location/geocode`,
+  storesApiUrl: process.env.EXPO_PUBLIC_STORES_API_URL || `${_apiBase}/stores`,
   defaultLocation: {
     latitude: parseFloat(process.env.EXPO_PUBLIC_DEFAULT_LOCATION_LAT || '12.9716'),
     longitude: parseFloat(process.env.EXPO_PUBLIC_DEFAULT_LOCATION_LNG || '77.5946'),

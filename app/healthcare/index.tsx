@@ -318,9 +318,15 @@ const HealthcarePage: React.FC = () => {
                       </Text>
                       <Text style={styles.serviceType}>{service.metadata?.serviceType || 'Lab Test'}</Text>
                       <View style={styles.priceRow}>
-                        <Text style={styles.servicePrice}>Rs {service.price.selling}</Text>
+                        <Text style={styles.servicePrice}>
+                          {currencySymbol}
+                          {service.price.selling}
+                        </Text>
                         {service.price.mrp > service.price.selling && (
-                          <Text style={styles.serviceMrp}>Rs {service.price.mrp}</Text>
+                          <Text style={styles.serviceMrp}>
+                            {currencySymbol}
+                            {service.price.mrp}
+                          </Text>
                         )}
                       </View>
                     </View>

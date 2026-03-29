@@ -10,7 +10,8 @@ import {
   Dimensions,
   TextInput,
   ActivityIndicator,
-  ImageBackground} from 'react-native';
+  ImageBackground,
+} from 'react-native';
 import Animated, {
   useSharedValue,
   withTiming,
@@ -29,7 +30,7 @@ import { useOnlineVoucher } from '@/hooks/useOnlineVoucher';
 import { Brand, Category } from '@/types/voucher.types';
 import VoucherData from '@/data/voucherData';
 import { useDebounce } from '@/hooks/useDebounce';
-import { ErrorState } from '@/components/common/ErrorState';
+import ErrorState from '@/components/common/ErrorState';
 import { LoadingState } from '@/components/common/LoadingState';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
@@ -63,11 +64,7 @@ const COLORS = {
 // Glass Card Component
 const GlassCard = ({ children, style, intensity = 60 }: any) => {
   if (Platform.OS === 'web') {
-    return (
-      <View style={[styles.glassCardWeb, style]}>
-        {children}
-      </View>
-    );
+    return <View style={[styles.glassCardWeb, style]}>{children}</View>;
   }
   return (
     <BlurView intensity={intensity} tint="light" style={[styles.glassCard, style]}>
@@ -100,18 +97,12 @@ function OnlineVoucherPage() {
     slideAnim.value = withSpring(0, { tension: 50, friction: 7 });
 
     // Shimmer animation loop
-    shimmerAnim.value = withRepeat(
-      withTiming(1, { duration: 2000 }),
-      -1
-    );
+    shimmerAnim.value = withRepeat(withTiming(1, { duration: 2000 }), -1);
 
     // Pulse animation for coin badge
     pulseAnim.value = withRepeat(
-      withSequence(
-        withTiming(1.05, { duration: 1000 }),
-        withTiming(1, { duration: 1000 }),
-      ),
-      -1
+      withSequence(withTiming(1.05, { duration: 1000 }), withTiming(1, { duration: 1000 })),
+      -1,
     );
 
     return () => {
@@ -177,7 +168,6 @@ function OnlineVoucherPage() {
           <Pressable
             style={styles.backButton}
             onPress={handlers.handleBackNavigation}
-           
             hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
           >
             <View style={styles.glassButton}>
@@ -200,17 +190,11 @@ function OnlineVoucherPage() {
           </View>
 
           <View style={styles.headerActions}>
-            <Pressable
-              style={styles.glassButton}
-              onPress={() => handlers.handleShare()}
-             
-            >
+            <Pressable style={styles.glassButton} onPress={() => handlers.handleShare()}>
               <Ionicons name="share-outline" size={20} color={COLORS.navy} />
             </Pressable>
 
-            <Pressable
-              style={styles.glassButton}
-            >
+            <Pressable style={styles.glassButton}>
               <Ionicons name="heart-outline" size={20} color={COLORS.primary} />
             </Pressable>
           </View>
@@ -266,188 +250,186 @@ function OnlineVoucherPage() {
     return gradientPresets[index % gradientPresets.length];
   };
 
-  const renderHeroCarouselItem = useCallback(({ item, index }: { item: any; index: number }) => {
-              const gradientColors = getCardGradient(index, item.backgroundColor);
+  const renderHeroCarouselItem = useCallback(
+    ({ item, index }: { item: any; index: number }) => {
+      const gradientColors = getCardGradient(index, item.backgroundColor);
 
-              // Calculate scale and opacity based on scroll position
-              const inputRange = [
-                (index - 1) * SNAP_INTERVAL,
-                index * SNAP_INTERVAL,
-                (index + 1) * SNAP_INTERVAL,
-              ];
+      // Calculate scale and opacity based on scroll position
+      const inputRange = [(index - 1) * SNAP_INTERVAL, index * SNAP_INTERVAL, (index + 1) * SNAP_INTERVAL];
 
-              const scale = interpolate(scrollX.value, inputRange, [0.9, 1, 0.9], 'clamp');
-              const opacity = interpolate(scrollX.value, inputRange, [0.6, 1, 0.6], 'clamp');
+      const scale = interpolate(scrollX.value, inputRange, [0.9, 1, 0.9], 'clamp');
+      const opacity = interpolate(scrollX.value, inputRange, [0.6, 1, 0.6], 'clamp');
 
-              return (
-                <Animated.View
-                  style={[
-                    styles.hero3DWrapper,
-                    {
-                      transform: [{ scale }],
-                      opacity: Animated.multiply(opacity, fadeAnim),
-                    },
-                  ]}
-                >
-                  {/* FLOOR SHADOW - Creates floating illusion */}
-                  <View style={[
-                    styles.heroFloorShadow,
-                    Platform.OS === 'web' && {
-                      boxShadow: '0px 0px 60px 20px rgba(0, 0, 0, 0.25)',
-                    }
-                  ]} />
+      return (
+        <Animated.View
+          style={[
+            styles.hero3DWrapper,
+            {
+              transform: [{ scale }],
+              opacity: Animated.multiply(opacity, fadeAnim),
+            },
+          ]}
+        >
+          {/* FLOOR SHADOW - Creates floating illusion */}
+          <View
+            style={[
+              styles.heroFloorShadow,
+              Platform.OS === 'web' && {
+                boxShadow: '0px 0px 60px 20px rgba(0, 0, 0, 0.25)',
+              },
+            ]}
+          />
 
-                  <Pressable
-                    style={styles.heroCard}
-                   
-                    onPress={() => {
-                      if (item.brandId) {
-                        handlers.handleBrandSelect({ id: item.brandId } as any);
-                      }
-                    }}
+          <Pressable
+            style={styles.heroCard}
+            onPress={() => {
+              if (item.brandId) {
+                handlers.handleBrandSelect({ id: item.brandId } as any);
+              }
+            }}
+          >
+            {/* OUTER GLOW - Creates the "pop out" effect */}
+            <View style={styles.heroOuterGlow}>
+              <LinearGradient
+                colors={[gradientColors[0] + '60', gradientColors[1] + '30', 'transparent']}
+                style={styles.heroGlowGradient}
+                start={{ x: 0.5, y: 0.5 }}
+                end={{ x: 0.5, y: 1 }}
+              />
+            </View>
+
+            {/* Main Floating Card */}
+            <View
+              style={[
+                styles.heroFloatingCard,
+                Platform.OS === 'web' && {
+                  boxShadow:
+                    '0px 20px 50px rgba(0, 0, 0, 0.35), 0px 8px 20px rgba(0, 0, 0, 0.25), 0px 0px 0px 5px rgba(255, 255, 255, 1)',
+                },
+              ]}
+            >
+              {/* Premium Border Glow */}
+              <LinearGradient
+                colors={['rgba(255,255,255,0.9)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.6)']}
+                style={styles.heroBorderGlow}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+              >
+                {/* Inner Card */}
+                <View style={styles.heroCardInner}>
+                  {/* Multi-layer gradient background */}
+                  <LinearGradient
+                    colors={gradientColors as any}
+                    style={styles.heroGradient}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
                   >
-                    {/* OUTER GLOW - Creates the "pop out" effect */}
-                    <View style={styles.heroOuterGlow}>
-                      <LinearGradient
-                        colors={[gradientColors[0] + '60', gradientColors[1] + '30', 'transparent']}
-                        style={styles.heroGlowGradient}
-                        start={{ x: 0.5, y: 0.5 }}
-                        end={{ x: 0.5, y: 1 }}
-                      />
+                    {/* Decorative floating orbs */}
+                    <View style={styles.heroOrbContainer}>
+                      <View style={[styles.heroOrb, styles.heroOrbLarge]} />
+                      <View style={[styles.heroOrb, styles.heroOrbMedium]} />
+                      <View style={[styles.heroOrb, styles.heroOrbSmall]} />
                     </View>
 
-                    {/* Main Floating Card */}
-                    <View style={[
-                      styles.heroFloatingCard,
-                      Platform.OS === 'web' && {
-                        boxShadow: '0px 20px 50px rgba(0, 0, 0, 0.35), 0px 8px 20px rgba(0, 0, 0, 0.25), 0px 0px 0px 5px rgba(255, 255, 255, 1)',
-                      }
-                    ]}>
-                      {/* Premium Border Glow */}
-                      <LinearGradient
-                        colors={['rgba(255,255,255,0.9)', 'rgba(255,255,255,0.3)', 'rgba(255,255,255,0.6)']}
-                        style={styles.heroBorderGlow}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                      >
-                        {/* Inner Card */}
-                        <View style={styles.heroCardInner}>
-                          {/* Multi-layer gradient background */}
-                          <LinearGradient
-                            colors={gradientColors as any}
-                            style={styles.heroGradient}
-                            start={{ x: 0, y: 0 }}
-                            end={{ x: 1, y: 1 }}
-                          >
-                            {/* Decorative floating orbs */}
-                            <View style={styles.heroOrbContainer}>
-                              <View style={[styles.heroOrb, styles.heroOrbLarge]} />
-                              <View style={[styles.heroOrb, styles.heroOrbMedium]} />
-                              <View style={[styles.heroOrb, styles.heroOrbSmall]} />
-                            </View>
+                    {/* Top Light Reflection */}
+                    <LinearGradient
+                      colors={['rgba(255,255,255,0.6)', 'rgba(255,255,255,0.2)', 'transparent']}
+                      style={styles.heroTopReflection}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 0, y: 1 }}
+                    />
 
-                            {/* Top Light Reflection */}
+                    {/* Glass Content Layer */}
+                    <View style={styles.heroGlassLayer}>
+                      {/* Diagonal Shine Effect */}
+                      <View style={styles.heroDiagonalShine} />
+
+                      <View style={styles.heroContent}>
+                        <View style={styles.heroText}>
+                          {/* Premium Floating Cashback Badge */}
+                          <View style={styles.heroCashbackBadge}>
                             <LinearGradient
-                              colors={['rgba(255,255,255,0.6)', 'rgba(255,255,255,0.2)', 'transparent']}
-                              style={styles.heroTopReflection}
+                              colors={[COLORS.gold, COLORS.goldDark]}
+                              style={styles.heroCashbackGradient}
                               start={{ x: 0, y: 0 }}
-                              end={{ x: 0, y: 1 }}
-                            />
+                              end={{ x: 1, y: 1 }}
+                            >
+                              <View style={styles.heroCashbackInnerShine} />
+                              <Ionicons name="gift" size={13} color={COLORS.navy} />
+                              <ThemedText style={styles.heroCashbackText}>
+                                {item.subtitle || 'Up to 15% Cashback'}
+                              </ThemedText>
+                            </LinearGradient>
+                          </View>
 
-                            {/* Glass Content Layer */}
-                            <View style={styles.heroGlassLayer}>
-                              {/* Diagonal Shine Effect */}
-                              <View style={styles.heroDiagonalShine} />
+                          {/* Brand Title with Strong Shadow */}
+                          <ThemedText style={styles.heroTitle}>{item.title}</ThemedText>
 
-                              <View style={styles.heroContent}>
-                                <View style={styles.heroText}>
-                                  {/* Premium Floating Cashback Badge */}
-                                  <View style={styles.heroCashbackBadge}>
-                                    <LinearGradient
-                                      colors={[COLORS.gold, COLORS.goldDark]}
-                                      style={styles.heroCashbackGradient}
-                                      start={{ x: 0, y: 0 }}
-                                      end={{ x: 1, y: 1 }}
-                                    >
-                                      <View style={styles.heroCashbackInnerShine} />
-                                      <Ionicons name="gift" size={13} color={COLORS.navy} />
-                                      <ThemedText style={styles.heroCashbackText}>
-                                        {item.subtitle || 'Up to 15% Cashback'}
-                                      </ThemedText>
-                                    </LinearGradient>
-                                  </View>
-
-                                  {/* Brand Title with Strong Shadow */}
-                                  <ThemedText style={styles.heroTitle}>
-                                    {item.title}
-                                  </ThemedText>
-
-                                  {/* Location Badge */}
-                                  {(item as any).store && (
-                                    <View style={styles.heroLocationBadge}>
-                                      <View style={styles.heroLocationDot} />
-                                      <ThemedText style={styles.heroLocationText}>
-                                        {(item as any).store.name}
-                                      </ThemedText>
-                                    </View>
-                                  )}
-
-                                  {/* Premium CTA Button */}
-                                  <View style={styles.heroCtaButton}>
-                                    <ThemedText style={styles.heroCtaText}>Shop Now</ThemedText>
-                                    <View style={styles.heroCtaArrow}>
-                                      <Ionicons name="arrow-forward" size={14} color={COLORS.white} />
-                                    </View>
-                                  </View>
-                                </View>
-
-                                {/* Premium Floating Icon */}
-                                <View style={styles.heroIconSection}>
-                                  {/* Multi-ring glow effect */}
-                                  <View style={styles.heroIconRing3} />
-                                  <View style={styles.heroIconRing2} />
-                                  <View style={styles.heroIconRing1} />
-
-                                  {/* Icon Container */}
-                                  <View style={styles.heroIconWrapper}>
-                                    <LinearGradient
-                                      colors={[colors.background.primary, colors.offWhite]}
-                                      style={styles.heroIconInner}
-                                      start={{ x: 0, y: 0 }}
-                                      end={{ x: 1, y: 1 }}
-                                    >
-                                      <View style={styles.heroIconTopShine} />
-                                      <ThemedText style={styles.heroEmoji}>
-                                        {item.image || (item as any).logo || '🎁'}
-                                      </ThemedText>
-                                    </LinearGradient>
-                                  </View>
-
-                                  {/* Sparkles */}
-                                  <View style={[styles.heroSparkle, styles.heroSparkle1]} />
-                                  <View style={[styles.heroSparkle, styles.heroSparkle2]} />
-                                  <View style={[styles.heroSparkle, styles.heroSparkle3]} />
-                                  <View style={[styles.heroSparkle, styles.heroSparkle4]} />
-                                </View>
-                              </View>
+                          {/* Location Badge */}
+                          {(item as any).store && (
+                            <View style={styles.heroLocationBadge}>
+                              <View style={styles.heroLocationDot} />
+                              <ThemedText style={styles.heroLocationText}>{(item as any).store.name}</ThemedText>
                             </View>
+                          )}
 
-                            {/* Bottom Vignette */}
-                            <LinearGradient
-                              colors={['transparent', 'rgba(0,0,0,0.2)']}
-                              style={styles.heroBottomVignette}
-                              start={{ x: 0.5, y: 0 }}
-                              end={{ x: 0.5, y: 1 }}
-                            />
-                          </LinearGradient>
+                          {/* Premium CTA Button */}
+                          <View style={styles.heroCtaButton}>
+                            <ThemedText style={styles.heroCtaText}>Shop Now</ThemedText>
+                            <View style={styles.heroCtaArrow}>
+                              <Ionicons name="arrow-forward" size={14} color={COLORS.white} />
+                            </View>
+                          </View>
                         </View>
-                      </LinearGradient>
+
+                        {/* Premium Floating Icon */}
+                        <View style={styles.heroIconSection}>
+                          {/* Multi-ring glow effect */}
+                          <View style={styles.heroIconRing3} />
+                          <View style={styles.heroIconRing2} />
+                          <View style={styles.heroIconRing1} />
+
+                          {/* Icon Container */}
+                          <View style={styles.heroIconWrapper}>
+                            <LinearGradient
+                              colors={[colors.background.primary, colors.offWhite]}
+                              style={styles.heroIconInner}
+                              start={{ x: 0, y: 0 }}
+                              end={{ x: 1, y: 1 }}
+                            >
+                              <View style={styles.heroIconTopShine} />
+                              <ThemedText style={styles.heroEmoji}>
+                                {item.image || (item as any).logo || '🎁'}
+                              </ThemedText>
+                            </LinearGradient>
+                          </View>
+
+                          {/* Sparkles */}
+                          <View style={[styles.heroSparkle, styles.heroSparkle1]} />
+                          <View style={[styles.heroSparkle, styles.heroSparkle2]} />
+                          <View style={[styles.heroSparkle, styles.heroSparkle3]} />
+                          <View style={[styles.heroSparkle, styles.heroSparkle4]} />
+                        </View>
+                      </View>
                     </View>
 
-                  </Pressable>
-                </Animated.View>
-              );
-  }, [scrollX, fadeAnim]);
+                    {/* Bottom Vignette */}
+                    <LinearGradient
+                      colors={['transparent', 'rgba(0,0,0,0.2)']}
+                      style={styles.heroBottomVignette}
+                      start={{ x: 0.5, y: 0 }}
+                      end={{ x: 0.5, y: 1 }}
+                    />
+                  </LinearGradient>
+                </View>
+              </LinearGradient>
+            </View>
+          </Pressable>
+        </Animated.View>
+      );
+    },
+    [scrollX, fadeAnim],
+  );
 
   const renderHeroCarousel = () => {
     const carouselData = heroCarousel;
@@ -469,16 +451,13 @@ function OnlineVoucherPage() {
             decelerationRate="fast"
             bounces={false}
             contentContainerStyle={styles.heroCarouselContent}
-            onScroll={Animated.event(
-              [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-              {
-                useNativeDriver: true,
-                listener: (event: any) => {
-                  const index = Math.round(event.nativeEvent.contentOffset.x / SNAP_INTERVAL);
-                  setCarouselIndex(index);
-                }
-              }
-            )}
+            onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+              useNativeDriver: true,
+              listener: (event: any) => {
+                const index = Math.round(event.nativeEvent.contentOffset.x / SNAP_INTERVAL);
+                setCarouselIndex(index);
+              },
+            })}
             scrollEventThrottle={16}
             getItemLayout={(data, index) => ({
               length: SNAP_INTERVAL,
@@ -492,11 +471,7 @@ function OnlineVoucherPage() {
         <View style={styles.carouselIndicators}>
           <View style={styles.indicatorTrack}>
             {carouselData.map((_, index) => (
-              <Pressable
-                key={index}
-               
-                style={styles.indicatorContainer}
-              >
+              <Pressable key={index} style={styles.indicatorContainer}>
                 {index === carouselIndex ? (
                   <LinearGradient
                     colors={[COLORS.primary, COLORS.primaryDark]}
@@ -534,11 +509,7 @@ function OnlineVoucherPage() {
               transform: [{ translateY: slideAnim }],
             }}
           >
-            <Pressable
-              style={styles.categoryCardGlass}
-              onPress={() => handlers.handleCategorySelect(category)}
-             
-            >
+            <Pressable style={styles.categoryCardGlass} onPress={() => handlers.handleCategorySelect(category)}>
               {Platform.OS === 'web' ? (
                 <View style={styles.categoryCardInnerWeb}>
                   <LinearGradient
@@ -550,11 +521,7 @@ function OnlineVoucherPage() {
                     <ThemedText style={styles.categoryIcon}>{category.icon}</ThemedText>
                   </LinearGradient>
                   <View style={styles.categoryTextContainerVertical}>
-                    <ThemedText
-                      style={styles.categoryName}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
+                    <ThemedText style={styles.categoryName} numberOfLines={1} ellipsizeMode="tail">
                       {category.name}
                     </ThemedText>
                     {category.brandCount !== undefined && category.brandCount !== null && (
@@ -575,11 +542,7 @@ function OnlineVoucherPage() {
                     <ThemedText style={styles.categoryIcon}>{category.icon}</ThemedText>
                   </LinearGradient>
                   <View style={styles.categoryTextContainerVertical}>
-                    <ThemedText
-                      style={styles.categoryName}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
+                    <ThemedText style={styles.categoryName} numberOfLines={1} ellipsizeMode="tail">
                       {category.name}
                     </ThemedText>
                     {category.brandCount !== undefined && category.brandCount !== null && (
@@ -605,11 +568,7 @@ function OnlineVoucherPage() {
         transform: [{ translateY: slideAnim }],
       }}
     >
-      <Pressable
-        style={styles.brandCardGlass}
-        onPress={() => handlers.handleBrandSelect(brand)}
-       
-      >
+      <Pressable style={styles.brandCardGlass} onPress={() => handlers.handleBrandSelect(brand)}>
         <View style={styles.brandCardContent}>
           <View style={styles.brandHeader}>
             <LinearGradient
@@ -645,17 +604,13 @@ function OnlineVoucherPage() {
                 <View style={styles.cashbackIconContainer}>
                   <Ionicons name="gift" size={12} color={COLORS.primary} />
                 </View>
-                <ThemedText style={styles.brandCashback}>
-                  Up to {brand.cashbackRate || 0}% cashback
-                </ThemedText>
+                <ThemedText style={styles.brandCashback}>Up to {brand.cashbackRate || 0}% cashback</ThemedText>
               </View>
             </View>
             {brand.rating && brand.rating > 0 && (
               <View style={styles.brandRating}>
                 <Ionicons name="star" size={14} color={COLORS.gold} />
-                <ThemedText style={styles.ratingText}>
-                  {brand.rating.toFixed(1)}
-                </ThemedText>
+                <ThemedText style={styles.ratingText}>{brand.rating.toFixed(1)}</ThemedText>
               </View>
             )}
           </View>
@@ -664,45 +619,43 @@ function OnlineVoucherPage() {
     </Animated.View>
   );
 
-  const renderNewBrandItem = useCallback(({ item }: { item: Brand }) => (
-    <Animated.View
-      style={{
-        opacity: fadeAnim,
-        transform: [{ translateY: slideAnim }],
-      }}
-    >
-      <Pressable
-        style={styles.newBrandCardGlass}
-        onPress={() => handlers.handleBrandSelect(item)}
+  const renderNewBrandItem = useCallback(
+    ({ item }: { item: Brand }) => (
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          transform: [{ translateY: slideAnim }],
+        }}
       >
-        <View style={styles.newBrandCardContent}>
-          <LinearGradient
-            colors={[
-              item.backgroundColor || colors.neutral[100],
-              (item.backgroundColor || colors.neutral[100]) + 'DD',
-            ]}
-            style={styles.newBrandLogo}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-          >
-            <ThemedText style={styles.newBrandEmoji}>{item.logo}</ThemedText>
-          </LinearGradient>
-          <ThemedText style={styles.newBrandName} numberOfLines={1}>
-            {item.name}
-          </ThemedText>
-          <View style={styles.newBrandCashbackBadge}>
-            <Ionicons name="gift" size={10} color={COLORS.primary} />
-            <ThemedText style={styles.newBrandCashback}>
-              {item.cashbackRate || 0}% cashback
+        <Pressable style={styles.newBrandCardGlass} onPress={() => handlers.handleBrandSelect(item)}>
+          <View style={styles.newBrandCardContent}>
+            <LinearGradient
+              colors={[
+                item.backgroundColor || colors.neutral[100],
+                (item.backgroundColor || colors.neutral[100]) + 'DD',
+              ]}
+              style={styles.newBrandLogo}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+            >
+              <ThemedText style={styles.newBrandEmoji}>{item.logo}</ThemedText>
+            </LinearGradient>
+            <ThemedText style={styles.newBrandName} numberOfLines={1}>
+              {item.name}
             </ThemedText>
+            <View style={styles.newBrandCashbackBadge}>
+              <Ionicons name="gift" size={10} color={COLORS.primary} />
+              <ThemedText style={styles.newBrandCashback}>{item.cashbackRate || 0}% cashback</ThemedText>
+            </View>
           </View>
-        </View>
-      </Pressable>
-    </Animated.View>
-  ), [fadeAnim, slideAnim, handlers.handleBrandSelect]);
+        </Pressable>
+      </Animated.View>
+    ),
+    [fadeAnim, slideAnim, handlers.handleBrandSelect],
+  );
 
   const renderNewlyAddedBrands = () => {
-    const newlyAdded = state.brands.filter(brand => brand.newlyAdded);
+    const newlyAdded = state.brands.filter((brand) => brand.newlyAdded);
 
     if (newlyAdded.length === 0) return null;
 
@@ -731,9 +684,10 @@ function OnlineVoucherPage() {
   };
 
   const renderFeaturedBrands = () => {
-    const featured = state.brands.filter(brand => brand.featured).length > 0
-      ? state.brands.filter(brand => brand.featured)
-      : state.brands;
+    const featured =
+      state.brands.filter((brand) => brand.featured).length > 0
+        ? state.brands.filter((brand) => brand.featured)
+        : state.brands;
 
     if (featured.length === 0) return null;
 
@@ -745,9 +699,7 @@ function OnlineVoucherPage() {
             <ThemedText style={styles.sectionSubtitle}>{featured.length} brands available</ThemedText>
           </View>
         </View>
-        <View style={styles.brandsList}>
-          {featured.map((brand, index) => renderBrandCard(brand, index))}
-        </View>
+        <View style={styles.brandsList}>{featured.map((brand, index) => renderBrandCard(brand, index))}</View>
       </View>
     );
   };
@@ -757,9 +709,7 @@ function OnlineVoucherPage() {
 
     return (
       <View style={styles.searchResults}>
-        <ThemedText style={styles.searchResultsTitle}>
-          Search Results for "{state.searchQuery}"
-        </ThemedText>
+        <ThemedText style={styles.searchResultsTitle}>Search Results for "{state.searchQuery}"</ThemedText>
         {state.loading ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="large" color={COLORS.primary} />
@@ -773,9 +723,7 @@ function OnlineVoucherPage() {
                 <View style={styles.noResultsIconContainer}>
                   <Ionicons name="search-outline" size={48} color={COLORS.muted} />
                 </View>
-                <ThemedText style={styles.noResultsText}>
-                  No brands found for "{state.searchQuery}"
-                </ThemedText>
+                <ThemedText style={styles.noResultsText}>No brands found for "{state.searchQuery}"</ThemedText>
               </View>
             )}
           </View>
@@ -835,7 +783,7 @@ function OnlineVoucherPage() {
           {
             opacity: fadeAnim,
             transform: [{ translateY: slideAnim }],
-          }
+          },
         ]}
       >
         <ScrollView

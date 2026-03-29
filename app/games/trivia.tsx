@@ -3,19 +3,8 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Multiple choice quiz, 10 questions, timer per question, score tracking, backend integration
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Platform,
-  ScrollView,
-  ActivityIndicator} from 'react-native';
-import Animated, {
-  useSharedValue,
-  withTiming,
-  interpolate,
-} from 'react-native-reanimated';
+import { View, Text, StyleSheet, Pressable, Platform, ScrollView, ActivityIndicator } from 'react-native';
+import Animated, { useSharedValue, withTiming, interpolate, cancelAnimation, Easing } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -133,23 +122,23 @@ function TriviaPage() {
   const [answers, setAnswers] = useState<{ questionId: string; correct: boolean; timeTaken: number }[]>([]);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const moveTimerRef = useRef<NodeJS.Timeout>();
   const progressAnim = useSharedValue(1);
-  const optionAnimations = useRef(
-    [0, 1, 2, 3].map(() => useSharedValue(0))
-  ).current;
+  const opt0 = useSharedValue(0);
+  const opt1 = useSharedValue(0);
+  const opt2 = useSharedValue(0);
+  const opt3 = useSharedValue(0);
+  const optionAnimations = useRef([opt0, opt1, opt2, opt3]).current;
 
   // Timer countdown
   useEffect(() => {
-    let progressAnimation: any | undefined;
     if (gameState === 'playing') {
       progressAnim.value = 1;
-      progressAnimation = withTiming(0, { duration: SECONDS_PER_QUESTION * 1000 });
+      progressAnim.value = withTiming(0, { duration: SECONDS_PER_QUESTION * 1000 });
 
       timerRef.current = setInterval(() => {
-        setTimeLeft(prev => {
+        setTimeLeft((prev) => {
           if (prev <= 1) {
-            // Time's up
-            handleTimeUp();
             return 0;
           }
           return prev - 1;
@@ -158,25 +147,38 @@ function TriviaPage() {
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
-      progressAnimation?.stop();
+      cancelAnimation(progressAnim);
     };
   }, [gameState, currentIndex]);
+
+  // BUG-013: Side effects outside state updater — call handleTimeUp when timeLeft hits 0
+  useEffect(() => {
+    if (timeLeft === 0 && gameState === 'playing') {
+      handleTimeUp();
+    }
+  }, [timeLeft]);
 
   // Animate options appearing
   useEffect(() => {
     if (gameState === 'playing') {
-      const anims = optionAnimations.map((anim, i) => {
+      optionAnimations.forEach((anim, i) => {
         anim.value = 0;
-        return withTiming(1, { duration: 300,
-          delay: i * 100 });
+        anim.value = withTiming(1, { duration: 300, delay: i * 100, easing: Easing.out(Easing.back(1.2)) });
       });
-      anims.forEach(a => a);
-      return () => anims.forEach(a => a.stop());
+      return () => optionAnimations.forEach((anim) => cancelAnimation(anim));
     }
   }, [gameState, currentIndex]);
 
+  // Cleanup moveTimerRef on unmount to prevent state updates after unmount
+  useEffect(() => {
+    return () => {
+      if (moveTimerRef.current) clearTimeout(moveTimerRef.current);
+    };
+  }, []);
+
   const handleBackPress = () => {
     if (timerRef.current) clearInterval(timerRef.current);
+    if (moveTimerRef.current) clearTimeout(moveTimerRef.current);
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   };
 
@@ -202,8 +204,7 @@ function TriviaPage() {
         if (!isMounted()) return;
         setSessionId(response.data.sessionId || response.data._id || '');
       }
-    } catch {
-    }
+    } catch {}
 
     // Use hardcoded questions
     const shuffled = shuffleQuestions();
@@ -231,15 +232,18 @@ function TriviaPage() {
 
   const handleTimeUp = () => {
     if (timerRef.current) clearInterval(timerRef.current);
-    setAnswers(prev => [...prev, {
-      questionId: questions[currentIndex].id,
-      correct: false,
-      timeTaken: SECONDS_PER_QUESTION,
-    }]);
+    setAnswers((prev) => [
+      ...prev,
+      {
+        questionId: questions[currentIndex].id,
+        correct: false,
+        timeTaken: SECONDS_PER_QUESTION,
+      },
+    ]);
     setGameState('answered');
     setSelectedOption(-1); // -1 = timed out
 
-    setTimeout(() => {
+    moveTimerRef.current = setTimeout(() => {
       moveToNext();
     }, 1500);
   };
@@ -256,17 +260,20 @@ function TriviaPage() {
 
     if (isCorrect) {
       const timeBonus = Math.max(0, timeLeft * 2);
-      setScore(prev => prev + 10 + timeBonus);
-      setCorrectCount(prev => prev + 1);
+      setScore((prev) => prev + 10 + timeBonus);
+      setCorrectCount((prev) => prev + 1);
     }
 
-    setAnswers(prev => [...prev, {
-      questionId: questions[currentIndex].id,
-      correct: isCorrect,
-      timeTaken,
-    }]);
+    setAnswers((prev) => [
+      ...prev,
+      {
+        questionId: questions[currentIndex].id,
+        correct: isCorrect,
+        timeTaken,
+      },
+    ]);
 
-    setTimeout(() => {
+    moveTimerRef.current = setTimeout(() => {
       moveToNext();
     }, 1500);
   };
@@ -276,7 +283,7 @@ function TriviaPage() {
       setGameState('completed');
       submitScore();
     } else {
-      setCurrentIndex(prev => prev + 1);
+      setCurrentIndex((prev) => prev + 1);
       setSelectedOption(null);
       setTimeLeft(SECONDS_PER_QUESTION);
       setGameState('playing');
@@ -302,8 +309,7 @@ function TriviaPage() {
           Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
         }
       }
-    } catch {
-    }
+    } catch {}
   };
 
   const getOptionStyle = (optionIndex: number) => {
@@ -327,17 +333,12 @@ function TriviaPage() {
   const renderIdleScreen = () => (
     <View style={styles.centerContent}>
       <View style={styles.gameIconContainer}>
-        <LinearGradient
-          colors={['#FF6B6B', colors.error]}
-          style={styles.gameIconGradient}
-        >
+        <LinearGradient colors={['#FF6B6B', colors.error]} style={styles.gameIconGradient}>
           <Text style={styles.gameIconText}>?</Text>
         </LinearGradient>
       </View>
       <ThemedText style={styles.gameTitle}>Trivia Challenge</ThemedText>
-      <ThemedText style={styles.gameSubtitle}>
-        Test your knowledge across multiple categories!
-      </ThemedText>
+      <ThemedText style={styles.gameSubtitle}>Test your knowledge across multiple categories!</ThemedText>
 
       <View style={styles.rulesCard}>
         <ThemedText style={styles.rulesTitle}>How to Play</ThemedText>
@@ -360,10 +361,7 @@ function TriviaPage() {
       </View>
 
       <Pressable style={styles.startButton} onPress={startGame} disabled={loading}>
-        <LinearGradient
-          colors={['#FF6B6B', colors.error]}
-          style={styles.startButtonGradient}
-        >
+        <LinearGradient colors={['#FF6B6B', colors.error]} style={styles.startButtonGradient}>
           {loading ? (
             <ActivityIndicator color={colors.text.inverse} />
           ) : (
@@ -401,9 +399,7 @@ function TriviaPage() {
             </Text>
             <View style={styles.timerBadge}>
               <Ionicons name="timer" size={14} color={timeLeft <= 5 ? Colors.error : Colors.info} />
-              <Text style={[styles.timerText, timeLeft <= 5 && { color: Colors.error }]}>
-                {timeLeft}s
-              </Text>
+              <Text style={[styles.timerText, timeLeft <= 5 && { color: Colors.error }]}>{timeLeft}s</Text>
             </View>
           </View>
         </View>
@@ -428,25 +424,31 @@ function TriviaPage() {
               key={i}
               style={{
                 opacity: optionAnimations[i],
-                transform: [{
-                  translateY: interpolate(optionAnimations[i].value, [0, 1], [20, 0]),
-                }],
+                transform: [
+                  {
+                    translateY: interpolate(optionAnimations[i].value, [0, 1], [20, 0]),
+                  },
+                ],
               }}
             >
               <Pressable
                 style={getOptionStyle(i)}
                 onPress={() => handleOptionPress(i)}
                 disabled={gameState === 'answered'}
-               
               >
                 <View style={styles.optionLetter}>
-                  <Text style={styles.optionLetterText}>
-                    {String.fromCharCode(65 + i)}
-                  </Text>
+                  <Text style={styles.optionLetterText}>{String.fromCharCode(65 + i)}</Text>
                 </View>
-                <Text style={getOptionTextStyle(i)} numberOfLines={2}>{option}</Text>
+                <Text style={getOptionTextStyle(i)} numberOfLines={2}>
+                  {option}
+                </Text>
                 {gameState === 'answered' && i === currentQuestion.correctIndex && (
-                  <Ionicons name="checkmark-circle" size={22} color={colors.text.inverse} style={{ marginLeft: 'auto' }} />
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={22}
+                    color={colors.text.inverse}
+                    style={{ marginLeft: 'auto' }}
+                  />
                 )}
                 {gameState === 'answered' && i === selectedOption && i !== currentQuestion.correctIndex && (
                   <Ionicons name="close-circle" size={22} color={colors.text.inverse} style={{ marginLeft: 'auto' }} />
@@ -463,18 +465,21 @@ function TriviaPage() {
     const percentage = Math.round((correctCount / questions.length) * 100);
     let grade = 'Keep Trying!';
     let gradeColor = Colors.error;
-    if (percentage >= 90) { grade = 'Excellent!'; gradeColor = Colors.success; }
-    else if (percentage >= 70) { grade = 'Great Job!'; gradeColor = Colors.info; }
-    else if (percentage >= 50) { grade = 'Good Effort!'; gradeColor = Colors.warning; }
+    if (percentage >= 90) {
+      grade = 'Excellent!';
+      gradeColor = Colors.success;
+    } else if (percentage >= 70) {
+      grade = 'Great Job!';
+      gradeColor = Colors.info;
+    } else if (percentage >= 50) {
+      grade = 'Good Effort!';
+      gradeColor = Colors.warning;
+    }
 
     return (
       <View style={styles.centerContent}>
         <View style={[styles.completedIconBg, { backgroundColor: `${gradeColor}20` }]}>
-          <Ionicons
-            name={percentage >= 70 ? 'trophy' : 'ribbon'}
-            size={56}
-            color={gradeColor}
-          />
+          <Ionicons name={percentage >= 70 ? 'trophy' : 'ribbon'} size={56} color={gradeColor} />
         </View>
         <ThemedText style={[styles.completedTitle, { color: gradeColor }]}>{grade}</ThemedText>
         <ThemedText style={styles.completedSubtitle}>
@@ -490,16 +495,15 @@ function TriviaPage() {
         {coinsEarned > 0 && (
           <View style={styles.coinsEarnedCard}>
             <CachedImage source={nuqtaCoinImage} style={styles.coinIcon} />
-            <ThemedText style={styles.coinsEarnedText}>+{coinsEarned} {BRAND.CURRENCY_CODE} earned!</ThemedText>
+            <ThemedText style={styles.coinsEarnedText}>
+              +{coinsEarned} {BRAND.CURRENCY_CODE} earned!
+            </ThemedText>
           </View>
         )}
 
         <View style={styles.actionButtons}>
           <Pressable style={styles.playAgainButton} onPress={startGame}>
-            <LinearGradient
-              colors={['#FF6B6B', colors.error]}
-              style={styles.startButtonGradient}
-            >
+            <LinearGradient colors={['#FF6B6B', colors.error]} style={styles.startButtonGradient}>
               <Ionicons name="refresh" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.startButtonText}>Play Again</ThemedText>
             </LinearGradient>
@@ -522,24 +526,15 @@ function TriviaPage() {
           headerTintColor: colors.text.primary,
           headerTitleStyle: { fontWeight: 'bold' },
           headerLeft: () => (
-            <Pressable
-              onPress={handleBackPress}
-              style={styles.headerBackButton}
-            >
+            <Pressable onPress={handleBackPress} style={styles.headerBackButton}>
               <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
           ),
         }}
       />
       <ThemedView style={styles.container}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <LinearGradient
-            colors={['#FFD93D', '#FFC93D', '#FFB93D']}
-            style={styles.gradient}
-          >
+        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+          <LinearGradient colors={['#FFD93D', '#FFC93D', '#FFB93D']} style={styles.gradient}>
             {gameState === 'idle' && renderIdleScreen()}
             {(gameState === 'playing' || gameState === 'answered') && renderPlayingScreen()}
             {gameState === 'completed' && renderCompletedScreen()}

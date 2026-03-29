@@ -327,11 +327,17 @@ function PaymentPage() {
       } else if (statusResponse.data?.status === 'failed') {
         throw new Error(statusResponse.data?.failureReason || 'Payment was declined');
       } else {
+        // CRIT-004 FIX: 'pending' (or any non-completed status) must NOT navigate to the
+        // success screen. Doing so lets the user believe payment succeeded and could trigger
+        // downstream cashback/reward flows before the backend confirms the payment.
+        // Instead, show a neutral informational alert and navigate back without triggering
+        // any success-path side-effects.
         platformAlertSimple(
           'Payment Pending',
           'Your payment is still being processed. Please check your wallet for updates.',
         );
-        navigateAfterSuccess();
+        // Navigate back (not to success) — user can check wallet history for status
+        router.canGoBack() ? router.back() : router.replace('/(tabs)');
       }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : 'Payment failed. Please try again.';

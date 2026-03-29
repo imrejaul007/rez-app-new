@@ -22,6 +22,7 @@ import { useRouter } from 'expo-router';
 import { getImagePicker } from '@/utils/lazyImports';
 import apiClient from '@/services/apiClient';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
+import { useGetCurrencySymbol } from '@/stores/selectors';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { CLOUDINARY_CONFIG, getCloudinaryUploadUrl } from '@/config/cloudinary.config';
@@ -108,6 +109,8 @@ const medicineCategories: MedicineCategory[] = [
 function PharmacyPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const getCurrencySymbol = useGetCurrencySymbol();
+  const currencySymbol = getCurrencySymbol();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [medicines, setMedicines] = useState<Medicine[]>([]);
@@ -168,7 +171,7 @@ function PharmacyPage() {
         (medicine) =>
           medicine.name.toLowerCase().includes(query) ||
           medicine.metadata?.manufacturer?.toLowerCase().includes(query) ||
-          medicine.metadata?.composition?.toLowerCase().includes(query)
+          medicine.metadata?.composition?.toLowerCase().includes(query),
       );
     }
 
@@ -176,7 +179,7 @@ function PharmacyPage() {
       filtered = filtered.filter(
         (medicine) =>
           medicine.subCategory?.toLowerCase() === selectedCategory.toLowerCase() ||
-          medicine.category.toLowerCase().includes(selectedCategory.replace('_', ' '))
+          medicine.category.toLowerCase().includes(selectedCategory.replace('_', ' ')),
       );
     }
 
@@ -195,11 +198,7 @@ function PharmacyPage() {
     const existingItem = cart.find((item) => item.medicine._id === medicine._id);
     if (existingItem) {
       setCart(
-        cart.map((item) =>
-          item.medicine._id === medicine._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        )
+        cart.map((item) => (item.medicine._id === medicine._id ? { ...item, quantity: item.quantity + 1 } : item)),
       );
     } else {
       setCart([...cart, { medicine, quantity: 1 }]);
@@ -215,19 +214,12 @@ function PharmacyPage() {
     if (quantity <= 0) {
       removeFromCart(medicineId);
     } else {
-      setCart(
-        cart.map((item) =>
-          item.medicine._id === medicineId ? { ...item, quantity } : item
-        )
-      );
+      setCart(cart.map((item) => (item.medicine._id === medicineId ? { ...item, quantity } : item)));
     }
   };
 
   const getCartTotal = () => {
-    return cart.reduce(
-      (total, item) => total + item.medicine.price.selling * item.quantity,
-      0
-    );
+    return cart.reduce((total, item) => total + item.medicine.price.selling * item.quantity, 0);
   };
 
   const getCartItemCount = () => {
@@ -328,7 +320,7 @@ function PharmacyPage() {
           if (!isMounted()) return;
           setPrescriptionNotes('');
         },
-        'OK'
+        'OK',
       );
     } catch (error) {
       platformAlertSimple('Error', 'Failed to submit prescription. Please try again.');
@@ -353,12 +345,14 @@ function PharmacyPage() {
       pathname: '/checkout',
       params: {
         storeId: storeId || '',
-        items: JSON.stringify(cart.map((item) => ({
-          productId: item.medicine._id,
-          name: item.medicine.name,
-          price: item.medicine.price?.selling || item.medicine.price?.mrp || 0,
-          quantity: item.quantity,
-        }))),
+        items: JSON.stringify(
+          cart.map((item) => ({
+            productId: item.medicine._id,
+            name: item.medicine.name,
+            price: item.medicine.price?.selling || item.medicine.price?.mrp || 0,
+            quantity: item.quantity,
+          })),
+        ),
         fulfillmentType: 'delivery',
       },
     } as any);
@@ -370,25 +364,11 @@ function PharmacyPage() {
     return (
       <Pressable
         key={category.id}
-        style={[
-          styles.categoryChip,
-          isSelected && { backgroundColor: category.color },
-        ]}
+        style={[styles.categoryChip, isSelected && { backgroundColor: category.color }]}
         onPress={() => setSelectedCategory(category.id)}
       >
-        <Ionicons
-          name={category.icon as any}
-          size={16}
-          color={isSelected ? colors.text.inverse : category.color}
-        />
-        <Text
-          style={[
-            styles.categoryChipText,
-            isSelected && styles.categoryChipTextSelected,
-          ]}
-        >
-          {category.name}
-        </Text>
+        <Ionicons name={category.icon as any} size={16} color={isSelected ? colors.text.inverse : category.color} />
+        <Text style={[styles.categoryChipText, isSelected && styles.categoryChipTextSelected]}>{category.name}</Text>
       </Pressable>
     );
   };
@@ -425,17 +405,15 @@ function PharmacyPage() {
       </View>
       <View style={styles.pharmacyRating}>
         <Ionicons name="star" size={12} color={colors.warningScale[400]} />
-        <Text style={styles.pharmacyRatingText}>
-          {pharmacy.ratings.average.toFixed(1)}
-        </Text>
+        <Text style={styles.pharmacyRatingText}>{pharmacy.ratings.average.toFixed(1)}</Text>
       </View>
     </Pressable>
   );
 
   // Render medicine card
   const renderMedicineCard = (medicine: Medicine) => {
-    const discount = medicine.price.discount ||
-      Math.round(((medicine.price.mrp - medicine.price.selling) / medicine.price.mrp) * 100);
+    const discount =
+      medicine.price.discount || Math.round(((medicine.price.mrp - medicine.price.selling) / medicine.price.mrp) * 100);
 
     return (
       <Pressable key={medicine._id} style={styles.medicineCard}>
@@ -463,9 +441,7 @@ function PharmacyPage() {
           <Text style={styles.medicineName} numberOfLines={2}>
             {medicine.name}
           </Text>
-          {medicine.metadata?.packSize && (
-            <Text style={styles.medicinePackSize}>{medicine.metadata.packSize}</Text>
-          )}
+          {medicine.metadata?.packSize && <Text style={styles.medicinePackSize}>{medicine.metadata.packSize}</Text>}
           {medicine.metadata?.manufacturer && (
             <Text style={styles.medicineManufacturer} numberOfLines={1}>
               {medicine.metadata.manufacturer}
@@ -473,16 +449,19 @@ function PharmacyPage() {
           )}
 
           <View style={styles.priceContainer}>
-            <Text style={styles.sellingPrice}>Rs {medicine.price.selling}</Text>
+            <Text style={styles.sellingPrice}>
+              {currencySymbol}
+              {medicine.price.selling}
+            </Text>
             {medicine.price.mrp > medicine.price.selling && (
-              <Text style={styles.mrpPrice}>Rs {medicine.price.mrp}</Text>
+              <Text style={styles.mrpPrice}>
+                {currencySymbol}
+                {medicine.price.mrp}
+              </Text>
             )}
           </View>
 
-          <Pressable
-            style={styles.addToCartButton}
-            onPress={() => addToCart(medicine)}
-          >
+          <Pressable style={styles.addToCartButton} onPress={() => addToCart(medicine)}>
             <Ionicons name="cart-outline" size={16} color={colors.background.primary} />
             <Text style={styles.addToCartText}>Add</Text>
           </Pressable>
@@ -496,17 +475,17 @@ function PharmacyPage() {
       {/* Header */}
       <LinearGradient colors={[colors.brand.cyan, colors.cyanDark]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Online Pharmacy</Text>
             <Text style={styles.headerSubtitle}>Medicines delivered to your door</Text>
           </View>
-          <Pressable
-            style={styles.cartButton}
-            onPress={() => setCartModalVisible(true)}
-          >
+          <Pressable style={styles.cartButton} onPress={() => setCartModalVisible(true)}>
             <Ionicons name="cart" size={24} color={colors.background.primary} />
             {cart.length > 0 && (
               <View style={styles.cartBadge}>
@@ -538,23 +517,16 @@ function PharmacyPage() {
         style={styles.content}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 120 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.brand.cyan]} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.brand.cyan]} />}
       >
         {/* Upload Prescription Banner */}
-        <Pressable
-          style={styles.prescriptionBanner}
-          onPress={() => setPrescriptionModalVisible(true)}
-        >
+        <Pressable style={styles.prescriptionBanner} onPress={() => setPrescriptionModalVisible(true)}>
           <View style={styles.prescriptionBannerIcon}>
             <Ionicons name="document-text" size={28} color={colors.background.primary} />
           </View>
           <View style={styles.prescriptionBannerContent}>
             <Text style={styles.prescriptionBannerTitle}>Upload Prescription</Text>
-            <Text style={styles.prescriptionBannerText}>
-              Order medicines by uploading your prescription
-            </Text>
+            <Text style={styles.prescriptionBannerText}>Order medicines by uploading your prescription</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color={colors.background.primary} />
         </Pressable>
@@ -562,11 +534,7 @@ function PharmacyPage() {
         {/* Categories */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Shop by Category</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.categoriesScroll}
-          >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoriesScroll}>
             {medicineCategories.map(renderCategoryChip)}
           </ScrollView>
         </View>
@@ -594,7 +562,9 @@ function PharmacyPage() {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>
-              {selectedCategory === 'all' ? 'All Products' : medicineCategories.find(c => c.id === selectedCategory)?.name}
+              {selectedCategory === 'all'
+                ? 'All Products'
+                : medicineCategories.find((c) => c.id === selectedCategory)?.name}
             </Text>
             <Text style={styles.resultCount}>{filteredMedicines.length} products</Text>
           </View>
@@ -606,15 +576,11 @@ function PharmacyPage() {
               <Ionicons name="medical-outline" size={64} color={colors.neutral[300]} />
               <Text style={styles.emptyText}>No medicines found</Text>
               <Text style={styles.emptySubtext}>
-                {searchQuery
-                  ? 'Try a different search term'
-                  : 'Check back later for available medicines'}
+                {searchQuery ? 'Try a different search term' : 'Check back later for available medicines'}
               </Text>
             </View>
           ) : (
-            <View style={styles.medicinesGrid}>
-              {filteredMedicines.map(renderMedicineCard)}
-            </View>
+            <View style={styles.medicinesGrid}>{filteredMedicines.map(renderMedicineCard)}</View>
           )}
         </View>
 
@@ -623,14 +589,14 @@ function PharmacyPage() {
 
       {/* Cart Button Fixed at Bottom */}
       {cart.length > 0 && (
-        <Pressable
-          style={styles.floatingCartButton}
-          onPress={() => setCartModalVisible(true)}
-        >
+        <Pressable style={styles.floatingCartButton} onPress={() => setCartModalVisible(true)}>
           <View style={styles.floatingCartContent}>
             <View style={styles.floatingCartInfo}>
               <Text style={styles.floatingCartItems}>{getCartItemCount()} items</Text>
-              <Text style={styles.floatingCartTotal}>Rs {getCartTotal()}</Text>
+              <Text style={styles.floatingCartTotal}>
+                {currencySymbol}
+                {getCartTotal()}
+              </Text>
             </View>
             <View style={styles.floatingCartAction}>
               <Text style={styles.floatingCartActionText}>View Cart</Text>
@@ -660,10 +626,7 @@ function PharmacyPage() {
               <View style={styles.emptyCartContainer}>
                 <Ionicons name="cart-outline" size={64} color={colors.neutral[300]} />
                 <Text style={styles.emptyCartText}>Your cart is empty</Text>
-                <Pressable
-                  style={styles.continueShopping}
-                  onPress={() => setCartModalVisible(false)}
-                >
+                <Pressable style={styles.continueShopping} onPress={() => setCartModalVisible(false)}>
                   <Text style={styles.continueShoppingText}>Continue Shopping</Text>
                 </Pressable>
               </View>
@@ -674,10 +637,7 @@ function PharmacyPage() {
                     <View key={item.medicine._id} style={styles.cartItem}>
                       <View style={styles.cartItemImage}>
                         {item.medicine.images && item.medicine.images.length > 0 ? (
-                          <CachedImage
-                            source={item.medicine.images[0]}
-                            style={styles.cartItemImg}
-                          />
+                          <CachedImage source={item.medicine.images[0]} style={styles.cartItemImg} />
                         ) : (
                           <Ionicons name="medical" size={24} color={colors.neutral[300]} />
                         )}
@@ -687,24 +647,21 @@ function PharmacyPage() {
                           {item.medicine.name}
                         </Text>
                         <Text style={styles.cartItemPrice}>
-                          Rs {item.medicine.price.selling}
+                          {currencySymbol}
+                          {item.medicine.price.selling}
                         </Text>
                       </View>
                       <View style={styles.cartItemActions}>
                         <Pressable
                           style={styles.quantityButton}
-                          onPress={() =>
-                            updateCartQuantity(item.medicine._id, item.quantity - 1)
-                          }
+                          onPress={() => updateCartQuantity(item.medicine._id, item.quantity - 1)}
                         >
                           <Ionicons name="remove" size={18} color={colors.brand.cyan} />
                         </Pressable>
                         <Text style={styles.quantityText}>{item.quantity}</Text>
                         <Pressable
                           style={styles.quantityButton}
-                          onPress={() =>
-                            updateCartQuantity(item.medicine._id, item.quantity + 1)
-                          }
+                          onPress={() => updateCartQuantity(item.medicine._id, item.quantity + 1)}
                         >
                           <Ionicons name="add" size={18} color={colors.brand.cyan} />
                         </Pressable>
@@ -716,7 +673,10 @@ function PharmacyPage() {
                 <View style={styles.cartSummary}>
                   <View style={styles.summaryRow}>
                     <Text style={styles.summaryLabel}>Subtotal</Text>
-                    <Text style={styles.summaryValue}>Rs {getCartTotal()}</Text>
+                    <Text style={styles.summaryValue}>
+                      {currencySymbol}
+                      {getCartTotal()}
+                    </Text>
                   </View>
                   <View style={styles.summaryRow}>
                     <Text style={styles.summaryLabel}>Delivery</Text>
@@ -724,13 +684,13 @@ function PharmacyPage() {
                   </View>
                   <View style={[styles.summaryRow, styles.totalRow]}>
                     <Text style={styles.totalLabel}>Total</Text>
-                    <Text style={styles.totalValue}>Rs {getCartTotal()}</Text>
+                    <Text style={styles.totalValue}>
+                      {currencySymbol}
+                      {getCartTotal()}
+                    </Text>
                   </View>
 
-                  <Pressable
-                    style={styles.checkoutButton}
-                    onPress={handleCheckout}
-                  >
+                  <Pressable style={styles.checkoutButton} onPress={handleCheckout}>
                     <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
                     <Ionicons name="arrow-forward" size={20} color={colors.background.primary} />
                   </Pressable>
@@ -759,39 +719,26 @@ function PharmacyPage() {
 
             <ScrollView showsVerticalScrollIndicator={false}>
               <Text style={styles.prescriptionInfo}>
-                Upload a clear photo of your prescription. Our pharmacist will verify it
-                and contact you within 2 hours.
+                Upload a clear photo of your prescription. Our pharmacist will verify it and contact you within 2 hours.
               </Text>
 
               {prescriptionImage ? (
                 <View style={styles.prescriptionPreview}>
-                  <CachedImage
-                    source={prescriptionImage}
-                    style={styles.prescriptionPreviewImage}
-                  />
-                  <Pressable
-                    style={styles.removePreviewButton}
-                    onPress={() => setPrescriptionImage(null)}
-                  >
+                  <CachedImage source={prescriptionImage} style={styles.prescriptionPreviewImage} />
+                  <Pressable style={styles.removePreviewButton} onPress={() => setPrescriptionImage(null)}>
                     <Ionicons name="close-circle" size={28} color={colors.error} />
                   </Pressable>
                 </View>
               ) : (
                 <View style={styles.uploadOptions}>
-                  <Pressable
-                    style={styles.uploadOption}
-                    onPress={() => pickPrescriptionImage(true)}
-                  >
+                  <Pressable style={styles.uploadOption} onPress={() => pickPrescriptionImage(true)}>
                     <View style={styles.uploadOptionIcon}>
                       <Ionicons name="camera" size={32} color={colors.brand.cyan} />
                     </View>
                     <Text style={styles.uploadOptionText}>Take Photo</Text>
                   </Pressable>
 
-                  <Pressable
-                    style={styles.uploadOption}
-                    onPress={() => pickPrescriptionImage(false)}
-                  >
+                  <Pressable style={styles.uploadOption} onPress={() => pickPrescriptionImage(false)}>
                     <View style={styles.uploadOptionIcon}>
                       <Ionicons name="images" size={32} color={colors.brand.cyan} />
                     </View>
@@ -815,9 +762,7 @@ function PharmacyPage() {
                 <Text style={styles.tipsTitle}>Tips for a valid prescription:</Text>
                 <View style={styles.tipRow}>
                   <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
-                  <Text style={styles.tipText}>
-                    Must be issued by a registered doctor
-                  </Text>
+                  <Text style={styles.tipText}>Must be issued by a registered doctor</Text>
                 </View>
                 <View style={styles.tipRow}>
                   <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
@@ -825,9 +770,7 @@ function PharmacyPage() {
                 </View>
                 <View style={styles.tipRow}>
                   <Ionicons name="checkmark-circle" size={16} color={colors.successScale[400]} />
-                  <Text style={styles.tipText}>
-                    Clear and readable handwriting or print
-                  </Text>
+                  <Text style={styles.tipText}>Clear and readable handwriting or print</Text>
                 </View>
               </View>
 

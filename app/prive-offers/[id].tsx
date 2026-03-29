@@ -17,6 +17,7 @@ import priveApi, { PriveOffer } from '@/services/priveApi';
 import { DetailPageSkeleton } from '@/components/skeletons';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useGetCurrencySymbol } from '@/stores/selectors';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const IMAGE_HEIGHT = 220;
@@ -38,6 +39,8 @@ const REWARD_TYPE_LABELS: Record<string, string> = {
 function PriveOfferDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
+  const getCurrencySymbol = useGetCurrencySymbol();
+  const currencySymbol = getCurrencySymbol();
 
   const [offer, setOffer] = useState<PriveOffer | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,13 +79,13 @@ function PriveOfferDetailScreen() {
       case 'percentage':
         return `${offer.rewardValue}% Off`;
       case 'fixed':
-        return `Rs ${offer.rewardValue} Off`;
+        return `${currencySymbol}${offer.rewardValue} Off`;
       case 'coins':
         return `${offer.rewardValue} Coins`;
       default:
         return `${offer.rewardValue}`;
     }
-  }, [offer?.rewardValue, offer?.rewardType]);
+  }, [offer?.rewardValue, offer?.rewardType, currencySymbol]);
 
   /** Format expiry date */
   const formattedExpiry = useMemo(() => {
