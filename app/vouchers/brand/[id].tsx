@@ -19,6 +19,7 @@ import {
   RefreshControl,
   Modal,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -128,6 +129,14 @@ function VoucherBrandDetailPage() {
     setIsRefreshing(true);
     fetchBrand();
   }, [fetchBrand]);
+
+  useFocusEffect(
+    useCallback(() => {
+      // Refresh brand data when screen is focused (e.g., after purchase)
+      setIsLoading(true);
+      fetchBrand();
+    }, [fetchBrand]),
+  );
 
   const executeWalletPurchase = useCallback(async () => {
     if (!brand || !selectedDenomination) return;

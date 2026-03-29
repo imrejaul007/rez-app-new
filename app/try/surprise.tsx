@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
   ImageBackground,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -82,17 +83,25 @@ export default function SurpriseScreen() {
     }
   };
 
-  const handleReveal = async () => {
-    setRevealing(true);
-    try {
-      const revealed = await tryApi.revealSurpriseTrial();
-      setData(revealed);
-      setRevealed(true);
-    } catch (err) {
-      console.error('Failed to reveal surprise:', err);
-    } finally {
-      setRevealing(false);
-    }
+  const handleReveal = () => {
+    Alert.alert('Reveal Surprise', 'This will redeem coins to reveal your personalized surprise. Continue?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Confirm',
+        onPress: async () => {
+          setRevealing(true);
+          try {
+            const revealed = await tryApi.revealSurpriseTrial();
+            setData(revealed);
+            setRevealed(true);
+          } catch (err) {
+            console.error('Failed to reveal surprise:', err);
+          } finally {
+            setRevealing(false);
+          }
+        },
+      },
+    ]);
   };
 
   const handleBookNow = () => {
@@ -103,7 +112,7 @@ export default function SurpriseScreen() {
 
   const handleSkip = () => {
     setRevealed(false);
-    setData(prev => prev ? { ...prev, merchant: undefined, trial: undefined } : null);
+    setData((prev) => (prev ? { ...prev, merchant: undefined, trial: undefined } : null));
   };
 
   if (loading) {
@@ -205,11 +214,7 @@ export default function SurpriseScreen() {
               </View>
 
               {/* Reveal Button */}
-              <Pressable
-                style={styles.revealButton}
-                onPress={handleReveal}
-                disabled={revealing}
-              >
+              <Pressable style={styles.revealButton} onPress={handleReveal} disabled={revealing}>
                 {revealing ? (
                   <ActivityIndicator size="small" color={colors.brand.purple} />
                 ) : (
@@ -226,15 +231,8 @@ export default function SurpriseScreen() {
             {/* Trial Card */}
             <View style={styles.trialCard}>
               {data.trial.image && (
-                <ImageBackground
-                  source={{ uri: data.trial.image }}
-                  style={styles.trialImage}
-                  resizeMode="cover"
-                >
-                  <LinearGradient
-                    colors={['transparent', 'rgba(0,0,0,0.8)']}
-                    style={styles.trialImageOverlay}
-                  />
+                <ImageBackground source={{ uri: data.trial.image }} style={styles.trialImage} resizeMode="cover">
+                  <LinearGradient colors={['transparent', 'rgba(0,0,0,0.8)']} style={styles.trialImageOverlay} />
                 </ImageBackground>
               )}
 
@@ -245,13 +243,9 @@ export default function SurpriseScreen() {
                 {/* Pricing */}
                 <View style={styles.pricingSection}>
                   <View style={styles.coinPrice}>
-                    <Text style={styles.coinPriceText}>
-                      {data.trial.coinPrice} 🪙
-                    </Text>
+                    <Text style={styles.coinPriceText}>{data.trial.coinPrice} 🪙</Text>
                   </View>
-                  <Text style={styles.originalPrice}>
-                    ₹{data.trial.originalPrice}
-                  </Text>
+                  <Text style={styles.originalPrice}>₹{data.trial.originalPrice}</Text>
                 </View>
 
                 {/* Distance */}
@@ -267,10 +261,7 @@ export default function SurpriseScreen() {
               <View style={styles.bookedBanner}>
                 <Ionicons name="checkmark-circle" size={20} color={colors.successScale[500]} />
                 <Text style={styles.bookedText}>Already Booked ✓</Text>
-                <Pressable
-                  style={styles.bookedLink}
-                  onPress={() => router.push('/try/history')}
-                >
+                <Pressable style={styles.bookedLink} onPress={() => router.push('/try/history')}>
                   <Text style={styles.bookedLinkText}>View QR →</Text>
                 </Pressable>
               </View>
@@ -279,17 +270,11 @@ export default function SurpriseScreen() {
             {/* Actions */}
             {!data.isBooked && (
               <View style={styles.actions}>
-                <Pressable
-                  style={styles.bookButton}
-                  onPress={handleBookNow}
-                >
+                <Pressable style={styles.bookButton} onPress={handleBookNow}>
                   <Text style={styles.bookButtonText}>Book Now</Text>
                 </Pressable>
 
-                <Pressable
-                  style={styles.skipButton}
-                  onPress={handleSkip}
-                >
+                <Pressable style={styles.skipButton} onPress={handleSkip}>
                   <Text style={styles.skipButtonText}>Skip this week</Text>
                 </Pressable>
               </View>

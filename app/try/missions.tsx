@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,7 @@ import {
   RefreshControl,
   FlatList,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
@@ -45,9 +45,25 @@ export default function MissionsScreen() {
   const [timeRemaining, setTimeRemaining] = useState<string>('');
   const [modalData, setModalData] = useState<ModalData>({ isVisible: false, mission: null });
 
-  useEffect(() => {
+  const loadMissionsCallback = useCallback(() => {
     loadMissions();
   }, []);
+
+  useEffect(() => {
+    loadMissionsCallback();
+  }, [loadMissionsCallback]);
+
+  // Refresh data when navigating back to this screen
+  const isFirstFocus = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstFocus.current) {
+        isFirstFocus.current = false;
+        return;
+      }
+      loadMissionsCallback();
+    }, [loadMissionsCallback]),
+  );
 
   useEffect(() => {
     // Update time remaining every minute
@@ -202,29 +218,21 @@ export default function MissionsScreen() {
       <FlatList
         data={missions && Array.isArray(missions) ? missions : []}
         renderItem={renderMissionCard}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         scrollEnabled={true}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         ListEmptyComponent={<EmptyState />}
       />
 
       {/* Mission Detail Modal */}
       {modalData.isVisible && modalData.mission && (
         <View style={styles.modalOverlay}>
-          <Pressable
-            style={styles.modalBackdrop}
-            onPress={() => setModalData({ isVisible: false, mission: null })}
-          />
+          <Pressable style={styles.modalBackdrop} onPress={() => setModalData({ isVisible: false, mission: null })} />
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>{modalData.mission.title}</Text>
-              <Pressable
-                onPress={() => setModalData({ isVisible: false, mission: null })}
-                style={styles.closeButton}
-              >
+              <Pressable onPress={() => setModalData({ isVisible: false, mission: null })} style={styles.closeButton}>
                 <Ionicons name="close" size={24} color={colors.text.primary} />
               </Pressable>
             </View>
@@ -245,10 +253,7 @@ export default function MissionsScreen() {
                       styles.progressFill,
                       {
                         width: `${Math.min((modalData.mission.completed / modalData.mission.target) * 100, 100)}%`,
-                        backgroundColor: getProgressColor(
-                          modalData.mission.completed,
-                          modalData.mission.target
-                        ),
+                        backgroundColor: getProgressColor(modalData.mission.completed, modalData.mission.target),
                       },
                     ]}
                   />
@@ -260,12 +265,8 @@ export default function MissionsScreen() {
 
               <View style={styles.modalSection}>
                 <Text style={styles.modalSectionTitle}>Reward</Text>
-                <Text style={styles.modalRewardText}>
-                  🪙 {modalData.mission.reward.rezCoins} ReZ Coins
-                </Text>
-                <Text style={styles.modalRewardText}>
-                  💎 {modalData.mission.reward.trialCoins} Trial Coins
-                </Text>
+                <Text style={styles.modalRewardText}>🪙 {modalData.mission.reward.rezCoins} ReZ Coins</Text>
+                <Text style={styles.modalRewardText}>💎 {modalData.mission.reward.trialCoins} Trial Coins</Text>
               </View>
 
               <View style={styles.modalSection}>

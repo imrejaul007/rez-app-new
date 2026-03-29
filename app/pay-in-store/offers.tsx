@@ -9,26 +9,13 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * - Best value recommendation
  */
 
-import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import React, { useState, useEffect, useCallback } from 'react';
+import { View, Text, StyleSheet, Pressable, ScrollView, ActivityIndicator, RefreshControl } from 'react-native';
+import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  OffersScreenParams,
-  StorePaymentOffer,
-  OffersResponse,
-  OfferSource,
-} from '@/types/storePayment.types';
+import { OffersScreenParams, StorePaymentOffer, OffersResponse, OfferSource } from '@/types/storePayment.types';
 import apiClient from '@/services/apiClient';
 import { useAuthLoading, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import { BRAND } from '@/constants/brand';
@@ -60,25 +47,33 @@ function OffersScreen() {
     loadOffers();
   }, [storeId, amount, authLoading, isAuthenticated]);
 
+  useFocusEffect(
+    useCallback(() => {
+      if (authLoading || !isAuthenticated) return;
+      loadOffers();
+    }, [authLoading, isAuthenticated, storeId, amount]),
+  );
+
   const loadOffers = async (refresh = false) => {
     try {
       if (refresh) setIsRefreshing(true);
       else setIsLoading(true);
       setError(null);
 
-      const response = await apiClient.get<OffersResponse>(`/store-payment/offers/${storeId}`, { amount: numericAmount });
+      const response = await apiClient.get<OffersResponse>(`/store-payment/offers/${storeId}`, {
+        amount: numericAmount,
+      });
+
+      if (!isMounted()) return;
 
       if (response.success && response.data) {
-        if (!isMounted()) return;
         setOffers(response.data);
 
         // Auto-select best offer
         if (response.data.bestOffer) {
-          if (!isMounted()) return;
           setSelectedOffers([response.data.bestOffer]);
         }
       } else {
-        if (!isMounted()) return;
         setError(response.error || 'Failed to load offers');
       }
     } catch (err: any) {
@@ -87,7 +82,6 @@ function OffersScreen() {
     } finally {
       if (!isMounted()) return;
       setIsLoading(false);
-      if (!isMounted()) return;
       setIsRefreshing(false);
     }
   };
@@ -104,11 +98,7 @@ function OffersScreen() {
         return offers.rezOffers;
       case 'all':
       default:
-        return [
-          ...offers.storeOffers,
-          ...offers.bankOffers,
-          ...offers.rezOffers,
-        ];
+        return [...offers.storeOffers, ...offers.bankOffers, ...offers.rezOffers];
     }
   };
 
@@ -150,9 +140,7 @@ function OffersScreen() {
     {
       key: 'all',
       label: 'All Offers',
-      count: offers
-        ? offers.storeOffers.length + offers.bankOffers.length + offers.rezOffers.length
-        : 0,
+      count: offers ? offers.storeOffers.length + offers.bankOffers.length + offers.rezOffers.length : 0,
     },
     { key: 'store', label: 'Store', count: offers?.storeOffers.length || 0 },
     { key: 'bank', label: 'Bank', count: offers?.bankOffers.length || 0 },
@@ -166,13 +154,17 @@ function OffersScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerContent}>
           <Text style={styles.headerTitle}>Available Offers</Text>
           <Text style={styles.headerSubtitle}>
-            {storeName} • {currencySymbol}{numericAmount.toFixed(0)}
+            {storeName} • {currencySymbol}
+            {numericAmount.toFixed(0)}
           </Text>
         </View>
         <View style={styles.placeholder} />
@@ -187,19 +179,10 @@ function OffersScreen() {
               style={[styles.tab, activeTab === tab.key && styles.activeTab]}
               onPress={() => setActiveTab(tab.key)}
             >
-              <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>
-                {tab.label}
-              </Text>
+              <Text style={[styles.tabText, activeTab === tab.key && styles.activeTabText]}>{tab.label}</Text>
               {tab.count > 0 && (
-                <View
-                  style={[styles.tabBadge, activeTab === tab.key && styles.activeTabBadge]}
-                >
-                  <Text
-                    style={[
-                      styles.tabBadgeText,
-                      activeTab === tab.key && styles.activeTabBadgeText,
-                    ]}
-                  >
+                <View style={[styles.tabBadge, activeTab === tab.key && styles.activeTabBadge]}>
+                  <Text style={[styles.tabBadgeText, activeTab === tab.key && styles.activeTabBadgeText]}>
                     {tab.count}
                   </Text>
                 </View>
@@ -238,10 +221,7 @@ function OffersScreen() {
         >
           {/* Best Offer Banner */}
           {offers?.bestOffer && activeTab === 'all' && (
-            <Pressable
-              style={styles.bestOfferBanner}
-              onPress={() => toggleOfferSelection(offers.bestOffer!)}
-            >
+            <Pressable style={styles.bestOfferBanner} onPress={() => toggleOfferSelection(offers.bestOffer!)}>
               <LinearGradient
                 colors={[colors.secondary[500], colors.secondary[600]]}
                 style={styles.bestOfferGradient}
@@ -276,9 +256,7 @@ function OffersScreen() {
             <View style={styles.emptyState}>
               <Ionicons name="pricetag-outline" size={48} color={colors.neutral[300]} />
               <Text style={styles.emptyStateTitle}>No offers available</Text>
-              <Text style={styles.emptyStateText}>
-                Check back later for exclusive offers
-              </Text>
+              <Text style={styles.emptyStateText}>Check back later for exclusive offers</Text>
             </View>
           ) : (
             <View style={styles.offersList}>
@@ -304,7 +282,10 @@ function OffersScreen() {
         {selectedOffers.length > 0 && (
           <View style={styles.savingsInfo}>
             <Text style={styles.savingsLabel}>You'll save</Text>
-            <Text style={styles.savingsValue}>{currencySymbol}{Math.floor(totalDiscount)}</Text>
+            <Text style={styles.savingsValue}>
+              {currencySymbol}
+              {Math.floor(totalDiscount)}
+            </Text>
           </View>
         )}
         <Pressable style={styles.continueButton} onPress={handleContinue}>
@@ -366,25 +347,15 @@ function OfferCard({ offer, billAmount, isSelected, onPress, currencySymbol }: O
 
   return (
     <Pressable
-      style={[
-        styles.offerCard,
-        isSelected && styles.offerCardSelected,
-        !isEligible && styles.offerCardDisabled,
-      ]}
+      style={[styles.offerCard, isSelected && styles.offerCardSelected, !isEligible && styles.offerCardDisabled]}
       onPress={onPress}
       disabled={!isEligible}
     >
       <View style={styles.offerCardContent}>
         {/* Source Badge */}
         <View style={[styles.sourceBadge, { backgroundColor: getSourceColor(offer.source) + '20' }]}>
-          <Ionicons
-            name={getSourceIcon(offer.source) as any}
-            size={14}
-            color={getSourceColor(offer.source)}
-          />
-          <Text style={[styles.sourceBadgeText, { color: getSourceColor(offer.source) }]}>
-            {offer.source}
-          </Text>
+          <Ionicons name={getSourceIcon(offer.source) as any} size={14} color={getSourceColor(offer.source)} />
+          <Text style={[styles.sourceBadgeText, { color: getSourceColor(offer.source) }]}>{offer.source}</Text>
         </View>
 
         {/* Offer Info */}
@@ -399,11 +370,14 @@ function OfferCard({ offer, billAmount, isSelected, onPress, currencySymbol }: O
             {offer.valueType === 'PERCENTAGE'
               ? `${offer.value}% OFF`
               : offer.valueType === 'FIXED_COINS'
-              ? `${offer.value} Coins`
-              : `${currencySymbol}${offer.value} OFF`}
+                ? `${offer.value} Coins`
+                : `${currencySymbol}${offer.value} OFF`}
           </Text>
           {isEligible && (
-            <Text style={styles.offerSavings}>Save {currencySymbol}{Math.floor(calculateDiscount())}</Text>
+            <Text style={styles.offerSavings}>
+              Save {currencySymbol}
+              {Math.floor(calculateDiscount())}
+            </Text>
           )}
         </View>
 
@@ -417,12 +391,13 @@ function OfferCard({ offer, billAmount, isSelected, onPress, currencySymbol }: O
         )}
 
         {offer.maxDiscount && (
-          <Text style={styles.offerCondition}>Max discount: {currencySymbol}{offer.maxDiscount}</Text>
+          <Text style={styles.offerCondition}>
+            Max discount: {currencySymbol}
+            {offer.maxDiscount}
+          </Text>
         )}
 
-        {offer.bankName && (
-          <Text style={styles.offerCondition}>Only on {offer.bankName} cards</Text>
-        )}
+        {offer.bankName && <Text style={styles.offerCondition}>Only on {offer.bankName} cards</Text>}
       </View>
 
       {/* Selection Indicator */}

@@ -4,10 +4,10 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Redeem coins for exclusive experiences
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, SafeAreaView, ActivityIndicator, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS } from '@/components/prive/priveTheme';
 import { usePriveSection } from '@/hooks/usePriveSection';
@@ -49,6 +49,13 @@ function ExperiencesScreen() {
   const [generatedVoucher, setGeneratedVoucher] = useState<Voucher | null>(null);
   const [showVoucherModal, setShowVoucherModal] = useState(false);
 
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+      refreshWallet().catch(() => {});
+    }, [refresh, refreshWallet]),
+  );
+
   const handleSelectExperience = (exp: Experience) => {
     if (availableCoins >= exp.coinCost) {
       setSelectedExperience(exp);
@@ -56,7 +63,7 @@ function ExperiencesScreen() {
   };
 
   const handleRedeem = async () => {
-    if (!selectedExperience) return;
+    if (!selectedExperience || isRedeeming) return;
 
     platformAlertConfirm(
       'Confirm Redemption',
@@ -89,7 +96,7 @@ function ExperiencesScreen() {
           if (!isMounted()) return;
           setIsRedeeming(false);
         }
-      }
+      },
     );
   };
 
@@ -102,7 +109,10 @@ function ExperiencesScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Experiences</Text>
@@ -116,14 +126,12 @@ function ExperiencesScreen() {
         </View>
 
         <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
           <Text style={styles.sectionTitle}>Exclusive Experiences</Text>
-          <Text style={styles.sectionSubtitle}>
-            Premium experiences curated for Prive members
-          </Text>
+          <Text style={styles.sectionSubtitle}>Premium experiences curated for Prive members</Text>
 
           {experiences.map((exp) => {
             const canAfford = availableCoins >= exp.coinCost;
@@ -132,20 +140,14 @@ function ExperiencesScreen() {
             return (
               <Pressable
                 key={exp.id}
-                style={[
-                  styles.expCard,
-                  isSelected && styles.expCardSelected,
-                  !canAfford && styles.expCardDisabled,
-                ]}
+                style={[styles.expCard, isSelected && styles.expCardSelected, !canAfford && styles.expCardDisabled]}
                 onPress={() => handleSelectExperience(exp)}
                 disabled={!canAfford}
               >
                 <View style={styles.expHeader}>
                   <Text style={styles.expIcon}>{exp.icon}</Text>
                   <View style={styles.expTitleSection}>
-                    <Text style={[styles.expName, !canAfford && styles.expNameDisabled]}>
-                      {exp.name}
-                    </Text>
+                    <Text style={[styles.expName, !canAfford && styles.expNameDisabled]}>{exp.name}</Text>
                     <Text style={styles.expDesc}>{exp.description}</Text>
                   </View>
                 </View>
@@ -164,7 +166,10 @@ function ExperiencesScreen() {
                     <Text style={[styles.expCoins, !canAfford && styles.expCoinsDisabled]}>
                       {exp.coinCost.toLocaleString()} coins
                     </Text>
-                    <Text style={styles.expValue}>Worth {currencySymbol}{exp.value}</Text>
+                    <Text style={styles.expValue}>
+                      Worth {currencySymbol}
+                      {exp.value}
+                    </Text>
                   </View>
                   {canAfford ? (
                     isSelected ? (
@@ -175,9 +180,7 @@ function ExperiencesScreen() {
                       <Text style={styles.selectText}>Select</Text>
                     )
                   ) : (
-                    <Text style={styles.needMore}>
-                      Need {(exp.coinCost - availableCoins).toLocaleString()} more
-                    </Text>
+                    <Text style={styles.needMore}>Need {(exp.coinCost - availableCoins).toLocaleString()} more</Text>
                   )}
                 </View>
               </Pressable>
@@ -194,9 +197,7 @@ function ExperiencesScreen() {
               {isRedeeming ? (
                 <ActivityIndicator color={PRIVE_COLORS.background.primary} />
               ) : (
-                <Text style={styles.redeemButtonText}>
-                  Redeem {selectedExperience.name}
-                </Text>
+                <Text style={styles.redeemButtonText}>Redeem {selectedExperience.name}</Text>
               )}
             </Pressable>
           )}
@@ -205,8 +206,7 @@ function ExperiencesScreen() {
           <View style={styles.infoCard}>
             <Text style={styles.infoIcon}>✨</Text>
             <Text style={styles.infoText}>
-              Experience vouchers include a 20% premium conversion rate.
-              Valid for 90 days. Book via our concierge.
+              Experience vouchers include a 20% premium conversion rate. Valid for 90 days. Book via our concierge.
             </Text>
           </View>
         </ScrollView>
@@ -232,7 +232,10 @@ function ExperiencesScreen() {
                     <Text style={styles.voucherCode}>{generatedVoucher.code}</Text>
                   </View>
                   <Text style={styles.voucherCategory}>{generatedVoucher.category}</Text>
-                  <Text style={styles.voucherValue}>Value: {currencySymbol}{generatedVoucher.value}</Text>
+                  <Text style={styles.voucherValue}>
+                    Value: {currencySymbol}
+                    {generatedVoucher.value}
+                  </Text>
                   <Text style={styles.voucherExpiry}>Valid for: {generatedVoucher.expiresIn}</Text>
 
                   <View style={styles.voucherTerms}>

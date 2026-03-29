@@ -13,29 +13,16 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * - Floating location button
  */
 
-import React, { useCallback, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  RefreshControl,
-  Pressable,
-  ActivityIndicator,
-} from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { View, Text, StyleSheet, RefreshControl, Pressable, ActivityIndicator } from 'react-native';
 import { useRouter, Stack } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
-import Animated, {
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { usePaymentStoreSearch } from '@/hooks/usePaymentStoreSearch';
-import {
-  PaymentStoreInfo,
-  PAYMENT_SEARCH_COLORS,
-} from '@/types/paymentStoreSearch.types';
+import { PaymentStoreInfo, PAYMENT_SEARCH_COLORS } from '@/types/paymentStoreSearch.types';
 
 import { colors } from '@/constants/theme';
 import {
@@ -56,6 +43,7 @@ function StoreSearchScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const scrollY = useSharedValue(0);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Hook for search functionality
   const {
@@ -82,6 +70,18 @@ function StoreSearchScreen() {
     retry,
   } = usePaymentStoreSearch();
 
+  // Debounced search handler to prevent API flooding
+  const handleSearchChange = useCallback(
+    (query: string) => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+      debounceTimerRef.current = setTimeout(() => {
+        setSearchQuery(query);
+      }, 300);
+    },
+    [setSearchQuery],
+  );
 
   // Scroll handler for parallax
   const scrollHandler = useAnimatedScrollHandler({
@@ -95,16 +95,19 @@ function StoreSearchScreen() {
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
   }, [router]);
 
-  const handleStorePress = useCallback((store: PaymentStoreInfo) => {
-    router.push({
-      pathname: '/pay-in-store/enter-amount',
-      params: {
-        storeId: store._id,
-        storeName: store.name,
-        storeLogo: store.logo || '',
-      },
-    });
-  }, [router]);
+  const handleStorePress = useCallback(
+    (store: PaymentStoreInfo) => {
+      router.push({
+        pathname: '/pay-in-store/enter-amount',
+        params: {
+          storeId: store._id,
+          storeName: store.name,
+          storeLogo: store.logo || '',
+        },
+      });
+    },
+    [router],
+  );
 
   // Determine what to show
   const isShowingSearchResults = searchQuery.trim().length > 0 || selectedCategory !== null;
@@ -118,11 +121,7 @@ function StoreSearchScreen() {
 
     if (hasNoResults) {
       return (
-        <EmptySearchState
-          query={searchQuery || selectedCategory || ''}
-          onClearSearch={clearSearch}
-          onRetry={retry}
-        />
+        <EmptySearchState query={searchQuery || selectedCategory || ''} onClearSearch={clearSearch} onRetry={retry} />
       );
     }
 
@@ -141,12 +140,7 @@ function StoreSearchScreen() {
 
         {/* Load More */}
         {hasMore && (
-          <Pressable
-            onPress={loadMore}
-            style={styles.loadMoreButton}
-           
-            disabled={isLoadingMore}
-          >
+          <Pressable onPress={loadMore} style={styles.loadMoreButton} disabled={isLoadingMore}>
             {isLoadingMore ? (
               <ActivityIndicator size="small" color={PAYMENT_SEARCH_COLORS.primary} />
             ) : (
@@ -168,20 +162,12 @@ function StoreSearchScreen() {
       <>
         {/* Nearby Stores */}
         {showNearby && (
-          <NearbyStoresSection
-            stores={nearbyStores}
-            isLoading={isLoadingNearby}
-            onStorePress={handleStorePress}
-          />
+          <NearbyStoresSection stores={nearbyStores} isLoading={isLoadingNearby} onStorePress={handleStorePress} />
         )}
 
         {/* Recent Payments */}
         {showRecent && (
-          <RecentStoresSection
-            stores={recentStores}
-            isLoading={isLoadingRecent}
-            onStorePress={handleStorePress}
-          />
+          <RecentStoresSection stores={recentStores} isLoading={isLoadingRecent} onStorePress={handleStorePress} />
         )}
 
         {/* Popular Stores - Always show with loading state initially */}
@@ -213,45 +199,41 @@ function StoreSearchScreen() {
           style={StyleSheet.absoluteFill}
         />
 
-      {/* Search Header */}
-      <PremiumSearchHeader
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        onBack={handleBack}
-        isSearching={isSearching}
-        scrollY={scrollY}
-      />
+        {/* Search Header */}
+        <PremiumSearchHeader
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+          onBack={handleBack}
+          isSearching={isSearching}
+          scrollY={scrollY}
+        />
 
-      {/* Category Chips */}
-      <CategoryChips
-        categories={categories}
-        selectedCategory={selectedCategory}
-        onSelectCategory={setSelectedCategory}
-        isLoading={isInitialLoading}
-      />
+        {/* Category Chips */}
+        <CategoryChips
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+          isLoading={isInitialLoading}
+        />
 
-      {/* Main Content */}
-      <AnimatedScrollView
-        style={styles.scrollView}
-        contentContainerStyle={[
-          styles.scrollContent,
-          { paddingBottom: insets.bottom + 120 },
-        ]}
-        onScroll={scrollHandler}
-        scrollEventThrottle={16}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={false}
-            onRefresh={refresh}
-            tintColor={PAYMENT_SEARCH_COLORS.primary}
-            colors={[PAYMENT_SEARCH_COLORS.primary]}
-          />
-        }
-      >
-        {isShowingSearchResults ? renderSearchResults() : renderDefaultSections()}
-      </AnimatedScrollView>
-
+        {/* Main Content */}
+        <AnimatedScrollView
+          style={styles.scrollView}
+          contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 120 }]}
+          onScroll={scrollHandler}
+          scrollEventThrottle={16}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={false}
+              onRefresh={refresh}
+              tintColor={PAYMENT_SEARCH_COLORS.primary}
+              colors={[PAYMENT_SEARCH_COLORS.primary]}
+            />
+          }
+        >
+          {isShowingSearchResults ? renderSearchResults() : renderDefaultSections()}
+        </AnimatedScrollView>
       </View>
     </>
   );

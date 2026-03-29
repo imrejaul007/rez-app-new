@@ -4,10 +4,20 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Redeem coins for bill payments
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, SafeAreaView, ActivityIndicator, Modal, TextInput } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Pressable,
+  SafeAreaView,
+  ActivityIndicator,
+  Modal,
+  TextInput,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS } from '@/components/prive/priveTheme';
 import { usePriveSection } from '@/hooks/usePriveSection';
@@ -31,7 +41,7 @@ function BillPayScreen() {
   const availableCoins = userData?.totalCoins || 0;
 
   // Fetch conversion rate from backend, fallback to constant
-  const [conversionRate, setConversionRate] = useState(0.10);
+  const [conversionRate, setConversionRate] = useState(0.1);
   const isMounted = useIsMounted();
   useEffect(() => {
     (async () => {
@@ -54,6 +64,13 @@ function BillPayScreen() {
   const [generatedVoucher, setGeneratedVoucher] = useState<Voucher | null>(null);
   const [showVoucherModal, setShowVoucherModal] = useState(false);
 
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+      refreshWallet().catch(() => {});
+    }, [refresh, refreshWallet]),
+  );
+
   const handleSelectAmount = (amount: number) => {
     setSelectedAmount(amount);
     setCustomAmount('');
@@ -70,13 +87,15 @@ function BillPayScreen() {
   };
 
   const handleRedeem = async () => {
-    if (!selectedAmount || selectedAmount < 100) {
-      platformAlertSimple('Invalid Amount', 'Minimum 100 coins required for bill pay redemption.');
+    if (!selectedAmount || selectedAmount < 100 || isRedeeming) {
+      if (!selectedAmount || selectedAmount < 100) {
+        platformAlertSimple('Invalid Amount', 'Minimum 100 coins required for bill pay redemption.');
+      }
       return;
     }
 
     if (availableCoins < selectedAmount) {
-      platformAlertSimple('Insufficient Coins', 'You don\'t have enough coins for this redemption.');
+      platformAlertSimple('Insufficient Coins', "You don't have enough coins for this redemption.");
       return;
     }
 
@@ -110,7 +129,7 @@ function BillPayScreen() {
           if (!isMounted()) return;
           setIsRedeeming(false);
         }
-      }
+      },
     );
   };
 
@@ -127,7 +146,10 @@ function BillPayScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Bill Pay</Text>
@@ -141,23 +163,29 @@ function BillPayScreen() {
         </View>
 
         <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
           {/* How it works */}
           <View style={styles.howItWorks}>
             <Text style={styles.howTitle}>How Bill Pay Works</Text>
             <View style={styles.stepRow}>
-              <View style={styles.stepNum}><Text style={styles.stepNumText}>1</Text></View>
+              <View style={styles.stepNum}>
+                <Text style={styles.stepNumText}>1</Text>
+              </View>
               <Text style={styles.stepText}>Select coin amount to convert</Text>
             </View>
             <View style={styles.stepRow}>
-              <View style={styles.stepNum}><Text style={styles.stepNumText}>2</Text></View>
+              <View style={styles.stepNum}>
+                <Text style={styles.stepNumText}>2</Text>
+              </View>
               <Text style={styles.stepText}>Get a voucher code instantly</Text>
             </View>
             <View style={styles.stepRow}>
-              <View style={styles.stepNum}><Text style={styles.stepNumText}>3</Text></View>
+              <View style={styles.stepNum}>
+                <Text style={styles.stepNumText}>3</Text>
+              </View>
               <Text style={styles.stepText}>Apply at checkout to reduce bill</Text>
             </View>
           </View>
@@ -184,7 +212,10 @@ function BillPayScreen() {
                     {amount.toLocaleString()}
                   </Text>
                   <Text style={styles.amountLabel}>coins</Text>
-                  <Text style={styles.amountValue}>= {currencySymbol}{getVoucherValue(amount)}</Text>
+                  <Text style={styles.amountValue}>
+                    = {currencySymbol}
+                    {getVoucherValue(amount)}
+                  </Text>
                 </Pressable>
               );
             })}
@@ -204,7 +235,8 @@ function BillPayScreen() {
             />
             {customAmount && (
               <Text style={styles.customValue}>
-                = {currencySymbol}{getVoucherValue(parseInt(customAmount || '0', 10))}
+                = {currencySymbol}
+                {getVoucherValue(parseInt(customAmount || '0', 10))}
               </Text>
             )}
           </View>
@@ -220,7 +252,8 @@ function BillPayScreen() {
                 <ActivityIndicator color={PRIVE_COLORS.background.primary} />
               ) : (
                 <Text style={styles.redeemButtonText}>
-                  Redeem {selectedAmount.toLocaleString()} Coins for {currencySymbol}{getVoucherValue(selectedAmount)}
+                  Redeem {selectedAmount.toLocaleString()} Coins for {currencySymbol}
+                  {getVoucherValue(selectedAmount)}
                 </Text>
               )}
             </Pressable>
@@ -230,8 +263,7 @@ function BillPayScreen() {
           <View style={styles.infoCard}>
             <Text style={styles.infoIcon}>💡</Text>
             <Text style={styles.infoText}>
-              Bill pay vouchers are valid for 30 days. Use them at any participating store
-              to reduce your bill amount.
+              Bill pay vouchers are valid for 30 days. Use them at any participating store to reduce your bill amount.
             </Text>
           </View>
         </ScrollView>
@@ -257,11 +289,10 @@ function BillPayScreen() {
                     <Text style={styles.voucherCode}>{generatedVoucher.code}</Text>
                   </View>
                   <Text style={styles.voucherValue}>
-                    Value: {currencySymbol}{generatedVoucher.value}
+                    Value: {currencySymbol}
+                    {generatedVoucher.value}
                   </Text>
-                  <Text style={styles.voucherExpiry}>
-                    Valid for: {generatedVoucher.expiresIn}
-                  </Text>
+                  <Text style={styles.voucherExpiry}>Valid for: {generatedVoucher.expiresIn}</Text>
 
                   <View style={styles.voucherTerms}>
                     <Text style={styles.termsTitle}>How to use:</Text>

@@ -1,6 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // PostDetailScreen.tsx - Modern Instagram-style Post Detail View
 import React, { useEffect, useState, useCallback } from 'react';
+import { useFocusEffect } from '@expo/router';
 import {
   View,
   StyleSheet,
@@ -64,9 +65,12 @@ function PostDetailScreen() {
         setPost(parsedItem);
 
         // Set initial engagement state
-        const likes = typeof parsedItem.engagement?.likes === 'number'
-          ? parsedItem.engagement.likes
-          : (Array.isArray(parsedItem.engagement?.likes) ? parsedItem.engagement.likes.length : 0);
+        const likes =
+          typeof parsedItem.engagement?.likes === 'number'
+            ? parsedItem.engagement.likes
+            : Array.isArray(parsedItem.engagement?.likes)
+              ? parsedItem.engagement.likes.length
+              : 0;
         setLikesCount(likes);
         setIsLiked(parsedItem.engagement?.liked || false);
         setIsBookmarked(parsedItem.engagement?.bookmarked || false);
@@ -82,13 +86,42 @@ function PostDetailScreen() {
     }
   }, [params.item]);
 
+  // Refresh post data when screen comes into focus to update engagement metrics
+  useFocusEffect(
+    useCallback(() => {
+      if (post?._id) {
+        // Refresh engagement data on focus
+        const refreshEngagement = async () => {
+          try {
+            const updatedPost = await realVideosApi.getPostById(post._id);
+            if (!isMounted()) return;
+            if (updatedPost) {
+              const likes =
+                typeof updatedPost.engagement?.likes === 'number'
+                  ? updatedPost.engagement.likes
+                  : Array.isArray(updatedPost.engagement?.likes)
+                    ? updatedPost.engagement.likes.length
+                    : 0;
+              setLikesCount(likes);
+              setIsLiked(updatedPost.engagement?.liked || false);
+              setIsBookmarked(updatedPost.engagement?.bookmarked || false);
+            }
+          } catch (err) {
+            // silently handle
+          }
+        };
+        refreshEngagement();
+      }
+    }, [post?._id, isMounted]),
+  );
+
   // Handle like toggle
   const handleLike = useCallback(async () => {
     if (!post) return;
 
     const newLikedState = !isLiked;
     setIsLiked(newLikedState);
-    setLikesCount(prev => newLikedState ? prev + 1 : Math.max(0, prev - 1));
+    setLikesCount((prev) => (newLikedState ? prev + 1 : Math.max(0, prev - 1)));
 
     try {
       await realVideosApi.toggleVideoLike(post._id);
@@ -97,7 +130,7 @@ function PostDetailScreen() {
       if (!isMounted()) return;
       setIsLiked(!newLikedState);
       if (!isMounted()) return;
-      setLikesCount(prev => newLikedState ? Math.max(0, prev - 1) : prev + 1);
+      setLikesCount((prev) => (newLikedState ? Math.max(0, prev - 1) : prev + 1));
     }
   }, [post, isLiked]);
 
@@ -131,21 +164,27 @@ function PostDetailScreen() {
   }, [post]);
 
   // Navigate to product
-  const handleProductPress = useCallback((product: DiscoverProduct) => {
-    router.push(`/product-page?cardId=${product._id}&cardType=product&source=post`);
-  }, [router]);
+  const handleProductPress = useCallback(
+    (product: DiscoverProduct) => {
+      router.push(`/product-page?cardId=${product._id}&cardType=product&source=post`);
+    },
+    [router],
+  );
 
   // Add to cart
-  const handleAddToCart = useCallback(async (product: DiscoverProduct) => {
-    try {
-      await addItem({
-        productId: product._id,
-        quantity: 1,
-      });
-    } catch (error) {
-      // silently handle
-    }
-  }, [addItem]);
+  const handleAddToCart = useCallback(
+    async (product: DiscoverProduct) => {
+      try {
+        await addItem({
+          productId: product._id,
+          quantity: 1,
+        });
+      } catch (error) {
+        // silently handle
+      }
+    },
+    [addItem],
+  );
 
   // Deep-link parameter validation guard
   if (!params.item || typeof params.item !== 'string') {
@@ -185,7 +224,10 @@ function PostDetailScreen() {
         <StatusBar barStyle="dark-content" />
         <Ionicons name="alert-circle-outline" size={64} color={colors.text.tertiary} />
         <Text style={styles.errorText}>{error || 'Post not found'}</Text>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Text style={styles.backButtonText}>Go Back</Text>
         </Pressable>
       </View>
@@ -195,13 +237,15 @@ function PostDetailScreen() {
   // Helper to check if URL is likely a video
   const isVideoUrl = (url: string): boolean => {
     const lowerUrl = url.toLowerCase();
-    return lowerUrl.includes('.mp4') ||
-           lowerUrl.includes('.webm') ||
-           lowerUrl.includes('.mov') ||
-           lowerUrl.includes('.avi') ||
-           lowerUrl.includes('/video/') ||
-           lowerUrl.includes('video.') ||
-           lowerUrl.includes('stream');
+    return (
+      lowerUrl.includes('.mp4') ||
+      lowerUrl.includes('.webm') ||
+      lowerUrl.includes('.mov') ||
+      lowerUrl.includes('.avi') ||
+      lowerUrl.includes('/video/') ||
+      lowerUrl.includes('video.') ||
+      lowerUrl.includes('stream')
+    );
   };
 
   // Get best available image URL - prioritize thumbnail over mediaUrl (which might be video)
@@ -241,19 +285,14 @@ function PostDetailScreen() {
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Pressable
           style={styles.headerButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-         
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
 
         <Text style={styles.headerTitle}>Post</Text>
 
-        <Pressable
-          style={styles.headerButton}
-          onPress={handleShare}
-         
-        >
+        <Pressable style={styles.headerButton} onPress={handleShare}>
           <Ionicons name="share-outline" size={24} color={colors.text.primary} />
         </Pressable>
       </View>
@@ -266,9 +305,7 @@ function PostDetailScreen() {
       >
         {/* Creator Info */}
         <View style={styles.creatorSection}>
-          {creatorInfo.avatar && (
-            <CachedImage source={creatorInfo.avatar} style={styles.creatorAvatar} />
-          )}
+          {creatorInfo.avatar && <CachedImage source={creatorInfo.avatar} style={styles.creatorAvatar} />}
           <View style={styles.creatorInfo}>
             <Text style={styles.creatorName}>{creatorInfo.name || 'User'}</Text>
             {post.contentType === 'merchant' && (
@@ -319,19 +356,13 @@ function PostDetailScreen() {
                 style={StyleSheet.absoluteFill}
               />
               <Ionicons name="image-outline" size={64} color="rgba(139, 92, 246, 0.5)" />
-              <Text style={styles.noImageText}>
-                {imageError ? 'Failed to load image' : 'No image available'}
-              </Text>
+              <Text style={styles.noImageText}>{imageError ? 'Failed to load image' : 'No image available'}</Text>
             </View>
           )}
 
           {/* Product Tags Overlay */}
           {hasProducts && (
-            <Pressable
-              style={styles.productTagOverlay}
-              onPress={() => handleProductPress(post.products[0])}
-             
-            >
+            <Pressable style={styles.productTagOverlay} onPress={() => handleProductPress(post.products[0])}>
               <View style={styles.productTag}>
                 <Ionicons name="bag-handle" size={16} color={colors.text.inverse} />
                 <Text style={styles.productTagText}>
@@ -345,13 +376,9 @@ function PostDetailScreen() {
         {/* Engagement Actions */}
         <View style={styles.engagementSection}>
           <View style={styles.actionRow}>
-            <Pressable
-              style={styles.actionButton}
-              onPress={handleLike}
-             
-            >
+            <Pressable style={styles.actionButton} onPress={handleLike}>
               <Ionicons
-                name={isLiked ? "heart" : "heart-outline"}
+                name={isLiked ? 'heart' : 'heart-outline'}
                 size={28}
                 color={isLiked ? colors.error : colors.text.primary}
               />
@@ -359,23 +386,15 @@ function PostDetailScreen() {
             <Pressable style={styles.actionButton}>
               <Ionicons name="chatbubble-outline" size={26} color={colors.text.primary} />
             </Pressable>
-            <Pressable
-              style={styles.actionButton}
-              onPress={handleShare}
-             
-            >
+            <Pressable style={styles.actionButton} onPress={handleShare}>
               <Ionicons name="paper-plane-outline" size={26} color={colors.text.primary} />
             </Pressable>
 
             <View style={styles.actionSpacer} />
 
-            <Pressable
-              style={styles.actionButton}
-              onPress={handleBookmark}
-             
-            >
+            <Pressable style={styles.actionButton} onPress={handleBookmark}>
               <Ionicons
-                name={isBookmarked ? "bookmark" : "bookmark-outline"}
+                name={isBookmarked ? 'bookmark' : 'bookmark-outline'}
                 size={26}
                 color={isBookmarked ? colors.gold : colors.text.primary}
               />
@@ -410,9 +429,7 @@ function PostDetailScreen() {
         )}
 
         {/* View Count */}
-        <Text style={styles.viewsText}>
-          {formatCount(post.engagement?.views || 0)} views
-        </Text>
+        <Text style={styles.viewsText}>{formatCount(post.engagement?.views || 0)} views</Text>
 
         {/* Debug info - remove in production */}
         {__DEV__ && (
@@ -439,7 +456,6 @@ function PostDetailScreen() {
                   key={product._id || index}
                   style={styles.productCard}
                   onPress={() => handleProductPress(product)}
-                 
                 >
                   <CachedImage
                     source={product.image || product.images?.[0]}
@@ -452,27 +468,23 @@ function PostDetailScreen() {
                     </Text>
                     <View style={styles.productPriceRow}>
                       <Text style={styles.productPrice}>
-                        {currencySymbol}{product.salePrice || product.price}
+                        {currencySymbol}
+                        {product.salePrice || product.price}
                       </Text>
                       {product.salePrice && product.price > product.salePrice && (
                         <Text style={styles.productOriginalPrice}>
-                          {currencySymbol}{product.price}
+                          {currencySymbol}
+                          {product.price}
                         </Text>
                       )}
                     </View>
                     {product.cashbackPercent && product.cashbackPercent > 0 && (
                       <View style={styles.cashbackBadge}>
-                        <Text style={styles.cashbackText}>
-                          {product.cashbackPercent}% Cashback
-                        </Text>
+                        <Text style={styles.cashbackText}>{product.cashbackPercent}% Cashback</Text>
                       </View>
                     )}
                   </View>
-                  <Pressable
-                    style={styles.addToCartButton}
-                    onPress={() => handleAddToCart(product)}
-                   
-                  >
+                  <Pressable style={styles.addToCartButton} onPress={() => handleAddToCart(product)}>
                     <Ionicons name="add" size={20} color={colors.text.inverse} />
                   </Pressable>
                 </Pressable>

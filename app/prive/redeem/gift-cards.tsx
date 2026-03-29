@@ -4,10 +4,10 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Redeem coins for gift cards
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, SafeAreaView, ActivityIndicator, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS } from '@/components/prive/priveTheme';
 import { usePriveSection } from '@/hooks/usePriveSection';
@@ -31,15 +31,12 @@ function GiftCardsScreen() {
 
   // Fetch catalog from backend, fallback to constants
   const [giftCards, setGiftCards] = useState<GiftCardOption[]>(GIFT_CARDS);
-  const [conversionRate, setConversionRate] = useState(0.10);
+  const [conversionRate, setConversionRate] = useState(0.1);
   const isMounted = useIsMounted();
   useEffect(() => {
     (async () => {
       try {
-        const [catalogRes, configRes] = await Promise.all([
-          priveApi.getCatalog(),
-          priveApi.getRedeemConfig(),
-        ]);
+        const [catalogRes, configRes] = await Promise.all([priveApi.getCatalog(), priveApi.getRedeemConfig()]);
         if (catalogRes.success && catalogRes.data?.giftCards) {
           if (!isMounted()) return;
           setGiftCards(catalogRes.data.giftCards as unknown as GiftCardOption[]);
@@ -62,6 +59,13 @@ function GiftCardsScreen() {
   const [generatedVoucher, setGeneratedVoucher] = useState<Voucher | null>(null);
   const [showVoucherModal, setShowVoucherModal] = useState(false);
 
+  useFocusEffect(
+    useCallback(() => {
+      refresh();
+      refreshWallet().catch(() => {});
+    }, [refresh, refreshWallet]),
+  );
+
   const handleSelectCard = (card: GiftCardOption) => {
     setSelectedCard(card);
     setSelectedDenomination(null);
@@ -72,10 +76,10 @@ function GiftCardsScreen() {
   };
 
   const handleRedeem = async () => {
-    if (!selectedCard || !selectedDenomination) return;
+    if (!selectedCard || !selectedDenomination || isRedeeming) return;
 
     if (availableCoins < selectedDenomination) {
-      platformAlertSimple('Insufficient Coins', 'You don\'t have enough coins for this redemption.');
+      platformAlertSimple('Insufficient Coins', "You don't have enough coins for this redemption.");
       return;
     }
 
@@ -110,7 +114,7 @@ function GiftCardsScreen() {
           if (!isMounted()) return;
           setIsRedeeming(false);
         }
-      }
+      },
     );
   };
 
@@ -127,7 +131,10 @@ function GiftCardsScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Gift Cards</Text>
@@ -141,10 +148,10 @@ function GiftCardsScreen() {
         </View>
 
         <ScrollView
-        style={styles.content}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+          style={styles.content}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
           {/* Card Selection */}
           <Text style={styles.sectionTitle}>Select Brand</Text>
           <View style={styles.cardsGrid}>
@@ -164,9 +171,7 @@ function GiftCardsScreen() {
                   disabled={!canAfford}
                 >
                   <Text style={styles.cardLogo}>{card.logo}</Text>
-                  <Text style={[styles.cardName, !canAfford && styles.cardNameDisabled]}>
-                    {card.name}
-                  </Text>
+                  <Text style={[styles.cardName, !canAfford && styles.cardNameDisabled]}>{card.name}</Text>
                   <Text style={styles.cardMin}>
                     {canAfford ? `Min ${card.minCoins}` : `Need ${card.minCoins - availableCoins} more`}
                   </Text>
@@ -200,7 +205,10 @@ function GiftCardsScreen() {
                       </Text>
                       <Text style={styles.denomLabel}>coins</Text>
                       <View style={styles.denomDivider} />
-                      <Text style={styles.denomValue}>{currencySymbol}{getVoucherValue(amount)}</Text>
+                      <Text style={styles.denomValue}>
+                        {currencySymbol}
+                        {getVoucherValue(amount)}
+                      </Text>
                     </Pressable>
                   );
                 })}
@@ -218,9 +226,7 @@ function GiftCardsScreen() {
               {isRedeeming ? (
                 <ActivityIndicator color={PRIVE_COLORS.background.primary} />
               ) : (
-                <Text style={styles.redeemButtonText}>
-                  Redeem {selectedDenomination.toLocaleString()} Coins
-                </Text>
+                <Text style={styles.redeemButtonText}>Redeem {selectedDenomination.toLocaleString()} Coins</Text>
               )}
             </Pressable>
           )}
@@ -229,8 +235,7 @@ function GiftCardsScreen() {
           <View style={styles.infoCard}>
             <Text style={styles.infoIcon}>💡</Text>
             <Text style={styles.infoText}>
-              Gift cards are valid for 1 year from the date of redemption.
-              Present the voucher code at checkout.
+              Gift cards are valid for 1 year from the date of redemption. Present the voucher code at checkout.
             </Text>
           </View>
         </ScrollView>
@@ -256,11 +261,10 @@ function GiftCardsScreen() {
                     <Text style={styles.voucherCode}>{generatedVoucher.code}</Text>
                   </View>
                   <Text style={styles.voucherValue}>
-                    Value: {currencySymbol}{generatedVoucher.value} | {generatedVoucher.category}
+                    Value: {currencySymbol}
+                    {generatedVoucher.value} | {generatedVoucher.category}
                   </Text>
-                  <Text style={styles.voucherExpiry}>
-                    Expires: {generatedVoucher.expiresIn}
-                  </Text>
+                  <Text style={styles.voucherExpiry}>Expires: {generatedVoucher.expiresIn}</Text>
 
                   <View style={styles.voucherTerms}>
                     <Text style={styles.termsTitle}>How to use:</Text>

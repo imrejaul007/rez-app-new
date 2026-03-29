@@ -10,14 +10,9 @@ import {
   Platform,
   Text,
   StatusBar,
-  ScrollView
+  ScrollView,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withTiming,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useFocusEffect } from '@react-navigation/native';
@@ -86,6 +81,7 @@ function UGCDetailScreen() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [viewsCount, setViewsCount] = useState(0);
+  const [isLiking, setIsLiking] = useState(false);
 
   // Report state
   const [reportModalVisible, setReportModalVisible] = useState(false);
@@ -98,9 +94,10 @@ function UGCDetailScreen() {
   const currencySymbol = getCurrencySymbol();
 
   // Product interaction
-  const { addToCart, navigateToProduct } = useProductInteraction({
+  const { addToCart, navigateToProduct, isLoading } = useProductInteraction({
     onSuccess: () => {},
-    onError: () => {}});
+    onError: () => {},
+  });
 
   // Parse params item or fetch video from API (combined into single effect)
   useEffect(() => {
@@ -139,7 +136,8 @@ function UGCDetailScreen() {
           const normalizedVideo = {
             ...videoData,
             _id: extractedVideoId,
-            products: videoData.products || videoData.relatedProducts || []};
+            products: videoData.products || videoData.relatedProducts || [],
+          };
           setVideo(normalizedVideo);
         } else {
           if (!isMounted()) return;
@@ -168,10 +166,16 @@ function UGCDetailScreen() {
   const getFollowableStoreId = useCallback(() => {
     if (!video) return null;
     // Priority: video.store > video.storeId > creator.storeId > creator.store > creator.id
-    return video.store?.id || video.store?._id ||
-           (video as any).storeId ||
-           video.creator?.storeId || (video.creator as any)?.store?.id || (video.creator as any)?.store?._id ||
-           video.creator?.id || video.creator?._id;
+    return (
+      video.store?.id ||
+      video.store?._id ||
+      (video as any).storeId ||
+      video.creator?.storeId ||
+      (video.creator as any)?.store?.id ||
+      (video.creator as any)?.store?._id ||
+      video.creator?.id ||
+      video.creator?._id
+    );
   }, [video]);
 
   // Initialize engagement data
@@ -179,7 +183,7 @@ function UGCDetailScreen() {
     let cancelled = false;
     if (video) {
       const likes = video.metrics?.likes || video.engagement?.likes;
-      setLikesCount(Array.isArray(likes) ? likes.length : (Number(likes) || 0));
+      setLikesCount(Array.isArray(likes) ? likes.length : Number(likes) || 0);
       setViewsCount(video.metrics?.views || video.engagement?.views || 0);
       setIsLiked(video.engagement?.liked || false);
       setIsBookmarked(video.engagement?.bookmarked || false);
@@ -187,8 +191,9 @@ function UGCDetailScreen() {
       // Check follow status for the store (using wishlistApi)
       const storeIdToCheck = getFollowableStoreId();
       if (storeIdToCheck && isAuthenticated) {
-        wishlistApi.checkWishlistStatus('store', storeIdToCheck)
-          .then(response => {
+        wishlistApi
+          .checkWishlistStatus('store', storeIdToCheck)
+          .then((response) => {
             if (cancelled) return;
             if (response.success && response.data) {
               if (!isMounted()) return;
@@ -200,7 +205,9 @@ function UGCDetailScreen() {
           });
       }
     }
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [video, isAuthenticated, getFollowableStoreId]);
 
   // Focus handling
@@ -212,8 +219,9 @@ function UGCDetailScreen() {
       // Re-check follow status when screen comes into focus (might have changed in another screen)
       const storeIdToCheck = getFollowableStoreId();
       if (storeIdToCheck && isAuthenticated) {
-        wishlistApi.checkWishlistStatus('store', storeIdToCheck)
-          .then(response => {
+        wishlistApi
+          .checkWishlistStatus('store', storeIdToCheck)
+          .then((response) => {
             if (response.success && response.data) {
               if (!isMounted()) return;
               setIsFollowing(response.data.inWishlist || false);
@@ -226,7 +234,7 @@ function UGCDetailScreen() {
         setIsFocused(false);
         StatusBar.setHidden(false);
       };
-    }, [getFollowableStoreId, isAuthenticated])
+    }, [getFollowableStoreId, isAuthenticated]),
   );
 
   // Playback control: pause when unfocused, auto-play when ready
@@ -280,7 +288,7 @@ function UGCDetailScreen() {
       };
 
       if (!detectDimensions()) {
-        const timers = [30, 80, 150, 300].map(ms => setTimeout(detectDimensions, ms));
+        const timers = [30, 80, 150, 300].map((ms) => setTimeout(detectDimensions, ms));
         return () => timers.forEach(clearTimeout);
       }
     }
@@ -340,7 +348,7 @@ function UGCDetailScreen() {
   // Transform products
   const products = useMemo(() => {
     if (!video?.products) return [];
-    return video.products.map(product => {
+    return video.products.map((product) => {
       const price = product.pricing?.selling || product.pricing?.basePrice || product.price || 0;
       const image = product.thumbnail || product.image || product.images?.[0] || '';
       return {
@@ -350,7 +358,8 @@ function UGCDetailScreen() {
         name: product.name || product.title || 'Product',
         title: product.title || product.name || 'Product',
         image,
-        price: typeof price === 'number' ? price : 0};
+        price: typeof price === 'number' ? price : 0,
+      };
     });
   }, [video]);
 
@@ -363,7 +372,7 @@ function UGCDetailScreen() {
     heartOpacity.value = withSequence(
       withTiming(1, { duration: 200 }),
       withTiming(1, { duration: 600 }),
-      withTiming(0, { duration: 200 })
+      withTiming(0, { duration: 200 }),
     );
   }, [isLiked]);
 
@@ -394,7 +403,7 @@ function UGCDetailScreen() {
       playPauseOpacity.value = withSequence(
         withTiming(1, { duration: 100 }),
         withTiming(1, { duration: 500 }),
-        withTiming(0, { duration: 200 })
+        withTiming(0, { duration: 200 }),
       );
     }
     lastTap.current = now;
@@ -414,9 +423,8 @@ function UGCDetailScreen() {
     setIsPlaying(status.isPlaying);
 
     // Auto-loop: Check if video reached the end (position-based for web compatibility)
-    const isAtEnd = status.durationMillis &&
-                    status.durationMillis > 0 &&
-                    status.positionMillis >= status.durationMillis - 500; // Within 500ms of end
+    const isAtEnd =
+      status.durationMillis && status.durationMillis > 0 && status.positionMillis >= status.durationMillis - 500; // Within 500ms of end
 
     if ((status.didJustFinish || isAtEnd) && !isRestartingRef.current && videoRef.current) {
       isRestartingRef.current = true;
@@ -453,22 +461,23 @@ function UGCDetailScreen() {
     if (!isAuthenticated) {
       showAlert('Sign In Required', 'Please sign in to like videos', [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign In', onPress: () => router.push('/sign-in') }
+        { text: 'Sign In', onPress: () => router.push('/sign-in') },
       ]);
       return;
     }
 
+    // Debounce: prevent multiple rapid submissions
+    if (isLiking) return;
+
     // Animate
-    likeScale.value = withSequence(
-      withTiming(1.4, { duration: 100 }),
-      withTiming(1, { duration: 100 })
-    );
+    likeScale.value = withSequence(withTiming(1.4, { duration: 100 }), withTiming(1, { duration: 100 }));
 
     try {
+      setIsLiking(true);
       if (!video?._id) return;
       const newLikedState = !isLiked;
       setIsLiked(newLikedState);
-      setLikesCount(prev => newLikedState ? prev + 1 : Math.max(0, prev - 1));
+      setLikesCount((prev) => (newLikedState ? prev + 1 : Math.max(0, prev - 1)));
 
       const response = await realVideosApi.toggleVideoLike(video._id);
       if (response.success) {
@@ -479,15 +488,18 @@ function UGCDetailScreen() {
       if (!isMounted()) return;
       setIsLiked(!isLiked);
       if (!isMounted()) return;
-      setLikesCount(prev => isLiked ? prev + 1 : Math.max(0, prev - 1));
+      setLikesCount((prev) => (isLiked ? prev + 1 : Math.max(0, prev - 1)));
+    } finally {
+      if (!isMounted()) return;
+      setIsLiking(false);
     }
-  }, [isAuthenticated, isLiked, video?._id, likeScale, router]);
+  }, [isAuthenticated, isLiked, video?._id, likeScale, router, isLiking]);
 
   const handleBookmark = useCallback(async () => {
     if (!isAuthenticated) {
       showAlert('Sign In Required', 'Please sign in to save videos', [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign In', onPress: () => router.push('/sign-in') }
+        { text: 'Sign In', onPress: () => router.push('/sign-in') },
       ]);
       return;
     }
@@ -518,7 +530,7 @@ function UGCDetailScreen() {
     if (!isAuthenticated) {
       showAlert('Sign In Required', 'Please sign in to follow creators', [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Sign In', onPress: () => router.push('/sign-in') }
+        { text: 'Sign In', onPress: () => router.push('/sign-in') },
       ]);
       return;
     }
@@ -545,7 +557,8 @@ function UGCDetailScreen() {
           itemType: 'store',
           itemId: storeIdToFollow,
           notes: `Following ${creatorName}`,
-          priority: 'medium'});
+          priority: 'medium',
+        });
         if (!response.success) {
           throw new Error(response.message || 'Failed to follow');
         }
@@ -584,7 +597,7 @@ function UGCDetailScreen() {
           await realVideosApi.trackView(video._id);
           await recordView(video._id);
           if (!isMounted()) return;
-          setViewsCount(prev => prev + 1);
+          setViewsCount((prev) => prev + 1);
         } catch (error) {
           // Silently handle view tracking errors
         }
@@ -631,7 +644,10 @@ function UGCDetailScreen() {
       <View style={styles.container}>
         <Ionicons name="videocam-off-outline" size={64} color={colors.text.tertiary} />
         <Text style={styles.errorText}>{error || 'Video not found'}</Text>
-        <Pressable style={styles.retryButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.retryButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Text style={styles.retryButtonText}>Go Back</Text>
         </Pressable>
       </View>
@@ -656,7 +672,8 @@ function UGCDetailScreen() {
                 width: '150%',
                 height: '150%',
                 top: '-25%',
-                left: '-25%'},
+                left: '-25%',
+              },
             ]}
             resizeMode={ResizeMode.COVER}
             isLooping={true}
@@ -669,13 +686,8 @@ function UGCDetailScreen() {
         </>
       )}
 
-
       {/* Main Video Player - Dynamic resize mode based on aspect ratio */}
-      <Pressable
-        style={StyleSheet.absoluteFill}
-        onPress={handleVideoPress}
-       
-      >
+      <Pressable style={StyleSheet.absoluteFill} onPress={handleVideoPress}>
         <Video
           key={`video-${videoAspectRatio}`}
           ref={videoRef}
@@ -755,9 +767,7 @@ function UGCDetailScreen() {
           }}
         />
         {/* Transparent overlay to capture taps on web */}
-        <View
-          style={[StyleSheet.absoluteFill, { pointerEvents: 'box-only' }]}
-        />
+        <View style={[StyleSheet.absoluteFill, { pointerEvents: 'box-only' }]} />
       </Pressable>
 
       {/* Play/Pause Indicator */}
@@ -786,7 +796,10 @@ function UGCDetailScreen() {
 
       {/* Top Bar */}
       <View style={styles.topBar}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
 
@@ -810,16 +823,15 @@ function UGCDetailScreen() {
       <View style={styles.socialActions}>
         {/* Creator Avatar */}
         <View style={styles.creatorAvatarContainer}>
-          <Pressable onPress={() => {
-            const creatorId = video?.creator?._id || (video?.creator as any)?.id;
-            if (creatorId) {
-              router.push(`/creator/${creatorId}` as any);
-            }
-          }}>
-            <CachedImage
-              source={creatorAvatar}
-              style={styles.creatorAvatar}
-            />
+          <Pressable
+            onPress={() => {
+              const creatorId = video?.creator?._id || (video?.creator as any)?.id;
+              if (creatorId) {
+                router.push(`/creator/${creatorId}` as any);
+              }
+            }}
+          >
+            <CachedImage source={creatorAvatar} style={styles.creatorAvatar} />
           </Pressable>
           {!isFollowing && (
             <Pressable style={styles.followBadge} onPress={handleFollow}>
@@ -829,12 +841,12 @@ function UGCDetailScreen() {
         </View>
 
         {/* Like */}
-        <Pressable style={styles.actionButton} onPress={handleLike}>
+        <Pressable style={styles.actionButton} onPress={handleLike} disabled={isLiking}>
           <Animated.View style={likeScaleStyle}>
             <Ionicons
               name={isLiked ? 'heart' : 'heart-outline'}
               size={32}
-              color={isLiked ? Colors.error : colors.background.primary}
+              color={isLiking ? colors.background.tertiary : isLiked ? Colors.error : colors.background.primary}
             />
           </Animated.View>
           <Text style={styles.actionCount}>{formatCount(likesCount)}</Text>
@@ -898,31 +910,29 @@ function UGCDetailScreen() {
               </View>
             </View>
 
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.productsList}
-            >
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.productsList}>
               {products.map((product: any, index: number) => (
                 <Pressable
                   key={product.id || index}
                   style={styles.productCard}
                   onPress={() => navigateToProduct(product, 'ugc_video')}
-                 
                 >
                   <CachedImage source={product.image} style={styles.productImage} />
                   <View style={styles.productInfo}>
-                    <Text style={styles.productName} numberOfLines={1}>{product.name}</Text>
+                    <Text style={styles.productName} numberOfLines={1}>
+                      {product.name}
+                    </Text>
                     <View style={styles.productPriceRow}>
                       <Text style={styles.productPrice}>
                         {typeof product.price === 'number' ? `${currencySymbol}${product.price}` : product.price}
                       </Text>
                       <Pressable
-                        style={styles.addToCartButton}
+                        style={[styles.addToCartButton, { opacity: isLoading ? 0.5 : 1 }]}
                         onPress={(e) => {
                           e.stopPropagation();
                           addToCart(product, 1);
                         }}
+                        disabled={isLoading}
                       >
                         <Ionicons name="add" size={14} color={colors.text.inverse} />
                       </Pressable>
@@ -961,30 +971,37 @@ const styles = StyleSheet.create({
     backgroundColor: colors.text.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    ...(Platform.OS === 'web' && { overflow: 'hidden' as const })},
+    ...(Platform.OS === 'web' && { overflow: 'hidden' as const }),
+  },
   backgroundVideo: {
     opacity: 0.7,
-    transform: [{ scale: 1.5 }]},
+    transform: [{ scale: 1.5 }],
+  },
   darkOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)'},
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+  },
   loadingText: {
     color: colors.text.tertiary,
     marginTop: Spacing.base,
-    ...Typography.bodyLarge},
+    ...Typography.bodyLarge,
+  },
   errorText: {
     color: colors.text.tertiary,
     marginTop: Spacing.base,
-    ...Typography.bodyLarge},
+    ...Typography.bodyLarge,
+  },
   retryButton: {
     marginTop: Spacing.lg,
     backgroundColor: Colors.brand.purpleLight,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
-    borderRadius: 25},
+    borderRadius: 25,
+  },
   retryButtonText: {
     color: colors.text.inverse,
-    fontWeight: '600'},
+    fontWeight: '600',
+  },
 
   // Overlays
   topGradient: {
@@ -992,34 +1009,39 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 150},
+    height: 150,
+  },
   bottomGradient: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: SCREEN_HEIGHT * 0.5},
+    height: SCREEN_HEIGHT * 0.5,
+  },
 
   // Play/Pause Indicator
   playPauseIndicator: {
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 10},
+    zIndex: 10,
+  },
   playPauseCircle: {
     width: 80,
     height: 80,
     borderRadius: 40,
     backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
 
   // Heart Animation
   heartAnimation: {
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 10},
+    zIndex: 10,
+  },
 
   // Top Bar
   topBar: {
@@ -1031,24 +1053,28 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
-    zIndex: 20},
+    zIndex: 20,
+  },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
     backgroundColor: 'rgba(0,0,0,0.3)',
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   topBarRight: {
     flexDirection: 'row',
-    gap: Spacing.md},
+    gap: Spacing.md,
+  },
   topBarButton: {
     width: 40,
     height: 40,
     borderRadius: BorderRadius.xl,
     backgroundColor: 'rgba(0,0,0,0.3)',
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   cartBadge: {
     position: 'absolute',
     top: -2,
@@ -1058,11 +1084,13 @@ const styles = StyleSheet.create({
     minWidth: 18,
     height: 18,
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   cartBadgeText: {
     color: colors.text.inverse,
     ...Typography.overline,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
 
   // Social Actions (Right Side)
   socialActions: {
@@ -1071,15 +1099,18 @@ const styles = StyleSheet.create({
     bottom: Platform.OS === 'ios' ? 280 : 260, // Moved up further to avoid bottom nav bar
     alignItems: 'center',
     gap: Spacing.lg,
-    zIndex: 20},
+    zIndex: 20,
+  },
   creatorAvatarContainer: {
-    marginBottom: 10},
+    marginBottom: 10,
+  },
   creatorAvatar: {
     width: 52,
     height: 52,
     borderRadius: 26,
     borderWidth: 2,
-    borderColor: colors.text.inverse},
+    borderColor: colors.text.inverse,
+  },
   followBadge: {
     position: 'absolute',
     bottom: -8,
@@ -1092,14 +1123,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: colors.text.primary},
+    borderColor: colors.text.primary,
+  },
   actionButton: {
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   actionCount: {
     color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
-    marginTop: Spacing.xs},
+    marginTop: Spacing.xs,
+  },
 
   // Bottom Content
   bottomContent: {
@@ -1107,113 +1141,136 @@ const styles = StyleSheet.create({
     left: 12,
     right: 60,
     bottom: Platform.OS === 'ios' ? 100 : 80, // Moved up further to avoid bottom nav bar
-    zIndex: 20},
+    zIndex: 20,
+  },
   creatorInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.sm},
+    marginBottom: Spacing.sm,
+  },
   creatorName: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
   followButton: {
     marginLeft: Spacing.md,
     backgroundColor: Colors.error,
     paddingHorizontal: Spacing.base,
     paddingVertical: 6,
-    borderRadius: 4},
+    borderRadius: 4,
+  },
   followButtonText: {
     color: colors.text.inverse,
     ...Typography.bodySmall,
-    fontWeight: '600'},
+    fontWeight: '600',
+  },
   followingBadge: {
     marginLeft: Spacing.md,
     borderWidth: 1,
     borderColor: colors.text.inverse,
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.xs,
-    borderRadius: 4},
+    borderRadius: 4,
+  },
   followingText: {
     color: colors.text.inverse,
-    ...Typography.bodySmall},
+    ...Typography.bodySmall,
+  },
   caption: {
     color: colors.text.inverse,
     ...Typography.body,
     lineHeight: 20,
-    marginBottom: Spacing.sm},
+    marginBottom: Spacing.sm,
+  },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: Spacing.sm,
-    marginBottom: Spacing.md},
+    marginBottom: Spacing.md,
+  },
   tag: {
     color: colors.text.inverse,
     ...Typography.body,
-    fontWeight: '600'},
+    fontWeight: '600',
+  },
 
   // Products Section
   productsSection: {
     backgroundColor: 'rgba(255,255,255,0.1)',
     borderRadius: BorderRadius.md,
     padding: 10,
-    ...Platform.select({ web: { backdropFilter: 'blur(10px)' } as any, default: {} })},
+    ...Platform.select({ web: { backdropFilter: 'blur(10px)' } as any, default: {} }),
+  },
   productsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: Spacing.sm,
-    gap: 6},
+    gap: 6,
+  },
   productsTitle: {
     color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
-    flex: 1},
+    flex: 1,
+  },
   productsBadge: {
     backgroundColor: Colors.brand.purpleLight,
     paddingHorizontal: 6,
     paddingVertical: 2,
-    borderRadius: BorderRadius.sm},
+    borderRadius: BorderRadius.sm,
+  },
   productsBadgeText: {
     color: colors.text.inverse,
     ...Typography.overline,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
   productsList: {
     flexDirection: 'row',
     gap: 10,
-    paddingRight: Spacing.xs},
+    paddingRight: Spacing.xs,
+  },
   productCard: {
     width: 120,
     backgroundColor: 'rgba(255,255,255,0.15)',
     borderRadius: 10,
     padding: Spacing.sm,
-    overflow: 'hidden'},
+    overflow: 'hidden',
+  },
   productImage: {
     width: '100%',
     height: 70,
     borderRadius: BorderRadius.sm,
     backgroundColor: colors.text.primary,
-    marginBottom: 6},
+    marginBottom: 6,
+  },
   productInfo: {
-    flex: 1},
+    flex: 1,
+  },
   productName: {
     color: colors.text.inverse,
     ...Typography.caption,
     fontWeight: '500',
-    marginBottom: Spacing.xs},
+    marginBottom: Spacing.xs,
+  },
   productPriceRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'},
+    justifyContent: 'space-between',
+  },
   productPrice: {
     color: Colors.gold,
     ...Typography.bodySmall,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
   addToCartButton: {
     width: 24,
     height: 24,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.brand.purpleLight,
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
 
   // Progress Bar
   progressBarContainer: {
@@ -1222,9 +1279,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     height: 3,
-    backgroundColor: 'rgba(255,255,255,0.2)'},
+    backgroundColor: 'rgba(255,255,255,0.2)',
+  },
   progressBar: {
     height: '100%',
-    backgroundColor: colors.background.primary}});
+    backgroundColor: colors.background.primary,
+  },
+});
 
 export default withErrorBoundary(UGCDetailScreen, 'UGCDetailScreen');

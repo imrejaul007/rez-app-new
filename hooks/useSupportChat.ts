@@ -122,6 +122,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
   const [showRating, setShowRating] = useState(false);
   const [showFAQ, setShowFAQ] = useState(false);
   const [faqSuggestions, setFaqSuggestions] = useState<FAQSuggestion[]>([]);
+  const [isSendingMessage, setIsSendingMessage] = useState(false);
 
   const [offlineMessages, setOfflineMessages] = useState<OfflineMessage[]>([]);
   const [isOnline, setIsOnline] = useState(true);
@@ -419,6 +420,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
     // Stop typing indicator immediately on send
     stopTyping();
+    setIsSendingMessage(true);
 
     const messageRequest: SendMessageRequest = {
       ticketId: currentTicket.id,
@@ -429,6 +431,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
 
     // If offline, queue the message
     if (!isOnline) {
+      setIsSendingMessage(false);
       return queueOfflineMessage(messageRequest);
     }
 
@@ -469,12 +472,14 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
           );
         }
 
+        setIsSendingMessage(false);
         return true;
       } else {
         // Remove optimistic message on failure
         setMessages((prev) =>
           prev.filter((msg) => msg.id !== optimisticMessage.id)
         );
+        setIsSendingMessage(false);
         return false;
       }
     } catch (error) {
@@ -484,6 +489,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
         prev.filter((msg) => msg.id !== optimisticMessage.id)
       );
       setMessagesError('Failed to send message');
+      setIsSendingMessage(false);
       return false;
     }
   };
@@ -1037,6 +1043,7 @@ export function useSupportChat(initialTicketId?: string): UseSupportChatReturn {
     showRating,
     showFAQ,
     faqSuggestions,
+    isSendingMessage,
     offlineMessages,
     isOnline,
 

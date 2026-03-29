@@ -12,15 +12,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  SafeAreaView,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, SafeAreaView, RefreshControl } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -112,72 +104,82 @@ function EarningsScreen() {
 
   // --- Data fetching ---
 
-  const fetchEarnings = useCallback(async (opts: {
-    nextCursor?: string;
-    refresh?: boolean;
-    timeRange?: number;
-  } = {}) => {
-    const { nextCursor, refresh = false, timeRange } = opts;
-    const isInitial = !nextCursor;
+  const fetchEarnings = useCallback(
+    async (
+      opts: {
+        nextCursor?: string;
+        refresh?: boolean;
+        timeRange?: number;
+      } = {},
+    ) => {
+      const { nextCursor, refresh = false, timeRange } = opts;
+      const isInitial = !nextCursor;
 
-    try {
-      if (refresh) {
-        setIsRefreshing(true);
-      } else if (isInitial) {
-        setIsLoading(true);
-      } else {
-        setIsLoadingMore(true);
-      }
-      setError(null);
-
-      const response = await priveApi.getEarnings({
-        limit: 20,
-        cursor: nextCursor,
-        timeRange,
-      });
-
-      if (response.success && response.data) {
-        const {
-          earnings: newEarnings,
-          summary: newSummary,
-          bySource: newBySource,
-          pagination,
-        } = response.data;
-
-        if (isInitial) {
-          // Fresh load — reset seen set
-          const ids = new Set(newEarnings.map(e => e.id));
-          setSeenIds(ids);
-          setEarnings(newEarnings);
+      try {
+        if (refresh) {
+          setIsRefreshing(true);
+        } else if (isInitial) {
+          setIsLoading(true);
         } else {
-          // Append with dedup
-          setSeenIds(prev => {
-            const next = new Set(prev);
-            newEarnings.forEach(e => next.add(e.id));
-            return next;
-          });
-          setEarnings(prev => {
-            const existingIds = new Set(prev.map(e => e.id));
-            const deduped = newEarnings.filter(e => !existingIds.has(e.id));
-            return [...prev, ...deduped];
-          });
+          setIsLoadingMore(true);
         }
+        setError(null);
 
-        setSummary(newSummary);
-        if (newBySource) setBySource(newBySource);
-        setHasMore(pagination.hasMore ?? pagination.page < pagination.pages);
-        setCursor(pagination.nextCursor);
-      } else {
-        setError('Failed to load earnings');
+        const response = await priveApi.getEarnings({
+          limit: 20,
+          cursor: nextCursor,
+          timeRange,
+        });
+
+        if (response.success && response.data) {
+          const { earnings: newEarnings, summary: newSummary, bySource: newBySource, pagination } = response.data;
+
+          if (isInitial) {
+            // Fresh load — reset seen set
+            const ids = new Set(newEarnings.map((e) => e.id));
+            if (!isMounted()) return;
+            setSeenIds(ids);
+            if (!isMounted()) return;
+            setEarnings(newEarnings);
+          } else {
+            // Append with dedup
+            if (!isMounted()) return;
+            setSeenIds((prev) => {
+              const next = new Set(prev);
+              newEarnings.forEach((e) => next.add(e.id));
+              return next;
+            });
+            if (!isMounted()) return;
+            setEarnings((prev) => {
+              const existingIds = new Set(prev.map((e) => e.id));
+              const deduped = newEarnings.filter((e) => !existingIds.has(e.id));
+              return [...prev, ...deduped];
+            });
+          }
+
+          if (!isMounted()) return;
+          setSummary(newSummary);
+          if (newBySource) setBySource(newBySource);
+          setHasMore(pagination.hasMore ?? pagination.page < pagination.pages);
+          setCursor(pagination.nextCursor);
+        } else {
+          if (!isMounted()) return;
+          setError('Failed to load earnings');
+        }
+      } catch (err: any) {
+        if (!isMounted()) return;
+        setError(err.message || 'Failed to load earnings');
+      } finally {
+        if (!isMounted()) return;
+        setIsLoading(false);
+        if (!isMounted()) return;
+        setIsRefreshing(false);
+        if (!isMounted()) return;
+        setIsLoadingMore(false);
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to load earnings');
-    } finally {
-      setIsLoading(false);
-      setIsRefreshing(false);
-      setIsLoadingMore(false);
-    }
-  }, []);
+    },
+    [isMounted],
+  );
 
   useEffect(() => {
     fetchEarnings({ timeRange: selectedTimeRange });
@@ -229,9 +231,8 @@ function EarningsScreen() {
 
   // Growth indicator: compare thisWeek vs derived "last week" (thisMonth - thisWeek)
   const lastWeekProxy = Math.max(summary.thisMonth - summary.thisWeek, 0);
-  const growthDiff = lastWeekProxy > 0
-    ? ((summary.thisWeek - lastWeekProxy) / lastWeekProxy) * 100
-    : summary.thisWeek > 0 ? 100 : 0;
+  const growthDiff =
+    lastWeekProxy > 0 ? ((summary.thisWeek - lastWeekProxy) / lastWeekProxy) * 100 : summary.thisWeek > 0 ? 100 : 0;
   const isGrowthPositive = summary.thisWeek >= lastWeekProxy;
 
   // --- Render helpers ---
@@ -260,7 +261,7 @@ function EarningsScreen() {
       {/* Source breakdown skeleton */}
       <View style={[styles.listCard, styles.skeletonSourceCard]}>
         <PriveSkeletonBlock width={140} height={14} style={{ marginBottom: PRIVE_SPACING.lg }} />
-        {[1, 2, 3, 4].map(i => (
+        {[1, 2, 3, 4].map((i) => (
           <View key={i} style={styles.skeletonSourceRow}>
             <PriveSkeletonBlock width={36} height={36} borderRadius={18} style={{ marginRight: PRIVE_SPACING.md }} />
             <PriveSkeletonBlock width={100} height={14} style={{ flex: 1 }} />
@@ -272,7 +273,7 @@ function EarningsScreen() {
       {/* Earnings list skeleton */}
       <View style={styles.listCard}>
         <PriveSkeletonBlock width={120} height={14} style={{ marginBottom: PRIVE_SPACING.lg }} />
-        {[1, 2, 3, 4, 5].map(i => (
+        {[1, 2, 3, 4, 5].map((i) => (
           <View key={i} style={styles.skeletonEarningRow}>
             <PriveSkeletonBlock width={40} height={40} borderRadius={20} style={{ marginRight: PRIVE_SPACING.md }} />
             <View style={styles.skeletonFlex1}>
@@ -288,7 +289,7 @@ function EarningsScreen() {
 
   const renderTimeRangeFilters = () => (
     <View style={styles.filterRow}>
-      {TIME_RANGE_OPTIONS.map(opt => {
+      {TIME_RANGE_OPTIONS.map((opt) => {
         const isActive = opt.value === selectedTimeRange;
         return (
           <Pressable
@@ -296,9 +297,7 @@ function EarningsScreen() {
             style={[styles.filterChip, isActive && styles.filterChipActive]}
             onPress={() => handleTimeRangeChange(opt.value)}
           >
-            <Text style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>
-              {opt.label}
-            </Text>
+            <Text style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>{opt.label}</Text>
           </Pressable>
         );
       })}
@@ -311,11 +310,7 @@ function EarningsScreen() {
 
     return (
       <View style={styles.sourceCard}>
-        <Pressable
-          style={styles.sourceHeader}
-          onPress={() => setShowSourceBreakdown(prev => !prev)}
-         
-        >
+        <Pressable style={styles.sourceHeader} onPress={() => setShowSourceBreakdown((prev) => !prev)}>
           <Text style={styles.sectionTitle}>Earnings by Source</Text>
           <Ionicons
             name={showSourceBreakdown ? 'chevron-up' : 'chevron-down'}
@@ -358,10 +353,12 @@ function EarningsScreen() {
           size={14}
           color={isGrowthPositive ? PRIVE_COLORS.status.success : PRIVE_COLORS.status.error}
         />
-        <Text style={[
-          styles.growthText,
-          { color: isGrowthPositive ? PRIVE_COLORS.status.success : PRIVE_COLORS.status.error },
-        ]}>
+        <Text
+          style={[
+            styles.growthText,
+            { color: isGrowthPositive ? PRIVE_COLORS.status.success : PRIVE_COLORS.status.error },
+          ]}
+        >
           {displayPercent}%
         </Text>
       </View>
@@ -377,7 +374,10 @@ function EarningsScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Earnings</Text>
@@ -392,10 +392,7 @@ function EarningsScreen() {
         ) : error ? (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>{error}</Text>
-            <Pressable
-              style={styles.retryButton}
-              onPress={() => fetchEarnings({ timeRange: selectedTimeRange })}
-            >
+            <Pressable style={styles.retryButton} onPress={() => fetchEarnings({ timeRange: selectedTimeRange })}>
               <Text style={styles.retryText}>Retry</Text>
             </Pressable>
           </View>
@@ -460,10 +457,7 @@ function EarningsScreen() {
                 earnings.map((item, index) => (
                   <View
                     key={item.id}
-                    style={[
-                      styles.earningRow,
-                      index === earnings.length - 1 && styles.earningRowLast,
-                    ]}
+                    style={[styles.earningRow, index === earnings.length - 1 && styles.earningRowLast]}
                   >
                     <View style={styles.earningIcon}>
                       <Text style={styles.earningEmoji}>{getEarningIcon(item.type)}</Text>

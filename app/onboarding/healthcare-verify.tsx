@@ -1,8 +1,14 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useCallback } from 'react';
 import {
-  View, StyleSheet, StatusBar, ScrollView,
-  Pressable, ActivityIndicator, Platform, KeyboardAvoidingView,
+  View,
+  StyleSheet,
+  StatusBar,
+  ScrollView,
+  Pressable,
+  ActivityIndicator,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -40,8 +46,24 @@ function HealthcareVerifyPage() {
   const [error, setError] = useState('');
 
   const handleVerify = useCallback(async () => {
-    if (!profession) { setError('Please select your profession'); return; }
-    if (!documentType) { setError('Please select a document type'); return; }
+    if (!profession) {
+      setError('Please select your profession');
+      return;
+    }
+    if (!documentType) {
+      setError('Please select a document type');
+      return;
+    }
+
+    // Basic validation for credentials based on document type
+    if (documentType === 'medical_council' && profession !== 'doctor') {
+      setError('Medical Council Registration is only for doctors');
+      return;
+    }
+    if (documentType === 'nursing_license' && profession !== 'nurse') {
+      setError('Nursing License is only for nurses');
+      return;
+    }
 
     setLoading(true);
     setError('');
@@ -54,7 +76,9 @@ function HealthcareVerifyPage() {
       });
 
       analyticsService.track(IdentityAnalyticsEvents.VERIFICATION_COMPLETED, {
-        type: 'healthcare', autoVerified: result.autoVerified, provisional: result.provisionalUnlock,
+        type: 'healthcare',
+        autoVerified: result.autoVerified,
+        provisional: result.provisionalUnlock,
       });
 
       if (!isMounted()) return;
@@ -80,7 +104,10 @@ function HealthcareVerifyPage() {
       <StatusBar barStyle="dark-content" />
 
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerIcon}>
@@ -90,70 +117,73 @@ function HealthcareVerifyPage() {
         <ThemedText style={styles.headerSubtitle}>Your details are private and never shared</ThemedText>
       </View>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-      <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} keyboardShouldPersistTaps="handled">
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>Profession</ThemedText>
-          <View style={styles.chipRow}>
-            {PROFESSIONS.map((p) => (
-              <Pressable
-                key={p.value}
-                style={[styles.chip, profession === p.value && { backgroundColor: ACCENT }]}
-                onPress={() => { setProfession(p.value); setError(''); }}
-              >
-                <ThemedText style={[styles.chipText, profession === p.value && styles.chipTextActive]}>
-                  {p.label}
-                </ThemedText>
-              </Pressable>
-            ))}
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} keyboardShouldPersistTaps="handled">
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>Profession</ThemedText>
+            <View style={styles.chipRow}>
+              {PROFESSIONS.map((p) => (
+                <Pressable
+                  key={p.value}
+                  style={[styles.chip, profession === p.value && { backgroundColor: ACCENT }]}
+                  onPress={() => {
+                    setProfession(p.value);
+                    setError('');
+                  }}
+                >
+                  <ThemedText style={[styles.chipText, profession === p.value && styles.chipTextActive]}>
+                    {p.label}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </View>
           </View>
-        </View>
 
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>Document Type</ThemedText>
-          <View style={styles.chipRow}>
-            {DOC_TYPES.map((d) => (
-              <Pressable
-                key={d.value}
-                style={[styles.chip, documentType === d.value && { backgroundColor: ACCENT }]}
-                onPress={() => { setDocumentType(d.value); setError(''); }}
-              >
-                <ThemedText style={[styles.chipText, documentType === d.value && styles.chipTextActive]}>
-                  {d.label}
-                </ThemedText>
-              </Pressable>
-            ))}
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>Document Type</ThemedText>
+            <View style={styles.chipRow}>
+              {DOC_TYPES.map((d) => (
+                <Pressable
+                  key={d.value}
+                  style={[styles.chip, documentType === d.value && { backgroundColor: ACCENT }]}
+                  onPress={() => {
+                    setDocumentType(d.value);
+                    setError('');
+                  }}
+                >
+                  <ThemedText style={[styles.chipText, documentType === d.value && styles.chipTextActive]}>
+                    {d.label}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </View>
           </View>
-        </View>
 
-        <View style={styles.hintBox}>
-          <Ionicons name="time-outline" size={16} color={ACCENT} />
-          <ThemedText style={styles.hintBoxText}>
-            All healthcare verifications require admin review.{'\n'}
-            Provisional access is granted immediately, full unlock in 2-4 hours.
-          </ThemedText>
-        </View>
+          <View style={styles.hintBox}>
+            <Ionicons name="time-outline" size={16} color={ACCENT} />
+            <ThemedText style={styles.hintBoxText}>
+              All healthcare verifications require admin review.{'\n'}
+              Provisional access is granted immediately, full unlock in 2-4 hours.
+            </ThemedText>
+          </View>
 
-        {error ? <ThemedText style={styles.errorText}>{error}</ThemedText> : null}
+          {error ? <ThemedText style={styles.errorText}>{error}</ThemedText> : null}
 
-        <Pressable
-          onPress={handleVerify}
-          disabled={loading}
-          style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <ThemedText style={styles.verifyButtonText}>Verify & Unlock Deals</ThemedText>
-              <Ionicons name="arrow-forward" size={18} color="#fff" />
-            </>
-          )}
-        </Pressable>
-      </ScrollView>
+          <Pressable
+            onPress={handleVerify}
+            disabled={loading}
+            style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <ThemedText style={styles.verifyButtonText}>Verify & Unlock Deals</ThemedText>
+                <Ionicons name="arrow-forward" size={18} color="#fff" />
+              </>
+            )}
+          </Pressable>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );
@@ -163,11 +193,15 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   header: {
     paddingTop: Platform.OS === 'ios' ? 60 : 48,
-    paddingHorizontal: spacing.xl, paddingBottom: spacing.xl, alignItems: 'center',
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl,
+    alignItems: 'center',
   },
   backButton: {
-    position: 'absolute', left: spacing.base,
-    top: Platform.OS === 'ios' ? 56 : 44, padding: spacing.sm,
+    position: 'absolute',
+    left: spacing.base,
+    top: Platform.OS === 'ios' ? 56 : 44,
+    padding: spacing.sm,
   },
   headerIcon: { marginBottom: spacing.md },
   headerTitle: { fontSize: 22, fontWeight: '700', color: colors.text.primary, marginBottom: 4 },
@@ -178,20 +212,33 @@ const styles = StyleSheet.create({
   label: { fontSize: 14, fontWeight: '600', color: colors.text.primary, marginBottom: spacing.sm },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   chip: {
-    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-    backgroundColor: '#fff', borderWidth: 1, borderColor: colors.border.default,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   chipText: { fontSize: 13, fontWeight: '600', color: colors.text.secondary },
   chipTextActive: { color: '#fff' },
   hintBox: {
-    flexDirection: 'row', backgroundColor: '#ECFEFF',
-    padding: spacing.base, borderRadius: borderRadius.md, gap: spacing.sm, marginBottom: spacing.xl,
+    flexDirection: 'row',
+    backgroundColor: '#ECFEFF',
+    padding: spacing.base,
+    borderRadius: borderRadius.md,
+    gap: spacing.sm,
+    marginBottom: spacing.xl,
   },
   hintBoxText: { flex: 1, fontSize: 13, color: colors.text.secondary, lineHeight: 18 },
   errorText: { fontSize: 13, color: colors.errorScale[600], marginBottom: spacing.md },
   verifyButton: {
-    backgroundColor: ACCENT, paddingVertical: 16, borderRadius: borderRadius.md,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm,
+    backgroundColor: ACCENT,
+    paddingVertical: 16,
+    borderRadius: borderRadius.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
     ...shadows.medium,
   },
   verifyButtonDisabled: { opacity: 0.6 },

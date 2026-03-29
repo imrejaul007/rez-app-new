@@ -3,7 +3,17 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Real-time chat support with complete functionality
 
 import React, { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, TextInput, KeyboardAvoidingView, ActivityIndicator } from 'react-native';
+import {
+  View,
+  ScrollView,
+  StyleSheet,
+  Pressable,
+  StatusBar,
+  Platform,
+  TextInput,
+  KeyboardAvoidingView,
+  ActivityIndicator,
+} from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -46,6 +56,7 @@ function SupportChatPage() {
     showRating,
     showFAQ,
     faqSuggestions,
+    isSendingMessage,
     isOnline,
     createTicket,
     closeTicket,
@@ -128,7 +139,7 @@ function SupportChatPage() {
           analyticsService.track('support_chat_ended', { ticketId: currentTicket.id });
         }
       },
-      'End Chat'
+      'End Chat',
     );
   };
 
@@ -178,7 +189,7 @@ function SupportChatPage() {
           name: `image_${Date.now()}.jpg`,
           type: 'image/jpeg',
         } as any,
-        'image'
+        'image',
       );
       if (attachment) {
         addAttachment(attachment);
@@ -203,7 +214,7 @@ function SupportChatPage() {
           name: file.name,
           type: file.mimeType || 'application/octet-stream',
         } as any,
-        'file'
+        'file',
       );
       if (attachment) {
         addAttachment(attachment);
@@ -215,12 +226,17 @@ function SupportChatPage() {
   };
 
   const handleCallRequest = () => {
-    platformAlertConfirm('Voice Call', 'Request a voice call with the agent?', async () => {
-      const success = await requestCall('voice');
-      if (success) {
-        platformAlertSimple('Call Request Sent', 'The agent will call you shortly.');
-      }
-    }, 'Call');
+    platformAlertConfirm(
+      'Voice Call',
+      'Request a voice call with the agent?',
+      async () => {
+        const success = await requestCall('voice');
+        if (success) {
+          platformAlertSimple('Call Request Sent', 'The agent will call you shortly.');
+        }
+      },
+      'Call',
+    );
   };
 
   const handleRatingSubmit = (rating: any, comment?: string) => {
@@ -313,8 +329,8 @@ function SupportChatPage() {
               {queueInfo
                 ? `You're in queue position ${queueInfo.position}. Average wait time is ${Math.round(queueInfo.estimatedWaitTime / 60)} minutes.`
                 : assignedAgent
-                ? `${assignedAgent.name} is here to help you. Feel free to ask any questions.`
-                : 'Connecting you with a support agent...'}
+                  ? `${assignedAgent.name} is here to help you. Feel free to ask any questions.`
+                  : 'Connecting you with a support agent...'}
             </ThemedText>
           </View>
 
@@ -330,11 +346,7 @@ function SupportChatPage() {
 
           {/* FAQ Suggestions */}
           {showFAQ && faqSuggestions.length > 0 && (
-            <FAQSuggestions
-              suggestions={faqSuggestions}
-              onHelpful={markFAQHelpful}
-              onClose={toggleFAQ}
-            />
+            <FAQSuggestions suggestions={faqSuggestions} onHelpful={markFAQHelpful} onClose={toggleFAQ} />
           )}
 
           {/* Messages */}
@@ -346,7 +358,8 @@ function SupportChatPage() {
           ) : (
             messages.map((msg, index) => {
               const messageTime = formatTime(msg.timestamp);
-              const sender = msg.sender === 'user' ? 'You' : msg.sender === 'agent' ? assignedAgent?.name || 'Agent' : 'System';
+              const sender =
+                msg.sender === 'user' ? 'You' : msg.sender === 'agent' ? assignedAgent?.name || 'Agent' : 'System';
               const accessibilityLabel = `${sender} at ${messageTime}: ${msg.content}`;
 
               return (
@@ -363,85 +376,81 @@ function SupportChatPage() {
                   {msg.sender === 'agent' && assignedAgent && (
                     <View style={styles.agentInfo}>
                       <View style={styles.smallAgentAvatar}>
-                        <ThemedText style={styles.smallAgentInitial}>
-                          {assignedAgent.name.charAt(0)}
-                        </ThemedText>
+                        <ThemedText style={styles.smallAgentInitial}>{assignedAgent.name.charAt(0)}</ThemedText>
                       </View>
                       <ThemedText style={styles.agentName}>{assignedAgent.name}</ThemedText>
                     </View>
                   )}
 
-                {msg.sender === 'system' ? (
-                  <View style={styles.systemMessageContent}>
-                    <Ionicons name="information-circle" size={16} color={Colors.gray[600]} />
-                    <ThemedText style={styles.systemMessageText}>{msg.content}</ThemedText>
-                  </View>
-                ) : (
-                  <View
-                    style={[
-                      styles.messageContent,
-                      msg.sender === 'user' ? styles.userMessageContent : styles.agentMessageContent,
-                    ]}
-                  >
-                    {msg.attachments && msg.attachments.length > 0 && (
-                      <View style={styles.attachments}>
-                        {msg.attachments.map((att, attIdx) => (
-                          <CachedImage
-                            key={att.id || `att-${attIdx}`}
-                            source={{ uri: att.url }}
-                            style={styles.attachmentImage}
-                            contentFit="cover"
-                            cachePolicy="memory-disk"
-                          />
-                        ))}
-                      </View>
-                    )}
-
-                    <ThemedText
+                  {msg.sender === 'system' ? (
+                    <View style={styles.systemMessageContent}>
+                      <Ionicons name="information-circle" size={16} color={Colors.gray[600]} />
+                      <ThemedText style={styles.systemMessageText}>{msg.content}</ThemedText>
+                    </View>
+                  ) : (
+                    <View
                       style={[
-                        styles.messageText,
-                        msg.sender === 'user' ? styles.userMessageText : styles.agentMessageText,
+                        styles.messageContent,
+                        msg.sender === 'user' ? styles.userMessageContent : styles.agentMessageContent,
                       ]}
                     >
-                      {msg.content}
-                    </ThemedText>
-
-                    <View style={styles.messageFooter}>
-                      <ThemedText
-                        style={[
-                          styles.messageTime,
-                          msg.sender === 'user' ? styles.userMessageTime : styles.agentMessageTime,
-                        ]}
-                      >
-                        {formatTime(msg.timestamp)}
-                      </ThemedText>
-
-                      {msg.sender === 'user' && (
-                        <View style={styles.messageStatus}>
-                          {msg.read ? (
-                            <Ionicons name="checkmark-done" size={14} color="#53BDEB" />
-                          ) : msg.delivered ? (
-                            <Ionicons name="checkmark-done" size={14} color="rgba(255, 255, 255, 0.55)" />
-                          ) : (
-                            <Ionicons name="checkmark" size={14} color="rgba(255, 255, 255, 0.55)" />
-                          )}
+                      {msg.attachments && msg.attachments.length > 0 && (
+                        <View style={styles.attachments}>
+                          {msg.attachments.map((att, attIdx) => (
+                            <CachedImage
+                              key={att.id || `att-${attIdx}`}
+                              source={{ uri: att.url }}
+                              style={styles.attachmentImage}
+                              contentFit="cover"
+                              cachePolicy="memory-disk"
+                            />
+                          ))}
                         </View>
                       )}
+
+                      <ThemedText
+                        style={[
+                          styles.messageText,
+                          msg.sender === 'user' ? styles.userMessageText : styles.agentMessageText,
+                        ]}
+                      >
+                        {msg.content}
+                      </ThemedText>
+
+                      <View style={styles.messageFooter}>
+                        <ThemedText
+                          style={[
+                            styles.messageTime,
+                            msg.sender === 'user' ? styles.userMessageTime : styles.agentMessageTime,
+                          ]}
+                        >
+                          {formatTime(msg.timestamp)}
+                        </ThemedText>
+
+                        {msg.sender === 'user' && (
+                          <View style={styles.messageStatus}>
+                            {msg.read ? (
+                              <Ionicons name="checkmark-done" size={14} color="#53BDEB" />
+                            ) : msg.delivered ? (
+                              <Ionicons name="checkmark-done" size={14} color="rgba(255, 255, 255, 0.55)" />
+                            ) : (
+                              <Ionicons name="checkmark" size={14} color="rgba(255, 255, 255, 0.55)" />
+                            )}
+                          </View>
+                        )}
+                      </View>
                     </View>
-                  </View>
-                )}
-              </View>
-            );
-          })
+                  )}
+                </View>
+              );
+            })
           )}
 
           {/* Typing Indicator */}
           {isAgentTyping && assignedAgent && (
             <View style={styles.typingIndicator}>
               <View style={styles.smallAgentAvatar}>
-                <ThemedText style={styles.smallAgentInitial}>
-                  {assignedAgent.name.charAt(0)}
-                </ThemedText>
+                <ThemedText style={styles.smallAgentInitial}>{assignedAgent.name.charAt(0)}</ThemedText>
               </View>
               <View style={styles.typingBubble}>
                 <View style={styles.typingDots}>
@@ -465,7 +474,11 @@ function SupportChatPage() {
             {attachments.map((att, attIdx) => (
               <View key={att.id || `preview-${attIdx}`} style={styles.attachmentPreview}>
                 {att.type === 'image' && att.thumbnail ? (
-                  <CachedImage source={{ uri: att.thumbnail }} style={styles.attachmentPreviewImage} cachePolicy="memory-disk" />
+                  <CachedImage
+                    source={{ uri: att.thumbnail }}
+                    style={styles.attachmentPreviewImage}
+                    cachePolicy="memory-disk"
+                  />
                 ) : (
                   <View style={styles.attachmentPreviewFile}>
                     <Ionicons name="document" size={24} color={Colors.gray[600]} />
@@ -516,16 +529,23 @@ function SupportChatPage() {
           />
 
           <Pressable
-            style={[styles.sendButton, !inputText.trim() && attachments.length === 0 && styles.sendButtonDisabled]}
+            style={[
+              styles.sendButton,
+              ((!inputText.trim() && attachments.length === 0) || isSendingMessage) && styles.sendButtonDisabled,
+            ]}
             onPress={handleSend}
-            disabled={!inputText.trim() && attachments.length === 0}
+            disabled={(!inputText.trim() && attachments.length === 0) || isSendingMessage}
             accessibilityLabel="Send message"
             accessibilityRole="button"
             accessibilityHint="Double tap to send your message"
-            accessibilityState={{ disabled: !inputText.trim() && attachments.length === 0 }}
+            accessibilityState={{ disabled: (!inputText.trim() && attachments.length === 0) || isSendingMessage }}
           >
             <LinearGradient
-              colors={(inputText.trim() || attachments.length > 0 ? [Colors.primary[500], Colors.primary[700]] : [Colors.gray[200], Colors.gray[300]]) as any}
+              colors={
+                (inputText.trim() || attachments.length > 0
+                  ? [Colors.primary[500], Colors.primary[700]]
+                  : [Colors.gray[200], Colors.gray[300]]) as any
+              }
               style={styles.sendButtonGradient}
             >
               <Ionicons name="send" size={20} color="white" />

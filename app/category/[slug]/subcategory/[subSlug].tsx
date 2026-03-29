@@ -5,6 +5,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import {
   View,
   ScrollView,
@@ -84,9 +85,7 @@ function SubcategoryPage() {
   const [refreshing, setRefreshing] = useState(false);
 
   // Subcategory name
-  const subcategoryName = subSlug
-    ? subSlug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
-    : 'Subcategory';
+  const subcategoryName = subSlug ? subSlug.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) : 'Subcategory';
 
   /**
    * Fetch stores for this subcategory
@@ -166,7 +165,7 @@ function SubcategoryPage() {
 
       if (response.success && response.data) {
         // Handle potential array or paginated object
-        const data = Array.isArray(response.data) ? response.data : (response.data.products || []);
+        const data = Array.isArray(response.data) ? response.data : response.data.products || [];
         if (data.length > 0) {
           productsData = data;
         }
@@ -193,9 +192,10 @@ function SubcategoryPage() {
           image: product.images?.[0]?.url || product.image,
           price: product.pricing?.salePrice || product.pricing?.basePrice || product.price || 0,
           originalPrice: product.pricing?.basePrice,
-          discount: product.pricing?.salePrice && product.pricing?.basePrice
-            ? Math.round((1 - product.pricing.salePrice / product.pricing.basePrice) * 100)
-            : undefined,
+          discount:
+            product.pricing?.salePrice && product.pricing?.basePrice
+              ? Math.round((1 - product.pricing.salePrice / product.pricing.basePrice) * 100)
+              : undefined,
           rating: product.ratings?.average || product.rating,
           cashback: product.cashback?.percentage,
           storeName: product.store?.name,
@@ -226,6 +226,18 @@ function SubcategoryPage() {
   }, [subSlug, fetchStores, fetchProducts]);
 
   /**
+   * Refresh data when screen comes into focus (prices/availability may have changed)
+   */
+  useFocusEffect(
+    useCallback(() => {
+      if (subSlug && (stores.length > 0 || products.length > 0)) {
+        fetchStores();
+        fetchProducts();
+      }
+    }, [subSlug, stores.length, products.length, fetchStores, fetchProducts]),
+  );
+
+  /**
    * Handle refresh
    */
   const handleRefresh = async () => {
@@ -238,110 +250,109 @@ function SubcategoryPage() {
   /**
    * Navigate to store
    */
-  const handleStorePress = useCallback((store: StoreItem) => {
-    router.push(`/MainStorePage?storeId=${store.id}` as any);
-  }, [router]);
+  const handleStorePress = useCallback(
+    (store: StoreItem) => {
+      router.push(`/MainStorePage?storeId=${store.id}` as any);
+    },
+    [router],
+  );
 
   /**
    * Navigate to product
    */
-  const handleProductPress = useCallback((product: ProductItem) => {
-    router.push(`/product-page?cardId=${product.id}&cardType=product` as any);
-  }, [router]);
+  const handleProductPress = useCallback(
+    (product: ProductItem) => {
+      router.push(`/product-page?cardId=${product.id}&cardType=product` as any);
+    },
+    [router],
+  );
 
   /**
    * Render store card
    */
-  const renderStoreCard = useCallback(({ item }: { item: StoreItem }) => (
-    <Pressable
-      style={[styles.storeCard, isDark && styles.storeCardDark]}
-      onPress={() => handleStorePress(item)}
-     
-    >
-      <CachedImage
-        source={item.banner || item.logo || undefined}
-        style={styles.storeBanner}
-      />
-      <View style={styles.storeInfo}>
-        <View style={styles.storeHeader}>
-          {item.logo && (
-            <CachedImage source={item.logo} style={styles.storeLogo} />
-          )}
-          <View style={styles.storeNameContainer}>
-            <View style={styles.storeNameRow}>
-              <ThemedText style={styles.storeName} numberOfLines={1}>
-                {item.name}
-              </ThemedText>
-              {item.isVerified && (
-                <Ionicons name="checkmark-circle" size={16} color={Colors.gold} style={{ marginLeft: 4 }} />
-              )}
+  const renderStoreCard = useCallback(
+    ({ item }: { item: StoreItem }) => (
+      <Pressable style={[styles.storeCard, isDark && styles.storeCardDark]} onPress={() => handleStorePress(item)}>
+        <CachedImage source={item.banner || item.logo || undefined} style={styles.storeBanner} />
+        <View style={styles.storeInfo}>
+          <View style={styles.storeHeader}>
+            {item.logo && <CachedImage source={item.logo} style={styles.storeLogo} />}
+            <View style={styles.storeNameContainer}>
+              <View style={styles.storeNameRow}>
+                <ThemedText style={styles.storeName} numberOfLines={1}>
+                  {item.name}
+                </ThemedText>
+                {item.isVerified && (
+                  <Ionicons name="checkmark-circle" size={16} color={Colors.gold} style={{ marginLeft: 4 }} />
+                )}
+              </View>
+              <ThemedText style={styles.storeDistance}>{item.distance}</ThemedText>
             </View>
-            <ThemedText style={styles.storeDistance}>{item.distance}</ThemedText>
+          </View>
+          <View style={styles.storeStats}>
+            <View style={styles.statItem}>
+              <Ionicons name="star" size={14} color={Colors.warning} />
+              <ThemedText style={styles.statText}>{item.rating?.toFixed(1) || '4.5'}</ThemedText>
+            </View>
+            <View style={styles.statItem}>
+              <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
+              <ThemedText style={styles.statText}>{item.deliveryTime}</ThemedText>
+            </View>
+            {item.cashback && (
+              <View style={styles.cashbackBadge}>
+                <ThemedText style={styles.cashbackText}>{item.cashback}% Cashback</ThemedText>
+              </View>
+            )}
           </View>
         </View>
-        <View style={styles.storeStats}>
-          <View style={styles.statItem}>
-            <Ionicons name="star" size={14} color={Colors.warning} />
-            <ThemedText style={styles.statText}>{item.rating?.toFixed(1) || '4.5'}</ThemedText>
-          </View>
-          <View style={styles.statItem}>
-            <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />
-            <ThemedText style={styles.statText}>{item.deliveryTime}</ThemedText>
-          </View>
-          {item.cashback && (
-            <View style={styles.cashbackBadge}>
-              <ThemedText style={styles.cashbackText}>{item.cashback}% Cashback</ThemedText>
-            </View>
-          )}
-        </View>
-      </View>
-    </Pressable>
-  ), [isDark, handleStorePress]);
+      </Pressable>
+    ),
+    [isDark, handleStorePress],
+  );
 
   /**
    * Render product card
    */
-  const renderProductCard = useCallback(({ item }: { item: ProductItem }) => (
-    <Pressable
-      style={[styles.productCard, isDark && styles.productCardDark]}
-      onPress={() => handleProductPress(item)}
-     
-    >
-      <CachedImage
-        source={item.image || undefined}
-        style={styles.productImage}
-      />
-      {item.discount && item.discount > 0 && (
-        <View style={styles.discountBadge}>
-          <ThemedText style={styles.discountText}>{item.discount}% OFF</ThemedText>
-        </View>
-      )}
-      <View style={styles.productInfo}>
-        <ThemedText style={styles.productName} numberOfLines={2}>
-          {item.name}
-        </ThemedText>
-        {item.storeName && (
-          <ThemedText style={styles.productStore}>{item.storeName}</ThemedText>
-        )}
-        <View style={styles.priceRow}>
-          <ThemedText style={styles.productPrice}>
-            {currencySymbol}{item.price?.toLocaleString() || '0'}
-          </ThemedText>
-          {item.originalPrice && item.originalPrice > item.price && (
-            <ThemedText style={styles.originalPrice}>
-              {currencySymbol}{item.originalPrice?.toLocaleString()}
-            </ThemedText>
-          )}
-        </View>
-        {item.cashback && (
-          <View style={styles.productCashback}>
-            <Ionicons name="wallet-outline" size={12} color={Colors.gold} />
-            <ThemedText style={styles.productCashbackText}>{item.cashback}% Cashback</ThemedText>
+  const renderProductCard = useCallback(
+    ({ item }: { item: ProductItem }) => (
+      <Pressable
+        style={[styles.productCard, isDark && styles.productCardDark]}
+        onPress={() => handleProductPress(item)}
+      >
+        <CachedImage source={item.image || undefined} style={styles.productImage} />
+        {item.discount && item.discount > 0 && (
+          <View style={styles.discountBadge}>
+            <ThemedText style={styles.discountText}>{item.discount}% OFF</ThemedText>
           </View>
         )}
-      </View>
-    </Pressable>
-  ), [isDark, handleProductPress, currencySymbol]);
+        <View style={styles.productInfo}>
+          <ThemedText style={styles.productName} numberOfLines={2}>
+            {item.name}
+          </ThemedText>
+          {item.storeName && <ThemedText style={styles.productStore}>{item.storeName}</ThemedText>}
+          <View style={styles.priceRow}>
+            <ThemedText style={styles.productPrice}>
+              {currencySymbol}
+              {item.price?.toLocaleString() || '0'}
+            </ThemedText>
+            {item.originalPrice && item.originalPrice > item.price && (
+              <ThemedText style={styles.originalPrice}>
+                {currencySymbol}
+                {item.originalPrice?.toLocaleString()}
+              </ThemedText>
+            )}
+          </View>
+          {item.cashback && (
+            <View style={styles.productCashback}>
+              <Ionicons name="wallet-outline" size={12} color={Colors.gold} />
+              <ThemedText style={styles.productCashbackText}>{item.cashback}% Cashback</ThemedText>
+            </View>
+          )}
+        </View>
+      </Pressable>
+    ),
+    [isDark, handleProductPress, currencySymbol],
+  );
 
   const isLoading = activeTab === 'stores' ? isLoadingStores : isLoadingProducts;
   const currentData = activeTab === 'stores' ? stores : products;
@@ -359,7 +370,7 @@ function SubcategoryPage() {
         >
           <View style={styles.headerContent}>
             <Pressable
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               style={styles.backButton}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
@@ -371,10 +382,7 @@ function SubcategoryPage() {
                 {stores.length} stores, {products.length} products
               </ThemedText>
             </View>
-            <Pressable
-              onPress={() => router.push(`/search?category=${subSlug}` as any)}
-              style={styles.searchButton}
-            >
+            <Pressable onPress={() => router.push(`/search?category=${subSlug}` as any)} style={styles.searchButton}>
               <Ionicons name="search" size={22} color={colors.text.inverse} />
             </Pressable>
           </View>
@@ -391,9 +399,7 @@ function SubcategoryPage() {
               size={18}
               color={activeTab === 'stores' ? colors.lightMustard : colors.neutral[500]}
             />
-            <ThemedText
-              style={[styles.tabText, activeTab === 'stores' && styles.activeTabText]}
-            >
+            <ThemedText style={[styles.tabText, activeTab === 'stores' && styles.activeTabText]}>
               Stores ({stores.length})
             </ThemedText>
           </Pressable>
@@ -406,9 +412,7 @@ function SubcategoryPage() {
               size={18}
               color={activeTab === 'products' ? colors.lightMustard : colors.neutral[500]}
             />
-            <ThemedText
-              style={[styles.tabText, activeTab === 'products' && styles.activeTabText]}
-            >
+            <ThemedText style={[styles.tabText, activeTab === 'products' && styles.activeTabText]}>
               Products ({products.length})
             </ThemedText>
           </Pressable>
@@ -424,12 +428,8 @@ function SubcategoryPage() {
               size={64}
               color={colors.border.default}
             />
-            <ThemedText style={styles.emptyTitle}>
-              No {activeTab} found
-            </ThemedText>
-            <ThemedText style={styles.emptyText}>
-              Try browsing other categories
-            </ThemedText>
+            <ThemedText style={styles.emptyTitle}>No {activeTab} found</ThemedText>
+            <ThemedText style={styles.emptyText}>Try browsing other categories</ThemedText>
           </View>
         ) : activeTab === 'stores' ? (
           <FlashList

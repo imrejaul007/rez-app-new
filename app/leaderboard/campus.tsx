@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { View, StyleSheet, FlatList, Pressable, ActivityIndicator, Share } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { colors, spacing, borderRadius, shadows } from '@/constants/theme';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
@@ -19,15 +19,34 @@ function CampusLeaderboardPage() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchData = useCallback(async () => {
     if (!instituteName) return;
     analyticsService.track(IdentityAnalyticsEvents.LEADERBOARD_OPENED, { institutionName: instituteName });
 
-    identityApi.getCampusLeaderboard(instituteName)
+    identityApi
+      .getCampusLeaderboard(instituteName)
       .then(setData)
       .catch(() => {})
-      .finally(() => { if (isMounted()) setLoading(false); });
-  }, [instituteName]);
+      .finally(() => {
+        if (isMounted()) setLoading(false);
+      });
+  }, [instituteName, isMounted]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  // Refresh data when navigating back to this screen
+  const isFirstFocus = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstFocus.current) {
+        isFirstFocus.current = false;
+        return;
+      }
+      fetchData();
+    }, [fetchData]),
+  );
 
   const handleShare = async () => {
     analyticsService.track(IdentityAnalyticsEvents.LEADERBOARD_SHARED, { institutionName: instituteName });
@@ -40,24 +59,27 @@ function CampusLeaderboardPage() {
 
   const userId = (user as any)?._id || (user as any)?.id;
 
-  const renderItem = useCallback(({ item }: { item: any }) => {
-    const isCurrentUser = userId && item.userId === userId;
-    return (
-      <View style={[styles.row, isCurrentUser && styles.currentUserRow]}>
-        <View style={[styles.rankCircle, item.rank <= 3 && styles.topRankCircle]}>
-          <ThemedText style={[styles.rankText, item.rank <= 3 && styles.topRankText]}>
-            {item.rank}
+  const renderItem = useCallback(
+    ({ item }: { item: any }) => {
+      const isCurrentUser = userId && item.userId === userId;
+      return (
+        <View style={[styles.row, isCurrentUser && styles.currentUserRow]}>
+          <View style={[styles.rankCircle, item.rank <= 3 && styles.topRankCircle]}>
+            <ThemedText style={[styles.rankText, item.rank <= 3 && styles.topRankText]}>{item.rank}</ThemedText>
+          </View>
+          <ThemedText style={[styles.name, isCurrentUser && styles.currentUserName]} numberOfLines={1}>
+            {item.name}
+            {isCurrentUser ? ' (You)' : ''}
+          </ThemedText>
+          <ThemedText style={styles.amount}>
+            {'\u20B9'}
+            {item.totalEarned.toLocaleString()}
           </ThemedText>
         </View>
-        <ThemedText style={[styles.name, isCurrentUser && styles.currentUserName]} numberOfLines={1}>
-          {item.name}{isCurrentUser ? ' (You)' : ''}
-        </ThemedText>
-        <ThemedText style={styles.amount}>
-          {'\u20B9'}{item.totalEarned.toLocaleString()}
-        </ThemedText>
-      </View>
-    );
-  }, [userId]);
+      );
+    },
+    [userId],
+  );
 
   if (loading) {
     return (
@@ -70,7 +92,10 @@ function CampusLeaderboardPage() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <ThemedText style={styles.headerTitle}>Campus Rankings</ThemedText>
@@ -92,11 +117,10 @@ function CampusLeaderboardPage() {
           <View style={styles.statsCard}>
             <ThemedText style={styles.institutionName}>{instituteName}</ThemedText>
             <ThemedText style={styles.totalSaved}>
-              {'\u20B9'}{data?.totalSaved?.toLocaleString() || 0}
+              {'\u20B9'}
+              {data?.totalSaved?.toLocaleString() || 0}
             </ThemedText>
-            <ThemedText style={styles.statsLabel}>
-              saved by {data?.studentCount || 0} students this month
-            </ThemedText>
+            <ThemedText style={styles.statsLabel}>saved by {data?.studentCount || 0} students this month</ThemedText>
           </View>
         }
         ListEmptyComponent={
@@ -113,29 +137,43 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.primary },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   header: {
-    flexDirection: 'row', alignItems: 'center', paddingTop: 56,
-    paddingHorizontal: spacing.base, paddingBottom: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 56,
+    paddingHorizontal: spacing.base,
+    paddingBottom: spacing.md,
   },
   backButton: { padding: spacing.sm },
   headerTitle: { flex: 1, fontSize: 18, fontWeight: '700', color: colors.text.primary, marginLeft: spacing.sm },
   shareButton: { padding: spacing.sm },
   listContent: { paddingHorizontal: spacing.base, paddingBottom: 120 },
   statsCard: {
-    backgroundColor: colors.secondary[700], borderRadius: borderRadius.xl,
-    padding: spacing.xl, alignItems: 'center', marginBottom: spacing.xl,
+    backgroundColor: colors.secondary[700],
+    borderRadius: borderRadius.xl,
+    padding: spacing.xl,
+    alignItems: 'center',
+    marginBottom: spacing.xl,
   },
   institutionName: { fontSize: 16, fontWeight: '700', color: colors.primary[500], marginBottom: 4 },
   totalSaved: { fontSize: 36, fontWeight: '800', color: colors.primary[500], marginBottom: 4 },
   statsLabel: { fontSize: 13, color: 'rgba(255,255,255,0.7)' },
   row: {
-    flexDirection: 'row', alignItems: 'center', paddingVertical: 14,
-    paddingHorizontal: spacing.md, borderRadius: borderRadius.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    paddingHorizontal: spacing.md,
+    borderRadius: borderRadius.md,
     marginBottom: 4,
   },
   currentUserRow: { backgroundColor: colors.primary[50] },
   rankCircle: {
-    width: 32, height: 32, borderRadius: 16, backgroundColor: colors.gray[100],
-    justifyContent: 'center', alignItems: 'center', marginRight: spacing.md,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.gray[100],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: spacing.md,
   },
   topRankCircle: { backgroundColor: colors.primary[500] },
   rankText: { fontSize: 13, fontWeight: '700', color: colors.text.secondary },

@@ -1,5 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from 'expo-router';
 import {
   View,
   Text,
@@ -26,19 +27,39 @@ const { width } = Dimensions.get('window');
 
 // Map Ionicon names to emojis for category display
 const iconToEmojiMap: { [key: string]: string } = {
-  'restaurant-outline': '🍔', 'restaurant': '🍔', 'fast-food-outline': '🍔', 'fast-food': '🍔',
-  'shirt-outline': '👔', 'shirt': '👔', 'bag-outline': '👜', 'bag': '👜',
-  'phone-portrait-outline': '📱', 'phone-portrait': '📱', 'laptop-outline': '💻',
-  'color-palette-outline': '💄', 'sparkles-outline': '💄',
-  'cart-outline': '🛒', 'cart': '🛒', 'basket-outline': '🧺',
-  'barbell-outline': '🏋️', 'barbell': '🏋️', 'fitness-outline': '🏋️',
-  'home-outline': '🏠', 'home': '🏠',
-  'construct-outline': '🔧', 'construct': '🔧',
-  'snow-outline': '❄️', 'snow': '❄️',
-  'receipt-outline': '🧾', 'receipt': '🧾',
-  'book-outline': '📚', 'book': '📚',
-  'medical-outline': '🏥', 'medkit-outline': '💊',
-  'airplane-outline': '✈️', 'car-outline': '🚗',
+  'restaurant-outline': '🍔',
+  restaurant: '🍔',
+  'fast-food-outline': '🍔',
+  'fast-food': '🍔',
+  'shirt-outline': '👔',
+  shirt: '👔',
+  'bag-outline': '👜',
+  bag: '👜',
+  'phone-portrait-outline': '📱',
+  'phone-portrait': '📱',
+  'laptop-outline': '💻',
+  'color-palette-outline': '💄',
+  'sparkles-outline': '💄',
+  'cart-outline': '🛒',
+  cart: '🛒',
+  'basket-outline': '🧺',
+  'barbell-outline': '🏋️',
+  barbell: '🏋️',
+  'fitness-outline': '🏋️',
+  'home-outline': '🏠',
+  home: '🏠',
+  'construct-outline': '🔧',
+  construct: '🔧',
+  'snow-outline': '❄️',
+  snow: '❄️',
+  'receipt-outline': '🧾',
+  receipt: '🧾',
+  'book-outline': '📚',
+  book: '📚',
+  'medical-outline': '🏥',
+  'medkit-outline': '💊',
+  'airplane-outline': '✈️',
+  'car-outline': '🚗',
   'paw-outline': '🐾',
 };
 
@@ -84,84 +105,97 @@ const CategoryDetailPage = () => {
   const [offersCount, setOffersCount] = useState<number | null>(null);
 
   // Fetch category data and stores
-  const fetchCategoryData = useCallback(async (isRefresh = false) => {
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
-      }
-      setError(null);
+  const fetchCategoryData = useCallback(
+    async (isRefresh = false) => {
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setError(null);
 
-      const categorySlug = id as string;
+        const categorySlug = id as string;
 
-      // Fetch category details and stores in parallel
-      const [categoryResponse, storesResponse] = await Promise.all([
-        exploreApi.getCategoryBySlug(categorySlug),
-        exploreApi.getStoresByCategory(categorySlug, { limit: 20 }),
-      ]);
+        // Fetch category details and stores in parallel
+        const [categoryResponse, storesResponse] = await Promise.all([
+          exploreApi.getCategoryBySlug(categorySlug),
+          exploreApi.getStoresByCategory(categorySlug, { limit: 20 }),
+        ]);
 
-      if (!isMounted()) return;
-      if (categoryResponse.success && categoryResponse.data) {
         if (!isMounted()) return;
-        setCategoryInfo(categoryResponse.data);
-      }
-
-      if (storesResponse.success && storesResponse.data) {
-        let fetchedStores = storesResponse.data.stores || [];
-
-        // Calculate max cashback from stores
-        let maxCb = 0;
-        let offersLive = 0;
-        fetchedStores.forEach((store: any) => {
-          const cbValue = parseInt(store.cashback?.replace('%', '') || '0');
-          if (cbValue > maxCb) maxCb = cbValue;
-          if (store.offer) offersLive++;
-        });
-        if (!isMounted()) return;
-        if (maxCb > 0) setMaxCashback(`${maxCb}%`);
-        if (!isMounted()) return;
-        if (offersLive > 0) setOffersCount(offersLive);
-
-        // Apply local filtering based on selected filter
-        if (selectedFilter === 'topRated') {
-          fetchedStores = [...fetchedStores].sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        } else if (selectedFilter === 'highCashback') {
-          fetchedStores = [...fetchedStores].sort((a, b) => {
-            const aRate = parseInt(a.cashback?.replace('%', '') || '0');
-            const bRate = parseInt(b.cashback?.replace('%', '') || '0');
-            return bRate - aRate;
-          });
+        if (categoryResponse.success && categoryResponse.data) {
+          if (!isMounted()) return;
+          setCategoryInfo(categoryResponse.data);
         }
 
+        if (storesResponse.success && storesResponse.data) {
+          let fetchedStores = storesResponse.data.stores || [];
+
+          // Calculate max cashback from stores
+          let maxCb = 0;
+          let offersLive = 0;
+          fetchedStores.forEach((store: any) => {
+            const cbValue = parseInt(store.cashback?.replace('%', '') || '0');
+            if (cbValue > maxCb) maxCb = cbValue;
+            if (store.offer) offersLive++;
+          });
+          if (!isMounted()) return;
+          if (maxCb > 0) setMaxCashback(`${maxCb}%`);
+          if (!isMounted()) return;
+          if (offersLive > 0) setOffersCount(offersLive);
+
+          // Apply local filtering based on selected filter
+          if (selectedFilter === 'topRated') {
+            fetchedStores = [...fetchedStores].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+          } else if (selectedFilter === 'highCashback') {
+            fetchedStores = [...fetchedStores].sort((a, b) => {
+              const aRate = parseInt(a.cashback?.replace('%', '') || '0');
+              const bRate = parseInt(b.cashback?.replace('%', '') || '0');
+              return bRate - aRate;
+            });
+          }
+
+          if (!isMounted()) return;
+          setStores(fetchedStores);
+        } else {
+          if (!isMounted()) return;
+          setError(storesResponse.error || 'Failed to fetch stores');
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setStores(fetchedStores);
-      } else {
+        setError(err.message || 'Something went wrong');
+      } finally {
         if (!isMounted()) return;
-        setError(storesResponse.error || 'Failed to fetch stores');
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Something went wrong');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [id, selectedFilter]);
+    },
+    [id, selectedFilter],
+  );
 
   // Initial fetch
   useEffect(() => {
     fetchCategoryData();
   }, [fetchCategoryData]);
 
+  // Refresh data when screen comes into focus (store availability/pricing may have changed)
+  useFocusEffect(
+    useCallback(() => {
+      if (stores.length > 0 || categoryInfo) {
+        fetchCategoryData();
+      }
+    }, [stores.length, categoryInfo, fetchCategoryData]),
+  );
+
   const onRefresh = useCallback(() => {
     fetchCategoryData(true);
   }, [fetchCategoryData]);
 
   // Get display category info from API
-  const categoryName = categoryInfo?.name || (id as string)?.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) || 'Category';
+  const categoryName =
+    categoryInfo?.name || (id as string)?.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()) || 'Category';
   const categoryEmoji = getEmojiForCategory(categoryInfo?.icon, categoryInfo?.name);
 
   const navigateTo = (path: string) => {
@@ -174,11 +208,11 @@ const CategoryDetailPage = () => {
       <SafeAreaView style={styles.container} edges={['top']}>
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
 
-      {/* Header */}
+        {/* Header */}
         <View style={styles.header}>
           <Pressable
             style={styles.backButton}
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           >
             <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
           </Pressable>
@@ -186,19 +220,13 @@ const CategoryDetailPage = () => {
             <Text style={styles.categoryEmoji}>{categoryEmoji}</Text>
             <Text style={styles.headerTitle}>{categoryName}</Text>
           </View>
-          <Pressable
-            style={styles.searchButton}
-            onPress={() => navigateTo('/explore/search')}
-          >
+          <Pressable style={styles.searchButton} onPress={() => navigateTo('/explore/search')}>
             <Ionicons name="search" size={22} color={colors.nileBlue} />
           </Pressable>
         </View>
 
         {/* Gradient Hero Banner */}
-        <LinearGradient
-          colors={[colors.nileBlue, '#2d5a7b']}
-          style={styles.heroBanner}
-        >
+        <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.heroBanner}>
           <Text style={styles.heroEmoji}>{categoryEmoji}</Text>
           <Text style={styles.heroTitle}>{categoryName}</Text>
           <View style={styles.heroStats}>
@@ -227,166 +255,152 @@ const CategoryDetailPage = () => {
           </View>
         </LinearGradient>
 
-      {/* Filter Chips */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        style={styles.filterScroll}
-        contentContainerStyle={styles.filterContainer}
-      >
-        {filterChips.map((filter) => (
-          <Pressable
-            key={filter.id}
-            style={[
-              styles.filterChip,
-              selectedFilter === filter.id && styles.filterChipActive,
-            ]}
-            onPress={() => setSelectedFilter(filter.id)}
-          >
-            <Text
-              style={[
-                styles.filterLabel,
-                selectedFilter === filter.id && styles.filterLabelActive,
-              ]}
+        {/* Filter Chips */}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.filterScroll}
+          contentContainerStyle={styles.filterContainer}
+        >
+          {filterChips.map((filter) => (
+            <Pressable
+              key={filter.id}
+              style={[styles.filterChip, selectedFilter === filter.id && styles.filterChipActive]}
+              onPress={() => setSelectedFilter(filter.id)}
             >
-              {filter.label}
-            </Text>
-          </Pressable>
-        ))}
-      </ScrollView>
-
-      {/* Results Count */}
-      {!loading && !error && stores.length > 0 && (
-        <Text style={styles.resultsCount}>
-          {stores.length} store{stores.length !== 1 ? 's' : ''} found
-        </Text>
-      )}
-
-      {/* Stores List */}
-      <ScrollView
-        style={styles.storesList}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.storesContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />
-        }
-      >
-        {/* Loading State */}
-        {loading && !refreshing && (
-          <CardGridSkeleton />
-        )}
-
-        {/* Error State */}
-        {error && !loading && (
-          <View style={styles.errorContainer}>
-            <Ionicons name="alert-circle" size={48} color={Colors.error} />
-            <Text style={styles.errorText}>{error}</Text>
-            <Pressable style={styles.retryButton} onPress={() => fetchCategoryData()}>
-              <Text style={styles.retryButtonText}>Try Again</Text>
+              <Text style={[styles.filterLabel, selectedFilter === filter.id && styles.filterLabelActive]}>
+                {filter.label}
+              </Text>
             </Pressable>
-          </View>
+          ))}
+        </ScrollView>
+
+        {/* Results Count */}
+        {!loading && !error && stores.length > 0 && (
+          <Text style={styles.resultsCount}>
+            {stores.length} store{stores.length !== 1 ? 's' : ''} found
+          </Text>
         )}
 
-        {/* Empty State */}
-        {!loading && !error && stores.length === 0 && (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyIcon}>{categoryEmoji}</Text>
-            <Text style={styles.emptyText}>No {categoryName.toLowerCase()} stores found</Text>
-            <Text style={styles.emptySubtext}>
-              No stores are available in this category yet. Check back soon!
-            </Text>
-            <Pressable style={styles.emptyButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
-              <Text style={styles.emptyButtonText}>Explore Other Categories</Text>
-            </Pressable>
-          </View>
-        )}
+        {/* Stores List */}
+        <ScrollView
+          style={styles.storesList}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.storesContainer}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[Colors.gold]} />}
+        >
+          {/* Loading State */}
+          {loading && !refreshing && <CardGridSkeleton />}
 
-        {/* Stores */}
-        {!loading && !error && stores.map((store) => (
-          <Pressable
-            key={store.id}
-            style={styles.storeCard}
-            onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
-          >
-            {store.image ? (
-              <CachedImage source={store.image} style={styles.storeImage} />
-            ) : (store as any).logo ? (
-              <CachedImage source={(store as any).logo} style={styles.storeImage} />
-            ) : (
-              <View style={[styles.storeImage, styles.storeImagePlaceholder]}>
-                <Text style={styles.storeInitial}>{store.name?.charAt(0) || 'S'}</Text>
-              </View>
-            )}
+          {/* Error State */}
+          {error && !loading && (
+            <View style={styles.errorContainer}>
+              <Ionicons name="alert-circle" size={48} color={Colors.error} />
+              <Text style={styles.errorText}>{error}</Text>
+              <Pressable style={styles.retryButton} onPress={() => fetchCategoryData()}>
+                <Text style={styles.retryButtonText}>Try Again</Text>
+              </Pressable>
+            </View>
+          )}
 
-            <View style={styles.storeContent}>
-              <View style={styles.storeHeader}>
-                <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
-                {store.rating != null && store.rating > 0 && (
-                  <View style={styles.ratingBadge}>
-                    <Ionicons name="star" size={12} color={Colors.warning} />
-                    <Text style={styles.ratingText}>{store.rating}</Text>
+          {/* Empty State */}
+          {!loading && !error && stores.length === 0 && (
+            <View style={styles.emptyContainer}>
+              <Text style={styles.emptyIcon}>{categoryEmoji}</Text>
+              <Text style={styles.emptyText}>No {categoryName.toLowerCase()} stores found</Text>
+              <Text style={styles.emptySubtext}>No stores are available in this category yet. Check back soon!</Text>
+              <Pressable
+                style={styles.emptyButton}
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              >
+                <Text style={styles.emptyButtonText}>Explore Other Categories</Text>
+              </Pressable>
+            </View>
+          )}
+
+          {/* Stores */}
+          {!loading &&
+            !error &&
+            stores.map((store) => (
+              <Pressable
+                key={store.id}
+                style={styles.storeCard}
+                onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
+              >
+                {store.image ? (
+                  <CachedImage source={store.image} style={styles.storeImage} />
+                ) : (store as any).logo ? (
+                  <CachedImage source={(store as any).logo} style={styles.storeImage} />
+                ) : (
+                  <View style={[styles.storeImage, styles.storeImagePlaceholder]}>
+                    <Text style={styles.storeInitial}>{store.name?.charAt(0) || 'S'}</Text>
                   </View>
                 )}
-              </View>
 
-              {(store.offer || store.cashback) && (
-                <View style={styles.offerRow}>
-                  <View style={styles.offerBadge}>
-                    <Ionicons name="pricetag" size={11} color={colors.brand.amberDark} />
-                    <Text style={styles.offerText}>{store.offer || `${store.cashback} Cashback`}</Text>
+                <View style={styles.storeContent}>
+                  <View style={styles.storeHeader}>
+                    <Text style={styles.storeName} numberOfLines={1}>
+                      {store.name}
+                    </Text>
+                    {store.rating != null && store.rating > 0 && (
+                      <View style={styles.ratingBadge}>
+                        <Ionicons name="star" size={12} color={Colors.warning} />
+                        <Text style={styles.ratingText}>{store.rating}</Text>
+                      </View>
+                    )}
+                  </View>
+
+                  {(store.offer || store.cashback) && (
+                    <View style={styles.offerRow}>
+                      <View style={styles.offerBadge}>
+                        <Ionicons name="pricetag" size={11} color={colors.brand.amberDark} />
+                        <Text style={styles.offerText}>{store.offer || `${store.cashback} Cashback`}</Text>
+                      </View>
+                    </View>
+                  )}
+
+                  <View style={styles.storeFooter}>
+                    {store.distance && (
+                      <View style={styles.infoItem}>
+                        <Ionicons name="location" size={14} color={colors.text.tertiary} />
+                        <Text style={styles.infoText}>{store.distance}</Text>
+                      </View>
+                    )}
+                    {store.isOpen !== null && store.isOpen !== undefined && (
+                      <View style={styles.infoItem}>
+                        <View
+                          style={[styles.statusDot, { backgroundColor: store.isOpen ? Colors.success : Colors.error }]}
+                        />
+                        <Text style={[styles.infoText, { color: store.isOpen ? Colors.success : Colors.error }]}>
+                          {store.isOpen ? 'Open' : 'Closed'}
+                        </Text>
+                      </View>
+                    )}
+                    {store.reviews != null && store.reviews > 0 && (
+                      <View style={styles.infoItem}>
+                        <Ionicons name="chatbubble" size={13} color={colors.text.tertiary} />
+                        <Text style={styles.infoText}>{store.reviews}</Text>
+                      </View>
+                    )}
                   </View>
                 </View>
-              )}
 
-              <View style={styles.storeFooter}>
-                {store.distance && (
-                  <View style={styles.infoItem}>
-                    <Ionicons name="location" size={14} color={colors.text.tertiary} />
-                    <Text style={styles.infoText}>{store.distance}</Text>
-                  </View>
-                )}
-                {store.isOpen !== null && store.isOpen !== undefined && (
-                  <View style={styles.infoItem}>
-                    <View style={[styles.statusDot, { backgroundColor: store.isOpen ? Colors.success : Colors.error }]} />
-                    <Text style={[styles.infoText, { color: store.isOpen ? Colors.success : Colors.error }]}>
-                      {store.isOpen ? 'Open' : 'Closed'}
-                    </Text>
-                  </View>
-                )}
-                {store.reviews != null && store.reviews > 0 && (
-                  <View style={styles.infoItem}>
-                    <Ionicons name="chatbubble" size={13} color={colors.text.tertiary} />
-                    <Text style={styles.infoText}>{store.reviews}</Text>
-                  </View>
-                )}
-              </View>
-            </View>
+                <Pressable style={styles.visitButton} onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}>
+                  <Text style={styles.visitText}>Visit</Text>
+                </Pressable>
+              </Pressable>
+            ))}
 
-            <Pressable
-              style={styles.visitButton}
-              onPress={() => navigateTo(`/MainStorePage?storeId=${store.id}`)}
-            >
-              <Text style={styles.visitText}>Visit</Text>
-            </Pressable>
-          </Pressable>
-        ))}
+          <View style={{ height: 100 }} />
+        </ScrollView>
 
-        <View style={{ height: 100 }} />
-      </ScrollView>
-
-      {/* Floating Map Button */}
-      <Pressable
-        style={styles.mapButton}
-        onPress={() => navigateTo('/explore/map')}
-      >
-        <LinearGradient
-          colors={[Colors.gold, colors.nileBlue]}
-          style={styles.mapButtonGradient}
-        >
-          <Ionicons name="map" size={20} color={colors.background.primary} />
-          <Text style={styles.mapButtonText}>Map View</Text>
-        </LinearGradient>
-      </Pressable>
+        {/* Floating Map Button */}
+        <Pressable style={styles.mapButton} onPress={() => navigateTo('/explore/map')}>
+          <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.mapButtonGradient}>
+            <Ionicons name="map" size={20} color={colors.background.primary} />
+            <Text style={styles.mapButtonText}>Map View</Text>
+          </LinearGradient>
+        </Pressable>
       </SafeAreaView>
     </>
   );

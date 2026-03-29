@@ -37,6 +37,15 @@ function StudentVerifyPage() {
       return;
     }
 
+    // Validate email format if provided
+    if (collegeEmail.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(collegeEmail.trim())) {
+        setError('Please enter a valid email address');
+        return;
+      }
+    }
+
     setLoading(true);
     setError('');
     analyticsService.track(IdentityAnalyticsEvents.VERIFICATION_STARTED, {
@@ -81,98 +90,85 @@ function StudentVerifyPage() {
     }
   }, [collegeName, collegeEmail, setIdentity, router]);
 
-
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerIcon}>
           <Ionicons name="school" size={40} color={colors.brand.purple} />
         </View>
         <ThemedText style={styles.headerTitle}>Student Verification</ThemedText>
-        <ThemedText style={styles.headerSubtitle}>
-          Your details are private and never shared
-        </ThemedText>
+        <ThemedText style={styles.headerSubtitle}>Your details are private and never shared</ThemedText>
       </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-      <ScrollView
-        style={styles.body}
-        contentContainerStyle={styles.bodyContent}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* College Name */}
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>College Name</ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="e.g. Christ University"
-            placeholderTextColor={colors.text.tertiary}
-            value={collegeName}
-            onChangeText={setCollegeName}
-            autoCapitalize="words"
-          />
-        </View>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} keyboardShouldPersistTaps="handled">
+          {/* College Name */}
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>College Name</ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g. Christ University"
+              placeholderTextColor={colors.text.tertiary}
+              value={collegeName}
+              onChangeText={setCollegeName}
+              autoCapitalize="words"
+            />
+          </View>
 
-        {/* College Email */}
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>
-            College Email{' '}
-            <ThemedText style={styles.optional}>(optional)</ThemedText>
-          </ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="you@college.edu"
-            placeholderTextColor={colors.text.tertiary}
-            value={collegeEmail}
-            onChangeText={setCollegeEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-          <ThemedText style={styles.hint}>Speeds up verification</ThemedText>
-        </View>
+          {/* College Email */}
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>
+              College Email <ThemedText style={styles.optional}>(optional)</ThemedText>
+            </ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="you@college.edu"
+              placeholderTextColor={colors.text.tertiary}
+              value={collegeEmail}
+              onChangeText={setCollegeEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            <ThemedText style={styles.hint}>Speeds up verification</ThemedText>
+          </View>
 
-        {/* Hint Box */}
-        <View style={styles.hintBox}>
-          <Ionicons name="flash" size={16} color={colors.warningScale[600]} />
-          <ThemedText style={styles.hintBoxText}>
-            .edu email = instant verification.{'\n'}
-            Others: provisional access now + full unlock in 2-4 hours.
-          </ThemedText>
-        </View>
+          {/* Hint Box */}
+          <View style={styles.hintBox}>
+            <Ionicons name="flash" size={16} color={colors.warningScale[600]} />
+            <ThemedText style={styles.hintBoxText}>
+              .edu email = instant verification.{'\n'}
+              Others: provisional access now + full unlock in 2-4 hours.
+            </ThemedText>
+          </View>
 
-        {error ? (
-          <ThemedText style={styles.errorText}>{error}</ThemedText>
-        ) : null}
+          {error ? <ThemedText style={styles.errorText}>{error}</ThemedText> : null}
 
-        {/* Verify Button */}
-        <Pressable
-          onPress={handleVerify}
-          disabled={loading}
-          style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <ThemedText style={styles.verifyButtonText}>
-                Verify & Unlock Deals
-              </ThemedText>
-              <Ionicons name="arrow-forward" size={18} color="#fff" />
-            </>
-          )}
-        </Pressable>
-
-      </ScrollView>
+          {/* Verify Button */}
+          <Pressable
+            onPress={handleVerify}
+            disabled={loading}
+            style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <ThemedText style={styles.verifyButtonText}>Verify & Unlock Deals</ThemedText>
+                <Ionicons name="arrow-forward" size={18} color="#fff" />
+              </>
+            )}
+          </Pressable>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );

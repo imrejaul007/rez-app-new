@@ -7,15 +7,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  ActivityIndicator,
-  Dimensions,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Dimensions } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -109,12 +101,21 @@ function PriveOfferDetailScreen() {
     return TIER_COLORS[offer.tierRequired] || TIER_COLORS.entry;
   }, [offer?.tierRequired]);
 
+  /** Check if offer has expired */
+  const isOfferExpired = useMemo(() => {
+    if (!offer?.expiresAt) return false;
+    return new Date(offer.expiresAt) < new Date();
+  }, [offer?.expiresAt]);
+
   // --- Loading state ---
   if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Offer Details</Text>
@@ -130,7 +131,10 @@ function PriveOfferDetailScreen() {
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Offer Details</Text>
@@ -152,7 +156,10 @@ function PriveOfferDetailScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
         </Pressable>
         <Text style={styles.headerTitle}>Offer Details</Text>
@@ -166,11 +173,7 @@ function PriveOfferDetailScreen() {
       >
         {/* Cover Image */}
         {offer.coverImage ? (
-          <CachedImage
-            source={offer.coverImage}
-            style={styles.coverImage}
-            contentFit="cover"
-          />
+          <CachedImage source={offer.coverImage} style={styles.coverImage} contentFit="cover" />
         ) : null}
 
         {/* Brand Badge + Exclusive Tag */}
@@ -226,9 +229,7 @@ function PriveOfferDetailScreen() {
           <Ionicons name="time-outline" size={18} color={PRIVE_COLORS.status.warning} />
           <View style={styles.expiryInfo}>
             <Text style={styles.expiryCountdown}>{offer.expiresIn}</Text>
-            {formattedExpiry && (
-              <Text style={styles.expiryDate}>Expires on {formattedExpiry}</Text>
-            )}
+            {formattedExpiry && <Text style={styles.expiryDate}>Expires on {formattedExpiry}</Text>}
           </View>
         </View>
 
@@ -249,9 +250,7 @@ function PriveOfferDetailScreen() {
                 ]}
               />
             </View>
-            {offer.redemptions >= offer.totalLimit && (
-              <Text style={styles.soldOutText}>Fully Redeemed</Text>
-            )}
+            {offer.redemptions >= offer.totalLimit && <Text style={styles.soldOutText}>Fully Redeemed</Text>}
           </View>
         )}
 
@@ -267,18 +266,9 @@ function PriveOfferDetailScreen() {
         {offer.images && offer.images.length > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Gallery</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.imageGallery}
-            >
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.imageGallery}>
               {offer.images.map((img, index) => (
-                <CachedImage
-                  key={index}
-                  source={img}
-                  style={styles.galleryImage}
-                  contentFit="cover"
-                />
+                <CachedImage key={index} source={img} style={styles.galleryImage} contentFit="cover" />
               ))}
             </ScrollView>
           </View>
@@ -312,12 +302,18 @@ function PriveOfferDetailScreen() {
       {/* Sticky CTA */}
       <View style={styles.ctaContainer}>
         <Pressable
-          style={styles.ctaButton}
-         
-          onPress={() => router.push('/prive/redeem' as any)}
+          style={[styles.ctaButton, isOfferExpired && styles.ctaButtonDisabled]}
+          onPress={() => !isOfferExpired && router.push('/prive/redeem' as any)}
+          disabled={isOfferExpired}
         >
-          <Ionicons name="flash" size={18} color={PRIVE_COLORS.text.inverse} />
-          <Text style={styles.ctaText}>Redeem Now</Text>
+          <Ionicons
+            name="flash"
+            size={18}
+            color={isOfferExpired ? PRIVE_COLORS.text.tertiary : PRIVE_COLORS.text.inverse}
+          />
+          <Text style={[styles.ctaText, isOfferExpired && styles.ctaTextDisabled]}>
+            {isOfferExpired ? 'Offer Expired' : 'Redeem Now'}
+          </Text>
         </Pressable>
       </View>
     </SafeAreaView>
@@ -682,6 +678,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     color: PRIVE_COLORS.text.inverse,
+  },
+  ctaButtonDisabled: {
+    opacity: 0.6,
+    backgroundColor: PRIVE_COLORS.background.secondary,
+  },
+  ctaTextDisabled: {
+    color: PRIVE_COLORS.text.tertiary,
   },
 });
 

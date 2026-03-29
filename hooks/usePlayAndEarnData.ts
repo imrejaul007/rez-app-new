@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import { InteractionManager } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -260,12 +261,14 @@ export function usePlayAndEarnData() {
 
   // Exclusive zones (fetched from API)
   const [exclusiveZones, setExclusiveZones] = useState<any[]>([]);
-  useEffect(() => {
-    if (authLoading || !isAuthenticated) return;
-    realOffersApi.getExclusiveZones().then(res => {
-      if (res.success && res.data) setExclusiveZones(res.data);
-    }).catch(() => {});
-  }, [authLoading, isAuthenticated]);
+  useFocusEffect(
+    useCallback(() => {
+      if (authLoading || !isAuthenticated) return;
+      realOffersApi.getExclusiveZones().then(res => {
+        if (res.success && res.data) setExclusiveZones(res.data);
+      }).catch(() => {});
+    }, [authLoading, isAuthenticated])
+  );
 
   // Liked picks (local state, not from API)
   const [likedPicks, setLikedPicks] = useState<Set<string>>(new Set());

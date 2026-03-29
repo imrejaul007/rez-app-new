@@ -1,8 +1,15 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useCallback } from 'react';
 import {
-  View, StyleSheet, StatusBar, ScrollView, TextInput,
-  Pressable, ActivityIndicator, Platform, KeyboardAvoidingView,
+  View,
+  StyleSheet,
+  StatusBar,
+  ScrollView,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -42,8 +49,23 @@ function DefenceVerifyPage() {
   const [error, setError] = useState('');
 
   const handleVerify = useCallback(async () => {
-    if (!documentType) { setError('Please select a document type'); return; }
-    if (!serviceType) { setError('Please select your service branch'); return; }
+    if (!documentType) {
+      setError('Please select a document type');
+      return;
+    }
+    if (!serviceType) {
+      setError('Please select your service branch');
+      return;
+    }
+
+    // Validate service number format if provided
+    if (serviceNumber.trim()) {
+      const serviceNumberRegex = /^[A-Z]{2}-\d{4,6}$|^IC-\d{5}$/;
+      if (!serviceNumberRegex.test(serviceNumber.trim())) {
+        setError('Service number format invalid (e.g., IC-12345 or AB-123456)');
+        return;
+      }
+    }
 
     setLoading(true);
     setError('');
@@ -57,7 +79,9 @@ function DefenceVerifyPage() {
       });
 
       analyticsService.track(IdentityAnalyticsEvents.VERIFICATION_COMPLETED, {
-        type: 'defence', autoVerified: result.autoVerified, provisional: result.provisionalUnlock,
+        type: 'defence',
+        autoVerified: result.autoVerified,
+        provisional: result.provisionalUnlock,
       });
 
       if (!isMounted()) return;
@@ -83,7 +107,10 @@ function DefenceVerifyPage() {
       <StatusBar barStyle="dark-content" />
 
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerIcon}>
@@ -93,84 +120,87 @@ function DefenceVerifyPage() {
         <ThemedText style={styles.headerSubtitle}>Your details are private and never shared</ThemedText>
       </View>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-      <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} keyboardShouldPersistTaps="handled">
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>Document Type</ThemedText>
-          <View style={styles.chipRow}>
-            {DOC_TYPES.map((d) => (
-              <Pressable
-                key={d.value}
-                style={[styles.chip, documentType === d.value && { backgroundColor: ACCENT }]}
-                onPress={() => { setDocumentType(d.value); setError(''); }}
-              >
-                <ThemedText style={[styles.chipText, documentType === d.value && styles.chipTextActive]}>
-                  {d.label}
-                </ThemedText>
-              </Pressable>
-            ))}
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} keyboardShouldPersistTaps="handled">
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>Document Type</ThemedText>
+            <View style={styles.chipRow}>
+              {DOC_TYPES.map((d) => (
+                <Pressable
+                  key={d.value}
+                  style={[styles.chip, documentType === d.value && { backgroundColor: ACCENT }]}
+                  onPress={() => {
+                    setDocumentType(d.value);
+                    setError('');
+                  }}
+                >
+                  <ThemedText style={[styles.chipText, documentType === d.value && styles.chipTextActive]}>
+                    {d.label}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </View>
           </View>
-        </View>
 
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>Service Branch</ThemedText>
-          <View style={styles.chipRow}>
-            {SERVICE_BRANCHES.map((b) => (
-              <Pressable
-                key={b.value}
-                style={[styles.chip, serviceType === b.value && { backgroundColor: ACCENT }]}
-                onPress={() => { setServiceType(b.value); setError(''); }}
-              >
-                <ThemedText style={[styles.chipText, serviceType === b.value && styles.chipTextActive]}>
-                  {b.label}
-                </ThemedText>
-              </Pressable>
-            ))}
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>Service Branch</ThemedText>
+            <View style={styles.chipRow}>
+              {SERVICE_BRANCHES.map((b) => (
+                <Pressable
+                  key={b.value}
+                  style={[styles.chip, serviceType === b.value && { backgroundColor: ACCENT }]}
+                  onPress={() => {
+                    setServiceType(b.value);
+                    setError('');
+                  }}
+                >
+                  <ThemedText style={[styles.chipText, serviceType === b.value && styles.chipTextActive]}>
+                    {b.label}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </View>
           </View>
-        </View>
 
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>
-            Service Number <ThemedText style={styles.optional}>(optional)</ThemedText>
-          </ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="e.g. IC-12345"
-            placeholderTextColor={colors.text.tertiary}
-            value={serviceNumber}
-            onChangeText={setServiceNumber}
-            autoCapitalize="characters"
-          />
-        </View>
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>
+              Service Number <ThemedText style={styles.optional}>(optional)</ThemedText>
+            </ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g. IC-12345"
+              placeholderTextColor={colors.text.tertiary}
+              value={serviceNumber}
+              onChangeText={setServiceNumber}
+              autoCapitalize="characters"
+            />
+          </View>
 
-        <View style={styles.hintBox}>
-          <Ionicons name="time-outline" size={16} color={ACCENT} />
-          <ThemedText style={styles.hintBoxText}>
-            All defence verifications require admin review.{'\n'}
-            Provisional access is granted immediately, full unlock in 2-4 hours.
-          </ThemedText>
-        </View>
+          <View style={styles.hintBox}>
+            <Ionicons name="time-outline" size={16} color={ACCENT} />
+            <ThemedText style={styles.hintBoxText}>
+              All defence verifications require admin review.{'\n'}
+              Provisional access is granted immediately, full unlock in 2-4 hours.
+            </ThemedText>
+          </View>
 
-        {error ? <ThemedText style={styles.errorText}>{error}</ThemedText> : null}
+          {error ? <ThemedText style={styles.errorText}>{error}</ThemedText> : null}
 
-        <Pressable
-          onPress={handleVerify}
-          disabled={loading}
-          style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <ThemedText style={styles.verifyButtonText}>Verify & Unlock Deals</ThemedText>
-              <Ionicons name="arrow-forward" size={18} color="#fff" />
-            </>
-          )}
-        </Pressable>
-      </ScrollView>
+          <Pressable
+            onPress={handleVerify}
+            disabled={loading}
+            style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <ThemedText style={styles.verifyButtonText}>Verify & Unlock Deals</ThemedText>
+                <Ionicons name="arrow-forward" size={18} color="#fff" />
+              </>
+            )}
+          </Pressable>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );
@@ -180,11 +210,15 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   header: {
     paddingTop: Platform.OS === 'ios' ? 60 : 48,
-    paddingHorizontal: spacing.xl, paddingBottom: spacing.xl, alignItems: 'center',
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl,
+    alignItems: 'center',
   },
   backButton: {
-    position: 'absolute', left: spacing.base,
-    top: Platform.OS === 'ios' ? 56 : 44, padding: spacing.sm,
+    position: 'absolute',
+    left: spacing.base,
+    top: Platform.OS === 'ios' ? 56 : 44,
+    padding: spacing.sm,
   },
   headerIcon: { marginBottom: spacing.md },
   headerTitle: { fontSize: 22, fontWeight: '700', color: colors.text.primary, marginBottom: 4 },
@@ -195,26 +229,44 @@ const styles = StyleSheet.create({
   label: { fontSize: 14, fontWeight: '600', color: colors.text.primary, marginBottom: spacing.sm },
   optional: { fontSize: 12, fontWeight: '400', color: colors.text.tertiary },
   input: {
-    backgroundColor: '#fff', borderWidth: 1, borderColor: colors.border.default,
-    borderRadius: borderRadius.md, paddingHorizontal: spacing.base, paddingVertical: 14,
-    fontSize: 15, color: colors.text.primary,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.base,
+    paddingVertical: 14,
+    fontSize: 15,
+    color: colors.text.primary,
   },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   chip: {
-    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-    backgroundColor: '#fff', borderWidth: 1, borderColor: colors.border.default,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   chipText: { fontSize: 13, fontWeight: '600', color: colors.text.secondary },
   chipTextActive: { color: '#fff' },
   hintBox: {
-    flexDirection: 'row', backgroundColor: '#F0FDF4',
-    padding: spacing.base, borderRadius: borderRadius.md, gap: spacing.sm, marginBottom: spacing.xl,
+    flexDirection: 'row',
+    backgroundColor: '#F0FDF4',
+    padding: spacing.base,
+    borderRadius: borderRadius.md,
+    gap: spacing.sm,
+    marginBottom: spacing.xl,
   },
   hintBoxText: { flex: 1, fontSize: 13, color: colors.text.secondary, lineHeight: 18 },
   errorText: { fontSize: 13, color: colors.errorScale[600], marginBottom: spacing.md },
   verifyButton: {
-    backgroundColor: ACCENT, paddingVertical: 16, borderRadius: borderRadius.md,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm,
+    backgroundColor: ACCENT,
+    paddingVertical: 16,
+    borderRadius: borderRadius.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
     ...shadows.medium,
   },
   verifyButtonDisabled: { opacity: 0.6 },

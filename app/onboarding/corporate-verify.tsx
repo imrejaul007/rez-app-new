@@ -37,6 +37,15 @@ function CorporateVerifyPage() {
       return;
     }
 
+    // Validate email format if provided
+    if (workEmail.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(workEmail.trim())) {
+        setError('Please enter a valid email address');
+        return;
+      }
+    }
+
     setLoading(true);
     setError('');
     analyticsService.track(IdentityAnalyticsEvents.VERIFICATION_STARTED, {
@@ -81,91 +90,78 @@ function CorporateVerifyPage() {
     }
   }, [companyName, workEmail, setIdentity, router]);
 
-
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
 
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerIcon}>
           <Ionicons name="briefcase" size={40} color={colors.secondary[600]} />
         </View>
         <ThemedText style={styles.headerTitle}>Work Verification</ThemedText>
-        <ThemedText style={styles.headerSubtitle}>
-          Your details are private and never shared
-        </ThemedText>
+        <ThemedText style={styles.headerSubtitle}>Your details are private and never shared</ThemedText>
       </View>
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-      <ScrollView
-        style={styles.body}
-        contentContainerStyle={styles.bodyContent}
-        keyboardShouldPersistTaps="handled"
-      >
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>Company Name</ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="e.g. Infosys"
-            placeholderTextColor={colors.text.tertiary}
-            value={companyName}
-            onChangeText={setCompanyName}
-            autoCapitalize="words"
-          />
-        </View>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} keyboardShouldPersistTaps="handled">
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>Company Name</ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g. Infosys"
+              placeholderTextColor={colors.text.tertiary}
+              value={companyName}
+              onChangeText={setCompanyName}
+              autoCapitalize="words"
+            />
+          </View>
 
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>
-            Work Email{' '}
-            <ThemedText style={styles.optional}>(recommended)</ThemedText>
-          </ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="you@company.com"
-            placeholderTextColor={colors.text.tertiary}
-            value={workEmail}
-            onChangeText={setWorkEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
-        </View>
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>
+              Work Email <ThemedText style={styles.optional}>(recommended)</ThemedText>
+            </ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="you@company.com"
+              placeholderTextColor={colors.text.tertiary}
+              value={workEmail}
+              onChangeText={setWorkEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+          </View>
 
-        <View style={styles.hintBox}>
-          <Ionicons name="flash" size={16} color={colors.warningScale[600]} />
-          <ThemedText style={styles.hintBoxText}>
-            We send a verification OTP to your work email. One tap = verified.
-          </ThemedText>
-        </View>
+          <View style={styles.hintBox}>
+            <Ionicons name="flash" size={16} color={colors.warningScale[600]} />
+            <ThemedText style={styles.hintBoxText}>
+              We send a verification OTP to your work email. One tap = verified.
+            </ThemedText>
+          </View>
 
-        {error ? (
-          <ThemedText style={styles.errorText}>{error}</ThemedText>
-        ) : null}
+          {error ? <ThemedText style={styles.errorText}>{error}</ThemedText> : null}
 
-        <Pressable
-          onPress={handleVerify}
-          disabled={loading}
-          style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <ThemedText style={styles.verifyButtonText}>
-                Verify & Unlock Perks
-              </ThemedText>
-              <Ionicons name="arrow-forward" size={18} color="#fff" />
-            </>
-          )}
-        </Pressable>
-
-      </ScrollView>
+          <Pressable
+            onPress={handleVerify}
+            disabled={loading}
+            style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <ThemedText style={styles.verifyButtonText}>Verify & Unlock Perks</ThemedText>
+                <Ionicons name="arrow-forward" size={18} color="#fff" />
+              </>
+            )}
+          </Pressable>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );

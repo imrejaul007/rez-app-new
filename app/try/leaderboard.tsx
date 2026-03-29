@@ -1,15 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  Pressable,
-  ActivityIndicator,
-  FlatList,
-  ScrollView,
-} from 'react-native';
-import { useRouter } from 'expo-router';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { View, Text, StyleSheet, SafeAreaView, Pressable, ActivityIndicator, FlatList, ScrollView } from 'react-native';
+import { useRouter, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, spacing, borderRadius } from '@/constants/theme';
 import { tryApi } from '@/services/tryApi';
@@ -49,10 +40,6 @@ export default function LeaderboardScreen() {
   const [leaderboard, setLeaderboard] = useState<LeaderboardData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    loadLeaderboard();
-  }, [period, city]);
-
   const loadLeaderboard = useCallback(async () => {
     setLoading(true);
     try {
@@ -64,6 +51,22 @@ export default function LeaderboardScreen() {
       setLoading(false);
     }
   }, [city, period]);
+
+  useEffect(() => {
+    loadLeaderboard();
+  }, [period, city, loadLeaderboard]);
+
+  // Refresh data when navigating back to this screen
+  const isFirstFocus = useRef(true);
+  useFocusEffect(
+    useCallback(() => {
+      if (isFirstFocus.current) {
+        isFirstFocus.current = false;
+        return;
+      }
+      loadLeaderboard();
+    }, [loadLeaderboard]),
+  );
 
   const renderPodium = () => {
     if (!leaderboard || !leaderboard.entries || leaderboard.entries.length === 0) return null;
@@ -131,42 +134,20 @@ export default function LeaderboardScreen() {
     const medal = MEDAL_EMOJIS[item.rank];
 
     return (
-      <View
-        style={[
-          styles.entry,
-          item.isCurrentUser && styles.entryHighlighted,
-        ]}
-      >
+      <View style={[styles.entry, item.isCurrentUser && styles.entryHighlighted]}>
         <View style={styles.entryRank}>
-          {isMedal ? (
-            <Text style={styles.medal}>{medal}</Text>
-          ) : (
-            <Text style={styles.rankNumber}>#{item.rank}</Text>
-          )}
+          {isMedal ? <Text style={styles.medal}>{medal}</Text> : <Text style={styles.rankNumber}>#{item.rank}</Text>}
         </View>
 
         <View style={styles.entryInfo}>
-          <Text
-            style={[
-              styles.entryName,
-              item.isCurrentUser && styles.entryNameHighlighted,
-            ]}
-            numberOfLines={1}
-          >
+          <Text style={[styles.entryName, item.isCurrentUser && styles.entryNameHighlighted]} numberOfLines={1}>
             {item.isCurrentUser ? `${item.name} (You)` : item.name}
           </Text>
           <Text style={styles.entryTrials}>{item.trialCount} trials</Text>
         </View>
 
         <View style={styles.entryScore}>
-          <Text
-            style={[
-              styles.score,
-              item.isCurrentUser && styles.scoreHighlighted,
-            ]}
-          >
-            {item.score}
-          </Text>
+          <Text style={[styles.score, item.isCurrentUser && styles.scoreHighlighted]}>{item.score}</Text>
           <Text style={styles.scoreLabel}>pts</Text>
         </View>
       </View>
@@ -206,7 +187,7 @@ export default function LeaderboardScreen() {
       <FlatList
         data={remainingEntries}
         renderItem={renderLeaderboardEntry}
-        keyExtractor={item => `${item.rank}-${item.name}`}
+        keyExtractor={(item) => `${item.rank}-${item.name}`}
         contentContainerStyle={styles.listContent}
         scrollEnabled={true}
         ListHeaderComponent={
@@ -218,44 +199,26 @@ export default function LeaderboardScreen() {
               style={styles.citySelector}
               contentContainerStyle={styles.citySelectorContent}
             >
-              {['Mumbai', 'Delhi', 'Bangalore', 'Pune'].map(c => (
+              {['Mumbai', 'Delhi', 'Bangalore', 'Pune'].map((c) => (
                 <Pressable
                   key={c}
-                  style={[
-                    styles.cityChip,
-                    city === c && styles.cityChipActive,
-                  ]}
+                  style={[styles.cityChip, city === c && styles.cityChipActive]}
                   onPress={() => setCity(c)}
                 >
-                  <Text
-                    style={[
-                      styles.cityChipText,
-                      city === c && styles.cityChipTextActive,
-                    ]}
-                  >
-                    {c}
-                  </Text>
+                  <Text style={[styles.cityChipText, city === c && styles.cityChipTextActive]}>{c}</Text>
                 </Pressable>
               ))}
             </ScrollView>
 
             {/* Period Tabs */}
             <View style={styles.periodTabs}>
-              {(Object.keys(PERIOD_LABELS) as Period[]).map(p => (
+              {(Object.keys(PERIOD_LABELS) as Period[]).map((p) => (
                 <Pressable
                   key={p}
-                  style={[
-                    styles.periodTab,
-                    period === p && styles.periodTabActive,
-                  ]}
+                  style={[styles.periodTab, period === p && styles.periodTabActive]}
                   onPress={() => setPeriod(p)}
                 >
-                  <Text
-                    style={[
-                      styles.periodTabText,
-                      period === p && styles.periodTabTextActive,
-                    ]}
-                  >
+                  <Text style={[styles.periodTabText, period === p && styles.periodTabTextActive]}>
                     {PERIOD_LABELS[p]}
                   </Text>
                 </Pressable>
@@ -272,14 +235,10 @@ export default function LeaderboardScreen() {
                   <Text style={styles.rankNumber}>#{leaderboard.userRank}</Text>
                 </View>
                 <View style={styles.entryInfo}>
-                  <Text style={[styles.entryName, styles.entryNameHighlighted]}>
-                    Your rank
-                  </Text>
+                  <Text style={[styles.entryName, styles.entryNameHighlighted]}>Your rank</Text>
                 </View>
                 <View style={styles.entryScore}>
-                  <Text style={[styles.score, styles.scoreHighlighted]}>
-                    {leaderboard.userScore}
-                  </Text>
+                  <Text style={[styles.score, styles.scoreHighlighted]}>{leaderboard.userScore}</Text>
                 </View>
               </View>
             )}

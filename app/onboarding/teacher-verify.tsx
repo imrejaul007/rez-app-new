@@ -1,8 +1,15 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useCallback } from 'react';
 import {
-  View, StyleSheet, StatusBar, ScrollView, TextInput,
-  Pressable, ActivityIndicator, Platform, KeyboardAvoidingView,
+  View,
+  StyleSheet,
+  StatusBar,
+  ScrollView,
+  TextInput,
+  Pressable,
+  ActivityIndicator,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -33,8 +40,19 @@ function TeacherVerifyPage() {
   const [error, setError] = useState('');
 
   const handleVerify = useCallback(async () => {
-    if (!instituteName.trim()) { setError('Please enter your institution name'); return; }
-    if (!documentType) { setError('Please select a document type'); return; }
+    const trimmedName = instituteName.trim();
+    if (!trimmedName) {
+      setError('Please enter your institution name');
+      return;
+    }
+    if (trimmedName.length < 3) {
+      setError('Institution name must be at least 3 characters');
+      return;
+    }
+    if (!documentType) {
+      setError('Please select a document type');
+      return;
+    }
 
     setLoading(true);
     setError('');
@@ -47,7 +65,9 @@ function TeacherVerifyPage() {
       });
 
       analyticsService.track(IdentityAnalyticsEvents.VERIFICATION_COMPLETED, {
-        type: 'teacher', autoVerified: result.autoVerified, provisional: result.provisionalUnlock,
+        type: 'teacher',
+        autoVerified: result.autoVerified,
+        provisional: result.provisionalUnlock,
       });
 
       if (!isMounted()) return;
@@ -73,7 +93,10 @@ function TeacherVerifyPage() {
       <StatusBar barStyle="dark-content" />
 
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </Pressable>
         <View style={styles.headerIcon}>
@@ -83,65 +106,65 @@ function TeacherVerifyPage() {
         <ThemedText style={styles.headerSubtitle}>Your details are private and never shared</ThemedText>
       </View>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-      <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} keyboardShouldPersistTaps="handled">
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>Institution Name</ThemedText>
-          <TextInput
-            style={styles.input}
-            placeholder="e.g. Delhi Public School"
-            placeholderTextColor={colors.text.tertiary}
-            value={instituteName}
-            onChangeText={setInstituteName}
-            autoCapitalize="words"
-          />
-        </View>
-
-        <View style={styles.inputGroup}>
-          <ThemedText style={styles.label}>Document Type</ThemedText>
-          <View style={styles.chipRow}>
-            {DOC_TYPES.map((d) => (
-              <Pressable
-                key={d.value}
-                style={[styles.chip, documentType === d.value && { backgroundColor: ACCENT }]}
-                onPress={() => { setDocumentType(d.value); setError(''); }}
-              >
-                <ThemedText style={[styles.chipText, documentType === d.value && styles.chipTextActive]}>
-                  {d.label}
-                </ThemedText>
-              </Pressable>
-            ))}
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent} keyboardShouldPersistTaps="handled">
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>Institution Name</ThemedText>
+            <TextInput
+              style={styles.input}
+              placeholder="e.g. Delhi Public School"
+              placeholderTextColor={colors.text.tertiary}
+              value={instituteName}
+              onChangeText={setInstituteName}
+              autoCapitalize="words"
+            />
           </View>
-        </View>
 
-        <View style={styles.hintBox}>
-          <Ionicons name="time-outline" size={16} color={ACCENT} />
-          <ThemedText style={styles.hintBoxText}>
-            All teacher verifications require admin review.{'\n'}
-            Provisional access is granted immediately, full unlock in 2-4 hours.
-          </ThemedText>
-        </View>
+          <View style={styles.inputGroup}>
+            <ThemedText style={styles.label}>Document Type</ThemedText>
+            <View style={styles.chipRow}>
+              {DOC_TYPES.map((d) => (
+                <Pressable
+                  key={d.value}
+                  style={[styles.chip, documentType === d.value && { backgroundColor: ACCENT }]}
+                  onPress={() => {
+                    setDocumentType(d.value);
+                    setError('');
+                  }}
+                >
+                  <ThemedText style={[styles.chipText, documentType === d.value && styles.chipTextActive]}>
+                    {d.label}
+                  </ThemedText>
+                </Pressable>
+              ))}
+            </View>
+          </View>
 
-        {error ? <ThemedText style={styles.errorText}>{error}</ThemedText> : null}
+          <View style={styles.hintBox}>
+            <Ionicons name="time-outline" size={16} color={ACCENT} />
+            <ThemedText style={styles.hintBoxText}>
+              All teacher verifications require admin review.{'\n'}
+              Provisional access is granted immediately, full unlock in 2-4 hours.
+            </ThemedText>
+          </View>
 
-        <Pressable
-          onPress={handleVerify}
-          disabled={loading}
-          style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
-        >
-          {loading ? (
-            <ActivityIndicator color="#fff" />
-          ) : (
-            <>
-              <ThemedText style={styles.verifyButtonText}>Verify & Unlock Deals</ThemedText>
-              <Ionicons name="arrow-forward" size={18} color="#fff" />
-            </>
-          )}
-        </Pressable>
-      </ScrollView>
+          {error ? <ThemedText style={styles.errorText}>{error}</ThemedText> : null}
+
+          <Pressable
+            onPress={handleVerify}
+            disabled={loading}
+            style={[styles.verifyButton, loading && styles.verifyButtonDisabled]}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <>
+                <ThemedText style={styles.verifyButtonText}>Verify & Unlock Deals</ThemedText>
+                <Ionicons name="arrow-forward" size={18} color="#fff" />
+              </>
+            )}
+          </Pressable>
+        </ScrollView>
       </KeyboardAvoidingView>
     </View>
   );
@@ -151,11 +174,15 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.secondary },
   header: {
     paddingTop: Platform.OS === 'ios' ? 60 : 48,
-    paddingHorizontal: spacing.xl, paddingBottom: spacing.xl, alignItems: 'center',
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl,
+    alignItems: 'center',
   },
   backButton: {
-    position: 'absolute', left: spacing.base,
-    top: Platform.OS === 'ios' ? 56 : 44, padding: spacing.sm,
+    position: 'absolute',
+    left: spacing.base,
+    top: Platform.OS === 'ios' ? 56 : 44,
+    padding: spacing.sm,
   },
   headerIcon: { marginBottom: spacing.md },
   headerTitle: { fontSize: 22, fontWeight: '700', color: colors.text.primary, marginBottom: 4 },
@@ -165,26 +192,44 @@ const styles = StyleSheet.create({
   inputGroup: { marginBottom: spacing.lg },
   label: { fontSize: 14, fontWeight: '600', color: colors.text.primary, marginBottom: spacing.sm },
   input: {
-    backgroundColor: '#fff', borderWidth: 1, borderColor: colors.border.default,
-    borderRadius: borderRadius.md, paddingHorizontal: spacing.base, paddingVertical: 14,
-    fontSize: 15, color: colors.text.primary,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    borderRadius: borderRadius.md,
+    paddingHorizontal: spacing.base,
+    paddingVertical: 14,
+    fontSize: 15,
+    color: colors.text.primary,
   },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   chip: {
-    paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20,
-    backgroundColor: '#fff', borderWidth: 1, borderColor: colors.border.default,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: colors.border.default,
   },
   chipText: { fontSize: 13, fontWeight: '600', color: colors.text.secondary },
   chipTextActive: { color: '#fff' },
   hintBox: {
-    flexDirection: 'row', backgroundColor: '#FFFBEB',
-    padding: spacing.base, borderRadius: borderRadius.md, gap: spacing.sm, marginBottom: spacing.xl,
+    flexDirection: 'row',
+    backgroundColor: '#FFFBEB',
+    padding: spacing.base,
+    borderRadius: borderRadius.md,
+    gap: spacing.sm,
+    marginBottom: spacing.xl,
   },
   hintBoxText: { flex: 1, fontSize: 13, color: colors.text.secondary, lineHeight: 18 },
   errorText: { fontSize: 13, color: colors.errorScale[600], marginBottom: spacing.md },
   verifyButton: {
-    backgroundColor: ACCENT, paddingVertical: 16, borderRadius: borderRadius.md,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm,
+    backgroundColor: ACCENT,
+    paddingVertical: 16,
+    borderRadius: borderRadius.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: spacing.sm,
     ...shadows.medium,
   },
   verifyButtonDisabled: { opacity: 0.6 },

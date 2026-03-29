@@ -15,6 +15,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -33,7 +34,14 @@ import { TransactionListSkeleton } from '@/components/skeletons';
 import { PRIVE_COLORS, PRIVE_SPACING, PRIVE_RADIUS } from '@/components/prive/priveTheme';
 import { Colors } from '@/constants/DesignSystem';
 import { PriveSkeletonBlock } from '@/components/prive/PriveSkeletonBlock';
-import { useWalletData, useRezBalance, useTotalBalance, useBrandedCoins, useWalletLoading, useRefreshWallet } from '@/stores/selectors';
+import {
+  useWalletData,
+  useRezBalance,
+  useTotalBalance,
+  useBrandedCoins,
+  useWalletLoading,
+  useRefreshWallet,
+} from '@/stores/selectors';
 import priveApi, { TransactionItem } from '@/services/priveApi';
 import { BRAND } from '@/constants/brand';
 import { colors } from '@/constants/theme';
@@ -210,17 +218,21 @@ function PriveWalletScreen() {
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isStale, setIsStale] = useState(false);
-  const [cachedCoins, setCachedCoins] = useState<{ total: number; rez: number; prive: number; branded: number } | null>(null);
+  const [cachedCoins, setCachedCoins] = useState<{ total: number; rez: number; prive: number; branded: number } | null>(
+    null,
+  );
   const isMounted = useIsMounted();
 
   // Derive coin balances from WalletContext
   const priveCoin = walletData?.coins?.find((c: any) => c.type === 'prive');
-  const liveCoinData = walletData ? {
-    total: totalBalance || 0,
-    rez: rezBalance || 0,
-    prive: priveCoin?.amount || 0,
-    branded: brandedCoins?.reduce((sum: number, c: any) => sum + (c.amount || 0), 0) || 0,
-  } : null;
+  const liveCoinData = walletData
+    ? {
+        total: totalBalance || 0,
+        rez: rezBalance || 0,
+        prive: priveCoin?.amount || 0,
+        branded: brandedCoins?.reduce((sum: number, c: any) => sum + (c.amount || 0), 0) || 0,
+      }
+    : null;
 
   const coins = {
     ...(liveCoinData || cachedCoins || { total: 0, rez: 0, prive: 0, branded: 0 }),
@@ -233,14 +245,16 @@ function PriveWalletScreen() {
 
   // Load cached coin balances on mount
   useEffect(() => {
-    AsyncStorage.getItem(WALLET_CACHE_KEY).then(cached => {
-      if (cached) {
-        try {
-          setCachedCoins(JSON.parse(cached));
-          if (!walletData) setIsStale(true);
-        } catch {}
-      }
-    }).catch(() => {});
+    AsyncStorage.getItem(WALLET_CACHE_KEY)
+      .then((cached) => {
+        if (cached) {
+          try {
+            setCachedCoins(JSON.parse(cached));
+            if (!walletData) setIsStale(true);
+          } catch {}
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // Cache coin balances when fresh data arrives; clear stale indicator
@@ -252,10 +266,7 @@ function PriveWalletScreen() {
   }, [liveCoinData?.total, liveCoinData?.rez, liveCoinData?.prive, liveCoinData?.branded]);
 
   // Grouped transaction sections
-  const transactionSections = useMemo(
-    () => groupTransactionsByDate(transactions),
-    [transactions],
-  );
+  const transactionSections = useMemo(() => groupTransactionsByDate(transactions), [transactions]);
 
   // -------------------------------------------------------------------
   // Fetch transactions (cursor-based)
@@ -314,9 +325,11 @@ function PriveWalletScreen() {
     [seenIds],
   );
 
-  useEffect(() => {
-    fetchTransactions();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fetchTransactions();
+    }, [fetchTransactions]),
+  );
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
@@ -373,7 +386,10 @@ function PriveWalletScreen() {
       <SafeAreaView style={styles.safeArea}>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={PRIVE_COLORS.text.primary} />
           </Pressable>
           <Text style={styles.headerTitle}>Prive Wallet</Text>
@@ -383,11 +399,7 @@ function PriveWalletScreen() {
         {/* Error State */}
         {error && !isLoading ? (
           <View style={styles.errorContainer}>
-            <Ionicons
-              name="cloud-offline-outline"
-              size={56}
-              color={PRIVE_COLORS.text.tertiary}
-            />
+            <Ionicons name="cloud-offline-outline" size={56} color={PRIVE_COLORS.text.tertiary} />
             <Text style={styles.errorTitle}>Something went wrong</Text>
             <Text style={styles.errorMessage}>{error}</Text>
             <Pressable style={styles.retryButton} onPress={handleRetry}>
@@ -412,9 +424,7 @@ function PriveWalletScreen() {
             }
             onScroll={({ nativeEvent }) => {
               const { layoutMeasurement, contentOffset, contentSize } = nativeEvent;
-              const isNearEnd =
-                layoutMeasurement.height + contentOffset.y >=
-                contentSize.height - 100;
+              const isNearEnd = layoutMeasurement.height + contentOffset.y >= contentSize.height - 100;
               if (isNearEnd && hasMore && !isLoadingTransactions) {
                 handleLoadMore();
               }
@@ -424,47 +434,28 @@ function PriveWalletScreen() {
             {/* Balance Card */}
             <View style={styles.balanceCard}>
               <Text style={styles.balanceLabel}>Total Balance</Text>
-              <Text style={styles.balanceAmount}>
-                {coins.total.toLocaleString()}
-              </Text>
+              <Text style={styles.balanceAmount}>{coins.total.toLocaleString()}</Text>
               <Text style={styles.balanceSubtext}>coins</Text>
-              {isStale && (
-                <Text style={styles.staleIndicator}>Showing cached data...</Text>
-              )}
+              {isStale && <Text style={styles.staleIndicator}>Showing cached data...</Text>}
             </View>
 
             {/* Coin Breakdown */}
             <View style={styles.breakdownCard}>
               <Text style={styles.sectionTitle}>Coin Breakdown</Text>
               <View style={styles.coinRow}>
-                <View
-                  style={[
-                    styles.coinDot,
-                    { backgroundColor: PRIVE_COLORS.gold.primary },
-                  ]}
-                />
+                <View style={[styles.coinDot, { backgroundColor: PRIVE_COLORS.gold.primary }]} />
                 <Text style={styles.coinLabel}>{BRAND.COIN_NAME}</Text>
-                <Text style={styles.coinValue}>
-                  {coins.rez.toLocaleString()}
-                </Text>
+                <Text style={styles.coinValue}>{coins.rez.toLocaleString()}</Text>
               </View>
               <View style={styles.coinRow}>
-                <View
-                  style={[styles.coinDot, { backgroundColor: '#B8860B' }]}
-                />
+                <View style={[styles.coinDot, { backgroundColor: '#B8860B' }]} />
                 <Text style={styles.coinLabel}>Prive Coins</Text>
-                <Text style={styles.coinValue}>
-                  {coins.prive.toLocaleString()}
-                </Text>
+                <Text style={styles.coinValue}>{coins.prive.toLocaleString()}</Text>
               </View>
               <View style={[styles.coinRow, styles.coinRowLast]}>
-                <View
-                  style={[styles.coinDot, { backgroundColor: '#64B5F6' }]}
-                />
+                <View style={[styles.coinDot, { backgroundColor: '#64B5F6' }]} />
                 <Text style={styles.coinLabel}>Branded Coins</Text>
-                <Text style={styles.coinValue}>
-                  {coins.branded.toLocaleString()}
-                </Text>
+                <Text style={styles.coinValue}>{coins.branded.toLocaleString()}</Text>
               </View>
 
               {/* Proportional coin bar */}
@@ -522,9 +513,7 @@ function PriveWalletScreen() {
                   {coins.brandedBreakdown.map((brand, index) => (
                     <View key={brand.brandId || index} style={styles.brandedRow}>
                       <Text style={styles.brandedName}>{brand.brandName}</Text>
-                      <Text style={styles.brandedAmount}>
-                        {brand.amount.toLocaleString()}
-                      </Text>
+                      <Text style={styles.brandedAmount}>{brand.amount.toLocaleString()}</Text>
                     </View>
                   ))}
                 </View>
@@ -534,11 +523,7 @@ function PriveWalletScreen() {
             {/* Quick Actions */}
             <View style={styles.quickActions}>
               <Pressable
-                style={[
-                  styles.actionButton,
-                  styles.actionButtonGold,
-                  redeemDisabled && styles.actionButtonDisabled,
-                ]}
+                style={[styles.actionButton, styles.actionButtonGold, redeemDisabled && styles.actionButtonDisabled]}
                 onPress={() => router.push('/prive/redeem' as any)}
                 disabled={redeemDisabled}
               >
@@ -546,9 +531,7 @@ function PriveWalletScreen() {
                   <Text style={styles.actionEmoji}>🎁</Text>
                 </View>
                 <Text style={styles.actionText}>
-                  {redeemDisabled
-                    ? 'Redeem'
-                    : `Redeem (${priveBalance.toLocaleString()} Prive)`}
+                  {redeemDisabled ? 'Redeem' : `Redeem (${priveBalance.toLocaleString()} Prive)`}
                 </Text>
               </Pressable>
               <Pressable
@@ -590,9 +573,7 @@ function PriveWalletScreen() {
                 <View style={styles.emptyState}>
                   <Text style={styles.emptyIcon}>📋</Text>
                   <Text style={styles.emptyText}>No transactions yet</Text>
-                  <Text style={styles.emptySubtext}>
-                    Your coin transactions will appear here
-                  </Text>
+                  <Text style={styles.emptySubtext}>Your coin transactions will appear here</Text>
                 </View>
               ) : (
                 <>
@@ -605,29 +586,20 @@ function PriveWalletScreen() {
                           key={txn.id}
                           style={[
                             styles.transactionRow,
-                            index === section.data.length - 1 &&
-                              styles.transactionRowLast,
+                            index === section.data.length - 1 && styles.transactionRowLast,
                           ]}
                         >
                           <View style={styles.transactionIcon}>
-                            <Text style={styles.transactionEmoji}>
-                              {getTransactionIcon(txn.type, txn.source)}
-                            </Text>
+                            <Text style={styles.transactionEmoji}>{getTransactionIcon(txn.type, txn.source)}</Text>
                           </View>
                           <View style={styles.transactionInfo}>
-                            <Text style={styles.transactionTitle}>
-                              {txn.description}
-                            </Text>
-                            <Text style={styles.transactionDate}>
-                              {txn.time}
-                            </Text>
+                            <Text style={styles.transactionTitle}>{txn.description}</Text>
+                            <Text style={styles.transactionDate}>{txn.time}</Text>
                           </View>
                           <Text
                             style={[
                               styles.transactionAmount,
-                              txn.amount > 0
-                                ? styles.amountPositive
-                                : styles.amountNegative,
+                              txn.amount > 0 ? styles.amountPositive : styles.amountNegative,
                             ]}
                           >
                             {formatAmount(txn.amount)}
@@ -638,15 +610,9 @@ function PriveWalletScreen() {
                   ))}
 
                   {hasMore && (
-                    <Pressable
-                      style={styles.loadMoreButton}
-                      onPress={handleLoadMore}
-                    >
+                    <Pressable style={styles.loadMoreButton} onPress={handleLoadMore}>
                       {isLoadingTransactions ? (
-                        <ActivityIndicator
-                          size="small"
-                          color={PRIVE_COLORS.gold.primary}
-                        />
+                        <ActivityIndicator size="small" color={PRIVE_COLORS.gold.primary} />
                       ) : (
                         <Text style={styles.loadMoreText}>Load More</Text>
                       )}

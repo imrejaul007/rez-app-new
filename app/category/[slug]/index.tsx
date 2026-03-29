@@ -1,15 +1,8 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import { colors } from '@/constants/theme';
-import React, { useEffect, useState } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  RefreshControl,
-  ActivityIndicator,
-  Pressable
-} from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, ScrollView, StyleSheet, RefreshControl, ActivityIndicator, Pressable } from 'react-native';
+import { useLocalSearchParams, useRouter, useFocusEffect } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 
 import { ThemedView } from '@/components/ThemedView';
@@ -56,6 +49,15 @@ function CategoryPage() {
     }
   }, [slug]);
 
+  // Refresh category data when screen comes into focus (product prices/availability may have changed)
+  useFocusEffect(
+    useCallback(() => {
+      if (slug && state.currentCategory) {
+        loadCategoryData();
+      }
+    }, [slug, state.currentCategory]),
+  );
+
   const loadCategoryData = async () => {
     if (!slug) return;
 
@@ -68,15 +70,9 @@ function CategoryPage() {
         setLoyaltyStats(statsRes.data);
       }
     } catch (error) {
-      platformAlertConfirm(
-        'Error',
-        'Failed to load category. Please try again.',
-        loadCategoryData,
-        'Retry'
-      );
+      platformAlertConfirm('Error', 'Failed to load category. Please try again.', loadCategoryData, 'Retry');
     }
   };
-
 
   // Redirect logic removed - displaying rich category page instead
 
@@ -159,31 +155,29 @@ function CategoryPage() {
       await cartActions.addItem(cartItemData);
 
       // Wait a bit for the cart state to update
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
 
       // Show success toast
       showToast({
         message: `${item.name || 'Item'} added to cart`,
         type: 'success',
-        duration: 3000
+        duration: 3000,
       });
-
     } catch (error) {
-
       // Fallback: Try using cart API directly
       try {
         const cartApi = (await import('@/services/cartApi')).default;
 
         const cartResponse = await cartApi.addToCart({
           productId: item.id,
-          quantity: 1
+          quantity: 1,
         });
 
         if (cartResponse.success) {
           showToast({
             message: `${item.name || 'Item'} added to cart`,
             type: 'success',
-            duration: 3000
+            duration: 3000,
           });
         } else {
           throw new Error(cartResponse.message || 'Failed to add to cart');
@@ -192,7 +186,7 @@ function CategoryPage() {
         showToast({
           message: 'Failed to add item to cart',
           type: 'error',
-          duration: 3000
+          duration: 3000,
         });
       }
     }
@@ -215,17 +209,14 @@ function CategoryPage() {
   const handleCarouselItemPress = async (carouselItem: CategoryCarouselItem) => {
     try {
       // Handle carousel action with backend-ready analytics and logging
-      const actionResult = await handleCarouselAction(
-        carouselItem,
-        slug || ''
-      );
+      const actionResult = await handleCarouselAction(carouselItem, slug || '');
 
       if (actionResult.success && carouselItem.action) {
         switch (carouselItem.action.type) {
           case 'filter':
             const newFilters = {
               ...state.filters,
-              [carouselItem.action.target]: carouselItem.action.params?.[carouselItem.action.target]
+              [carouselItem.action.target]: carouselItem.action.params?.[carouselItem.action.target],
             };
             actions.updateFilters(newFilters);
             break;
@@ -255,18 +246,14 @@ function CategoryPage() {
     return (
       <ThemedView style={styles.errorContainer}>
         <ThemedText style={styles.errorTitle}>Category Not Found</ThemedText>
-        <ThemedText style={styles.errorText}>
-          The category &quot;{slug}&quot; could not be found.
-        </ThemedText>
+        <ThemedText style={styles.errorText}>The category &quot;{slug}&quot; could not be found.</ThemedText>
         <Pressable
           onPress={handleBack}
           accessibilityLabel="Go back"
           accessibilityRole="button"
           accessibilityHint="Double tap to return to previous screen"
         >
-          <ThemedText style={styles.backButton}>
-            Go Back
-          </ThemedText>
+          <ThemedText style={styles.backButton}>Go Back</ThemedText>
         </Pressable>
       </ThemedView>
     );
@@ -289,12 +276,12 @@ function CategoryPage() {
           stats={{
             productCount: (category as any).productCount || 2000,
             storeCount: (category as any).storeCount || 50,
-            maxCashback: (category as any).maxCashback || 25
+            maxCashback: (category as any).maxCashback || 25,
           }}
         />
 
         <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }}
+          contentContainerStyle={{ paddingBottom: 120 }}
           style={styles.content}
           showsVerticalScrollIndicator={false}
           refreshControl={
@@ -351,9 +338,7 @@ function CategoryPage() {
 
           {/* Filtered Content Title */}
           <View style={styles.sectionHeader}>
-            <ThemedText style={styles.sectionTitle}>
-              Recommended for You
-            </ThemedText>
+            <ThemedText style={styles.sectionTitle}>Recommended for You</ThemedText>
           </View>
 
           {/* Filters */}
@@ -381,9 +366,7 @@ function CategoryPage() {
             category.sections.map((section) => (
               <View key={section.id} style={styles.section}>
                 <View style={styles.sectionHeader}>
-                  <ThemedText style={styles.sectionTitle}>
-                    {section.title}
-                  </ThemedText>
+                  <ThemedText style={styles.sectionTitle}>{section.title}</ThemedText>
                   {section.viewAllLink && (
                     <Pressable
                       onPress={() => router.push(section.viewAllLink as any)}
@@ -391,9 +374,7 @@ function CategoryPage() {
                       accessibilityRole="button"
                       accessibilityHint="Double tap to see all items in this section"
                     >
-                      <ThemedText style={styles.viewAllButton}>
-                        View all
-                      </ThemedText>
+                      <ThemedText style={styles.viewAllButton}>View all</ThemedText>
                     </Pressable>
                   )}
                 </View>
@@ -401,7 +382,7 @@ function CategoryPage() {
                   items={section.items}
                   layoutConfig={{
                     ...category.layoutConfig,
-                    type: section.layoutType === 'horizontal' ? 'cards' : category.layoutConfig.type
+                    type: section.layoutType === 'horizontal' ? 'cards' : category.layoutConfig.type,
                   }}
                   onItemPress={handleItemPress}
                   onAddToCart={handleAddToCart}
@@ -428,9 +409,7 @@ function CategoryPage() {
           {items.length === 0 && !loading && (
             <View style={styles.emptyState}>
               <ThemedText style={styles.emptyTitle}>No items found</ThemedText>
-              <ThemedText style={styles.emptyText}>
-                Try adjusting your search or filters
-              </ThemedText>
+              <ThemedText style={styles.emptyText}>Try adjusting your search or filters</ThemedText>
               {Object.keys(state.filters).length > 0 && (
                 <Pressable
                   onPress={handleResetFilters}
@@ -438,9 +417,7 @@ function CategoryPage() {
                   accessibilityRole="button"
                   accessibilityHint="Double tap to remove all active filters"
                 >
-                  <ThemedText style={styles.clearFiltersButton}>
-                    Clear Filters
-                  </ThemedText>
+                  <ThemedText style={styles.clearFiltersButton}>Clear Filters</ThemedText>
                 </Pressable>
               )}
             </View>
