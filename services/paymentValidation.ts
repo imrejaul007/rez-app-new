@@ -57,7 +57,7 @@ export class PaymentValidator {
     let isEven = false;
     
     for (let i = number.length - 1; i >= 0; i--) {
-      let digit = parseInt(number[i]);
+      let digit = parseInt(number[i], 10); // BUG-035: always pass radix 10
       
       if (isEven) {
         digit *= 2;
@@ -102,8 +102,8 @@ export class PaymentValidator {
     const currentYear = currentDate.getFullYear() % 100;
     const currentMonth = currentDate.getMonth() + 1;
 
-    const expiryYear = parseInt(year);
-    const expiryMonth = parseInt(month);
+    const expiryYear = parseInt(year, 10); // BUG-035: always pass radix 10
+    const expiryMonth = parseInt(month, 10); // BUG-035: always pass radix 10
 
     if (expiryYear < currentYear || (expiryYear === currentYear && expiryMonth < currentMonth)) {
       errors.push('Card has expired');
@@ -171,8 +171,10 @@ export class PaymentValidator {
       errors.push('Cardholder name is too long');
     }
 
-    if (!/^[a-zA-Z\s]+$/.test(name.trim())) {
-      errors.push('Cardholder name can only contain letters and spaces');
+    // BUG-036: Allow hyphens, apostrophes, and accented characters so names like
+    // "Mary-Jane", "O'Brien", and "José" are accepted.
+    if (!/^[a-zA-ZÀ-ÿ\s'\-]+$/.test(name.trim())) {
+      errors.push('Cardholder name can only contain letters, spaces, hyphens, and apostrophes');
     }
 
     return {

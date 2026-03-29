@@ -123,8 +123,11 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load settings from storage or backend
-  const loadSettings = async () => {
+  // BUG-048: Wrap loadSettings in useCallback so it has a stable identity across
+  // renders.  Without this, refreshSettings's dependency array would capture a
+  // new function reference on every render, causing stale-closure issues and
+  // unnecessary re-runs of any effect that depends on refreshSettings.
+  const loadSettings = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -150,7 +153,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [isAuthenticated, user]); // BUG-048: dependency array for useCallback
 
   // Load from local storage
   const loadFromStorage = async () => {
@@ -212,7 +215,7 @@ export function NotificationProvider({ children }: NotificationProviderProps) {
   // Refresh settings from backend
   const refreshSettings = useCallback(async () => {
     await loadSettings();
-  }, []);
+  }, [loadSettings]); // BUG-048: include loadSettings in deps now that it's stable
 
   // Check if push notification can be sent
   const canSendPushNotification = useCallback((type: keyof NotificationSettings['push']): boolean => {

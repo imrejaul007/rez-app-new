@@ -8,7 +8,7 @@ import {
   Dimensions,
   StatusBar,
   Platform} from 'react-native';
-import Animated, { interpolate, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withSpring, withTiming } from 'react-native-reanimated';
+import Animated, { cancelAnimation, interpolate, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withSpring, withTiming } from 'react-native-reanimated';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useGetCurrencySymbol } from '@/stores/selectors';
@@ -63,17 +63,22 @@ function CashbackModal({
       slideAnim.value = withSpring(0);
       startCoinAnimations();
     } else {
-      // Stop coin animations when modal closes
-      if (coinAnimRef.current) {
-        coinAnimRef.current = null;
-      }
+      // BUG-030: Use cancelAnimation to actually stop the Reanimated shared-value
+      // animations — setting the ref to null only drops the JS reference but
+      // leaves the native-side animation running, causing memory leaks and
+      // unexpected visual glitches after the modal reopens.
+      cancelAnimation(coin1Anim);
+      cancelAnimation(coin2Anim);
+      cancelAnimation(coin3Anim);
+      cancelAnimation(coin4Anim);
       fadeAnim.value = withTiming(0, { duration: 200 });
       slideAnim.value = withTiming(screenHeight, { duration: 250 });
     }
     return () => {
-      if (coinAnimRef.current) {
-        coinAnimRef.current = null;
-      }
+      cancelAnimation(coin1Anim);
+      cancelAnimation(coin2Anim);
+      cancelAnimation(coin3Anim);
+      cancelAnimation(coin4Anim);
     };
   }, [visible]);
 

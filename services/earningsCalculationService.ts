@@ -158,9 +158,20 @@ class EarningsCalculationService {
 
   /**
    * Calculate weekly average earnings
+   * BUG-027: Instead of multiplying the daily average by 7 (which double-counted
+   * the day-spread denominator), compute the total over the actual observed week
+   * span and divide by the number of weeks with data.
    */
   calculateWeeklyAverage(transactions: TransactionResponse[]): number {
-    return this.roundToTwoDecimals(this.calculateDailyAverage(transactions) * 7);
+    if (transactions.length === 0) return 0;
+    const earnings = transactions.filter((t) => t.type === 'credit');
+    if (earnings.length === 0) return 0;
+    const total = earnings.reduce((sum, t) => sum + this.parseAmount(t.amount), 0);
+    const dates = earnings.map((t) => new Date(t.createdAt).getTime());
+    const minDate = Math.min(...dates);
+    const maxDate = Math.max(...dates);
+    const weeksDiff = Math.max(1, (maxDate - minDate) / (1000 * 60 * 60 * 24 * 7));
+    return this.roundToTwoDecimals(total / weeksDiff);
   }
 
   /**
