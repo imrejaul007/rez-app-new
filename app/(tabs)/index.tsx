@@ -53,7 +53,6 @@ import { useUserIdentityStore } from '@/stores/userIdentityStore';
 // Phase 1: Habit Engine components
 import StreakFireIcon from '@/components/gamification/StreakFireIcon';
 import RezScoreCard from '@/components/gamification/RezScoreCard';
-import NearbyOffersCarousel from '@/components/discovery/NearbyOffersCarousel';
 
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import FeatureErrorBoundary from '@/components/common/FeatureErrorBoundary';
@@ -63,11 +62,8 @@ import HeroBanner from '@/components/homepage/HeroBanner';
 import type { TabId } from '@/components/homepage/HomeTabSection';
 import { useHomepage, useHomepageNavigation } from '@/hooks/useHomepage';
 import { useLoyaltySection } from '@/hooks/useLoyaltySection';
-import { PersonalizedHeroBanner } from '@/components/home/PersonalizedHeroBanner';
-import * as insightsApi from '@/services/insightsApi';
 import streakApi from '@/services/streakApi';
-// HeroCard replaced by redesigned HeroBanner — see HeroBanner.tsx
-import CoinExpiryBanner from '@/components/wallet/CoinExpiryBanner';
+import { getScore } from '@/services/rezScoreApi';
 
 // NOTE: PersonaDetectionOnboarding, MicroMomentDecisionCard, StreakToDealConnector,
 // CoinExpiryUrgencyBanner are rendered inside NearUTabContent — not here.
@@ -260,11 +256,12 @@ function HomeScreen() {
   const savingsInsights = useSavingsInsights();
   const totalSaved = savingsInsights?.totalSaved ?? 0;
 
-  // Wire missing API on mount — missed savings for insight data
-  const { data: missedSavings } = useQuery({
-    queryKey: ['missed-savings'],
-    queryFn: () => insightsApi.getMissedSavings(),
+  // Fetch REZ Score — used by RezScoreCard in the Habit Engine row
+  const { data: rezScoreData } = useQuery({
+    queryKey: ['rez-score'],
+    queryFn: getScore,
     enabled: isAuthenticated,
+    staleTime: 5 * 60_000, // score updates infrequently — 5-min cache is fine
   });
   // Zustand selectors for home tab — granular subscriptions
   const activeTab = useActiveTab();
@@ -1145,10 +1142,10 @@ function HomeScreen() {
               )}
               <View style={{ flex: 1 }}>
                 <RezScoreCard
-                  score={0}
-                  tier="Beginner"
-                  trend="stable"
-                  percentile={0}
+                  score={rezScoreData?.score ?? 0}
+                  tier={rezScoreData?.tier ?? 'Beginner'}
+                  trend={rezScoreData?.trend ?? 'stable'}
+                  percentile={rezScoreData?.peerPercentile ?? 0}
                   onPress={() => router.push('/rez-score')}
                 />
               </View>
