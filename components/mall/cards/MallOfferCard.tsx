@@ -57,10 +57,11 @@ const MallOfferCard: React.FC<MallOfferCardProps> = ({
     return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
   };
 
-  // Value display
-  const valueDisplay = offer.valueType === 'percentage'
-    ? `${offer.value}% off`
-    : `${currencySymbol}${offer.value} off`;
+  // Value display — guard against undefined value
+  const offerValue = offer?.value ?? 0;
+  const valueDisplay = offer?.valueType === 'percentage'
+    ? `${offerValue}% off`
+    : `${currencySymbol}${offerValue} off`;
 
   return (
     <Pressable

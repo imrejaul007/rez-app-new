@@ -148,13 +148,14 @@ const MallCategoryCard: React.FC<MallCategoryCardProps> = ({
   width,
   index = 0,
 }) => {
-  const categoryKey = category.name.toLowerCase();
+  // Guard against null/undefined name to prevent toLowerCase() crash
+  const categoryKey = (category?.name ?? '').toLowerCase();
   const theme = CATEGORY_THEMES[categoryKey];
 
   const gradient = theme?.gradient || FALLBACK_GRADIENTS[index % FALLBACK_GRADIENTS.length];
   const iconName = theme?.icon || 'grid-outline';
 
-  const rewardText = category.maxCashback > 0
+  const rewardText = (category?.maxCashback ?? 0) > 0
     ? `Up to ${category.maxCashback}% coins`
     : `Earn ${BRAND.COIN_NAME}`;
 
@@ -198,7 +199,7 @@ const MallCategoryCard: React.FC<MallCategoryCardProps> = ({
             {/* Category Info */}
             <View style={styles.infoContainer}>
               <Text style={styles.categoryName} numberOfLines={2}>
-                {category.name}
+                {category?.name ?? ''}
               </Text>
 
               {/* Coins Info pill */}

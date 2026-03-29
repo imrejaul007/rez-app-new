@@ -272,7 +272,7 @@ const MallHeroBanner: React.FC<MallHeroBannerProps> = ({
     );
   }, [handleBannerPress]);
 
-  const keyExtractor = useCallback((item: MallBanner) => item.id || item._id, []);
+  const keyExtractor = useCallback((item: MallBanner) => item.id || item._id || String(Math.random()), []);
 
 
   const ItemSeparator = useCallback(() => (

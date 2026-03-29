@@ -44,12 +44,14 @@ const MallNewArrivalCard: React.FC<MallNewArrivalCardProps> = ({
   const [imageError, setImageError] = useState(false);
 
   const getInitials = (name: string) => {
+    if (!name) return '?';
     return name
       .split(' ')
       .map(word => word[0])
+      .filter(Boolean)
       .join('')
       .toUpperCase()
-      .slice(0, 2);
+      .slice(0, 2) || '?';
   };
 
   const brandName = brand.name || 'Brand';

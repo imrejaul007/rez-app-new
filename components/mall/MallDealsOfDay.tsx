@@ -70,9 +70,10 @@ const MallDealsOfDay: React.FC<MallDealsOfDayProps> = ({
     ({ item }: { item: MallOffer }) => {
       const brandName = item.brand?.name || item.store?.name || 'Store';
       const brandLogo = item.brand?.logo || item.store?.logo;
-      const discountDisplay = item.valueType === 'percentage'
-        ? `${item.value}% OFF`
-        : `${item.value} OFF`;
+      const dealValue = item?.value ?? 0;
+      const discountDisplay = item?.valueType === 'percentage'
+        ? `${dealValue}% OFF`
+        : `${dealValue} OFF`;
 
       return (
         <Pressable
@@ -145,7 +146,7 @@ const MallDealsOfDay: React.FC<MallDealsOfDayProps> = ({
     [onOfferPress]
   );
 
-  const keyExtractor = useCallback((item: MallOffer) => item.id || item._id, []);
+  const keyExtractor = useCallback((item: MallOffer) => item.id || item._id || String(Math.random()), []);
 
   if (isLoading) {
     return (

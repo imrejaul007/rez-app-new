@@ -36,8 +36,10 @@ const MallRewardBoosters: React.FC<MallRewardBoostersProps> = ({
   onBrandPress,
   onViewAllPress,
 }) => {
-  const getInitials = (name: string) =>
-    name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+  const getInitials = (name: string) => {
+    if (!name) return '?';
+    return name.split(' ').map(w => w[0]).filter(Boolean).join('').toUpperCase().slice(0, 2) || '?';
+  };
 
   const renderItem = useCallback(
     ({ item, index }: { item: MallBrand; index: number }) => {
@@ -108,7 +110,7 @@ const MallRewardBoosters: React.FC<MallRewardBoostersProps> = ({
     [onBrandPress]
   );
 
-  const keyExtractor = useCallback((item: MallBrand) => item.id || item._id, []);
+  const keyExtractor = useCallback((item: MallBrand) => item.id || item._id || String(Math.random()), []);
 
   if (isLoading) {
     return (

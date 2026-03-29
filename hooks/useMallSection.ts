@@ -82,8 +82,8 @@ function transformStoreToMallBrand(store: any): MallBrand {
   return {
     _id: store._id,
     id: store._id,
-    name: store.name,
-    slug: store.slug || store.name.toLowerCase().replace(/\s+/g, '-'),
+    name: store.name || '',
+    slug: store.slug || (store.name ? store.name.toLowerCase().replace(/\s+/g, '-') : store._id || 'store'),
     description: store.description || '',
     logo: store.logo,
     banner: store.banner?.[0] || '',

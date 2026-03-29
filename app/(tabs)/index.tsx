@@ -1004,9 +1004,11 @@ function HomeScreen() {
 
           {/* Mall Hero Banner */}
           {activeTab === 'mall' && (
-            <Suspense fallback={<View style={{ height: 185 }} />}>
-              <MallHeaderWrapper />
-            </Suspense>
+            <FeatureErrorBoundary featureName="Mall Banner" compact={true}>
+              <Suspense fallback={<View style={{ height: 185 }} />}>
+                <MallHeaderWrapper />
+              </Suspense>
+            </FeatureErrorBoundary>
           )}
 
           {/* Cash Store Header */}
@@ -1196,9 +1198,11 @@ function HomeScreen() {
 
           {/* Mall Tab Content */}
           {activeTab === 'mall' && (
-            <Suspense fallback={<TabContentFallback />}>
-              <MallSectionContainer />
-            </Suspense>
+            <FeatureErrorBoundary featureName="Mall" compact={true}>
+              <Suspense fallback={<TabContentFallback />}>
+                <MallSectionContainer />
+              </Suspense>
+            </FeatureErrorBoundary>
           )}
 
           {/* Cash Store Tab Content */}

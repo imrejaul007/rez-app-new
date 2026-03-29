@@ -64,12 +64,14 @@ const MallBrandCard: React.FC<MallBrandCardProps> = ({
 
   // Get initials for fallback
   const getInitials = (name: string) => {
+    if (!name) return '?';
     return name
       .split(' ')
       .map(word => word[0])
+      .filter(Boolean)
       .join('')
       .toUpperCase()
-      .slice(0, 2);
+      .slice(0, 2) || '?';
   };
 
   // Get consistent gradient based on brand name
@@ -82,9 +84,8 @@ const MallBrandCard: React.FC<MallBrandCardProps> = ({
   const gradientColors = getGradientColors(brandName);
 
   // Get first relevant badge (not tier, not 'new' if already shown as NEW overlay)
-  const displayBadge = brand.badges
-    ?.filter(b => b !== brand.tier && !(brand.isNewArrival && b === 'new'))
-    ?.[0];
+  const displayBadge = (brand.badges ?? [])
+    .filter(b => b !== brand.tier && !(brand.isNewArrival && b === 'new'))[0];
 
   return (
     <Pressable

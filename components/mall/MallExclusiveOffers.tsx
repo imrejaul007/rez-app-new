@@ -48,7 +48,7 @@ const MallExclusiveOffers: React.FC<MallExclusiveOffersProps> = ({
     [onOfferPress]
   );
 
-  const keyExtractor = useCallback((item: MallOffer) => item.id || item._id, []);
+  const keyExtractor = useCallback((item: MallOffer) => item.id || item._id || String(Math.random()), []);
 
   // Loading skeleton
   if (isLoading) {

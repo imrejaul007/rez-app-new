@@ -41,7 +41,7 @@ const MallCollections: React.FC<MallCollectionsProps> = ({
     [onCollectionPress]
   );
 
-  const keyExtractor = useCallback((item: MallCollection) => item.id || item._id, []);
+  const keyExtractor = useCallback((item: MallCollection) => item.id || item._id || String(Math.random()), []);
 
   // Loading skeleton
   if (isLoading) {
