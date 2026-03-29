@@ -48,8 +48,10 @@ function SubscriptionPlansPage() {
   const getTierPricing = (tier: string) => {
     const config = state.availableTiers?.find((t: any) => t.tier === tier);
     if (config?.pricing) return { monthly: config.pricing.monthly, yearly: config.pricing.yearly };
-    if (tier === 'vip') return { monthly: 299, yearly: 2850 };
-    if (tier === 'premium') return { monthly: 99, yearly: 950 };
+    // TODO: Remove these hardcoded fallback prices once the subscription tiers API
+    // reliably returns pricing for all environments (staging + production).
+    if (tier === 'vip') return { monthly: 299, yearly: 2850 }; // fallback default — VIP tier
+    if (tier === 'premium') return { monthly: 99, yearly: 950 }; // fallback default — Premium tier
     return { monthly: 0, yearly: 0 };
   };
   const getTierFeatures = (tier: string, fallback: string[]): string[] => {

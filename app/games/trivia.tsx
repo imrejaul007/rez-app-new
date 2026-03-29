@@ -195,6 +195,7 @@ function TriviaPage() {
     setLoading(true);
 
     // Try to fetch questions from backend quiz endpoint
+    let backendQuestions: Question[] | null = null;
     try {
       const response = await apiClient.post<any>('/games/quiz/create', {
         category: 'general',
@@ -203,11 +204,15 @@ function TriviaPage() {
       if (response.success && response.data) {
         if (!isMounted()) return;
         setSessionId(response.data.sessionId || response.data._id || '');
+        // Use backend questions if they exist and are non-empty
+        if (Array.isArray(response.data.questions) && response.data.questions.length > 0) {
+          backendQuestions = response.data.questions.slice(0, TOTAL_QUESTIONS);
+        }
       }
     } catch {}
 
-    // Use hardcoded questions
-    const shuffled = shuffleQuestions();
+    // Fall back to hardcoded questions only when backend returns none
+    const shuffled = backendQuestions ?? shuffleQuestions();
     if (!isMounted()) return;
     setQuestions(shuffled);
     if (!isMounted()) return;

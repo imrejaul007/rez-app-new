@@ -35,7 +35,7 @@ import { useFonts } from 'expo-font';
 import * as Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, AppState, AppStateStatus, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { Alert, AppState, AppStateStatus, Platform, StyleSheet, Text, View, useColorScheme } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import { useRouter } from 'expo-router';
 import { Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
@@ -187,7 +187,8 @@ function RootLayout() {
   const { handleQueueSyncError, handleQueueSyncComplete, handleErrorBoundaryError } = useAppServices(fontsReady);
 
   if (!fontsReady) {
-    return <View style={{ flex: 1, backgroundColor: colors.nileBlue }} />;
+    // Use cream/off-white background to match the home screen and avoid a dark navy flash
+    return <View style={{ flex: 1, backgroundColor: '#F5F5F0' }} />;
   }
 
   return (
@@ -212,7 +213,11 @@ const styles = StyleSheet.create({
   },
   offlineBanner: {
     backgroundColor: '#F59E0B',
-    paddingVertical: 6,
+    // paddingTop accounts for the status-bar / notch so the banner is not hidden behind it.
+    // SafeAreaProvider lives inside AppProviders and is not available here, so we use a
+    // platform-specific constant as a safe fallback until we can hoist the provider.
+    paddingTop: Platform.OS === 'ios' ? 50 : Platform.OS === 'android' ? 30 : 6,
+    paddingBottom: 6,
     paddingHorizontal: 16,
     alignItems: 'center',
     zIndex: 9999,

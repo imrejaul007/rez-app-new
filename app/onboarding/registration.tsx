@@ -146,7 +146,7 @@ function RegistrationScreen() {
       clearTimeout(slowHintTimer);
       if (isMounted()) setSlowLoadingMsg('');
       const errorMessage =
-        error?.message || useAuthStore.getState().state.error || 'Failed to send OTP. Please try again.';
+        error?.message || useAuthStore.getState()?.state?.error || 'Failed to send OTP. Please try again.';
 
       // Detect "phone already registered" reliably:
       // Primary check: HTTP 409 Conflict status code (set by backend on duplicate phone/email).

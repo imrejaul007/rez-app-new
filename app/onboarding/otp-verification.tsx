@@ -118,7 +118,7 @@ function OTPVerificationScreen() {
         router.replace('/onboarding/set-pin');
       }
     } catch (error: any) {
-      const msg = error?.message || useAuthStore.getState().state.error || '';
+      const msg = error?.message || useAuthStore.getState()?.state?.error || '';
       if (!isMounted()) return;
       if (msg.includes('Network') || msg.includes('network')) {
         setOtpError('No internet connection. Check your network and try again.');
@@ -152,7 +152,7 @@ function OTPVerificationScreen() {
       setResendMessage('OTP has been resent to your phone number.');
     } catch (error: any) {
       const errorMessage =
-        error?.message || useAuthStore.getState().state.error || 'Failed to resend OTP. Please try again.';
+        error?.message || useAuthStore.getState()?.state?.error || 'Failed to resend OTP. Please try again.';
       platformAlertSimple('Error', errorMessage);
       actions.clearError();
     }

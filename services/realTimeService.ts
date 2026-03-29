@@ -59,8 +59,11 @@ const getSocketUrl = (): string => {
     return baseUrl;
   }
 
+  // Match apiClient's resolveBaseURL: BlueStacks/Hyper-V uses 172.19.128.1, not 10.0.2.2.
+  // apiClient.getBaseURL() already applies this substitution on Android __DEV__ builds,
+  // but guard here too for consistency in case the URL is constructed independently.
   if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1')) {
-    return baseUrl.replace('localhost', '10.0.2.2').replace('127.0.0.1', '10.0.2.2');
+    return baseUrl.replace('localhost', '172.19.128.1').replace('127.0.0.1', '172.19.128.1');
   }
 
   return baseUrl;

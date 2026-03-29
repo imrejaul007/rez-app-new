@@ -334,19 +334,22 @@ const FitnessBookingPage: React.FC = () => {
   };
 
   const getTrainerPrice = () => {
+    // TODO: Replace hardcoded fallback prices with values from the store/trainer API
+    // These are default fallback prices shown when the API does not return pricing data
     switch (sessionType) {
       case 'single':
-        return 999;
+        return 999; // fallback default — single session
       case 'pack5':
-        return 4499;
+        return 4499; // fallback default — 5-session pack
       case 'pack10':
-        return 7999;
+        return 7999; // fallback default — 10-session pack
       default:
-        return 999;
+        return 999; // fallback default
     }
   };
 
-  const getDayPassPrice = () => 499 * dayPassCount;
+  // TODO: Replace hardcoded fallback day-pass price with value from the store API
+  const getDayPassPrice = () => 499 * dayPassCount; // 499 is a fallback default per pass
 
   const getCashbackAmount = () => {
     const cashbackPercent = parseInt(cashback || '0') || store?.offers?.cashback || 15;

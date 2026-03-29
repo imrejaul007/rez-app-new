@@ -36,8 +36,8 @@ function SignInScreen() {
   const rootNavigationState = useRootNavigationState();
   // Read auth state via refs to avoid re-renders that dismiss the keyboard.
   // Only isAuthenticated + user are needed for the navigation effect.
-  const userRef = useRef(useAuthStore.getState().state.user);
-  const isAuthRef = useRef(useAuthStore.getState().state.isAuthenticated);
+  const userRef = useRef(useAuthStore.getState()?.state?.user);
+  const isAuthRef = useRef(useAuthStore.getState()?.state?.isAuthenticated);
   useEffect(() => {
     const unsub = useAuthStore.subscribe((s) => {
       userRef.current = s.state.user;
@@ -186,7 +186,7 @@ function SignInScreen() {
       clearTimeout(slowHintTimer);
       if (isMounted()) setSlowLoadingMsg('');
       const errorMessage =
-        error?.message || useAuthStore.getState().state.error || 'Failed to send OTP. Please try again.';
+        error?.message || useAuthStore.getState()?.state?.error || 'Failed to send OTP. Please try again.';
 
       if (
         errorMessage.toLowerCase().includes('user not found') ||
@@ -364,14 +364,14 @@ function SignInScreen() {
         await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       } catch {}
       // Use the returned user directly to avoid reading stale store state
-      const loggedInUser = (result as any) || useAuthStore.getState().state.user;
+      const loggedInUser = (result as any) || useAuthStore.getState()?.state?.user;
       if (loggedInUser?.isOnboarded) {
         router.replace('/(tabs)/');
       } else {
         router.replace('/onboarding/notification-permission');
       }
     } catch (error: any) {
-      const errorMessage = error?.message || useAuthStore.getState().state.error || 'Invalid OTP. Please try again.';
+      const errorMessage = error?.message || useAuthStore.getState()?.state?.error || 'Invalid OTP. Please try again.';
       if (!isMounted()) return;
       setErrors((prev) => ({
         ...prev,
@@ -396,7 +396,7 @@ function SignInScreen() {
       platformAlertSimple('OTP Resent', 'New verification code sent to your phone');
     } catch (error: any) {
       const errorMessage =
-        error?.message || useAuthStore.getState().state.error || 'Failed to resend OTP. Please try again.';
+        error?.message || useAuthStore.getState()?.state?.error || 'Failed to resend OTP. Please try again.';
       if (!isMounted()) return;
       setErrors((prev) => ({ ...prev, otp: errorMessage }));
       platformAlertSimple('Error', errorMessage);

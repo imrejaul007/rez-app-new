@@ -213,15 +213,11 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
 
     // TODO: Replace with real bill-fetch API call (e.g. POST /financial/bills/fetch)
     // that returns { amount, dueDate } for the given consumerNumber and service.
-    // For now show a loading state and leave the amount blank until the API is connected.
-    setFetchedBill({
-      amount: 0,
-      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
-      }),
-    });
+    // Bill fetching from operator APIs is not yet connected — notify the user.
+    platformAlertSimple(
+      'Coming Soon',
+      'Automatic bill fetching is not yet available. Please enter your bill amount manually.',
+    );
     setBillAmount('');
   };
 
