@@ -69,10 +69,17 @@ const StudentBudgetFoodGrid: React.FC = () => {
   const router = useRouter();
 
   const handleTilePress = (slug: string) => {
-    router.push(`/near-u/food?subcategory=${slug}` as any);
+    // Navigate directly to the store list filtered by the chosen food subcategory.
+    // /near-u/food does not consume the subcategory param, so we go straight to
+    // StoreListPage which does accept a category filter.
+    router.push({
+      pathname: '/StoreListPage',
+      params: { category: slug, sort: 'rating' },
+    } as any);
   };
 
   const handleViewAll = () => {
+    // Open the generic food discovery page for browsing all food options.
     router.push('/near-u/food' as any);
   };
 

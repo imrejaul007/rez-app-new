@@ -41,7 +41,7 @@ import Animated, {
   SlideInRight,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Location from 'expo-location';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -239,6 +239,7 @@ function SectionHeader({
 // ─── Main Screen ───────────────────────────────────────────────────────────────
 export default function TryHomeScreen() {
   const router = useRouter();
+  const params = useLocalSearchParams<{ category?: string }>();
 
   // Data state
   const [allTrials, setAllTrials] = useState<TrialCard[]>([]);
@@ -251,7 +252,8 @@ export default function TryHomeScreen() {
     reward: 50,
   });
   const [explorerScore, setExplorerScore] = useState({ score: 0, tier: 'Curious', streak: 0 });
-  const [activeCat, setActiveCat] = useState('all');
+  // Pre-select category if navigated from a category chip (e.g. from TryBeforeYouBuyCard)
+  const [activeCat, setActiveCat] = useState(() => params.category || 'all');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [locationPermission, setLocationPermission] = useState(false);
@@ -296,7 +298,12 @@ export default function TryHomeScreen() {
         ]);
         if (feed.status === 'fulfilled') {
           setAllTrials(feed.value);
-          setFilteredTrials(feed.value);
+          // Apply the active category filter (may have been set via URL param)
+          setFilteredTrials(
+            activeCat && activeCat !== 'all'
+              ? feed.value.filter((t) => t.category.toLowerCase().includes(activeCat))
+              : feed.value,
+          );
         }
         if (coinsData.status === 'fulfilled') setCoinBalance(coinsData.value.totalBalance);
         if (scoreData.status === 'fulfilled') {
@@ -310,7 +317,7 @@ export default function TryHomeScreen() {
         setLoading(false);
       }
     },
-    [location],
+    [location, activeCat],
   );
 
   const handleRefresh = async () => {

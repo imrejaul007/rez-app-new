@@ -125,9 +125,17 @@ const CampusHotDealsStrip: React.FC<CampusHotDealsStripProps> = ({ campusId = ''
   }, [campusId]);
 
   const handleCardPress = useCallback((id: string) => {
-    // TODO: Navigate to merchant/store detail page when store routing is unified
-    router.push(`/product-page?cardId=${id}&cardType=store` as any);
-  }, [router]);
+    // Find the item to get its category for navigation
+    const item = items.find((i) => i.id === id);
+    const category = item?.category || 'food';
+    // Navigate to the store list filtered by this item's category.
+    // Placeholder IDs (e.g. ct-1) are not real backend product IDs, so we
+    // route to the store discovery page rather than product-page.
+    router.push({
+      pathname: '/StoreListPage',
+      params: { category, sort: 'rating' },
+    } as any);
+  }, [router, items]);
 
   const handleViewAll = () => {
     router.push('/near-u/student-offers' as any);
