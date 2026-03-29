@@ -34,7 +34,7 @@ export function BasicVideoUploadExample() {
         style={styles.tagButton}
         onPress={() => setShowProductSelector(true)}
       >
-        <Ionicons name="pricetag" size={20} color="#6366F1" />
+        <Ionicons name="pricetag" size={20} color="#1a3a52" />
         <Text style={styles.tagButtonText}>
           Tag Products ({selectedProducts.length}/10)
         </Text>
@@ -283,7 +283,7 @@ export function UGCContentCreationExample() {
             <Ionicons
               name="pricetag-outline"
               size={24}
-              color={taggedProducts.length >= 5 ? '#ffcd57' : '#6366F1'}
+              color={taggedProducts.length >= 5 ? '#ffcd57' : '#1a3a52'}
             />
             <View style={styles.tagProductsButtonContent}>
               <Text
@@ -392,7 +392,7 @@ const styles = StyleSheet.create({
     gap: 8,
     backgroundColor: '#F5F7FF',
     borderWidth: 2,
-    borderColor: '#6366F1',
+    borderColor: '#1a3a52',
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -400,7 +400,7 @@ const styles = StyleSheet.create({
   tagButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#6366F1',
+    color: '#1a3a52',
   },
   taggedProducts: {
     marginTop: 16,
@@ -424,7 +424,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#6366F1',
+    backgroundColor: '#1a3a52',
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 12,
@@ -472,7 +472,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
-    backgroundColor: '#6366F1',
+    backgroundColor: '#1a3a52',
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 8,
@@ -510,14 +510,14 @@ const styles = StyleSheet.create({
   listItemPrice: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#6366F1',
+    color: '#1a3a52',
   },
   compareButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#6366F1',
+    backgroundColor: '#1a3a52',
     paddingVertical: 14,
     borderRadius: 12,
     marginBottom: 16,
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
   compareCardPrice: {
     fontSize: 15,
     fontWeight: '700',
-    color: '#6366F1',
+    color: '#1a3a52',
     marginBottom: 4,
   },
   compareCardRating: {
@@ -609,7 +609,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F7FF',
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#6366F1',
+    borderColor: '#1a3a52',
   },
   tagProductsButtonActive: {
     borderColor: '#ffcd57',
@@ -621,7 +621,7 @@ const styles = StyleSheet.create({
   tagProductsButtonText: {
     fontSize: 15,
     fontWeight: '600',
-    color: '#6366F1',
+    color: '#1a3a52',
   },
   tagProductsButtonTextActive: {
     color: '#ffcd57',
@@ -647,7 +647,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#6366F1',
+    backgroundColor: '#1a3a52',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -674,7 +674,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 12,
-    backgroundColor: '#6366F1',
+    backgroundColor: '#1a3a52',
     paddingVertical: 16,
     borderRadius: 12,
   },

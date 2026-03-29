@@ -152,9 +152,18 @@ function StoreVisitPageInner() {
 
   // Time slots
   const timeSlots = [
-    '09:00 AM', '10:00 AM', '11:00 AM', '12:00 PM',
-    '01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM',
-    '05:00 PM', '06:00 PM', '07:00 PM', '08:00 PM',
+    '09:00 AM',
+    '10:00 AM',
+    '11:00 AM',
+    '12:00 PM',
+    '01:00 PM',
+    '02:00 PM',
+    '03:00 PM',
+    '04:00 PM',
+    '05:00 PM',
+    '06:00 PM',
+    '07:00 PM',
+    '08:00 PM',
   ];
 
   // Check if a time slot is in the past for the selected date
@@ -202,19 +211,22 @@ function StoreVisitPageInner() {
   };
 
   // Helper to get store hours for a given day from keyed object
-  const getHoursForDay = useCallback((dayName: string) => {
-    const dayKey = dayName.toLowerCase();
-    // Try operationalInfo.hours first (raw backend), then unified hours object
-    const hoursObj = (store as any)?.operationalInfo?.hours || store?.hours;
-    if (!hoursObj || typeof hoursObj !== 'object') return null;
-    const dayData = hoursObj[dayKey];
-    if (!dayData) return null;
-    return {
-      open: dayData.open || '09:00 AM',
-      close: dayData.close || '09:00 PM',
-      closed: dayData.closed ?? !dayData.isOpen ?? false,
-    };
-  }, [store]);
+  const getHoursForDay = useCallback(
+    (dayName: string) => {
+      const dayKey = dayName.toLowerCase();
+      // Try operationalInfo.hours first (raw backend), then unified hours object
+      const hoursObj = (store as any)?.operationalInfo?.hours || store?.hours;
+      if (!hoursObj || typeof hoursObj !== 'object') return null;
+      const dayData = hoursObj[dayKey];
+      if (!dayData) return null;
+      return {
+        open: dayData.open || '09:00 AM',
+        close: dayData.close || '09:00 PM',
+        closed: dayData.closed ?? !dayData.isOpen ?? false,
+      };
+    },
+    [store],
+  );
 
   // Memoized available time slots based on selected date and store hours
   const availableTimeSlots = useMemo(() => {
@@ -232,7 +244,7 @@ function StoreVisitPageInner() {
     }
 
     // Filter slots based on store hours and past time
-    return timeSlots.filter(time => {
+    return timeSlots.filter((time) => {
       // First check if time is in the past
       if (isTimeInPast(time, selectedDate)) {
         return false;
@@ -269,10 +281,10 @@ function StoreVisitPageInner() {
           {
             text: 'Cancel',
             style: 'cancel',
-            onPress: () => router.canGoBack() ? router.back() : router.replace('/(tabs)'),
+            onPress: () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
           },
         ],
-        'warning'
+        'warning',
       );
     }
   }, [isAuthenticated]);
@@ -280,7 +292,7 @@ function StoreVisitPageInner() {
   // Pre-fill user details when user data loads
   useEffect(() => {
     if (user) {
-      setVisitDetails(prev => ({
+      setVisitDetails((prev) => ({
         ...prev,
         name: user.name || prev.name,
         phone: user.phoneNumber || prev.phone,
@@ -297,7 +309,7 @@ function StoreVisitPageInner() {
         'Time Slot No Longer Available',
         'The selected time has passed. Please choose another time slot.',
         undefined,
-        'info'
+        'info',
       );
     }
   }, [selectedDate]);
@@ -440,7 +452,7 @@ function StoreVisitPageInner() {
         'Login Required',
         'You need to be logged in to get a queue number. Please sign in to continue.',
         [{ text: 'Go to Login', onPress: () => router.push('/sign-in') }],
-        'warning'
+        'warning',
       );
       return;
     }
@@ -540,7 +552,7 @@ function StoreVisitPageInner() {
         'Login Required',
         'You need to be logged in to schedule a visit. Please sign in to continue.',
         [{ text: 'Go to Login', onPress: () => router.push('/sign-in') }],
-        'warning'
+        'warning',
       );
       return;
     }
@@ -577,7 +589,7 @@ function StoreVisitPageInner() {
         'Invalid Time',
         'The selected time has already passed. Please choose a future time slot.',
         undefined,
-        'error'
+        'error',
       );
       return;
     }
@@ -593,7 +605,7 @@ function StoreVisitPageInner() {
         'Invalid Date',
         'Cannot schedule a visit in the past. Please select a future date.',
         undefined,
-        'error'
+        'error',
       );
       return;
     }
@@ -612,11 +624,7 @@ function StoreVisitPageInner() {
       });
       let response;
       if (rescheduleVisitId) {
-        response = await storeVisitApi.rescheduleVisit(
-          rescheduleVisitId,
-          selectedDate.toISOString(),
-          selectedTime,
-        );
+        response = await storeVisitApi.rescheduleVisit(rescheduleVisitId, selectedDate.toISOString(), selectedTime);
       } else {
         response = await storeVisitApi.scheduleStoreVisit({
           storeId: storeId as string,
@@ -633,7 +641,7 @@ function StoreVisitPageInner() {
         const dateStr = selectedDate.toLocaleDateString('en-US', {
           month: 'short',
           day: 'numeric',
-          year: 'numeric'
+          year: 'numeric',
         });
 
         // Track visit scheduled success
@@ -651,17 +659,19 @@ function StoreVisitPageInner() {
         showAlert(
           rescheduleVisitId ? 'Visit Rescheduled!' : 'Visit Scheduled!',
           `Your visit has been ${rescheduleVisitId ? 'rescheduled' : 'scheduled'}!\n\nVisit Number: ${response.data.visitNumber}\nDate: ${dateStr}\nTime: ${selectedTime}\n\nYou'll receive a confirmation SMS shortly.`,
-          [{
-            text: 'OK',
-            style: 'default',
-            onPress: () => {
-              // Reset form
-              setSelectedDate(null);
-              setSelectedTime('');
-              router.canGoBack() ? router.back() : router.replace('/(tabs)');
-            }
-          }],
-          'success'
+          [
+            {
+              text: 'OK',
+              style: 'default',
+              onPress: () => {
+                // Reset form
+                setSelectedDate(null);
+                setSelectedTime('');
+                router.canGoBack() ? router.back() : router.replace('/(tabs)');
+              },
+            },
+          ],
+          'success',
         );
       } else {
         // Track visit scheduling error
@@ -694,7 +704,18 @@ function StoreVisitPageInner() {
       if (!isMounted()) return;
       setSchedulingVisit(false);
     }
-  }, [isAuthenticated, visitDetails, selectedDate, selectedTime, storeId, router, store, crowdLevel, rescheduleVisitId, paymentMethod]);
+  }, [
+    isAuthenticated,
+    visitDetails,
+    selectedDate,
+    selectedTime,
+    storeId,
+    router,
+    store,
+    crowdLevel,
+    rescheduleVisitId,
+    paymentMethod,
+  ]);
 
   // Memoized handle directions
   const handleGetDirections = useCallback(() => {
@@ -712,7 +733,9 @@ function StoreVisitPageInner() {
       timestamp: new Date().toISOString(),
     });
 
-    const address = [store.location?.address, store.location?.city, store.location?.state, store.location?.pincode].filter(Boolean).join(', ');
+    const address = [store.location?.address, store.location?.city, store.location?.state, store.location?.pincode]
+      .filter(Boolean)
+      .join(', ');
     const url = Platform.select({
       ios: `maps:0,0?q=${encodeURIComponent(address)}`,
       android: `geo:0,0?q=${encodeURIComponent(address)}`,
@@ -737,9 +760,12 @@ function StoreVisitPageInner() {
   // Memoized get crowd status color and badge
   const getCrowdStatusColor = useCallback((level: CrowdLevel) => {
     switch (level) {
-      case 'Low': return Colors.gold;
-      case 'Medium': return Colors.warning;
-      case 'High': return Colors.error;
+      case 'Low':
+        return Colors.gold;
+      case 'Medium':
+        return Colors.warning;
+      case 'High':
+        return Colors.error;
     }
   }, []);
 
@@ -768,18 +794,20 @@ function StoreVisitPageInner() {
 
   // Loading state - show skeleton screens
   if (loading) {
-    return <StoreVisitLoadingSkeleton onBackPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} />;
+    return (
+      <StoreVisitLoadingSkeleton onBackPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))} />
+    );
   }
 
   // Error state
   if (error || !store) {
     return (
       <ThemedView style={styles.container}>
-        <LinearGradient
-          colors={[Colors.gold, colors.brand.teal]}
-          style={styles.header}
-        >
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <LinearGradient colors={[Colors.gold, colors.brand.teal]} style={styles.header}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Store Visit</ThemedText>
@@ -807,7 +835,10 @@ function StoreVisitPageInner() {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={22} color="white" />
           </Pressable>
           <Text style={styles.headerTitle}>Store Visit</Text>
@@ -820,9 +851,7 @@ function StoreVisitPageInner() {
             </View>
             <View style={styles.flex1}>
               <Text style={styles.storeName}>{store.name}</Text>
-              {store.category?.name && (
-                <Text style={styles.storeCategory}>{store.category.name}</Text>
-              )}
+              {store.category?.name && <Text style={styles.storeCategory}>{store.category.name}</Text>}
               {(store.location?.address || store.location?.city) && (
                 <View style={styles.addressRow}>
                   <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />
@@ -869,9 +898,7 @@ function StoreVisitPageInner() {
                 {queueEstimatedWait ? (
                   <View style={styles.queueWaitRow}>
                     <Ionicons name="time-outline" size={14} color={Colors.gold} />
-                    <Text style={styles.queueWaitText}>
-                      Est. wait: {queueEstimatedWait}
-                    </Text>
+                    <Text style={styles.queueWaitText}>Est. wait: {queueEstimatedWait}</Text>
                   </View>
                 ) : null}
                 {queueSize > 0 ? (
@@ -879,10 +906,7 @@ function StoreVisitPageInner() {
                     {queueSize} {queueSize === 1 ? 'person' : 'people'} in queue
                   </Text>
                 ) : null}
-                <Pressable
-                  onPress={() => router.push('/my-visits')}
-                  style={styles.viewMyVisitsBtn}
-                >
+                <Pressable onPress={() => router.push('/my-visits')} style={styles.viewMyVisitsBtn}>
                   <Ionicons name="list-outline" size={14} color={colors.nileBlue} />
                   <Text style={styles.viewMyVisitsText}>View My Visits</Text>
                 </Pressable>
@@ -904,7 +928,7 @@ function StoreVisitPageInner() {
               colors={isOpen ? [Colors.gold, colors.nileBlue] : [Colors.error, Colors.error]}
               style={styles.statusBadge}
             >
-              <Ionicons name={isOpen ? "checkmark-circle" : "close-circle"} size={16} color="white" />
+              <Ionicons name={isOpen ? 'checkmark-circle' : 'close-circle'} size={16} color="white" />
               <Text style={styles.statusText}>{isOpen ? 'Open Now' : 'Closed'}</Text>
             </LinearGradient>
             {isOpen && (
@@ -991,12 +1015,8 @@ function StoreVisitPageInner() {
 
           <View style={styles.paymentOptionsRow}>
             <Pressable
-              style={[
-                styles.paymentOption,
-                paymentMethod === 'none' && styles.paymentOptionSelected,
-              ]}
+              style={[styles.paymentOption, paymentMethod === 'none' && styles.paymentOptionSelected]}
               onPress={() => setPaymentMethod('none')}
-             
             >
               {paymentMethod === 'none' ? (
                 <View style={styles.paymentOptionInner}>
@@ -1014,12 +1034,8 @@ function StoreVisitPageInner() {
             </Pressable>
 
             <Pressable
-              style={[
-                styles.paymentOption,
-                paymentMethod === 'pay_at_store' && styles.paymentOptionSelected,
-              ]}
+              style={[styles.paymentOption, paymentMethod === 'pay_at_store' && styles.paymentOptionSelected]}
               onPress={() => setPaymentMethod('pay_at_store')}
-             
             >
               {paymentMethod === 'pay_at_store' ? (
                 <View style={styles.paymentOptionInner}>
@@ -1064,12 +1080,15 @@ function StoreVisitPageInner() {
                       storeId,
                       storeName: store?.name,
                       selectedDate: date.toISOString(),
-                      dateFormatted: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+                      dateFormatted: date.toLocaleDateString('en-US', {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      }),
                       crowdLevel,
                       timestamp: new Date().toISOString(),
                     });
                   }}
-                 
                 >
                   {isSelected ? (
                     <View style={[styles.dateCard, styles.dateCardSelected]}>
@@ -1081,9 +1100,7 @@ function StoreVisitPageInner() {
                     </View>
                   ) : (
                     <View style={styles.dateCard}>
-                      <Text style={styles.dateDay}>
-                        {date.toLocaleDateString('en-US', { weekday: 'short' })}
-                      </Text>
+                      <Text style={styles.dateDay}>{date.toLocaleDateString('en-US', { weekday: 'short' })}</Text>
                       <Text style={styles.dateNumber}>{date.getDate()}</Text>
                       <Text style={styles.dateLabel}>{formatDate(date)}</Text>
                     </View>
@@ -1096,9 +1113,7 @@ function StoreVisitPageInner() {
           <View style={[styles.sectionHeader, styles.sectionHeaderSpaced]}>
             <Ionicons name="time" size={16} color={colors.nileBlue} />
             <Text style={styles.sectionLabel}>Select Time</Text>
-            {loadingSlots && (
-              <ActivityIndicator size="small" color={Colors.gold} style={{ marginLeft: 8 }} />
-            )}
+            {loadingSlots && <ActivityIndicator size="small" color={Colors.gold} style={{ marginLeft: 8 }} />}
           </View>
           <View style={styles.timeGrid}>
             {getAvailableTimeSlots().map((time) => {
@@ -1120,7 +1135,6 @@ function StoreVisitPageInner() {
                       timestamp: new Date().toISOString(),
                     });
                   }}
-                 
                   disabled={isBooked}
                 >
                   {isBooked ? (
@@ -1148,30 +1162,31 @@ function StoreVisitPageInner() {
               <Text style={styles.allBookedText}>All time slots are booked for this date. Please try another day.</Text>
             </View>
           )}
-          {selectedDate && getAvailableTimeSlots().length === 0 && (() => {
-            const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
-            const dayHoursInfo = getHoursForDay(dayName);
-            const isClosed = dayHoursInfo?.closed;
-            const isToday = selectedDate.toDateString() === new Date().toDateString();
+          {selectedDate &&
+            getAvailableTimeSlots().length === 0 &&
+            (() => {
+              const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' });
+              const dayHoursInfo = getHoursForDay(dayName);
+              const isClosed = dayHoursInfo?.closed;
+              const isToday = selectedDate.toDateString() === new Date().toDateString();
 
-            return (
-              <View style={styles.noTimeSlotsContainer}>
-                <Ionicons
-                  name={isClosed ? "close-circle-outline" : "time-outline"}
-                  size={24}
-                  color={isClosed ? Colors.error : colors.text.tertiary}
-                />
-                <Text style={styles.noTimeSlotsText}>
-                  {isClosed
-                    ? `Store is closed on ${dayName}. Please select another day.`
-                    : isToday
-                      ? 'All time slots for today have passed. Please select another date.'
-                      : 'No time slots available. Please select another date.'
-                  }
-                </Text>
-              </View>
-            );
-          })()}
+              return (
+                <View style={styles.noTimeSlotsContainer}>
+                  <Ionicons
+                    name={isClosed ? 'close-circle-outline' : 'time-outline'}
+                    size={24}
+                    color={isClosed ? Colors.error : colors.text.tertiary}
+                  />
+                  <Text style={styles.noTimeSlotsText}>
+                    {isClosed
+                      ? `Store is closed on ${dayName}. Please select another day.`
+                      : isToday
+                        ? 'All time slots for today have passed. Please select another date.'
+                        : 'No time slots available. Please select another date.'}
+                  </Text>
+                </View>
+              );
+            })()}
         </View>
 
         {/* Action Buttons */}
@@ -1181,7 +1196,6 @@ function StoreVisitPageInner() {
               style={[styles.secondaryButton, (gettingQueue || queueNumber) && styles.buttonDisabled]}
               onPress={queueNumber ? undefined : handleGetQueueNumber}
               disabled={gettingQueue || !!queueNumber}
-             
             >
               <View style={styles.buttonContent}>
                 {gettingQueue ? (
@@ -1195,11 +1209,7 @@ function StoreVisitPageInner() {
               </View>
             </Pressable>
 
-            <Pressable
-              style={styles.directionsButton}
-              onPress={handleGetDirections}
-             
-            >
+            <Pressable style={styles.directionsButton} onPress={handleGetDirections}>
               <View style={styles.directionsButtonInner}>
                 <Ionicons name="navigate" size={18} color="white" />
                 <Text style={styles.directionsButtonText}>Directions</Text>
@@ -1211,7 +1221,6 @@ function StoreVisitPageInner() {
             style={[styles.primaryButton, schedulingVisit && styles.buttonDisabled]}
             onPress={handleScheduleVisit}
             disabled={schedulingVisit}
-           
           >
             <View style={styles.primaryButtonInner}>
               {schedulingVisit ? (
@@ -1221,17 +1230,17 @@ function StoreVisitPageInner() {
               )}
               <Text style={styles.primaryButtonText}>
                 {schedulingVisit
-                  ? (rescheduleVisitId ? 'Rescheduling...' : 'Scheduling Visit...')
-                  : (rescheduleVisitId ? 'Reschedule Visit' : 'Schedule Visit')
-                }
+                  ? rescheduleVisitId
+                    ? 'Rescheduling...'
+                    : 'Scheduling Visit...'
+                  : rescheduleVisitId
+                    ? 'Reschedule Visit'
+                    : 'Schedule Visit'}
               </Text>
             </View>
           </Pressable>
 
-          <Pressable
-            onPress={() => router.push('/my-visits')}
-            style={styles.viewPlannedVisitsBtn}
-          >
+          <Pressable onPress={() => router.push('/my-visits')} style={styles.viewPlannedVisitsBtn}>
             <Ionicons name="list-outline" size={16} color={colors.nileBlue} />
             <Text style={styles.viewPlannedVisitsText}>View My Planned Visits</Text>
           </Pressable>
@@ -1706,28 +1715,45 @@ const styles = StyleSheet.create({
   queueWaitRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: Spacing.sm },
   queueWaitText: { fontSize: 13, color: Colors.gold, fontWeight: '600' },
   queueSizeText: { fontSize: 12, color: colors.text.tertiary, marginTop: Spacing.xs },
-  viewMyVisitsBtn: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 10, paddingVertical: 6, paddingHorizontal: Spacing.md, borderRadius: BorderRadius.md, backgroundColor: Colors.gold + '15' },
+  viewMyVisitsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 10,
+    paddingVertical: 6,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.md,
+    backgroundColor: Colors.gold + '15',
+  },
   viewMyVisitsText: { fontSize: 13, color: colors.nileBlue, fontWeight: '700' },
   paymentOptionsRow: { flexDirection: 'row', gap: 10 },
   paymentOptionSubtext: { fontSize: 11, color: colors.text.tertiary, textAlign: 'center' },
   sectionHeaderSpaced: { marginTop: 24 },
   bookedText: { fontSize: 10, color: colors.text.tertiary, fontWeight: '600' },
-  allBookedBanner: { backgroundColor: Colors.errorScale[50], padding: Spacing.md, borderRadius: BorderRadius.sm, marginTop: Spacing.sm, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  allBookedBanner: {
+    backgroundColor: Colors.errorScale[50],
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    marginTop: Spacing.sm,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
   allBookedText: { color: Colors.error, fontSize: 13, flex: 1 },
-  viewPlannedVisitsBtn: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6, paddingVertical: Spacing.sm },
+  viewPlannedVisitsBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: Spacing.sm,
+  },
   viewPlannedVisitsText: { fontSize: 14, color: colors.nileBlue, fontWeight: '700' },
 });
 
 // Wrap component with ErrorBoundary for production safety
 function StoreVisitPage() {
-  const isMounted = useIsMounted();
   return (
-    <ErrorBoundary
-      onError={(error, errorInfo) => {
-      }}
-      onReset={() => {
-      }}
-    >
+    <ErrorBoundary onError={(error, errorInfo) => {}} onReset={() => {}}>
       <StoreVisitPageInner />
     </ErrorBoundary>
   );

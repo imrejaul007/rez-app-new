@@ -29,7 +29,7 @@ const CARD_HEIGHT = CARD_WIDTH * 1.45;
 const TIER_COLORS: Record<string, [string, string]> = {
   'Beginner':     ['#64748b', '#94a3b8'],
   'Smart Saver':  ['#0ea5e9', '#38bdf8'],
-  'Super Saver':  ['#7c3aed', '#a78bfa'],
+  'Super Saver':  ['#1a3a52', '#FFC857'],
   'Elite Saver':  ['#d97706', '#fbbf24'],
   'Legend':       ['#dc2626', '#f87171'],
 };
@@ -62,7 +62,7 @@ export interface SavingsShareCardProps {
 const SavingsShareCard = forwardRef<View, SavingsShareCardProps>(
   ({ savings, score, streakDays, tier, referralCode }, ref) => {
     const gradientColors: [string, string] =
-      TIER_COLORS[tier] || ['#7c3aed', '#a78bfa'];
+      TIER_COLORS[tier] || ['#1a3a52', '#FFC857'];
 
     const tierIcon = TIER_ICONS[tier] || '✨';
     const referralLink = `https://app.rezpay.in/join?ref=${referralCode}`;

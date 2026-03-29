@@ -815,7 +815,7 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     marginRight: 12,
     marginTop: 4,
   },
@@ -870,7 +870,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[900],
   },
   trackButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     borderRadius: 8,
     padding: 12,
     alignItems: 'center',
@@ -886,7 +886,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   actionButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     borderRadius: 8,
     padding: 16,
     alignItems: 'center',
@@ -917,7 +917,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   retryButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8,

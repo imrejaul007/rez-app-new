@@ -14,9 +14,9 @@ const SEGMENT_THIRD_TILE: Record<string, { label: string; icon: string; iconColo
   verified_student:    { label: 'Campus Rank',    icon: 'trophy-outline',       iconColor: '#F59E0B' },
   verified_employee:   { label: 'Work Perks Used', icon: 'checkmark-circle',    iconColor: '#10B981' },
   verified_healthcare: { label: 'Health Saves',   icon: 'medkit-outline',       iconColor: '#EF4444' },
-  verified_defence:    { label: 'Defence Saves',  icon: 'shield-checkmark',     iconColor: '#6366F1' },
+  verified_defence:    { label: 'Defence Saves',  icon: 'shield-checkmark',     iconColor: '#1a3a52' },
   verified_teacher:    { label: 'Edu Savings',    icon: 'book-outline',         iconColor: '#F59E0B' },
-  verified_senior:     { label: 'Senior Saves',   icon: 'heart-outline',        iconColor: '#EC4899' },
+  verified_senior:     { label: 'Senior Saves',   icon: 'heart-outline',        iconColor: '#FFC857' },
 };
 
 interface InsightSectionProps {

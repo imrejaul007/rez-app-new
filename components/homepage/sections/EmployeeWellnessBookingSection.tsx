@@ -110,7 +110,7 @@ const CATEGORY_CONFIG: Record<
   spa: { emoji: '🧖', label: 'Spa', bg: '#ECFDF5', accent: '#059669' },
   grooming: { emoji: '✂️', label: 'Grooming', bg: '#EFF6FF', accent: '#2563EB' },
   skin_clinic: { emoji: '🧴', label: 'Skin Clinic', bg: '#FCE7F3', accent: '#DB2777' },
-  health_check: { emoji: '🩺', label: 'Health Check', bg: '#FFF7ED', accent: '#EA580C' },
+  health_check: { emoji: '🩺', label: 'Health Check', bg: '#FFF7ED', accent: '#FFC857' },
 };
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -432,7 +432,7 @@ const styles = StyleSheet.create({
   discountText: {
     fontSize: 10,
     fontWeight: '700',
-    color: '#EA580C',
+    color: '#FFC857',
   },
   cashbackText: {
     fontSize: 11,

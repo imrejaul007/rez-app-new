@@ -823,7 +823,7 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#F97316',
+    backgroundColor: '#FFC857',
   },
 
   // =====================================================

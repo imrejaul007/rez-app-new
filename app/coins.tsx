@@ -158,7 +158,7 @@ function CoinsScreen() {
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         {/* Coin Balance Card */}
         <LinearGradient
-          colors={['#6366f1', '#8b5cf6']}
+          colors={['#1a3a52', '#FFC857']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.balanceCard}
@@ -245,7 +245,7 @@ function CoinsScreen() {
 
         {/* Learn More Button */}
         <TouchableOpacity style={styles.learnBtn} onPress={() => router.push('/coin-system' as any)}>
-          <Ionicons name="book" size={20} color="#6366f1" />
+          <Ionicons name="book" size={20} color="#1a3a52" />
           <Text style={styles.learnBtnText}>Learn More About Coins</Text>
         </TouchableOpacity>
       </ScrollView>
@@ -350,5 +350,5 @@ const styles = StyleSheet.create({
     marginTop: 8,
     marginBottom: 20,
   },
-  learnBtnText: { fontSize: 14, fontWeight: '600', color: '#6366f1' },
+  learnBtnText: { fontSize: 14, fontWeight: '600', color: '#1a3a52' },
 });

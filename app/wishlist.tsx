@@ -307,7 +307,7 @@ function WishlistPage() {
 
       const response = await wishlistApi.getWishlists(1, 50);
 
-      if (!response.success || !response.data) {
+      if (!response.success || !response.data?.wishlists) {
         throw new Error('Failed to fetch wishlists');
       }
 

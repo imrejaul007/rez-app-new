@@ -75,10 +75,10 @@ function GiftCardItem({ card, onCopyCode }: { card: StoreGiftCard; onCopyCode: (
   const balancePct = card.amount > 0 ? (card.balance / card.amount) * 100 : 0;
 
   const gradientColors: [string, string] = isActive
-    ? ['#7C3AED', '#4F46E5']
+    ? ['#1a3a52', '#FFC857']
     : card.status === 'used'
-    ? ['#374151', '#1F2937']
-    : ['#6B7280', '#4B5563'];
+      ? ['#374151', '#1F2937']
+      : ['#6B7280', '#4B5563'];
 
   return (
     <View style={styles.cardWrapper}>
@@ -94,7 +94,9 @@ function GiftCardItem({ card, onCopyCode }: { card: StoreGiftCard; onCopyCode: (
               </View>
             )}
           </View>
-          <View style={[styles.statusBadge, { backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.3)' }]}>
+          <View
+            style={[styles.statusBadge, { backgroundColor: isActive ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.3)' }]}
+          >
             <Text style={styles.statusText}>{card.status.toUpperCase()}</Text>
           </View>
         </View>
@@ -125,9 +127,7 @@ function GiftCardItem({ card, onCopyCode }: { card: StoreGiftCard; onCopyCode: (
             <Ionicons name="copy-outline" size={14} color="rgba(255,255,255,0.7)" style={{ marginLeft: 6 }} />
           </TouchableOpacity>
           <View>
-            {isExpiringSoon(card.expiresAt) && isActive && (
-              <Text style={styles.expiryWarning}>Expires soon!</Text>
-            )}
+            {isExpiringSoon(card.expiresAt) && isActive && <Text style={styles.expiryWarning}>Expires soon!</Text>}
             <Text style={styles.expiryText}>Valid till {formatDate(card.expiresAt)}</Text>
           </View>
         </View>
@@ -145,8 +145,16 @@ function EmptyState({ tab }: { tab: FilterTab }) {
       title: 'No active gift cards',
       body: 'Visit your favourite stores and ask them to issue a gift card for you.',
     },
-    used: { icon: 'checkmark-circle-outline', title: 'No used cards', body: 'Your redeemed gift cards will appear here.' },
-    expired: { icon: 'time-outline', title: 'No expired cards', body: 'Cards that have passed their validity date show up here.' },
+    used: {
+      icon: 'checkmark-circle-outline',
+      title: 'No used cards',
+      body: 'Your redeemed gift cards will appear here.',
+    },
+    expired: {
+      icon: 'time-outline',
+      title: 'No expired cards',
+      body: 'Cards that have passed their validity date show up here.',
+    },
   };
   const m = messages[tab];
   return (
@@ -169,24 +177,31 @@ function StoreGiftCardsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('active');
 
-  const fetchCards = useCallback(async (isRefresh = false) => {
-    try {
-      isRefresh ? setRefreshing(true) : setLoading(true);
-      const res = await apiClient.get<{ giftCards: StoreGiftCard[] }>('/user/store-gift-cards?status=all');
-      if (!isMounted()) return;
-      if (res.success && res.data?.giftCards) {
-        setCards(res.data.giftCards);
+  const fetchCards = useCallback(
+    async (isRefresh = false) => {
+      try {
+        isRefresh ? setRefreshing(true) : setLoading(true);
+        const res = await apiClient.get<{ giftCards: StoreGiftCard[] }>('/user/store-gift-cards?status=all');
+        if (!isMounted()) return;
+        if (res.success && res.data?.giftCards) {
+          setCards(res.data.giftCards);
+        }
+      } catch (err) {
+        // silently handle
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        setRefreshing(false);
       }
-    } catch (err) {
-      // silently handle
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [isMounted]);
+    },
+    [isMounted],
+  );
 
-  useFocusEffect(useCallback(() => { fetchCards(); }, [fetchCards]));
+  useFocusEffect(
+    useCallback(() => {
+      fetchCards();
+    }, [fetchCards]),
+  );
 
   const handleCopyCode = useCallback((code: string) => {
     Clipboard.setString(code);
@@ -217,7 +232,8 @@ function StoreGiftCardsScreen() {
               onPress={() => setActiveTab(tab)}
             >
               <Text style={[styles.tabText, activeTab === tab && styles.tabTextActive]}>
-                {tab.charAt(0).toUpperCase() + tab.slice(1)}{count > 0 ? ` (${count})` : ''}
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {count > 0 ? ` (${count})` : ''}
               </Text>
             </TouchableOpacity>
           );
@@ -226,7 +242,7 @@ function StoreGiftCardsScreen() {
 
       {loading ? (
         <View style={styles.loader}>
-          <ActivityIndicator size="large" color={colors.brand?.primary || '#7C3AED'} />
+          <ActivityIndicator size="large" color={colors.nileBlue || '#1a3a52'} />
         </View>
       ) : (
         <ScrollView
@@ -237,9 +253,7 @@ function StoreGiftCardsScreen() {
           {filteredCards.length === 0 ? (
             <EmptyState tab={activeTab} />
           ) : (
-            filteredCards.map((card) => (
-              <GiftCardItem key={card.id} card={card} onCopyCode={handleCopyCode} />
-            ))
+            filteredCards.map((card) => <GiftCardItem key={card.id} card={card} onCopyCode={handleCopyCode} />)
           )}
         </ScrollView>
       )}
@@ -252,24 +266,40 @@ function StoreGiftCardsScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F9FAFB' },
   header: {
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff',
-    borderBottomWidth: 1, borderBottomColor: '#F3F4F6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
   },
   backBtn: { width: 40, height: 40, justifyContent: 'center' },
   headerTitle: { fontSize: 18, fontWeight: '700', color: '#111827' },
   tabBar: { flexDirection: 'row', backgroundColor: '#fff', paddingHorizontal: 16, paddingBottom: 12, gap: 8 },
   tab: {
-    flex: 1, paddingVertical: 8, borderRadius: 20,
-    backgroundColor: '#F3F4F6', alignItems: 'center',
+    flex: 1,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
   },
-  tabActive: { backgroundColor: '#7C3AED' },
+  tabActive: { backgroundColor: '#1a3a52' },
   tabText: { fontSize: 13, fontWeight: '500', color: '#6B7280' },
   tabTextActive: { color: '#fff' },
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   listContent: { padding: 16, gap: 16, paddingBottom: 40 },
 
-  cardWrapper: { borderRadius: 16, overflow: 'hidden', elevation: 4, shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 8, shadowOffset: { width: 0, height: 4 } },
+  cardWrapper: {
+    borderRadius: 16,
+    overflow: 'hidden',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 4 },
+  },
   card: { padding: 20 },
   cardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 },
   storeName: { fontSize: 16, fontWeight: '700', color: '#fff' },
@@ -281,10 +311,23 @@ const styles = StyleSheet.create({
   balanceLabel: { fontSize: 11, color: 'rgba(255,255,255,0.7)', marginBottom: 2 },
   balanceAmount: { fontSize: 28, fontWeight: '800', color: '#fff' },
   faceValue: { fontSize: 16, fontWeight: '600', color: 'rgba(255,255,255,0.8)' },
-  progressBg: { height: 4, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: 2, marginBottom: 16, overflow: 'hidden' },
+  progressBg: {
+    height: 4,
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    borderRadius: 2,
+    marginBottom: 16,
+    overflow: 'hidden',
+  },
   progressFill: { height: 4, backgroundColor: '#fff', borderRadius: 2 },
   cardFooter: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
-  codeRow: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(0,0,0,0.2)', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8 },
+  codeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
   codeText: { fontSize: 13, fontWeight: '600', color: '#fff', fontFamily: 'monospace' },
   expiryWarning: { fontSize: 10, color: '#FCD34D', fontWeight: '700', textAlign: 'right', marginBottom: 2 },
   expiryText: { fontSize: 11, color: 'rgba(255,255,255,0.7)', textAlign: 'right' },

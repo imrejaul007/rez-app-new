@@ -57,12 +57,12 @@ import { useUserIdentityStore, IdentitySegment } from '@/stores/userIdentityStor
 
 // Personalised banner config per segment
 const SEGMENT_BANNER: Partial<Record<IdentitySegment, { text: string; route: string; color: string; icon: string }>> = {
-  verified_student:    { text: 'Your student deals are ready',      route: '/offers/student',          color: '#8B5CF6', icon: 'school-outline' },
+  verified_student:    { text: 'Your student deals are ready',      route: '/offers/student',          color: '#1a3a52', icon: 'school-outline' },
   verified_employee:   { text: 'Your work perks are unlocked',      route: '/offers/corporate',        color: '#0EA5E9', icon: 'briefcase-outline' },
   verified_healthcare: { text: 'Healthcare offers unlocked for you', route: '/offers/zones/healthcare', color: '#2ECC71', icon: 'medkit-outline' },
-  verified_defence:    { text: 'Exclusive defence benefits available', route: '/offers/zones/defence',  color: '#6366F1', icon: 'shield-outline' },
+  verified_defence:    { text: 'Exclusive defence benefits available', route: '/offers/zones/defence',  color: '#1a3a52', icon: 'shield-outline' },
   verified_teacher:    { text: 'Teacher benefits are live',          route: '/offers/zones/teacher',    color: '#F59E0B', icon: 'book-outline' },
-  verified_senior:     { text: 'Senior benefits unlocked',           route: '/offers/zones/senior',     color: '#EC4899', icon: 'heart-outline' },
+  verified_senior:     { text: 'Senior benefits unlocked',           route: '/offers/zones/senior',     color: '#FFC857', icon: 'heart-outline' },
 };
 
 // Exclusive tab label per segment

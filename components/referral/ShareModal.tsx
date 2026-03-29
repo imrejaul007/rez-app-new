@@ -69,7 +69,7 @@ const getSharePlatforms = (currencySymbol: string): ShareTemplate[] => [
   {
     type: 'email',
     icon: 'mail',
-    color: '#6366f1',
+    color: '#1a3a52',
     subject: `Get ${currencySymbol}30 off on REZ - My referral gift!`,
     message: `Hi!\n\nI've been using REZ to shop from local stores. Use my code {CODE} for ${currencySymbol}30 off!\n\n{LINK}`,
   },

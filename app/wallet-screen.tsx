@@ -813,7 +813,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               }}
             >
               <LinearGradient
-                colors={['#F97316', '#FBBF24']}
+                colors={['#1a3a52', '#FFC857']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={{ padding: 18 }}
@@ -883,8 +883,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
                     gap: 6,
                   }}
                 >
-                  <Ionicons name="flash" size={15} color="#EA580C" />
-                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#EA580C' }}>
+                  <Ionicons name="flash" size={15} color="#1a3a52" />
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#1a3a52' }}>
                     Buy a Micro Pack — unlock more deals
                   </Text>
                 </Pressable>

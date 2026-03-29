@@ -1,21 +1,15 @@
 import { colors } from '@/constants/theme';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Dimensions,
-  ActivityIndicator} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
   withTiming,
   withSequence,
   interpolate,
-  Easing} from 'react-native-reanimated';
+  Easing,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -69,7 +63,8 @@ const COLORS = {
   error: Colors.error,
   errorBg: Colors.errorScale[50],
 
-  shadow: 'rgba(26, 58, 82, 0.08)'};
+  shadow: 'rgba(26, 58, 82, 0.08)',
+};
 
 // Confetti particle for celebration
 const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, color }) => {
@@ -105,7 +100,8 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
         {
           backgroundColor: color,
           transform: [{ translateY }, { translateX }, { rotate: spin }],
-          opacity},
+          opacity,
+        },
       ]}
     />
   );
@@ -145,10 +141,7 @@ const Quiz = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [limitsResponse] = await Promise.all([
-          gameApi.getDailyLimits(),
-          refreshWallet(),
-        ]);
+        const [limitsResponse] = await Promise.all([gameApi.getDailyLimits(), refreshWallet()]);
 
         if (limitsResponse.data) {
           const quizLimits = limitsResponse.data.quiz;
@@ -188,7 +181,7 @@ const Quiz = () => {
     try {
       const response = await gamificationApi.startQuiz('medium');
 
-      if (response.success && response.data) {
+      if (response.success && response.data?.questions) {
         const mappedQuestions: QuizQuestion[] = response.data.questions.map((q: any) => ({
           _id: q.id,
           question: q.question,
@@ -196,7 +189,8 @@ const Quiz = () => {
           correctAnswer: q.correctAnswer,
           coins: q.coins,
           category: 'General',
-          difficulty: 'medium'}));
+          difficulty: 'medium',
+        }));
 
         if (mappedQuestions.length === 0) {
           platformAlert('No Questions', 'No quiz questions are available right now. Please try again later.');
@@ -246,24 +240,24 @@ const Quiz = () => {
 
     // Track answer
     const timeSpent = 15 - timeLeft;
-    setAnswers(prev => [...prev, {
-      questionId: currentQ._id,
-      selectedAnswer: answerIndex,
-      timeSpent
-    }]);
+    setAnswers((prev) => [
+      ...prev,
+      {
+        questionId: currentQ._id,
+        selectedAnswer: answerIndex,
+        timeSpent,
+      },
+    ]);
 
     if (isCorrect) {
       setScore(score + currentQ.coins);
       const newStreak = streak + 1;
       setStreak(newStreak);
       if (newStreak > bestStreak) setBestStreak(newStreak);
-      setCorrectCount(prev => prev + 1);
+      setCorrectCount((prev) => prev + 1);
 
       // Pulse animation for correct answer
-      scaleAnim.value = withSequence(
-        withTiming(1.05, { duration: 150 }),
-        withTiming(1, { duration: 150 }),
-      );
+      scaleAnim.value = withSequence(withTiming(1.05, { duration: 150 }), withTiming(1, { duration: 150 }));
     } else {
       setStreak(0);
     }
@@ -335,7 +329,10 @@ const Quiz = () => {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="chevron-back" size={24} color={COLORS.navy} />
         </Pressable>
 
@@ -354,11 +351,7 @@ const Quiz = () => {
           </View>
         ) : (
           <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any)}>
-            <CachedImage
-              source={BRAND.COIN_IMAGE}
-              style={styles.coinIcon}
-              contentFit="contain"
-            />
+            <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
             <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
           </Pressable>
         )}
@@ -390,11 +383,7 @@ const Quiz = () => {
 
               <View style={styles.heroStatsRow}>
                 <View style={styles.heroStatBox}>
-                  <CachedImage
-                    source={BRAND.COIN_IMAGE}
-                    style={styles.heroStatIcon}
-                    contentFit="contain"
-                  />
+                  <CachedImage source={BRAND.COIN_IMAGE} style={styles.heroStatIcon} contentFit="contain" />
                   <Text style={styles.heroStatValue}>250</Text>
                   <Text style={styles.heroStatLabel}>Max Coins</Text>
                 </View>
@@ -403,7 +392,9 @@ const Quiz = () => {
 
                 <View style={styles.heroStatBox}>
                   <Ionicons name="game-controller" size={24} color={colors.text.inverse} />
-                  <Text style={styles.heroStatValue}>{maxPlays - todayPlays}/{maxPlays}</Text>
+                  <Text style={styles.heroStatValue}>
+                    {maxPlays - todayPlays}/{maxPlays}
+                  </Text>
                   <Text style={styles.heroStatLabel}>Plays Left</Text>
                 </View>
               </View>
@@ -422,9 +413,27 @@ const Quiz = () => {
 
               <View style={styles.stepsContainer}>
                 {[
-                  { num: '1', color: COLORS.purple, title: 'Answer 5 questions', desc: 'Each question has 15 seconds', icon: 'bulb' },
-                  { num: '2', color: COLORS.gold, title: 'Earn 50 coins per correct answer', desc: 'Plus streak bonuses!', icon: 'cash' },
-                  { num: '3', color: colors.brand.pink, title: 'Get streak bonuses', desc: '3+ streak: +25% | 5 streak: +50%', icon: 'flash' },
+                  {
+                    num: '1',
+                    color: COLORS.purple,
+                    title: 'Answer 5 questions',
+                    desc: 'Each question has 15 seconds',
+                    icon: 'bulb',
+                  },
+                  {
+                    num: '2',
+                    color: COLORS.gold,
+                    title: 'Earn 50 coins per correct answer',
+                    desc: 'Plus streak bonuses!',
+                    icon: 'cash',
+                  },
+                  {
+                    num: '3',
+                    color: colors.brand.pink,
+                    title: 'Get streak bonuses',
+                    desc: '3+ streak: +25% | 5 streak: +50%',
+                    icon: 'flash',
+                  },
                 ].map((step, idx) => (
                   <View key={idx} style={styles.stepRow}>
                     <View style={[styles.stepBadge, { backgroundColor: `${step.color}15` }]}>
@@ -446,11 +455,12 @@ const Quiz = () => {
             <Pressable
               onPress={startGame}
               disabled={todayPlays >= maxPlays || fetchingQuestions}
-             
               style={styles.startButtonWrapper}
             >
               <LinearGradient
-                colors={todayPlays >= maxPlays ? [colors.text.tertiary, Colors.gray[600]] : [COLORS.purple, COLORS.purpleDark]}
+                colors={
+                  todayPlays >= maxPlays ? [colors.text.tertiary, Colors.gray[600]] : [COLORS.purple, COLORS.purpleDark]
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.startButton}
@@ -460,7 +470,7 @@ const Quiz = () => {
                 ) : (
                   <>
                     <Ionicons
-                      name={todayPlays >= maxPlays ? "time-outline" : "play"}
+                      name={todayPlays >= maxPlays ? 'time-outline' : 'play'}
                       size={22}
                       color={colors.text.inverse}
                     />
@@ -481,7 +491,10 @@ const Quiz = () => {
             <View style={styles.gameStatsBar}>
               <View style={styles.gameStatItem}>
                 <Text style={styles.gameStatLabel}>QUESTION</Text>
-                <Text style={styles.gameStatValue}>{currentQuestion + 1}<Text style={styles.gameStatTotal}>/{quizQuestions.length}</Text></Text>
+                <Text style={styles.gameStatValue}>
+                  {currentQuestion + 1}
+                  <Text style={styles.gameStatTotal}>/{quizQuestions.length}</Text>
+                </Text>
               </View>
 
               <View style={styles.gameStatDivider} />
@@ -524,7 +537,6 @@ const Quiz = () => {
                       key={index}
                       onPress={() => handleAnswer(index)}
                       disabled={selectedAnswer !== null}
-                     
                       style={[
                         styles.optionButton,
                         showResult && isCorrect && styles.optionCorrect,
@@ -532,27 +544,35 @@ const Quiz = () => {
                         !showResult && isSelected && styles.optionSelected,
                       ]}
                     >
-                      <View style={[
-                        styles.optionLetter,
-                        showResult && isCorrect && { backgroundColor: COLORS.successBg, borderColor: COLORS.success },
-                        showResult && isSelected && !isCorrect && { backgroundColor: COLORS.errorBg, borderColor: COLORS.error },
-                      ]}>
-                        <Text style={[
-                          styles.optionLetterText,
-                          showResult && isCorrect && { color: COLORS.success },
-                          showResult && isSelected && !isCorrect && { color: COLORS.error },
-                        ]}>
+                      <View
+                        style={[
+                          styles.optionLetter,
+                          showResult && isCorrect && { backgroundColor: COLORS.successBg, borderColor: COLORS.success },
+                          showResult &&
+                            isSelected &&
+                            !isCorrect && { backgroundColor: COLORS.errorBg, borderColor: COLORS.error },
+                        ]}
+                      >
+                        <Text
+                          style={[
+                            styles.optionLetterText,
+                            showResult && isCorrect && { color: COLORS.success },
+                            showResult && isSelected && !isCorrect && { color: COLORS.error },
+                          ]}
+                        >
                           {String.fromCharCode(65 + index)}
                         </Text>
                       </View>
-                      <Text style={[
-                        styles.optionText,
-                        showResult && isCorrect && { color: COLORS.success, fontWeight: '700' },
-                        showResult && isSelected && !isCorrect && { color: COLORS.error },
-                      ]}>{option}</Text>
-                      {showResult && isCorrect && (
-                        <Ionicons name="checkmark-circle" size={22} color={COLORS.success} />
-                      )}
+                      <Text
+                        style={[
+                          styles.optionText,
+                          showResult && isCorrect && { color: COLORS.success, fontWeight: '700' },
+                          showResult && isSelected && !isCorrect && { color: COLORS.error },
+                        ]}
+                      >
+                        {option}
+                      </Text>
+                      {showResult && isCorrect && <Ionicons name="checkmark-circle" size={22} color={COLORS.success} />}
                       {showResult && isSelected && !isCorrect && (
                         <Ionicons name="close-circle" size={22} color={COLORS.error} />
                       )}
@@ -567,7 +587,9 @@ const Quiz = () => {
               <View style={styles.progressBg}>
                 <Animated.View style={[styles.progressFill, { width: progressWidth }]}>
                   <LinearGradient
-                    colors={timeLeft <= 5 ? [COLORS.error, Colors.errorScale[700]] : [COLORS.purple, COLORS.purpleLight]}
+                    colors={
+                      timeLeft <= 5 ? [COLORS.error, Colors.errorScale[700]] : [COLORS.purple, COLORS.purpleLight]
+                    }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.progressGradient}
@@ -576,7 +598,9 @@ const Quiz = () => {
               </View>
               <View style={styles.progressLabels}>
                 <Text style={styles.progressLabel}>0s</Text>
-                <Text style={[styles.progressLabel, styles.progressLabelCenter, timeLeft <= 5 && { color: COLORS.error }]}>
+                <Text
+                  style={[styles.progressLabel, styles.progressLabelCenter, timeLeft <= 5 && { color: COLORS.error }]}
+                >
                   {timeLeft}s remaining
                 </Text>
                 <Text style={styles.progressLabel}>15s</Text>
@@ -604,40 +628,76 @@ const Quiz = () => {
             {/* Result Card */}
             <View style={styles.resultCard}>
               <LinearGradient
-                colors={correctCount >= 3 ? [COLORS.purple, COLORS.purpleDark] : [COLORS.surfaceSecondary, COLORS.surface]}
+                colors={
+                  correctCount >= 3 ? [COLORS.purple, COLORS.purpleDark] : [COLORS.surfaceSecondary, COLORS.surface]
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.resultGradient}
               >
-                <View style={[styles.resultIconWrapper, { backgroundColor: correctCount >= 3 ? 'rgba(255,255,255,0.2)' : COLORS.purpleBg }]}>
+                <View
+                  style={[
+                    styles.resultIconWrapper,
+                    { backgroundColor: correctCount >= 3 ? 'rgba(255,255,255,0.2)' : COLORS.purpleBg },
+                  ]}
+                >
                   <Ionicons
                     name={getPerformanceRating().icon}
                     size={48}
-                    color={correctCount >= 3 ? colors.text.inverse :getPerformanceRating().color}
+                    color={correctCount >= 3 ? colors.text.inverse : getPerformanceRating().color}
                   />
                 </View>
 
-                <Text style={[styles.resultTitle, { color: correctCount >= 3 ? colors.text.inverse :COLORS.navy }]}>
+                <Text style={[styles.resultTitle, { color: correctCount >= 3 ? colors.text.inverse : COLORS.navy }]}>
                   {getPerformanceRating().text}
                 </Text>
-                <Text style={[styles.resultSubtitle, { color: correctCount >= 3 ? 'rgba(255,255,255,0.9)' : COLORS.textMuted }]}>
+                <Text
+                  style={[
+                    styles.resultSubtitle,
+                    { color: correctCount >= 3 ? 'rgba(255,255,255,0.9)' : COLORS.textMuted },
+                  ]}
+                >
                   You answered {correctCount} of {quizQuestions.length} correctly
                 </Text>
 
-                <View style={[styles.earnedBox, { backgroundColor: correctCount >= 3 ? 'rgba(255,255,255,0.15)' : COLORS.goldBg }]}>
+                <View
+                  style={[
+                    styles.earnedBox,
+                    { backgroundColor: correctCount >= 3 ? 'rgba(255,255,255,0.15)' : COLORS.goldBg },
+                  ]}
+                >
                   <View style={styles.earnedRow}>
                     <CachedImage source={BRAND.COIN_IMAGE} style={styles.earnedCoin} contentFit="contain" />
-                    <Text style={[styles.earnedValue, { color: correctCount >= 3 ? colors.text.inverse :COLORS.gold }]}>+{Math.round(totalEarned)}</Text>
+                    <Text
+                      style={[styles.earnedValue, { color: correctCount >= 3 ? colors.text.inverse : COLORS.gold }]}
+                    >
+                      +{Math.round(totalEarned)}
+                    </Text>
                   </View>
-                  <Text style={[styles.earnedLabel, { color: correctCount >= 3 ? 'rgba(255,255,255,0.8)' : COLORS.textMuted }]}>
+                  <Text
+                    style={[
+                      styles.earnedLabel,
+                      { color: correctCount >= 3 ? 'rgba(255,255,255,0.8)' : COLORS.textMuted },
+                    ]}
+                  >
                     Coins Earned
                   </Text>
                 </View>
 
                 {getStreakBonus() > 0 && (
-                  <View style={[styles.streakBonusCard, { backgroundColor: correctCount >= 3 ? 'rgba(245,158,11,0.25)' : COLORS.warningBg }]}>
+                  <View
+                    style={[
+                      styles.streakBonusCard,
+                      { backgroundColor: correctCount >= 3 ? 'rgba(245,158,11,0.25)' : COLORS.warningBg },
+                    ]}
+                  >
                     <Ionicons name="flash" size={16} color={COLORS.warning} />
-                    <Text style={[styles.streakBonusText, { color: correctCount >= 3 ? colors.text.inverse :COLORS.warning }]}>
+                    <Text
+                      style={[
+                        styles.streakBonusText,
+                        { color: correctCount >= 3 ? colors.text.inverse : COLORS.warning },
+                      ]}
+                    >
                       +{Math.round(getStreakBonus())} Streak Bonus!
                     </Text>
                   </View>
@@ -651,7 +711,9 @@ const Quiz = () => {
                 <View style={[styles.statIconBg, { backgroundColor: COLORS.purpleBg }]}>
                   <Ionicons name="locate" size={22} color={COLORS.purple} />
                 </View>
-                <Text style={styles.statValue}>{quizQuestions.length > 0 ? ((correctCount / quizQuestions.length) * 100).toFixed(0) : 0}%</Text>
+                <Text style={styles.statValue}>
+                  {quizQuestions.length > 0 ? ((correctCount / quizQuestions.length) * 100).toFixed(0) : 0}%
+                </Text>
                 <Text style={styles.statLabel}>Accuracy</Text>
               </View>
 
@@ -667,20 +729,22 @@ const Quiz = () => {
                 <View style={[styles.statIconBg, { backgroundColor: COLORS.successBg }]}>
                   <Ionicons name="checkmark-done" size={22} color={COLORS.success} />
                 </View>
-                <Text style={styles.statValue}>{correctCount}/{quizQuestions.length}</Text>
+                <Text style={styles.statValue}>
+                  {correctCount}/{quizQuestions.length}
+                </Text>
                 <Text style={styles.statLabel}>Correct</Text>
               </View>
             </View>
 
             {/* Action Buttons */}
             <View style={styles.actionsContainer}>
-              <Pressable
-                onPress={startGame}
-                disabled={todayPlays >= maxPlays || fetchingQuestions}
-               
-              >
+              <Pressable onPress={startGame} disabled={todayPlays >= maxPlays || fetchingQuestions}>
                 <LinearGradient
-                  colors={todayPlays >= maxPlays ? [colors.text.tertiary, Colors.gray[600]] : [COLORS.purple, COLORS.purpleDark]}
+                  colors={
+                    todayPlays >= maxPlays
+                      ? [colors.text.tertiary, Colors.gray[600]]
+                      : [COLORS.purple, COLORS.purpleDark]
+                  }
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.primaryAction}
@@ -690,7 +754,7 @@ const Quiz = () => {
                   ) : (
                     <>
                       <Ionicons
-                        name={todayPlays >= maxPlays ? "time-outline" : "refresh"}
+                        name={todayPlays >= maxPlays ? 'time-outline' : 'refresh'}
                         size={20}
                         color={colors.text.inverse}
                       />
@@ -704,10 +768,7 @@ const Quiz = () => {
                 </LinearGradient>
               </Pressable>
 
-              <Pressable
-                onPress={() => router.push('/playandearn' as any)}
-                style={styles.secondaryAction}
-              >
+              <Pressable onPress={() => router.push('/playandearn' as any)} style={styles.secondaryAction}>
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
                 <Text style={styles.secondaryActionText}>Back to Games</Text>
               </Pressable>
@@ -724,7 +785,8 @@ const Quiz = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background},
+    backgroundColor: COLORS.background,
+  },
 
   // Header
   header: {
@@ -736,30 +798,37 @@ const styles = StyleSheet.create({
     gap: 12,
     backgroundColor: COLORS.surface,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border},
+    borderBottomColor: COLORS.border,
+  },
   backButton: {
     width: 44,
     height: 44,
     borderRadius: 12,
     backgroundColor: COLORS.surfaceSecondary,
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   headerCenter: {
-    flex: 1},
+    flex: 1,
+  },
   headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8},
+    gap: 8,
+  },
   headerIcon: {
-    fontSize: 24},
+    fontSize: 24,
+  },
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.navy},
+    color: COLORS.navy,
+  },
   headerSubtitle: {
     fontSize: 13,
     color: COLORS.textMuted,
-    marginTop: 2},
+    marginTop: 2,
+  },
   timerBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -767,15 +836,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: COLORS.purpleBg},
+    backgroundColor: COLORS.purpleBg,
+  },
   timerBadgeWarning: {
-    backgroundColor: COLORS.errorBg},
+    backgroundColor: COLORS.errorBg,
+  },
   timerText: {
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.purple},
+    color: COLORS.purple,
+  },
   timerTextWarning: {
-    color: COLORS.error},
+    color: COLORS.error,
+  },
   coinsBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -783,19 +856,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: COLORS.goldBg},
+    backgroundColor: COLORS.goldBg,
+  },
   coinIcon: {
     width: 20,
-    height: 20},
+    height: 20,
+  },
   coinsText: {
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.goldDark},
+    color: COLORS.goldDark,
+  },
 
   scrollView: {
-    flex: 1},
+    flex: 1,
+  },
   content: {
-    padding: 16},
+    padding: 16,
+  },
 
   // Hero Card
   heroCard: {
@@ -804,64 +882,79 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     overflow: 'hidden',
-    position: 'relative'},
+    position: 'relative',
+  },
   heroIconWrapper: {
-    marginBottom: 16},
+    marginBottom: 16,
+  },
   heroIconBg: {
     width: 80,
     height: 80,
     borderRadius: 40,
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   heroIconText: {
-    fontSize: 40},
+    fontSize: 40,
+  },
   heroTitle: {
     fontSize: 28,
     fontWeight: '800',
     color: colors.text.inverse,
-    marginBottom: 8},
+    marginBottom: 8,
+  },
   heroSubtitle: {
     fontSize: 15,
     color: 'rgba(255,255,255,0.9)',
     textAlign: 'center',
-    marginBottom: 24},
+    marginBottom: 24,
+  },
   heroStatsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 32},
+    gap: 32,
+  },
   heroStatBox: {
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   heroStatIcon: {
     width: 28,
     height: 28,
-    marginBottom: 8},
+    marginBottom: 8,
+  },
   heroStatValue: {
     fontSize: 24,
     fontWeight: '800',
-    color: colors.text.inverse},
+    color: colors.text.inverse,
+  },
   heroStatLabel: {
     fontSize: 12,
     color: 'rgba(255,255,255,0.8)',
-    marginTop: 4},
+    marginTop: 4,
+  },
   heroStatDivider: {
     width: 1,
     height: 50,
-    backgroundColor: 'rgba(255,255,255,0.3)'},
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  },
   decorCircle: {
     position: 'absolute',
     borderRadius: 100,
-    backgroundColor: 'rgba(255,255,255,0.1)'},
+    backgroundColor: 'rgba(255,255,255,0.1)',
+  },
   decorCircle1: {
     width: 120,
     height: 120,
     top: -40,
-    right: -40},
+    right: -40,
+  },
   decorCircle2: {
     width: 100,
     height: 100,
     bottom: -30,
-    left: -30},
+    left: -30,
+  },
 
   // How to Play
   howToPlayCard: {
@@ -873,63 +966,77 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 12,
-    elevation: 4},
+    elevation: 4,
+  },
   howToPlayHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 16},
+    marginBottom: 16,
+  },
   howToPlayTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: COLORS.navy},
+    color: COLORS.navy,
+  },
   stepsContainer: {
-    gap: 14},
+    gap: 14,
+  },
   stepRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12},
+    gap: 12,
+  },
   stepBadge: {
     width: 32,
     height: 32,
     borderRadius: 16,
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   stepBadgeText: {
     fontSize: 14,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
   stepTextContainer: {
-    flex: 1},
+    flex: 1,
+  },
   stepTitle: {
     fontSize: 14,
     fontWeight: '600',
     color: COLORS.navy,
-    marginBottom: 2},
+    marginBottom: 2,
+  },
   stepDesc: {
     fontSize: 12,
-    color: COLORS.textMuted},
+    color: COLORS.textMuted,
+  },
   stepIconBg: {
     width: 36,
     height: 36,
     borderRadius: 18,
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
 
   // Start Button
   startButtonWrapper: {
     borderRadius: 16,
-    overflow: 'hidden'},
+    overflow: 'hidden',
+  },
   startButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
     paddingVertical: 18,
-    borderRadius: 16},
+    borderRadius: 16,
+  },
   startButtonText: {
     fontSize: 17,
     fontWeight: '700',
-    color: colors.text.inverse},
+    color: colors.text.inverse,
+  },
 
   // Game Stats Bar
   gameStatsBar: {
@@ -943,39 +1050,48 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
-    elevation: 2},
+    elevation: 2,
+  },
   gameStatItem: {
     flex: 1,
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   gameStatLabel: {
     fontSize: 10,
     fontWeight: '600',
     color: COLORS.textLight,
     marginBottom: 4,
-    letterSpacing: 0.5},
+    letterSpacing: 0.5,
+  },
   gameStatValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.navy},
+    color: COLORS.navy,
+  },
   gameStatTotal: {
     fontSize: 14,
     fontWeight: '500',
-    color: COLORS.textMuted},
+    color: COLORS.textMuted,
+  },
   gameStatDivider: {
     width: 1,
     height: 32,
-    backgroundColor: COLORS.border},
+    backgroundColor: COLORS.border,
+  },
   streakRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4},
+    gap: 4,
+  },
   scoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4},
+    gap: 4,
+  },
   miniCoin: {
     width: 18,
-    height: 18},
+    height: 18,
+  },
 
   // Question Card
   questionCard: {
@@ -987,26 +1103,31 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 12,
-    elevation: 4},
+    elevation: 4,
+  },
   categoryBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 12,
     paddingVertical: 4,
     borderRadius: 12,
     backgroundColor: COLORS.purpleBg,
-    marginBottom: 16},
+    marginBottom: 16,
+  },
   categoryText: {
     fontSize: 12,
     fontWeight: '600',
-    color: COLORS.purple},
+    color: COLORS.purple,
+  },
   questionText: {
     fontSize: 18,
     fontWeight: '700',
     color: COLORS.navy,
     marginBottom: 24,
-    lineHeight: 26},
+    lineHeight: 26,
+  },
   optionsContainer: {
-    gap: 12},
+    gap: 12,
+  },
   optionButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1015,16 +1136,20 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.surfaceSecondary,
     borderWidth: 2,
     borderColor: COLORS.border,
-    gap: 12},
+    gap: 12,
+  },
   optionSelected: {
     borderColor: COLORS.purple,
-    backgroundColor: COLORS.purpleBg},
+    backgroundColor: COLORS.purpleBg,
+  },
   optionCorrect: {
     backgroundColor: COLORS.successBg,
-    borderColor: COLORS.success},
+    borderColor: COLORS.success,
+  },
   optionWrong: {
     backgroundColor: COLORS.errorBg,
-    borderColor: COLORS.error},
+    borderColor: COLORS.error,
+  },
   optionLetter: {
     width: 32,
     height: 32,
@@ -1033,41 +1158,51 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: COLORS.border,
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   optionLetterText: {
     fontSize: 14,
     fontWeight: '700',
-    color: COLORS.textMuted},
+    color: COLORS.textMuted,
+  },
   optionText: {
     flex: 1,
     fontSize: 15,
     fontWeight: '500',
-    color: COLORS.navy},
+    color: COLORS.navy,
+  },
 
   // Progress Bar
   progressWrapper: {
-    marginBottom: 8},
+    marginBottom: 8,
+  },
   progressBg: {
     height: 10,
     backgroundColor: COLORS.surfaceSecondary,
     borderRadius: 5,
-    overflow: 'hidden'},
+    overflow: 'hidden',
+  },
   progressFill: {
     height: '100%',
     borderRadius: 5,
-    overflow: 'hidden'},
+    overflow: 'hidden',
+  },
   progressGradient: {
-    flex: 1},
+    flex: 1,
+  },
   progressLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8},
+    marginTop: 8,
+  },
   progressLabel: {
     fontSize: 11,
-    color: COLORS.textLight},
+    color: COLORS.textLight,
+  },
   progressLabelCenter: {
     fontWeight: '600',
-    color: COLORS.textMuted},
+    color: COLORS.textMuted,
+  },
 
   // Confetti
   confettiContainer: {
@@ -1077,14 +1212,16 @@ const styles = StyleSheet.create({
     right: 0,
     height: 200,
     pointerEvents: 'none',
-    overflow: 'hidden'},
+    overflow: 'hidden',
+  },
   confetti: {
     position: 'absolute',
     width: 10,
     height: 10,
     borderRadius: 2,
     left: '50%',
-    top: -10},
+    top: -10,
+  },
 
   // Result Card
   resultCard: {
@@ -1095,59 +1232,72 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 1,
     shadowRadius: 20,
-    elevation: 8},
+    elevation: 8,
+  },
   resultGradient: {
     padding: 32,
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   resultIconWrapper: {
     width: 96,
     height: 96,
     borderRadius: 48,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20},
+    marginBottom: 20,
+  },
   resultTitle: {
     fontSize: 32,
     fontWeight: '800',
-    marginBottom: 8},
+    marginBottom: 8,
+  },
   resultSubtitle: {
     fontSize: 15,
-    marginBottom: 24},
+    marginBottom: 24,
+  },
   earnedBox: {
     paddingHorizontal: 32,
     paddingVertical: 20,
     borderRadius: 16,
     alignItems: 'center',
-    marginBottom: 12},
+    marginBottom: 12,
+  },
   earnedRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 6},
+    marginBottom: 6,
+  },
   earnedCoin: {
     width: 36,
-    height: 36},
+    height: 36,
+  },
   earnedValue: {
     fontSize: 44,
-    fontWeight: '800'},
+    fontWeight: '800',
+  },
   earnedLabel: {
-    fontSize: 13},
+    fontSize: 13,
+  },
   streakBonusCard: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    borderRadius: 12},
+    borderRadius: 12,
+  },
   streakBonusText: {
     fontSize: 14,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
 
   // Stats Grid
   statsGrid: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 20},
+    marginBottom: 20,
+  },
   statCard: {
     flex: 1,
     backgroundColor: COLORS.surface,
@@ -1158,40 +1308,47 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
-    elevation: 2},
+    elevation: 2,
+  },
   statIconBg: {
     width: 44,
     height: 44,
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10},
+    marginBottom: 10,
+  },
   statValue: {
     fontSize: 20,
     fontWeight: '700',
     color: COLORS.navy,
-    marginBottom: 4},
+    marginBottom: 4,
+  },
   statLabel: {
     fontSize: 11,
     fontWeight: '600',
     color: COLORS.textMuted,
     textTransform: 'uppercase',
-    letterSpacing: 0.5},
+    letterSpacing: 0.5,
+  },
 
   // Actions
   actionsContainer: {
-    gap: 12},
+    gap: 12,
+  },
   primaryAction: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
     paddingVertical: 18,
-    borderRadius: 16},
+    borderRadius: 16,
+  },
   primaryActionText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.text.inverse},
+    color: colors.text.inverse,
+  },
   secondaryAction: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1201,10 +1358,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: COLORS.border},
+    borderColor: COLORS.border,
+  },
   secondaryActionText: {
     fontSize: 15,
     fontWeight: '600',
-    color: COLORS.textMuted}});
+    color: COLORS.textMuted,
+  },
+});
 
 export default withErrorBoundary(Quiz, 'Quiz');

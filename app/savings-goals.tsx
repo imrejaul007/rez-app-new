@@ -102,7 +102,7 @@ function CircularProgress({ pct, size = 160 }: { pct: number; size?: number }) {
     <View style={[circleStyles.container, { width: size, height: size }]}>
       <View style={[circleStyles.ring, { borderRadius: size / 2, width: size, height: size }]}>
         <LinearGradient
-          colors={pct >= 100 ? ['#10b981', '#34d399'] : ['#7c3aed', '#a78bfa']}
+          colors={pct >= 100 ? ['#10b981', '#34d399'] : ['#1a3a52', '#FFC857']}
           style={[circleStyles.fill, { width: size, height: size, borderRadius: size / 2 }]}
         />
         <View
@@ -217,7 +217,7 @@ function SetGoalModal({
             accessibilityLabel="Save savings goal"
             accessibilityRole="button"
           >
-            <LinearGradient colors={['#7c3aed', '#a78bfa']} style={modalStyles.saveBtnGradient}>
+            <LinearGradient colors={['#1a3a52', '#FFC857']} style={modalStyles.saveBtnGradient}>
               {saving ? (
                 <ActivityIndicator color="#fff" size="small" />
               ) : (
@@ -264,7 +264,7 @@ const modalStyles = StyleSheet.create({
   },
   quickBtnActive: { backgroundColor: '#ede9fe' },
   quickBtnText: { fontSize: 13, fontWeight: '600', color: '#475569' },
-  quickBtnTextActive: { color: '#7c3aed' },
+  quickBtnTextActive: { color: '#1a3a52' },
   inputRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -359,7 +359,7 @@ function SavingsGoalsScreen() {
     return (
       <View style={styles.loadingContainer}>
         <Stack.Screen options={{ headerShown: false }} />
-        <ActivityIndicator size="large" color="#7c3aed" />
+        <ActivityIndicator size="large" color="#1a3a52" />
       </View>
     );
   }
@@ -369,7 +369,7 @@ function SavingsGoalsScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <LinearGradient colors={goal?.isAchieved ? ['#059669', '#34d399'] : ['#7c3aed', '#a78bfa']} style={styles.header}>
+      <LinearGradient colors={goal?.isAchieved ? ['#059669', '#34d399'] : ['#1a3a52', '#FFC857']} style={styles.header}>
         <View style={styles.headerRow}>
           <Pressable
             style={styles.backBtn}
@@ -413,7 +413,7 @@ function SavingsGoalsScreen() {
               accessibilityLabel="Set savings goal"
               accessibilityRole="button"
             >
-              <LinearGradient colors={['#7c3aed', '#a78bfa']} style={styles.setGoalGradient}>
+              <LinearGradient colors={['#1a3a52', '#FFC857']} style={styles.setGoalGradient}>
                 <Text style={styles.setGoalBtnText}>Set My Goal</Text>
               </LinearGradient>
             </Pressable>
@@ -448,7 +448,7 @@ function SavingsGoalsScreen() {
                 </View>
                 <View style={styles.amountDivider} />
                 <View style={styles.amountItem}>
-                  <Text style={[styles.amountValue, { color: goal.remaining === 0 ? '#10b981' : '#7c3aed' }]}>
+                  <Text style={[styles.amountValue, { color: goal.remaining === 0 ? '#10b981' : '#1a3a52' }]}>
                     Rs.{goal.remaining.toLocaleString('en-IN')}
                   </Text>
                   <Text style={styles.amountLabel}>{goal.remaining === 0 ? 'Done!' : 'Left'}</Text>
@@ -462,7 +462,7 @@ function SavingsGoalsScreen() {
                     styles.linearFill,
                     {
                       width: `${Math.min(100, goal.progressPct)}%` as any,
-                      backgroundColor: goal.isAchieved ? '#10b981' : '#7c3aed',
+                      backgroundColor: goal.isAchieved ? '#10b981' : '#1a3a52',
                     },
                   ]}
                 />
@@ -471,7 +471,7 @@ function SavingsGoalsScreen() {
 
             {/* Projected savings */}
             <View style={styles.projectionCard}>
-              <Ionicons name="trending-up" size={20} color="#7c3aed" />
+              <Ionicons name="trending-up" size={20} color="#1a3a52" />
               <View style={styles.projectionInfo}>
                 <Text style={styles.projectionTitle}>At your current pace...</Text>
                 <Text style={styles.projectionBody}>
@@ -505,7 +505,7 @@ function SavingsGoalsScreen() {
                         styles.historyBarFill,
                         {
                           width: `${item.progressPct}%` as any,
-                          backgroundColor: item.isAchieved ? '#10b981' : '#7c3aed',
+                          backgroundColor: item.isAchieved ? '#10b981' : '#1a3a52',
                         },
                       ]}
                     />
@@ -666,8 +666,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   projectionInfo: { flex: 1 },
-  projectionTitle: { fontSize: 13, fontWeight: '700', color: '#7c3aed', marginBottom: 4 },
-  projectionBody: { fontSize: 13, color: '#6d28d9', lineHeight: 18 },
+  projectionTitle: { fontSize: 13, fontWeight: '700', color: '#1a3a52', marginBottom: 4 },
+  projectionBody: { fontSize: 13, color: '#1a3a52', lineHeight: 18 },
   projectionBold: { fontWeight: '800' },
 
   // History

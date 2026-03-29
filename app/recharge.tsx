@@ -927,7 +927,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   popularBadge: {
-    backgroundColor: '#7C3AED1A',
+    backgroundColor: '#1a3a521A',
     paddingHorizontal: Spacing.sm,
     paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.md,

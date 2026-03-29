@@ -6,15 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  Dimensions,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, Dimensions } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -91,13 +83,15 @@ const CampaignDetailPage: React.FC = () => {
       setError(null);
       const response = await campaignsApi.getCampaignById(campaignId);
 
-      if (response.success && response.data) {
+      if (response.success && response.data?.deals) {
         const transformedCampaign = {
           ...response.data,
           deals: response.data.deals.map((deal: CampaignDeal) => ({
             ...deal,
             storeId: deal.storeId
-              ? (typeof deal.storeId === 'string' ? deal.storeId : String(deal.storeId))
+              ? typeof deal.storeId === 'string'
+                ? deal.storeId
+                : String(deal.storeId)
               : undefined,
           })),
         };
@@ -207,7 +201,10 @@ const CampaignDetailPage: React.FC = () => {
           </View>
           <Text style={styles.errorTitle}>Oops!</Text>
           <Text style={styles.errorText}>{error || 'Campaign not found'}</Text>
-          <Pressable style={styles.errorButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.errorButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={18} color={COLORS.white} />
             <Text style={styles.errorButtonText}>Go Back</Text>
           </Pressable>
@@ -223,8 +220,7 @@ const CampaignDetailPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false} bounces={false}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false} bounces={false}>
         {/* Expired Campaign Banner */}
         {isExpired && (
           <View style={styles.expiredBanner}>
@@ -246,10 +242,7 @@ const CampaignDetailPage: React.FC = () => {
             />
           )}
 
-          <LinearGradient
-            colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.8)']}
-            style={styles.bannerOverlay}
-          />
+          <LinearGradient colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.8)']} style={styles.bannerOverlay} />
 
           {/* Urgent Badge */}
           {isExpiringSoon && (
@@ -261,7 +254,7 @@ const CampaignDetailPage: React.FC = () => {
 
           {/* Back Button */}
           <Pressable
-            onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
           >
             <Ionicons name="arrow-back" size={22} color={COLORS.white} />
@@ -269,18 +262,14 @@ const CampaignDetailPage: React.FC = () => {
 
           {/* Hero Content */}
           <View style={styles.heroContent}>
-            {campaign.icon && (
-              <CachedImage source={campaign.icon} style={styles.campaignIcon} />
-            )}
+            {campaign.icon && <CachedImage source={campaign.icon} style={styles.campaignIcon} />}
             <View style={styles.heroTextContainer}>
               <View style={styles.campaignTypeBadge}>
                 <Ionicons name="megaphone" size={12} color={COLORS.white} />
                 <Text style={styles.campaignTypeText}>Campaign</Text>
               </View>
               <Text style={styles.heroTitle}>{campaign.title}</Text>
-              {campaign.subtitle && (
-                <Text style={styles.heroSubtitle}>{campaign.subtitle}</Text>
-              )}
+              {campaign.subtitle && <Text style={styles.heroSubtitle}>{campaign.subtitle}</Text>}
             </View>
             {campaign.badge && (
               <View style={[styles.heroBadge, { backgroundColor: campaign.badgeBg || COLORS.gold }]}>
@@ -310,16 +299,15 @@ const CampaignDetailPage: React.FC = () => {
               </View>
               <View style={styles.statDivider} />
               <View style={styles.statItem}>
-                <View style={[styles.statIconBg, { backgroundColor: isExpiringSoon ? 'rgba(239, 68, 68, 0.2)' : 'rgba(59, 130, 246, 0.2)' }]}>
-                  <Ionicons
-                    name="hourglass"
-                    size={20}
-                    color={isExpiringSoon ? COLORS.red500 : COLORS.blue500}
-                  />
+                <View
+                  style={[
+                    styles.statIconBg,
+                    { backgroundColor: isExpiringSoon ? 'rgba(239, 68, 68, 0.2)' : 'rgba(59, 130, 246, 0.2)' },
+                  ]}
+                >
+                  <Ionicons name="hourglass" size={20} color={isExpiringSoon ? COLORS.red500 : COLORS.blue500} />
                 </View>
-                <Text style={[styles.statValue, isExpiringSoon && styles.statValueUrgent]}>
-                  {daysRemaining}
-                </Text>
+                <Text style={[styles.statValue, isExpiringSoon && styles.statValueUrgent]}>{daysRemaining}</Text>
                 <Text style={styles.statLabel}>Days Left</Text>
               </View>
               <View style={styles.statDivider} />
@@ -349,15 +337,23 @@ const CampaignDetailPage: React.FC = () => {
             </View>
             <View style={styles.countdownGrid}>
               <View style={[styles.countdownItem, isExpiringSoon && styles.countdownItemUrgent]}>
-                <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>{daysRemaining}</Text>
+                <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>
+                  {daysRemaining}
+                </Text>
                 <Text style={styles.countdownLabel}>Days</Text>
               </View>
-              <View style={styles.countdownSeparator}><Text style={styles.countdownColon}>:</Text></View>
+              <View style={styles.countdownSeparator}>
+                <Text style={styles.countdownColon}>:</Text>
+              </View>
               <View style={[styles.countdownItem, isExpiringSoon && styles.countdownItemUrgent]}>
-                <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>{hoursRemaining}</Text>
+                <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>
+                  {hoursRemaining}
+                </Text>
                 <Text style={styles.countdownLabel}>Hours</Text>
               </View>
-              <View style={styles.countdownSeparator}><Text style={styles.countdownColon}>:</Text></View>
+              <View style={styles.countdownSeparator}>
+                <Text style={styles.countdownColon}>:</Text>
+              </View>
               <View style={[styles.countdownItem, isExpiringSoon && styles.countdownItemUrgent]}>
                 <Text style={[styles.countdownNumber, isExpiringSoon && styles.countdownNumberUrgent]}>00</Text>
                 <Text style={styles.countdownLabel}>Mins</Text>
@@ -407,7 +403,9 @@ const CampaignDetailPage: React.FC = () => {
         )}
 
         {/* Offer Details */}
-        {(campaign.minOrderValue || campaign.maxBenefit || (campaign.eligibleCategories && campaign.eligibleCategories.length > 0)) && (
+        {(campaign.minOrderValue ||
+          campaign.maxBenefit ||
+          (campaign.eligibleCategories && campaign.eligibleCategories.length > 0)) && (
           <View style={styles.section}>
             <View style={styles.sectionHeaderRow}>
               <View style={[styles.sectionIcon, { backgroundColor: COLORS.green50 }]}>
@@ -423,7 +421,10 @@ const CampaignDetailPage: React.FC = () => {
                     <View style={[styles.offerDetailIcon, { backgroundColor: COLORS.blue50 }]}>
                       <Ionicons name="cart-outline" size={22} color={COLORS.blue500} />
                     </View>
-                    <Text style={styles.offerDetailValue}>{currencySymbol}{campaign.minOrderValue}</Text>
+                    <Text style={styles.offerDetailValue}>
+                      {currencySymbol}
+                      {campaign.minOrderValue}
+                    </Text>
                     <Text style={styles.offerDetailLabel}>Minimum Order</Text>
                   </View>
                 )}
@@ -432,7 +433,10 @@ const CampaignDetailPage: React.FC = () => {
                     <View style={[styles.offerDetailIcon, { backgroundColor: COLORS.green50 }]}>
                       <Ionicons name="trending-up" size={22} color={COLORS.green500} />
                     </View>
-                    <Text style={styles.offerDetailValue}>{currencySymbol}{campaign.maxBenefit}</Text>
+                    <Text style={styles.offerDetailValue}>
+                      {currencySymbol}
+                      {campaign.maxBenefit}
+                    </Text>
                     <Text style={styles.offerDetailLabel}>Max Savings</Text>
                   </View>
                 )}
@@ -528,12 +532,7 @@ const CampaignDetailPage: React.FC = () => {
             </View>
             <View style={styles.dealsGrid}>
               {campaign.deals.map((deal, idx) => (
-                <Pressable
-                  key={idx}
-                  style={styles.dealCard}
-                  onPress={() => handleDealPress(deal, idx)}
-                 
-                >
+                <Pressable key={idx} style={styles.dealCard} onPress={() => handleDealPress(deal, idx)}>
                   <View style={styles.dealImageContainer}>
                     {deal.image ? (
                       <CachedImage source={deal.image} style={styles.dealImage} />
@@ -593,8 +592,18 @@ const CampaignDetailPage: React.FC = () => {
           </View>
           <View style={styles.stepsContainer}>
             {[
-              { step: 1, title: 'Choose a Deal', desc: 'Browse and select from available deals', icon: 'search-outline' },
-              { step: 2, title: 'Redeem Offer', desc: 'Tap redeem to activate your deal', icon: 'finger-print-outline' },
+              {
+                step: 1,
+                title: 'Choose a Deal',
+                desc: 'Browse and select from available deals',
+                icon: 'search-outline',
+              },
+              {
+                step: 2,
+                title: 'Redeem Offer',
+                desc: 'Tap redeem to activate your deal',
+                icon: 'finger-print-outline',
+              },
               { step: 3, title: 'Save Money', desc: 'Enjoy your rewards at the store', icon: 'wallet-outline' },
             ].map((item, idx) => (
               <View key={idx} style={styles.stepItem}>

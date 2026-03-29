@@ -65,11 +65,9 @@ export default function TrialCoinsScreen() {
 
         // Calculate days until expiry and sort buckets
         if (coinsData.buckets && Array.isArray(coinsData.buckets)) {
-          const bucketsWithExpiry = coinsData.buckets.map(b => ({
+          const bucketsWithExpiry = coinsData.buckets.map((b) => ({
             ...b,
-            daysUntilExpiry: Math.ceil(
-              (new Date(b.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-            ),
+            daysUntilExpiry: Math.ceil((new Date(b.expiresAt).getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
           }));
           setBuckets(bucketsWithExpiry.sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry));
         }
@@ -114,20 +112,21 @@ export default function TrialCoinsScreen() {
 
         // Complete coin purchase with payment ID
         await tryApi.purchaseCoins(pack.index, paymentResponse.razorpay_payment_id);
-        setCoinBalance(prev => prev + pack.coins);
+        setCoinBalance((prev) => prev + pack.coins);
 
         setTimeout(() => {
           setPurchaseModal({ visible: false });
         }, 1500);
       } catch (paymentErr: any) {
-        if (paymentErr.code !== 2) { // 2 = user cancelled
+        if (paymentErr.code !== 2) {
+          // 2 = user cancelled
           console.error('Payment error:', paymentErr);
         }
-        setPurchaseModal(prev => ({ ...prev, loading: false }));
+        setPurchaseModal((prev) => ({ ...prev, loading: false }));
       }
     } catch (err: any) {
       console.error('Failed to purchase coins:', err);
-      setPurchaseModal(prev => ({ ...prev, loading: false }));
+      setPurchaseModal((prev) => ({ ...prev, loading: false }));
     }
   };
 
@@ -139,45 +138,26 @@ export default function TrialCoinsScreen() {
     const isExpiringSoon = item.daysUntilExpiry < 7;
 
     return (
-      <View
-        style={[
-          styles.bucketItem,
-          isExpiringSoon && styles.bucketItemExpiring,
-        ]}
-      >
+      <View style={[styles.bucketItem, isExpiringSoon && styles.bucketItemExpiring]}>
         <View style={styles.bucketHeader}>
           <Text style={styles.bucketAmount}>{item.amount} 🪙</Text>
           {isExpiringSoon && (
             <View style={styles.expiryWarningBadge}>
               <Ionicons name="alert-circle" size={12} color="#fff" />
-              <Text style={styles.expiryWarningText}>
-                {item.daysUntilExpiry} days
-              </Text>
+              <Text style={styles.expiryWarningText}>{item.daysUntilExpiry} days</Text>
             </View>
           )}
         </View>
         <View style={styles.bucketMeta}>
           <Ionicons
-            name={
-              item.source === 'subscription'
-                ? 'layers'
-                : item.source === 'pack'
-                ? 'gift'
-                : 'star'
-            }
+            name={item.source === 'subscription' ? 'layers' : item.source === 'pack' ? 'gift' : 'star'}
             size={14}
             color={colors.text.secondary}
           />
           <Text style={styles.bucketSource}>
-            {item.source === 'subscription'
-              ? 'Subscription'
-              : item.source === 'pack'
-              ? 'Purchased'
-              : 'Earned'}
+            {item.source === 'subscription' ? 'Subscription' : item.source === 'pack' ? 'Purchased' : 'Earned'}
           </Text>
-          <Text style={styles.bucketDate}>
-            Expires {new Date(item.expiresAt).toLocaleDateString()}
-          </Text>
+          <Text style={styles.bucketDate}>Expires {new Date(item.expiresAt).toLocaleDateString()}</Text>
         </View>
       </View>
     );
@@ -186,11 +166,7 @@ export default function TrialCoinsScreen() {
   const renderTransactionItem = ({ item }: { item: Transaction }) => {
     const isIncome = item.type === 'earn';
     const icon =
-      item.type === 'earn'
-        ? 'arrow-down-circle'
-        : item.type === 'spend'
-        ? 'arrow-up-circle'
-        : 'alert-circle';
+      item.type === 'earn' ? 'arrow-down-circle' : item.type === 'spend' ? 'arrow-up-circle' : 'alert-circle';
     const color = isIncome ? colors.successScale[500] : colors.error;
 
     return (
@@ -203,7 +179,8 @@ export default function TrialCoinsScreen() {
           <Text style={styles.transactionDate}>{item.date}</Text>
         </View>
         <Text style={[styles.transactionAmount, { color }]}>
-          {isIncome ? '+' : ''}{item.amount}
+          {isIncome ? '+' : ''}
+          {item.amount}
         </Text>
       </View>
     );
@@ -233,7 +210,7 @@ export default function TrialCoinsScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {/* Balance Card */}
         <LinearGradient
-          colors={['#7C3AED', '#A855F7']}
+          colors={['#1a3a52', '#FFC857']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.balanceCard}
@@ -266,12 +243,8 @@ export default function TrialCoinsScreen() {
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Buy More Coins</Text>
           <View style={styles.packsGrid}>
-            {COIN_PACKS.map(pack => (
-              <Pressable
-                key={pack.index}
-                style={styles.packCard}
-                onPress={() => handlePurchasePack(pack)}
-              >
+            {COIN_PACKS.map((pack) => (
+              <Pressable key={pack.index} style={styles.packCard} onPress={() => handlePurchasePack(pack)}>
                 {pack.savings && (
                   <View style={styles.savingsBadge}>
                     <Text style={styles.savingsText}>Save {pack.savings}%</Text>
@@ -296,7 +269,7 @@ export default function TrialCoinsScreen() {
               scrollEnabled={false}
               data={transactions.slice(0, 10)}
               renderItem={renderTransactionItem}
-              keyExtractor={item => item.id}
+              keyExtractor={(item) => item.id}
               contentContainerStyle={styles.transactionsList}
             />
           </View>
@@ -312,11 +285,7 @@ export default function TrialCoinsScreen() {
       </ScrollView>
 
       {/* Purchase Confirmation Modal */}
-      <Modal
-        visible={purchaseModal.visible && !!purchaseModal.pack}
-        transparent
-        animationType="fade"
-      >
+      <Modal visible={purchaseModal.visible && !!purchaseModal.pack} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             {purchaseModal.loading ? (
@@ -328,14 +297,9 @@ export default function TrialCoinsScreen() {
               <>
                 <Ionicons name="checkmark-circle" size={48} color={colors.successScale[500]} />
                 <Text style={styles.modalTitle}>Purchase Successful! 🎉</Text>
-                <Text style={styles.modalText}>
-                  You've added {purchaseModal.pack?.coins} coins to your account
-                </Text>
+                <Text style={styles.modalText}>You've added {purchaseModal.pack?.coins} coins to your account</Text>
 
-                <Pressable
-                  style={styles.modalButton}
-                  onPress={() => setPurchaseModal({ visible: false })}
-                >
+                <Pressable style={styles.modalButton} onPress={() => setPurchaseModal({ visible: false })}>
                   <Text style={styles.modalButtonText}>Continue</Text>
                 </Pressable>
               </>

@@ -57,7 +57,7 @@ const UTILITY_SERVICES: UtilityService[] = [
     nextSlot: 'Same day service',
     cashbackPercent: 8,
     route: '/services/appliance-repair',
-    accentColor: '#EA580C',
+    accentColor: '#FFC857',
     bgColor: '#FFF7ED',
   },
   {

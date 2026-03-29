@@ -238,7 +238,7 @@ function ReferralQRModal({
     {
       name: 'Email',
       icon: 'mail',
-      color: '#6366f1',
+      color: '#1a3a52',
       action: handleEmailShare,
     },
     {

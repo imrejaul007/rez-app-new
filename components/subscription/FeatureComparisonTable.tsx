@@ -187,7 +187,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerCellHighlighted: {
-    backgroundColor: '#8B5CF620',
+    backgroundColor: '#1a3a5220',
   },
   valueCell: {
     flex: 1,
@@ -196,7 +196,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   valueCellHighlighted: {
-    backgroundColor: '#8B5CF610',
+    backgroundColor: '#1a3a5210',
   },
   iconCell: {
     flex: 1,
@@ -205,7 +205,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconCellHighlighted: {
-    backgroundColor: '#8B5CF610',
+    backgroundColor: '#1a3a5210',
   },
   headerText: {
     fontSize: 12,

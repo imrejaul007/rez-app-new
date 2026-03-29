@@ -50,7 +50,7 @@ const SHARE_TARGETS: ShareTarget[] = [
   { id: 'instagram', label: 'Instagram', icon: 'logo-instagram', color: '#E1306C' },
   { id: 'twitter', label: 'Twitter/X', icon: 'logo-twitter', color: '#1DA1F2' },
   { id: 'copy', label: 'Copy Link', icon: 'link-outline', color: '#64748b' },
-  { id: 'more', label: 'More', icon: 'share-social', color: '#7c3aed' },
+  { id: 'more', label: 'More', icon: 'share-social', color: '#1a3a52' },
 ];
 
 // ---------------------------------------------------------------------------
@@ -164,7 +164,7 @@ function SavingsShareScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <LinearGradient colors={['#7c3aed', '#a78bfa']} style={styles.header}>
+      <LinearGradient colors={['#1a3a52', '#FFC857']} style={styles.header}>
         <View style={styles.headerRow}>
           <Pressable
             style={styles.backBtn}
@@ -247,7 +247,7 @@ function SavingsShareScreen() {
             accessibilityLabel="Copy referral code"
             accessibilityRole="button"
           >
-            <Ionicons name="copy-outline" size={16} color="#7c3aed" />
+            <Ionicons name="copy-outline" size={16} color="#1a3a52" />
             <Text style={styles.copyCodeText}>Copy Code</Text>
           </Pressable>
         </View>
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#94a3b8',
   },
-  modeTabTextActive: { color: '#7c3aed' },
+  modeTabTextActive: { color: '#1a3a52' },
 
   // Card preview
   cardContainer: {
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
   codeValue: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#7c3aed',
+    color: '#1a3a52',
     letterSpacing: 4,
     marginBottom: 12,
   },
@@ -409,13 +409,13 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 16,
     paddingVertical: 8,
-    backgroundColor: '#ede9fe',
+    backgroundColor: '#e8f0f7',
     borderRadius: BorderRadius.sm,
   },
   copyCodeText: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#7c3aed',
+    color: '#1a3a52',
   },
 });
 

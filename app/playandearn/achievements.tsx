@@ -1,14 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -100,7 +92,7 @@ const Achievements = () => {
       setAchievements(mapped);
 
       // Extract unique categories and prepend 'All'
-      const uniqueCategories = [...new Set(mapped.map(a => a.category))];
+      const uniqueCategories = [...new Set(mapped.map((a) => a.category))];
       if (!isMounted()) return;
       setCategories(['All', ...uniqueCategories]);
     } catch (err) {
@@ -116,12 +108,11 @@ const Achievements = () => {
     fetchAchievements();
   }, []);
 
-  const filteredAchievements = activeCategory === 'All'
-    ? achievements
-    : achievements.filter(a => a.category === activeCategory);
+  const filteredAchievements =
+    activeCategory === 'All' ? achievements : achievements.filter((a) => a.category === activeCategory);
 
-  const totalUnlocked = achievements.filter(a => a.unlocked).length;
-  const totalCoins = achievements.filter(a => a.unlocked).reduce((sum, a) => sum + a.coins, 0);
+  const totalUnlocked = achievements.filter((a) => a.unlocked).length;
+  const totalCoins = achievements.filter((a) => a.unlocked).reduce((sum, a) => sum + a.coins, 0);
 
   return (
     <View style={styles.container}>
@@ -129,7 +120,7 @@ const Achievements = () => {
       <View style={styles.header}>
         <Pressable
           style={styles.backButton}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
         >
           <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
         </Pressable>
@@ -139,28 +130,27 @@ const Achievements = () => {
         </View>
       </View>
 
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 120 }}>
+      <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 120 }}
+      >
         {/* Stats */}
         <View style={styles.statsContainer}>
-          <LinearGradient
-            colors={['#A855F720', '#EC489920']}
-            style={styles.statCard}
-          >
-            <Text style={styles.statValue}>{totalUnlocked}/{achievements.length}</Text>
+          <LinearGradient colors={['#1a3a5220', '#FFC85720']} style={styles.statCard}>
+            <Text style={styles.statValue}>
+              {totalUnlocked}/{achievements.length}
+            </Text>
             <Text style={styles.statLabel}>Unlocked</Text>
           </LinearGradient>
-          <LinearGradient
-            colors={['#F59E0B20', '#EAB30820']}
-            style={styles.statCard}
-          >
+          <LinearGradient colors={['#F59E0B20', '#EAB30820']} style={styles.statCard}>
             <Text style={[styles.statValue, { color: Colors.warning }]}>{totalCoins}</Text>
             <Text style={styles.statLabel}>Coins Earned</Text>
           </LinearGradient>
-          <LinearGradient
-            colors={['#ffcd5720', '#ffcd5720']}
-            style={styles.statCard}
-          >
-            <Text style={[styles.statValue, { color: Colors.gold }]}>{achievements.length > 0 ? Math.round((totalUnlocked/achievements.length)*100) : 0}%</Text>
+          <LinearGradient colors={['#ffcd5720', '#ffcd5720']} style={styles.statCard}>
+            <Text style={[styles.statValue, { color: Colors.gold }]}>
+              {achievements.length > 0 ? Math.round((totalUnlocked / achievements.length) * 100) : 0}%
+            </Text>
             <Text style={styles.statLabel}>Complete</Text>
           </LinearGradient>
         </View>
@@ -172,21 +162,13 @@ const Achievements = () => {
           style={styles.categoryScroll}
           contentContainerStyle={styles.categoryContainer}
         >
-          {categories.map(cat => (
+          {categories.map((cat) => (
             <Pressable
               key={cat}
               onPress={() => setActiveCategory(cat)}
-              style={[
-                styles.categoryButton,
-                activeCategory === cat && styles.categoryButtonActive
-              ]}
+              style={[styles.categoryButton, activeCategory === cat && styles.categoryButtonActive]}
             >
-              <Text style={[
-                styles.categoryText,
-                activeCategory === cat && styles.categoryTextActive
-              ]}>
-                {cat}
-              </Text>
+              <Text style={[styles.categoryText, activeCategory === cat && styles.categoryTextActive]}>{cat}</Text>
             </Pressable>
           ))}
         </ScrollView>
@@ -207,10 +189,7 @@ const Achievements = () => {
           {filteredAchievements.map((achievement) => (
             <View
               key={achievement.id}
-              style={[
-                styles.achievementCard,
-                achievement.unlocked && styles.achievementUnlocked
-              ]}
+              style={[styles.achievementCard, achievement.unlocked && styles.achievementUnlocked]}
             >
               {!achievement.unlocked && (
                 <View style={styles.lockIcon}>
@@ -243,15 +222,9 @@ const Achievements = () => {
         <View style={styles.ctaSection}>
           <Text style={styles.ctaTitle}>Quick Actions to Unlock More</Text>
 
-          <Pressable
-            style={styles.ctaCard}
-            onPress={() => router.push('/mall' as any)}
-          >
-            <LinearGradient
-              colors={['#A855F720', '#EC489920']}
-              style={styles.ctaGradient}
-            >
-              <View style={[styles.ctaIconContainer, { backgroundColor: '#A855F730' }]}>
+          <Pressable style={styles.ctaCard} onPress={() => router.push('/mall' as any)}>
+            <LinearGradient colors={['#1a3a5220', '#FFC85720']} style={styles.ctaGradient}>
+              <View style={[styles.ctaIconContainer, { backgroundColor: '#1a3a5230' }]}>
                 <Ionicons name="bag" size={20} color={colors.brand.purpleMedium} />
               </View>
               <View style={styles.ctaContent}>
@@ -262,14 +235,8 @@ const Achievements = () => {
             </LinearGradient>
           </Pressable>
 
-          <Pressable
-            style={styles.ctaCard}
-            onPress={() => router.push('/referral' as any)}
-          >
-            <LinearGradient
-              colors={['#3B82F620', '#06B6D420']}
-              style={styles.ctaGradient}
-            >
+          <Pressable style={styles.ctaCard} onPress={() => router.push('/referral' as any)}>
+            <LinearGradient colors={['#3B82F620', '#06B6D420']} style={styles.ctaGradient}>
               <View style={[styles.ctaIconContainer, { backgroundColor: '#3B82F630' }]}>
                 <Ionicons name="people" size={20} color={colors.infoScale[400]} />
               </View>
@@ -281,14 +248,8 @@ const Achievements = () => {
             </LinearGradient>
           </Pressable>
 
-          <Pressable
-            style={styles.ctaCard}
-            onPress={() => router.push('/games' as any)}
-          >
-            <LinearGradient
-              colors={['#ffcd5720', '#ffcd5720']}
-              style={styles.ctaGradient}
-            >
+          <Pressable style={styles.ctaCard} onPress={() => router.push('/games' as any)}>
+            <LinearGradient colors={['#ffcd5720', '#ffcd5720']} style={styles.ctaGradient}>
               <View style={[styles.ctaIconContainer, { backgroundColor: Colors.gold + '30' }]}>
                 <Ionicons name="game-controller" size={20} color={Colors.gold} />
               </View>
@@ -301,10 +262,7 @@ const Achievements = () => {
           </Pressable>
 
           <View style={styles.checkinCard}>
-            <LinearGradient
-              colors={['#F59E0B20', '#EAB30820']}
-              style={styles.ctaGradient}
-            >
+            <LinearGradient colors={['#F59E0B20', '#EAB30820']} style={styles.ctaGradient}>
               <View style={[styles.ctaIconContainer, { backgroundColor: Colors.warning + '30' }]}>
                 <Ionicons name="ribbon" size={20} color={Colors.warning} />
               </View>

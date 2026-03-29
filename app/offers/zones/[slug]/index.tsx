@@ -6,7 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * based on the zone slug parameter. Fetches zone info and offers from the API.
  */
 
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -15,7 +15,7 @@ import {
   StatusBar,
   Platform,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import Animated, {
   interpolate,
@@ -23,7 +23,8 @@ import Animated, {
   useSharedValue,
   withRepeat,
   withSequence,
-  withTiming } from 'react-native-reanimated';
+  withTiming,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams, Stack } from 'expo-router';
@@ -93,86 +94,101 @@ const ZONE_THEMES: Record<string, ZoneTheme> = {
     ionicon: 'school',
     emoji: '',
     tagLabel: 'Students Only',
-    placeholderSubtitle: 'Campus deals & student discounts' },
+    placeholderSubtitle: 'Campus deals & student discounts',
+  },
   birthday: {
     gradientColors: [colors.warningScale[400], colors.warningScale[700], colors.brand.amberDeep],
     ionicon: 'gift',
     emoji: '',
     tagLabel: 'Birthday Special',
-    placeholderSubtitle: 'Celebrate with exclusive deals' },
+    placeholderSubtitle: 'Celebrate with exclusive deals',
+  },
   corporate: {
     gradientColors: [colors.brand.purpleSoft, colors.brand.purpleLight, colors.brand.purpleDeep],
     ionicon: 'briefcase',
     emoji: '',
     tagLabel: 'Corporate',
-    placeholderSubtitle: 'Exclusive corporate benefits' },
+    placeholderSubtitle: 'Exclusive corporate benefits',
+  },
   senior: {
     gradientColors: ['#FCD34D', colors.warningScale[400], colors.warningScale[700]],
     ionicon: 'heart',
     emoji: '',
     tagLabel: 'Senior Citizens',
-    placeholderSubtitle: 'Special deals for senior citizens' },
+    placeholderSubtitle: 'Special deals for senior citizens',
+  },
   heroes: {
     gradientColors: [colors.successScale[400], colors.successScale[400], colors.successScale[700]],
     ionicon: 'shield',
     emoji: '',
     tagLabel: 'Heroes',
-    placeholderSubtitle: 'Saluting our heroes with exclusive offers' },
+    placeholderSubtitle: 'Saluting our heroes with exclusive offers',
+  },
   defence: {
     gradientColors: [colors.successScale[400], colors.successScale[400], colors.successScale[700]],
     ionicon: 'shield-checkmark',
     emoji: '',
     tagLabel: 'Defence',
-    placeholderSubtitle: 'Thank you for your service' },
+    placeholderSubtitle: 'Thank you for your service',
+  },
   women: {
     gradientColors: ['#F472B6', colors.brand.pink, colors.deepPink],
     ionicon: 'flower',
     emoji: '',
     tagLabel: 'Women Exclusive',
-    placeholderSubtitle: 'Exclusive offers for women' },
+    placeholderSubtitle: 'Exclusive offers for women',
+  },
   'first-time': {
     gradientColors: [colors.infoScale[400], colors.infoScale[400], colors.brand.blue],
     ionicon: 'sparkles',
     emoji: '',
     tagLabel: 'First-Time User',
-    placeholderSubtitle: 'Welcome! Special first-time offers' },
+    placeholderSubtitle: 'Welcome! Special first-time offers',
+  },
   loyalty: {
     gradientColors: [colors.warningScale[400], colors.warningScale[400], colors.warningScale[700]],
     ionicon: 'star',
     emoji: '',
     tagLabel: 'Loyalty',
-    placeholderSubtitle: 'Rewards for our loyal members' },
+    placeholderSubtitle: 'Rewards for our loyal members',
+  },
   healthcare: {
     gradientColors: ['#F87171', '#DC2626', '#B91C1C'],
     ionicon: 'medkit',
     emoji: '',
     tagLabel: 'Healthcare',
-    placeholderSubtitle: 'Benefits for healthcare professionals' },
+    placeholderSubtitle: 'Benefits for healthcare professionals',
+  },
   teacher: {
-    gradientColors: [colors.brand.purpleSoft, '#7C3AED', '#6D28D9'],
+    gradientColors: ['#1a3a52', '#2d5f87', '#0f2438'],
     ionicon: 'library',
     emoji: '',
     tagLabel: 'Educators',
-    placeholderSubtitle: 'Exclusive deals for teachers & educators' },
+    placeholderSubtitle: 'Exclusive deals for teachers & educators',
+  },
   government: {
     gradientColors: ['#D97706', '#B45309', '#92400E'],
     ionicon: 'business',
     emoji: '',
     tagLabel: 'Government',
-    placeholderSubtitle: 'Special offers for government employees' },
+    placeholderSubtitle: 'Special offers for government employees',
+  },
   'differently-abled': {
     gradientColors: ['#22D3EE', '#0891B2', '#0E7490'],
     ionicon: 'accessibility',
     emoji: '',
     tagLabel: 'Differently Abled',
-    placeholderSubtitle: 'Inclusive benefits & accessibility offers' } };
+    placeholderSubtitle: 'Inclusive benefits & accessibility offers',
+  },
+};
 
 const DEFAULT_THEME: ZoneTheme = {
   gradientColors: [colors.brand.indigo, '#4F46E5', '#4338CA'],
   ionicon: 'pricetag',
   emoji: '',
   tagLabel: 'Exclusive',
-  placeholderSubtitle: 'Exclusive zone offers' };
+  placeholderSubtitle: 'Exclusive zone offers',
+};
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -233,13 +249,12 @@ function ExclusiveZonePage() {
   const bottomPadding = 80 + 70 + insets.bottom;
 
   // Resolve theme for the current slug
-  const theme: ZoneTheme = (slug && ZONE_THEMES[slug]) ? ZONE_THEMES[slug] : DEFAULT_THEME;
+  const theme: ZoneTheme = slug && ZONE_THEMES[slug] ? ZONE_THEMES[slug] : DEFAULT_THEME;
 
   // If the API provides a backgroundColor, derive gradient from it; otherwise fall back to theme
-  const gradientColors: [string, string, string] =
-    zoneInfo?.backgroundColor
-      ? deriveGradient(zoneInfo.backgroundColor)
-      : theme.gradientColors;
+  const gradientColors: [string, string, string] = zoneInfo?.backgroundColor
+    ? deriveGradient(zoneInfo.backgroundColor)
+    : theme.gradientColors;
 
   const ionicon = resolveIonicon(zoneInfo?.icon, theme.ionicon);
 
@@ -252,13 +267,12 @@ function ExclusiveZonePage() {
       fetchZoneData();
     }
     shimmerAnim.value = withRepeat(
-      withSequence(
-        withTiming(1, { duration: 1000 }),
-        withTiming(0, { duration: 1000 })
-      ),
-      -1
+      withSequence(withTiming(1, { duration: 1000 }), withTiming(0, { duration: 1000 })),
+      -1,
     );
-    return () => { shimmerAnim.value = 0; };
+    return () => {
+      shimmerAnim.value = 0;
+    };
   }, [slug]);
 
   const fetchZoneData = async () => {
@@ -291,7 +305,8 @@ function ExclusiveZonePage() {
             verificationRequired: zone.verificationRequired,
             eligibilityDetails: zone.eligibilityDetails,
             userEligible: zone.userEligible,
-            cashbackBonusPercent: zone.cashbackBonusPercent || 0 });
+            cashbackBonusPercent: zone.cashbackBonusPercent || 0,
+          });
         }
       }
 
@@ -303,7 +318,11 @@ function ExclusiveZonePage() {
         setOffers(offersArray);
       }
     } catch (err: any) {
-      logger.error('Error fetching zone data', err instanceof Error ? err : new Error(String(err)), 'ExclusiveZonePage');
+      logger.error(
+        'Error fetching zone data',
+        err instanceof Error ? err : new Error(String(err)),
+        'ExclusiveZonePage',
+      );
       if (!isMounted()) return;
       setError('Failed to load offers. Please try again.');
     } finally {
@@ -337,7 +356,8 @@ function ExclusiveZonePage() {
   const zoneDescription = zoneInfo?.description || theme.placeholderSubtitle;
   const stats = {
     totalDeals: offers.length,
-    maxDiscount: offers.reduce((max, o) => Math.max(max, o.cashbackPercentage || 0), 0) };
+    maxDiscount: offers.reduce((max, o) => Math.max(max, o.cashbackPercentage || 0), 0),
+  };
 
   // -----------------------------------------------------------------------
   // Renderers
@@ -345,12 +365,7 @@ function ExclusiveZonePage() {
 
   const renderSkeletonCard = (index: number) => (
     <View key={`skeleton-${index}`} style={styles.offerCard}>
-      <Animated.View
-        style={[
-          styles.skeletonImage,
-          shimmerOpacityStyle,
-        ]}
-      />
+      <Animated.View style={[styles.skeletonImage, shimmerOpacityStyle]} />
       <View style={styles.offerContent}>
         <View style={[styles.skeletonText, { width: '40%', marginBottom: 8 }]} />
         <View style={[styles.skeletonText, { width: '80%', marginBottom: 8 }]} />
@@ -362,19 +377,10 @@ function ExclusiveZonePage() {
   const renderOfferCard = (offer: ZoneOffer) => {
     const offerId = offer._id || offer.id;
     return (
-      <Pressable
-        key={offerId}
-        style={styles.offerCard}
-        onPress={() => handleOfferPress(offer)}
-       
-      >
+      <Pressable key={offerId} style={styles.offerCard} onPress={() => handleOfferPress(offer)}>
         <View style={styles.offerImageContainer}>
           {offer.image ? (
-            <CachedImage
-              source={offer.image}
-              style={styles.offerImage}
-              contentFit="cover"
-            />
+            <CachedImage source={offer.image} style={styles.offerImage} contentFit="cover" />
           ) : (
             <View style={[styles.offerImagePlaceholder, { backgroundColor: `${gradientColors[0]}20` }]}>
               <Ionicons name={ionicon} size={32} color={gradientColors[0]} />
@@ -385,9 +391,7 @@ function ExclusiveZonePage() {
         <View style={styles.offerContent}>
           <View style={styles.offerHeader}>
             <View style={styles.offerInfo}>
-              <ThemedText style={styles.offerStore}>
-                {offer.store?.name || 'Store'}
-              </ThemedText>
+              <ThemedText style={styles.offerStore}>{offer.store?.name || 'Store'}</ThemedText>
               <ThemedText style={styles.offerTitle} numberOfLines={2}>
                 {offer.title}
               </ThemedText>
@@ -407,9 +411,7 @@ function ExclusiveZonePage() {
 
           <View style={styles.offerTags}>
             <View style={[styles.tag, { backgroundColor: `${gradientColors[0]}15` }]}>
-              <ThemedText style={[styles.tagText, { color: gradientColors[1] }]}>
-                {theme.tagLabel}
-              </ThemedText>
+              <ThemedText style={[styles.tagText, { color: gradientColors[1] }]}>{theme.tagLabel}</ThemedText>
             </View>
             {offer.category && (
               <View style={styles.tag}>
@@ -449,24 +451,25 @@ function ExclusiveZonePage() {
       <StatusBar barStyle="light-content" backgroundColor={gradientColors[0]} translucent />
 
       {/* ---- Header ---- */}
-      <View style={[styles.header, { backgroundColor: gradientColors[0], paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0 }]}>
+      <View
+        style={[
+          styles.header,
+          { backgroundColor: gradientColors[0], paddingTop: Platform.OS === 'ios' ? 0 : StatusBar.currentHeight || 0 },
+        ]}
+      >
         <SafeAreaView edges={['top']} style={styles.safeHeader}>
           <View style={styles.headerContent}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
 
             <View style={styles.headerTitleContainer}>
-              <ThemedText style={styles.headerTitle}>
-                {zoneName}
-              </ThemedText>
-              <ThemedText style={styles.headerSubtitle}>
-                {zoneDescription}
-              </ThemedText>
+              <ThemedText style={styles.headerTitle}>{zoneName}</ThemedText>
+              <ThemedText style={styles.headerSubtitle}>{zoneDescription}</ThemedText>
             </View>
 
             <View style={styles.headerIconContainer}>
@@ -484,18 +487,19 @@ function ExclusiveZonePage() {
       >
         {/* Zone Banner */}
         <View style={styles.bannerContainer}>
-          <View style={[styles.bannerGradient, { backgroundColor: `${gradientColors[0]}15`, borderColor: `${gradientColors[0]}30` }]}>
+          <View
+            style={[
+              styles.bannerGradient,
+              { backgroundColor: `${gradientColors[0]}15`, borderColor: `${gradientColors[0]}30` },
+            ]}
+          >
             <View style={styles.bannerContent}>
               <View style={[styles.bannerIconContainer, { backgroundColor: `${gradientColors[0]}30` }]}>
                 <Ionicons name={ionicon} size={32} color={gradientColors[0]} />
               </View>
               <View style={styles.bannerTextContainer}>
-                <ThemedText style={styles.bannerTitle}>
-                  {zoneName} Offers
-                </ThemedText>
-                <ThemedText style={styles.bannerSubtitle}>
-                  {zoneDescription}
-                </ThemedText>
+                <ThemedText style={styles.bannerTitle}>{zoneName} Offers</ThemedText>
+                <ThemedText style={styles.bannerSubtitle}>{zoneDescription}</ThemedText>
               </View>
             </View>
 
@@ -505,14 +509,11 @@ function ExclusiveZonePage() {
                 <View style={styles.verificationRow}>
                   <View style={styles.verificationLeft}>
                     <Ionicons name="alert-circle" size={20} color={colors.warningScale[400]} />
-                    <ThemedText style={styles.verificationText}>
-                      Verify to unlock all deals
-                    </ThemedText>
+                    <ThemedText style={styles.verificationText}>Verify to unlock all deals</ThemedText>
                   </View>
                   <Pressable
                     style={[styles.verifyButton, { backgroundColor: gradientColors[0] }]}
                     onPress={handleVerify}
-                   
                   >
                     <ThemedText style={styles.verifyButtonText}>Verify</ThemedText>
                   </Pressable>
@@ -555,9 +556,17 @@ function ExclusiveZonePage() {
           </View>
           <View style={styles.statCard}>
             <ThemedText style={[styles.statValue, { color: Colors.success }]}>
-              {loading ? '...' : zoneInfo?.cashbackBonusPercent ? `+${zoneInfo.cashbackBonusPercent}%` : zoneInfo?.offersCount ? `${zoneInfo.offersCount}+` : `${stats.totalDeals}`}
+              {loading
+                ? '...'
+                : zoneInfo?.cashbackBonusPercent
+                  ? `+${zoneInfo.cashbackBonusPercent}%`
+                  : zoneInfo?.offersCount
+                    ? `${zoneInfo.offersCount}+`
+                    : `${stats.totalDeals}`}
             </ThemedText>
-            <ThemedText style={styles.statLabel}>{zoneInfo?.cashbackBonusPercent ? 'Extra Cashback' : 'Total Offers'}</ThemedText>
+            <ThemedText style={styles.statLabel}>
+              {zoneInfo?.cashbackBonusPercent ? 'Extra Cashback' : 'Total Offers'}
+            </ThemedText>
           </View>
         </View>
 
@@ -578,9 +587,7 @@ function ExclusiveZonePage() {
           ) : (
             <View style={styles.emptyState}>
               <Ionicons name="pricetags-outline" size={48} color={colors.text.tertiary} />
-              <ThemedText style={styles.emptyStateTitle}>
-                No offers available
-              </ThemedText>
+              <ThemedText style={styles.emptyStateTitle}>No offers available</ThemedText>
               <ThemedText style={styles.emptyStateSubtext}>
                 There are no active offers in this zone right now. Check back later!
               </ThemedText>
@@ -599,154 +606,189 @@ function ExclusiveZonePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.secondary },
+    backgroundColor: colors.background.secondary,
+  },
   centerContent: {
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   errorText: {
     ...Typography.body,
     color: colors.text.secondary,
     textAlign: 'center',
     marginTop: Spacing.md,
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   retryButton: {
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   retryButtonText: {
     ...Typography.button,
-    color: colors.background.primary },
+    color: colors.background.primary,
+  },
 
   // Header
   header: {},
   safeHeader: {
-    paddingBottom: Spacing.base },
+    paddingBottom: Spacing.base,
+  },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
-    paddingVertical: Spacing.md },
+    paddingVertical: Spacing.md,
+  },
   backButton: {
     padding: Spacing.sm,
-    marginRight: Spacing.sm },
+    marginRight: Spacing.sm,
+  },
   headerTitleContainer: {
     flex: 1,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   headerTitle: {
     ...Typography.h3,
     color: colors.background.primary,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   headerSubtitle: {
     ...Typography.bodySmall,
     color: 'rgba(255, 255, 255, 0.8)',
-    marginTop: 2 },
+    marginTop: 2,
+  },
   headerIconContainer: {
     width: 40,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
 
   // Scroll
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   scrollContent: {
-    paddingBottom: 150 },
+    paddingBottom: 150,
+  },
 
   // Banner
   bannerContainer: {
     margin: Spacing.base,
     borderRadius: BorderRadius['2xl'],
     overflow: 'hidden',
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   bannerGradient: {
     padding: Spacing.lg,
     borderWidth: 1,
-    borderRadius: BorderRadius['2xl'] },
+    borderRadius: BorderRadius['2xl'],
+  },
   bannerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   bannerIconContainer: {
     width: 64,
     height: 64,
     borderRadius: BorderRadius.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: Spacing.base },
+    marginRight: Spacing.base,
+  },
   bannerTextContainer: {
-    flex: 1 },
+    flex: 1,
+  },
   bannerTitle: {
     ...Typography.h4,
     color: colors.text.primary,
     fontWeight: '600',
-    marginBottom: 4 },
+    marginBottom: 4,
+  },
   bannerSubtitle: {
     ...Typography.bodySmall,
-    color: colors.text.secondary },
+    color: colors.text.secondary,
+  },
 
   // Verification card
   verificationCard: {
     marginTop: Spacing.base,
     padding: Spacing.md,
     borderRadius: BorderRadius.lg,
-    backgroundColor: 'rgba(255, 255, 255, 0.05)' },
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  },
   verificationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between' },
+    justifyContent: 'space-between',
+  },
   verificationLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    flex: 1 },
+    flex: 1,
+  },
   verificationText: {
     ...Typography.body,
-    color: colors.warningScale[400] },
+    color: colors.warningScale[400],
+  },
   verifyButton: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   verifyButtonText: {
     ...Typography.labelSmall,
     color: colors.background.primary,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   activeBadge: {
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   activeBadgeText: {
     ...Typography.caption,
     color: colors.background.primary,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
 
   // Stats
   statsContainer: {
     flexDirection: 'row',
     paddingHorizontal: Spacing.base,
     gap: Spacing.sm,
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   statCard: {
     flex: 1,
     backgroundColor: colors.background.primary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
     alignItems: 'center',
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   statValue: {
     ...Typography.h2,
     fontWeight: '700',
-    marginBottom: 4 },
+    marginBottom: 4,
+  },
   statLabel: {
     ...Typography.caption,
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
 
   // Offers section
   offersSection: {
-    paddingHorizontal: Spacing.base },
+    paddingHorizontal: Spacing.base,
+  },
   sectionTitle: {
     ...Typography.h4,
     color: colors.text.primary,
     fontWeight: '600',
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
 
   // Offer card
   offerCard: {
@@ -755,62 +797,77 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   offerImageContainer: {
     width: 80,
     height: 80,
     borderRadius: BorderRadius.md,
     overflow: 'hidden',
-    marginRight: Spacing.base },
+    marginRight: Spacing.base,
+  },
   offerImage: {
     width: '100%',
-    height: '100%' },
+    height: '100%',
+  },
   offerImagePlaceholder: {
     width: '100%',
     height: '100%',
     alignItems: 'center',
-    justifyContent: 'center' },
+    justifyContent: 'center',
+  },
   offerContent: {
-    flex: 1 },
+    flex: 1,
+  },
   offerHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   offerInfo: {
     flex: 1,
-    marginRight: Spacing.sm },
+    marginRight: Spacing.sm,
+  },
   offerStore: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
-    marginBottom: 2 },
+    marginBottom: 2,
+  },
   offerTitle: {
     ...Typography.label,
     color: colors.text.primary,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   discountBadge: {
     paddingHorizontal: Spacing.sm,
     paddingVertical: 4,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   discountText: {
     ...Typography.labelSmall,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   offerDescription: {
     ...Typography.bodySmall,
     color: colors.text.secondary,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   offerTags: {
     flexDirection: 'row',
     gap: Spacing.xs,
-    flexWrap: 'wrap' },
+    flexWrap: 'wrap',
+  },
   tag: {
     backgroundColor: Colors.gray[100],
     paddingHorizontal: Spacing.sm,
     paddingVertical: 2,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   tagText: {
     ...Typography.caption,
-    color: colors.text.secondary },
+    color: colors.text.secondary,
+  },
 
   // Skeleton
   skeletonImage: {
@@ -818,25 +875,31 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: BorderRadius.md,
     backgroundColor: Colors.gray[200],
-    marginRight: Spacing.base },
+    marginRight: Spacing.base,
+  },
   skeletonText: {
     height: 12,
     borderRadius: 6,
-    backgroundColor: Colors.gray[200] },
+    backgroundColor: Colors.gray[200],
+  },
 
   // Empty state
   emptyState: {
     alignItems: 'center',
-    padding: Spacing.xl },
+    padding: Spacing.xl,
+  },
   emptyStateTitle: {
     ...Typography.body,
     color: colors.text.tertiary,
     fontWeight: '600',
-    marginTop: Spacing.md },
+    marginTop: Spacing.md,
+  },
   emptyStateSubtext: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
     textAlign: 'center',
-    marginTop: Spacing.xs } });
+    marginTop: Spacing.xs,
+  },
+});
 
 export default withErrorBoundary(ExclusiveZonePage, 'OffersZonesSlugIndex');

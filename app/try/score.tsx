@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-  Pressable,
-  FlatList,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Pressable, FlatList, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -43,14 +34,14 @@ const TIER_INFO: Record<string, TierInfo> = {
     name: 'Seasoned Explorer',
     minPoints: 500,
     benefits: ['Extra coin multiplier', 'Priority access to new trials', 'Exclusive merchant offers'],
-    color: '#8B5CF6',
+    color: '#1a3a52',
     icon: 'compass',
   },
   adventurer: {
     name: 'Adventurer',
     minPoints: 1500,
     benefits: ['2x coin multiplier', 'VIP merchant status', 'Early access to trials', 'Bonus rewards'],
-    color: '#EC4899',
+    color: '#FFC857',
     icon: 'rocket',
   },
   pioneer: {
@@ -105,8 +96,7 @@ export default function ExplorerScoreScreen() {
 
   const tierInfo = TIER_INFO[scoreData.tier];
   const progressPercentage =
-    ((scoreData.score - tierInfo.minPoints) / (scoreData.nextTierPoints - tierInfo.minPoints)) *
-    100;
+    ((scoreData.score - tierInfo.minPoints) / (scoreData.nextTierPoints - tierInfo.minPoints)) * 100;
 
   return (
     <SafeAreaView style={styles.container}>
@@ -188,9 +178,7 @@ export default function ExplorerScoreScreen() {
                 <Ionicons name={nextTierInfo.icon as any} size={24} color={nextTierInfo.color} />
                 <View style={styles.nextTierInfo}>
                   <Text style={styles.nextTierLabel}>Next Tier</Text>
-                  <Text style={styles.nextTierName}>
-                    {nextTierInfo.name}
-                  </Text>
+                  <Text style={styles.nextTierName}>{nextTierInfo.name}</Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={colors.text.secondary} />
               </View>
@@ -261,12 +249,10 @@ export default function ExplorerScoreScreen() {
                     <Text style={styles.eventDesc}>{item.description}</Text>
                     <Text style={styles.eventDate}>{item.date}</Text>
                   </View>
-                  <Text style={[styles.eventPoints, { color: tierInfo.color }]}>
-                    +{item.points}
-                  </Text>
+                  <Text style={[styles.eventPoints, { color: tierInfo.color }]}>+{item.points}</Text>
                 </View>
               )}
-              keyExtractor={item => item.id}
+              keyExtractor={(item) => item.id}
               contentContainerStyle={styles.eventsList}
             />
           </View>
@@ -299,7 +285,9 @@ export default function ExplorerScoreScreen() {
           </View>
           <View style={styles.missionCard}>
             <View style={styles.missionHeader}>
-              <Text style={styles.missionTitle} numberOfLines={1}>Try 3 cafes this weekend</Text>
+              <Text style={styles.missionTitle} numberOfLines={1}>
+                Try 3 cafes this weekend
+              </Text>
               <Text style={styles.missionReward}>+200 🪙</Text>
             </View>
             <View style={styles.missionProgress}>
@@ -313,10 +301,7 @@ export default function ExplorerScoreScreen() {
 
         {/* Weekly Surprise */}
         <View style={styles.section}>
-          <Pressable
-            style={styles.surpriseCard}
-            onPress={() => router.push('/try/surprise')}
-          >
+          <Pressable style={styles.surpriseCard} onPress={() => router.push('/try/surprise')}>
             <Text style={styles.surpriseEmoji}>🎁</Text>
             <View style={styles.surpriseContent}>
               <Text style={styles.surpriseLabel}>Weekly Surprise</Text>

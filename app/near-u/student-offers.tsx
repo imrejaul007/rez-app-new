@@ -41,7 +41,7 @@ export default function StudentOffersScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         {/* Hero banner */}
         <LinearGradient
-          colors={['#F97316', '#FBBF24']}
+          colors={['#1a3a52', '#FFC857']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.heroBanner}
@@ -98,7 +98,7 @@ export default function StudentOffersScreen() {
         {/* TRY nudge */}
         <Pressable style={styles.tryNudge} onPress={() => router.push('/try' as any)}>
           <LinearGradient
-            colors={['#7C3AED', '#A78BFA']}
+            colors={['#1a3a52', '#2d5f87']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.tryNudgeGradient}
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignSelf: 'flex-start',
   },
-  verifyBtnText: { fontSize: 13, fontWeight: '700', color: '#F97316' },
+  verifyBtnText: { fontSize: 13, fontWeight: '700', color: '#1a3a52' },
 
   sectionTitle: {
     fontSize: 15,

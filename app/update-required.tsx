@@ -1,11 +1,13 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, Platform } from 'react-native';
+import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
-export default function UpdateRequiredScreen() {
+function UpdateRequiredScreen() {
   const openStore = () => {
-    const url = Platform.OS === 'ios'
-      ? 'https://apps.apple.com/app/rez/id000000000'
-      : 'https://play.google.com/store/apps/details?id=com.rez.consumer';
+    const url =
+      Platform.OS === 'ios'
+        ? 'https://apps.apple.com/app/rez/id000000000'
+        : 'https://play.google.com/store/apps/details?id=com.rez.consumer';
     Linking.openURL(url);
   };
 
@@ -19,6 +21,8 @@ export default function UpdateRequiredScreen() {
     </View>
   );
 }
+
+export default withErrorBoundary(UpdateRequiredScreen, 'UpdateRequired');
 
 const styles = StyleSheet.create({
   container: {

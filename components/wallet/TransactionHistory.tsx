@@ -109,7 +109,7 @@ const STATUS_COLORS: Record<string, string> = {
   processing: '#3B82F6',
   failed: '#EF4444',
   cancelled: '#6B7280',
-  reversed: '#8B5CF6',
+  reversed: '#1a3a52',
 };
 
 function statusColor(status: string): string {

@@ -39,7 +39,7 @@ const TIER_CONFIG: Record<RezScoreTier, { color: string; bg: string; emoji: stri
   'Smart Saver': { color: colors.brand.sky, bg: colors.tint.blue, emoji: '💡' },
   'Super Saver': { color: colors.brand.amberDark, bg: colors.tint.amber, emoji: '⭐' },
   'Elite Saver': { color: colors.brand.orangeDark, bg: colors.tint.orange, emoji: '🔥' },
-  Legend: { color: '#7C3AED', bg: '#F0E6FF', emoji: '👑' },
+  Legend: { color: '#1a3a52', bg: '#e8f0f7', emoji: '👑' },
 };
 
 // ============================================================================

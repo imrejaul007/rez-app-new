@@ -138,7 +138,7 @@ function TrialDetailScreen() {
           order_id: order.razorpayOrderId,
           name: 'ReZ TRY',
           prefill: { name: '', contact: '' },
-          theme: { color: '#7C3AED' }, // brand purple
+          theme: { color: '#1a3a52' }, // Nile Blue
         });
         paymentId = paymentResponse.razorpay_payment_id;
       } catch (paymentErr: any) {
@@ -361,7 +361,7 @@ function TrialDetailScreen() {
         ) : (
           <Pressable style={styles.bookButton} onPress={handleBookPress}>
             <LinearGradient
-              colors={['#7C3AED', '#A855F7']}
+              colors={['#1a3a52', '#FFC857']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.bookButtonGradient}

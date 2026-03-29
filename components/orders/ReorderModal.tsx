@@ -270,7 +270,7 @@ function ReorderModal({
 
           {validating && (
             <View style={styles.loadingContainer}>
-              <ActivityIndicator size="large" color="#6366f1" />
+              <ActivityIndicator size="large" color="#1a3a52" />
               <Text style={styles.loadingText}>Checking availability...</Text>
             </View>
           )}
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     marginBottom: 16
   },
   retryButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8
@@ -505,8 +505,8 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   checkboxSelected: {
-    backgroundColor: '#6366f1',
-    borderColor: '#6366f1'
+    backgroundColor: '#1a3a52',
+    borderColor: '#1a3a52'
   },
   checkmark: {
     color: colors.background.primary,
@@ -580,7 +580,7 @@ const styles = StyleSheet.create({
     marginTop: 4
   },
   reorderButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center'

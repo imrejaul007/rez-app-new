@@ -53,13 +53,13 @@ const PERIOD_OPTIONS: { label: string; value: EarningsPeriod }[] = [
 
 // Breakdown category config
 const BREAKDOWN_CATEGORIES = [
-  { key: 'videos' as const, label: 'Videos', icon: 'videocam', color: colors.brand.pink, bgColor: '#EC489920' },
+  { key: 'videos' as const, label: 'Videos', icon: 'videocam', color: '#FFC857', bgColor: '#FFC85720' },
   {
     key: 'projects' as const,
     label: 'Projects',
     icon: 'briefcase',
-    color: colors.brand.purpleLight,
-    bgColor: '#8B5CF620',
+    color: '#1a3a52',
+    bgColor: '#1a3a5220',
   },
   { key: 'referrals' as const, label: 'Referrals', icon: 'people', color: Colors.success, bgColor: '#10B98120' },
   { key: 'cashback' as const, label: 'Cashback', icon: 'cash', color: colors.warningScale[400], bgColor: '#F59E0B20' },
@@ -78,13 +78,13 @@ const BREAKDOWN_CATEGORIES = [
     color: colors.brand.cyan,
     bgColor: '#06B6D420',
   },
-  { key: 'events' as const, label: 'Events', icon: 'ticket', color: colors.brand.purple, bgColor: '#7C3AED20' },
+  { key: 'events' as const, label: 'Events', icon: 'ticket', color: '#1a3a52', bgColor: '#1a3a5220' },
   {
     key: 'socialImpact' as const,
     label: 'Social Impact',
     icon: 'heart',
-    color: colors.brand.pink,
-    bgColor: '#EC489920',
+    color: '#FFC857',
+    bgColor: '#FFC85720',
   },
   { key: 'bonus' as const, label: 'Bonus', icon: 'gift', color: Colors.error, bgColor: '#EF444420' },
 ] as const;

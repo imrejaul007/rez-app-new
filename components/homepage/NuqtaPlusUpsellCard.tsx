@@ -28,7 +28,7 @@ const NuqtaPlusUpsellCard = React.memo(function NuqtaPlusUpsellCard() {
   return (
     <Pressable onPress={() => router.push('/subscriptions' as any)} style={styles.card}>
       <View style={styles.iconContainer}>
-        <Ionicons name="trending-up" size={24} color="#6D28D9" />
+        <Ionicons name="trending-up" size={24} color="#1a3a52" />
       </View>
       <View style={styles.content}>
         <Text style={styles.headline}>
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   cta: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#6D28D9',
+    color: '#1a3a52',
     marginTop: 4,
   },
 });

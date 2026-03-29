@@ -70,7 +70,7 @@ function MerchantSlugScreen() {
   if (loading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color={colors.brand?.purple || '#7C3AED'} />
+        <ActivityIndicator size="large" color={colors.nileBlue || '#1a3a52'} />
       </View>
     );
   }
@@ -159,7 +159,7 @@ function MerchantSlugScreen() {
             <Text style={styles.ctaPrimaryText}>View Offers</Text>
           </Pressable>
           <Pressable style={styles.ctaSecondary} onPress={() => router.push('/try' as any)}>
-            <Ionicons name="flask" size={18} color="#7C3AED" />
+            <Ionicons name="flask" size={18} color="#1a3a52" />
             <Text style={styles.ctaSecondaryText}>Try Free</Text>
           </Pressable>
         </View>
@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#1a3a52',
     paddingVertical: 13,
     borderRadius: borderRadius.lg,
   },
@@ -237,18 +237,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    backgroundColor: '#F5F3FF',
+    backgroundColor: '#e8f0f7',
     paddingVertical: 13,
     borderRadius: borderRadius.lg,
     borderWidth: 1.5,
-    borderColor: '#7C3AED',
+    borderColor: '#1a3a52',
   },
-  ctaSecondaryText: { fontSize: 15, fontWeight: '700', color: '#7C3AED' },
+  ctaSecondaryText: { fontSize: 15, fontWeight: '700', color: '#1a3a52' },
 
   errorTitle: { fontSize: 18, fontWeight: '700', color: '#111', marginTop: 16, marginBottom: 8 },
   errorSub: { fontSize: 13, color: '#6B7280', textAlign: 'center', marginBottom: 20 },
   backBtn: {
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#1a3a52',
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: borderRadius.lg,

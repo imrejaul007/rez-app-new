@@ -8,15 +8,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -167,10 +159,7 @@ function UserProgressSection({ progress, tiers }: { progress: TierProgress; tier
           {sortedTiers.map((tier, idx) => (
             <View
               key={tier.name}
-              style={[
-                styles.tierDot,
-                { backgroundColor: idx <= currentIdx ? tier.color : '#E5E7EB' },
-              ]}
+              style={[styles.tierDot, { backgroundColor: idx <= currentIdx ? tier.color : '#E5E7EB' }]}
             />
           ))}
         </View>
@@ -184,10 +173,10 @@ function UserProgressSection({ progress, tiers }: { progress: TierProgress; tier
         </View>
       ) : (
         <Text style={styles.nextTierHint}>
-          Spend{' '}
-          <Text style={styles.nextTierAmount}>{formatCurrency(progress.spendToNextTier)}</Text>
-          {' '}more to reach{' '}
-          <Text style={{ fontWeight: '700' }}>{progress.nextTier?.icon} {progress.nextTier?.name}</Text>
+          Spend <Text style={styles.nextTierAmount}>{formatCurrency(progress.spendToNextTier)}</Text> more to reach{' '}
+          <Text style={{ fontWeight: '700' }}>
+            {progress.nextTier?.icon} {progress.nextTier?.name}
+          </Text>
         </Text>
       )}
     </View>
@@ -207,32 +196,37 @@ function TierProgressScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchData = useCallback(async (isRefresh = false) => {
-    if (!storeId) {
-      setLoading(false);
-      return;
-    }
-    try {
-      isRefresh ? setRefreshing(true) : setLoading(true);
-      const res = await apiClient.get<LoyaltyData>(`/stores/${storeId}/loyalty-program`);
-      if (!isMounted()) return;
-      if (res.success && res.data) {
-        setData(res.data);
+  const fetchData = useCallback(
+    async (isRefresh = false) => {
+      if (!storeId) {
+        setLoading(false);
+        return;
       }
-    } catch {
-      // silently handle
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [storeId, isMounted]);
+      try {
+        isRefresh ? setRefreshing(true) : setLoading(true);
+        const res = await apiClient.get<LoyaltyData>(`/stores/${storeId}/loyalty-program`);
+        if (!isMounted()) return;
+        if (res.success && res.data) {
+          setData(res.data);
+        }
+      } catch {
+        // silently handle
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [storeId, isMounted],
+  );
 
-  useFocusEffect(useCallback(() => { fetchData(); }, [fetchData]));
+  useFocusEffect(
+    useCallback(() => {
+      fetchData();
+    }, [fetchData]),
+  );
 
-  const sortedTiers = data
-    ? [...data.program.tiers].sort((a, b) => a.minCumulativeSpend - b.minCumulativeSpend)
-    : [];
+  const sortedTiers = data ? [...data.program.tiers].sort((a, b) => a.minCumulativeSpend - b.minCumulativeSpend) : [];
 
   const currentTierName = data?.userProgress?.currentTier?.name;
   const currentTierIdx = sortedTiers.findIndex((t) => t.name === currentTierName);
@@ -271,10 +265,8 @@ function TierProgressScreen() {
             <UserProgressSection progress={data.userProgress} tiers={data.program.tiers} />
           ) : (
             <View style={styles.loginPrompt}>
-              <Ionicons name="person-circle-outline" size={32} color="#7C3AED" />
-              <Text style={styles.loginPromptText}>
-                Sign in to see your tier progress and earn rewards.
-              </Text>
+              <Ionicons name="person-circle-outline" size={32} color="#1a3a52" />
+              <Text style={styles.loginPromptText}>Sign in to see your tier progress and earn rewards.</Text>
             </View>
           )}
 
@@ -292,9 +284,10 @@ function TierProgressScreen() {
 
           {/* How it works note */}
           <View style={styles.infoBox}>
-            <Ionicons name="information-circle-outline" size={16} color="#7C3AED" style={{ marginRight: 6 }} />
+            <Ionicons name="information-circle-outline" size={16} color="#1a3a52" style={{ marginRight: 6 }} />
             <Text style={styles.infoText}>
-              Tier progress is calculated from your total spend at this store. Coins earned are automatically multiplied by your tier rate.
+              Tier progress is calculated from your total spend at this store. Coins earned are automatically multiplied
+              by your tier rate.
             </Text>
           </View>
         </ScrollView>
@@ -317,38 +310,64 @@ const styles = StyleSheet.create({
 
   // Progress card
   progressCard: {
-    backgroundColor: '#fff', borderRadius: 16, padding: 20, marginBottom: 20,
-    shadowColor: '#000', shadowOpacity: 0.07, shadowRadius: 8, shadowOffset: { width: 0, height: 2 }, elevation: 3,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 20,
+    shadowColor: '#000',
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
   progressHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: 16 },
   progressLabel: { fontSize: 12, color: '#6B7280', marginBottom: 4 },
   progressSpend: { fontSize: 26, fontWeight: '800', color: '#111827' },
   currentTierChip: {
-    flexDirection: 'row', alignItems: 'center', gap: 6,
-    borderWidth: 1.5, borderRadius: 20, paddingHorizontal: 12, paddingVertical: 6,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    borderWidth: 1.5,
+    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
   },
   currentTierIcon: { fontSize: 16 },
   currentTierName: { fontSize: 14, fontWeight: '700' },
   progressBarContainer: { marginBottom: 12 },
   progressBarTrack: { height: 8, backgroundColor: '#E5E7EB', borderRadius: 4, overflow: 'hidden', marginBottom: 8 },
-  progressBarFill: { height: 8, backgroundColor: '#7C3AED', borderRadius: 4 },
+  progressBarFill: { height: 8, backgroundColor: '#1a3a52', borderRadius: 4 },
   tierDots: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 2 },
   tierDot: { width: 10, height: 10, borderRadius: 5 },
   topTierMsg: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 4 },
   topTierText: { fontSize: 14, color: '#F59E0B', fontWeight: '600' },
   nextTierHint: { fontSize: 13, color: '#6B7280', marginTop: 4 },
-  nextTierAmount: { color: '#7C3AED', fontWeight: '700' },
+  nextTierAmount: { color: '#1a3a52', fontWeight: '700' },
 
   // Tier card
   tierCard: {
-    backgroundColor: '#fff', borderRadius: 16, padding: 16, marginBottom: 12,
-    borderWidth: 1, borderColor: '#F3F4F6',
-    shadowColor: '#000', shadowOpacity: 0.04, shadowRadius: 4, shadowOffset: { width: 0, height: 1 }, elevation: 1,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 12,
+    borderWidth: 1,
+    borderColor: '#F3F4F6',
+    shadowColor: '#000',
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    elevation: 1,
   },
-  tierCardActive: { borderColor: '#7C3AED', borderWidth: 2 },
+  tierCardActive: { borderColor: '#1a3a52', borderWidth: 2 },
   currentBadge: {
-    position: 'absolute', top: -1, right: 16, backgroundColor: '#7C3AED',
-    paddingHorizontal: 10, paddingVertical: 3, borderBottomLeftRadius: 8, borderBottomRightRadius: 8,
+    position: 'absolute',
+    top: -1,
+    right: 16,
+    backgroundColor: '#1a3a52',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
   },
   currentBadgeText: { fontSize: 9, fontWeight: '800', color: '#fff', letterSpacing: 0.8 },
   tierHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 },
@@ -356,9 +375,15 @@ const styles = StyleSheet.create({
   tierIconText: { fontSize: 22 },
   tierName: { fontSize: 16, fontWeight: '700' },
   tierThreshold: { fontSize: 11, color: '#6B7280', marginTop: 2 },
-  multiplierBadge: { alignItems: 'center', backgroundColor: '#F5F3FF', borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6 },
-  multiplierText: { fontSize: 16, fontWeight: '800', color: '#7C3AED' },
-  multiplierLabel: { fontSize: 10, color: '#7C3AED', marginTop: -2 },
+  multiplierBadge: {
+    alignItems: 'center',
+    backgroundColor: '#e8f0f7',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+  multiplierText: { fontSize: 16, fontWeight: '800', color: '#1a3a52' },
+  multiplierLabel: { fontSize: 10, color: '#1a3a52', marginTop: -2 },
   perksList: { gap: 6 },
   perkRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   perkText: { fontSize: 13, color: '#374151', flex: 1 },
@@ -366,15 +391,24 @@ const styles = StyleSheet.create({
 
   // Login prompt
   loginPrompt: {
-    flexDirection: 'row', alignItems: 'center', gap: 10,
-    backgroundColor: '#F5F3FF', borderRadius: 12, padding: 14, marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    backgroundColor: '#e8f0f7',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 20,
   },
   loginPromptText: { flex: 1, fontSize: 13, color: '#374151' },
 
   // Info box
   infoBox: {
-    flexDirection: 'row', alignItems: 'flex-start',
-    backgroundColor: '#F5F3FF', borderRadius: 12, padding: 14, marginTop: 8,
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    backgroundColor: '#e8f0f7',
+    borderRadius: 12,
+    padding: 14,
+    marginTop: 8,
   },
   infoText: { flex: 1, fontSize: 12, color: '#374151', lineHeight: 18 },
 });

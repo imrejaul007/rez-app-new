@@ -496,7 +496,7 @@ const styles = StyleSheet.create({
   },
   timingOptionSelected: {
     borderColor: Colors.brand.purpleLight,
-    backgroundColor: '#8B5CF605',
+    backgroundColor: '#1a3a5205',
   },
   radioButton: {
     width: 24,

@@ -108,7 +108,7 @@ function QuickReorder({ limit = 5, onViewAll }: QuickReorderProps) {
           <Text style={styles.title}>Quick Reorder</Text>
         </View>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="small" color="#6366f1" />
+          <ActivityIndicator size="small" color="#1a3a52" />
         </View>
       </View>
     );
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   viewAllText: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#6366f1'
+    color: '#1a3a52'
   },
   listContent: {
     paddingHorizontal: 16
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
   orderCount: {
     fontSize: 11,
-    color: '#8b5cf6',
+    color: '#1a3a52',
     fontWeight: '600'
   },
   price: {
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     color: colors.gray[900]
   },
   reorderBadge: {
-    backgroundColor: '#ede9fe',
+    backgroundColor: '#e8f0f7',
     paddingVertical: 6,
     paddingHorizontal: 8,
     borderRadius: 6,
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   reorderText: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#6366f1'
+    color: '#1a3a52'
   },
   unavailableBadge: {
     backgroundColor: '#fef2f2',
@@ -272,7 +272,7 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   },
   shopButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8

@@ -159,12 +159,12 @@ const styles = StyleSheet.create({
 
   // Variant styles
   primaryButton: {
-    backgroundColor: '#6366f1'
+    backgroundColor: '#1a3a52'
   },
   secondaryButton: {
     backgroundColor: colors.background.primary,
     borderWidth: 1,
-    borderColor: '#6366f1'
+    borderColor: '#1a3a52'
   },
   textButton: {
     backgroundColor: 'transparent'
@@ -192,10 +192,10 @@ const styles = StyleSheet.create({
     color: colors.background.primary
   },
   secondaryText: {
-    color: '#6366f1'
+    color: '#1a3a52'
   },
   textButtonText: {
-    color: '#6366f1'
+    color: '#1a3a52'
   },
   smallText: {
     fontSize: 12

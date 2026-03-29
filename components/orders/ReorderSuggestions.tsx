@@ -53,7 +53,7 @@ function ReorderSuggestions({ onAddToCart }: ReorderSuggestionsProps) {
       case 'consumable':
         return colors.warningScale[400];
       case 'frequent':
-        return '#8b5cf6';
+        return '#1a3a52';
       case 'subscription':
         return colors.infoScale[400];
       default:
@@ -336,7 +336,7 @@ const styles = StyleSheet.create({
   },
   reason: {
     fontSize: 12,
-    color: '#6366f1',
+    color: '#1a3a52',
     marginBottom: 8,
     fontStyle: 'italic'
   },
@@ -352,7 +352,7 @@ const styles = StyleSheet.create({
     color: colors.neutral[900]
   },
   quickAddButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 6
@@ -404,7 +404,7 @@ const styles = StyleSheet.create({
     marginBottom: 12
   },
   retryButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 8

@@ -45,16 +45,16 @@ export default function PaymentMethodsScreen() {
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(DUMMY_PAYMENT_METHODS);
 
   const handleSetDefault = (id: string) => {
-    setPaymentMethods(prev =>
-      prev.map(method => ({
+    setPaymentMethods((prev) =>
+      prev.map((method) => ({
         ...method,
         isDefault: method.id === id,
-      }))
+      })),
     );
   };
 
   const handleRemovePaymentMethod = (id: string) => {
-    setPaymentMethods(prev => prev.filter(method => method.id !== id));
+    setPaymentMethods((prev) => prev.filter((method) => method.id !== id));
   };
 
   const getIconName = (type: string) => {
@@ -91,7 +91,7 @@ export default function PaymentMethodsScreen() {
         </TouchableOpacity>
         <Text style={styles.title}>Payment Methods</Text>
         <TouchableOpacity style={styles.addBtn}>
-          <Ionicons name="add-circle" size={24} color="#6366f1" />
+          <Ionicons name="add-circle" size={24} color="#1a3a52" />
         </TouchableOpacity>
       </View>
 
@@ -109,14 +109,12 @@ export default function PaymentMethodsScreen() {
               <View key={method.id} style={styles.card}>
                 <View style={styles.cardLeft}>
                   <View style={styles.iconContainer}>
-                    <Ionicons name={getIconName(method.type)} size={24} color="#6366f1" />
+                    <Ionicons name={getIconName(method.type)} size={24} color="#1a3a52" />
                   </View>
                   <View style={styles.cardInfo}>
                     <Text style={styles.cardType}>{getTypeLabel(method.type)}</Text>
                     <Text style={styles.cardValue}>{method.value}</Text>
-                    {method.lastUsed && (
-                      <Text style={styles.cardSubtext}>Last used {method.lastUsed}</Text>
-                    )}
+                    {method.lastUsed && <Text style={styles.cardSubtext}>Last used {method.lastUsed}</Text>}
                   </View>
                 </View>
                 <View style={styles.cardRight}>
@@ -145,7 +143,15 @@ export default function PaymentMethodsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f9fafb' },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, paddingVertical: 12, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#e5e7eb' },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+  },
   backBtn: { marginRight: 12 },
   title: { fontSize: 18, fontWeight: '600', color: '#1a1a1a', flex: 1 },
   addBtn: { marginLeft: 12 },
@@ -154,18 +160,42 @@ const styles = StyleSheet.create({
   emptyText: { fontSize: 16, fontWeight: '600', color: '#1a1a1a', marginTop: 12 },
   emptySubtext: { fontSize: 14, color: '#6b7280', marginTop: 4 },
   sectionTitle: { fontSize: 16, fontWeight: '600', color: '#1a1a1a', marginBottom: 8 },
-  card: { backgroundColor: '#fff', borderRadius: 12, padding: 16, borderWidth: 1, borderColor: '#e5e7eb', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#e5e7eb',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   cardLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, gap: 12 },
   cardInfo: { flex: 1 },
-  iconContainer: { width: 48, height: 48, borderRadius: 8, backgroundColor: '#f3f4f6', alignItems: 'center', justifyContent: 'center' },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    backgroundColor: '#f3f4f6',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   cardType: { fontSize: 14, fontWeight: '600', color: '#1a1a1a' },
   cardValue: { fontSize: 13, color: '#6b7280', marginTop: 2 },
   cardSubtext: { fontSize: 12, color: '#9ca3af', marginTop: 4 },
   cardRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  defaultBadge: { backgroundColor: '#e0e7ff', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
-  defaultText: { fontSize: 12, fontWeight: '600', color: '#6366f1' },
+  defaultBadge: { backgroundColor: '#e8f0f7', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
+  defaultText: { fontSize: 12, fontWeight: '600', color: '#1a3a52' },
   moreBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  addMethodBtn: { backgroundColor: '#6366f1', borderRadius: 12, padding: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12, marginTop: 8 },
+  addMethodBtn: {
+    backgroundColor: '#1a3a52',
+    borderRadius: 12,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 12,
+    marginTop: 8,
+  },
   addMethodText: { fontSize: 16, fontWeight: '600', color: '#fff' },
 });
-

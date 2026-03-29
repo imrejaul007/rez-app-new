@@ -67,7 +67,7 @@ const COIN_TYPES: CoinType[] = [
     id: 'prive',
     name: `${BRAND.PRIVE_NAME} Coins`,
     icon: 'diamond',
-    color: '#EC4899',
+    color: '#FFC857',
     description: 'Premium coins for elite members — higher value and exclusive perks.',
     howToEarn: ['Elite tier membership', 'Premium campaigns', 'Special achievements'],
     howToUse: 'Redeem for premium experiences and gift cards',

@@ -74,7 +74,7 @@ function ComboCard({ combo, currencySymbol }: { combo: ComboProduct; currencySym
       {combo.image ? (
         <Image source={{ uri: combo.image }} style={styles.comboImage} resizeMode="cover" />
       ) : (
-        <LinearGradient colors={['#7C3AED', '#4F46E5']} style={styles.comboImagePlaceholder}>
+        <LinearGradient colors={['#1a3a52', '#FFC857']} style={styles.comboImagePlaceholder}>
           <Ionicons name="fast-food-outline" size={36} color="rgba(255,255,255,0.6)" />
         </LinearGradient>
       )}
@@ -88,7 +88,8 @@ function ComboCard({ combo, currencySymbol }: { combo: ComboProduct; currencySym
             <View key={item.productId} style={styles.itemRow}>
               <Text style={styles.itemBullet}>•</Text>
               <Text style={styles.itemName}>
-                {item.quantity > 1 ? `${item.quantity}× ` : ''}{item.productName}
+                {item.quantity > 1 ? `${item.quantity}× ` : ''}
+                {item.productName}
               </Text>
               <Text style={styles.itemPrice}>{formatCurrency(item.basePrice * item.quantity)}</Text>
             </View>
@@ -111,9 +112,7 @@ function ComboCard({ combo, currencySymbol }: { combo: ComboProduct; currencySym
         </View>
 
         {/* Validity */}
-        {expiryStr && (
-          <Text style={styles.validityText}>Valid till {expiryStr}</Text>
-        )}
+        {expiryStr && <Text style={styles.validityText}>Valid till {expiryStr}</Text>}
       </View>
     </View>
   );
@@ -126,9 +125,7 @@ function EmptyState() {
     <View style={styles.emptyState}>
       <Ionicons name="fast-food-outline" size={52} color="#D1D5DB" />
       <Text style={styles.emptyTitle}>No combo deals right now</Text>
-      <Text style={styles.emptyBody}>
-        Check back soon — this store may add bundle deals for even better value.
-      </Text>
+      <Text style={styles.emptyBody}>Check back soon — this store may add bundle deals for even better value.</Text>
     </View>
   );
 }
@@ -146,28 +143,35 @@ function CombosScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const fetchCombos = useCallback(async (isRefresh = false) => {
-    if (!storeId) {
-      setLoading(false);
-      return;
-    }
-    try {
-      isRefresh ? setRefreshing(true) : setLoading(true);
-      const res = await apiClient.get<{ combos: ComboProduct[] }>(`/stores/${storeId}/combos`);
-      if (!isMounted()) return;
-      if (res.success && res.data?.combos) {
-        setCombos(res.data.combos);
+  const fetchCombos = useCallback(
+    async (isRefresh = false) => {
+      if (!storeId) {
+        setLoading(false);
+        return;
       }
-    } catch {
-      // silently handle
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      setRefreshing(false);
-    }
-  }, [storeId, isMounted]);
+      try {
+        isRefresh ? setRefreshing(true) : setLoading(true);
+        const res = await apiClient.get<{ combos: ComboProduct[] }>(`/stores/${storeId}/combos`);
+        if (!isMounted()) return;
+        if (res.success && res.data?.combos) {
+          setCombos(res.data.combos);
+        }
+      } catch {
+        // silently handle
+      } finally {
+        if (!isMounted()) return;
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [storeId, isMounted],
+  );
 
-  useFocusEffect(useCallback(() => { fetchCombos(); }, [fetchCombos]));
+  useFocusEffect(
+    useCallback(() => {
+      fetchCombos();
+    }, [fetchCombos]),
+  );
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -180,12 +184,12 @@ function CombosScreen() {
           <Text style={styles.headerTitle}>Combo Deals</Text>
           <Text style={styles.headerSubtitle}>{storeName}</Text>
         </View>
-        <Ionicons name="pricetags-outline" size={24} color="#7C3AED" />
+        <Ionicons name="pricetags-outline" size={24} color="#1a3a52" />
       </View>
 
       {loading ? (
         <View style={styles.loader}>
-          <ActivityIndicator size="large" color="#7C3AED" />
+          <ActivityIndicator size="large" color="#1a3a52" />
         </View>
       ) : (
         <ScrollView
@@ -216,9 +220,14 @@ function CombosScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#F9FAFB' },
   header: {
-    flexDirection: 'row', alignItems: 'center', gap: 12,
-    paddingHorizontal: 16, paddingVertical: 12,
-    backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: '#F3F4F6',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#F3F4F6',
   },
   backBtn: { width: 40, height: 40, justifyContent: 'center' },
   headerTitle: { fontSize: 18, fontWeight: '700', color: '#111827' },
@@ -228,35 +237,52 @@ const styles = StyleSheet.create({
   sectionHint: { fontSize: 13, color: '#6B7280', marginBottom: 16 },
 
   card: {
-    backgroundColor: '#fff', borderRadius: 16, marginBottom: 16,
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    marginBottom: 16,
     overflow: 'hidden',
-    shadowColor: '#000', shadowOpacity: 0.07, shadowRadius: 8, shadowOffset: { width: 0, height: 2 },
+    shadowColor: '#000',
+    shadowOpacity: 0.07,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
     elevation: 3,
   },
   savingsBadge: {
-    position: 'absolute', top: 12, right: 12, zIndex: 2,
-    backgroundColor: '#EF4444', paddingHorizontal: 10, paddingVertical: 4,
+    position: 'absolute',
+    top: 12,
+    right: 12,
+    zIndex: 2,
+    backgroundColor: '#EF4444',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 20,
   },
   savingsText: { fontSize: 11, fontWeight: '800', color: '#fff' },
   comboImage: { width: '100%', height: 140 },
   comboImagePlaceholder: {
-    width: '100%', height: 140, justifyContent: 'center', alignItems: 'center',
+    width: '100%',
+    height: 140,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   cardBody: { padding: 16 },
   comboName: { fontSize: 17, fontWeight: '700', color: '#111827', marginBottom: 12 },
   itemsList: { gap: 6, marginBottom: 12 },
   itemRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  itemBullet: { color: '#7C3AED', fontSize: 16, lineHeight: 20 },
+  itemBullet: { color: '#1a3a52', fontSize: 16, lineHeight: 20 },
   itemName: { flex: 1, fontSize: 14, color: '#374151' },
   itemPrice: { fontSize: 13, color: '#6B7280' },
   divider: { height: 1, backgroundColor: '#F3F4F6', marginBottom: 12 },
   priceRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   originalPrice: { fontSize: 13, color: '#9CA3AF', textDecorationLine: 'line-through', marginBottom: 2 },
-  comboPrice: { fontSize: 22, fontWeight: '800', color: '#7C3AED' },
+  comboPrice: { fontSize: 22, fontWeight: '800', color: '#1a3a52' },
   savingsChip: {
-    flexDirection: 'row', alignItems: 'center',
-    backgroundColor: '#ECFDF5', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#ECFDF5',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 20,
   },
   savingsChipText: { fontSize: 13, fontWeight: '600', color: '#059669' },
   validityText: { fontSize: 11, color: '#9CA3AF', marginTop: 10 },

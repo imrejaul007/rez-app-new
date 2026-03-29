@@ -50,10 +50,10 @@ const MILESTONE_CONFIG: Record<
   { emoji: string; headline: string; gradient: [string, string] }
 > = {
   1000:   { emoji: '🎉', headline: 'First milestone unlocked!',    gradient: ['#0ea5e9', '#38bdf8'] },
-  5000:   { emoji: '🚀', headline: 'You\'re a Smart Saver now!',    gradient: ['#7c3aed', '#a78bfa'] },
+  5000:   { emoji: '🚀', headline: 'You\'re a Smart Saver now!',    gradient: ['#1a3a52', '#FFC857'] },
   10000:  { emoji: '💎', headline: 'Incredible savings habit!',     gradient: ['#d97706', '#fbbf24'] },
   25000:  { emoji: '👑', headline: 'Elite savings territory!',      gradient: ['#dc2626', '#f87171'] },
-  50000:  { emoji: '🏆', headline: 'You\'re a REZ Legend!',         gradient: ['#7c3aed', '#a78bfa'] },
+  50000:  { emoji: '🏆', headline: 'You\'re a REZ Legend!',         gradient: ['#1a3a52', '#FFC857'] },
   100000: { emoji: '🌟', headline: 'Savings master. 1 Lakh done!',  gradient: ['#059669', '#34d399'] },
 };
 
@@ -62,7 +62,7 @@ function getMilestoneConfig(milestone: number) {
     MILESTONE_CONFIG[milestone] ?? {
       emoji: '🎯',
       headline: 'Milestone achieved!',
-      gradient: ['#7c3aed', '#a78bfa'] as [string, string],
+      gradient: ['#1a3a52', '#FFC857'] as [string, string],
     }
   );
 }

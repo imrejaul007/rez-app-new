@@ -18,7 +18,7 @@ const CARD_WIDTH = Dimensions.get('window').width - 48;
 const TIER_GRADIENTS: Record<string, [string, string, string]> = {
   'Beginner':     ['#475569', '#64748b', '#0f172a'],
   'Smart Saver':  ['#0369a1', '#0ea5e9', '#0c4a6e'],
-  'Super Saver':  ['#6d28d9', '#7c3aed', '#2e1065'],
+  'Super Saver':  ['#1a3a52', '#2d5f87', '#0f2438'],
   'Elite Saver':  ['#b45309', '#d97706', '#451a03'],
   'Legend':       ['#b91c1c', '#dc2626', '#450a0a'],
 };
@@ -33,7 +33,7 @@ export interface StreakShareCardProps {
 const StreakShareCard = forwardRef<View, StreakShareCardProps>(
   ({ streakDays, tier }, ref) => {
     const gradientColors: [string, string, string] =
-      TIER_GRADIENTS[tier] || ['#6d28d9', '#7c3aed', '#2e1065'];
+      TIER_GRADIENTS[tier] || ['#1a3a52', '#2d5f87', '#0f2438'];
 
     const milestoneEmoji =
       streakDays >= 100 ? '🏆' :

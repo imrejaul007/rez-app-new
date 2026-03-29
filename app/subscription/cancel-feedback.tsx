@@ -775,7 +775,7 @@ const styles = StyleSheet.create({
   },
   typeOptionSelected: {
     borderColor: Colors.brand.purpleLight,
-    backgroundColor: '#8B5CF605',
+    backgroundColor: '#1a3a5205',
   },
   checkbox: {
     width: 24,

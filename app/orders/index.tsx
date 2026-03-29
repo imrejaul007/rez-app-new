@@ -27,8 +27,8 @@ const STATUS_COLORS: Record<string, string> = {
   confirmed: colors.infoScale[400],
   preparing: '#e67e22',
   ready: '#0ea5e9',
-  dispatched: '#6366f1',
-  shipped: '#6366f1',
+  dispatched: '#1a3a52',
+  shipped: '#1a3a52',
   delivered: colors.success,
   cancelled: '#E74C3C',
   returned: '#ef6868',
@@ -386,7 +386,7 @@ function OrdersListScreen() {
         ...filterParams,
       });
 
-      if (response.success && response.data) {
+      if (response.success && response.data?.orders) {
         const mappedOrders = response.data.orders.map(mapBackendOrderToFrontend);
 
         if (refresh || pageNum === 1) {

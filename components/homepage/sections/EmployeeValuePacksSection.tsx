@@ -77,8 +77,8 @@ const PACK_GRADIENTS: Record<
   ValuePack['category'],
   readonly [string, string]
 > = {
-  salon: ['#4C1D95', '#1a3a52'],
-  dining: ['#7C2D12', '#EA580C'],
+  salon: ['#1a3a52', '#2d5f87'],
+  dining: ['#1a3a52', '#FFC857'],
   wellness: ['#064E3B', '#059669'],
 };
 

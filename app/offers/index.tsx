@@ -25,14 +25,40 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import { useUserIdentityStore, IdentitySegment } from '@/stores/userIdentityStore';
 
 // Segment-aware hero banner config
-const SEGMENT_HERO: Partial<Record<IdentitySegment, { title: string; subtitle: string; icon: string; color: string }>> = {
-  verified_student:    { title: 'STUDENT OFFERS',    subtitle: 'Exclusive deals for campus life',          icon: 'school',     color: '#8B5CF6' },
-  verified_employee:   { title: 'WORK PERKS',        subtitle: 'Corporate benefits & savings',             icon: 'briefcase',  color: '#0EA5E9' },
-  verified_healthcare: { title: 'HEALTH DEALS',      subtitle: 'Pharmacy, wellness & medical offers',      icon: 'medkit',     color: '#2ECC71' },
-  verified_defence:    { title: 'DEFENCE PERKS',     subtitle: 'Exclusive service member benefits',        icon: 'shield',     color: '#6366F1' },
-  verified_teacher:    { title: 'TEACHER BENEFITS',  subtitle: 'Education & stationery savings',           icon: 'book',       color: '#F59E0B' },
-  verified_senior:     { title: 'SENIOR OFFERS',     subtitle: 'Special benefits for you',                 icon: 'heart',      color: '#EC4899' },
-};
+const SEGMENT_HERO: Partial<Record<IdentitySegment, { title: string; subtitle: string; icon: string; color: string }>> =
+  {
+    verified_student: {
+      title: 'STUDENT OFFERS',
+      subtitle: 'Exclusive deals for campus life',
+      icon: 'school',
+      color: '#1a3a52',
+    },
+    verified_employee: {
+      title: 'WORK PERKS',
+      subtitle: 'Corporate benefits & savings',
+      icon: 'briefcase',
+      color: '#0EA5E9',
+    },
+    verified_healthcare: {
+      title: 'HEALTH DEALS',
+      subtitle: 'Pharmacy, wellness & medical offers',
+      icon: 'medkit',
+      color: '#2ECC71',
+    },
+    verified_defence: {
+      title: 'DEFENCE PERKS',
+      subtitle: 'Exclusive service member benefits',
+      icon: 'shield',
+      color: '#1a3a52',
+    },
+    verified_teacher: {
+      title: 'TEACHER BENEFITS',
+      subtitle: 'Education & stationery savings',
+      icon: 'book',
+      color: '#F59E0B',
+    },
+    verified_senior: { title: 'SENIOR OFFERS', subtitle: 'Special benefits for you', icon: 'heart', color: '#FFC857' },
+  };
 
 const { width } = Dimensions.get('window');
 
@@ -58,11 +84,11 @@ function OffersScreen() {
 
   // Get URL query parameters for filtering
   const searchParams = useLocalSearchParams<{
-    type?: string;           // e.g., 'flash-sale', 'bogo', 'nearby'
-    tab?: string;            // e.g., 'cashback'
-    category?: string;       // category filter
-    multiplier?: string;     // e.g., '2' for 2X cashback
-    filter?: string;         // e.g., 'double', 'coindrops'
+    type?: string; // e.g., 'flash-sale', 'bogo', 'nearby'
+    tab?: string; // e.g., 'cashback'
+    category?: string; // category filter
+    multiplier?: string; // e.g., '2' for 2X cashback
+    filter?: string; // e.g., 'double', 'coindrops'
   }>();
 
   // Convert search params to filter props
@@ -84,7 +110,8 @@ function OffersScreen() {
   const handleShare = async () => {
     try {
       const result = await Share.share({
-        message: 'Check out amazing offers on ${BRAND.APP_NAME}! Get up to 50% off + extra cashback on your favorite stores. Download now!',
+        message:
+          'Check out amazing offers on ${BRAND.APP_NAME}! Get up to 50% off + extra cashback on your favorite stores. Download now!',
         url: 'https://nuqta.app/offers',
         title: `${BRAND.APP_NAME} Offers`,
       });
@@ -95,7 +122,6 @@ function OffersScreen() {
       platformAlertSimple('Error', 'Failed to share. Please try again.');
     }
   };
-
 
   const handleRefresh = useCallback(async () => {
     // Refresh wallet balance
@@ -117,11 +143,7 @@ function OffersScreen() {
           <SafeAreaView edges={['top']} style={styles.safeHeader}>
             <View style={styles.header}>
               {/* Back Button */}
-              <Pressable
-                style={styles.backButton}
-                onPress={handleBack}
-               
-              >
+              <Pressable style={styles.backButton} onPress={handleBack}>
                 <Ionicons name="arrow-back" size={22} color={colors.text.primary} />
               </Pressable>
 
@@ -143,11 +165,7 @@ function OffersScreen() {
 
               {/* Right Actions */}
               <View style={styles.headerRight}>
-                <Pressable
-                  style={styles.iconButton}
-                  onPress={handleShare}
-                 
-                >
+                <Pressable style={styles.iconButton} onPress={handleShare}>
                   <Ionicons name="share-outline" size={20} color={colors.text.primary} />
                 </Pressable>
               </View>
@@ -156,18 +174,18 @@ function OffersScreen() {
             {/* Hero Banner — segment-aware or default */}
             <View style={styles.heroBanner}>
               <LinearGradient
-                colors={heroConfig
-                  ? [heroConfig.color, heroConfig.color + 'CC', heroConfig.color + '99']
-                  : [PALETTE.nileBlue, '#234a64', colors.nileBlue]}
+                colors={
+                  heroConfig
+                    ? [heroConfig.color, heroConfig.color + 'CC', heroConfig.color + '99']
+                    : [PALETTE.nileBlue, '#234a64', colors.nileBlue]
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.heroBannerGradient}
               >
                 <View style={styles.heroBannerContent}>
                   <View style={styles.heroBannerText}>
-                    <ThemedText style={styles.heroTitle}>
-                      {heroConfig?.title ?? 'MEGA OFFERS'}
-                    </ThemedText>
+                    <ThemedText style={styles.heroTitle}>{heroConfig?.title ?? 'MEGA OFFERS'}</ThemedText>
                     <ThemedText style={styles.heroSubtitle}>
                       {heroConfig?.subtitle ?? 'Up to 50% off + Extra Cashback'}
                     </ThemedText>

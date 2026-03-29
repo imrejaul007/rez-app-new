@@ -356,7 +356,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 5,
@@ -374,7 +374,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.neutral[50],
   },
   header: {
-    backgroundColor: '#6366f1',
+    backgroundColor: '#1a3a52',
     paddingTop: Platform.OS === 'ios' ? 50 : 20,
     paddingBottom: 20,
     paddingHorizontal: 20,
@@ -509,7 +509,7 @@ const styles = StyleSheet.create({
   errorTypeValue: {
     fontSize: 13,
     fontWeight: '600',
-    color: '#6366f1',
+    color: '#1a3a52',
   },
   recommendationItem: {
     paddingVertical: 4,

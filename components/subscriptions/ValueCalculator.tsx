@@ -115,7 +115,7 @@ function ValueCalculator({ selectedTier, currencySymbol, isAuthenticated, select
 
           {/* Payback Period */}
           <View style={styles.statBox}>
-            <Ionicons name="time-outline" size={20} color="#7C3AED" />
+            <Ionicons name="time-outline" size={20} color="#1a3a52" />
             <Text style={styles.statValue}>
               {data.paybackPeriod} days
             </Text>

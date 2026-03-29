@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   },
   viewCommentsLink: {
     fontSize: 14,
-    color: '#7C3AED',
+    color: '#1a3a52',
     fontWeight: '600',
   },
   commentsButton: {
@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
     padding: 12,
-    backgroundColor: '#7C3AED',
+    backgroundColor: '#1a3a52',
     borderRadius: 24,
   },
   commentsButtonText: {

@@ -360,7 +360,7 @@ function BookTicketsPage() {
             </View>
           )}
           <View style={{ alignItems: 'center', marginVertical: 16, padding: 16, backgroundColor: '#F8FAFC', borderRadius: 12, borderWidth: 1, borderColor: '#E2E8F0' }}>
-            <Ionicons name="qr-code-outline" size={80} color="#7C3AED" />
+            <Ionicons name="qr-code-outline" size={80} color="#1a3a52" />
             <Text style={{ fontSize: 12, fontWeight: '700', color: '#111827', marginTop: 8 }}>{bookingNumber}</Text>
             <Text style={{ fontSize: 11, color: '#94A3B8', marginTop: 4 }}>Show this at entry</Text>
           </View>
@@ -532,7 +532,7 @@ function BookTicketsPage() {
                           : [...(prev || []), seatLabel]
                       );
                     }}
-                    style={{ width: 36, height: 36, borderRadius: 6, alignItems: 'center', justifyContent: 'center', backgroundColor: isSelected ? '#7C3AED' : '#F1F5F9', borderWidth: 1, borderColor: isSelected ? '#7C3AED' : '#E2E8F0' }}
+                    style={{ width: 36, height: 36, borderRadius: 6, alignItems: 'center', justifyContent: 'center', backgroundColor: isSelected ? '#1a3a52' : '#F1F5F9', borderWidth: 1, borderColor: isSelected ? '#1a3a52' : '#E2E8F0' }}
                   >
                     <Text style={{ fontSize: 10, fontWeight: '600', color: isSelected ? '#fff' : '#64748B' }}>{seatLabel}</Text>
                   </Pressable>

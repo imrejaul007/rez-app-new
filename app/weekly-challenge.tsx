@@ -130,16 +130,16 @@ const progressStyles = StyleSheet.create({
   fill: {
     height: '100%',
     borderRadius: 5,
-    backgroundColor: '#7c3aed',
+    backgroundColor: '#1a3a52',
   },
 });
 
 function DaysLeftBadge({ days }: { days: number }) {
   const isUrgent = days <= 2;
   return (
-    <View style={[daysStyles.badge, { backgroundColor: isUrgent ? '#fef2f2' : '#f3e8ff' }]}>
-      <Ionicons name="time" size={12} color={isUrgent ? '#dc2626' : '#7c3aed'} />
-      <Text style={[daysStyles.text, { color: isUrgent ? '#dc2626' : '#7c3aed' }]}>
+    <View style={[daysStyles.badge, { backgroundColor: isUrgent ? '#fef2f2' : '#e8f0f7' }]}>
+      <Ionicons name="time" size={12} color={isUrgent ? '#dc2626' : '#1a3a52'} />
+      <Text style={[daysStyles.text, { color: isUrgent ? '#dc2626' : '#1a3a52' }]}>
         {days === 0 ? 'Last day!' : `${days}d left`}
       </Text>
     </View>
@@ -216,7 +216,7 @@ function WeeklyChallengeScreen() {
     return (
       <View style={styles.loadingContainer}>
         <Stack.Screen options={{ headerShown: false }} />
-        <ActivityIndicator size="large" color="#7c3aed" />
+        <ActivityIndicator size="large" color="#1a3a52" />
       </View>
     );
   }
@@ -226,7 +226,7 @@ function WeeklyChallengeScreen() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <LinearGradient colors={['#7c3aed', '#4c1d95']} style={styles.header}>
+      <LinearGradient colors={['#1a3a52', '#0f2438']} style={styles.header}>
         <View style={styles.headerRow}>
           <Pressable
             style={styles.backBtn}
@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   progressLabel: { ...Typography.bodySmall, color: '#475569' },
-  progressPct: { ...Typography.bodySmall, color: '#7c3aed', fontWeight: '600' },
+  progressPct: { ...Typography.bodySmall, color: '#1a3a52', fontWeight: '600' },
 
   challengeFooter: {
     flexDirection: 'row',
@@ -466,7 +466,7 @@ const styles = StyleSheet.create({
   },
   rewardText: { fontSize: 12, fontWeight: '600', color: '#b45309' },
   claimBtn: {
-    backgroundColor: '#7c3aed',
+    backgroundColor: '#1a3a52',
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 10,

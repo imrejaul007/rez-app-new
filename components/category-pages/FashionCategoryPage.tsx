@@ -614,7 +614,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 7,
     paddingVertical: 3,
     borderRadius: 12,
-    backgroundColor: '#EC4899',
+    backgroundColor: '#FFC857',
   },
   storeNewBadgeText: { fontSize: 10, fontWeight: '800', color: COLORS.white, letterSpacing: 0.5 },
   storeCashbackBadge: {

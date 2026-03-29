@@ -27,7 +27,7 @@ function BookingRewardBanner({ cashback, coins, discount, storeName }: BookingRe
 
   return (
     <LinearGradient
-      colors={['#7C3AED', '#9333EA']}
+      colors={['#1a3a52', '#FFC857']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     gap: 12,
     ...Platform.select({
-      ios: { shadowColor: '#7C3AED', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 4 } },
+      ios: { shadowColor: '#1a3a52', shadowOpacity: 0.25, shadowRadius: 8, shadowOffset: { width: 0, height: 4 } },
       android: { elevation: 4 },
     }),
   },

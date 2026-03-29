@@ -58,15 +58,15 @@ const ACTIONS: QuickAction[] = [
     label: 'Transfer',
     route: '/wallet/transfer',
     color: colors.brand.indigo,
-    gradientColors: ['#6366F1', '#818CF8'],
+    gradientColors: ['#1a3a52', '#2d5f87'],
   },
   {
     id: 'gift',
     icon: 'gift',
     label: 'Gift',
     route: '/wallet/gift',
-    color: colors.brand.pink,
-    gradientColors: ['#EC4899', '#F472B6'],
+    color: colors.lightMustard,
+    gradientColors: ['#FFC857', '#e6a800'],
   },
   {
     id: 'gift-cards',
@@ -90,7 +90,7 @@ const ACTIONS: QuickAction[] = [
     label: 'Drops',
     route: '/wallet/scheduled-drops',
     color: colors.brand.purpleLight,
-    gradientColors: ['#8B5CF6', '#A78BFA'],
+    gradientColors: ['#1a3a52', '#FFC857'],
   },
 ];
 

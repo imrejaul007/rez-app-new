@@ -148,7 +148,7 @@ function ReferralSharePage() {
       <Stack.Screen options={{ headerShown: false }} />
 
       {/* Header */}
-      <LinearGradient colors={['#7c3aed', '#a78bfa']} style={[styles.header, { paddingTop: insets.top + 12 }]}>
+      <LinearGradient colors={['#1a3a52', '#FFC857']} style={[styles.header, { paddingTop: insets.top + 12 }]}>
         <View style={styles.headerRow}>
           <Pressable
             style={styles.backButton}
@@ -189,7 +189,7 @@ function ReferralSharePage() {
           <Pressable style={styles.codeContainer} onPress={handleCopyCode}>
             <Text style={styles.codeText}>{referralCode}</Text>
             <View style={styles.copyBadge}>
-              <Ionicons name={isCopied ? 'checkmark' : 'copy'} size={18} color="#7c3aed" />
+              <Ionicons name={isCopied ? 'checkmark' : 'copy'} size={18} color="#1a3a52" />
               <Text style={styles.copyText}>{isCopied ? 'Copied!' : 'Copy'}</Text>
             </View>
           </Pressable>
@@ -241,7 +241,7 @@ function ReferralSharePage() {
           accessibilityLabel="Share with more apps"
           accessibilityRole="button"
         >
-          <LinearGradient colors={['#7c3aed', '#a78bfa']} style={styles.nativeShareGradient}>
+          <LinearGradient colors={['#1a3a52', '#FFC857']} style={styles.nativeShareGradient}>
             <Ionicons name="share-social" size={22} color={colors.text.inverse} />
             <Text style={styles.nativeShareText}>More Sharing Options</Text>
           </LinearGradient>
@@ -339,19 +339,19 @@ const styles = StyleSheet.create({
   codeText: {
     ...Typography.h2,
     fontWeight: '800',
-    color: '#7c3aed',
+    color: '#1a3a52',
     letterSpacing: 3,
   },
   copyBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ede9fe',
+    backgroundColor: '#e8f0f7',
     paddingHorizontal: Spacing.md,
     paddingVertical: 6,
     borderRadius: BorderRadius.sm,
     gap: Spacing.xs,
   },
-  copyText: { ...Typography.bodySmall, fontWeight: '600', color: '#7c3aed' },
+  copyText: { ...Typography.bodySmall, fontWeight: '600', color: '#1a3a52' },
   linkSection: {
     backgroundColor: colors.background.primary,
     borderRadius: BorderRadius.lg,

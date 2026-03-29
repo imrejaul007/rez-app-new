@@ -35,7 +35,7 @@ export default function FoodScreen() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-        <LinearGradient colors={['#F97316', '#FB923C']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.hero}>
+        <LinearGradient colors={['#1a3a52', '#FFC857']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.hero}>
           <View style={styles.heroInner}>
             <View>
               <Text style={styles.heroTitle}>🍴 Lunch sorted</Text>
@@ -75,7 +75,7 @@ export default function FoodScreen() {
           }
         >
           <Text style={styles.allBtnText}>Browse all food spots</Text>
-          <Ionicons name="arrow-forward" size={16} color="#F97316" />
+          <Ionicons name="arrow-forward" size={16} color="#FFC857" />
         </Pressable>
       </ScrollView>
     </SafeAreaView>
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: borderRadius.xl,
     borderWidth: 2,
-    borderColor: '#F97316',
+    borderColor: '#FFC857',
   },
-  allBtnText: { fontSize: 15, fontWeight: '700', color: '#F97316' },
+  allBtnText: { fontSize: 15, fontWeight: '700', color: '#FFC857' },
 });
