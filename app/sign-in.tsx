@@ -211,8 +211,8 @@ function SignInScreen() {
           ...prev,
           phoneNumber: errorMessage,
         }));
-        // Log for debugging — visible in Expo dev tools
-        console.error('[SIGN-IN] OTP send failed:', errorMessage, error);
+        // BUG-094 FIX: Gate behind __DEV__ to prevent leaking error details in production
+        if (__DEV__) console.error('[SIGN-IN] OTP send failed:', errorMessage, error);
         platformAlertSimple(
           'OTP Failed',
           `Could not send OTP: ${errorMessage}\n\nPlease check your internet connection and try again.`,

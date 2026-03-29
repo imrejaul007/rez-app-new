@@ -189,7 +189,10 @@ export class PaymentValidator {
   static validateAmount(amount: number): ValidationResult {
     const errors: string[] = [];
     
-    if (!amount || isNaN(amount)) {
+    // BUG-037 FIX: Use explicit null/undefined checks instead of truthy !amount,
+    // which incorrectly treats amount=0 as invalid (though 0 is also rejected by
+    // the "must be > 0" check below, the intent matters for correctness).
+    if (amount === null || amount === undefined || isNaN(amount)) {
       errors.push('Amount is required');
       return { isValid: false, errors };
     }

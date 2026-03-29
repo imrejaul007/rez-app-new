@@ -36,6 +36,9 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
+// BUG-024 FIX: Named constant for default rating fallback — avoid magic numbers
+const DEFAULT_STORE_RATING = 4.5;
+
 // Store item interface
 interface StoreItem {
   id: string;
@@ -126,7 +129,7 @@ function SubcategoryPage() {
           slug: store.slug,
           logo: store.logo,
           banner: store.banner,
-          rating: store.ratings?.average || store.rating || 4.5,
+          rating: store.ratings?.average || store.rating || DEFAULT_STORE_RATING,
           cashback: store.offers?.cashback || store.cashback,
           distance: store.distance || '2.0 km',
           deliveryTime: store.operationalInfo?.deliveryTime || '30 min',
@@ -292,7 +295,7 @@ function SubcategoryPage() {
           <View style={styles.storeStats}>
             <View style={styles.statItem}>
               <Ionicons name="star" size={14} color={Colors.warning} />
-              <ThemedText style={styles.statText}>{item.rating?.toFixed(1) || '4.5'}</ThemedText>
+              <ThemedText style={styles.statText}>{item.rating?.toFixed(1) || String(DEFAULT_STORE_RATING)}</ThemedText>
             </View>
             <View style={styles.statItem}>
               <Ionicons name="time-outline" size={14} color={colors.text.tertiary} />

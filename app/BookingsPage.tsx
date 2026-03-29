@@ -120,6 +120,86 @@ const formatTime12 = (time24: string) => {
 
 const isUpcoming = (d: Date) => d >= new Date(new Date().setHours(0, 0, 0, 0));
 
+// ─── BUG-041 FIX: Normalize functions moved to module level to avoid
+//     recreation on every render. currencySymbol passed as parameter.
+const normalizeTableBooking = (b: any): UnifiedBooking => {
+  const store = b.storeId && typeof b.storeId === 'object' ? b.storeId : null;
+  const bookingDate = new Date(b.bookingDate);
+  return {
+    id: `table-${b._id}`,
+    type: 'table',
+    title: store?.name || 'Restaurant',
+    subtitle: `Table for ${b.partySize} ${b.partySize === 1 ? 'guest' : 'guests'}`,
+    image: store?.logo,
+    date: bookingDate,
+    dateLabel: formatDateFull(bookingDate),
+    timeLabel: formatTime12(b.bookingTime),
+    status: b.status,
+    referenceNumber: b.bookingNumber || b._id,
+    details: [
+      { label: 'Party Size', value: `${b.partySize} ${b.partySize === 1 ? 'person' : 'people'}` },
+      { label: 'Customer', value: b.customerName },
+      ...(b.customerPhone ? [{ label: 'Phone', value: b.customerPhone }] : []),
+      ...(b.specialRequests ? [{ label: 'Requests', value: b.specialRequests }] : []),
+    ],
+    canCancel: b.status === 'pending' || b.status === 'confirmed',
+    raw: b,
+  };
+};
+
+const normalizeEventBooking = (b: any, currencySymbol: string): UnifiedBooking => {
+  const eventDate = b.event?.date ? new Date(b.event.date) : new Date(b.bookingDate);
+  return {
+    id: `event-${b._id}`,
+    type: 'event',
+    title: b.event?.title || 'Event',
+    subtitle: b.event?.location || 'Location TBD',
+    image: b.event?.image,
+    date: eventDate,
+    dateLabel: formatDateFull(eventDate),
+    timeLabel: b.event?.time || '',
+    status: b.status,
+    referenceNumber: b.bookingReference || b._id,
+    details: [
+      { label: 'Attendee', value: b.attendeeInfo?.name || '-' },
+      ...(b.amount > 0
+        ? [{ label: 'Amount', value: `${b.currency || currencySymbol} ${b.amount?.toLocaleString()}` }]
+        : []),
+      ...(b.attendeeInfo?.email ? [{ label: 'Email', value: b.attendeeInfo.email }] : []),
+    ],
+    canCancel: b.status === 'pending' || b.status === 'confirmed',
+    raw: b,
+  };
+};
+
+const normalizeServiceBooking = (b: any, currencySymbol: string): UnifiedBooking => {
+  const bookingDate = new Date(b.bookingDate);
+  return {
+    id: `service-${b._id}`,
+    type: 'service',
+    title: b.service?.name || 'Service',
+    subtitle: b.store?.name || 'Provider',
+    image: b.service?.images?.[0] || b.store?.logo,
+    date: bookingDate,
+    dateLabel: formatDateFull(bookingDate),
+    timeLabel: b.timeSlot ? `${formatTime12(b.timeSlot.start)} - ${formatTime12(b.timeSlot.end)}` : '',
+    status: b.status,
+    referenceNumber: b.bookingNumber || b._id,
+    details: [
+      { label: 'Customer', value: b.customerName || '-' },
+      ...(b.pricing?.total
+        ? [{ label: 'Amount', value: `${b.pricing.currency || currencySymbol} ${b.pricing.total?.toLocaleString()}` }]
+        : []),
+      ...(b.serviceType
+        ? [{ label: 'Type', value: b.serviceType.charAt(0).toUpperCase() + b.serviceType.slice(1) }]
+        : []),
+      ...(b.duration ? [{ label: 'Duration', value: `${b.duration} min` }] : []),
+    ],
+    canCancel: b.status === 'pending' || b.status === 'confirmed' || b.status === 'assigned',
+    raw: b,
+  };
+};
+
 // ══════════════════════════════════════════════════════════════
 //  MAIN COMPONENT
 // ══════════════════════════════════════════════════════════════
@@ -162,85 +242,6 @@ function BookingsPage() {
     });
     return s;
   }, [allBookings]);
-
-  // ─── Normalize bookings ──────────────────────────────────
-  const normalizeTableBooking = (b: any): UnifiedBooking => {
-    const store = b.storeId && typeof b.storeId === 'object' ? b.storeId : null;
-    const bookingDate = new Date(b.bookingDate);
-    return {
-      id: `table-${b._id}`,
-      type: 'table',
-      title: store?.name || 'Restaurant',
-      subtitle: `Table for ${b.partySize} ${b.partySize === 1 ? 'guest' : 'guests'}`,
-      image: store?.logo,
-      date: bookingDate,
-      dateLabel: formatDateFull(bookingDate),
-      timeLabel: formatTime12(b.bookingTime),
-      status: b.status,
-      referenceNumber: b.bookingNumber || b._id,
-      details: [
-        { label: 'Party Size', value: `${b.partySize} ${b.partySize === 1 ? 'person' : 'people'}` },
-        { label: 'Customer', value: b.customerName },
-        ...(b.customerPhone ? [{ label: 'Phone', value: b.customerPhone }] : []),
-        ...(b.specialRequests ? [{ label: 'Requests', value: b.specialRequests }] : []),
-      ],
-      canCancel: b.status === 'pending' || b.status === 'confirmed',
-      raw: b,
-    };
-  };
-
-  const normalizeEventBooking = (b: any): UnifiedBooking => {
-    const eventDate = b.event?.date ? new Date(b.event.date) : new Date(b.bookingDate);
-    return {
-      id: `event-${b._id}`,
-      type: 'event',
-      title: b.event?.title || 'Event',
-      subtitle: b.event?.location || 'Location TBD',
-      image: b.event?.image,
-      date: eventDate,
-      dateLabel: formatDateFull(eventDate),
-      timeLabel: b.event?.time || '',
-      status: b.status,
-      referenceNumber: b.bookingReference || b._id,
-      details: [
-        { label: 'Attendee', value: b.attendeeInfo?.name || '-' },
-        ...(b.amount > 0
-          ? [{ label: 'Amount', value: `${b.currency || currencySymbol} ${b.amount?.toLocaleString()}` }]
-          : []),
-        ...(b.attendeeInfo?.email ? [{ label: 'Email', value: b.attendeeInfo.email }] : []),
-      ],
-      canCancel: b.status === 'pending' || b.status === 'confirmed',
-      raw: b,
-    };
-  };
-
-  const normalizeServiceBooking = (b: any): UnifiedBooking => {
-    const bookingDate = new Date(b.bookingDate);
-    return {
-      id: `service-${b._id}`,
-      type: 'service',
-      title: b.service?.name || 'Service',
-      subtitle: b.store?.name || 'Provider',
-      image: b.service?.images?.[0] || b.store?.logo,
-      date: bookingDate,
-      dateLabel: formatDateFull(bookingDate),
-      timeLabel: b.timeSlot ? `${formatTime12(b.timeSlot.start)} - ${formatTime12(b.timeSlot.end)}` : '',
-      status: b.status,
-      referenceNumber: b.bookingNumber || b._id,
-      details: [
-        { label: 'Customer', value: b.customerName || '-' },
-        ...(b.pricing?.total
-          ? [{ label: 'Amount', value: `${b.pricing.currency || currencySymbol} ${b.pricing.total?.toLocaleString()}` }]
-          : []),
-        ...(b.serviceType
-          ? [{ label: 'Type', value: b.serviceType.charAt(0).toUpperCase() + b.serviceType.slice(1) }]
-          : []),
-        ...(b.duration ? [{ label: 'Duration', value: `${b.duration} min` }] : []),
-      ],
-      canCancel: b.status === 'pending' || b.status === 'confirmed' || b.status === 'assigned',
-      raw: b,
-    };
-  };
 
   // ─── Sort helper ────────────────────────────────────────
   const sortBookings = (list: UnifiedBooking[]) => {
@@ -338,10 +339,10 @@ function BookingsPage() {
             r.bookings.forEach((b: any) => unified.push(normalizeTableBooking(b)));
             tHasMore = r.hasMore;
           } else if (r.type === 'event') {
-            r.bookings.forEach((b: any) => unified.push(normalizeEventBooking(b)));
+            r.bookings.forEach((b: any) => unified.push(normalizeEventBooking(b, currencySymbol)));
             eHasMore = r.hasMore;
           } else {
-            r.bookings.forEach((b: any) => unified.push(normalizeServiceBooking(b)));
+            r.bookings.forEach((b: any) => unified.push(normalizeServiceBooking(b, currencySymbol)));
             sHasMore = r.hasMore;
           }
         });
@@ -397,11 +398,11 @@ function BookingsPage() {
           tHasMore = r.hasMore;
           tNextPage = tablePage.page + 1;
         } else if (r.type === 'event') {
-          r.bookings.forEach((b: any) => newItems.push(normalizeEventBooking(b)));
+          r.bookings.forEach((b: any) => newItems.push(normalizeEventBooking(b, currencySymbol)));
           eHasMore = r.hasMore;
           eNextOffset = eventPage.offset + PAGE_SIZE;
         } else {
-          r.bookings.forEach((b: any) => newItems.push(normalizeServiceBooking(b)));
+          r.bookings.forEach((b: any) => newItems.push(normalizeServiceBooking(b, currencySymbol)));
           sHasMore = r.hasMore;
           sNextPage = servicePage.page + 1;
         }
@@ -884,7 +885,7 @@ function BookingsPage() {
         ) : (
           <FlashList
             data={filteredBookings}
-            keyExtractor={(item: any) => item.id}
+            keyExtractor={(item: any, idx: number) => item.id || item._id || String(idx)}
             renderItem={renderBookingCard}
             contentContainerStyle={
               Object.assign({}, styles.listContent, filteredBookings.length === 0 ? { flex: 1 } : {}) as any

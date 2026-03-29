@@ -92,7 +92,13 @@ function DealCard({
     };
 
     updateTimer();
-    const timer = setInterval(updateTimer, 60000); // Update every minute
+    // BUG-049 FIX: Use 1s interval when deal is expiring soon (within 24h) for
+    // accurate countdown display; fall back to 60s interval otherwise.
+    const now = new Date().getTime();
+    const expiry = deal.validUntil.getTime();
+    const hoursLeft = (expiry - now) / (1000 * 60 * 60);
+    const intervalMs = hoursLeft <= 24 && hoursLeft > 0 ? 1000 : 60000;
+    const timer = setInterval(updateTimer, intervalMs);
 
     return () => clearInterval(timer);
   }, [deal.validUntil]);
@@ -129,13 +135,13 @@ function DealCard({
     color: deal.badge.textColor,
   } : styles.defaultBadgeText;
 
-  // Check if deal is expiring soon (within 24 hours)
-  const isExpiringSoon = () => {
+  // BUG-043 FIX: Wrap isExpiringSoon in useMemo to avoid recomputing on every render
+  const isExpiringSoon = useMemo(() => {
     const now = new Date().getTime();
     const expiry = deal.validUntil.getTime();
     const hoursLeft = (expiry - now) / (1000 * 60 * 60);
     return hoursLeft <= 24 && hoursLeft > 0;
-  };
+  }, [deal.validUntil]);
 
   const cardAnimStyle = useAnimatedStyle(() => ({
     transform: [
@@ -185,7 +191,7 @@ function DealCard({
               </View>
 
               {/* Expiry Warning */}
-              {isExpiringSoon() && (
+              {isExpiringSoon && (
                 <View style={styles.expiryWarning}>
                   <Ionicons name="time-outline" size={12} color={colors.error} />
                   <ThemedText style={styles.expiryText}>{timeLeft}</ThemedText>
@@ -214,7 +220,7 @@ function DealCard({
             </View>
 
             {/* Expiry Warning */}
-            {isExpiringSoon() && (
+            {isExpiringSoon && (
               <View style={styles.expiryWarning}>
                 <Ionicons name="time-outline" size={12} color={colors.error} />
                 <ThemedText style={styles.expiryText}>{timeLeft}</ThemedText>

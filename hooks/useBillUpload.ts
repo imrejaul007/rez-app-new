@@ -3,7 +3,7 @@
  * Manages bill upload state with progress tracking, retry logic, and form persistence
  */
 
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { billUploadService, BillUploadData } from '@/services/billUploadService';
 import {
@@ -79,8 +79,14 @@ export function useBillUpload(retryConfig?: Partial<RetryConfig>): UseBillUpload
   const lastUploadDataRef = useRef<BillUploadData | null>(null);
   const uploadIdRef = useRef<string | null>(null);
 
-  // Config
-  const config: RetryConfig = { ...DEFAULT_RETRY_CONFIG, ...retryConfig };
+  // BUG-039 FIX: Wrap config spread in useMemo to avoid creating a new object
+  // on every render, which would cause useCallback deps to always re-run.
+  const config: RetryConfig = useMemo(
+    () => ({ ...DEFAULT_RETRY_CONFIG, ...retryConfig }),
+    // retryConfig is an optional object param — spread it for stable deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [JSON.stringify(retryConfig)]
+  );
   const maxAttempts = config.maxAttempts;
 
   // Computed values

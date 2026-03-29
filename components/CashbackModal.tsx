@@ -5,7 +5,7 @@ import {
   StyleSheet,
   Modal,
   Pressable,
-  Dimensions,
+  useWindowDimensions,
   StatusBar,
   Platform} from 'react-native';
 import Animated, { cancelAnimation, interpolate, useAnimatedStyle, useSharedValue, withDelay, withRepeat, withSequence, withSpring, withTiming } from 'react-native-reanimated';
@@ -19,8 +19,6 @@ interface CashbackModalProps {
   onClose: () => void;
   cashbackAmount?: number;
 }
-
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 // Separate component for floating coin (needs useAnimatedStyle)
 const FloatingCoin: React.FC<{ animValue: { value: number }; style: object; currencySymbol: string }> = React.memo(({ animValue, style, currencySymbol }) => {
@@ -45,6 +43,9 @@ function CashbackModal({
   onClose,
   cashbackAmount = 219.9,
 }: CashbackModalProps) {
+  // BUG-005 FIX: Use useWindowDimensions hook instead of module-level Dimensions.get
+  // so values update on rotation/resize
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
 

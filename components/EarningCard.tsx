@@ -37,7 +37,8 @@ const EarningCard: React.FC<EarningCardProps> = ({ card }) => {
   const currencySymbol = getCurrencySymbol();
   const theme = themeConfig[card.theme] || themeConfig.purple;
   const safeEarning = typeof card.earning === 'number' ? card.earning : 0;
-  const formattedEarning = formatPrice(safeEarning, 'INR', false) || `${currencySymbol}${safeEarning}`;
+  // BUG-058 FIX: Replace hardcoded 'INR' with currencySymbol for multi-region support
+  const formattedEarning = formatPrice(safeEarning, currencySymbol, false) || `${currencySymbol}${safeEarning}`;
 
   const renderIcon = () => {
     // Placeholder for icons - will be replaced with actual icons in Phase 3

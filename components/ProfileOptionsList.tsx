@@ -1,6 +1,6 @@
 // components/ProfileOptionsList.tsx
 import React from "react";
-import { View, Text, Pressable, StyleSheet } from "react-native";
+import { View, Text, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from '@shopify/flash-list';
 import { Ionicons } from "@expo/vector-icons";
 import { ProfileOption, ProfileOptionsListProps } from "@/types/profile";
@@ -97,9 +97,10 @@ const ProfileOptionsList: React.FC<ProfileOptionsListProps> = ({
   );
 
   if (isLoading) {
+    // BUG-004 FIX: Use ActivityIndicator instead of plain text for accessible loading state
     return (
       <View style={styles.container}>
-        <Text style={styles.loadingText}>Loading options...</Text>
+        <ActivityIndicator size="small" color="#7B3EFF" accessibilityLabel="Loading options" />
       </View>
     );
   }
