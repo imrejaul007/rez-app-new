@@ -177,7 +177,7 @@ const StoreDetailPage: React.FC = () => {
       if (response.success && response.data) {
         // Filter redemptions for this store
         // Compare with both URL id (could be slug) and store._id (MongoDB ObjectId)
-        const storeRedemptions = response.data.redemptions.filter((r) => {
+        const storeRedemptions = (response.data.redemptions ?? []).filter((r) => {
           const dealStoreId = r.deal.storeId;
           if (!dealStoreId) return false;
           // Match against URL param (id) or loaded store's _id

@@ -65,8 +65,8 @@ function PlayScreen() {
 
       if (response.success && response.data) {
         if (!isMounted()) return;
-        setArticles(response.data.articles);
-        logger.debug(`✅ [PlayPage] Loaded ${response.data.articles.length} articles`);
+        setArticles(response.data.articles ?? []);
+        logger.debug(`✅ [PlayPage] Loaded ${(response.data.articles ?? []).length} articles`);
       } else {
         throw new Error(response.message || 'Failed to fetch articles');
       }

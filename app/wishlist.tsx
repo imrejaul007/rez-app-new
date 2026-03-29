@@ -446,7 +446,7 @@ function WishlistPage() {
                     wishlist.id === wishlistId
                       ? {
                           ...wishlist,
-                          items: wishlist.items.filter((item) => item.id !== itemId),
+                          items: (wishlist.items ?? []).filter((item) => item.id !== itemId),
                           itemCount: wishlist.itemCount - 1,
                         }
                       : wishlist,
@@ -672,10 +672,10 @@ function WishlistPage() {
   const renderWishlist = useCallback(
     ({ item: wishlist, index }: { item: WishlistData; index: number }) => {
       // Separate items by type
-      const deals = wishlist.items.filter((i) => i.itemType === 'discount');
-      const stores = wishlist.items.filter((i) => i.itemType === 'store');
-      const videos = wishlist.items.filter((i) => i.itemType === 'video');
-      const products = wishlist.items.filter((i) => i.itemType === 'product');
+      const deals = (wishlist.items ?? []).filter((i) => i.itemType === 'discount');
+      const stores = (wishlist.items ?? []).filter((i) => i.itemType === 'store');
+      const videos = (wishlist.items ?? []).filter((i) => i.itemType === 'video');
+      const products = (wishlist.items ?? []).filter((i) => i.itemType === 'product');
 
       // Build metadata string
       const metaParts: string[] = [];
@@ -786,14 +786,14 @@ function WishlistPage() {
           )}
 
           {/* Empty State */}
-          {wishlist.items.length === 0 && (
+          {(wishlist.items ?? []).length === 0 && (
             <View style={styles.emptyWishlist}>
               <Ionicons name="heart-outline" size={40} color={colors.border.medium} />
               <ThemedText style={styles.emptyText}>No items yet</ThemedText>
             </View>
           )}
 
-          {wishlist.items.length > 5 && (
+          {(wishlist.items ?? []).length > 5 && (
             <Pressable style={styles.viewAllBtn} onPress={() => handleWishlistPress(wishlist)}>
               <ThemedText style={styles.viewAllText}>View all {wishlist.itemCount} items</ThemedText>
               <Ionicons name="chevron-forward" size={16} color={Colors.primary[500]} />

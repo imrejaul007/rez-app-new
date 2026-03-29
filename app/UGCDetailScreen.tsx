@@ -810,9 +810,9 @@ function UGCDetailScreen() {
 
           <Pressable style={styles.topBarButton} onPress={() => router.push('/cart')}>
             <Ionicons name="bag-outline" size={22} color={colors.text.inverse} />
-            {cartState.items.length > 0 && (
+            {(cartState.items ?? []).length > 0 && (
               <View style={styles.cartBadge}>
-                <Text style={styles.cartBadgeText}>{cartState.items.length}</Text>
+                <Text style={styles.cartBadgeText}>{(cartState.items ?? []).length}</Text>
               </View>
             )}
           </Pressable>
