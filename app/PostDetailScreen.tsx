@@ -1,7 +1,7 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // PostDetailScreen.tsx - Modern Instagram-style Post Detail View
 import React, { useEffect, useState, useCallback } from 'react';
-import { useFocusEffect } from '@expo/router';
+import { useFocusEffect } from 'expo-router';
 import {
   View,
   StyleSheet,

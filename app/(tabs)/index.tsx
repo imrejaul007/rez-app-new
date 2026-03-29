@@ -23,7 +23,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router';
 import {
   useGetCurrencySymbol,
   useGetCurrency,

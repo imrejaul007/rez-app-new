@@ -1,4 +1,5 @@
 import { EventItem } from '@/types/homepage.types';
+import apiClient from './apiClient';
 
 const devLog = {
   log: __DEV__ ? console.log.bind(console) : () => {},
@@ -133,8 +134,8 @@ class EventsApiService {
   private BACKEND_CHECK_INTERVAL = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
-    // Use environment variable or default to localhost
-    this.baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
+    // Derive from the central apiClient so all services share the same base URL
+    this.baseUrl = apiClient.getBaseURL();
   }
 
   /**

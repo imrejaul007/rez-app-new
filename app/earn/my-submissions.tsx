@@ -3,23 +3,14 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Unified view of all user submissions across engagement types
 
 import React, { useState, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, StatusBar, Platform, ActivityIndicator, ScrollView } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router';
 import photoUploadApi, { PhotoUploadItem } from '@/services/photoUploadApi';
 import ugcApi, { UgcReel } from '@/services/ugcApi';
 import offerCommentApi, { MyCommentItem } from '@/services/offerCommentApi';
@@ -121,7 +112,10 @@ function MySubmissionsPage() {
 
       const items: SubmissionItem[] = [];
       let totalCoins = 0;
-      let photoCount = 0, reelCount = 0, commentCount = 0, voteCount = 0;
+      let photoCount = 0,
+        reelCount = 0,
+        commentCount = 0,
+        voteCount = 0;
 
       // Photos
       if (photosRes.status === 'fulfilled' && photosRes.value.success && photosRes.value.data?.uploads) {
@@ -210,23 +204,29 @@ function MySubmissionsPage() {
   useFocusEffect(
     useCallback(() => {
       fetchAll();
-    }, [fetchAll])
+    }, [fetchAll]),
   );
 
-  const filteredSubmissions = filter === 'all'
-    ? submissions
-    : submissions.filter(s => {
-        switch (filter) {
-          case 'photos': return s.type === 'photo';
-          case 'reels': return s.type === 'reel';
-          case 'comments': return s.type === 'comment';
-          case 'votes': return s.type === 'vote';
-          default: return true;
-        }
-      });
+  const filteredSubmissions =
+    filter === 'all'
+      ? submissions
+      : submissions.filter((s) => {
+          switch (filter) {
+            case 'photos':
+              return s.type === 'photo';
+            case 'reels':
+              return s.type === 'reel';
+            case 'comments':
+              return s.type === 'comment';
+            case 'votes':
+              return s.type === 'vote';
+            default:
+              return true;
+          }
+        });
 
-  const pendingCount = submissions.filter(s => s.status === 'pending').length;
-  const approvedCount = submissions.filter(s => s.status === 'approved' || s.status === 'credited').length;
+  const pendingCount = submissions.filter((s) => s.status === 'pending').length;
+  const approvedCount = submissions.filter((s) => s.status === 'approved' || s.status === 'credited').length;
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -298,11 +298,15 @@ function MySubmissionsPage() {
           </View>
 
           {/* Title */}
-          <Text style={styles.cardTitle} numberOfLines={2}>{item.title}</Text>
+          <Text style={styles.cardTitle} numberOfLines={2}>
+            {item.title}
+          </Text>
 
           {/* Subtitle (store/offer name) */}
           {item.subtitle && (
-            <Text style={styles.cardSubtitle} numberOfLines={1}>{item.subtitle}</Text>
+            <Text style={styles.cardSubtitle} numberOfLines={1}>
+              {item.subtitle}
+            </Text>
           )}
 
           {/* Bottom: Status + Coins */}
@@ -332,13 +336,13 @@ function MySubmissionsPage() {
       <StatusBar barStyle="light-content" />
 
       {/* Header */}
-      <LinearGradient
-        colors={[COLORS.navy, COLORS.navyLight]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[COLORS.navy, COLORS.navyLight]} style={styles.header}>
         {/* Nav bar */}
         <View style={styles.navBar}>
-          <Pressable style={styles.backBtn} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backBtn}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={22} color={COLORS.white} />
           </Pressable>
           <Text style={styles.navTitle}>My Submissions</Text>
@@ -387,19 +391,14 @@ function MySubmissionsPage() {
 
       {/* Filter Tabs */}
       <View style={styles.filterSection}>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.filterScroll}
-        >
-          {filters.map(f => {
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterScroll}>
+          {filters.map((f) => {
             const isActive = filter === f.key;
             return (
               <Pressable
                 key={f.key}
                 style={[styles.filterTab, isActive && styles.filterTabActive]}
                 onPress={() => setFilter(f.key)}
-               
               >
                 <Ionicons
                   name={f.icon}
@@ -407,13 +406,9 @@ function MySubmissionsPage() {
                   color={isActive ? COLORS.white : COLORS.gray500}
                   style={{ marginRight: 5 }}
                 />
-                <Text style={[styles.filterTabText, isActive && styles.filterTabTextActive]}>
-                  {f.label}
-                </Text>
+                <Text style={[styles.filterTabText, isActive && styles.filterTabTextActive]}>{f.label}</Text>
                 <View style={[styles.filterCount, isActive && styles.filterCountActive]}>
-                  <Text style={[styles.filterCountText, isActive && styles.filterCountTextActive]}>
-                    {f.count}
-                  </Text>
+                  <Text style={[styles.filterCountText, isActive && styles.filterCountTextActive]}>{f.count}</Text>
                 </View>
               </Pressable>
             );
@@ -428,7 +423,7 @@ function MySubmissionsPage() {
         <FlashList
           data={filteredSubmissions}
           renderItem={renderSubmission}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}
           estimatedItemSize={100}
@@ -438,17 +433,14 @@ function MySubmissionsPage() {
                 <Ionicons name="document-text-outline" size={32} color={COLORS.gray400} />
               </View>
               <Text style={styles.emptyTitle}>
-                {filter === 'all' ? 'No Submissions Yet' : `No ${filters.find(f => f.key === filter)?.label || ''}`}
+                {filter === 'all' ? 'No Submissions Yet' : `No ${filters.find((f) => f.key === filter)?.label || ''}`}
               </Text>
               <Text style={styles.emptySubtitle}>
                 {filter === 'all'
                   ? 'Upload photos, create reels, vote in polls, or comment on offers to earn coins!'
                   : 'Nothing here yet. Start contributing to earn rewards!'}
               </Text>
-              <Pressable
-                style={styles.emptyCta}
-                onPress={() => router.push('/playandearn' as any)}
-              >
+              <Pressable style={styles.emptyCta} onPress={() => router.push('/playandearn' as any)}>
                 <Ionicons name="add-circle" size={18} color={COLORS.white} />
                 <Text style={styles.emptyCtaText}>Start Earning</Text>
               </Pressable>

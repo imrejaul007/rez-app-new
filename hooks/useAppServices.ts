@@ -93,7 +93,7 @@ export function useAppServices(fontsLoaded: boolean) {
 
   const initializeApp = async () => {
     try {
-      const apiUrl = API_CONFIG.baseUrl || getApiUrl() || 'http://localhost:5001/api';
+      const apiUrl = API_CONFIG.baseUrl || getApiUrl();
       apiClient.setBaseURL(apiUrl);
       apiClient.setCurrentAppVersion(APP_CONFIG.version);
 

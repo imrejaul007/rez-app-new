@@ -18,7 +18,7 @@ import { CardGridSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import offerCommentApi, { CommentableOffer, MyCommentItem } from '@/services/offerCommentApi';
@@ -68,7 +68,7 @@ function OfferCommentsPage() {
   useFocusEffect(
     useCallback(() => {
       fetchOffers();
-    }, [fetchOffers])
+    }, [fetchOffers]),
   );
 
   const handleTabChange = (tab: TabType) => {
@@ -129,40 +129,42 @@ function OfferCommentsPage() {
     }
   };
 
-  const renderOfferCard = useCallback(({ item }: { item: CommentableOffer }) => (
-    <Pressable
-      style={[styles.offerCard, selectedOffer?.id === item.id && styles.offerCardSelected]}
-      onPress={() => setSelectedOffer(selectedOffer?.id === item.id ? null : item)}
-     
-    >
-      <View style={styles.offerCardHeader}>
-        <View style={styles.offerInfo}>
-          <ThemedText style={styles.offerTitle} numberOfLines={2}>{item.title}</ThemedText>
-          {item.store && (
-            <ThemedText style={styles.offerStore}>{item.store.name}</ThemedText>
-          )}
+  const renderOfferCard = useCallback(
+    ({ item }: { item: CommentableOffer }) => (
+      <Pressable
+        style={[styles.offerCard, selectedOffer?.id === item.id && styles.offerCardSelected]}
+        onPress={() => setSelectedOffer(selectedOffer?.id === item.id ? null : item)}
+      >
+        <View style={styles.offerCardHeader}>
+          <View style={styles.offerInfo}>
+            <ThemedText style={styles.offerTitle} numberOfLines={2}>
+              {item.title}
+            </ThemedText>
+            {item.store && <ThemedText style={styles.offerStore}>{item.store.name}</ThemedText>}
+          </View>
+          <View style={styles.commentCountBadge}>
+            <Ionicons name="chatbubble-outline" size={14} color={Colors.primary[600]} />
+            <ThemedText style={styles.commentCountText}>{item.commentCount}</ThemedText>
+          </View>
         </View>
-        <View style={styles.commentCountBadge}>
-          <Ionicons name="chatbubble-outline" size={14} color={Colors.primary[600]} />
-          <ThemedText style={styles.commentCountText}>{item.commentCount}</ThemedText>
-        </View>
-      </View>
-      {item.description && (
-        <ThemedText style={styles.offerDescription} numberOfLines={2}>{item.description}</ThemedText>
-      )}
-      <View style={styles.offerFooter}>
-        <View style={styles.coinPreview}>
-          <Ionicons name="diamond" size={14} color={Colors.gold} />
-          <ThemedText style={styles.coinPreviewText}>15-20 coins</ThemedText>
-        </View>
-        {item.endDate && (
-          <ThemedText style={styles.offerEndDate}>
-            Ends {new Date(item.endDate).toLocaleDateString()}
+        {item.description && (
+          <ThemedText style={styles.offerDescription} numberOfLines={2}>
+            {item.description}
           </ThemedText>
         )}
-      </View>
-    </Pressable>
-  ), [selectedOffer]);
+        <View style={styles.offerFooter}>
+          <View style={styles.coinPreview}>
+            <Ionicons name="diamond" size={14} color={Colors.gold} />
+            <ThemedText style={styles.coinPreviewText}>15-20 coins</ThemedText>
+          </View>
+          {item.endDate && (
+            <ThemedText style={styles.offerEndDate}>Ends {new Date(item.endDate).toLocaleDateString()}</ThemedText>
+          )}
+        </View>
+      </Pressable>
+    ),
+    [selectedOffer],
+  );
 
   const renderMyCommentItem = useCallback(({ item }: { item: MyCommentItem }) => {
     const badge = getModerationBadge(item.moderationStatus);
@@ -179,7 +181,9 @@ function OfferCommentsPage() {
             <ThemedText style={[styles.statusText, { color: badge.color }]}>{badge.label}</ThemedText>
           </View>
         </View>
-        <ThemedText style={styles.myCommentText} numberOfLines={3}>{item.text}</ThemedText>
+        <ThemedText style={styles.myCommentText} numberOfLines={3}>
+          {item.text}
+        </ThemedText>
         <View style={styles.myCommentFooter}>
           {item.coinsAwarded > 0 && (
             <View style={styles.coinPreview}>
@@ -187,9 +191,7 @@ function OfferCommentsPage() {
               <ThemedText style={styles.coinPreviewText}>+{item.coinsAwarded}</ThemedText>
             </View>
           )}
-          <ThemedText style={styles.myCommentDate}>
-            {new Date(item.createdAt).toLocaleDateString()}
-          </ThemedText>
+          <ThemedText style={styles.myCommentDate}>{new Date(item.createdAt).toLocaleDateString()}</ThemedText>
         </View>
       </View>
     );
@@ -199,12 +201,12 @@ function OfferCommentsPage() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Comment on Offers</ThemedText>
@@ -217,7 +219,7 @@ function OfferCommentsPage() {
 
       {/* Tabs */}
       <View style={styles.tabs}>
-        {(['offers', 'my-comments'] as TabType[]).map(tab => (
+        {(['offers', 'my-comments'] as TabType[]).map((tab) => (
           <Pressable
             key={tab}
             style={[styles.tab, activeTab === tab && styles.tabActive]}
@@ -237,16 +239,14 @@ function OfferCommentsPage() {
           <FlashList
             data={offers}
             renderItem={renderOfferCard}
-            keyExtractor={item => item.id}
+            keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
             estimatedItemSize={120}
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <Ionicons name="pricetags-outline" size={64} color={colors.text.tertiary} />
                 <ThemedText style={styles.emptyTitle}>No Active Offers</ThemedText>
-                <ThemedText style={styles.emptyText}>
-                  Check back later for offers you can comment on.
-                </ThemedText>
+                <ThemedText style={styles.emptyText}>Check back later for offers you can comment on.</ThemedText>
               </View>
             }
           />
@@ -273,19 +273,15 @@ function OfferCommentsPage() {
               />
               <View style={styles.commentInputFooter}>
                 <View>
-                  <ThemedText style={[
-                    styles.qualityText,
-                    { color: getQualityIndicator(commentText.trim().length).color },
-                  ]}>
+                  <ThemedText
+                    style={[styles.qualityText, { color: getQualityIndicator(commentText.trim().length).color }]}
+                  >
                     {getQualityIndicator(commentText.trim().length).label}
                   </ThemedText>
                   <ThemedText style={styles.charCount}>{commentText.length}/1000</ThemedText>
                 </View>
                 <Pressable
-                  style={[
-                    styles.submitButton,
-                    commentText.trim().length < 20 && styles.submitButtonDisabled,
-                  ]}
+                  style={[styles.submitButton, commentText.trim().length < 20 && styles.submitButtonDisabled]}
                   onPress={handleSubmitComment}
                   disabled={commentText.trim().length < 20 || submitting}
                 >
@@ -306,16 +302,14 @@ function OfferCommentsPage() {
         <FlashList
           data={myComments}
           renderItem={renderMyCommentItem}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContent}
           estimatedItemSize={80}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons name="chatbubbles-outline" size={64} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyTitle}>No Comments Yet</ThemedText>
-              <ThemedText style={styles.emptyText}>
-                Comment on active offers to see your history here.
-              </ThemedText>
+              <ThemedText style={styles.emptyText}>Comment on active offers to see your history here.</ThemedText>
             </View>
           }
         />

@@ -1,3 +1,5 @@
+import apiClient from './apiClient';
+
 export interface Survey {
   _id: string;
   title: string;
@@ -99,7 +101,7 @@ class SurveyApiService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
+    this.baseUrl = apiClient.getBaseURL();
   }
 
   /**

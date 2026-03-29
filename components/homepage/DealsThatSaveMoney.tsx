@@ -26,6 +26,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { CrossPlatformBlurView as BlurView } from '@/components/ui/CrossPlatformBlurView';
 import realOffersApi, { Offer } from '@/services/realOffersApi';
+import apiClient from '@/services/apiClient';
 import { useAuthUser, useCurrentRegionId, useGetCurrencySymbol, useIsAuthenticated } from '@/stores/selectors';
 import { colors } from '@/constants/theme';
 import OfferTile from '@/components/offers/OfferTile';
@@ -367,11 +368,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
     itemIds.forEach(id => impressionsSent.current.add(id));
 
     try {
-      await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api'}/offers/homepage-deals-section/track-impression`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemIds, tabType }),
-      });
+      await apiClient.post('/offers/homepage-deals-section/track-impression', { itemIds, tabType });
     } catch (error) {
       // Silent fail for analytics
     }
@@ -382,11 +379,7 @@ const DealsThatSaveMoney: React.FC<DealsThatSaveMoneyProps> = ({ style }) => {
     if (!itemId) return;
 
     try {
-      await fetch(`${process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api'}/offers/homepage-deals-section/track-click`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ itemId, tabType }),
-      });
+      await apiClient.post('/offers/homepage-deals-section/track-click', { itemId, tabType });
     } catch (error) {
       // Silent fail for analytics
     }

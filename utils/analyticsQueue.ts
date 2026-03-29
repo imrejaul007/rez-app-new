@@ -7,6 +7,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from '@react-native-community/netinfo';
 import { AnalyticsEvent } from '@/services/analytics/types';
+import apiClient from '@/services/apiClient';
 
 const QUEUE_KEY = '@analytics:offline_queue';
 const MAX_QUEUE_SIZE = 1000;
@@ -134,18 +135,10 @@ export class AnalyticsQueue {
    * Send single event
    */
   private async sendEvent(event: QueuedEvent): Promise<void> {
-    const apiUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
+    const result = await apiClient.post('/analytics/events', { event });
 
-    const response = await fetch(`${apiUrl}/analytics/events`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ event }),
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    if (!result.success) {
+      throw new Error(result.error || 'Analytics event failed');
     }
   }
 

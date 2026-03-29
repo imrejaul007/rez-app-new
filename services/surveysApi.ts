@@ -2,6 +2,7 @@
  * Surveys API Service
  * Handles all survey-related API calls
  */
+import apiClient from './apiClient';
 
 export interface SurveyQuestion {
   id: string;
@@ -102,7 +103,7 @@ class SurveysApiService {
   private baseUrl: string;
 
   constructor() {
-    this.baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
+    this.baseUrl = apiClient.getBaseURL();
   }
 
   /**

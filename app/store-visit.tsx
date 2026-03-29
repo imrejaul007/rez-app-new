@@ -106,6 +106,7 @@ function StoreVisitPageInner() {
   const params = useLocalSearchParams();
   const router = useRouter();
   const storeId = params.storeId as string;
+  const isMounted = useIsMounted();
   const rescheduleVisitId = params.rescheduleVisitId as string | undefined;
   const user = useAuthUser();
   const isAuthenticated = useIsAuthenticated();

@@ -3,21 +3,13 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Vote in polls to earn coins
 
 import React, { useState, useCallback } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { CardGridSkeleton } from '@/components/skeletons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router';
 import { ThemedText } from '@/components/ThemedText';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import pollApi, { Poll, PollOption, PollVoteHistory } from '@/services/pollApi';
@@ -40,10 +32,7 @@ function PollsPage() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [activePollsRes, dailyPollRes] = await Promise.all([
-        pollApi.getActivePolls(1, 50),
-        pollApi.getDailyPoll(),
-      ]);
+      const [activePollsRes, dailyPollRes] = await Promise.all([pollApi.getActivePolls(1, 50), pollApi.getDailyPoll()]);
 
       if (activePollsRes.success && activePollsRes.data) {
         if (!isMounted()) return;
@@ -75,7 +64,7 @@ function PollsPage() {
   useFocusEffect(
     useCallback(() => {
       fetchData();
-    }, [fetchData])
+    }, [fetchData]),
   );
 
   const handleTabChange = (tab: TabType) => {
@@ -93,27 +82,33 @@ function PollsPage() {
         const coins = result.data.coinReward?.coinsAwarded;
 
         // Update local state optimistically
-        setPolls(prev => prev.map(p => {
-          if (p.id === pollId) {
-            return {
-              ...p,
-              hasVoted: true,
-              userVote: optionId,
-              totalVotes: result.data!.totalVotes,
-              options: result.data!.options,
-            };
-          }
-          return p;
-        }));
+        setPolls((prev) =>
+          prev.map((p) => {
+            if (p.id === pollId) {
+              return {
+                ...p,
+                hasVoted: true,
+                userVote: optionId,
+                totalVotes: result.data!.totalVotes,
+                options: result.data!.options,
+              };
+            }
+            return p;
+          }),
+        );
 
         if (dailyPoll && dailyPoll.id === pollId) {
-          setDailyPoll(prev => prev ? {
-            ...prev,
-            hasVoted: true,
-            userVote: optionId,
-            totalVotes: result.data!.totalVotes,
-            options: result.data!.options,
-          } : null);
+          setDailyPoll((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  hasVoted: true,
+                  userVote: optionId,
+                  totalVotes: result.data!.totalVotes,
+                  options: result.data!.options,
+                }
+              : null,
+          );
         }
 
         if (coins) {
@@ -162,9 +157,7 @@ function PollsPage() {
               </View>
             )}
             <ThemedText style={styles.pollTitle}>{poll.title}</ThemedText>
-            {poll.description ? (
-              <ThemedText style={styles.pollDescription}>{poll.description}</ThemedText>
-            ) : null}
+            {poll.description ? <ThemedText style={styles.pollDescription}>{poll.description}</ThemedText> : null}
           </View>
           <View style={styles.coinBadge}>
             <Ionicons name="diamond" size={14} color={Colors.gold} />
@@ -181,19 +174,12 @@ function PollsPage() {
             return (
               <Pressable
                 key={option.id}
-                style={[
-                  styles.optionButton,
-                  poll.hasVoted && styles.optionVoted,
-                  isSelected && styles.optionSelected,
-                ]}
+                style={[styles.optionButton, poll.hasVoted && styles.optionVoted, isSelected && styles.optionSelected]}
                 onPress={() => !poll.hasVoted && !isVoting && handleVote(poll.id, option.id)}
                 disabled={poll.hasVoted || isVoting}
-               
               >
                 {/* Progress bar background */}
-                {poll.hasVoted && (
-                  <View style={[styles.optionProgress, { width: `${pct}%` }]} />
-                )}
+                {poll.hasVoted && <View style={[styles.optionProgress, { width: `${pct}%` }]} />}
 
                 <View style={styles.optionContent}>
                   <View style={styles.optionLeft}>
@@ -206,17 +192,12 @@ function PollsPage() {
                     ) : (
                       <Ionicons name="radio-button-off" size={20} color={colors.text.tertiary} />
                     )}
-                    <ThemedText style={[
-                      styles.optionText,
-                      isSelected && styles.optionTextSelected,
-                    ]}>
+                    <ThemedText style={[styles.optionText, isSelected && styles.optionTextSelected]}>
                       {option.text}
                     </ThemedText>
                   </View>
 
-                  {poll.hasVoted && (
-                    <ThemedText style={styles.optionPct}>{pct}%</ThemedText>
-                  )}
+                  {poll.hasVoted && <ThemedText style={styles.optionPct}>{pct}%</ThemedText>}
                 </View>
               </Pressable>
             );
@@ -228,9 +209,7 @@ function PollsPage() {
           <ThemedText style={styles.pollVotes}>
             {poll.totalVotes} vote{poll.totalVotes !== 1 ? 's' : ''}
           </ThemedText>
-          <ThemedText style={styles.pollTime}>
-            {getTimeRemaining(poll.endsAt)}
-          </ThemedText>
+          <ThemedText style={styles.pollTime}>{getTimeRemaining(poll.endsAt)}</ThemedText>
         </View>
 
         {isVoting && (
@@ -245,7 +224,7 @@ function PollsPage() {
 
   const renderVoteHistoryItem = useCallback(({ item }: { item: PollVoteHistory }) => {
     if (!item.poll) return null;
-    const selectedOption = item.poll.options.find(o => o.id === item.optionId);
+    const selectedOption = item.poll.options.find((o) => o.id === item.optionId);
 
     return (
       <View style={styles.historyCard}>
@@ -258,12 +237,8 @@ function PollsPage() {
             </View>
           )}
         </View>
-        <ThemedText style={styles.historyVote}>
-          Your vote: {selectedOption?.text || 'Unknown option'}
-        </ThemedText>
-        <ThemedText style={styles.historyDate}>
-          {new Date(item.createdAt).toLocaleDateString()}
-        </ThemedText>
+        <ThemedText style={styles.historyVote}>Your vote: {selectedOption?.text || 'Unknown option'}</ThemedText>
+        <ThemedText style={styles.historyDate}>{new Date(item.createdAt).toLocaleDateString()}</ThemedText>
       </View>
     );
   }, []);
@@ -272,12 +247,12 @@ function PollsPage() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Vote in Polls</ThemedText>
@@ -290,7 +265,7 @@ function PollsPage() {
 
       {/* Tabs */}
       <View style={styles.tabs}>
-        {(['active', 'history'] as TabType[]).map(tab => (
+        {(['active', 'history'] as TabType[]).map((tab) => (
           <Pressable
             key={tab}
             style={[styles.tab, activeTab === tab && styles.tabActive]}
@@ -315,7 +290,7 @@ function PollsPage() {
           {dailyPoll && renderPollCard(dailyPoll, true)}
 
           {/* Regular Polls */}
-          {polls.filter(p => !p.isDaily || p.id !== dailyPoll?.id).map(poll => renderPollCard(poll))}
+          {polls.filter((p) => !p.isDaily || p.id !== dailyPoll?.id).map((poll) => renderPollCard(poll))}
 
           {/* Empty State */}
           {polls.length === 0 && !dailyPoll && (
@@ -332,16 +307,14 @@ function PollsPage() {
         <FlashList
           data={voteHistory}
           renderItem={renderVoteHistoryItem}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           contentContainerStyle={styles.contentContainer}
           estimatedItemSize={80}
           ListEmptyComponent={
             <View style={styles.emptyContainer}>
               <Ionicons name="hand-left-outline" size={64} color={colors.text.tertiary} />
               <ThemedText style={styles.emptyTitle}>No Votes Yet</ThemedText>
-              <ThemedText style={styles.emptyText}>
-                Vote on active polls to see your history here.
-              </ThemedText>
+              <ThemedText style={styles.emptyText}>Vote on active polls to see your history here.</ThemedText>
             </View>
           }
         />

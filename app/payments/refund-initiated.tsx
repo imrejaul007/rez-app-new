@@ -66,8 +66,8 @@ function mapRefundResponse(raw: any): RefundDetails {
     id: '2',
     title: 'Under Review',
     description: 'Our team is reviewing your request',
-    status: pastPending ? 'completed' : (status === 'pending' ? 'current' : 'pending'),
-    timestamp: pastPending ? (raw.processedAt || raw.requestedAt) : undefined,
+    status: pastPending ? 'completed' : status === 'pending' ? 'current' : 'pending',
+    timestamp: pastPending ? raw.processedAt || raw.requestedAt : undefined,
   });
 
   // Step 3: Processing
@@ -76,8 +76,8 @@ function mapRefundResponse(raw: any): RefundDetails {
     id: '3',
     title: 'Processing',
     description: 'Refund is being processed',
-    status: pastProcessing ? 'completed' : (status === 'processing' ? 'current' : 'pending'),
-    timestamp: status === 'processing' || pastProcessing ? (raw.processedAt || undefined) : undefined,
+    status: pastProcessing ? 'completed' : status === 'processing' ? 'current' : 'pending',
+    timestamp: status === 'processing' || pastProcessing ? raw.processedAt || undefined : undefined,
   });
 
   // Step 4: Completed / Failed
@@ -95,7 +95,7 @@ function mapRefundResponse(raw: any): RefundDetails {
       title: 'Completed',
       description: 'Refund credited to your account',
       status: status === 'completed' ? 'completed' : 'pending',
-      timestamp: status === 'completed' ? (raw.completedAt || raw.actualArrival || undefined) : undefined,
+      timestamp: status === 'completed' ? raw.completedAt || raw.actualArrival || undefined : undefined,
     });
   }
 
@@ -138,6 +138,7 @@ function RefundInitiatedPage() {
 
   const refundId = params.refundId as string | undefined;
   const orderId = params.orderId as string | undefined;
+  const isMounted = useIsMounted();
 
   const fetchRefund = useCallback(async () => {
     if (!refundId && !orderId) {
@@ -163,9 +164,9 @@ function RefundInitiatedPage() {
         const response = await apiClient.get<any>(`/orders/refunds?page=1&limit=1`);
         if (response.success && response.data?.refunds?.length > 0) {
           // Find a refund matching this order, or use first one
-          const match = response.data.refunds.find(
-            (r: any) => (typeof r.order === 'object' ? r.order._id : r.order) === orderId
-          ) || response.data.refunds[0];
+          const match =
+            response.data.refunds.find((r: any) => (typeof r.order === 'object' ? r.order._id : r.order) === orderId) ||
+            response.data.refunds[0];
           setRefund(mapRefundResponse(match));
         } else {
           if (!isMounted()) return;
@@ -180,7 +181,6 @@ function RefundInitiatedPage() {
       setLoading(false);
     }
   }, [refundId, orderId]);
-  const isMounted = useIsMounted();
 
   useEffect(() => {
     if (authLoading || !isAuthenticated) return;
@@ -196,21 +196,30 @@ function RefundInitiatedPage() {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return Colors.success;
+      case 'completed':
+        return Colors.success;
       case 'approved':
-      case 'processing': return Colors.primary[600];
-      case 'failed': return Colors.error;
-      default: return Colors.gray[400];
+      case 'processing':
+        return Colors.primary[600];
+      case 'failed':
+        return Colors.error;
+      default:
+        return Colors.gray[400];
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'processing': return 'In Progress';
-      case 'approved': return 'Approved';
-      case 'completed': return 'Completed';
-      case 'failed': return 'Failed';
-      default: return status;
+      case 'processing':
+        return 'In Progress';
+      case 'approved':
+        return 'Approved';
+      case 'completed':
+        return 'Completed';
+      case 'failed':
+        return 'Failed';
+      default:
+        return status;
     }
   };
 
@@ -236,12 +245,12 @@ function RefundInitiatedPage() {
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Refund Status</ThemedText>
@@ -271,140 +280,149 @@ function RefundInitiatedPage() {
           </Pressable>
         </View>
       ) : (
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={styles.scrollContent}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-      >
-        {/* Status Card */}
-        <View style={styles.statusCard}>
-          <View style={[styles.statusIcon, { backgroundColor: getStatusColor(refund.status) + '20' }]}>
-            <Ionicons
-              name={refund.status === 'completed' ? 'checkmark-circle' : refund.status === 'failed' ? 'close-circle' : 'time'}
-              size={48}
-              color={getStatusColor(refund.status)}
-            />
-          </View>
-          <ThemedText style={styles.statusTitle}>
-            {refund.status === 'completed' ? 'Refund Completed!' : refund.status === 'failed' ? 'Refund Failed' : 'Refund In Progress'}
-          </ThemedText>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(refund.status) + '20' }]}>
-            <ThemedText style={[styles.statusBadgeText, { color: getStatusColor(refund.status) }]}>
-              {getStatusLabel(refund.status)}
+        <ScrollView
+          style={styles.content}
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
+        >
+          {/* Status Card */}
+          <View style={styles.statusCard}>
+            <View style={[styles.statusIcon, { backgroundColor: getStatusColor(refund.status) + '20' }]}>
+              <Ionicons
+                name={
+                  refund.status === 'completed'
+                    ? 'checkmark-circle'
+                    : refund.status === 'failed'
+                      ? 'close-circle'
+                      : 'time'
+                }
+                size={48}
+                color={getStatusColor(refund.status)}
+              />
+            </View>
+            <ThemedText style={styles.statusTitle}>
+              {refund.status === 'completed'
+                ? 'Refund Completed!'
+                : refund.status === 'failed'
+                  ? 'Refund Failed'
+                  : 'Refund In Progress'}
             </ThemedText>
+            <View style={[styles.statusBadge, { backgroundColor: getStatusColor(refund.status) + '20' }]}>
+              <ThemedText style={[styles.statusBadgeText, { color: getStatusColor(refund.status) }]}>
+                {getStatusLabel(refund.status)}
+              </ThemedText>
+            </View>
           </View>
-        </View>
 
-        {/* Amount Card */}
-        <View style={styles.amountCard}>
-          <View style={styles.amountRow}>
-            <ThemedText style={styles.amountLabel}>Refund Amount</ThemedText>
-            <ThemedText style={styles.amountValue}>{currencySymbol}{refund.amount.toLocaleString()}</ThemedText>
+          {/* Amount Card */}
+          <View style={styles.amountCard}>
+            <View style={styles.amountRow}>
+              <ThemedText style={styles.amountLabel}>Refund Amount</ThemedText>
+              <ThemedText style={styles.amountValue}>
+                {currencySymbol}
+                {refund.amount.toLocaleString()}
+              </ThemedText>
+            </View>
+            <View style={styles.divider} />
+            <View style={styles.amountRow}>
+              <ThemedText style={styles.amountLabel}>Expected by</ThemedText>
+              <ThemedText style={styles.amountDate}>{formatDate(refund.expectedDate)}</ThemedText>
+            </View>
           </View>
-          <View style={styles.divider} />
-          <View style={styles.amountRow}>
-            <ThemedText style={styles.amountLabel}>Expected by</ThemedText>
-            <ThemedText style={styles.amountDate}>{formatDate(refund.expectedDate)}</ThemedText>
-          </View>
-        </View>
 
-        {/* Timeline */}
-        <View style={styles.timelineSection}>
-          <ThemedText style={styles.sectionTitle}>Refund Timeline</ThemedText>
-          <View style={styles.timeline}>
-            {refund.steps.map((step, index) => (
-              <View key={step.id} style={styles.timelineItem}>
-                <View style={styles.timelineLeft}>
-                  <View style={[
-                    styles.timelineDot,
-                    step.status === 'completed' && styles.timelineDotCompleted,
-                    step.status === 'current' && styles.timelineDotCurrent,
-                  ]}>
-                    {step.status === 'completed' && (
-                      <Ionicons name="checkmark" size={12} color={colors.background.primary} />
+          {/* Timeline */}
+          <View style={styles.timelineSection}>
+            <ThemedText style={styles.sectionTitle}>Refund Timeline</ThemedText>
+            <View style={styles.timeline}>
+              {refund.steps.map((step, index) => (
+                <View key={step.id} style={styles.timelineItem}>
+                  <View style={styles.timelineLeft}>
+                    <View
+                      style={[
+                        styles.timelineDot,
+                        step.status === 'completed' && styles.timelineDotCompleted,
+                        step.status === 'current' && styles.timelineDotCurrent,
+                      ]}
+                    >
+                      {step.status === 'completed' && (
+                        <Ionicons name="checkmark" size={12} color={colors.background.primary} />
+                      )}
+                    </View>
+                    {index < refund.steps.length - 1 && (
+                      <View
+                        style={[
+                          styles.timelineLine,
+                          (step.status === 'completed' || step.status === 'current') && styles.timelineLineCompleted,
+                        ]}
+                      />
                     )}
                   </View>
-                  {index < refund.steps.length - 1 && (
-                    <View style={[
-                      styles.timelineLine,
-                      (step.status === 'completed' || step.status === 'current') && styles.timelineLineCompleted,
-                    ]} />
-                  )}
-                </View>
-                <View style={styles.timelineContent}>
-                  <ThemedText style={[
-                    styles.timelineTitle,
-                    step.status === 'pending' && styles.timelineTitlePending,
-                  ]}>
-                    {step.title}
-                  </ThemedText>
-                  <ThemedText style={styles.timelineDescription}>
-                    {step.description}
-                  </ThemedText>
-                  {step.timestamp && (
-                    <ThemedText style={styles.timelineTime}>
-                      {formatDate(step.timestamp)} at {formatTime(step.timestamp)}
+                  <View style={styles.timelineContent}>
+                    <ThemedText
+                      style={[styles.timelineTitle, step.status === 'pending' && styles.timelineTitlePending]}
+                    >
+                      {step.title}
                     </ThemedText>
-                  )}
+                    <ThemedText style={styles.timelineDescription}>{step.description}</ThemedText>
+                    {step.timestamp && (
+                      <ThemedText style={styles.timelineTime}>
+                        {formatDate(step.timestamp)} at {formatTime(step.timestamp)}
+                      </ThemedText>
+                    )}
+                  </View>
                 </View>
-              </View>
-            ))}
+              ))}
+            </View>
           </View>
-        </View>
 
-        {/* Details Card */}
-        <View style={styles.detailsCard}>
-          <ThemedText style={styles.sectionTitle}>Refund Details</ThemedText>
-          <View style={styles.detailRow}>
-            <ThemedText style={styles.detailLabel}>Refund ID</ThemedText>
-            <ThemedText style={styles.detailValue}>{refund.id}</ThemedText>
+          {/* Details Card */}
+          <View style={styles.detailsCard}>
+            <ThemedText style={styles.sectionTitle}>Refund Details</ThemedText>
+            <View style={styles.detailRow}>
+              <ThemedText style={styles.detailLabel}>Refund ID</ThemedText>
+              <ThemedText style={styles.detailValue}>{refund.id}</ThemedText>
+            </View>
+            <View style={styles.detailRow}>
+              <ThemedText style={styles.detailLabel}>Order</ThemedText>
+              <Pressable onPress={() => router.push(`/orders/${refund.orderId}` as any)}>
+                <ThemedText style={[styles.detailValue, styles.detailLink]}>
+                  {refund.orderNumber || refund.orderId}
+                </ThemedText>
+              </Pressable>
+            </View>
+            <View style={styles.detailRow}>
+              <ThemedText style={styles.detailLabel}>Refund To</ThemedText>
+              <ThemedText style={styles.detailValue}>{refund.refundMethod}</ThemedText>
+            </View>
+            <View style={styles.detailRow}>
+              <ThemedText style={styles.detailLabel}>Reason</ThemedText>
+              <ThemedText style={styles.detailValue}>{refund.reason}</ThemedText>
+            </View>
           </View>
-          <View style={styles.detailRow}>
-            <ThemedText style={styles.detailLabel}>Order</ThemedText>
-            <Pressable onPress={() => router.push(`/orders/${refund.orderId}` as any)}>
-              <ThemedText style={[styles.detailValue, styles.detailLink]}>
-                {refund.orderNumber || refund.orderId}
+
+          {/* Help Card */}
+          <View style={styles.helpCard}>
+            <Ionicons name="help-circle-outline" size={24} color={Colors.info} />
+            <View style={styles.helpContent}>
+              <ThemedText style={styles.helpTitle}>Need Help?</ThemedText>
+              <ThemedText style={styles.helpText}>
+                If your refund is delayed or you have questions, our support team is here to help.
               </ThemedText>
+            </View>
+            <Pressable style={styles.helpButton} onPress={() => router.push('/support' as any)}>
+              <ThemedText style={styles.helpButtonText}>Contact Support</ThemedText>
             </Pressable>
           </View>
-          <View style={styles.detailRow}>
-            <ThemedText style={styles.detailLabel}>Refund To</ThemedText>
-            <ThemedText style={styles.detailValue}>{refund.refundMethod}</ThemedText>
-          </View>
-          <View style={styles.detailRow}>
-            <ThemedText style={styles.detailLabel}>Reason</ThemedText>
-            <ThemedText style={styles.detailValue}>{refund.reason}</ThemedText>
-          </View>
-        </View>
 
-        {/* Help Card */}
-        <View style={styles.helpCard}>
-          <Ionicons name="help-circle-outline" size={24} color={Colors.info} />
-          <View style={styles.helpContent}>
-            <ThemedText style={styles.helpTitle}>Need Help?</ThemedText>
-            <ThemedText style={styles.helpText}>
-              If your refund is delayed or you have questions, our support team is here to help.
+          {/* Note */}
+          <View style={styles.noteCard}>
+            <Ionicons name="information-circle-outline" size={20} color={colors.text.tertiary} />
+            <ThemedText style={styles.noteText}>
+              Refunds typically take 5-7 business days to reflect in your account. Bank processing times may vary.
             </ThemedText>
           </View>
-          <Pressable
-            style={styles.helpButton}
-            onPress={() => router.push('/support' as any)}
-          >
-            <ThemedText style={styles.helpButtonText}>Contact Support</ThemedText>
-          </Pressable>
-        </View>
-
-        {/* Note */}
-        <View style={styles.noteCard}>
-          <Ionicons name="information-circle-outline" size={20} color={colors.text.tertiary} />
-          <ThemedText style={styles.noteText}>
-            Refunds typically take 5-7 business days to reflect in your account. Bank processing times may vary.
-          </ThemedText>
-        </View>
-      </ScrollView>
+        </ScrollView>
       )}
     </View>
   );

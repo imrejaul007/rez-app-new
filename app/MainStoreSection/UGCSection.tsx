@@ -19,7 +19,7 @@ import {
   ActivityIndicator,
   Platform,
   RefreshControl,
-  ScrollView
+  ScrollView,
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -30,11 +30,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import { FlashList } from '@shopify/flash-list';
 import CachedImage from '@/components/ui/CachedImage';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { Video, ResizeMode } from 'expo-av';
-import { triggerImpact, triggerNotification } from "@/utils/haptics";
+import { triggerImpact, triggerNotification } from '@/utils/haptics';
 import { ThemedText } from '@/components/ThemedText';
 import { ShimmerSkeleton } from '@/components/ui';
 import ugcApi, { UGCMedia } from '@/services/ugcApi';
@@ -237,16 +237,13 @@ const UGCCard = memo(function UGCCard({
   };
 
   // Debug: indicate whether Video component exists
-  useEffect(() => {
-
-  }, [isVisible, item.id]);
+  useEffect(() => {}, [isVisible, item.id]);
 
   return (
     <Pressable
       onPress={handleImagePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-     
       accessibilityLabel={`${item.category || 'Content'} by ${item.author || 'creator'}. ${item.viewCount} views. ${displayDescription}`}
       accessibilityRole="button"
       accessibilityHint="Tap to view full content details"
@@ -267,16 +264,13 @@ const UGCCard = memo(function UGCCard({
                 onLoadStart={() => {
                   setMediaLoading(true);
                   setMediaError(null);
-
                 }}
                 onLoad={() => {
                   setMediaLoading(false);
-
                 }}
                 onError={(e) => {
                   setMediaLoading(false);
                   setMediaError(String(e));
-                   
                 }}
                 onPlaybackStatusUpdate={(status) => {
                   if (!status) return;
@@ -286,7 +280,12 @@ const UGCCard = memo(function UGCCard({
 
               {mediaLoading && !mediaError && (
                 <View style={styles.skeletonOverlay}>
-                  <LinearGradient colors={[colors.neutral[100], colors.neutral[200], colors.neutral[100]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.skeletonGradient} />
+                  <LinearGradient
+                    colors={[colors.neutral[100], colors.neutral[200], colors.neutral[100]]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.skeletonGradient}
+                  />
                   <ActivityIndicator size="large" color={colors.lightMustard} style={styles.skeletonSpinner} />
                 </View>
               )}
@@ -311,7 +310,12 @@ const UGCCard = memo(function UGCCard({
               />
               {mediaLoading && !mediaError && (
                 <View style={styles.skeletonOverlay}>
-                  <LinearGradient colors={[colors.neutral[100], colors.neutral[200], colors.neutral[100]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.skeletonGradient} />
+                  <LinearGradient
+                    colors={[colors.neutral[100], colors.neutral[200], colors.neutral[100]]}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 0 }}
+                    style={styles.skeletonGradient}
+                  />
                   <ActivityIndicator size="large" color={colors.lightMustard} style={styles.skeletonSpinner} />
                 </View>
               )}
@@ -329,13 +333,20 @@ const UGCCard = memo(function UGCCard({
         )}
 
         {/* Gradient for readability */}
-        <LinearGradient colors={['transparent', 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.85)']} style={styles.gradientOverlay} start={{ x: 0, y: 0 }} end={{ x: 0, y: 1 }} />
+        <LinearGradient
+          colors={['transparent', 'rgba(0,0,0,0.35)', 'rgba(0,0,0,0.85)']}
+          style={styles.gradientOverlay}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 0, y: 1 }}
+        />
 
         {/* View count badge */}
         <View style={styles.viewCountContainer}>
           <View style={styles.viewCountBadge}>
             <Ionicons name="eye" size={14} color={colors.background.primary} style={styles.eyeIcon} />
-            <ThemedText style={[styles.viewCountText, { fontSize: typography.viewCountText }]}>{item.viewCount}</ThemedText>
+            <ThemedText style={[styles.viewCountText, { fontSize: typography.viewCountText }]}>
+              {item.viewCount}
+            </ThemedText>
           </View>
         </View>
 
@@ -344,7 +355,6 @@ const UGCCard = memo(function UGCCard({
           {/* Like button */}
           <Pressable
             onPress={handleLikePress}
-           
             style={styles.actionButton}
             accessibilityLabel={`${item.isLiked ? 'Unlike' : 'Like'} this content. ${formatLikeCount(item.likes || 0)} likes`}
             accessibilityRole="button"
@@ -366,7 +376,6 @@ const UGCCard = memo(function UGCCard({
           {/* Bookmark button */}
           <Pressable
             onPress={handleBookmarkPress}
-           
             style={styles.actionButton}
             accessibilityLabel={`${item.isBookmarked ? 'Remove bookmark' : 'Bookmark'} this content`}
             accessibilityRole="button"
@@ -398,9 +407,7 @@ const UGCCard = memo(function UGCCard({
                 <ThemedText numberOfLines={1} style={styles.productTitle}>
                   {item.productTitle || item.category || ''}
                 </ThemedText>
-                {item.productPrice && (
-                  <ThemedText style={styles.productPrice}>{item.productPrice}</ThemedText>
-                )}
+                {item.productPrice && <ThemedText style={styles.productPrice}>{item.productPrice}</ThemedText>}
               </View>
             </View>
           </View>
@@ -465,43 +472,46 @@ function UGCSection({
   }, [propImages, ugcContent]);
 
   // Fetch UGC content from API
-  const fetchUGCContent = useCallback(async (isRefresh = false) => {
-    if (!storeId) {
-      return;
-    }
-
-    try {
-      if (isRefresh) {
-        setRefreshing(true);
-      } else {
-        setLoading(true);
+  const fetchUGCContent = useCallback(
+    async (isRefresh = false) => {
+      if (!storeId) {
+        return;
       }
-      setError(null);
 
-      const response = await ugcApi.getStoreContent(storeId!, {
-        limit: 20,
-        offset: 0,
-      });
+      try {
+        if (isRefresh) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+        setError(null);
 
-      if (response.success && response.data?.content) {
-        const transformedContent = response.data.content.map(transformUGCMedia);
+        const response = await ugcApi.getStoreContent(storeId!, {
+          limit: 20,
+          offset: 0,
+        });
+
+        if (response.success && response.data?.content) {
+          const transformedContent = response.data.content.map(transformUGCMedia);
+          if (!isMounted()) return;
+          setUgcContent(transformedContent);
+        } else {
+          if (!isMounted()) return;
+          setUgcContent([]); // Set empty array instead of error
+        }
+      } catch (err) {
+        const errorMessage = err instanceof Error ? err.message : 'Unknown error';
         if (!isMounted()) return;
-        setUgcContent(transformedContent);
-      } else {
+        setError(errorMessage);
+      } finally {
         if (!isMounted()) return;
-        setUgcContent([]); // Set empty array instead of error
+        setLoading(false);
+        if (!isMounted()) return;
+        setRefreshing(false);
       }
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Unknown error';
-      if (!isMounted()) return;
-      setError(errorMessage);
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [storeId]); // propImages removed to prevent infinite loop if parent passes unstable reference
+    },
+    [storeId],
+  ); // propImages removed to prevent infinite loop if parent passes unstable reference
 
   // Load UGC content on mount
   useEffect(() => {
@@ -515,7 +525,7 @@ function UGCSection({
       if (ugcContent.length > 0 || (propImages && propImages.length > 0)) {
         fetchUGCContent(true); // Silent refresh
       }
-    }, [fetchUGCContent, ugcContent.length, propImages])
+    }, [fetchUGCContent, ugcContent.length, propImages]),
   );
 
   // Handle pull-to-refresh
@@ -527,16 +537,16 @@ function UGCSection({
   const handleLikePress = useCallback(async (item: UGCImage) => {
     try {
       // Optimistic update
-      setUgcContent(prev =>
-        prev.map(ugc =>
+      setUgcContent((prev) =>
+        prev.map((ugc) =>
           ugc.id === item.id
             ? {
                 ...ugc,
                 isLiked: !ugc.isLiked,
-                likes: (ugc.likes || 0) + (ugc.isLiked ? -1 : 1)
+                likes: (ugc.likes || 0) + (ugc.isLiked ? -1 : 1),
               }
-            : ugc
-        )
+            : ugc,
+        ),
       );
 
       // Call API
@@ -545,31 +555,31 @@ function UGCSection({
       if (!response.success) {
         // Revert on failure
         if (!isMounted()) return;
-        setUgcContent(prev =>
-          prev.map(ugc =>
+        setUgcContent((prev) =>
+          prev.map((ugc) =>
             ugc.id === item.id
               ? {
                   ...ugc,
                   isLiked: item.isLiked,
-                  likes: item.likes
+                  likes: item.likes,
                 }
-              : ugc
-          )
+              : ugc,
+          ),
         );
       }
     } catch (err) {
       // Revert on error
       if (!isMounted()) return;
-      setUgcContent(prev =>
-        prev.map(ugc =>
+      setUgcContent((prev) =>
+        prev.map((ugc) =>
           ugc.id === item.id
             ? {
                 ...ugc,
                 isLiked: item.isLiked,
-                likes: item.likes
+                likes: item.likes,
               }
-            : ugc
-        )
+            : ugc,
+        ),
       );
     }
   }, []);
@@ -578,12 +588,8 @@ function UGCSection({
   const handleBookmarkPress = useCallback(async (item: UGCImage) => {
     try {
       // Optimistic update
-      setUgcContent(prev =>
-        prev.map(ugc =>
-          ugc.id === item.id
-            ? { ...ugc, isBookmarked: !ugc.isBookmarked }
-            : ugc
-        )
+      setUgcContent((prev) =>
+        prev.map((ugc) => (ugc.id === item.id ? { ...ugc, isBookmarked: !ugc.isBookmarked } : ugc)),
       );
 
       // Call real videos API for bookmark
@@ -592,35 +598,23 @@ function UGCSection({
       if (!response.success && !response.data) {
         // Revert on failure
         if (!isMounted()) return;
-        setUgcContent(prev =>
-          prev.map(ugc =>
-            ugc.id === item.id
-              ? { ...ugc, isBookmarked: item.isBookmarked }
-              : ugc
-          )
+        setUgcContent((prev) =>
+          prev.map((ugc) => (ugc.id === item.id ? { ...ugc, isBookmarked: item.isBookmarked } : ugc)),
         );
       } else {
         // Update with actual state from server
         const newBookmarkState = response.data?.isBookmarked;
         if (newBookmarkState !== undefined) {
-          setUgcContent(prev =>
-            prev.map(ugc =>
-              ugc.id === item.id
-                ? { ...ugc, isBookmarked: newBookmarkState }
-                : ugc
-            )
+          setUgcContent((prev) =>
+            prev.map((ugc) => (ugc.id === item.id ? { ...ugc, isBookmarked: newBookmarkState } : ugc)),
           );
         }
       }
     } catch (err) {
       // Revert on error
       if (!isMounted()) return;
-      setUgcContent(prev =>
-        prev.map(ugc =>
-          ugc.id === item.id
-            ? { ...ugc, isBookmarked: item.isBookmarked }
-            : ugc
-        )
+      setUgcContent((prev) =>
+        prev.map((ugc) => (ugc.id === item.id ? { ...ugc, isBookmarked: item.isBookmarked } : ugc)),
       );
     }
   }, []);
@@ -723,7 +717,17 @@ function UGCSection({
         needsTruncation={needsTruncation}
       />
     ),
-    [cardWidth, cardHeight, typography, showDescriptions, maxDescriptionLength, visibleItems, onImagePress, handleLikePress, handleBookmarkPress]
+    [
+      cardWidth,
+      cardHeight,
+      typography,
+      showDescriptions,
+      maxDescriptionLength,
+      visibleItems,
+      onImagePress,
+      handleLikePress,
+      handleBookmarkPress,
+    ],
   );
 
   // Loading skeleton
@@ -755,7 +759,13 @@ function UGCSection({
               {/* Shimmer overlay */}
               <View style={styles.skeletonOverlay}>
                 <LinearGradient
-                  colors={[colors.neutral[200], colors.neutral[100], colors.tint.purple, colors.neutral[100], colors.neutral[200]]}
+                  colors={[
+                    colors.neutral[200],
+                    colors.neutral[100],
+                    colors.tint.purple,
+                    colors.neutral[100],
+                    colors.neutral[200],
+                  ]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.skeletonGradient}
@@ -778,11 +788,7 @@ function UGCSection({
         <View style={[styles.errorContainer, { paddingHorizontal: horizontalPadding }]}>
           <Ionicons name="alert-circle-outline" size={48} color={colors.nileBlue} />
           <ThemedText style={styles.errorText}>{error}</ThemedText>
-          <Pressable
-            style={styles.retryButton}
-            onPress={() => fetchUGCContent()}
-           
-          >
+          <Pressable style={styles.retryButton} onPress={() => fetchUGCContent()}>
             <Ionicons name="refresh" size={20} color={colors.background.primary} />
             <ThemedText style={styles.retryButtonText}>Retry</ThemedText>
           </Pressable>
@@ -814,7 +820,6 @@ function UGCSection({
         {onViewAllPress && (
           <Pressable
             onPress={onViewAllPress}
-           
             accessibilityLabel="View all user generated content"
             accessibilityRole="button"
             accessibilityHint={`Browse all ${images.length} posts`}
@@ -828,7 +833,7 @@ function UGCSection({
         data={images}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-          estimatedItemSize={250}
+        estimatedItemSize={250}
         horizontal
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={[styles.imagesList, { paddingHorizontal: horizontalPadding }]}
@@ -853,7 +858,7 @@ function UGCSection({
         scrollEventThrottle={80}
       />
     </View>
-);
+  );
 }
 
 const styles = StyleSheet.create({

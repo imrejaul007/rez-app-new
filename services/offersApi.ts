@@ -414,8 +414,12 @@ class OffersHttpClient {
   }
 }
 
-// API Client instance
-const offersApiClient = new OffersHttpClient(API_CONFIG);
+// API Client instance — derive baseUrl from the main apiClient so both use the
+// same URL (respects EXPO_PUBLIC_API_BASE_URL; avoids duplicate localhost fallbacks)
+const offersApiClient = new OffersHttpClient({
+  ...API_CONFIG,
+  baseUrl: mainApiClient.getBaseURL(),
+});
 
 // Mock API implementation (for development)
 class MockOffersApi implements OffersApiEndpoints {

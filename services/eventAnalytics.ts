@@ -2,6 +2,7 @@
  * Event Analytics Service
  * Tracks user interactions, conversions, and engagement metrics for events
  */
+import apiClient from './apiClient';
 
 interface EventAnalyticsEvent {
   eventId: string;
@@ -28,7 +29,7 @@ class EventAnalyticsService {
   private flushTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor() {
-    this.baseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
+    this.baseUrl = apiClient.getBaseURL();
     this.startFlushTimer();
   }
 

@@ -8,6 +8,7 @@ import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { AnalyticsProvider, AnalyticsConfig, PurchaseTransaction, UserProperties, AnalyticsEvent } from './types';
 import { CustomAnalyticsProvider } from './providers/CustomProvider';
+import apiClient from '../apiClient';
 import { ANALYTICS_EVENTS } from './events';
 
 const DEFAULT_CONFIG: AnalyticsConfig = {
@@ -95,7 +96,7 @@ export class AnalyticsService {
         case 'custom':
           provider = new CustomAnalyticsProvider();
           await provider.initialize({
-            apiUrl: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api',
+            apiUrl: apiClient.getBaseURL(),
             ...providerConfig.config,
           });
           break;

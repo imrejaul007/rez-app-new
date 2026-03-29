@@ -22,7 +22,7 @@ import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect } from 'expo-router';
 import { useIsAuthenticated } from '@/stores/selectors';
 import eventsApiService from '@/services/eventsApi';
 import { alertOk } from '@/utils/alert';
@@ -32,7 +32,6 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const C = Colors;
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
-
 
 type TabType = 'upcoming' | 'past' | 'favorites';
 
@@ -76,38 +75,43 @@ function MyEventsPage() {
   const [favorites, setFavorites] = useState<FavoriteEvent[]>([]);
   const [checkingIn, setCheckingIn] = useState<string | null>(null);
 
-  const fetchData = useCallback(async (tab: TabType) => {
-    if (!isAuthenticated) return;
+  const fetchData = useCallback(
+    async (tab: TabType) => {
+      if (!isAuthenticated) return;
 
-    try {
-      const result = await eventsApiService.getMyEvents(tab === 'favorites' ? 'favorites' : tab === 'past' ? 'past' : 'upcoming');
+      try {
+        const result = await eventsApiService.getMyEvents(
+          tab === 'favorites' ? 'favorites' : tab === 'past' ? 'past' : 'upcoming',
+        );
 
-      if (tab === 'upcoming') {
+        if (tab === 'upcoming') {
+          if (!isMounted()) return;
+          setUpcomingBookings(result?.bookings || []);
+        } else if (tab === 'past') {
+          if (!isMounted()) return;
+          setPastBookings(result?.bookings || []);
+        } else {
+          // Backend returns { events: [...], tab: 'favorites' } for favorites tab
+          if (!isMounted()) return;
+          setFavorites(result?.events || result?.favorites || result?.bookings || []);
+        }
+      } catch (error) {
+        alertOk('Error', 'Failed to load events. Pull down to refresh.');
+      } finally {
         if (!isMounted()) return;
-        setUpcomingBookings(result?.bookings || []);
-      } else if (tab === 'past') {
+        setIsLoading(false);
         if (!isMounted()) return;
-        setPastBookings(result?.bookings || []);
-      } else {
-        // Backend returns { events: [...], tab: 'favorites' } for favorites tab
-        if (!isMounted()) return;
-        setFavorites(result?.events || result?.favorites || result?.bookings || []);
+        setIsRefreshing(false);
       }
-    } catch (error) {
-      alertOk('Error', 'Failed to load events. Pull down to refresh.');
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-    }
-  }, [isAuthenticated]);
+    },
+    [isAuthenticated],
+  );
 
   useFocusEffect(
     useCallback(() => {
       setIsLoading(true);
       fetchData(activeTab);
-    }, [activeTab, fetchData])
+    }, [activeTab, fetchData]),
   );
 
   const handleRefresh = () => {
@@ -137,9 +141,7 @@ function MyEventsPage() {
         const coins = result.data?.reward?.coinsAwarded || 0;
         alertOk(
           'Checked In!',
-          coins > 0
-            ? `You've checked in successfully and earned +${coins} coins!`
-            : `You've checked in successfully!`
+          coins > 0 ? `You've checked in successfully and earned +${coins} coins!` : `You've checked in successfully!`,
         );
         fetchData(activeTab);
       } else {
@@ -161,10 +163,7 @@ function MyEventsPage() {
           <Ionicons name="lock-closed-outline" size={64} color={C.textSecondary} />
           <Text style={styles.authTitle}>Login Required</Text>
           <Text style={styles.authSubtitle}>Please login to view your events</Text>
-          <Pressable
-            style={styles.loginButton}
-            onPress={() => router.push('/sign-in' as any)}
-          >
+          <Pressable style={styles.loginButton} onPress={() => router.push('/sign-in' as any)}>
             <Text style={styles.loginButtonText}>Login</Text>
           </Pressable>
         </View>
@@ -178,15 +177,13 @@ function MyEventsPage() {
     { id: 'favorites', label: 'Favorites', icon: 'heart-outline' },
   ];
 
-  const currentData = activeTab === 'upcoming' ? upcomingBookings
-    : activeTab === 'past' ? pastBookings
-    : favorites;
+  const currentData = activeTab === 'upcoming' ? upcomingBookings : activeTab === 'past' ? pastBookings : favorites;
 
-  const renderEventItem = useCallback(({ item }: { item: EventBooking | FavoriteEvent }) =>
-    activeTab === 'favorites'
-      ? renderFavoriteCard(item as FavoriteEvent)
-      : renderBookingCard(item as EventBooking)
-  , [activeTab]);
+  const renderEventItem = useCallback(
+    ({ item }: { item: EventBooking | FavoriteEvent }) =>
+      activeTab === 'favorites' ? renderFavoriteCard(item as FavoriteEvent) : renderBookingCard(item as EventBooking),
+    [activeTab],
+  );
 
   const renderBookingCard = (booking: EventBooking) => {
     const event = booking.eventId;
@@ -200,17 +197,12 @@ function MyEventsPage() {
     const isCheckingInThis = checkingIn === booking._id;
 
     return (
-      <Pressable
-        key={booking._id}
-        style={styles.bookingCard}
-        onPress={() => eventId && handleEventPress(eventId)}
-       
-      >
-        {eventImage && (
-          <CachedImage source={eventImage} style={styles.bookingImage} />
-        )}
+      <Pressable key={booking._id} style={styles.bookingCard} onPress={() => eventId && handleEventPress(eventId)}>
+        {eventImage && <CachedImage source={eventImage} style={styles.bookingImage} />}
         <View style={styles.bookingInfo}>
-          <Text style={styles.bookingTitle} numberOfLines={2}>{eventTitle}</Text>
+          <Text style={styles.bookingTitle} numberOfLines={2}>
+            {eventTitle}
+          </Text>
           <Text style={styles.bookingRef}>Ref: {booking.bookingReference}</Text>
           {eventDate && (
             <Text style={styles.bookingDate}>
@@ -239,7 +231,6 @@ function MyEventsPage() {
                 handleCheckIn(booking);
               }}
               disabled={isCheckingInThis}
-             
             >
               {isCheckingInThis ? (
                 <ActivityIndicator size="small" color={colors.text.inverse} />
@@ -259,19 +250,15 @@ function MyEventsPage() {
 
   const renderFavoriteCard = (fav: FavoriteEvent) => {
     return (
-      <Pressable
-        key={fav._id}
-        style={styles.bookingCard}
-        onPress={() => handleEventPress(fav._id)}
-       
-      >
-        {fav.image && (
-          <CachedImage source={fav.image} style={styles.bookingImage} />
-        )}
+      <Pressable key={fav._id} style={styles.bookingCard} onPress={() => handleEventPress(fav._id)}>
+        {fav.image && <CachedImage source={fav.image} style={styles.bookingImage} />}
         <View style={styles.bookingInfo}>
-          <Text style={styles.bookingTitle} numberOfLines={2}>{fav.title}</Text>
+          <Text style={styles.bookingTitle} numberOfLines={2}>
+            {fav.title}
+          </Text>
           <Text style={styles.bookingRef}>
-            {fav.category} {'\u2022'} {fav.date ? new Date(fav.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : ''}
+            {fav.category} {'\u2022'}{' '}
+            {fav.date ? new Date(fav.date).toLocaleDateString('en-IN', { month: 'short', day: 'numeric' }) : ''}
           </Text>
           <Text style={styles.favoritePrice}>
             {fav.price?.isFree ? 'Free' : `${fav.price?.currency || ''}${fav.price?.amount || 0}`}
@@ -284,9 +271,17 @@ function MyEventsPage() {
 
   const renderEmptyState = () => {
     const config = {
-      upcoming: { icon: 'calendar-outline', title: 'No Upcoming Events', subtitle: 'Browse events and book your next experience' },
+      upcoming: {
+        icon: 'calendar-outline',
+        title: 'No Upcoming Events',
+        subtitle: 'Browse events and book your next experience',
+      },
       past: { icon: 'time-outline', title: 'No Past Events', subtitle: 'Your attended events will appear here' },
-      favorites: { icon: 'heart-outline', title: 'No Favorites Yet', subtitle: 'Tap the heart icon on events to save them' },
+      favorites: {
+        icon: 'heart-outline',
+        title: 'No Favorites Yet',
+        subtitle: 'Tap the heart icon on events to save them',
+      },
     };
     const { icon, title, subtitle } = config[activeTab];
 
@@ -295,10 +290,7 @@ function MyEventsPage() {
         <Ionicons name={icon as any} size={64} color={C.textSecondary} />
         <Text style={styles.emptyTitle}>{title}</Text>
         <Text style={styles.emptySubtitle}>{subtitle}</Text>
-        <Pressable
-          style={styles.exploreButton}
-          onPress={() => router.push('/events' as any)}
-        >
+        <Pressable style={styles.exploreButton} onPress={() => router.push('/events' as any)}>
           <Ionicons name="compass-outline" size={18} color={colors.text.inverse} />
           <Text style={styles.exploreButtonText}>Explore Events</Text>
         </Pressable>
@@ -318,7 +310,10 @@ function MyEventsPage() {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -339,14 +334,8 @@ function MyEventsPage() {
             style={[styles.tab, activeTab === tab.id && styles.tabActive]}
             onPress={() => handleTabChange(tab.id)}
           >
-            <Ionicons
-              name={tab.icon as any}
-              size={18}
-              color={activeTab === tab.id ? C.purple : C.textSecondary}
-            />
-            <Text style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}>
-              {tab.label}
-            </Text>
+            <Ionicons name={tab.icon as any} size={18} color={activeTab === tab.id ? C.purple : C.textSecondary} />
+            <Text style={[styles.tabText, activeTab === tab.id && styles.tabTextActive]}>{tab.label}</Text>
           </Pressable>
         ))}
       </View>

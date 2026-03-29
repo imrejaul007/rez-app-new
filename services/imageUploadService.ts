@@ -4,8 +4,9 @@
 import { Platform } from 'react-native';
 import { FILE_SIZE_LIMITS, UPLOAD_TIMEOUTS, formatFileSize } from '@/utils/fileUploadConstants';
 import { getAuthToken } from '@/utils/authStorage';
+import apiClient from './apiClient';
 
-const API_URL = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
+const API_URL = apiClient.getBaseURL();
 const UPLOAD_TIMEOUT = UPLOAD_TIMEOUTS.IMAGE; // Use centralized timeout
 
 interface UploadResult {

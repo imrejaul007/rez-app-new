@@ -1,5 +1,6 @@
 import { AppState, AppStateStatus, Platform } from 'react-native';
 import { getAuthToken } from '@/utils/authStorage';
+import apiClient from './apiClient';
 
 // Lazy-load socket.io-client (same pattern as SocketContext)
 type SocketIOClient = any;
@@ -51,7 +52,7 @@ export type ConnectionEventCallback = (data?: any) => void;
 
 // Get socket URL from environment (matches SocketContext pattern)
 const getSocketUrl = (): string => {
-  const apiBaseUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api';
+  const apiBaseUrl = apiClient.getBaseURL();
   const baseUrl = apiBaseUrl.replace('/api', '');
 
   if (Platform.OS === 'web') {
