@@ -14,8 +14,8 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   ScrollView,
-  Alert,
 } from 'react-native';
+import { platformAlert, platformAlertSimple } from '@/utils/platformAlert';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, Stack } from 'expo-router';
@@ -94,7 +94,7 @@ function CreateArticlePage() {
 
   const handlePublish = async () => {
     if (!form.title.trim() || !form.content.trim()) {
-      Alert.alert('Missing Info', 'Please add a title and content to your article.');
+      platformAlertSimple('Missing Info', 'Please add a title and content to your article.');
       return;
     }
 
@@ -109,9 +109,9 @@ function CreateArticlePage() {
         images: form.images,
       });
 
-      Alert.alert('Published! 🎉', 'Your article is now live.', [{ text: 'OK', onPress: () => router.back() }]);
+      platformAlert('Published!', 'Your article is now live.', [{ text: 'OK', onPress: () => router.back() }]);
     } catch (err: any) {
-      Alert.alert('Error', err.message || 'Failed to publish. Try again.');
+      platformAlertSimple('Error', err.message || 'Failed to publish. Try again.');
     } finally {
       setSubmitting(false);
     }

@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -15,6 +14,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '@/hooks/useTheme';
 import apiClient from '@/services/apiClient';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
+import { platformAlertSimple } from '@/utils/platformAlert';
 
 function WaitlistScreen() {
   const { storeId } = useLocalSearchParams<{ storeId: string }>();
@@ -28,11 +28,11 @@ function WaitlistScreen() {
 
   const handleJoin = async () => {
     if (!storeId) {
-      Alert.alert('Error', 'Invalid store. Please go back and try again.');
+      platformAlertSimple('Error', 'Invalid store. Please go back and try again.');
       return;
     }
     if (!serviceType.trim()) {
-      Alert.alert('Required', 'Please enter the service you need');
+      platformAlertSimple('Required', 'Please enter the service you need');
       return;
     }
     setLoading(true);
@@ -47,7 +47,7 @@ function WaitlistScreen() {
         setJoined(true);
       }
     } catch (e: any) {
-      Alert.alert('Error', e?.response?.data?.error || 'Failed to join waitlist');
+      platformAlertSimple('Error', e?.response?.data?.error || 'Failed to join waitlist');
     } finally {
       setLoading(false);
     }

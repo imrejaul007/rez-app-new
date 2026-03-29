@@ -17,7 +17,6 @@ import {
   KeyboardAvoidingView,
   Share,
   Modal,
-  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -102,10 +101,15 @@ function TransferPage() {
   }, [fetchRecipients]);
 
   const handleQRScan = async () => {
+    if (Platform.OS === 'web') {
+      // Web does not support CameraView — show manual QR input instead
+      setShowScanner(true);
+      return;
+    }
     if (!permission?.granted) {
       const result = await requestPermission();
       if (!result.granted) {
-        Alert.alert('Camera Permission', 'Camera access is needed to scan QR codes.');
+        platformAlertSimple('Camera Permission', 'Camera access is needed to scan QR codes.');
         return;
       }
     }
@@ -137,10 +141,10 @@ function TransferPage() {
         });
         setStep('amount');
       } else {
-        Alert.alert('Invalid QR', 'This QR code is not a valid REZ payment QR.');
+        platformAlertSimple('Invalid QR', 'This QR code is not a valid REZ payment QR.');
       }
     } catch {
-      Alert.alert('Scan Error', 'Could not read QR code. Please try again.');
+      platformAlertSimple('Scan Error', 'Could not read QR code. Please try again.');
     }
   };
 
@@ -363,26 +367,68 @@ function TransferPage() {
       {/* QR Scanner Modal */}
       {showScanner && (
         <Modal visible animationType="slide">
-          <SafeAreaView style={{ flex: 1, backgroundColor: '#000' }} edges={['top', 'bottom']}>
-            <CameraView
-              style={{ flex: 1 }}
-              facing="back"
-              barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
-              onBarcodeScanned={handleBarCodeScanned}
-            />
-            <View style={{ position: 'absolute', top: 60, left: 20, right: 20 }}>
-              <ThemedText style={{ color: '#fff', textAlign: 'center', fontSize: 16 }}>
-                Point camera at a REZ QR code
-              </ThemedText>
-            </View>
-            <View style={{ position: 'absolute', bottom: 50, left: 0, right: 0, alignItems: 'center' }}>
-              <Pressable
-                onPress={() => setShowScanner(false)}
-                style={{ backgroundColor: '#ffcd57', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 24 }}
-              >
-                <ThemedText style={{ color: '#1a3a52', fontWeight: '700' }}>Cancel</ThemedText>
-              </Pressable>
-            </View>
+          <SafeAreaView
+            style={{ flex: 1, backgroundColor: Platform.OS === 'web' ? '#fff' : '#000' }}
+            edges={['top', 'bottom']}
+          >
+            {Platform.OS !== 'web' ? (
+              <>
+                <CameraView
+                  style={{ flex: 1 }}
+                  facing="back"
+                  barcodeScannerSettings={{ barcodeTypes: ['qr'] }}
+                  onBarcodeScanned={handleBarCodeScanned}
+                />
+                <View style={{ position: 'absolute', top: 60, left: 20, right: 20 }}>
+                  <ThemedText style={{ color: '#fff', textAlign: 'center', fontSize: 16 }}>
+                    Point camera at a REZ QR code
+                  </ThemedText>
+                </View>
+                <View style={{ position: 'absolute', bottom: 50, left: 0, right: 0, alignItems: 'center' }}>
+                  <Pressable
+                    onPress={() => setShowScanner(false)}
+                    style={{ backgroundColor: '#ffcd57', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 24 }}
+                  >
+                    <ThemedText style={{ color: '#1a3a52', fontWeight: '700' }}>Cancel</ThemedText>
+                  </Pressable>
+                </View>
+              </>
+            ) : (
+              /* Web fallback: manual QR code / phone number entry */
+              <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 }}>
+                <ThemedText style={{ fontSize: 22, fontWeight: '700', color: '#1a3a52', marginBottom: 12 }}>
+                  Enter QR Code Manually
+                </ThemedText>
+                <ThemedText style={{ fontSize: 14, color: '#6B7280', textAlign: 'center', marginBottom: 24 }}>
+                  Camera scanning is not available on web. Paste the REZ QR code value or enter a 10-digit phone number.
+                </ThemedText>
+                <TextInput
+                  style={{
+                    width: '100%',
+                    backgroundColor: '#F9FAFB',
+                    borderWidth: 1.5,
+                    borderColor: '#D1D5DB',
+                    borderRadius: 12,
+                    paddingHorizontal: 16,
+                    paddingVertical: 12,
+                    fontSize: 15,
+                    color: '#111827',
+                    marginBottom: 16,
+                  }}
+                  placeholder="rez://pay/9876543210 or 10-digit number"
+                  placeholderTextColor="#9CA3AF"
+                  autoFocus
+                  onSubmitEditing={(e) => handleBarCodeScanned({ data: e.nativeEvent.text.trim() })}
+                  returnKeyType="go"
+                />
+                <Pressable
+                  onPress={() => setShowScanner(false)}
+                  style={{ backgroundColor: '#ffcd57', paddingHorizontal: 32, paddingVertical: 14, borderRadius: 24 }}
+                >
+                  <ThemedText style={{ color: '#1a3a52', fontWeight: '700' }}>Cancel</ThemedText>
+                </Pressable>
+              </View>
+            )}
           </SafeAreaView>
         </Modal>
       )}

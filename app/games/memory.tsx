@@ -4,26 +4,13 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import { colors } from '@/constants/theme';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Platform,
-  ScrollView,
-  ActivityIndicator
-} from 'react-native';
-import Animated, {
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
-} from 'react-native-reanimated';
+import { View, Text, StyleSheet, Pressable, Platform, ScrollView, ActivityIndicator } from 'react-native';
+import Animated, { interpolate, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Haptics from 'expo-haptics';
+import { triggerNotification } from '@/utils/haptics';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -65,52 +52,43 @@ function createDeck(): Card[] {
   }));
 }
 
-const MemoryCardView = React.memo(({ card, index, flipAnim, onPress, disabled }: {
-  card: Card;
-  index: number;
-  flipAnim: Animated.SharedValue<number>;
-  onPress: () => void;
-  disabled: boolean;
-}) => {
-  const frontStyle = useAnimatedStyle(() => ({
-    transform: [{ rotateY: `${interpolate(flipAnim.value, [0, 1], [0, 180])}deg` }],
-  }));
-  const backStyle = useAnimatedStyle(() => ({
-    transform: [{ rotateY: `${interpolate(flipAnim.value, [0, 1], [180, 360])}deg` }],
-  }));
+const MemoryCardView = React.memo(
+  ({
+    card,
+    index,
+    flipAnim,
+    onPress,
+    disabled,
+  }: {
+    card: Card;
+    index: number;
+    flipAnim: Animated.SharedValue<number>;
+    onPress: () => void;
+    disabled: boolean;
+  }) => {
+    const frontStyle = useAnimatedStyle(() => ({
+      transform: [{ rotateY: `${interpolate(flipAnim.value, [0, 1], [0, 180])}deg` }],
+    }));
+    const backStyle = useAnimatedStyle(() => ({
+      transform: [{ rotateY: `${interpolate(flipAnim.value, [0, 1], [180, 360])}deg` }],
+    }));
 
-  return (
-    <Pressable
-      style={styles.cardContainer}
-      onPress={onPress}
-      disabled={disabled}
-    >
-      <Animated.View
-        style={[
-          styles.card,
-          styles.cardBack,
-          card.isMatched && styles.cardMatched,
-          frontStyle,
-        ]}
-      >
-        {card.isMatched ? (
-          <Ionicons name="checkmark-circle" size={28} color={Colors.success} />
-        ) : (
-          <Text style={styles.cardBackText}>?</Text>
-        )}
-      </Animated.View>
-      <Animated.View
-        style={[
-          styles.card,
-          styles.cardFront,
-          backStyle,
-        ]}
-      >
-        <Text style={styles.cardEmoji}>{card.emoji}</Text>
-      </Animated.View>
-    </Pressable>
-  );
-});
+    return (
+      <Pressable style={styles.cardContainer} onPress={onPress} disabled={disabled}>
+        <Animated.View style={[styles.card, styles.cardBack, card.isMatched && styles.cardMatched, frontStyle]}>
+          {card.isMatched ? (
+            <Ionicons name="checkmark-circle" size={28} color={Colors.success} />
+          ) : (
+            <Text style={styles.cardBackText}>?</Text>
+          )}
+        </Animated.View>
+        <Animated.View style={[styles.card, styles.cardFront, backStyle]}>
+          <Text style={styles.cardEmoji}>{card.emoji}</Text>
+        </Animated.View>
+      </Pressable>
+    );
+  },
+);
 
 function MemoryPage() {
   const isMounted = useIsMounted();
@@ -126,15 +104,13 @@ function MemoryPage() {
   const [canFlip, setCanFlip] = useState(true);
 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const flipAnimations = useRef<any[]>(
-    Array.from({ length: 16 }, () => useSharedValue(0))
-  ).current;
+  const flipAnimations = useRef<any[]>(Array.from({ length: 16 }, () => useSharedValue(0))).current;
 
   // Timer effect
   useEffect(() => {
     if (gameState === 'playing') {
       timerRef.current = setInterval(() => {
-        setTimer(prev => prev + 1);
+        setTimer((prev) => prev + 1);
       }, 1000);
     }
     return () => {
@@ -187,7 +163,7 @@ function MemoryPage() {
     if (!isMounted()) return;
     setCanFlip(true);
     if (!isMounted()) return;
-    flipAnimations.forEach(anim => anim.value = 0);
+    flipAnimations.forEach((anim) => (anim.value = 0));
     if (!isMounted()) return;
     setGameState('playing');
     if (!isMounted()) return;
@@ -209,7 +185,7 @@ function MemoryPage() {
         setCoinsEarned(earned);
         // Haptic feedback on coins earned
         if (earned > 0) {
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+          triggerNotification('Success');
         }
       }
     } catch (error) {
@@ -225,51 +201,52 @@ function MemoryPage() {
     flipAnimations[index].value = withTiming(0, { duration: 300 });
   };
 
-  const handleCardPress = useCallback((index: number) => {
-    if (!canFlip) return;
-    if (gameState !== 'playing') return;
-    if (cards[index].isFlipped || cards[index].isMatched) return;
-    if (flippedCards.length >= 2) return;
-    if (flippedCards.includes(index)) return;
+  const handleCardPress = useCallback(
+    (index: number) => {
+      if (!canFlip) return;
+      if (gameState !== 'playing') return;
+      if (cards[index].isFlipped || cards[index].isMatched) return;
+      if (flippedCards.length >= 2) return;
+      if (flippedCards.includes(index)) return;
 
-    // Flip the card
-    flipCard(index);
-    const newFlipped = [...flippedCards, index];
-    setFlippedCards(newFlipped);
+      // Flip the card
+      flipCard(index);
+      const newFlipped = [...flippedCards, index];
+      setFlippedCards(newFlipped);
 
-    setCards(prev => prev.map((card, i) =>
-      i === index ? { ...card, isFlipped: true } : card
-    ));
+      setCards((prev) => prev.map((card, i) => (i === index ? { ...card, isFlipped: true } : card)));
 
-    if (newFlipped.length === 2) {
-      setAttempts(prev => prev + 1);
-      setCanFlip(false);
+      if (newFlipped.length === 2) {
+        setAttempts((prev) => prev + 1);
+        setCanFlip(false);
 
-      const [first, second] = newFlipped;
-      if (cards[first].emoji === cards[index].emoji) {
-        // Match found
-        setTimeout(() => {
-          setCards(prev => prev.map((card, i) =>
-            i === first || i === second ? { ...card, isMatched: true } : card
-          ));
-          setMatches(prev => prev + 1);
-          setFlippedCards([]);
-          setCanFlip(true);
-        }, 500);
-      } else {
-        // No match - flip back
-        setTimeout(() => {
-          unflipCard(first);
-          unflipCard(second);
-          setCards(prev => prev.map((card, i) =>
-            i === first || i === second ? { ...card, isFlipped: false } : card
-          ));
-          setFlippedCards([]);
-          setCanFlip(true);
-        }, 1000);
+        const [first, second] = newFlipped;
+        if (cards[first].emoji === cards[index].emoji) {
+          // Match found
+          setTimeout(() => {
+            setCards((prev) =>
+              prev.map((card, i) => (i === first || i === second ? { ...card, isMatched: true } : card)),
+            );
+            setMatches((prev) => prev + 1);
+            setFlippedCards([]);
+            setCanFlip(true);
+          }, 500);
+        } else {
+          // No match - flip back
+          setTimeout(() => {
+            unflipCard(first);
+            unflipCard(second);
+            setCards((prev) =>
+              prev.map((card, i) => (i === first || i === second ? { ...card, isFlipped: false } : card)),
+            );
+            setFlippedCards([]);
+            setCanFlip(true);
+          }, 1000);
+        }
       }
-    }
-  }, [canFlip, gameState, cards, flippedCards]);
+    },
+    [canFlip, gameState, cards, flippedCards],
+  );
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
@@ -291,17 +268,12 @@ function MemoryPage() {
   const renderIdleScreen = () => (
     <View style={styles.centerContent}>
       <View style={styles.gameIconContainer}>
-        <LinearGradient
-          colors={[colors.brand.indigo, '#4F46E5']}
-          style={styles.gameIconGradient}
-        >
+        <LinearGradient colors={[colors.brand.indigo, '#4F46E5']} style={styles.gameIconGradient}>
           <Text style={styles.gameIcon}>&#x1F0CF;</Text>
         </LinearGradient>
       </View>
       <ThemedText style={styles.gameTitle}>Memory Match</ThemedText>
-      <ThemedText style={styles.gameSubtitle}>
-        Match all 8 pairs as fast as you can!
-      </ThemedText>
+      <ThemedText style={styles.gameSubtitle}>Match all 8 pairs as fast as you can!</ThemedText>
 
       <View style={styles.rulesCard}>
         <ThemedText style={styles.rulesTitle}>How to Play</ThemedText>
@@ -324,10 +296,7 @@ function MemoryPage() {
       </View>
 
       <Pressable style={styles.startButton} onPress={startGame} disabled={loading}>
-        <LinearGradient
-          colors={[colors.brand.indigo, '#4F46E5']}
-          style={styles.startButtonGradient}
-        >
+        <LinearGradient colors={[colors.brand.indigo, '#4F46E5']} style={styles.startButtonGradient}>
           {loading ? (
             <ActivityIndicator color={colors.text.inverse} />
           ) : (
@@ -347,9 +316,7 @@ function MemoryPage() {
         <Ionicons name="trophy" size={64} color={Colors.gold} />
       </View>
       <ThemedText style={styles.completedTitle}>Well Done!</ThemedText>
-      <ThemedText style={styles.completedSubtitle}>
-        You matched all pairs!
-      </ThemedText>
+      <ThemedText style={styles.completedSubtitle}>You matched all pairs!</ThemedText>
 
       <View style={styles.statsGrid}>
         <View style={styles.statItem}>
@@ -364,7 +331,9 @@ function MemoryPage() {
         </View>
         <View style={styles.statItem}>
           <Ionicons name="checkmark-done" size={22} color={Colors.success} />
-          <ThemedText style={styles.statValue}>{matches}/{CARD_EMOJIS.length}</ThemedText>
+          <ThemedText style={styles.statValue}>
+            {matches}/{CARD_EMOJIS.length}
+          </ThemedText>
           <ThemedText style={styles.statLabel}>Matches</ThemedText>
         </View>
       </View>
@@ -380,10 +349,7 @@ function MemoryPage() {
 
       <View style={styles.actionButtons}>
         <Pressable style={styles.playAgainButton} onPress={startGame}>
-          <LinearGradient
-            colors={[colors.brand.indigo, '#4F46E5']}
-            style={styles.startButtonGradient}
-          >
+          <LinearGradient colors={[colors.brand.indigo, '#4F46E5']} style={styles.startButtonGradient}>
             <Ionicons name="refresh" size={20} color={colors.text.inverse} />
             <ThemedText style={styles.startButtonText}>Play Again</ThemedText>
           </LinearGradient>
@@ -405,10 +371,7 @@ function MemoryPage() {
           headerTintColor: colors.text.primary,
           headerTitleStyle: { fontWeight: 'bold' },
           headerLeft: () => (
-            <Pressable
-              onPress={handleBackPress}
-              style={styles.headerBackButton}
-            >
+            <Pressable onPress={handleBackPress} style={styles.headerBackButton}>
               <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
           ),
@@ -416,10 +379,7 @@ function MemoryPage() {
       />
       <ThemedView style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <LinearGradient
-            colors={['#A8E6CF', '#8FD9B8', '#7CCCA0']}
-            style={styles.gradient}
-          >
+          <LinearGradient colors={['#A8E6CF', '#8FD9B8', '#7CCCA0']} style={styles.gradient}>
             {gameState === 'idle' && renderIdleScreen()}
 
             {gameState === 'playing' && (
@@ -436,14 +396,14 @@ function MemoryPage() {
                   </View>
                   <View style={styles.gameStat}>
                     <Ionicons name="checkmark-done" size={16} color={Colors.success} />
-                    <Text style={styles.gameStatText}>{matches}/{CARD_EMOJIS.length}</Text>
+                    <Text style={styles.gameStatText}>
+                      {matches}/{CARD_EMOJIS.length}
+                    </Text>
                   </View>
                 </View>
 
                 {/* Card Grid */}
-                <View style={styles.grid}>
-                  {cards.map((card, index) => renderCard(card, index))}
-                </View>
+                <View style={styles.grid}>{cards.map((card, index) => renderCard(card, index))}</View>
               </>
             )}
 

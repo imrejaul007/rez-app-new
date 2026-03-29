@@ -15,8 +15,8 @@ import {
   ActivityIndicator,
   RefreshControl,
   Clipboard,
-  Alert,
 } from 'react-native';
+import { platformAlertSimple } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -205,7 +205,7 @@ function StoreGiftCardsScreen() {
 
   const handleCopyCode = useCallback((code: string) => {
     Clipboard.setString(code);
-    Alert.alert('Copied!', `Gift card code ${code} copied to clipboard.`);
+    platformAlertSimple('Copied!', `Gift card code ${code} copied to clipboard.`);
   }, []);
 
   const filteredCards = cards.filter((c) => c.status === activeTab);

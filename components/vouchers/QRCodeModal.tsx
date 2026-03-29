@@ -10,7 +10,8 @@ import {
   Pressable,
   Platform,
   Share,
-  Dimensions} from 'react-native';
+  Dimensions,
+} from 'react-native';
 import { platformAlertSimple, platformAlertDestructive } from '@/utils/platformAlert';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
@@ -74,6 +75,7 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
 
   // Increase brightness when modal opens for better scanning
   const handleModalShow = async () => {
+    if (Platform.OS === 'web') return;
     try {
       const { status } = await Brightness.requestPermissionsAsync();
       if (status === 'granted') {
@@ -90,13 +92,15 @@ const QRCodeModal: React.FC<QRCodeModalProps> = ({
 
   // Restore brightness when modal closes
   const handleModalClose = async () => {
-    try {
-      if (originalBrightness !== null) {
-        if (!isMounted()) return;
-        await Brightness.setBrightnessAsync(originalBrightness);
+    if (Platform.OS !== 'web') {
+      try {
+        if (originalBrightness !== null) {
+          if (!isMounted()) return;
+          await Brightness.setBrightnessAsync(originalBrightness);
+        }
+      } catch (error) {
+        // silently handle
       }
-    } catch (error) {
-      // silently handle
     }
     onClose();
   };

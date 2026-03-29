@@ -1,18 +1,13 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet, Pressable, Platform } from 'react-native';
 import { router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import QuizGame from '@/components/gamification/QuizGame';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
-import * as Haptics from 'expo-haptics';
+import { triggerNotification } from '@/utils/haptics';
 import { useGamification } from '@/contexts/GamificationContext';
 import { platformAlert } from '@/utils/platformAlert';
 
@@ -24,20 +19,24 @@ function QuizPage() {
   const [gameComplete, setGameComplete] = useState(false);
   const [finalScore, setFinalScore] = useState(0);
   const [coinsEarned, setCoinsEarned] = useState(0);
-  const [tournamentUpdate, setTournamentUpdate] = useState<{ tournamentName: string; pointsAdded: number; newRank: number } | null>(null);
+  const [tournamentUpdate, setTournamentUpdate] = useState<{
+    tournamentName: string;
+    pointsAdded: number;
+    newRank: number;
+  } | null>(null);
 
   const { actions: gamificationActions } = useGamification();
 
   const handleBackPress = () => {
     if (!gameComplete) {
-      platformAlert(
-        'Quit Quiz?',
-        'Are you sure you want to quit? Your progress will be lost.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'Quit', style: 'destructive', onPress: () => router.canGoBack() ? router.back() : router.replace('/(tabs)') },
-        ]
-      );
+      platformAlert('Quit Quiz?', 'Are you sure you want to quit? Your progress will be lost.', [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Quit',
+          style: 'destructive',
+          onPress: () => (router.canGoBack() ? router.back() : router.replace('/(tabs)')),
+        },
+      ]);
     } else {
       router.canGoBack() ? router.back() : router.replace('/(tabs)');
     }
@@ -51,7 +50,7 @@ function QuizPage() {
 
     // Haptic feedback on game completion with coins earned
     if (coins > 0) {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+      triggerNotification('Success');
     }
 
     // Refresh gamification data to update coins balance
@@ -88,7 +87,7 @@ function QuizPage() {
             },
             headerLeft: () => (
               <Pressable
-                onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
                 style={styles.backButton}
               >
                 <Ionicons name="arrow-back" size={24} color="white" />
@@ -130,7 +129,12 @@ function QuizPage() {
                     <ThemedText style={styles.tournamentBannerValue}>+{tournamentUpdate.pointsAdded}</ThemedText>
                     <ThemedText style={styles.tournamentBannerLabel}>Points</ThemedText>
                   </View>
-                  <View style={[styles.tournamentBannerStat, { borderLeftWidth: 1, borderLeftColor: 'rgba(255,255,255,0.2)' }]}>
+                  <View
+                    style={[
+                      styles.tournamentBannerStat,
+                      { borderLeftWidth: 1, borderLeftColor: 'rgba(255,255,255,0.2)' },
+                    ]}
+                  >
                     <ThemedText style={styles.tournamentBannerValue}>#{tournamentUpdate.newRank}</ThemedText>
                     <ThemedText style={styles.tournamentBannerLabel}>Rank</ThemedText>
                   </View>
@@ -139,27 +143,17 @@ function QuizPage() {
             )}
 
             <View style={styles.actionsContainer}>
-              <Pressable
-                style={styles.actionButton}
-                onPress={handlePlayAgain}
-               
-              >
+              <Pressable style={styles.actionButton} onPress={handlePlayAgain}>
                 <View style={styles.actionButtonInner}>
                   <Ionicons name="refresh" size={20} color={colors.brand.purpleLight} />
                   <ThemedText style={styles.actionButtonText}>Play Again</ThemedText>
                 </View>
               </Pressable>
 
-              <Pressable
-                style={[styles.actionButton, styles.actionButtonSecondary]}
-                onPress={handleViewChallenges}
-               
-              >
+              <Pressable style={[styles.actionButton, styles.actionButtonSecondary]} onPress={handleViewChallenges}>
                 <View style={styles.actionButtonInner}>
                   <Ionicons name="trophy" size={20} color="white" />
-                  <ThemedText style={styles.actionButtonTextSecondary}>
-                    View Challenges
-                  </ThemedText>
+                  <ThemedText style={styles.actionButtonTextSecondary}>View Challenges</ThemedText>
                 </View>
               </Pressable>
             </View>
@@ -182,21 +176,14 @@ function QuizPage() {
             fontWeight: 'bold',
           },
           headerLeft: () => (
-            <Pressable
-              onPress={handleBackPress}
-              style={styles.backButton}
-            >
+            <Pressable onPress={handleBackPress} style={styles.backButton}>
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
           ),
         }}
       />
       <ThemedView style={styles.container}>
-        <QuizGame
-          difficulty="medium"
-          category="general"
-          onGameComplete={handleGameComplete}
-        />
+        <QuizGame difficulty="medium" category="general" onGameComplete={handleGameComplete} />
       </ThemedView>
     </>
   );

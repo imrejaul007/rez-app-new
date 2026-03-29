@@ -8,8 +8,8 @@ import {
   ActivityIndicator,
   ImageBackground,
   ScrollView,
-  Alert,
 } from 'react-native';
+import { platformAlertConfirm } from '@/utils/platformAlert';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -84,24 +84,24 @@ export default function SurpriseScreen() {
   };
 
   const handleReveal = () => {
-    Alert.alert('Reveal Surprise', 'This will redeem coins to reveal your personalized surprise. Continue?', [
-      { text: 'Cancel', style: 'cancel' },
-      {
-        text: 'Confirm',
-        onPress: async () => {
-          setRevealing(true);
-          try {
-            const revealed = await tryApi.revealSurpriseTrial();
-            setData(revealed);
-            setRevealed(true);
-          } catch (err) {
-            console.error('Failed to reveal surprise:', err);
-          } finally {
-            setRevealing(false);
-          }
-        },
+    platformAlertConfirm(
+      'Reveal Surprise',
+      'This will redeem coins to reveal your personalized surprise. Continue?',
+      async () => {
+        setRevealing(true);
+        try {
+          const revealed = await tryApi.revealSurpriseTrial();
+          setData(revealed);
+          setRevealed(true);
+        } catch (err) {
+          console.error('Failed to reveal surprise:', err);
+        } finally {
+          setRevealing(false);
+        }
       },
-    ]);
+      'Confirm',
+      'Cancel',
+    );
   };
 
   const handleBookNow = () => {

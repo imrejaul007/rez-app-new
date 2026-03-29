@@ -10,6 +10,17 @@ export const APP_CONFIG = {
   environment: process.env.EXPO_PUBLIC_ENVIRONMENT || 'development',
 } as const;
 
+// Production guard: critical URL env vars must be set in production.
+// Evaluated once at module load so misconfigured production builds fail fast.
+if (process.env.EXPO_PUBLIC_ENVIRONMENT === 'production') {
+  if (!process.env.EXPO_PUBLIC_API_BASE_URL) {
+    throw new Error('[config/env] FATAL: EXPO_PUBLIC_API_BASE_URL is not set in production.');
+  }
+  if (!process.env.EXPO_PUBLIC_PROD_API_URL) {
+    throw new Error('[config/env] FATAL: EXPO_PUBLIC_PROD_API_URL is not set in production.');
+  }
+}
+
 // API Configuration
 export const API_CONFIG = {
   baseUrl: process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:5001/api',

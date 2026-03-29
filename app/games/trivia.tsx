@@ -9,7 +9,7 @@ import CachedImage from '@/components/ui/CachedImage';
 import { router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Haptics from 'expo-haptics';
+import { triggerNotification } from '@/utils/haptics';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -311,7 +311,7 @@ function TriviaPage() {
         setCoinsEarned(earned);
         // Haptic feedback on coins earned
         if (earned > 0) {
-          Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+          triggerNotification('Success');
         }
       }
     } catch {}

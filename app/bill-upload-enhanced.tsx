@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Users can upload bills with OCR verification and cashback calculation
 
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  ActivityIndicator,
-  Platform,
-  Modal,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, ActivityIndicator, Platform, Modal } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 import * as ExpoCamera from 'expo-camera';
@@ -34,10 +25,10 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 
 const CameraType = {
   back: 'back' as const,
-  front: 'front' as const
+  front: 'front' as const,
 };
 
-type CameraTypeValue = typeof CameraType[keyof typeof CameraType];
+type CameraTypeValue = (typeof CameraType)[keyof typeof CameraType];
 
 function EnhancedBillUploadPage() {
   const isMounted = useIsMounted();
@@ -91,7 +82,6 @@ function EnhancedBillUploadPage() {
         router.replace('/');
       }
     } catch (error) {
-
       if (router) {
         router.replace('/');
       }
@@ -100,6 +90,12 @@ function EnhancedBillUploadPage() {
 
   // Open camera
   const openCamera = async () => {
+    if (Platform.OS === 'web') {
+      // Show web fallback screen instead of attempting to open native camera
+      setShowCamera(true);
+      return;
+    }
+
     if (!permission) {
       // Permission not loaded yet
       return;
@@ -187,7 +183,7 @@ function EnhancedBillUploadPage() {
           'Success!',
           `Your bill has been uploaded successfully. You'll earn ${currencySymbol}${estimatedCashback.toFixed(2)} cashback once approved!`,
           () => router?.push && router.push('/bill-history'),
-          'View History'
+          'View History',
         );
       } else {
         platformAlertSimple('Upload Failed', error || 'Failed to upload bill. Please try again.');
@@ -208,28 +204,49 @@ function EnhancedBillUploadPage() {
 
   // Render camera view
   if (showCamera) {
+    if (Platform.OS === 'web') {
+      // Camera is not available on web — show a friendly message and close trigger
+      return (
+        <View
+          style={[
+            styles.cameraContainer,
+            { justifyContent: 'center', alignItems: 'center', backgroundColor: '#F9FAFB', padding: 32 },
+          ]}
+        >
+          <Ionicons name="camera-off-outline" size={64} color="#9CA3AF" />
+          <Text style={{ fontSize: 18, fontWeight: '700', color: '#374151', marginTop: 16, textAlign: 'center' }}>
+            Camera Not Available on Web
+          </Text>
+          <Text style={{ fontSize: 14, color: '#6B7280', marginTop: 8, textAlign: 'center', lineHeight: 20 }}>
+            Please use the Gallery option to upload a bill image from your device.
+          </Text>
+          <Pressable
+            style={{
+              marginTop: 24,
+              backgroundColor: '#FF6B35',
+              paddingHorizontal: 32,
+              paddingVertical: 12,
+              borderRadius: 12,
+            }}
+            onPress={() => setShowCamera(false)}
+          >
+            <Text style={{ color: '#fff', fontWeight: '700', fontSize: 15 }}>Go Back</Text>
+          </Pressable>
+        </View>
+      );
+    }
+
     return (
       <View style={styles.cameraContainer}>
-        <ExpoCamera.CameraView
-          ref={cameraRef}
-          style={styles.camera}
-          facing={cameraType as any}
-        >
+        <ExpoCamera.CameraView ref={cameraRef} style={styles.camera} facing={cameraType as any}>
           <View style={styles.cameraOverlay}>
-            <Pressable
-              style={styles.cameraCloseButton}
-              onPress={() => setShowCamera(false)}
-            >
+            <Pressable style={styles.cameraCloseButton} onPress={() => setShowCamera(false)}>
               <Ionicons name="close" size={32} color={colors.text.inverse} />
             </Pressable>
 
             <View style={styles.cameraGuidelines}>
-              <Text style={styles.cameraGuidelinesText}>
-                Position the bill within the frame
-              </Text>
-              <Text style={styles.cameraGuidelinesSubtext}>
-                Ensure all text is visible and clear
-              </Text>
+              <Text style={styles.cameraGuidelinesText}>Position the bill within the frame</Text>
+              <Text style={styles.cameraGuidelinesSubtext}>Ensure all text is visible and clear</Text>
               <View style={styles.cameraFrame} />
             </View>
 
@@ -237,20 +254,13 @@ function EnhancedBillUploadPage() {
               <Pressable
                 style={styles.cameraFlipButton}
                 onPress={() => {
-                  setCameraType(
-                    cameraType === CameraType.back
-                      ? CameraType.front
-                      : CameraType.back
-                  );
+                  setCameraType(cameraType === CameraType.back ? CameraType.front : CameraType.back);
                 }}
               >
                 <Ionicons name="camera-reverse" size={32} color={colors.text.inverse} />
               </Pressable>
 
-              <Pressable
-                style={styles.cameraCaptureButton}
-                onPress={takePicture}
-              >
+              <Pressable style={styles.cameraCaptureButton} onPress={takePicture}>
                 <View style={styles.cameraCaptureButtonInner} />
               </Pressable>
 
@@ -266,201 +276,173 @@ function EnhancedBillUploadPage() {
     <ErrorBoundary>
       <View style={styles.container}>
         <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
-        {/* Header */}
-        <View style={styles.header}>
-          <Pressable onPress={handleGoBack}>
-            <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
-          </Pressable>
-          <Text style={styles.headerTitle}>Upload Bill</Text>
-          <Pressable onPress={() => setShowRequirements(true)}>
-            <Ionicons name="information-circle-outline" size={24} color={colors.text.primary} />
-          </Pressable>
-        </View>
-
-        {/* Info Banner */}
-        <View style={styles.infoBanner}>
-          <Ionicons name="gift" size={24} color={colors.brand.emerald} />
-          <View style={styles.infoBannerContent}>
-            <Text style={styles.infoBannerTitle}>Earn Cashback on Bills!</Text>
-            <Text style={styles.infoBannerText}>
-              Upload your bills and earn up to 20% cashback instantly
-            </Text>
-          </View>
-        </View>
-
-        {/* Bill Image Section */}
-        {!billImage ? (
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Upload Your Bill</Text>
-            <View style={styles.uploadOptionsContainer}>
-              <Pressable
-                style={styles.uploadOption}
-                onPress={openCamera}
-              >
-                <Ionicons name="camera" size={40} color="#FF6B35" />
-                <Text style={styles.uploadOptionText}>Take Photo</Text>
-              </Pressable>
-
-              <Pressable
-                style={styles.uploadOption}
-                onPress={pickImageFromGallery}
-              >
-                <Ionicons name="images" size={40} color="#FF6B35" />
-                <Text style={styles.uploadOptionText}>Gallery</Text>
-              </Pressable>
-            </View>
-            <Text style={styles.helperText}>
-              Ensure the bill is clear and all details are visible
-            </Text>
-          </View>
-        ) : (
-          <View style={styles.section}>
-            <View style={styles.imagePreviewContainer}>
-              <CachedImage source={billImage} style={styles.imagePreview} />
-              <Pressable
-                style={styles.removeImageButton}
-                onPress={resetForm}
-              >
-                <Ionicons name="close-circle" size={32} color={Colors.error} />
-              </Pressable>
-            </View>
-          </View>
-        )}
-
-        {/* Verification Status */}
-        {workflow && workflow.currentState && (
-          <View style={styles.section}>
-            <BillVerificationStatus state={workflow.currentState} />
-          </View>
-        )}
-
-        {/* Errors */}
-        {hasErrors && workflow && (
-          <View style={styles.errorSection}>
-            <View style={styles.errorHeader}>
-              <Ionicons name="alert-circle" size={20} color="#F44336" />
-              <Text style={styles.errorTitle}>Verification Issues</Text>
-            </View>
-            {workflow.errors.map((err, index) => (
-              <Text key={index} style={styles.errorText}>• {err}</Text>
-            ))}
-            <Pressable
-              style={styles.correctionButton}
-              onPress={() => setShowCorrectionForm(true)}
-            >
-              <Text style={styles.correctionButtonText}>Correct Details</Text>
+          style={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 120 }}
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <Pressable onPress={handleGoBack}>
+              <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
+            </Pressable>
+            <Text style={styles.headerTitle}>Upload Bill</Text>
+            <Pressable onPress={() => setShowRequirements(true)}>
+              <Ionicons name="information-circle-outline" size={24} color={colors.text.primary} />
             </Pressable>
           </View>
-        )}
 
-        {/* Cashback Preview */}
-        {workflow?.cashbackCalculation && (
-          <View style={styles.section}>
-            <CashbackCalculator calculation={workflow.cashbackCalculation} />
+          {/* Info Banner */}
+          <View style={styles.infoBanner}>
+            <Ionicons name="gift" size={24} color={colors.brand.emerald} />
+            <View style={styles.infoBannerContent}>
+              <Text style={styles.infoBannerTitle}>Earn Cashback on Bills!</Text>
+              <Text style={styles.infoBannerText}>Upload your bills and earn up to 20% cashback instantly</Text>
+            </View>
           </View>
-        )}
 
-        {/* Action Buttons */}
-        {workflow && requiresUserInput && (
-          <View style={styles.actionButtons}>
-            <Pressable
-              style={styles.previewButton}
-              onPress={() => setShowPreview(true)}
-            >
-              <Ionicons name="eye" size={20} color="#2196F3" />
-              <Text style={styles.previewButtonText}>Review Details</Text>
-            </Pressable>
+          {/* Bill Image Section */}
+          {!billImage ? (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Upload Your Bill</Text>
+              <View style={styles.uploadOptionsContainer}>
+                <Pressable style={styles.uploadOption} onPress={openCamera}>
+                  <Ionicons name="camera" size={40} color="#FF6B35" />
+                  <Text style={styles.uploadOptionText}>Take Photo</Text>
+                </Pressable>
 
-            {!canProceed && (
-              <Pressable
-                style={styles.editButton}
-                onPress={() => setShowCorrectionForm(true)}
-              >
-                <Ionicons name="create" size={20} color="#FF9800" />
-                <Text style={styles.editButtonText}>Edit Details</Text>
-              </Pressable>
-            )}
-          </View>
-        )}
+                <Pressable style={styles.uploadOption} onPress={pickImageFromGallery}>
+                  <Ionicons name="images" size={40} color="#FF6B35" />
+                  <Text style={styles.uploadOptionText}>Gallery</Text>
+                </Pressable>
+              </View>
+              <Text style={styles.helperText}>Ensure the bill is clear and all details are visible</Text>
+            </View>
+          ) : (
+            <View style={styles.section}>
+              <View style={styles.imagePreviewContainer}>
+                <CachedImage source={billImage} style={styles.imagePreview} />
+                <Pressable style={styles.removeImageButton} onPress={resetForm}>
+                  <Ionicons name="close-circle" size={32} color={Colors.error} />
+                </Pressable>
+              </View>
+            </View>
+          )}
 
-        {/* Submit Button */}
-        {billImage && (
-          <Pressable
-            style={[
-              styles.submitButton,
-              (!canProceed || isUploading || isProcessing) && styles.submitButtonDisabled
-            ]}
-            onPress={handleSubmit}
-            disabled={!canProceed || isUploading || isProcessing}
-          >
-            {isUploading ? (
-              <ActivityIndicator color={colors.text.inverse} />
-            ) : (
-              <>
-                <Text style={styles.submitButtonText}>
-                  {canProceed ? 'Submit Bill' : 'Verifying...'}
+          {/* Verification Status */}
+          {workflow && workflow.currentState && (
+            <View style={styles.section}>
+              <BillVerificationStatus state={workflow.currentState} />
+            </View>
+          )}
+
+          {/* Errors */}
+          {hasErrors && workflow && (
+            <View style={styles.errorSection}>
+              <View style={styles.errorHeader}>
+                <Ionicons name="alert-circle" size={20} color="#F44336" />
+                <Text style={styles.errorTitle}>Verification Issues</Text>
+              </View>
+              {workflow.errors.map((err, index) => (
+                <Text key={index} style={styles.errorText}>
+                  • {err}
                 </Text>
-                {estimatedCashback > 0 && (
-                  <Text style={styles.submitButtonSubtext}>
-                    Earn {currencySymbol}{estimatedCashback.toFixed(2)} cashback
-                  </Text>
-                )}
-              </>
-            )}
-          </Pressable>
+              ))}
+              <Pressable style={styles.correctionButton} onPress={() => setShowCorrectionForm(true)}>
+                <Text style={styles.correctionButtonText}>Correct Details</Text>
+              </Pressable>
+            </View>
+          )}
+
+          {/* Cashback Preview */}
+          {workflow?.cashbackCalculation && (
+            <View style={styles.section}>
+              <CashbackCalculator calculation={workflow.cashbackCalculation} />
+            </View>
+          )}
+
+          {/* Action Buttons */}
+          {workflow && requiresUserInput && (
+            <View style={styles.actionButtons}>
+              <Pressable style={styles.previewButton} onPress={() => setShowPreview(true)}>
+                <Ionicons name="eye" size={20} color="#2196F3" />
+                <Text style={styles.previewButtonText}>Review Details</Text>
+              </Pressable>
+
+              {!canProceed && (
+                <Pressable style={styles.editButton} onPress={() => setShowCorrectionForm(true)}>
+                  <Ionicons name="create" size={20} color="#FF9800" />
+                  <Text style={styles.editButtonText}>Edit Details</Text>
+                </Pressable>
+              )}
+            </View>
+          )}
+
+          {/* Submit Button */}
+          {billImage && (
+            <Pressable
+              style={[styles.submitButton, (!canProceed || isUploading || isProcessing) && styles.submitButtonDisabled]}
+              onPress={handleSubmit}
+              disabled={!canProceed || isUploading || isProcessing}
+            >
+              {isUploading ? (
+                <ActivityIndicator color={colors.text.inverse} />
+              ) : (
+                <>
+                  <Text style={styles.submitButtonText}>{canProceed ? 'Submit Bill' : 'Verifying...'}</Text>
+                  {estimatedCashback > 0 && (
+                    <Text style={styles.submitButtonSubtext}>
+                      Earn {currencySymbol}
+                      {estimatedCashback.toFixed(2)} cashback
+                    </Text>
+                  )}
+                </>
+              )}
+            </Pressable>
+          )}
+        </ScrollView>
+
+        {/* Requirements Modal */}
+        <Modal visible={showRequirements} animationType="slide" onRequestClose={() => setShowRequirements(false)}>
+          <View style={styles.modalHeader}>
+            <Pressable onPress={() => setShowRequirements(false)}>
+              <Ionicons name="close" size={24} color={colors.text.primary} />
+            </Pressable>
+            <Text style={styles.modalTitle}>Requirements</Text>
+            <View style={{ width: 24 }} />
+          </View>
+          <BillRequirements />
+        </Modal>
+
+        {/* Preview Modal */}
+        {workflow && workflow.ocrData && (
+          <BillPreviewModal
+            visible={showPreview}
+            onClose={() => setShowPreview(false)}
+            imageUri={workflow.imageUri}
+            ocrData={workflow.ocrData}
+            selectedMerchant={workflow.selectedMerchant}
+            onConfirm={handlePreviewConfirm}
+            onEdit={() => {
+              setShowPreview(false);
+              setShowCorrectionForm(true);
+            }}
+          />
         )}
-      </ScrollView>
 
-      {/* Requirements Modal */}
-      <Modal
-        visible={showRequirements}
-        animationType="slide"
-        onRequestClose={() => setShowRequirements(false)}
-      >
-        <View style={styles.modalHeader}>
-          <Pressable onPress={() => setShowRequirements(false)}>
-            <Ionicons name="close" size={24} color={colors.text.primary} />
-          </Pressable>
-          <Text style={styles.modalTitle}>Requirements</Text>
-          <View style={{ width: 24 }} />
-        </View>
-        <BillRequirements />
-      </Modal>
-
-      {/* Preview Modal */}
-      {workflow && workflow.ocrData && (
-        <BillPreviewModal
-          visible={showPreview}
-          onClose={() => setShowPreview(false)}
-          imageUri={workflow.imageUri}
-          ocrData={workflow.ocrData}
-          selectedMerchant={workflow.selectedMerchant}
-          onConfirm={handlePreviewConfirm}
-          onEdit={() => {
-            setShowPreview(false);
-            setShowCorrectionForm(true);
-          }}
-        />
-      )}
-
-      {/* Correction Form Modal */}
-      {workflow && workflow.ocrData && (
-        <ManualCorrectionForm
-          visible={showCorrectionForm}
-          onClose={() => setShowCorrectionForm(false)}
-          ocrData={workflow.ocrData}
-          onSubmit={async (corrections) => {
-            await applyManualCorrections(corrections);
-            if (!isMounted()) return;
-            setShowCorrectionForm(false);
-          }}
-        />
-      )}
-    </View>
+        {/* Correction Form Modal */}
+        {workflow && workflow.ocrData && (
+          <ManualCorrectionForm
+            visible={showCorrectionForm}
+            onClose={() => setShowCorrectionForm(false)}
+            ocrData={workflow.ocrData}
+            onSubmit={async (corrections) => {
+              await applyManualCorrections(corrections);
+              if (!isMounted()) return;
+              setShowCorrectionForm(false);
+            }}
+          />
+        )}
+      </View>
     </ErrorBoundary>
   );
 }

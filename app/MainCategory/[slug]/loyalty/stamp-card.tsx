@@ -14,6 +14,7 @@ import {
   SafeAreaView,
   RefreshControl,
 } from 'react-native';
+import { platformAlertSimple } from '@/utils/platformAlert';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -69,9 +70,11 @@ export default function StampCardScreen() {
     }
   }, [slug, isMounted]);
 
-  useFocusEffect(useCallback(() => {
-    fetchStampCard();
-  }, [fetchStampCard]));
+  useFocusEffect(
+    useCallback(() => {
+      fetchStampCard();
+    }, [fetchStampCard]),
+  );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -86,16 +89,16 @@ export default function StampCardScreen() {
     try {
       const response = await userLoyaltyApi.claimStampReward(stampCard.storeId);
       if (response.success) {
-        Alert.alert(
+        platformAlertSimple(
           'Reward Claimed!',
-          `You've claimed your reward worth ${currencySymbol}${stampCard.rewardValue}!`
+          `You've claimed your reward worth ${currencySymbol}${stampCard.rewardValue}!`,
         );
         fetchStampCard();
       } else {
-        Alert.alert('Error', response.message || 'Failed to claim reward');
+        platformAlertSimple('Error', response.message || 'Failed to claim reward');
       }
     } catch (error: any) {
-      Alert.alert('Error', error?.message || 'Failed to claim reward');
+      platformAlertSimple('Error', error?.message || 'Failed to claim reward');
     }
   };
 
@@ -178,11 +181,7 @@ export default function StampCardScreen() {
 
           <View style={styles.stampGrid}>
             {stamps.map((isEarned, index) => (
-              <Animated.View
-                key={index}
-                entering={ZoomIn.delay(300 + index * 30)}
-                style={styles.stampContainer}
-              >
+              <Animated.View key={index} entering={ZoomIn.delay(300 + index * 30)} style={styles.stampContainer}>
                 <LinearGradient
                   colors={
                     isEarned
@@ -227,10 +226,7 @@ export default function StampCardScreen() {
             ]}
           >
             <View style={styles.rewardIconSection}>
-              <LinearGradient
-                colors={[theme.primary + '30', theme.primary + '10']}
-                style={styles.rewardIconGradient}
-              >
+              <LinearGradient colors={[theme.primary + '30', theme.primary + '10']} style={styles.rewardIconGradient}>
                 <Ionicons name="gift" size={32} color={theme.primary} />
               </LinearGradient>
             </View>
@@ -241,7 +237,8 @@ export default function StampCardScreen() {
                 {stampCard.rewardDescription}
               </Text>
               <Text style={[styles.rewardValue, { color: theme.primary }]}>
-                worth {currencySymbol}{stampCard.rewardValue}
+                worth {currencySymbol}
+                {stampCard.rewardValue}
               </Text>
             </View>
           </View>
@@ -272,18 +269,9 @@ export default function StampCardScreen() {
           <View style={styles.historyList}>
             {stampCard.stampHistory.length > 0 ? (
               stampCard.stampHistory.map((entry, index) => (
-                <Animated.View
-                  key={index}
-                  entering={FadeInDown.delay(450 + index * 50)}
-                  style={styles.historyItem}
-                >
+                <Animated.View key={index} entering={FadeInDown.delay(450 + index * 50)} style={styles.historyItem}>
                   <View style={styles.historyItemLeft}>
-                    <View
-                      style={[
-                        styles.historyCheckmark,
-                        { backgroundColor: theme.success + '20' },
-                      ]}
-                    >
+                    <View style={[styles.historyCheckmark, { backgroundColor: theme.success + '20' }]}>
                       <Ionicons name="checkmark" size={16} color={theme.success} />
                     </View>
                     <View>
@@ -299,15 +287,14 @@ export default function StampCardScreen() {
                     </View>
                   </View>
                   <Text style={[styles.historyAmount, { color: theme.primary }]}>
-                    {currencySymbol}{entry.billAmount}
+                    {currencySymbol}
+                    {entry.billAmount}
                   </Text>
                 </Animated.View>
               ))
             ) : (
               <View style={styles.emptyHistoryContainer}>
-                <Text style={[styles.emptyHistoryText, { color: theme.text.secondary }]}>
-                  No stamp history yet
-                </Text>
+                <Text style={[styles.emptyHistoryText, { color: theme.text.secondary }]}>No stamp history yet</Text>
               </View>
             )}
           </View>

@@ -1,19 +1,13 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, Platform } from 'react-native';
 import { router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import SpinWheelGame from '@/components/gamification/SpinWheelGame';
 import SpinHistory from '@/components/gamification/SpinHistory';
 import CelebrationModal from '@/components/gamification/CelebrationModal';
-import * as Haptics from 'expo-haptics';
+import { triggerNotification } from '@/utils/haptics';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { useGamification } from '@/contexts/GamificationContext';
@@ -34,7 +28,11 @@ function SpinWheelPage() {
   const [lastResult, setLastResult] = useState<SpinWheelResult | null>(null);
   const [coinsEarned, setCoinsEarned] = useState(0);
   const [newBalance, setNewBalance] = useState(0);
-  const [tournamentUpdate, setTournamentUpdate] = useState<{ tournamentName: string; pointsAdded: number; newRank: number } | null>(null);
+  const [tournamentUpdate, setTournamentUpdate] = useState<{
+    tournamentName: string;
+    pointsAdded: number;
+    newRank: number;
+  } | null>(null);
 
   const { state: gamificationState, actions: gamificationActions } = useGamification();
 
@@ -141,7 +139,7 @@ function SpinWheelPage() {
 
       // Haptic feedback on spin win
       if (coins > 0) {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        triggerNotification('Success');
       }
 
       // Reward is already claimed by the spin endpoint in SpinWheelGame component
@@ -190,10 +188,7 @@ function SpinWheelPage() {
             fontWeight: 'bold',
           },
           headerLeft: () => (
-            <Pressable
-              onPress={handleBackPress}
-              style={styles.backButton}
-            >
+            <Pressable onPress={handleBackPress} style={styles.backButton}>
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
           ),
@@ -210,9 +205,8 @@ function SpinWheelPage() {
             <View style={styles.infoBannerTextContainer}>
               <ThemedText style={styles.infoBannerTitle}>How to Play</ThemedText>
               <ThemedText style={styles.infoBannerText}>
-                Tap "SPIN NOW" and watch the wheel spin! You can win coins, vouchers, or other
-                amazing rewards. You have {spinsRemaining} spin{spinsRemaining !== 1 ? 's' : ''}{' '}
-                remaining today.
+                Tap "SPIN NOW" and watch the wheel spin! You can win coins, vouchers, or other amazing rewards. You have{' '}
+                {spinsRemaining} spin{spinsRemaining !== 1 ? 's' : ''} remaining today.
               </ThemedText>
             </View>
           </LinearGradient>
@@ -232,9 +226,7 @@ function SpinWheelPage() {
           <View style={styles.statsGrid}>
             <View style={styles.statCard}>
               <Ionicons name="star" size={28} color={colors.brand.goldBright} />
-              <ThemedText style={styles.statValue}>
-                {gamificationState.coinBalance.total.toLocaleString()}
-              </ThemedText>
+              <ThemedText style={styles.statValue}>{gamificationState.coinBalance.total.toLocaleString()}</ThemedText>
               <ThemedText style={styles.statLabel}>Total Coins</ThemedText>
             </View>
             <View style={styles.statCard}>
@@ -258,20 +250,13 @@ function SpinWheelPage() {
         {/* CTA Section */}
         {spinsRemaining === 0 && (
           <View style={styles.ctaSection}>
-            <LinearGradient
-              colors={[Colors.brand.purpleLight, Colors.brand.purple]}
-              style={styles.ctaCard}
-            >
+            <LinearGradient colors={[Colors.brand.purpleLight, Colors.brand.purple]} style={styles.ctaCard}>
               <Ionicons name="trophy" size={48} color="white" />
               <ThemedText style={styles.ctaTitle}>No Spins Left!</ThemedText>
               <ThemedText style={styles.ctaText}>
                 Come back tomorrow for more spins or complete challenges to earn extra spins!
               </ThemedText>
-              <Pressable
-                style={styles.ctaButton}
-                onPress={() => router.push('/gamification' as any)}
-               
-              >
+              <Pressable style={styles.ctaButton} onPress={() => router.push('/gamification' as any)}>
                 <View style={styles.ctaButtonInner}>
                   <ThemedText style={styles.ctaButtonText}>View Challenges</ThemedText>
                   <Ionicons name="arrow-forward" size={20} color={Colors.brand.purpleLight} />

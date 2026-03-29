@@ -35,7 +35,8 @@ import { useFonts } from 'expo-font';
 import * as Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
 import React, { useEffect, useRef, useState } from 'react';
-import { Alert, AppState, AppStateStatus, Platform, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { AppState, AppStateStatus, Platform, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { platformAlertConfirm } from '@/utils/platformAlert';
 import NetInfo from '@react-native-community/netinfo';
 import { useRouter } from 'expo-router';
 import { Poppins_600SemiBold, Poppins_700Bold } from '@expo-google-fonts/poppins';
@@ -144,17 +145,12 @@ function RootLayout() {
           updateReadyRef.current = true;
           // Notify the user non-intrusively; they can dismiss and the app
           // will reload automatically the next time it resumes from background.
-          Alert.alert(
+          platformAlertConfirm(
             'Update Available',
             'A new version has been downloaded and will be applied the next time you open the app.',
-            [
-              { text: 'Later', style: 'cancel' },
-              {
-                text: 'Restart Now',
-                onPress: () => Updates.reloadAsync(),
-              },
-            ],
-            { cancelable: true },
+            () => Updates.reloadAsync(),
+            'Restart Now',
+            'Later',
           );
         }
       })

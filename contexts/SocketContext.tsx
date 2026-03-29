@@ -47,10 +47,10 @@ const getSocketUrl = (): string => {
     return baseUrl;
   }
 
-  // For mobile development on Android emulator, replace localhost with emulator host
-  // For iOS simulator or physical devices, use your machine's local IP address
-  // Android emulator: 10.0.2.2 maps to host machine's localhost
-  if (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1')) {
+  // In development on the Android emulator, replace localhost with the emulator's
+  // host alias so the socket can reach the dev server on the host machine.
+  // Gated with __DEV__ so physical-device production builds never apply this rewrite.
+  if (__DEV__ && (baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1'))) {
     return baseUrl.replace('localhost', '10.0.2.2').replace('127.0.0.1', '10.0.2.2');
   }
 

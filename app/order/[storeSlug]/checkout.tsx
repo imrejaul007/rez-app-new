@@ -18,7 +18,6 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   TextInput,
-  Alert,
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
@@ -28,6 +27,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { sendWebOtp, verifyWebOtp, createWebOrder, verifyWebPayment, CartItem } from '@/services/webOrderingApi';
+import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -207,7 +207,7 @@ export default function CheckoutScreen() {
   const handleSendOtp = useCallback(async () => {
     const cleaned = phone.replace(/\s/g, '');
     if (!/^[6-9]\d{9}$/.test(cleaned)) {
-      Alert.alert('Invalid number', 'Enter a valid 10-digit Indian mobile number.');
+      platformAlertSimple('Invalid number', 'Enter a valid 10-digit Indian mobile number.');
       return;
     }
     setOtpLoading(true);
@@ -216,7 +216,7 @@ export default function CheckoutScreen() {
       setOtpSent(true);
       startCountdown();
     } catch (e: any) {
-      Alert.alert('Error', e.message || 'Could not send OTP');
+      platformAlertSimple('Error', e.message || 'Could not send OTP');
     } finally {
       setOtpLoading(false);
     }
@@ -229,7 +229,7 @@ export default function CheckoutScreen() {
       const token = await verifyWebOtp(phone.replace(/\s/g, ''), otpValue);
       setSessionToken(token);
     } catch (e: any) {
-      Alert.alert('Wrong OTP', e.message || 'OTP did not match. Try again.');
+      platformAlertSimple('Wrong OTP', e.message || 'OTP did not match. Try again.');
       setOtpValue('');
     } finally {
       setOtpLoading(false);
@@ -239,7 +239,7 @@ export default function CheckoutScreen() {
   const handlePlaceOrder = useCallback(async () => {
     if (!sessionToken || !store) return;
     if (!name.trim()) {
-      Alert.alert('Name required', 'Please enter your name.');
+      platformAlertSimple('Name required', 'Please enter your name.');
       return;
     }
 
@@ -263,34 +263,40 @@ export default function CheckoutScreen() {
         return;
       }
 
-      // Attempt Razorpay (JS SDK would normally open a payment sheet)
-      // In React Native, open via WebBrowser or use react-native-razorpay
-      // Here we simulate success for demo + instruct real integration
-      Alert.alert(
-        'Complete Payment',
-        `Amount: ${formatCurrency(orderData.total)}\nOrder: ${orderData.orderNumber}\n\nIn production this opens the Razorpay checkout sheet.`,
-        [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Simulate Success',
-            onPress: async () => {
-              try {
-                // In a real flow: use react-native-razorpay or open Razorpay web checkout
-                // and receive {razorpay_payment_id, razorpay_order_id, razorpay_signature}
-                // then call verifyWebPayment(...)
-                router.replace({
-                  pathname: '/order/[storeSlug]/confirmation',
-                  params: { storeSlug: store.slug, orderNumber: orderData.orderNumber },
-                });
-              } catch (verifyErr: any) {
-                Alert.alert('Payment Error', verifyErr.message);
-              }
-            },
+      if (__DEV__) {
+        // DEV ONLY: Simulate payment success to speed up local testing.
+        // This block is stripped from production builds.
+        platformAlertConfirm(
+          'Complete Payment (DEV)',
+          `Amount: ${formatCurrency(orderData.total)}\nOrder: ${orderData.orderNumber}\n\nDev mode: tap Simulate to skip the Razorpay sheet.`,
+          async () => {
+            try {
+              // In a real flow: use react-native-razorpay or open Razorpay web checkout
+              // and receive {razorpay_payment_id, razorpay_order_id, razorpay_signature}
+              // then call verifyWebPayment(...)
+              router.replace({
+                pathname: '/order/[storeSlug]/confirmation',
+                params: { storeSlug: store.slug, orderNumber: orderData.orderNumber },
+              });
+            } catch (verifyErr: any) {
+              platformAlertSimple('Payment Error', verifyErr.message);
+            }
           },
-        ],
-      );
+          'Simulate Success',
+          'Cancel',
+        );
+      } else {
+        // PRODUCTION: Real Razorpay integration required here.
+        // Use react-native-razorpay or Razorpay Web Checkout via WebBrowser.
+        // Pass orderData.razorpay options to the Razorpay SDK and call
+        // verifyWebPayment() with the returned payment credentials.
+        platformAlertSimple(
+          'Payment Unavailable',
+          'Online payment is not yet configured for this platform. Please contact support or pay at the counter.',
+        );
+      }
     } catch (e: any) {
-      Alert.alert('Order Failed', e.message || 'Could not place order. Try again.');
+      platformAlertSimple('Order Failed', e.message || 'Could not place order. Try again.');
     } finally {
       setPlacingOrder(false);
     }

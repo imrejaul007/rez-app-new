@@ -3,16 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // General application preferences and configurations
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  SafeAreaView,
-  Switch,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, SafeAreaView, Switch } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { platformAlertSimple, platformAlertConfirm, platformAlertDestructive } from '@/utils/platformAlert';
@@ -69,7 +60,7 @@ function SettingsPage() {
         const stored = await AsyncStorage.getItem(SETTINGS_STORAGE_KEY);
         if (stored) {
           const parsed = JSON.parse(stored);
-          setSettings(prev => ({ ...prev, ...parsed }));
+          setSettings((prev) => ({ ...prev, ...parsed }));
         }
       } catch (e) {
         // silently handle
@@ -91,9 +82,9 @@ function SettingsPage() {
   };
 
   const handleToggleSetting = useCallback((key: string) => {
-    setSettings(prev => ({
+    setSettings((prev) => ({
       ...prev,
-      [key]: !prev[key as keyof typeof prev]
+      [key]: !prev[key as keyof typeof prev],
     }));
   }, []);
 
@@ -101,7 +92,13 @@ function SettingsPage() {
   const handleBiometricsToggle = useCallback(async () => {
     if (settings.biometrics) {
       // Turning OFF — no verification needed
-      setSettings(prev => ({ ...prev, biometrics: false }));
+      setSettings((prev) => ({ ...prev, biometrics: false }));
+      return;
+    }
+
+    // Biometric authentication is not available on web
+    if (Platform.OS === 'web') {
+      platformAlertSimple('Not Available', 'Biometric authentication is not supported on web.');
       return;
     }
 
@@ -115,7 +112,10 @@ function SettingsPage() {
 
       const isEnrolled = await LocalAuthentication.isEnrolledAsync();
       if (!isEnrolled) {
-        platformAlertSimple('Not Set Up', 'No biometric credentials found. Please set up fingerprint or face recognition in your device settings.');
+        platformAlertSimple(
+          'Not Set Up',
+          'No biometric credentials found. Please set up fingerprint or face recognition in your device settings.',
+        );
         return;
       }
 
@@ -127,7 +127,7 @@ function SettingsPage() {
 
       if (result.success) {
         if (!isMounted()) return;
-        setSettings(prev => ({ ...prev, biometrics: true }));
+        setSettings((prev) => ({ ...prev, biometrics: true }));
         platformAlertSimple('Enabled', 'Biometric authentication has been enabled.');
       }
     } catch (e) {
@@ -148,7 +148,7 @@ function SettingsPage() {
           // silently handle
         }
         platformAlertSimple('Settings Reset', 'All settings have been reset to default values.');
-      }
+      },
     );
   };
 
@@ -160,7 +160,7 @@ function SettingsPage() {
         // Simulate cache clearing
         platformAlertSimple('Cache Cleared', 'App cache has been cleared successfully.');
       },
-      'Clear Cache'
+      'Clear Cache',
     );
   };
 
@@ -172,7 +172,7 @@ function SettingsPage() {
         // Simulate data export
         platformAlertSimple('Export Complete', 'Your data has been exported successfully.');
       },
-      'Export'
+      'Export',
     );
   };
 
@@ -397,23 +397,18 @@ function SettingsPage() {
         }
       }}
       disabled={item.type === 'switch'}
-     
     >
       <View style={styles.settingsItemLeft}>
         <View style={[styles.settingsIcon, { backgroundColor: item.iconColor + '15' }]}>
           <Ionicons name={item.icon as any} size={20} color={item.iconColor} />
         </View>
-        
+
         <View style={styles.settingsText}>
           <ThemedText style={styles.settingsTitle}>{item.title}</ThemedText>
-          {item.description && (
-            <ThemedText style={styles.settingsDescription}>
-              {item.description}
-            </ThemedText>
-          )}
+          {item.description && <ThemedText style={styles.settingsDescription}>{item.description}</ThemedText>}
         </View>
       </View>
-      
+
       <View style={styles.settingsItemRight}>
         {item.type === 'switch' && (
           <Switch
@@ -423,12 +418,8 @@ function SettingsPage() {
             thumbColor={item.value ? colors.background.primary : colors.background.primary}
           />
         )}
-        {item.type === 'navigation' && (
-          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-        )}
-        {item.type === 'action' && (
-          <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
-        )}
+        {item.type === 'navigation' && <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />}
+        {item.type === 'action' && <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />}
       </View>
     </Pressable>
   );
@@ -436,53 +427,40 @@ function SettingsPage() {
   const renderSection = (section: SettingsSection) => (
     <View key={section.id} style={styles.section}>
       <ThemedText style={styles.sectionTitle}>{section.title}</ThemedText>
-      <View style={styles.sectionItems}>
-        {section.items.map(renderSettingsItem)}
-      </View>
+      <View style={styles.sectionItems}>{section.items.map(renderSettingsItem)}</View>
     </View>
   );
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="light-content"
-        backgroundColor={colors.primary[300]}
-        translucent={false}
-      />
-      
+      <StatusBar barStyle="light-content" backgroundColor={colors.primary[300]} translucent={false} />
+
       {/* Header */}
-      <LinearGradient
-        colors={[colors.primary[300], colors.primary[400]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[colors.primary[300], colors.primary[400]]} style={styles.header}>
         <View style={styles.headerContent}>
           <Pressable style={styles.backButton} onPress={handleBackPress}>
             <Ionicons name="arrow-back" size={24} color="white" />
           </Pressable>
-          
+
           <ThemedText style={styles.headerTitle}>Settings</ThemedText>
-          
+
           <View style={styles.headerRight} />
         </View>
       </LinearGradient>
 
-      <ScrollView 
+      <ScrollView
         style={styles.content}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
         {settingsSections.map(renderSection)}
-        
+
         {/* App Info */}
         <View style={styles.appInfo}>
-          <ThemedText style={styles.appInfoText}>
-            {`${BRAND.APP_NAME} App v1.0.0`}
-          </ThemedText>
-          <ThemedText style={styles.appInfoText}>
-            © 2024 ${BRAND.APP_NAME} Technologies
-          </ThemedText>
+          <ThemedText style={styles.appInfoText}>{`${BRAND.APP_NAME} App v1.0.0`}</ThemedText>
+          <ThemedText style={styles.appInfoText}>© 2024 ${BRAND.APP_NAME} Technologies</ThemedText>
         </View>
-        
+
         <View style={styles.bottomSpace} />
       </ScrollView>
     </SafeAreaView>

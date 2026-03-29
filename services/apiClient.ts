@@ -31,13 +31,13 @@ async function getDeviceFingerprintHeader(): Promise<string | null> {
   return _fingerprintLoadPromise;
 }
 
-// Emulators can't reach host's localhost directly
-// BlueStacks uses Hyper-V network, host is reachable at 172.19.128.1
-// Stock Android emulator: 10.0.2.2, iOS simulator: localhost works natively
+// Emulators can't reach the host's localhost directly.
+// Standard Android emulator (AVD/Genymotion): host is at 10.0.2.2.
+// iOS simulator: localhost resolves to host natively — no rewrite needed.
 // Guard with __DEV__ so production Android builds use the real API URL unchanged.
 function resolveBaseURL(url: string): string {
   if (__DEV__ && Platform.OS === 'android' && (url.includes('localhost') || url.includes('127.0.0.1'))) {
-    return url.replace('localhost', '172.19.128.1').replace('127.0.0.1', '172.19.128.1');
+    return url.replace('localhost', '10.0.2.2').replace('127.0.0.1', '10.0.2.2');
   }
   return url;
 }

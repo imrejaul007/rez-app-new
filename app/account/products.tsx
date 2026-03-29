@@ -203,7 +203,7 @@ function ProductsScreen() {
       {selectedFilter === 'all' && (
         <Pressable
           style={styles.shopButton}
-          onPress={() => router.push('/MainStorePage')}
+          onPress={() => router.push('/(tabs)')}
           accessibilityLabel="Start Shopping"
           accessibilityRole="button"
           accessibilityHint="Double tap to browse store and purchase products"

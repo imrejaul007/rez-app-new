@@ -2,15 +2,8 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Slot Machine Game
 // 3-reel slot machine with spin animation, symbol matching, win logic, visual feedback
 
-import React, { useState,  useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Platform,
-  ScrollView,
-  ActivityIndicator} from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, Text, StyleSheet, Pressable, Platform, ScrollView, ActivityIndicator } from 'react-native';
 import Animated, {
   interpolate,
   useAnimatedStyle,
@@ -24,7 +17,7 @@ import CachedImage from '@/components/ui/CachedImage';
 import { router, Stack } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Haptics from 'expo-haptics';
+import { triggerNotification } from '@/utils/haptics';
 import { ThemedView } from '@/components/ThemedView';
 import { ThemedText } from '@/components/ThemedText';
 import { platformAlertSimple } from '@/utils/platformAlert';
@@ -116,8 +109,8 @@ function SlotsPage() {
 
     setSpinning(true);
     setShowResult(false);
-    setBalance(prev => prev - SPIN_COST);
-    setTotalSpins(prev => prev + 1);
+    setBalance((prev) => prev - SPIN_COST);
+    setTotalSpins((prev) => prev + 1);
 
     // Generate spinning symbol arrays for visual effect
     const reelSymbols = [
@@ -131,10 +124,7 @@ function SlotsPage() {
     const result = calculateSpinResult();
 
     // Lever pull animation
-    leverAnim.value = withSequence(
-      withTiming(1, { duration: 200 }),
-      withTiming(0, { duration: 300 })
-    );
+    leverAnim.value = withSequence(withTiming(1, { duration: 200 }), withTiming(0, { duration: 300 }));
 
     // Reel spin animations (staggered stops)
     reel1Anim.value = 0;
@@ -151,9 +141,9 @@ function SlotsPage() {
       setLastResult(result);
 
       if (result.win) {
-        setBalance(prev => prev + result.winAmount);
-        setTotalWins(prev => prev + result.winAmount);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {});
+        setBalance((prev) => prev + result.winAmount);
+        setTotalWins((prev) => prev + result.winAmount);
+        triggerNotification('Success');
 
         // Win animation
         winScaleAnim.value = 0;
@@ -169,7 +159,12 @@ function SlotsPage() {
     <View key={index} style={styles.reelContainer}>
       <View style={styles.reelWindow}>
         {spinning ? (
-          <ReelView reelAnim={reelAnim} symbol={spinningSymbols[index]?.[Math.floor(Math.random() * (spinningSymbols[index]?.length || 1))] || symbol} />
+          <ReelView
+            reelAnim={reelAnim}
+            symbol={
+              spinningSymbols[index]?.[Math.floor(Math.random() * (spinningSymbols[index]?.length || 1))] || symbol
+            }
+          />
         ) : (
           <Text style={styles.reelSymbol}>{symbol}</Text>
         )}
@@ -183,10 +178,14 @@ function SlotsPage() {
       <View style={styles.balanceBar}>
         <View style={styles.balanceLeft}>
           <CachedImage source={nuqtaCoinImage} style={styles.balanceCoin} />
-          <Text style={styles.balanceText}>{balance} {BRAND.CURRENCY_CODE}</Text>
+          <Text style={styles.balanceText}>
+            {balance} {BRAND.CURRENCY_CODE}
+          </Text>
         </View>
         <View style={styles.balanceRight}>
-          <Text style={styles.spinCostText}>Cost: {SPIN_COST} {BRAND.CURRENCY_CODE}/spin</Text>
+          <Text style={styles.spinCostText}>
+            Cost: {SPIN_COST} {BRAND.CURRENCY_CODE}/spin
+          </Text>
         </View>
       </View>
 
@@ -205,7 +204,13 @@ function SlotsPage() {
                   key={i}
                   style={[
                     styles.light,
-                    { backgroundColor: spinning ? (i % 2 === 0 ? colors.brand.goldBright : colors.error) : colors.neutral[600] },
+                    {
+                      backgroundColor: spinning
+                        ? i % 2 === 0
+                          ? colors.brand.goldBright
+                          : colors.error
+                        : colors.neutral[600],
+                    },
                   ]}
                 />
               ))}
@@ -227,9 +232,7 @@ function SlotsPage() {
             <View style={styles.paylineCenter}>
               {showResult && lastResult?.win && (
                 <Animated.View style={winScaleStyle}>
-                  <Text style={styles.winBadgeText}>
-                    {lastResult.winType === 'jackpot' ? 'JACKPOT!' : 'WIN!'}
-                  </Text>
+                  <Text style={styles.winBadgeText}>{lastResult.winType === 'jackpot' ? 'JACKPOT!' : 'WIN!'}</Text>
                 </Animated.View>
               )}
             </View>
@@ -240,10 +243,7 @@ function SlotsPage() {
 
       {/* Result Display */}
       {showResult && lastResult && (
-        <View style={[
-          styles.resultCard,
-          lastResult.win ? styles.resultCardWin : styles.resultCardLose,
-        ]}>
+        <View style={[styles.resultCard, lastResult.win ? styles.resultCardWin : styles.resultCardLose]}>
           {lastResult.win ? (
             <>
               <Ionicons
@@ -252,10 +252,10 @@ function SlotsPage() {
                 color={lastResult.winType === 'jackpot' ? colors.brand.goldBright : colors.successScale[400]}
               />
               <View>
-                <Text style={styles.resultTitle}>
-                  {lastResult.winType === 'jackpot' ? 'JACKPOT!' : 'You Win!'}
+                <Text style={styles.resultTitle}>{lastResult.winType === 'jackpot' ? 'JACKPOT!' : 'You Win!'}</Text>
+                <Text style={styles.resultAmount}>
+                  +{lastResult.winAmount} {BRAND.CURRENCY_CODE}
                 </Text>
-                <Text style={styles.resultAmount}>+{lastResult.winAmount} {BRAND.CURRENCY_CODE}</Text>
               </View>
             </>
           ) : (
@@ -272,7 +272,6 @@ function SlotsPage() {
         style={[styles.spinButton, (spinning || balance < SPIN_COST) && styles.spinButtonDisabled]}
         onPress={handleSpin}
         disabled={spinning || balance < SPIN_COST}
-       
       >
         <LinearGradient
           colors={spinning ? [colors.neutral[400], colors.neutral[500]] : [colors.error, colors.error]}
@@ -300,7 +299,9 @@ function SlotsPage() {
           <Text style={styles.statBoxLabel}>Total Won</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={styles.statBoxValue}>{totalSpins > 0 ? Math.round((totalWins / (totalSpins * SPIN_COST)) * 100) : 0}%</Text>
+          <Text style={styles.statBoxValue}>
+            {totalSpins > 0 ? Math.round((totalWins / (totalSpins * SPIN_COST)) * 100) : 0}%
+          </Text>
           <Text style={styles.statBoxLabel}>Return</Text>
         </View>
       </View>
@@ -347,20 +348,15 @@ function SlotsPage() {
           headerTintColor: colors.neutral[900],
           headerTitleStyle: { fontWeight: 'bold' },
           headerLeft: () => (
-            <Pressable
-              onPress={handleBackPress}
-              style={styles.headerBackButton}
-            >
+            <Pressable onPress={handleBackPress} style={styles.headerBackButton}>
               <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
-          ) }}
+          ),
+        }}
       />
       <ThemedView style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-          <LinearGradient
-            colors={['#FF8B94', '#FF7A85', '#FF6976']}
-            style={styles.gradient}
-          >
+          <LinearGradient colors={['#FF8B94', '#FF7A85', '#FF6976']} style={styles.gradient}>
             {renderIdleOrPlaying()}
           </LinearGradient>
         </ScrollView>
@@ -371,22 +367,27 @@ function SlotsPage() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1 },
+    flex: 1,
+  },
   headerBackButton: {
     marginLeft: Platform.OS === 'ios' ? Spacing.sm : Spacing.base,
-    padding: Spacing.xs },
+    padding: Spacing.xs,
+  },
   scrollContent: {
     flexGrow: 1,
-    paddingBottom: 120 },
+    paddingBottom: 120,
+  },
   gradient: {
     flex: 1,
     alignItems: 'center',
     paddingHorizontal: Spacing.base,
     paddingTop: Spacing.base,
-    paddingBottom: Spacing['3xl'] },
+    paddingBottom: Spacing['3xl'],
+  },
   mainContent: {
     width: '100%',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   // Balance Bar
   balanceBar: {
     flexDirection: 'row',
@@ -397,50 +398,61 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 14,
     marginBottom: Spacing.base,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   balanceLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   balanceCoin: {
     width: 24,
     height: 24,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   balanceText: {
     ...Typography.h4,
     fontWeight: '700',
-    color: colors.nileBlue },
+    color: colors.nileBlue,
+  },
   balanceRight: {},
   spinCostText: {
     ...Typography.bodySmall,
     fontWeight: '600',
-    color: colors.text.tertiary },
+    color: colors.text.tertiary,
+  },
   // Machine
   machineContainer: {
     width: '100%',
     marginBottom: Spacing.base,
     borderRadius: BorderRadius.xl,
     overflow: 'hidden',
-    ...Shadows.strong },
+    ...Shadows.strong,
+  },
   machineBody: {
     padding: Spacing.lg,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   machineHeader: {
     alignItems: 'center',
-    marginBottom: Spacing.base },
+    marginBottom: Spacing.base,
+  },
   machineHeaderText: {
     fontSize: 22,
     fontWeight: '800',
     color: colors.brand.goldBright,
     letterSpacing: 3,
-    marginBottom: Spacing.sm },
+    marginBottom: Spacing.sm,
+  },
   lightRow: {
     flexDirection: 'row',
-    gap: Spacing.sm },
+    gap: Spacing.sm,
+  },
   light: {
     width: 10,
     height: 10,
-    borderRadius: 5 },
+    borderRadius: 5,
+  },
   reelsRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -448,10 +460,12 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: Spacing.sm,
-    gap: 0 },
+    gap: 0,
+  },
   reelContainer: {
     flex: 1,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   reelWindow: {
     width: 80,
     height: 90,
@@ -461,36 +475,44 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: 2,
     borderColor: colors.border.default,
-    overflow: 'hidden' },
+    overflow: 'hidden',
+  },
   reelSymbol: {
-    fontSize: 44 },
+    fontSize: 44,
+  },
   reelDivider: {
     width: 2,
     height: 70,
-    backgroundColor: colors.neutral[200] },
+    backgroundColor: colors.neutral[200],
+  },
   payline: {
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
-    marginTop: 12 },
+    marginTop: 12,
+  },
   paylineLeft: {
     flex: 1,
     height: 2,
-    backgroundColor: colors.brand.goldBright },
+    backgroundColor: colors.brand.goldBright,
+  },
   paylineCenter: {
     paddingHorizontal: 12,
     minHeight: 24,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   paylineRight: {
     flex: 1,
     height: 2,
-    backgroundColor: colors.brand.goldBright },
+    backgroundColor: colors.brand.goldBright,
+  },
   winBadgeText: {
     fontSize: 18,
     fontWeight: '800',
     color: colors.brand.goldBright,
-    letterSpacing: 2 },
+    letterSpacing: 2,
+  },
   // Result Card
   resultCard: {
     flexDirection: 'row',
@@ -499,23 +521,28 @@ const styles = StyleSheet.create({
     borderRadius: 14,
     padding: 16,
     gap: 12,
-    marginBottom: 16 },
+    marginBottom: 16,
+  },
   resultCardWin: {
     backgroundColor: Colors.successScale[50],
     borderWidth: 1,
-    borderColor: Colors.success },
+    borderColor: Colors.success,
+  },
   resultCardLose: {
     backgroundColor: colors.background.secondary,
     borderWidth: 1,
-    borderColor: colors.border.default },
+    borderColor: colors.border.default,
+  },
   resultTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   resultAmount: {
     ...Typography.h3,
     fontWeight: '800',
-    color: Colors.success },
+    color: Colors.success,
+  },
   // Spin Button
   spinButton: {
     width: '100%',
@@ -526,41 +553,49 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
-    elevation: 5 },
+    elevation: 5,
+  },
   spinButtonDisabled: {
-    opacity: 0.7 },
+    opacity: 0.7,
+  },
   spinButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 18,
-    gap: 10 },
+    gap: 10,
+  },
   spinButtonText: {
     ...Typography.h3,
     fontWeight: '800',
     color: colors.text.inverse,
-    letterSpacing: 2 },
+    letterSpacing: 2,
+  },
   // Stats
   statsRow: {
     flexDirection: 'row',
     width: '100%',
     gap: 10,
-    marginBottom: Spacing.lg },
+    marginBottom: Spacing.lg,
+  },
   statBox: {
     flex: 1,
     backgroundColor: colors.background.primary,
     borderRadius: 14,
     padding: 14,
     alignItems: 'center',
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   statBoxValue: {
     ...Typography.h3,
     fontWeight: '700',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   statBoxLabel: {
     ...Typography.caption,
     color: colors.text.tertiary,
-    marginTop: 2 },
+    marginTop: 2,
+  },
   // Paytable
   paytable: {
     width: '100%',
@@ -568,27 +603,32 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.lg,
     padding: Spacing.lg,
     marginBottom: Spacing.base,
-    ...Shadows.medium },
+    ...Shadows.medium,
+  },
   paytableTitle: {
     ...Typography.bodyLarge,
     fontWeight: '700',
     color: colors.text.primary,
     marginBottom: Spacing.md,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   paytableRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: Spacing.sm,
     borderBottomWidth: 1,
-    borderBottomColor: colors.background.secondary },
+    borderBottomColor: colors.background.secondary,
+  },
   paytableSymbols: {
     ...Typography.bodyLarge,
-    color: colors.text.secondary },
+    color: colors.text.secondary,
+  },
   paytableAmount: {
     ...Typography.body,
     fontWeight: '700',
-    color: colors.nileBlue },
+    color: colors.nileBlue,
+  },
   // Back
   backToGamesBtn: {
     flexDirection: 'row',
@@ -599,10 +639,13 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     width: '100%',
     gap: Spacing.sm,
-    ...Shadows.subtle },
+    ...Shadows.subtle,
+  },
   backToGamesText: {
     ...Typography.body,
     fontWeight: '600',
-    color: colors.text.primary } });
+    color: colors.text.primary,
+  },
+});
 
 export default withErrorBoundary(SlotsPage, 'GamesSlots');
