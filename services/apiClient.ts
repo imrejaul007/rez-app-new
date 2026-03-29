@@ -349,8 +349,16 @@ class ApiClient {
               }
             }
 
-            // Token refresh failed or no refresh callback - trigger logout (once)
-            if (this.logoutCallback && !this.isLoggingOut) {
+            // Token refresh failed. Only force logout if the refresh endpoint itself
+            // returned an auth rejection (401/403 from the refresh endpoint, handled
+            // inside the refreshTokenCallback). Network errors during refresh should NOT
+            // log the user out — they're transient and the token may still be valid.
+            // The refreshTokenCallback (tryRefreshToken in AuthContext) returns false for
+            // both network errors AND auth rejections, but only dispatches AUTH_FAILURE
+            // and sets shouldRedirectToSignIn for genuine auth failures. We therefore rely
+            // on that callback to handle logout state; the logoutCallback here is a last-
+            // resort for when no refreshTokenCallback is registered at all.
+            if (!this.refreshTokenCallback && this.logoutCallback && !this.isLoggingOut) {
               this.isLoggingOut = true;
               try {
                 await this.logoutCallback();
@@ -360,8 +368,8 @@ class ApiClient {
               } finally {
                 this.isLoggingOut = false;
               }
-            } else if (!this.logoutCallback) {
-              // No logout callback set - at minimum clear the token
+            } else if (!this.refreshTokenCallback && !this.logoutCallback) {
+              // No callbacks at all — at minimum clear the in-memory token
               this.setAuthToken(null);
             }
           }

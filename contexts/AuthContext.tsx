@@ -682,12 +682,18 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
             if (isCancelledRef.current) return;
 
             if (!response.success) {
-              if (response.error?.includes('401') || response.error?.includes('403') || response.error?.includes('Access token') || response.error?.includes('expired') || response.error?.includes('invalid')) {
-                const refreshSuccess = await tryRefreshToken();
-                if (!refreshSuccess) {
-                  // silently handle
-                }
+              // Only attempt refresh when the server explicitly signals an auth failure.
+              // Do NOT refresh on network errors (undefined/empty error string) or
+              // non-auth server errors — those don't mean the token is invalid.
+              const errStr = (response.error || '').toLowerCase();
+              const isAuthError = errStr.includes('401') || errStr.includes('403') ||
+                errStr.includes('access token') || errStr.includes('expired') ||
+                errStr.includes('revoked') || errStr.includes('invalid token') ||
+                errStr.includes('unauthorized');
+              if (isAuthError) {
+                await tryRefreshToken();
               }
+              // Otherwise silently ignore — transient server error, session stays alive
             } else if (response.data) {
               if (isCancelledRef.current) return;
               // Update stored user data if changed
@@ -700,14 +706,20 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
                 AsyncStorage.setItem('onboarding_completed', 'true').catch(() => {});
               }
               AsyncStorage.setItem('lastProfileSync', Date.now().toString()).catch(() => {});
-            } else {
-              await tryRefreshToken();
             }
+            // response.data === undefined/null but success === true: profile endpoint returned
+            // an empty body (shouldn't happen, but don't logout — just skip the sync update)
           } catch (error: any) {
             if (isCancelledRef.current) return;
-            if (error?.message?.includes('401') || error?.message?.includes('403') || error?.message?.includes('Access token') || error?.message?.includes('expired') || error?.message?.includes('invalid')) {
+            const errMsg = (error?.message || '').toLowerCase();
+            const isAuthError = errMsg.includes('401') || errMsg.includes('403') ||
+              errMsg.includes('access token') || errMsg.includes('expired') ||
+              errMsg.includes('revoked') || errMsg.includes('invalid token') ||
+              errMsg.includes('unauthorized');
+            if (isAuthError) {
               await tryRefreshToken();
             }
+            // Network/timeout errors: silently ignore, session remains alive
           }
         });
 
@@ -780,15 +792,20 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
           return false; // No refresh token available
         }
       } catch (error: any) {
-        // Don't immediately logout on refresh failure - could be network issue
-        // Only logout if the error message indicates an invalid/expired token.
-        // Note: errors here are plain Error objects (not axios-style with response.status),
-        // so we check the message string instead of error?.response?.status.
+        // Don't immediately logout on refresh failure - could be network issue.
+        // Only clear session when the server explicitly rejects the refresh token
+        // (expired, revoked, or replayed). Use precise string matching to avoid
+        // treating malformed-response errors or transient network failures as auth failures.
         const errorMessage = error?.message?.toLowerCase() || '';
-        const isInvalidToken = errorMessage.includes('token expired') ||
-                              errorMessage.includes('invalid') ||
-                              errorMessage.includes('Token refresh failed'.toLowerCase()) ||
-                              errorMessage.includes('unauthorized');
+        const isInvalidToken =
+          errorMessage.includes('token expired') ||
+          errorMessage.includes('refresh token') ||   // backend messages: "Refresh token has been revoked", "Invalid refresh token", etc.
+          errorMessage.includes('jwt expired') ||
+          errorMessage.includes('token has been revoked') ||
+          errorMessage.includes('session invalidated') ||
+          errorMessage.includes('please login again') ||
+          errorMessage.includes('token replay') ||
+          errorMessage.includes('unauthorized');
 
         if (isInvalidToken) {
           // Clear all stored auth data.
@@ -806,7 +823,9 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
 
           return false; // Failed - invalid token
         } else {
-          return false; // Failed - network error
+          // Network error, timeout, or malformed response — do NOT logout.
+          // The next request will trigger another 401→refresh attempt.
+          return false; // Failed - transient error, keep session alive
         }
       } finally {
         // Reset refreshing flag

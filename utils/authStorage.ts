@@ -94,16 +94,24 @@ async function nativeGet(key: string): Promise<string | null> {
 }
 
 /**
- * Write a value on native: writes to SecureStore only.
- * Only removes the AsyncStorage copy if SecureStore write succeeded,
- * so the AsyncStorage copy remains as a fallback if SecureStore fails.
+ * Write a value on native: tries SecureStore first, falls back to AsyncStorage.
+ * - SecureStore success: remove the AsyncStorage copy (no duplicate data).
+ * - SecureStore failure: write to AsyncStorage so the value is never lost.
+ *   This handles devices without hardware-backed keystores and rooted devices.
  */
 async function nativeSet(key: string, value: string): Promise<void> {
   const success = await secureSet(key, value);
   if (success) {
-    await AsyncStorage.removeItem(key);
+    // SecureStore write confirmed — clean up any old AsyncStorage copy
+    await AsyncStorage.removeItem(key).catch(() => {});
+  } else {
+    // SecureStore unavailable — fall back to AsyncStorage so the value is persisted
+    try {
+      await AsyncStorage.setItem(key, value);
+    } catch {
+      // Both stores failed — nothing we can do; the caller will get null on next read
+    }
   }
-  // If SecureStore failed, keep the AsyncStorage copy as fallback
 }
 
 /**
