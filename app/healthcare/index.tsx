@@ -277,7 +277,7 @@ const HealthcarePage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Popular Services</Text>
-            <Pressable onPress={() => router.push('/healthcare/lab' as any)}>
+            <Pressable onPress={() => router.push('/healthcare/doctors' as any)}>
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -299,7 +299,23 @@ const HealthcarePage: React.FC = () => {
                   <Pressable
                     key={service._id}
                     style={styles.serviceCard}
-                    onPress={() => router.push('/healthcare/lab' as any)}
+                    onPress={() => {
+                      // Route to the correct healthcare sub-screen based on serviceType metadata
+                      const serviceType = service.metadata?.serviceType?.toLowerCase() || '';
+                      let route: string = '/healthcare/lab'; // default
+                      if (serviceType.includes('doctor') || serviceType.includes('consult')) {
+                        route = '/healthcare/doctors';
+                      } else if (serviceType.includes('pharma') || serviceType.includes('medicine')) {
+                        route = '/healthcare/pharmacy';
+                      } else if (serviceType.includes('dental')) {
+                        route = '/healthcare/dental';
+                      } else if (serviceType.includes('emergency')) {
+                        route = '/healthcare/emergency';
+                      } else if (serviceType.includes('record')) {
+                        route = '/healthcare/records';
+                      }
+                      router.push(route as any);
+                    }}
                   >
                     <CachedImage source={service.images?.[0] || undefined} style={styles.serviceImage} />
                     {cashback > 0 && (

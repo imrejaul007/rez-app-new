@@ -217,8 +217,12 @@ function BookAppointmentPage() {
     if (!selectedService) { platformAlertSimple('Error', 'Please select a service'); return; }
     if (!selectedTime) { platformAlertSimple('Error', 'Please select a time slot'); return; }
     if (!customerName.trim()) { platformAlertSimple('Error', 'Please enter your name'); return; }
-    if (!customerPhone.trim() || customerPhone.trim().length < 10) {
-      platformAlertSimple('Error', 'Please enter a valid phone number'); return;
+    // BUG-031: Use a proper regex that handles country codes, spaces and dashes.
+    // Strip non-digit chars first, then require 7–15 digits (E.164 range).
+    const digitsOnly = customerPhone.trim().replace(/[\s\-().+]/g, '');
+    if (!/^\d{7,15}$/.test(digitsOnly)) {
+      platformAlertSimple('Error', 'Please enter a valid phone number (7–15 digits, country code optional)');
+      return;
     }
 
     try {
@@ -275,7 +279,8 @@ function BookAppointmentPage() {
         <Pressable
           style={styles.storeCard}
           onPress={() => handleSelectSalon(store)}
-         
+          accessibilityLabel={`${store.name}, rated ${rating}`}
+          accessibilityRole="button"
         >
           <View style={styles.storeImgWrap}>
             {imageUri ? (

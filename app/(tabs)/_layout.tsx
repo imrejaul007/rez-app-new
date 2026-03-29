@@ -1,13 +1,10 @@
 import { Tabs } from 'expo-router';
-import React, { useEffect } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React from 'react';
 
 export default function TabLayout() {
-  // Safety net: If user reaches main app, mark onboarding as complete
-  // This prevents redirect loops if user data is inconsistent
-  useEffect(() => {
-    AsyncStorage.setItem('onboarding_completed', 'true').catch(() => {});
-  }, []);
+  // NOTE: onboarding_completed is set by AuthContext when the user explicitly
+  // completes onboarding. Do NOT set it here — doing so would skip onboarding
+  // for new users who land on the tab navigator before finishing it.
 
   return (
     <Tabs

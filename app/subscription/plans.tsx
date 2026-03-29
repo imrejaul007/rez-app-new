@@ -332,6 +332,12 @@ function SubscriptionPlansPage() {
               <ThemedText style={styles.price}>{displayPrice}</ThemedText>
               <ThemedText style={styles.period}>/month</ThemedText>
             </View>
+            {/* BUG-051: Prices may vary disclaimer for hardcoded fallback prices */}
+            <ThemedText
+              style={{ fontSize: 11, color: colors.text?.tertiary || '#999', fontStyle: 'italic', marginBottom: 4 }}
+            >
+              Prices may vary. Final price confirmed at checkout.
+            </ThemedText>
 
             {selectedBilling === 'yearly' && yearlyPrice > 0 && (
               <View style={styles.savingsContainer}>

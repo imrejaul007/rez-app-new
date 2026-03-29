@@ -7,15 +7,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  RefreshControl,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl, ActivityIndicator } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { CardGridSkeleton } from '@/components/skeletons';
@@ -33,7 +25,10 @@ import { useIsMounted } from '@/hooks/useIsMounted';
 import { isStoreOpen } from '@/utils/dateUtils';
 
 // Subcategory metadata for icons and colors
-const SUBCATEGORY_META: Record<string, { title: string; description: string; icon: string; color: string; emoji: string; filterTags: string[] }> = {
+const SUBCATEGORY_META: Record<
+  string,
+  { title: string; description: string; icon: string; color: string; emoji: string; filterTags: string[] }
+> = {
   'mobile-phones': {
     title: 'Mobile Phones',
     description: 'Smartphones & feature phones',
@@ -42,7 +37,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83D\uDCF1',
     filterTags: ['5G', 'Flagship', 'Budget', 'Refurbished', 'Foldable'],
   },
-  'laptops': {
+  laptops: {
     title: 'Laptops',
     description: 'Notebooks, ultrabooks & workstations',
     icon: 'laptop-outline',
@@ -50,7 +45,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83D\uDCBB',
     filterTags: ['Gaming', 'Business', 'Ultrabook', 'Budget', '2-in-1'],
   },
-  'televisions': {
+  televisions: {
     title: 'Televisions',
     description: 'Smart TVs, OLED, QLED & LED',
     icon: 'tv-outline',
@@ -58,7 +53,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83D\uDCFA',
     filterTags: ['4K', 'OLED', 'QLED', 'Smart TV', 'Budget'],
   },
-  'cameras': {
+  cameras: {
     title: 'Cameras',
     description: 'DSLR, mirrorless & action cameras',
     icon: 'camera-outline',
@@ -74,7 +69,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83C\uDFA7',
     filterTags: ['Wireless', 'ANC', 'Earbuds', 'Speakers', 'Soundbar'],
   },
-  'gaming': {
+  gaming: {
     title: 'Gaming',
     description: 'Consoles, gaming PCs & accessories',
     icon: 'game-controller-outline',
@@ -82,7 +77,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83C\uDFAE',
     filterTags: ['Console', 'PC Gaming', 'VR', 'Controllers', 'Monitors'],
   },
-  'accessories': {
+  accessories: {
     title: 'Accessories',
     description: 'Cases, chargers, cables & more',
     icon: 'hardware-chip-outline',
@@ -90,7 +85,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83D\uDD0C',
     filterTags: ['Chargers', 'Cases', 'Cables', 'Adapters', 'Storage'],
   },
-  'smartwatches': {
+  smartwatches: {
     title: 'Smartwatches',
     description: 'Wearables & fitness trackers',
     icon: 'watch-outline',
@@ -99,7 +94,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     filterTags: ['Fitness', 'Premium', 'Kids', 'Budget', 'LTE'],
   },
   // Food & Dining subcategories
-  'cafes': {
+  cafes: {
     title: 'Cafes',
     description: 'Coffee shops & tea houses',
     icon: 'cafe-outline',
@@ -164,7 +159,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     filterTags: ['Chaat', 'Momos', 'Rolls', 'Pani Puri', 'Bhel'],
   },
   // Beauty & Wellness subcategories
-  'salons': {
+  salons: {
     title: 'Salons',
     description: 'Hair salons',
     icon: 'scissors-outline',
@@ -172,7 +167,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83D\uDC87',
     filterTags: ['Haircut', 'Color', 'Keratin', 'Blowout', 'Ladies'],
   },
-  'spas': {
+  spas: {
     title: 'Spas & Massage',
     description: 'Spa & massage',
     icon: 'leaf-outline',
@@ -204,7 +199,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83D\uDC88',
     filterTags: ['Haircut', 'Shave', 'Beard Trim', 'Fade', 'Hair Color'],
   },
-  'ayurvedic': {
+  ayurvedic: {
     title: 'Ayurvedic & Wellness',
     description: 'Ayurvedic wellness',
     icon: 'fitness-outline',
@@ -253,7 +248,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83D\uDC76',
     filterTags: ['kids', 'children'],
   },
-  'footwear': {
+  footwear: {
     title: 'Footwear',
     description: 'Shoes, sneakers & heels',
     icon: 'footsteps-outline',
@@ -261,7 +256,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83D\uDC9F',
     filterTags: ['shoes', 'sneakers', 'heels'],
   },
-  'jewelry': {
+  jewelry: {
     title: 'Jewelry & Accessories',
     description: 'Jewelry, accessories & more',
     icon: 'diamond-outline',
@@ -269,7 +264,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83D\uDC8E',
     filterTags: ['jewelry', 'accessories'],
   },
-  'watches': {
+  watches: {
     title: 'Watches',
     description: 'Watches & smartwatches',
     icon: 'watch-outline',
@@ -285,7 +280,7 @@ const SUBCATEGORY_META: Record<string, { title: string; description: string; ico
     emoji: '\uD83EDE77',
     filterTags: ['ethnic', 'traditional', 'saree'],
   },
-  'sportswear': {
+  sportswear: {
     title: 'Sportswear',
     description: 'Sports, gym & activewear',
     icon: 'fitness-outline',
@@ -325,17 +320,19 @@ function StoreCard({ store, currencySymbol }: { store: any; currencySymbol: stri
   const isOpenNow = store.tags?.some((t: string) => t.toLowerCase() === 'open-now');
   const cashbackPercent = store.offers?.cashback || 0;
 
-  const serviceTags = (store.tags || [])
-    .filter((t: string) => !['premium', 'budget', 'open-now'].includes(t.toLowerCase()))
-    .slice(0, 3)
-    .map((t: string) => t.charAt(0).toUpperCase() + t.slice(1))
-    .join(' \u2022 ') || store.category?.name || 'Store';
+  const serviceTags =
+    (store.tags || [])
+      .filter((t: string) => !['premium', 'budget', 'open-now'].includes(t.toLowerCase()))
+      .slice(0, 3)
+      .map((t: string) => t.charAt(0).toUpperCase() + t.slice(1))
+      .join(' \u2022 ') ||
+    store.category?.name ||
+    'Store';
 
   return (
     <Pressable
       style={styles.storeCard}
       onPress={() => router.push(`/MainStorePage?storeId=${store._id || store.id}` as any)}
-     
     >
       <View style={styles.storeImageContainer}>
         {imageUri && !imageError ? (
@@ -391,8 +388,12 @@ function StoreCard({ store, currencySymbol }: { store: any; currencySymbol: stri
       </View>
 
       <View style={styles.storeContent}>
-        <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
-        <Text style={styles.storeCuisine} numberOfLines={1}>{serviceTags}</Text>
+        <Text style={styles.storeName} numberOfLines={1}>
+          {store.name}
+        </Text>
+        <Text style={styles.storeCuisine} numberOfLines={1}>
+          {serviceTags}
+        </Text>
 
         <View style={styles.storeMeta}>
           <View style={styles.storeMetaItem}>
@@ -404,7 +405,10 @@ function StoreCard({ store, currencySymbol }: { store: any; currencySymbol: stri
             <Text style={styles.storeMetaText}>{store.operationalInfo?.deliveryTime || '30-45 min'}</Text>
           </View>
           {store.priceForTwo && (
-            <Text style={styles.storePriceForTwo}>{currencySymbol}{store.priceForTwo} avg.</Text>
+            <Text style={styles.storePriceForTwo}>
+              {currencySymbol}
+              {store.priceForTwo} avg.
+            </Text>
           )}
         </View>
 
@@ -412,7 +416,8 @@ function StoreCard({ store, currencySymbol }: { store: any; currencySymbol: stri
           <View style={styles.storeRewardsRow}>
             <Ionicons name="star" size={14} color={Colors.warning} />
             <Text style={styles.storeCoinsText}>
-              Earn {currencySymbol}{Math.round(cashbackPercent * 4.5)} coins
+              Earn {currencySymbol}
+              {Math.round(cashbackPercent * 4.5)} coins
             </Text>
           </View>
         )}
@@ -430,6 +435,7 @@ function SharedCategoryPage() {
 
   const [stores, setStores] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
@@ -440,11 +446,18 @@ function SharedCategoryPage() {
 
   const categoryTheme = getCategoryTheme(slug || '');
   const meta = SUBCATEGORY_META[subcategory || ''] || {
-    title: getCategoryConfig(slug || '')?.subcategories?.find(s => s.slug === subcategory)?.name
-      || subcategory?.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
-      || categoryTheme.name,
+    title:
+      getCategoryConfig(slug || '')?.subcategories?.find((s) => s.slug === subcategory)?.name ||
+      subcategory
+        ?.split('-')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ') ||
+      categoryTheme.name,
     description: '',
-    icon: getCategoryConfig(slug || '')?.subcategories?.find(s => s.slug === subcategory)?.icon || categoryTheme.defaultMissionIcon || 'storefront-outline',
+    icon:
+      getCategoryConfig(slug || '')?.subcategories?.find((s) => s.slug === subcategory)?.icon ||
+      categoryTheme.defaultMissionIcon ||
+      'storefront-outline',
     color: categoryTheme.primaryColor,
     emoji: '\uD83C\uDFEA',
     filterTags: [],
@@ -455,52 +468,62 @@ function SharedCategoryPage() {
     if (!subcategory) return getCategoryConfig(slug || '')?.name || 'Browse';
     // Check config for proper name
     const config = getCategoryConfig(slug || 'electronics');
-    const sub = config?.subcategories?.find(s => s.slug === subcategory);
+    const sub = config?.subcategories?.find((s) => s.slug === subcategory);
     if (sub) return sub.name;
     // Fallback: check our local meta
     if (SUBCATEGORY_META[subcategory]) return SUBCATEGORY_META[subcategory].title;
     // Last fallback: convert slug to title
-    return subcategory.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    return subcategory
+      .split('-')
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
   }, [subcategory, slug]);
 
-  const fetchStores = useCallback(async (pageNum: number = 1, isRefresh: boolean = false) => {
-    if (!subcategory) return;
+  const fetchStores = useCallback(
+    async (pageNum: number = 1, isRefresh: boolean = false) => {
+      if (!subcategory) return;
 
-    try {
-      if (pageNum === 1) {
-        if (!isRefresh) setIsLoading(true);
-      } else {
-        setLoadingMore(true);
-      }
-
-      const response = await storesApi.getStoresBySubcategorySlug(subcategory, 20, pageNum);
-
-      if (response.success && response.data) {
-        const storesData = Array.isArray(response.data) ? response.data : (response.data.stores || []);
-        const total = response.data.total || storesData.length;
-        if (!isMounted()) return;
-        setTotalCount(total);
-
+      try {
         if (pageNum === 1) {
           if (!isMounted()) return;
-          setStores(storesData);
+          setFetchError(null);
+          if (!isRefresh) setIsLoading(true);
         } else {
-          if (!isMounted()) return;
-          setStores(prev => [...prev, ...storesData]);
+          setLoadingMore(true);
         }
 
+        const response = await storesApi.getStoresBySubcategorySlug(subcategory, 20, pageNum);
+
+        if (response.success && response.data) {
+          const storesData = Array.isArray(response.data) ? response.data : response.data.stores || [];
+          const total = response.data.total || storesData.length;
+          if (!isMounted()) return;
+          setTotalCount(total);
+
+          if (pageNum === 1) {
+            if (!isMounted()) return;
+            setStores(storesData);
+          } else {
+            if (!isMounted()) return;
+            setStores((prev) => [...prev, ...storesData]);
+          }
+
+          if (!isMounted()) return;
+          setHasMore(storesData.length >= 20);
+        }
+      } catch (err) {
+        // BUG-025: surface the error to the user instead of silently swallowing it
         if (!isMounted()) return;
-        setHasMore(storesData.length >= 20);
+        setFetchError('Unable to load stores. Please check your connection and try again.');
+      } finally {
+        if (!isMounted()) return;
+        setIsLoading(false);
+        if (!isMounted()) return;
+        setLoadingMore(false);
       }
-    } catch (err) {
-      // silently handle
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setLoadingMore(false);
-    }
-  }, [subcategory]);
+    },
+    [subcategory],
+  );
 
   useEffect(() => {
     fetchStores(1);
@@ -530,22 +553,22 @@ function SharedCategoryPage() {
     if (activeFilter !== 'all') {
       switch (activeFilter) {
         case 'open-now':
-          result = result.filter(s => isStoreOpen(s.operationalInfo?.hours || s.hours));
+          result = result.filter((s) => isStoreOpen(s.operationalInfo?.hours || s.hours));
           break;
         case 'premium':
-          result = result.filter(s => s.tags?.some((t: string) => t.toLowerCase() === 'premium'));
+          result = result.filter((s) => s.tags?.some((t: string) => t.toLowerCase() === 'premium'));
           break;
         case 'budget':
-          result = result.filter(s => s.tags?.some((t: string) => t.toLowerCase() === 'budget'));
+          result = result.filter((s) => s.tags?.some((t: string) => t.toLowerCase() === 'budget'));
           break;
         case 'verified':
-          result = result.filter(s => s.isVerified);
+          result = result.filter((s) => s.isVerified);
           break;
         case 'top-rated':
-          result = result.filter(s => (s.ratings?.average || 0) >= 4.0);
+          result = result.filter((s) => (s.ratings?.average || 0) >= 4.0);
           break;
         case 'cashback':
-          result = result.filter(s => (s.offers?.cashback || 0) > 0);
+          result = result.filter((s) => (s.offers?.cashback || 0) > 0);
           break;
       }
     }
@@ -569,9 +592,10 @@ function SharedCategoryPage() {
     return result;
   }, [stores, activeFilter, activeSort]);
 
-  const renderStoreItem = useCallback(({ item }: { item: any }) => (
-    <StoreCard store={item} currencySymbol={currencySymbol} />
-  ), [currencySymbol]);
+  const renderStoreItem = useCallback(
+    ({ item }: { item: any }) => <StoreCard store={item} currencySymbol={currencySymbol} />,
+    [currencySymbol],
+  );
 
   if (isLoading) {
     return (
@@ -581,11 +605,54 @@ function SharedCategoryPage() {
     );
   }
 
+  // BUG-025: Show error state when fetch failed instead of silently showing an empty list
+  if (fetchError && stores.length === 0) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={{ padding: 16 }}
+        >
+          <Ionicons name="arrow-back" size={24} color={SHARED_COLORS.textPrimary} />
+        </Pressable>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24 }}>
+          <Ionicons name="cloud-offline-outline" size={48} color={SHARED_COLORS.textSecondary} />
+          <Text
+            style={{
+              fontSize: 16,
+              fontWeight: '600',
+              color: SHARED_COLORS.textPrimary,
+              marginTop: 16,
+              textAlign: 'center',
+            }}
+          >
+            {fetchError}
+          </Text>
+          <Pressable
+            onPress={() => fetchStores(1)}
+            style={{
+              marginTop: 16,
+              backgroundColor: '#7B3EFF',
+              borderRadius: 8,
+              paddingHorizontal: 24,
+              paddingVertical: 12,
+            }}
+          >
+            <Text style={{ color: '#fff', fontWeight: '600' }}>Retry</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+        <Pressable
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          style={styles.backButton}
+        >
           <Ionicons name="arrow-back" size={24} color={SHARED_COLORS.textPrimary} />
         </Pressable>
         <View style={styles.headerTitleContainer}>
@@ -603,7 +670,7 @@ function SharedCategoryPage() {
       {/* Sort Bar */}
       <View style={styles.sortBar}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.sortList}>
-          {SORT_OPTIONS.map(sort => (
+          {SORT_OPTIONS.map((sort) => (
             <Pressable
               key={sort.id}
               style={[styles.sortChip, activeSort === sort.id && styles.sortChipActive]}
@@ -625,7 +692,7 @@ function SharedCategoryPage() {
       {/* Filter Chips */}
       <View style={styles.filterBar}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filterList}>
-          {FILTER_CHIPS.map(filter => (
+          {FILTER_CHIPS.map((filter) => (
             <Pressable
               key={filter.id}
               style={[styles.filterChip, activeFilter === filter.id && styles.filterChipActive]}
@@ -658,9 +725,7 @@ function SharedCategoryPage() {
           renderItem={renderStoreItem}
           contentContainerStyle={styles.storeList}
           showsVerticalScrollIndicator={false}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[meta.color]} />
-          }
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[meta.color]} />}
           onEndReached={loadMore}
           onEndReachedThreshold={0.3}
           ListFooterComponent={

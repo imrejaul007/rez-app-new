@@ -321,11 +321,18 @@ const FitnessBookingPage: React.FC = () => {
       slots.push({
         id: `${hour}:00`,
         time: `${hour > 12 ? hour - 12 : hour}:00 ${hour >= 12 ? 'PM' : 'AM'}`,
-        available: true, // TODO: fetch real slot availability from API (currently all shown as available)
+        // NOTE: Real-time slot availability is not yet fetched from the API.
+        // All slots are shown as available as a placeholder — do not rely on
+        // this for actual booking capacity enforcement.
+        available: true,
       });
     }
     return slots;
   };
+
+  // BUG-008: Fake availability notice — displayed in the UI near the time-slot selector
+  const AVAILABILITY_DISCLAIMER =
+    'Availability data unavailable — actual slots may differ. Please confirm with the venue.';
 
   const timeSlots = generateTimeSlots();
 
@@ -520,6 +527,10 @@ const FitnessBookingPage: React.FC = () => {
   const renderMembershipPlans = () => (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Choose Your Plan</Text>
+      {/* BUG-052: Prices shown may be fallback defaults. Confirm actual pricing at the venue. */}
+      <Text style={{ fontSize: 12, color: colors.text?.tertiary || '#888', fontStyle: 'italic', marginBottom: 8 }}>
+        Prices may vary — confirm with the gym before booking.
+      </Text>
       {membershipPlans.map((plan) => (
         <Pressable
           key={plan.id}
@@ -668,6 +679,9 @@ const FitnessBookingPage: React.FC = () => {
       {renderDateSelector(selectedTrainerDate, setSelectedTrainerDate)}
 
       <Text style={[styles.sectionTitle, { marginTop: Spacing.lg }]}>Select Time</Text>
+      <Text style={{ fontSize: 12, color: colors.text?.tertiary || '#888', marginBottom: 8, fontStyle: 'italic' }}>
+        {AVAILABILITY_DISCLAIMER}
+      </Text>
       <View style={styles.timeGrid}>
         {timeSlots.map((slot) => (
           <Pressable

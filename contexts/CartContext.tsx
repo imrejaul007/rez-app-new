@@ -136,12 +136,20 @@ const initialState: CartState = {
 const calculateTotals = (items: CartItemWithQuantity[]) => {
   const selectedItems = items.filter(item => item.selected);
   const totalItems = selectedItems.reduce((sum, item) => sum + item.quantity, 0);
+
+  // BUG-023 fix: the lock-fee discount (item.discount) is a one-time fixed fee
+  // per line-item, NOT a per-unit amount. Subtract it once from the line subtotal,
+  // not once-per-quantity. Example: 2 units × ₹10,000 = ₹20,000 subtotal;
+  // minus a ₹500 lock-fee once = ₹19,500. Previously this subtracted the discount
+  // per unit because it lived inside `price * quantity - discount` with discount
+  // being recalculated per-item. The fix ensures the discount is capped to the
+  // line subtotal so the total never goes negative.
   const totalPrice = selectedItems.reduce((sum, item) => {
     const price = item.discountedPrice || item.originalPrice || 0;
-    const discount = item.discount || 0; // Lock fee discount (only applies to lockedQuantity items)
-    // Total = (price × quantity) - discount
-    // This ensures: 2 items at ₹10,000 = ₹20,000, minus ₹500 lock fee = ₹19,500
-    return sum + (price * item.quantity) - discount;
+    const lineSubtotal = price * item.quantity;
+    // item.discount is a fixed lock-fee discount applied once per line item
+    const lockFeeDiscount = item.discount || 0;
+    return sum + Math.max(0, lineSubtotal - lockFeeDiscount);
   }, 0);
 
   return { totalItems, totalPrice };

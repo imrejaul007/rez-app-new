@@ -450,6 +450,13 @@ function TableBookingPage() {
                 <Ionicons name="time" size={20} color={Colors.brand.purple} />
                 <ThemedText style={styles.sectionTitle}>Select Time</ThemedText>
               </View>
+              {/* BUG-009: Real table availability is not yet fetched from the API.
+                  Slots marked available are derived from business hours only. */}
+              <ThemedText
+                style={{ fontSize: 12, color: colors.text?.tertiary || '#888', marginBottom: 8, fontStyle: 'italic' }}
+              >
+                Availability data unavailable — confirm directly with the restaurant.
+              </ThemedText>
               {timeSlots.length > 0 ? (
                 <View style={styles.timeGrid}>
                   {timeSlots.map((slot) => {

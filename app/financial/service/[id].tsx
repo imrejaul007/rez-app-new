@@ -373,13 +373,30 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
                 accessibilityLabel="Consumer account number input"
                 accessibilityHint="Enter your consumer or account number"
               />
-              <Pressable
-                style={[styles.fetchButton, !consumerNumber && styles.fetchButtonDisabled]}
-                onPress={handleFetchBill}
-                disabled={!consumerNumber}
-              >
-                <Text style={styles.fetchButtonText}>Fetch Bill</Text>
-              </Pressable>
+              {/* BUG-077: Show "Coming Soon" badge on the button upfront so users know
+                  the feature is not yet available before tapping. */}
+              <View style={{ position: 'relative' }}>
+                <Pressable
+                  style={[styles.fetchButton, !consumerNumber && styles.fetchButtonDisabled]}
+                  onPress={handleFetchBill}
+                  disabled={!consumerNumber}
+                >
+                  <Text style={styles.fetchButtonText}>Fetch Bill</Text>
+                </Pressable>
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: -8,
+                    right: -8,
+                    backgroundColor: COLORS.amber500,
+                    borderRadius: 8,
+                    paddingHorizontal: 6,
+                    paddingVertical: 2,
+                  }}
+                >
+                  <Text style={{ fontSize: 9, fontWeight: '700', color: COLORS.white }}>SOON</Text>
+                </View>
+              </View>
             </View>
 
             {fetchedBill ? (

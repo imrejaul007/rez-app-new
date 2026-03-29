@@ -218,9 +218,11 @@ function BookTablePage() {
       platformAlertSimple('Error', 'Please enter your name');
       return;
     }
-    const phoneRegex = /^\d{7,15}$/;
-    if (!phoneRegex.test(customerPhone.trim())) {
-      platformAlertSimple('Error', 'Please enter a valid phone number (digits only)');
+    // BUG-032: Strip spaces, dashes, parens and leading + before validating so
+    // country codes like +91 or formatted numbers like (555) 123-4567 are accepted.
+    const phoneDigits = customerPhone.trim().replace(/[\s\-().+]/g, '');
+    if (!/^\d{7,15}$/.test(phoneDigits)) {
+      platformAlertSimple('Error', 'Please enter a valid phone number (7–15 digits, country code optional)');
       return;
     }
 

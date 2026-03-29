@@ -3,15 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Choose EMI plan during checkout
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  ActivityIndicator,
-} from 'react-native';
+import { View, ScrollView, StyleSheet, Pressable, StatusBar, Platform, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -79,7 +71,9 @@ function EMISelectionPage() {
 
   const calculateEMI = (tenure: number, bank: Bank): EMIOption => {
     const isNoCost = bank.noCostTenures.includes(tenure);
-    const interestRate = isNoCost ? 0 : 14;
+    // BUG-038: Hardcoded fallback interest rate — replace with bank-specific rate
+    // returned by the /payments/emi-options API once that endpoint is live.
+    const interestRate = isNoCost ? 0 : 14; // 14% p.a. is a fallback default
     const monthlyRate = interestRate / 12 / 100;
 
     let emi: number;
@@ -91,7 +85,7 @@ function EMISelectionPage() {
       total = amount;
       interest = 0;
     } else {
-      emi = amount * monthlyRate * Math.pow(1 + monthlyRate, tenure) / (Math.pow(1 + monthlyRate, tenure) - 1);
+      emi = (amount * monthlyRate * Math.pow(1 + monthlyRate, tenure)) / (Math.pow(1 + monthlyRate, tenure) - 1);
       total = emi * tenure;
       interest = total - amount;
     }
@@ -105,7 +99,9 @@ function EMISelectionPage() {
     };
   };
 
-  const tenureOptions = [3, 6, 9, 12, 18, 24];
+  // BUG-055: Hardcoded fallback tenure list — replace with tenures returned by the
+  // /payments/emi-options API for the selected bank once that endpoint is live.
+  const tenureOptions = [3, 6, 9, 12, 18, 24]; // fallback defaults in months
 
   const handleContinue = () => {
     if (selectedBank && selectedTenure) {
@@ -121,7 +117,7 @@ function EMISelectionPage() {
           emiTotal: emiPlan.total.toString(),
           emiInterest: emiPlan.interest.toString(),
           emiIsNoCost: emiPlan.isNoCost.toString(),
-        }
+        },
       });
     }
   };
@@ -130,12 +126,12 @@ function EMISelectionPage() {
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Select EMI Plan</ThemedText>
@@ -144,7 +140,10 @@ function EMISelectionPage() {
 
         <View style={styles.amountCard}>
           <ThemedText style={styles.amountLabel}>Order Amount</ThemedText>
-          <ThemedText style={styles.amountValue}>{currencySymbol}{amount.toLocaleString()}</ThemedText>
+          <ThemedText style={styles.amountValue}>
+            {currencySymbol}
+            {amount.toLocaleString()}
+          </ThemedText>
         </View>
       </LinearGradient>
 
@@ -159,13 +158,10 @@ function EMISelectionPage() {
           </View>
 
           <View style={styles.banksGrid}>
-            {banks.map(bank => (
+            {banks.map((bank) => (
               <Pressable
                 key={bank.id}
-                style={[
-                  styles.bankCard,
-                  selectedBank?.id === bank.id && styles.bankCardSelected,
-                ]}
+                style={[styles.bankCard, selectedBank?.id === bank.id && styles.bankCardSelected]}
                 onPress={() => {
                   setSelectedBank(bank);
                   setSelectedTenure(null);
@@ -196,15 +192,12 @@ function EMISelectionPage() {
             </View>
 
             <View style={styles.tenureGrid}>
-              {tenureOptions.map(tenure => {
+              {tenureOptions.map((tenure) => {
                 const option = calculateEMI(tenure, selectedBank);
                 return (
                   <Pressable
                     key={tenure}
-                    style={[
-                      styles.tenureCard,
-                      selectedTenure === tenure && styles.tenureCardSelected,
-                    ]}
+                    style={[styles.tenureCard, selectedTenure === tenure && styles.tenureCardSelected]}
                     onPress={() => setSelectedTenure(tenure)}
                   >
                     {option.isNoCost && (
@@ -212,21 +205,17 @@ function EMISelectionPage() {
                         <ThemedText style={styles.noCostBadgeText}>No Cost</ThemedText>
                       </View>
                     )}
-                    <ThemedText style={[
-                      styles.tenureMonths,
-                      selectedTenure === tenure && styles.tenureMonthsSelected,
-                    ]}>
+                    <ThemedText style={[styles.tenureMonths, selectedTenure === tenure && styles.tenureMonthsSelected]}>
                       {tenure} Months
                     </ThemedText>
-                    <ThemedText style={[
-                      styles.tenureEMI,
-                      selectedTenure === tenure && styles.tenureEMISelected,
-                    ]}>
-                      {currencySymbol}{option.emi.toLocaleString()}/mo
+                    <ThemedText style={[styles.tenureEMI, selectedTenure === tenure && styles.tenureEMISelected]}>
+                      {currencySymbol}
+                      {option.emi.toLocaleString()}/mo
                     </ThemedText>
                     {!option.isNoCost && (
                       <ThemedText style={styles.tenureInterest}>
-                        Interest: {currencySymbol}{option.interest.toLocaleString()}
+                        Interest: {currencySymbol}
+                        {option.interest.toLocaleString()}
                       </ThemedText>
                     )}
                   </Pressable>
@@ -254,7 +243,8 @@ function EMISelectionPage() {
             <View style={styles.summaryRow}>
               <ThemedText style={styles.summaryLabel}>Monthly EMI</ThemedText>
               <ThemedText style={styles.summaryValueHighlight}>
-                {currencySymbol}{calculateEMI(selectedTenure, selectedBank).emi.toLocaleString()}
+                {currencySymbol}
+                {calculateEMI(selectedTenure, selectedBank).emi.toLocaleString()}
               </ThemedText>
             </View>
 
@@ -275,8 +265,11 @@ function EMISelectionPage() {
             <View style={[styles.summaryRow, styles.summaryTotal]}>
               <ThemedText style={styles.summaryTotalLabel}>Total Amount</ThemedText>
               <ThemedText style={styles.summaryTotalValue}>
-                {currencySymbol}{(calculateEMI(selectedTenure, selectedBank).total +
-                  parseInt(selectedBank.processingFee.replace(/[^0-9]/g, ''))).toLocaleString()}
+                {currencySymbol}
+                {(
+                  calculateEMI(selectedTenure, selectedBank).total +
+                  parseInt(selectedBank.processingFee.replace(/[^0-9]/g, ''))
+                ).toLocaleString()}
               </ThemedText>
             </View>
           </View>
@@ -286,8 +279,8 @@ function EMISelectionPage() {
         <View style={styles.termsCard}>
           <Ionicons name="information-circle-outline" size={20} color={Colors.info} />
           <ThemedText style={styles.termsText}>
-            EMI will be charged to your credit card. Full payment will be made to the merchant.
-            EMI conversion is subject to bank approval.
+            EMI will be charged to your credit card. Full payment will be made to the merchant. EMI conversion is
+            subject to bank approval.
           </ThemedText>
         </View>
       </ScrollView>
@@ -299,7 +292,8 @@ function EMISelectionPage() {
             <>
               <ThemedText style={styles.footerLabel}>Pay in EMI</ThemedText>
               <ThemedText style={styles.footerValue}>
-                {currencySymbol}{calculateEMI(selectedTenure, selectedBank).emi.toLocaleString()}/mo × {selectedTenure}
+                {currencySymbol}
+                {calculateEMI(selectedTenure, selectedBank).emi.toLocaleString()}/mo × {selectedTenure}
               </ThemedText>
             </>
           ) : (
@@ -307,10 +301,7 @@ function EMISelectionPage() {
           )}
         </View>
         <Pressable
-          style={[
-            styles.continueButton,
-            (!selectedBank || !selectedTenure) && styles.continueButtonDisabled,
-          ]}
+          style={[styles.continueButton, (!selectedBank || !selectedTenure) && styles.continueButtonDisabled]}
           onPress={handleContinue}
           disabled={!selectedBank || !selectedTenure}
         >

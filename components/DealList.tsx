@@ -48,7 +48,8 @@ function DealList({
   const [sortBy, setSortBy] = useState<SortOption>('priority');
   const [filterBy, setFilterBy] = useState<FilterOption>('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [showFilterModal, setShowFilterModal] = useState(false);
+  // NOTE: showFilterModal is intentionally removed — filter UI is handled by
+  // the Quick Filters row below. A full modal implementation can be added later.
   const isMounted = useIsMounted();
   
   const flatListRef = useRef<FlashList<DealListItemData>>(null);
@@ -207,9 +208,15 @@ function DealList({
 
         {/* Filter and Sort Controls */}
         <View style={styles.controlsContainer}>
-          <Pressable 
+          <Pressable
             style={styles.controlButton}
-            onPress={() => setShowFilterModal(true)}
+            onPress={() => {
+              // Quick-filter cycling — tap to cycle through categories instead of opening a modal
+              const categories: FilterOption[] = ['all', ...getPopularCategories()];
+              const currentIdx = categories.indexOf(filterBy);
+              const nextIdx = (currentIdx + 1) % categories.length;
+              setFilterBy(categories[nextIdx]);
+            }}
           >
             <Ionicons name="funnel-outline" size={16} color={colors.lightMustard} />
             <ThemedText style={styles.controlButtonText} numberOfLines={1}>

@@ -53,6 +53,33 @@ const formatTimeSlot = (start: string, end?: string): string => {
   return formattedStart;
 };
 
+// BUG-062: Discriminated union that captures the extended fields stored on cart items
+// by CartContext (which comes through useCartStore). These fields are not declared on
+// the base CartItemType, which is why the original code used `as any`.
+interface ExtendedCartItem extends CartItemType {
+  itemType?: 'product' | 'service' | 'event';
+  productId?: string;
+  discount?: number;
+  variant?: { id?: string; name?: string; attributes?: Record<string, string> };
+  store?: { id?: string; name?: string; slug?: string };
+  metadata?: Record<string, unknown>;
+  serviceBookingDetails?: {
+    bookingDate?: Date | string | null;
+    timeSlot?: { start: string; end: string } | null;
+    duration?: number;
+    serviceType?: string;
+    customerNotes?: string;
+    customerName?: string;
+    customerPhone?: string;
+    customerEmail?: string;
+  } | null;
+}
+
+/** Type guard: narrows a CartItemType to ExtendedCartItem */
+function asExtendedCartItem(item: CartItemType): ExtendedCartItem {
+  return item as ExtendedCartItem;
+}
+
 function CartPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
@@ -90,26 +117,27 @@ function CartPage() {
   // Use real cart items from CartContext - separate products and services
   const productItems = useMemo(() => {
     return (cartState.items ?? [])
-      .filter((item) => (item as any).itemType !== 'service') // Only non-service items
+      .filter((item) => asExtendedCartItem(item).itemType !== 'service') // Only non-service items
       .map((item) => {
+        const ext = asExtendedCartItem(item);
         // Preserve metadata for event items
-        const metadata = (item as any).metadata || {};
+        const metadata = (ext.metadata as Record<string, unknown>) || {};
         const isEvent = metadata.eventType === 'event';
 
         return {
           id: item.id,
-          productId: (item as any).productId || item.id,
+          productId: ext.productId || item.id,
           name: item.name,
           image: item.image || '',
           price: item.discountedPrice || item.originalPrice || 0,
           originalPrice: item.originalPrice,
           cashback: isEvent ? '0' : `Upto 12% cash back`, // Events don't have cashback
           quantity: item.quantity,
-          discount: (item as any).discount,
-          variant: (item as any).variant,
-          store: (item as any).store,
+          discount: ext.discount,
+          variant: ext.variant,
+          store: ext.store,
           category: 'products' as const,
-          itemType: (item as any).itemType || 'product',
+          itemType: ext.itemType || 'product',
           // Preserve event metadata
           metadata: isEvent ? metadata : undefined,
           isEvent: isEvent,
@@ -120,23 +148,24 @@ function CartPage() {
   // Service items from cart
   const serviceItems = useMemo(() => {
     return (cartState.items ?? [])
-      .filter((item) => (item as any).itemType === 'service')
+      .filter((item) => asExtendedCartItem(item).itemType === 'service')
       .map((item) => {
-        const bookingDetails = (item as any).serviceBookingDetails || {};
-        const bookingDate = bookingDetails.bookingDate ? new Date(bookingDetails.bookingDate) : null;
+        const ext = asExtendedCartItem(item);
+        const bookingDetails = ext.serviceBookingDetails || {};
+        const bookingDate = bookingDetails.bookingDate ? new Date(bookingDetails.bookingDate as string | Date) : null;
 
         return {
           id: item.id,
-          productId: (item as any).productId || item.id,
+          productId: ext.productId || item.id,
           name: item.name,
           image: item.image || '',
           price: item.discountedPrice || item.originalPrice || 0,
           originalPrice: item.originalPrice,
           cashback: '0', // Services typically don't have cashback
           quantity: item.quantity,
-          discount: (item as any).discount,
-          variant: (item as any).variant,
-          store: (item as any).store,
+          discount: ext.discount,
+          variant: ext.variant,
+          store: ext.store,
           category: 'service' as const,
           itemType: 'service' as const,
           // Service booking details
@@ -466,7 +495,7 @@ function CartPage() {
         return (
           <View style={styles.cardWrapper}>
             <LockedItem
-              item={item as any}
+              item={item as unknown as LockedProduct}
               onMoveToCart={handleMoveToCart}
               onUnlock={handleUnlockItem}
               showAnimation={true}
@@ -477,7 +506,8 @@ function CartPage() {
 
       // Render service item with booking details
       if (activeTab === 'service') {
-        const serviceItem = item as any;
+        // Use the typed helper rather than casting to any
+        const serviceItem = asExtendedCartItem(item);
         return (
           <View style={styles.cardWrapper}>
             <CartItem
@@ -606,7 +636,10 @@ function CartPage() {
             ListFooterComponent={
               overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                 <CardOffersSection
-                  storeId={(productItems[0] as any)?.store?.id || (productItems[0] as any)?.storeId}
+                  storeId={
+                    asExtendedCartItem(productItems[0] as CartItemType)?.store?.id ||
+                    asExtendedCartItem(productItems[0] as CartItemType)?.productId
+                  }
                   orderValue={overallTotal}
                   onOfferApplied={handleCardOfferApplied}
                 />

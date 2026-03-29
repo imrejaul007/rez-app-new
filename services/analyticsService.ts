@@ -70,6 +70,9 @@ class AnalyticsService {
   constructor() {
     this.sessionId = this.generateSessionId();
     this.sessionStartTime = new Date();
+    // BUG-045: Start periodic flush so the event queue does not grow unbounded.
+    // Events are batched and sent to /analytics/batch every 30 seconds.
+    this.startAutoFlush(30000);
   }
 
   private generateSessionId(): string {

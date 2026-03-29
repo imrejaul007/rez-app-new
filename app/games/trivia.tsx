@@ -151,12 +151,17 @@ function TriviaPage() {
     };
   }, [gameState, currentIndex]);
 
-  // BUG-013: Side effects outside state updater — call handleTimeUp when timeLeft hits 0
+  // BUG-022 (part 1): declare a stable ref; it will be populated after handleTimeUp
+  // is defined below. The useEffect that reads it runs after render, so by that
+  // time handleTimeUp is always defined.
+  // eslint-disable-next-line @typescript-eslint/no-use-before-define
+  const handleTimeUpRef = useRef<() => void>(() => {});
+
   useEffect(() => {
     if (timeLeft === 0 && gameState === 'playing') {
-      handleTimeUp();
+      handleTimeUpRef.current();
     }
-  }, [timeLeft]);
+  }, [timeLeft, gameState]);
 
   // Animate options appearing
   useEffect(() => {
@@ -252,6 +257,8 @@ function TriviaPage() {
       moveToNext();
     }, 1500);
   };
+  // BUG-022 (part 2): keep the ref in sync with the latest closure after each render
+  handleTimeUpRef.current = handleTimeUp;
 
   const handleOptionPress = (optionIndex: number) => {
     if (gameState !== 'playing' || selectedOption !== null) return;
@@ -440,6 +447,9 @@ function TriviaPage() {
                 style={getOptionStyle(i)}
                 onPress={() => handleOptionPress(i)}
                 disabled={gameState === 'answered'}
+                accessibilityLabel={`Option ${String.fromCharCode(65 + i)}: ${option}`}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: gameState === 'answered' }}
               >
                 <View style={styles.optionLetter}>
                   <Text style={styles.optionLetterText}>{String.fromCharCode(65 + i)}</Text>

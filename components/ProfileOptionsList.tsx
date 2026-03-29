@@ -7,14 +7,17 @@ import { ProfileOption, ProfileOptionsListProps } from "@/types/profile";
 import { useRegion } from "@/contexts/RegionContext";
 import { colors } from '@/constants/theme';
 
-// Dummy data (Replace with backend data later)
-const getDefaultOptionsData = (currencySymbol: string): ProfileOption[] => [
+// Default option list — rightLabel for Wallet is intentionally not set here.
+// The actual balance must be injected by the parent via the `options` prop
+// (fetched from context/API). Showing a hardcoded balance (e.g. ₹2,075) is
+// misleading and was removed as part of BUG-056.
+const getDefaultOptionsData = (_currencySymbol: string): ProfileOption[] => [
   {
     id: "1",
     icon: "wallet-outline",
     title: "Wallet",
     subtitle: "Complete milestones and tasks for the exciting rewards",
-    rightLabel: `${currencySymbol}2,075`,
+    rightLabel: "View balance",
     badgeColor: "#38C172",
   },
   {
@@ -53,9 +56,11 @@ const ProfileOptionsList: React.FC<ProfileOptionsListProps> = ({
   const defaultOptionsData = getDefaultOptionsData(currencySymbol);
   const optionsToRender = options || defaultOptionsData;
   const renderItem = ({ item }: { item: ProfileOption }) => (
-    <Pressable 
-      style={[styles.itemContainer, item.disabled && styles.disabledItem]} 
-     
+    <Pressable
+      style={[styles.itemContainer, item.disabled && styles.disabledItem]}
+      accessibilityLabel={item.rightLabel ? `${item.title}: ${item.rightLabel}` : item.title}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: item.disabled }}
       onPress={() => {
         if (!item.disabled) {
           if (item.onPress) {
