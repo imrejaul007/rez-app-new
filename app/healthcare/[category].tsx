@@ -249,6 +249,8 @@ const HealthcareCategoryPage: React.FC = () => {
         key={store._id}
         style={styles.itemCard}
         onPress={() => router.push(`/MainStorePage?storeId=${store._id}` as any)}
+        accessibilityRole="button"
+        accessibilityLabel={`${store.name}${store.metadata?.specialization ? `, ${store.metadata.specialization}` : ''}, ${store.address.city}, rating ${store.ratings.average.toFixed(1)}${cashback > 0 ? `, ${cashback}% cashback` : ''}`}
       >
         <View style={styles.cardHeader}>
           <View style={styles.storeImageContainer}>
@@ -321,12 +323,19 @@ const HealthcareCategoryPage: React.FC = () => {
             </View>
 
             <View style={styles.actionButtons}>
-              <Pressable style={styles.callButton} onPress={() => handleCallStore(store.contact.phone)}>
+              <Pressable
+                style={styles.callButton}
+                onPress={() => handleCallStore(store.contact.phone)}
+                accessibilityRole="button"
+                accessibilityLabel={`Call ${store.name}`}
+              >
                 <Ionicons name="call" size={18} color={config.gradientColors[0]} />
               </Pressable>
               <Pressable
                 style={[styles.bookButton, { backgroundColor: config.gradientColors[0] }]}
                 onPress={() => handleBookAppointment(store)}
+                accessibilityRole="button"
+                accessibilityLabel={`Book appointment at ${store.name}`}
               >
                 <Text style={styles.bookButtonText}>Book</Text>
               </Pressable>
@@ -348,7 +357,11 @@ const HealthcareCategoryPage: React.FC = () => {
             <Text style={styles.comingSoonText}>
               Compare and buy health insurance plans from top providers. This feature is coming soon!
             </Text>
-            <Pressable style={styles.notifyButton}>
+            <Pressable
+              style={styles.notifyButton}
+              accessibilityRole="button"
+              accessibilityLabel="Notify me when health insurance is available"
+            >
               <Text style={styles.notifyButtonText}>Notify Me</Text>
             </Pressable>
           </View>
@@ -365,7 +378,11 @@ const HealthcareCategoryPage: React.FC = () => {
             <Text style={styles.comingSoonText}>
               Exclusive health offers and discounts. Stay tuned for amazing deals!
             </Text>
-            <Pressable style={styles.notifyButton}>
+            <Pressable
+              style={styles.notifyButton}
+              accessibilityRole="button"
+              accessibilityLabel="Notify me when health offers are available"
+            >
               <Text style={styles.notifyButtonText}>Notify Me</Text>
             </Pressable>
           </View>
@@ -383,6 +400,8 @@ const HealthcareCategoryPage: React.FC = () => {
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
@@ -395,7 +414,11 @@ const HealthcareCategoryPage: React.FC = () => {
               {stores.length > 0 ? `${stores.length} options available` : 'Finding options...'}
             </Text>
           </View>
-          <Pressable style={styles.searchButton}>
+          <Pressable
+            style={styles.searchButton}
+            accessibilityRole="button"
+            accessibilityLabel={`Search ${config.title}`}
+          >
             <Ionicons name="search" size={24} color={COLORS.white} />
           </Pressable>
         </View>
@@ -410,6 +433,9 @@ const HealthcareCategoryPage: React.FC = () => {
                 key={filter}
                 onPress={() => setSelectedFilter(filter)}
                 style={[styles.filterChip, selectedFilter === filter && { backgroundColor: config.gradientColors[0] }]}
+                accessibilityRole="radio"
+                accessibilityLabel={`Filter by ${filter}`}
+                accessibilityState={{ selected: selectedFilter === filter }}
               >
                 <Text style={[styles.filterChipText, selectedFilter === filter && styles.filterChipTextActive]}>
                   {filter}

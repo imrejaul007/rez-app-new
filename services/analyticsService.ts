@@ -80,7 +80,8 @@ class AnalyticsService {
   }
 
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    // BUG-091 FIX: .substr() is deprecated — use .substring() instead
+    return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 
   setUserId(userId: string) {

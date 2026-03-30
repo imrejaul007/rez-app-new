@@ -34,7 +34,7 @@ interface RewardPopupStoreState {
   popupQueue: RewardUnlockedData[];
 }
 
-const generateId = () => `reward-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+const generateId = () => `reward-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 
 let _dismissTimer: ReturnType<typeof setTimeout> | null = null;
 

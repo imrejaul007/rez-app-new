@@ -31,12 +31,15 @@ import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
-
 // Category configuration for UI
 const categoryConfig: Record<string, { title: string; icon: string; gradientColors: [string, string] }> = {
   gyms: { title: 'Gyms', icon: '🏋️', gradientColors: [colors.brand.orange, colors.brand.orangeDark] },
   studios: { title: 'Fitness Studios', icon: '🧘', gradientColors: [colors.brand.purpleLight, colors.brand.purple] },
-  trainers: { title: 'Personal Trainers', icon: '💪', gradientColors: [colors.successScale[400], colors.successScale[700]] },
+  trainers: {
+    title: 'Personal Trainers',
+    icon: '💪',
+    gradientColors: [colors.successScale[400], colors.successScale[700]],
+  },
   store: { title: 'Sports Store', icon: '🛒', gradientColors: [colors.infoScale[400], colors.brand.blue] },
   challenges: { title: 'Fitness Challenges', icon: '🏆', gradientColors: [colors.brand.amber, '#CA8A04'] },
   nutrition: { title: 'Nutrition Plans', icon: '🥗', gradientColors: [colors.success, colors.brand.greenDark] },
@@ -104,11 +107,11 @@ const FitnessCategoryPage: React.FC = () => {
   // Calculate distance between two coordinates (Haversine formula)
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
     const R = 6371; // Radius of Earth in km
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLon = ((lon2 - lon1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   };
@@ -168,12 +171,7 @@ const FitnessCategoryPage: React.FC = () => {
         storesData = storesData.map((store: StoreItem) => {
           if (store.location?.coordinates) {
             const [lng, lat] = store.location.coordinates;
-            const distance = calculateDistance(
-              userLocation.latitude,
-              userLocation.longitude,
-              lat,
-              lng
-            );
+            const distance = calculateDistance(userLocation.latitude, userLocation.longitude, lat, lng);
             return { ...store, distance };
           }
           return store;
@@ -207,19 +205,15 @@ const FitnessCategoryPage: React.FC = () => {
       case 'nearby':
         if (userLocation) {
           sorted = sorted
-            .filter(s => s.distance !== undefined)
+            .filter((s) => s.distance !== undefined)
             .sort((a, b) => (a.distance || 999) - (b.distance || 999));
         }
         break;
       case 'top-rated':
-        sorted = sorted.sort((a, b) =>
-          (b.ratings?.average || 0) - (a.ratings?.average || 0)
-        );
+        sorted = sorted.sort((a, b) => (b.ratings?.average || 0) - (a.ratings?.average || 0));
         break;
       case 'best-cashback':
-        sorted = sorted.sort((a, b) =>
-          (b.offers?.cashback || 0) - (a.offers?.cashback || 0)
-        );
+        sorted = sorted.sort((a, b) => (b.offers?.cashback || 0) - (a.offers?.cashback || 0));
         break;
       default:
         // Keep default order (by rating from API)
@@ -303,9 +297,9 @@ const FitnessCategoryPage: React.FC = () => {
 
       // Filter results to only show fitness-related stores
       const results = ((response.data as any)?.stores || []).filter((store: StoreItem) =>
-        store.tags?.some(tag =>
-          ['gym', 'fitness', 'yoga', 'studio', 'trainer', 'sports', 'pilates', 'crossfit'].includes(tag.toLowerCase())
-        )
+        store.tags?.some((tag) =>
+          ['gym', 'fitness', 'yoga', 'studio', 'trainer', 'sports', 'pilates', 'crossfit'].includes(tag.toLowerCase()),
+        ),
       );
 
       if (!isMounted()) return;
@@ -326,15 +320,23 @@ const FitnessCategoryPage: React.FC = () => {
 
   const getItemTypeLabel = (item: StoreItem): string => {
     if (item.serviceTypes && item.serviceTypes.length > 0) {
-      return item.serviceTypes[0].split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+      return item.serviceTypes[0]
+        .split('-')
+        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
     }
     if (item.tags && item.tags.length > 0) {
       return item.tags[0].charAt(0).toUpperCase() + item.tags[0].slice(1);
     }
-    return category === 'gyms' ? 'Gym' :
-           category === 'studios' ? 'Studio' :
-           category === 'trainers' ? 'Trainer' :
-           category === 'store' ? 'Store' : 'Fitness';
+    return category === 'gyms'
+      ? 'Gym'
+      : category === 'studios'
+        ? 'Studio'
+        : category === 'trainers'
+          ? 'Trainer'
+          : category === 'store'
+            ? 'Store'
+            : 'Fitness';
   };
 
   const formatDistance = (distance?: number): string => {
@@ -361,21 +363,28 @@ const FitnessCategoryPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={config.gradientColors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 0 }}
-        style={styles.header}
-      >
+      <LinearGradient colors={config.gradientColors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.header}>
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
-            <Text style={styles.headerTitle}>{config.icon} {config.title}</Text>
+            <Text style={styles.headerTitle}>
+              {config.icon} {config.title}
+            </Text>
             <Text style={styles.headerSubtitle}>{totalCount} options available</Text>
           </View>
-          <Pressable style={styles.searchButton} onPress={handleSearchOpen}>
+          <Pressable
+            style={styles.searchButton}
+            onPress={handleSearchOpen}
+            accessibilityRole="button"
+            accessibilityLabel={`Search ${config?.title?.toLowerCase() || 'fitness'}`}
+          >
             <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
@@ -388,22 +397,17 @@ const FitnessCategoryPage: React.FC = () => {
             <Pressable
               key={filter.id}
               onPress={() => handleFilterChange(filter.id)}
-              style={[
-                styles.filterChip,
-                selectedFilter === filter.id && styles.filterChipActive,
-              ]}
+              style={[styles.filterChip, selectedFilter === filter.id && styles.filterChipActive]}
+              accessibilityRole="radio"
+              accessibilityLabel={`${filter.label} filter`}
+              accessibilityState={{ selected: selectedFilter === filter.id }}
             >
               <Ionicons
                 name={filter.icon as any}
                 size={16}
                 color={selectedFilter === filter.id ? colors.background.primary : colors.text.tertiary}
               />
-              <Text
-                style={[
-                  styles.filterChipText,
-                  selectedFilter === filter.id && styles.filterChipTextActive,
-                ]}
-              >
+              <Text style={[styles.filterChipText, selectedFilter === filter.id && styles.filterChipTextActive]}>
                 {filter.label}
               </Text>
               {filter.id === 'nearby' && locationLoading && (
@@ -416,11 +420,14 @@ const FitnessCategoryPage: React.FC = () => {
 
       {/* Location status */}
       {selectedFilter === 'nearby' && !userLocation && !locationLoading && (
-        <Pressable style={styles.locationBanner} onPress={getUserLocation}>
+        <Pressable
+          style={styles.locationBanner}
+          onPress={getUserLocation}
+          accessibilityRole="button"
+          accessibilityLabel="Enable location to see nearby results"
+        >
           <Ionicons name="location-outline" size={20} color={Colors.warning} />
-          <Text style={styles.locationBannerText}>
-            {locationError || 'Tap to enable location for nearby results'}
-          </Text>
+          <Text style={styles.locationBannerText}>{locationError || 'Tap to enable location for nearby results'}</Text>
         </Pressable>
       )}
 
@@ -428,11 +435,7 @@ const FitnessCategoryPage: React.FC = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={config.gradientColors[0]}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={config.gradientColors[0]} />
         }
       >
         <View style={styles.itemsList}>
@@ -442,18 +445,18 @@ const FitnessCategoryPage: React.FC = () => {
                 key={item._id}
                 style={styles.itemCard}
                 onPress={() => handleItemPress(item)}
-               
+                accessibilityRole="button"
+                accessibilityLabel={`${item.name}, ${item.location?.city || 'Bangalore'}, rating ${item.ratings?.average?.toFixed(1) || '4.5'}, ${item.offers?.cashback || 15}% cashback`}
               >
-                <CachedImage
-                  source={item.banner?.[0] || item.logo || undefined}
-                  style={styles.itemImage}
-                />
+                <CachedImage source={item.banner?.[0] || item.logo || undefined} style={styles.itemImage} />
                 <View style={styles.cashbackBadge}>
                   <Text style={styles.cashbackText}>{item.offers?.cashback || 15}%</Text>
                 </View>
                 <View style={styles.itemInfo}>
                   <View style={styles.itemHeader}>
-                    <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
+                    <Text style={styles.itemName} numberOfLines={1}>
+                      {item.name}
+                    </Text>
                     <View style={styles.typeBadge}>
                       <Text style={styles.typeText}>{getItemTypeLabel(item)}</Text>
                     </View>
@@ -461,12 +464,8 @@ const FitnessCategoryPage: React.FC = () => {
                   <View style={styles.itemMeta}>
                     <View style={styles.ratingContainer}>
                       <Ionicons name="star" size={14} color={Colors.warning} />
-                      <Text style={styles.ratingText}>
-                        {item.ratings?.average?.toFixed(1) || '4.5'}
-                      </Text>
-                      <Text style={styles.reviewCount}>
-                        ({item.ratings?.count || 0})
-                      </Text>
+                      <Text style={styles.ratingText}>{item.ratings?.average?.toFixed(1) || '4.5'}</Text>
+                      <Text style={styles.reviewCount}>({item.ratings?.count || 0})</Text>
                     </View>
                     <View style={styles.metaItem}>
                       <Ionicons name="location-outline" size={14} color={colors.text.tertiary} />
@@ -479,7 +478,9 @@ const FitnessCategoryPage: React.FC = () => {
                     <Text style={styles.priceText}>{getPriceLabel(item)}</Text>
                     <Pressable
                       style={[styles.bookButton, { backgroundColor: config.gradientColors[0] }]}
-                      onPress={() => category === 'store' ? handleItemPress(item) : handleBookPress(item)}
+                      onPress={() => (category === 'store' ? handleItemPress(item) : handleBookPress(item))}
+                      accessibilityRole="button"
+                      accessibilityLabel={`${category === 'store' ? 'Shop at' : category === 'trainers' ? 'Book' : 'Join'} ${item.name}`}
                     >
                       <Text style={styles.bookButtonText}>
                         {category === 'store' ? 'Shop' : category === 'trainers' ? 'Book' : 'Join'}
@@ -493,12 +494,12 @@ const FitnessCategoryPage: React.FC = () => {
             <View style={styles.emptyState}>
               <Ionicons name="fitness-outline" size={64} color={colors.border.default} />
               <Text style={styles.emptyTitle}>No {config.title.toLowerCase()} found</Text>
-              <Text style={styles.emptyDescription}>
-                Try a different filter or check back later
-              </Text>
+              <Text style={styles.emptyDescription}>Try a different filter or check back later</Text>
               <Pressable
                 style={[styles.refreshButton, { backgroundColor: config.gradientColors[0] }]}
                 onPress={handleRefresh}
+                accessibilityRole="button"
+                accessibilityLabel="Refresh results"
               >
                 <Text style={styles.refreshButtonText}>Refresh</Text>
               </Pressable>
@@ -517,7 +518,12 @@ const FitnessCategoryPage: React.FC = () => {
       >
         <View style={styles.searchModal}>
           <View style={styles.searchHeader}>
-            <Pressable onPress={handleSearchClose} style={styles.searchCloseButton}>
+            <Pressable
+              onPress={handleSearchClose}
+              style={styles.searchCloseButton}
+              accessibilityRole="button"
+              accessibilityLabel="Close search"
+            >
               <Ionicons name="arrow-back" size={24} color={colors.nileBlue} />
             </Pressable>
             <View style={styles.searchInputContainer}>
@@ -533,7 +539,14 @@ const FitnessCategoryPage: React.FC = () => {
                 returnKeyType="search"
               />
               {searchQuery.length > 0 && (
-                <Pressable onPress={() => { setSearchQuery(''); setSearchResults([]); }}>
+                <Pressable
+                  onPress={() => {
+                    setSearchQuery('');
+                    setSearchResults([]);
+                  }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Clear search query"
+                >
                   <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
                 </Pressable>
               )}
@@ -551,21 +564,16 @@ const FitnessCategoryPage: React.FC = () => {
                   key={item._id}
                   style={styles.searchResultItem}
                   onPress={() => handleSearchResultPress(item)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`${item.name}, ${item.location?.city || 'Bangalore'}, rating ${item.ratings?.average?.toFixed(1) || '4.5'}`}
                 >
-                  <CachedImage
-                    source={item.logo || item.banner?.[0]}
-                    style={styles.searchResultImage}
-                  />
+                  <CachedImage source={item.logo || item.banner?.[0]} style={styles.searchResultImage} />
                   <View style={styles.searchResultInfo}>
                     <Text style={styles.searchResultName}>{item.name}</Text>
                     <View style={styles.searchResultMeta}>
                       <Ionicons name="star" size={12} color={Colors.warning} />
-                      <Text style={styles.searchResultRating}>
-                        {item.ratings?.average?.toFixed(1) || '4.5'}
-                      </Text>
-                      <Text style={styles.searchResultCashback}>
-                        {item.offers?.cashback || 15}% Cashback
-                      </Text>
+                      <Text style={styles.searchResultRating}>{item.ratings?.average?.toFixed(1) || '4.5'}</Text>
+                      <Text style={styles.searchResultCashback}>{item.offers?.cashback || 15}% Cashback</Text>
                     </View>
                   </View>
                   <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
@@ -579,9 +587,7 @@ const FitnessCategoryPage: React.FC = () => {
             </View>
           ) : (
             <View style={styles.searchHint}>
-              <Text style={styles.searchHintText}>
-                Start typing to search for {config.title.toLowerCase()}
-              </Text>
+              <Text style={styles.searchHintText}>Start typing to search for {config.title.toLowerCase()}</Text>
             </View>
           )}
         </View>
@@ -592,7 +598,12 @@ const FitnessCategoryPage: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.primary },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.primary },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+  },
   loadingText: { marginTop: Spacing.md, ...Typography.body, color: colors.text.tertiary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: Spacing.lg },
   headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base },
@@ -732,7 +743,12 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.background.secondary,
   },
-  searchResultImage: { width: 56, height: 56, borderRadius: BorderRadius.md, backgroundColor: colors.background.secondary },
+  searchResultImage: {
+    width: 56,
+    height: 56,
+    borderRadius: BorderRadius.md,
+    backgroundColor: colors.background.secondary,
+  },
   searchResultInfo: { flex: 1, marginLeft: Spacing.md },
   searchResultName: { ...Typography.bodyLarge, fontWeight: '600', color: colors.nileBlue },
   searchResultMeta: { flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: Spacing.xs },

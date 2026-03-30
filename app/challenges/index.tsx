@@ -369,116 +369,119 @@ function ChallengesPage() {
     }
   };
 
-  const renderChallengeCard = (challenge: Challenge) => {
-    const progress = (challenge.progress / challenge.target) * 100;
-    const isCompleted = challenge.completed;
-    const canClaim = isCompleted && !challenge.rewardsClaimed;
-    const isClaimed = challenge.rewardsClaimed;
-    const difficultyColors = getDifficultyColor(challenge.challenge.difficulty);
+  const renderChallengeCard = useCallback(
+    (challenge: Challenge) => {
+      const progress = (challenge.progress / challenge.target) * 100;
+      const isCompleted = challenge.completed;
+      const canClaim = isCompleted && !challenge.rewardsClaimed;
+      const isClaimed = challenge.rewardsClaimed;
+      const difficultyColors = getDifficultyColor(challenge.challenge.difficulty);
 
-    return (
-      <Pressable
-        key={challenge._id}
-        style={styles.challengeCard}
-        onPress={() => {
-          // Navigate to challenge detail page
-          router.push(`/challenges/${challenge._id}` as any);
-        }}
-      >
-        <LinearGradient
-          colors={isClaimed ? [colors.border.default, colors.neutral[300]] : difficultyColors}
-          style={styles.challengeGradient}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
+      return (
+        <Pressable
+          key={challenge._id}
+          style={styles.challengeCard}
+          onPress={() => {
+            // Navigate to challenge detail page
+            router.push(`/challenges/${challenge._id}` as any);
+          }}
         >
-          <View style={styles.challengeHeader}>
-            <View style={styles.challengeIconContainer}>
-              <Text style={styles.challengeIcon}>{challenge.challenge.icon}</Text>
-            </View>
-
-            <View style={styles.challengeInfo}>
-              <View style={styles.challengeTitleRow}>
-                <Text style={styles.challengeTitle}>{challenge.challenge.title}</Text>
-                <View style={[styles.typeBadge, isClaimed && styles.typeBadgeClaimed]}>
-                  <Ionicons name={getTypeIcon(challenge.challenge.type) as any} size={12} color="white" />
-                  <Text style={styles.typeBadgeText}>{challenge.challenge.type}</Text>
-                </View>
+          <LinearGradient
+            colors={isClaimed ? [colors.border.default, colors.neutral[300]] : difficultyColors}
+            style={styles.challengeGradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+          >
+            <View style={styles.challengeHeader}>
+              <View style={styles.challengeIconContainer}>
+                <Text style={styles.challengeIcon}>{challenge.challenge.icon}</Text>
               </View>
 
-              <Text style={styles.challengeDescription}>{challenge.challenge.description}</Text>
-
-              {/* Progress Bar */}
-              <View style={styles.progressContainer}>
-                <View style={styles.progressBar}>
-                  <View style={[styles.progressFill, { width: `${progress}%` }]} />
-                </View>
-                <Text style={styles.progressText}>
-                  {challenge.progress}/{challenge.target}
-                </Text>
-              </View>
-
-              {/* Rewards */}
-              <View style={styles.rewardRow}>
-                <View style={styles.rewardInfo}>
-                  <Ionicons name="star" size={16} color={colors.brand.goldBright} />
-                  <Text style={styles.rewardText}>{challenge.challenge.rewards.coins} coins</Text>
-                  {challenge.challenge.rewards.multiplier && (
-                    <Text style={styles.multiplierText}>{challenge.challenge.rewards.multiplier}x</Text>
-                  )}
+              <View style={styles.challengeInfo}>
+                <View style={styles.challengeTitleRow}>
+                  <Text style={styles.challengeTitle}>{challenge.challenge.title}</Text>
+                  <View style={[styles.typeBadge, isClaimed && styles.typeBadgeClaimed]}>
+                    <Ionicons name={getTypeIcon(challenge.challenge.type) as any} size={12} color="white" />
+                    <Text style={styles.typeBadgeText}>{challenge.challenge.type}</Text>
+                  </View>
                 </View>
 
-                <View style={styles.difficultyBadge}>
-                  <Text style={styles.difficultyText}>{challenge.challenge.difficulty}</Text>
-                </View>
-              </View>
+                <Text style={styles.challengeDescription}>{challenge.challenge.description}</Text>
 
-              {/* Status Indicator */}
-              {challenge.progress === 0 && !isClaimed && (
-                <View style={styles.statusIndicator}>
-                  <Ionicons name="play-circle-outline" size={20} color={Colors.brand.purpleLight} />
-                  <Text style={styles.statusText}>Tap to start</Text>
+                {/* Progress Bar */}
+                <View style={styles.progressContainer}>
+                  <View style={styles.progressBar}>
+                    <View style={[styles.progressFill, { width: `${progress}%` }]} />
+                  </View>
+                  <Text style={styles.progressText}>
+                    {challenge.progress}/{challenge.target}
+                  </Text>
                 </View>
-              )}
 
-              {canClaim && (
-                <Pressable
-                  style={styles.claimButton}
-                  onPress={() => handleClaimReward(challenge._id)}
-                  disabled={claimingId === challenge._id}
-                >
-                  <LinearGradient
-                    colors={[colors.successScale[400], colors.successScale[700]]}
-                    style={styles.claimGradient}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                  >
-                    {claimingId === challenge._id ? (
-                      <>
-                        <ActivityIndicator size="small" color="white" />
-                        <Text style={styles.claimButtonText}>Claiming...</Text>
-                      </>
-                    ) : (
-                      <>
-                        <Text style={styles.claimButtonText}>Claim Reward</Text>
-                        <Ionicons name="gift" size={20} color="white" />
-                      </>
+                {/* Rewards */}
+                <View style={styles.rewardRow}>
+                  <View style={styles.rewardInfo}>
+                    <Ionicons name="star" size={16} color={colors.brand.goldBright} />
+                    <Text style={styles.rewardText}>{challenge.challenge.rewards.coins} coins</Text>
+                    {challenge.challenge.rewards.multiplier && (
+                      <Text style={styles.multiplierText}>{challenge.challenge.rewards.multiplier}x</Text>
                     )}
-                  </LinearGradient>
-                </Pressable>
-              )}
+                  </View>
 
-              {isClaimed && (
-                <View style={styles.claimedBadge}>
-                  <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
-                  <Text style={styles.claimedText}>Completed</Text>
+                  <View style={styles.difficultyBadge}>
+                    <Text style={styles.difficultyText}>{challenge.challenge.difficulty}</Text>
+                  </View>
                 </View>
-              )}
+
+                {/* Status Indicator */}
+                {challenge.progress === 0 && !isClaimed && (
+                  <View style={styles.statusIndicator}>
+                    <Ionicons name="play-circle-outline" size={20} color={Colors.brand.purpleLight} />
+                    <Text style={styles.statusText}>Tap to start</Text>
+                  </View>
+                )}
+
+                {canClaim && (
+                  <Pressable
+                    style={styles.claimButton}
+                    onPress={() => handleClaimReward(challenge._id)}
+                    disabled={claimingId === challenge._id}
+                  >
+                    <LinearGradient
+                      colors={[colors.successScale[400], colors.successScale[700]]}
+                      style={styles.claimGradient}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                    >
+                      {claimingId === challenge._id ? (
+                        <>
+                          <ActivityIndicator size="small" color="white" />
+                          <Text style={styles.claimButtonText}>Claiming...</Text>
+                        </>
+                      ) : (
+                        <>
+                          <Text style={styles.claimButtonText}>Claim Reward</Text>
+                          <Ionicons name="gift" size={20} color="white" />
+                        </>
+                      )}
+                    </LinearGradient>
+                  </Pressable>
+                )}
+
+                {isClaimed && (
+                  <View style={styles.claimedBadge}>
+                    <Ionicons name="checkmark-circle" size={20} color={Colors.success} />
+                    <Text style={styles.claimedText}>Completed</Text>
+                  </View>
+                )}
+              </View>
             </View>
-          </View>
-        </LinearGradient>
-      </Pressable>
-    );
-  };
+          </LinearGradient>
+        </Pressable>
+      );
+    },
+    [getDifficultyColor, getTypeIcon, claimingId, handleClaimReward, router],
+  );
 
   if (loading) {
     return <CardGridSkeleton />;

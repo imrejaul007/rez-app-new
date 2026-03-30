@@ -67,7 +67,7 @@ export default function BadgesScreen() {
         setUndiscovered(data.undiscovered);
       }
     } catch (err) {
-      console.error('Failed to load badges:', err);
+      if (__DEV__) console.error('Failed to load badges:', err);
     } finally {
       setLoading(false);
     }
@@ -86,7 +86,7 @@ export default function BadgesScreen() {
   const capitalizeCategory = (cat: string): string => {
     return cat
       .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
 
@@ -96,29 +96,16 @@ export default function BadgesScreen() {
     return (
       <View style={styles.badgeCard}>
         {/* Badge Ring */}
-        <View
-          style={[
-            styles.badgeRing,
-            { borderColor: badgeColor },
-          ]}
-        >
-          <Ionicons
-            name={getIconName(item.category) as any}
-            size={32}
-            color={badgeColor}
-          />
+        <View style={[styles.badgeRing, { borderColor: badgeColor }]}>
+          <Ionicons name={getIconName(item.category) as any} size={32} color={badgeColor} />
         </View>
 
         {/* Content */}
         <View style={styles.badgeContent}>
           <Text style={styles.categoryName}>{capitalizeCategory(item.category)}</Text>
-          <Text style={[styles.levelLabel, { color: badgeColor }]}>
-            {item.level}
-          </Text>
+          <Text style={[styles.levelLabel, { color: badgeColor }]}>{item.level}</Text>
           <Text style={styles.trialCount}>{item.trialCount} trials</Text>
-          <Text style={styles.progressText}>
-            {item.nextLevelThreshold - item.trialCount} more for next level
-          </Text>
+          <Text style={styles.progressText}>{item.nextLevelThreshold - item.trialCount} more for next level</Text>
         </View>
       </View>
     );
@@ -127,26 +114,16 @@ export default function BadgesScreen() {
   const renderUndiscoveredCard = ({ item }: { item: UndiscoveredCategory }) => (
     <View style={styles.undiscoveredCard}>
       <View style={styles.undiscoveredBadgeRing}>
-        <Ionicons
-          name={getIconName(item.category) as any}
-          size={28}
-          color={colors.text.tertiary}
-        />
+        <Ionicons name={getIconName(item.category) as any} size={28} color={colors.text.tertiary} />
       </View>
       <View style={styles.undiscoveredContent}>
-        <Text style={styles.undiscoveredName}>
-          {capitalizeCategory(item.category)}
-        </Text>
-        <Text style={styles.undiscoveredText}>
-          Try your first {item.category} trial
-        </Text>
+        <Text style={styles.undiscoveredName}>{capitalizeCategory(item.category)}</Text>
+        <Text style={styles.undiscoveredText}>Try your first {item.category} trial</Text>
       </View>
     </View>
   );
 
-  const renderSectionHeader = (title: string) => (
-    <Text style={styles.sectionTitle}>{title}</Text>
-  );
+  const renderSectionHeader = (title: string) => <Text style={styles.sectionTitle}>{title}</Text>;
 
   if (loading) {
     return (
@@ -183,9 +160,9 @@ export default function BadgesScreen() {
       <FlatList
         data={[
           { type: 'header', data: null },
-          ...badges.map(b => ({ type: 'badge', data: b })),
+          ...badges.map((b) => ({ type: 'badge', data: b })),
           { type: 'undiscovered-header', data: null },
-          ...undiscovered.map(u => ({ type: 'undiscovered', data: u })),
+          ...undiscovered.map((u) => ({ type: 'undiscovered', data: u })),
         ]}
         renderItem={useCallback(({ item }: any) => {
           if (item.type === 'header') {
@@ -209,9 +186,7 @@ export default function BadgesScreen() {
         }}
         contentContainerStyle={styles.listContent}
         scrollEnabled={true}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
       />
     </SafeAreaView>
   );

@@ -56,16 +56,21 @@ interface ApiResponse<T = any> {
       pages: number;
     };
     timestamp?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;
-  body?: any;
+  body?: Record<string, unknown> | unknown[] | FormData | string | null;
   timeout?: number;
   deduplicate?: boolean; // Enable/disable deduplication per-request
+}
+
+/** Typed Sentry scope interface (subset used by ApiClient) */
+interface SentryScope {
+  setTag(key: string, value: string): void;
 }
 
 // Region getter - will be set by RegionContext
@@ -290,7 +295,17 @@ class ApiClient {
       // OG-D006 FIX: Unregister now that the fetch has resolved.
       requestRegistry.unregister(registryId);
 
-      const responseData = await response.json();
+      // Guard against calling .json() on responses that have no JSON body:
+      //   • 204 No Content has an empty body — .json() would throw a SyntaxError.
+      //   • HTML error pages (e.g. nginx 502/504) have Content-Type: text/html —
+      //     .json() would throw and mask the real HTTP status with a parse error.
+      const contentType = response.headers?.get('content-type') || '';
+      let responseData: any;
+      if (response.status === 204 || !contentType.includes('application/json')) {
+        responseData = { success: response.ok, data: null };
+      } else {
+        responseData = await response.json();
+      }
 
       if (!response.ok) {
 
@@ -403,7 +418,7 @@ class ApiClient {
         const subComputed = useSubscriptionStore.getState().computed;
         const priveEligibility = usePriveStore.getState().eligibility;
 
-        Sentry?.withScope?.((scope: any) => {
+        Sentry?.withScope?.((scope: SentryScope) => {
           scope.setTag('endpoint', endpoint);
           scope.setTag('method', method);
           scope.setTag('user_tier', subComputed?.isVIP ? 'vip' : subComputed?.isPremium ? 'premium' : 'free');
@@ -449,7 +464,7 @@ class ApiClient {
   // GET request (with automatic deduplication)
   async get<T>(
     endpoint: string,
-    params?: Record<string, any>,
+    params?: Record<string, string | number | boolean | undefined | null>,
     // Fixed: Add headers option so callers can pass explicit auth headers - Phase 0
     options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string> }
   ): Promise<ApiResponse<T>> {
@@ -495,7 +510,7 @@ class ApiClient {
   // OG-001: Pass headers: { 'Idempotency-Key': key } for mutating financial endpoints
   async post<T>(
     endpoint: string,
-    data?: any,
+    data?: Record<string, unknown> | unknown[] | FormData,
     options?: { deduplicate?: boolean; timeout?: number; headers?: Record<string, string> }
   ): Promise<ApiResponse<T>> {
     // POST requests are NOT deduplicated by default (usually mutating)
@@ -515,7 +530,7 @@ class ApiClient {
   // PUT request (optional deduplication, optional timeout)
   async put<T>(
     endpoint: string,
-    data?: any,
+    data?: Record<string, unknown> | unknown[] | FormData,
     options?: { deduplicate?: boolean; timeout?: number }
   ): Promise<ApiResponse<T>> {
     // PUT requests are NOT deduplicated by default (usually mutating)
@@ -534,7 +549,7 @@ class ApiClient {
   // PATCH request (optional deduplication, optional timeout)
   async patch<T>(
     endpoint: string,
-    data?: any,
+    data?: Record<string, unknown> | unknown[] | FormData,
     options?: { deduplicate?: boolean; timeout?: number }
   ): Promise<ApiResponse<T>> {
     // PATCH requests are NOT deduplicated by default (usually mutating)
@@ -553,7 +568,7 @@ class ApiClient {
   // DELETE request (optional deduplication, optional timeout)
   async delete<T>(
     endpoint: string,
-    data?: any,
+    data?: Record<string, unknown> | unknown[] | FormData,
     options?: { deduplicate?: boolean; timeout?: number }
   ): Promise<ApiResponse<T>> {
     // DELETE requests are NOT deduplicated by default (usually mutating)

@@ -62,7 +62,7 @@ export default function SurpriseScreen() {
       setData(surpriseData);
       setRevealed(!!surpriseData.merchant);
     } catch (err) {
-      console.error('Failed to load surprise:', err);
+      if (__DEV__) console.error('Failed to load surprise:', err);
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,7 @@ export default function SurpriseScreen() {
           setData(revealed);
           setRevealed(true);
         } catch (err) {
-          console.error('Failed to reveal surprise:', err);
+          if (__DEV__) console.error('Failed to reveal surprise:', err);
         } finally {
           setRevealing(false);
         }

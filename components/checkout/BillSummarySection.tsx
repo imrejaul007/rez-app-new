@@ -118,7 +118,7 @@ function BillSummarySection({
             <View style={styles.summaryRow}>
               <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
                 <ThemedText style={styles.summaryLabel}>Platform Fee</ThemedText>
-                <Pressable onPress={onTogglePlatformFeeInfo}>
+                <Pressable onPress={onTogglePlatformFeeInfo} accessibilityRole="button" accessibilityLabel="Learn about the platform fee" accessibilityState={{ expanded: showPlatformFeeInfo }}>
                   <Ionicons name="information-circle-outline" size={16} color={colors.neutral[500]} />
                 </Pressable>
               </View>

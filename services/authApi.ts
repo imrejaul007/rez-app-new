@@ -19,6 +19,8 @@ const devLog = {
 // Keep the old User interface for backwards compatibility during migration
 export interface User {
   id: string;
+  /** MongoDB ObjectId — may be present alongside `id` on backend responses */
+  _id?: string;
   phoneNumber: string;
   email?: string;
   profile: {
@@ -161,10 +163,17 @@ function isValidOtp(otp: string): boolean {
 
 // validateUser is imported from @/types/unified (line 10)
 
+/** Minimal shape we expect the backend auth response to carry */
+interface RawAuthResponsePayload {
+  user?: { id?: string; _id?: string; [key: string]: unknown };
+  tokens?: { accessToken?: string; refreshToken?: string; [key: string]: unknown };
+  [key: string]: unknown;
+}
+
 /**
  * Validates auth response structure
  */
-function validateAuthResponse(response: any): boolean {
+function validateAuthResponse(response: RawAuthResponsePayload): boolean {
   if (!response || typeof response !== 'object') {
     devLog.warn('[AUTH API] Invalid auth response: not an object');
     return false;
@@ -460,7 +469,7 @@ class AuthService {
       }
 
       // Validate email if provided
-      if (data.profile?.email && !isValidEmail(data.profile.email as any)) {
+      if (data.profile?.email && !isValidEmail(String(data.profile.email))) {
         return {
           success: false,
           error: 'Invalid email format',

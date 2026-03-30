@@ -173,7 +173,15 @@ function RechargePage() {
   // ============================================
 
   const handleProceed = useCallback(async () => {
-    if (!mobileNumber || mobileNumber.length !== 10 || !amount || !selectedOperator) return;
+    // Build the full E.164 number first so we can validate its total digit count.
+    // E.164 allows 7–15 digits after the '+' (ITU-T E.164 §4).
+    // Rejecting on local-part length alone (e.g. === 10) breaks non-Indian numbers.
+    const dialPrefix: string = selectedOperator?.countryCode || regionPhonePrefix;
+    const prefix = dialPrefix.startsWith('+') ? dialPrefix.slice(1) : dialPrefix;
+    const fullDigits = prefix + mobileNumber;
+    const isValidE164Length = fullDigits.length >= 7 && fullDigits.length <= 15;
+
+    if (!mobileNumber || !isValidE164Length || !amount || !selectedOperator) return;
 
     if (!isAuthenticated) {
       router.push('/sign-in');
@@ -184,12 +192,7 @@ function RechargePage() {
     setError(null);
 
     try {
-      // FR-003 FIX: selectedOperator.countryCode is optional (may be undefined).
-      // Template-string concatenation of undefined produces the literal string
-      // "undefined9876543210" which fails the backend E.164 regex validator
-      // (pattern: /^\+[1-9]\d{9,14}$/) and returns a 422 Unprocessable Entity.
-      // Ensure we always have a prefix string before concatenating.
-      const dialPrefix: string = selectedOperator?.countryCode || regionPhonePrefix;
+      // dialPrefix was already computed above for E.164 length validation.
       // Strip any accidental duplicate leading '+' from the final E.164 string.
       const e164Phone = dialPrefix.startsWith('+') ? `${dialPrefix}${mobileNumber}` : `+${dialPrefix}${mobileNumber}`;
       const response = await initiateRecharge(selectedOperator.code, Number(amount), e164Phone, selectedPlan?._id);

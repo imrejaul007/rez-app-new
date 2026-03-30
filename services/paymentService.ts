@@ -121,16 +121,10 @@ class PaymentService {
           processingFee: 0,
           processingTime: 'Instant'
         },
-        {
-          id: 'razorpay_card',
-          name: 'Debit/Credit Card',
-          type: 'card',
-          gateway: 'razorpay',
-          icon: '💳',
-          isAvailable: true,
-          processingFee: 2.0,
-          processingTime: '2-3 minutes'
-        },
+        // 'card' is intentionally excluded here and in loadPaymentMethods().
+        // The card payment flow (PCI-DSS tokenisation via Razorpay Cards /
+        // Stripe Elements) is not yet implemented.  Re-add once the card flow
+        // is complete and tested end-to-end.
         {
           id: 'razorpay_wallet',
           name: 'Digital Wallet',

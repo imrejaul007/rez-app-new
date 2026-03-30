@@ -215,6 +215,9 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
           style={styles.tabItem}
           onPress={() => onTabChange('near-u')}
           onLayout={(e) => handleTabLayout('near-u', e)}
+          accessibilityRole="tab"
+          accessibilityLabel="Near U tab — deals close to you"
+          accessibilityState={{ selected: activeTab === 'near-u' }}
         >
           <View style={[
             styles.tab,
@@ -240,6 +243,9 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
           style={styles.tabItem}
           onPress={() => onTabChange('mall')}
           onLayout={(e) => handleTabLayout('mall', e)}
+          accessibilityRole="tab"
+          accessibilityLabel="Mall tab — shop online brands"
+          accessibilityState={{ selected: activeTab === 'mall' }}
         >
           <View style={[
             styles.tab,
@@ -265,6 +271,9 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
           style={styles.tabItem}
           onPress={() => onTabChange('cash')}
           onLayout={(e) => handleTabLayout('cash', e)}
+          accessibilityRole="tab"
+          accessibilityLabel="Cash Store tab — earn cashback"
+          accessibilityState={{ selected: activeTab === 'cash' }}
         >
           <View style={[
             styles.tab,
@@ -290,6 +299,9 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
           style={styles.tabItem}
           onPress={handlePrivePress}
           onLayout={(e) => handleTabLayout('prive', e)}
+          accessibilityRole="tab"
+          accessibilityLabel={isPriveEligible ? 'Privé tab — exclusive luxury deals' : 'Privé tab — locked, upgrade to access exclusive deals'}
+          accessibilityState={{ selected: activeTab === 'prive' }}
         >
           <View style={[
             styles.tab,
@@ -330,6 +342,8 @@ const HomeTabSection: React.FC<HomeTabSectionProps> = ({
             <Pressable
               style={styles.searchContainerCompact}
               onPress={onSearchPress}
+              accessibilityRole="search"
+              accessibilityLabel={isPriveMode ? 'Search exclusive offers' : 'Search products, deals, and stores'}
             >
               <Ionicons
                 name="search"

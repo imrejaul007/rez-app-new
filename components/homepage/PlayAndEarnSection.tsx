@@ -147,7 +147,7 @@ const PlayAndEarnSection: React.FC = () => {
             <Text style={styles.headerSubtitle}>Daily rewards & challenges</Text>
           </View>
         </View>
-        <Pressable style={styles.viewAllButton} onPress={handleViewAll}>
+        <Pressable style={styles.viewAllButton} onPress={handleViewAll} accessibilityRole="button" accessibilityLabel="View all games and earn more coins">
           <Text style={styles.viewAllText}>View All</Text>
           <Ionicons name="arrow-forward" size={14} color={COLORS.primary} />
         </Pressable>

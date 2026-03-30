@@ -221,7 +221,7 @@ export class AnalyticsDebugger {
    * Generate unique ID
    */
   private generateId(): string {
-    return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 }
 

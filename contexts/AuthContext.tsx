@@ -594,7 +594,8 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       dispatch({ type: 'AUTH_SUCCESS', payload: { user, token: tokens.accessToken } });
 
       try {
-        const userId = (user as any)._id || user.id;
+        // User may carry a MongoDB _id field alongside the canonical `id`
+        const userId = (user as User & { _id?: string })._id || user.id;
         analytics.setUserId(userId);
       } catch {}
 

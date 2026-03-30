@@ -208,7 +208,7 @@ function AppointmentBookingPage() {
           }
         })
         .catch((err) => {
-          console.warn('[Appointment] Patch test check failed:', err?.message);
+          if (__DEV__) console.warn('[Appointment] Patch test check failed:', err?.message);
           setPatchTestStatus(null);
         });
     } else {
@@ -457,7 +457,7 @@ Price: ${currencySymbol}${Math.max(0, selectedService?.price ?? 0)}
         await submitBooking({ paymentId: paymentResult.paymentId });
       }
     } catch (error: any) {
-      console.error('[Appointment] Payment failed:', error);
+      if (__DEV__) console.error('[Appointment] Payment failed:', error);
       platformAlertSimple('Payment Failed', error?.message || 'Unable to process payment. Please try again.');
       setSubmitting(false);
     }
@@ -559,6 +559,8 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
             <Pressable
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               style={styles.backButton}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
             >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
@@ -603,6 +605,9 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                           setSelectedTime(null); // Reset time when service changes
                         }}
                         style={[styles.serviceCard, isSelected && styles.serviceCardSelected]}
+                        accessibilityRole="radio"
+                        accessibilityLabel={`${service.name}${service.duration ? `, ${formatDuration(service.duration)}` : ''}`}
+                        accessibilityState={{ selected: isSelected }}
                       >
                         <View style={[styles.serviceIconContainer, isSelected && styles.serviceIconContainerSelected]}>
                           <Ionicons
@@ -690,6 +695,9 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                           setSelectedTime(null); // Reset time when date changes
                         }}
                         style={[styles.dateCard, isSelected && styles.dateCardSelected]}
+                        accessibilityRole="radio"
+                        accessibilityLabel={`${isToday ? 'Today, ' : ''}${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`}
+                        accessibilityState={{ selected: isSelected }}
                       >
                         {isToday && (
                           <View style={styles.todayBadge}>
@@ -729,6 +737,9 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                           isSelected && styles.timeSlotSelected,
                           !slot.available && styles.timeSlotDisabled,
                         ]}
+                        accessibilityRole="radio"
+                        accessibilityLabel={slot.available ? slot.displayTime : `${slot.displayTime}, unavailable`}
+                        accessibilityState={{ selected: isSelected, disabled: !slot.available }}
                       >
                         <ThemedText
                           style={[
@@ -782,6 +793,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                     placeholderTextColor={colors.text.tertiary}
                     value={customerName}
                     onChangeText={setCustomerName}
+                    accessibilityLabel="Enter your full name"
                   />
                 </View>
 
@@ -794,6 +806,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                     value={customerPhone}
                     onChangeText={setCustomerPhone}
                     keyboardType="phone-pad"
+                    accessibilityLabel="Enter your phone number"
                   />
                 </View>
 
@@ -807,6 +820,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                     onChangeText={setCustomerEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
+                    accessibilityLabel="Enter your email address (optional)"
                   />
                 </View>
 
@@ -826,6 +840,7 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                     multiline
                     numberOfLines={4}
                     textAlignVertical="top"
+                    accessibilityLabel="Enter any special instructions for your appointment (optional)"
                   />
                 </View>
               </View>
@@ -841,6 +856,9 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
                 <Pressable
                   onPress={() => setIsGroupBooking(!isGroupBooking)}
                   style={[styles.toggleSwitch, isGroupBooking && styles.toggleSwitchActive]}
+                  accessibilityRole="switch"
+                  accessibilityLabel="Book for a group"
+                  accessibilityState={{ checked: isGroupBooking }}
                 >
                   <View style={[styles.toggleKnob, isGroupBooking && styles.toggleKnobActive]} />
                 </Pressable>
@@ -993,7 +1011,14 @@ You will receive a confirmation message at ${customerPhone}${customerEmail ? ` a
         {/* Bottom Fixed Button */}
         {selectedService && selectedTime && (
           <View style={[styles.bottomContainer, { backgroundColor }]}>
-            <Pressable onPress={handleConfirmAppointment} style={styles.confirmButton} disabled={submitting}>
+            <Pressable
+              onPress={handleConfirmAppointment}
+              style={styles.confirmButton}
+              disabled={submitting}
+              accessibilityRole="button"
+              accessibilityLabel={`Confirm appointment for ${selectedService?.name} at ${selectedTime?.displayTime}`}
+              accessibilityState={{ disabled: submitting }}
+            >
               <LinearGradient
                 colors={[colors.brand.purpleLight, colors.brand.purple]}
                 style={styles.confirmButtonGradient}

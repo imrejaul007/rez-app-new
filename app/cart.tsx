@@ -224,14 +224,20 @@ function CartPage() {
 
   // Memoize FlashList contentContainerStyle outside JSX to avoid Rules of Hooks violation
   const listContentContainerStyle = useMemo(
-    () => [
-      {
-        paddingHorizontal: isSmallDevice ? 12 : 16,
-        paddingTop: 16,
-        paddingBottom: insets.bottom + (currentItems.length < 3 ? 80 : 120),
-      },
-      currentItems.length === 0 && styles.emptyListContent,
-    ],
+    () => {
+      // BUG-092 FIX: On Android with gesture navigation the system reports insets.bottom = 0
+      // even when a translucent nav bar is present. Clamp to a minimum of 16 so the last
+      // cart item is never hidden behind the navigation gesture zone.
+      const safeBottom = Platform.OS === 'android' ? Math.max(insets.bottom, 16) : insets.bottom;
+      return [
+        {
+          paddingHorizontal: isSmallDevice ? 12 : 16,
+          paddingTop: 16,
+          paddingBottom: safeBottom + (currentItems.length < 3 ? 80 : 120),
+        },
+        currentItems.length === 0 && styles.emptyListContent,
+      ];
+    },
     // BUG-047 FIX: Added isSmallDevice to dependency array — it affects paddingHorizontal
     // but was missing, so the style would not update if device size classification changed.
     [currentItems.length, insets.bottom, isSmallDevice],

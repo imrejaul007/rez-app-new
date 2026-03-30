@@ -50,55 +50,18 @@ const FashionHeader = () => {
 
   const loadUserStatistics = async () => {
     try {
-      const response = await authService.getUserStatistics();
-      if (response.success && response.data) {
-        const stats = response.data;
-        const shopPoints = Math.floor((stats.orders?.totalSpent || 0) / 10);
-        const referralPoints = (stats.user?.totalReferrals || 0) * 200;
-        const videoPoints = (stats.videos?.totalCreated || 0) * 100;
-        const totalLoyaltyPoints = shopPoints + referralPoints + videoPoints;
+      // Read the live wallet balance from the read-only balance endpoint.
+      // DO NOT call creditLoyaltyPoints here — that is an admin-only endpoint.
+      // Loyalty points are credited automatically by the backend when orders
+      // complete; the consumer app must only read, never write, the balance.
+      const walletApi = (await import('@/services/walletApi')).default;
+      const walletResponse = await walletApi.getBalance();
 
-        // Sync loyalty points with wallet
-        try {
-          const walletApi = (await import('@/services/walletApi')).default;
-          const walletResponse = await walletApi.getBalance();
-
-          if (walletResponse.success && walletResponse.data) {
-            const wasilCoin = walletResponse.data.coins.find((c) => c.type === 'wasil');
-            const actualWalletCoins = wasilCoin?.amount || 0;
-
-            if (totalLoyaltyPoints > actualWalletCoins) {
-              const difference = totalLoyaltyPoints - actualWalletCoins;
-              const creditResponse = await walletApi.creditLoyaltyPoints({
-                amount: difference,
-                source: {
-                  type: 'loyalty_sync',
-                  description: 'Syncing loyalty points to wallet',
-                  metadata: {
-                    shopPoints,
-                    referralPoints,
-                    videoPoints,
-                    totalCalculated: totalLoyaltyPoints,
-                    previousWalletBalance: actualWalletCoins
-                  }
-                }
-              });
-
-              if (creditResponse.success && creditResponse.data) {
-                setUserPoints(creditResponse.data.balance.available);
-              } else {
-                setUserPoints(totalLoyaltyPoints);
-              }
-            } else {
-              setUserPoints(actualWalletCoins);
-            }
-          } else {
-            setUserPoints(totalLoyaltyPoints);
-          }
-        } catch (walletError) {
-          setUserPoints(totalLoyaltyPoints);
-        }
+      if (walletResponse.success && walletResponse.data) {
+        const total = walletResponse.data.balance?.available ?? walletResponse.data.totalValue ?? 0;
+        setUserPoints(total);
       } else {
+        // Graceful fallback: use cached user wallet data
         const loyaltyPoints = authState.user?.wallet?.totalEarned || authState.user?.wallet?.balance || 0;
         setUserPoints(loyaltyPoints);
       }

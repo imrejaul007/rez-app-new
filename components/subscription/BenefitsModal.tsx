@@ -192,7 +192,7 @@ function BenefitsModal({
               Compare features across all tiers
             </ThemedText>
           </View>
-          <Pressable style={styles.closeButton} onPress={onClose}>
+          <Pressable style={styles.closeButton} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close benefits comparison">
             <Ionicons name="close" size={24} color={SUBSCRIPTION_COLORS.white} />
           </Pressable>
         </LinearGradient>
@@ -227,13 +227,15 @@ function BenefitsModal({
                 onUpgrade?.();
                 onClose();
               }}
+              accessibilityRole="button"
+              accessibilityLabel={tier === 'free' ? 'View premium subscription plans' : 'Upgrade to VIP plan'}
             >
               <ThemedText style={styles.upgradeButtonText}>
                 {tier === 'free' ? 'View Premium Plans' : 'Upgrade to VIP'}
               </ThemedText>
               <Ionicons name="arrow-forward" size={20} color={SUBSCRIPTION_COLORS.white} />
             </Pressable>
-            <Pressable style={styles.closeButtonFooter} onPress={onClose}>
+            <Pressable style={styles.closeButtonFooter} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close benefits comparison modal">
               <ThemedText style={styles.closeButtonText}>Close</ThemedText>
             </Pressable>
           </View>

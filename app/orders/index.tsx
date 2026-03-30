@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useState, useEffect, useCallback, useRef, memo } from 'react';
+import React, { useState, useEffect, useCallback, useRef, memo, useMemo } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { View, Text, StyleSheet, Pressable, RefreshControl, TextInput, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -451,36 +451,40 @@ function OrdersListScreen() {
     [currencySymbol, handleOrderPress, handleRefresh],
   );
 
-  const renderEmptyState = () => (
-    <View style={styles.emptyState}>
-      <Ionicons name="receipt-outline" size={64} color={Colors.gray[400]} />
-      <Text style={styles.emptyText}>
-        {searchQuery || activeFilter !== 'all' ? 'No matching orders' : 'No orders yet'}
-      </Text>
-      <Text style={styles.emptySubtext}>
-        {searchQuery || activeFilter !== 'all'
-          ? 'Try adjusting your filters or search terms'
-          : 'Start shopping to see your orders here'}
-      </Text>
-      {!searchQuery && activeFilter === 'all' && (
-        <Pressable style={styles.shopButton} onPress={() => router.push('/')}>
-          <Text style={styles.shopButtonText}>Start Shopping</Text>
-        </Pressable>
-      )}
-    </View>
+  const renderEmptyState = useCallback(
+    () => (
+      <View style={styles.emptyState}>
+        <Ionicons name="receipt-outline" size={64} color={Colors.gray[400]} />
+        <Text style={styles.emptyText}>
+          {searchQuery || activeFilter !== 'all' ? 'No matching orders' : 'No orders yet'}
+        </Text>
+        <Text style={styles.emptySubtext}>
+          {searchQuery || activeFilter !== 'all'
+            ? 'Try adjusting your filters or search terms'
+            : 'Start shopping to see your orders here'}
+        </Text>
+        {!searchQuery && activeFilter === 'all' && (
+          <Pressable style={styles.shopButton} onPress={() => router.push('/')}>
+            <Text style={styles.shopButtonText}>Start Shopping</Text>
+          </Pressable>
+        )}
+      </View>
+    ),
+    [searchQuery, activeFilter],
   );
 
-  const renderFooter = () => {
+  const renderFooter = useCallback(() => {
     if (!loading || page === 1) return null;
     return (
       <View style={styles.footerLoader}>
         <SkeletonLoader width={200} height={16} borderRadius={8} />
       </View>
     );
-  };
+  }, [loading, page]);
 
-  const renderListHeader = () => (
-    <>{orders.length > 0 && !searchQuery && activeFilter === 'all' && <ReorderSuggestions />}</>
+  const renderListHeader = useCallback(
+    () => <>{orders.length > 0 && !searchQuery && activeFilter === 'all' && <ReorderSuggestions />}</>,
+    [orders.length, searchQuery, activeFilter],
   );
 
   return (

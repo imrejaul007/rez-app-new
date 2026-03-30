@@ -2,7 +2,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Transactions Page
 // Displays user's transaction history with filtering and search
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -299,25 +299,31 @@ function TransactionsPage() {
     [handleTransactionPress, expandedTxId],
   );
 
-  const renderEmptyState = () => (
-    <View style={styles.emptyState}>
-      <Ionicons name="receipt-outline" size={64} color={colors.border.default} />
-      <Text style={styles.emptyStateTitle}>No Transactions Yet</Text>
-      <Text style={styles.emptyStateText}>
-        Your transaction history will appear here once you start using your wallet.
-      </Text>
-    </View>
+  const renderEmptyState = useCallback(
+    () => (
+      <View style={styles.emptyState}>
+        <Ionicons name="receipt-outline" size={64} color={colors.border.default} />
+        <Text style={styles.emptyStateTitle}>No Transactions Yet</Text>
+        <Text style={styles.emptyStateText}>
+          Your transaction history will appear here once you start using your wallet.
+        </Text>
+      </View>
+    ),
+    [],
   );
 
-  const renderErrorState = () => (
-    <View style={styles.errorState}>
-      <Ionicons name="alert-circle-outline" size={64} color={Colors.error} />
-      <Text style={styles.errorStateTitle}>Failed to Load Transactions</Text>
-      <Text style={styles.errorStateText}>{error}</Text>
-      <Pressable style={styles.retryButton} onPress={handleRefresh}>
-        <Text style={styles.retryButtonText}>Try Again</Text>
-      </Pressable>
-    </View>
+  const renderErrorState = useCallback(
+    () => (
+      <View style={styles.errorState}>
+        <Ionicons name="alert-circle-outline" size={64} color={Colors.error} />
+        <Text style={styles.errorStateTitle}>Failed to Load Transactions</Text>
+        <Text style={styles.errorStateText}>{error}</Text>
+        <Pressable style={styles.retryButton} onPress={handleRefresh}>
+          <Text style={styles.retryButtonText}>Try Again</Text>
+        </Pressable>
+      </View>
+    ),
+    [error, handleRefresh],
   );
 
   if (isLoading && transactions.length === 0) {

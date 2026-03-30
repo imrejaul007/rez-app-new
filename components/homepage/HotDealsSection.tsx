@@ -133,7 +133,8 @@ function HotDealsSection({
       <Pressable
         style={styles.card}
         onPress={() => handleProductPress(item)}
-       
+        accessibilityRole="button"
+        accessibilityLabel={dealText}
       >
         {/* Product Image */}
         <View style={styles.imageContainer}>
@@ -178,7 +179,8 @@ function HotDealsSection({
         <Pressable
           style={styles.viewAllButton}
           onPress={handleViewAll}
-         
+          accessibilityRole="button"
+          accessibilityLabel={`View all ${title}`}
         >
           <ThemedText style={styles.viewAllText}>View all</ThemedText>
         </Pressable>
@@ -193,7 +195,7 @@ function HotDealsSection({
       ) : error ? (
         <View style={styles.errorContainer}>
           <ThemedText style={styles.errorText}>{error}</ThemedText>
-          <Pressable style={styles.retryButton} onPress={fetchHotDeals}>
+          <Pressable style={styles.retryButton} onPress={fetchHotDeals} accessibilityRole="button" accessibilityLabel="Retry loading hot deals">
             <ThemedText style={styles.retryText}>Retry</ThemedText>
           </Pressable>
         </View>

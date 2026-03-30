@@ -60,11 +60,11 @@ function RetentionOfferCard({
         )}
 
         <View style={styles.actions}>
-          <Pressable style={styles.acceptButton} onPress={onAccept}>
+          <Pressable style={styles.acceptButton} onPress={onAccept} accessibilityRole="button" accessibilityLabel={offer.ctaText}>
             <ThemedText style={styles.acceptButtonText}>{offer.ctaText}</ThemedText>
           </Pressable>
 
-          <Pressable style={styles.declineButton} onPress={onDecline}>
+          <Pressable style={styles.declineButton} onPress={onDecline} accessibilityRole="button" accessibilityLabel="No, continue to cancel subscription">
             <ThemedText style={styles.declineButtonText}>No, Continue to Cancel</ThemedText>
           </Pressable>
         </View>

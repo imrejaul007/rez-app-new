@@ -3,14 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Manage current subscription, view usage statistics, and handle upgrades/cancellations
 
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  StatusBar,
-  ActivityIndicator,
-} from 'react-native';
+import { View, StyleSheet, ScrollView, Pressable, StatusBar, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -133,7 +126,8 @@ function SubscriptionManagePage() {
       <Pressable
         style={styles.benefitRow}
         onPress={() => router.push('/subscription/plans')}
-       
+        accessibilityRole="button"
+        accessibilityLabel={`${title} — locked, upgrade to unlock`}
       >
         <View style={[styles.benefitIcon, { backgroundColor: colors.border.default }]}>
           <View style={styles.lockOverlay}>
@@ -161,7 +155,12 @@ function SubscriptionManagePage() {
       {/* Header */}
       <LinearGradient colors={tierGradient as any} style={styles.header}>
         <View style={styles.headerContainer}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Manage Subscription</ThemedText>
@@ -170,9 +169,7 @@ function SubscriptionManagePage() {
       </LinearGradient>
 
       {/* Loading Skeleton */}
-      {state.isLoading && !state.currentSubscription && (
-        <ManageSubscriptionSkeleton />
-      )}
+      {state.isLoading && !state.currentSubscription && <ManageSubscriptionSkeleton />}
 
       {/* Payment Failed Banner */}
       {state.currentSubscription?.status === 'grace_period' && (
@@ -182,7 +179,11 @@ function SubscriptionManagePage() {
         />
       )}
 
-      <ScrollView style={styles.scrollView} contentContainerStyle={{ paddingBottom: 120 }} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={{ paddingBottom: 120 }}
+        showsVerticalScrollIndicator={false}
+      >
         {/* Current Plan Card */}
         <View style={styles.currentPlanCard}>
           <LinearGradient colors={tierGradient as any} style={styles.planHeaderGradient}>
@@ -225,7 +226,12 @@ function SubscriptionManagePage() {
                 <ThemedText style={styles.upgradePromptText}>
                   Upgrade to Premium or VIP to unlock exclusive benefits!
                 </ThemedText>
-                <Pressable style={styles.upgradePromptButton} onPress={handleUpgrade}>
+                <Pressable
+                  style={styles.upgradePromptButton}
+                  onPress={handleUpgrade}
+                  accessibilityRole="button"
+                  accessibilityLabel="View subscription plans to upgrade"
+                >
                   <ThemedText style={styles.upgradePromptButtonText}>View Plans</ThemedText>
                   <Ionicons name="arrow-forward" size={16} color={colors.text.inverse} />
                 </Pressable>
@@ -243,25 +249,25 @@ function SubscriptionManagePage() {
                 savingsTitle,
                 `${currencySymbol}${stats.usage?.totalSavings || 0}`,
                 'cash-outline',
-                colors.successScale[400]
+                colors.successScale[400],
               )}
               {renderStatCard(
                 'Orders This Month',
                 stats.usage?.ordersThisMonth || 0,
                 'cart-outline',
-                colors.brand.purpleLight
+                colors.brand.purpleLight,
               )}
               {renderStatCard(
                 'Cashback Earned',
                 `${currencySymbol}${stats.usage?.cashbackEarned || 0}`,
                 'wallet-outline',
-                colors.warningScale[400]
+                colors.warningScale[400],
               )}
               {renderStatCard(
                 'Delivery Saved',
                 `${currencySymbol}${stats.usage?.deliveryFeesSaved || 0}`,
                 'bicycle-outline',
-                colors.infoScale[400]
+                colors.infoScale[400],
               )}
             </View>
 
@@ -272,24 +278,27 @@ function SubscriptionManagePage() {
                 <View style={styles.roiContent}>
                   <View style={styles.roiRow}>
                     <ThemedText style={styles.roiLabel}>Subscription Cost</ThemedText>
-                    <ThemedText style={styles.roiValue}>{currencySymbol}{stats.roi.subscriptionCost}</ThemedText>
+                    <ThemedText style={styles.roiValue}>
+                      {currencySymbol}
+                      {stats.roi.subscriptionCost}
+                    </ThemedText>
                   </View>
                   <View style={styles.roiRow}>
                     <ThemedText style={styles.roiLabel}>Total Savings</ThemedText>
                     <ThemedText style={[styles.roiValue, { color: Colors.success }]}>
-                      {currencySymbol}{stats.roi.totalSavings}
+                      {currencySymbol}
+                      {stats.roi.totalSavings}
                     </ThemedText>
                   </View>
                   <View style={[styles.roiRow, styles.roiTotalRow]}>
                     <ThemedText style={styles.roiTotalLabel}>Net Savings</ThemedText>
                     <ThemedText style={styles.roiTotalValue}>
-                      {currencySymbol}{stats.roi.netSavings}
+                      {currencySymbol}
+                      {stats.roi.netSavings}
                     </ThemedText>
                   </View>
                   <View style={styles.roiPercentage}>
-                    <ThemedText style={styles.roiPercentageText}>
-                      {stats.roi.roiPercentage}% ROI
-                    </ThemedText>
+                    <ThemedText style={styles.roiPercentageText}>{stats.roi.roiPercentage}% ROI</ThemedText>
                   </View>
                 </View>
               </View>
@@ -301,24 +310,12 @@ function SubscriptionManagePage() {
         <View style={styles.section}>
           <ThemedText style={styles.sectionTitle}>Your Benefits</ThemedText>
           <View style={styles.benefitsContainer}>
-            {renderBenefit(
-              `${benefits?.cashbackMultiplier || 1}x Cashback Multiplier`,
-              true,
-              'cash'
-            )}
+            {renderBenefit(`${benefits?.cashbackMultiplier || 1}x Cashback Multiplier`, true, 'cash')}
             {renderBenefit('Free Delivery', benefits?.freeDelivery || false, 'bicycle')}
             {renderBenefit('Priority Support', benefits?.prioritySupport || false, 'headset')}
             {renderBenefit('Exclusive Deals', benefits?.exclusiveDeals || false, 'pricetag')}
-            {renderBenefit(
-              'Unlimited Wishlists',
-              benefits?.unlimitedWishlists || false,
-              'heart'
-            )}
-            {renderBenefit(
-              'Early Flash Sales',
-              benefits?.earlyFlashSaleAccess || false,
-              'flash'
-            )}
+            {renderBenefit('Unlimited Wishlists', benefits?.unlimitedWishlists || false, 'heart')}
+            {renderBenefit('Early Flash Sales', benefits?.earlyFlashSaleAccess || false, 'flash')}
             {currentTier === 'vip' && (
               <>
                 {renderBenefit('Personal Shopper', true, 'person')}
@@ -358,25 +355,28 @@ function SubscriptionManagePage() {
             <Pressable
               style={styles.actionButton}
               onPress={() => router.push('/subscription/billing')}
+              accessibilityRole="button"
+              accessibilityLabel="View billing history — see payments and download invoices"
             >
               <Ionicons name="receipt-outline" size={24} color={Colors.info} />
               <View style={styles.actionContent}>
                 <ThemedText style={styles.actionTitle}>View Billing History</ThemedText>
-                <ThemedText style={styles.actionSubtitle}>
-                  See payments and download invoices
-                </ThemedText>
+                <ThemedText style={styles.actionSubtitle}>See payments and download invoices</ThemedText>
               </View>
               <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
             </Pressable>
 
             {currentTier === 'premium' && (
-              <Pressable style={styles.actionButton} onPress={handleUpgrade}>
+              <Pressable
+                style={styles.actionButton}
+                onPress={handleUpgrade}
+                accessibilityRole="button"
+                accessibilityLabel="Upgrade to VIP — get 3x cashback and exclusive benefits"
+              >
                 <Ionicons name="arrow-up-circle-outline" size={24} color={Colors.warning} />
                 <View style={styles.actionContent}>
                   <ThemedText style={styles.actionTitle}>Upgrade to VIP</ThemedText>
-                  <ThemedText style={styles.actionSubtitle}>
-                    Get 3x cashback and exclusive benefits
-                  </ThemedText>
+                  <ThemedText style={styles.actionSubtitle}>Get 3x cashback and exclusive benefits</ThemedText>
                 </View>
                 <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
               </Pressable>
@@ -386,6 +386,9 @@ function SubscriptionManagePage() {
               style={[styles.actionButton, styles.cancelButton]}
               onPress={handleCancelSubscription}
               disabled={isCancelling}
+              accessibilityRole="button"
+              accessibilityLabel="Cancel subscription — you'll keep benefits until the end of the billing period"
+              accessibilityState={{ disabled: isCancelling }}
             >
               {isCancelling ? (
                 <ActivityIndicator color={Colors.error} />
@@ -393,12 +396,8 @@ function SubscriptionManagePage() {
                 <>
                   <Ionicons name="close-circle-outline" size={24} color={Colors.error} />
                   <View style={styles.actionContent}>
-                    <ThemedText style={[styles.actionTitle, { color: Colors.error }]}>
-                      Cancel Subscription
-                    </ThemedText>
-                    <ThemedText style={styles.actionSubtitle}>
-                      You'll keep benefits until period ends
-                    </ThemedText>
+                    <ThemedText style={[styles.actionTitle, { color: Colors.error }]}>Cancel Subscription</ThemedText>
+                    <ThemedText style={styles.actionSubtitle}>You'll keep benefits until period ends</ThemedText>
                   </View>
                   <Ionicons name="chevron-forward" size={24} color={colors.text.tertiary} />
                 </>
@@ -408,7 +407,7 @@ function SubscriptionManagePage() {
         )}
       </ScrollView>
     </ThemedView>
-);
+  );
 }
 
 const styles = StyleSheet.create({

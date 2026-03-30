@@ -1,15 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  Pressable,
-  RefreshControl,
-  Dimensions,
-  Platform,
-} from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Pressable, RefreshControl, Dimensions, Platform } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { router, Stack, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -57,30 +48,30 @@ function GamesPage() {
 
   const isFirstFocus = React.useRef(true);
 
-  const loadData = useCallback(async (silent = false) => {
-    if (!isAuthenticated) return;
-    try {
-      if (!silent) setLoading(true);
-      const [gamesRes] = await Promise.all([
-        gameApi.getAvailableGames(),
-        refreshWallet(),
-      ]);
+  const loadData = useCallback(
+    async (silent = false) => {
+      if (!isAuthenticated) return;
+      try {
+        if (!silent) setLoading(true);
+        const [gamesRes] = await Promise.all([gameApi.getAvailableGames(), refreshWallet()]);
 
-      if (gamesRes.success && gamesRes.data?.games) {
+        if (gamesRes.success && gamesRes.data?.games) {
+          if (!isMounted()) return;
+          setGames(gamesRes.data.games);
+          if (!isMounted()) return;
+          setTodaysEarnings(gamesRes.data.todaysEarnings || 0);
+        }
+      } catch (err) {
+        if (!silent) platformAlert('Error', 'Failed to load games. Pull to refresh.');
+      } finally {
         if (!isMounted()) return;
-        setGames(gamesRes.data.games);
+        setLoading(false);
         if (!isMounted()) return;
-        setTodaysEarnings(gamesRes.data.todaysEarnings || 0);
+        setRefreshing(false);
       }
-    } catch (err) {
-      if (!silent) platformAlert('Error', 'Failed to load games. Pull to refresh.');
-    } finally {
-      if (!isMounted()) return;
-      setLoading(false);
-      if (!isMounted()) return;
-      setRefreshing(false);
-    }
-  }, [isAuthenticated, refreshWallet]);
+    },
+    [isAuthenticated, refreshWallet],
+  );
 
   useEffect(() => {
     // AuthContext navigation guard handles unauthenticated redirect
@@ -91,9 +82,12 @@ function GamesPage() {
 
   useFocusEffect(
     useCallback(() => {
-      if (isFirstFocus.current) { isFirstFocus.current = false; return; }
+      if (isFirstFocus.current) {
+        isFirstFocus.current = false;
+        return;
+      }
       loadData(true);
-    }, [loadData])
+    }, [loadData]),
   );
 
   const totalGamesPlayed = games.reduce((sum, g) => sum + (g.playsUsed || 0), 0);
@@ -122,17 +116,17 @@ function GamesPage() {
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
-            onRefresh={() => { setRefreshing(true); loadData(); }}
+            onRefresh={() => {
+              setRefreshing(true);
+              loadData();
+            }}
             tintColor={COLORS.primary}
             colors={[COLORS.primary]}
           />
         }
       >
         {/* Header Stats */}
-        <LinearGradient
-          colors={[COLORS.navy, '#234B6B']}
-          style={styles.header}
-        >
+        <LinearGradient colors={[COLORS.navy, '#234B6B']} style={styles.header}>
           <View style={styles.headerTop}>
             <View>
               <Text style={styles.headerTitle}>Play & Earn</Text>
@@ -141,6 +135,8 @@ function GamesPage() {
             <Pressable
               style={styles.coinsBadge}
               onPress={() => router.push('/wallet' as any)}
+              accessibilityRole="button"
+              accessibilityLabel={`Your coins balance: ${userCoins.toLocaleString()}. Tap to view wallet`}
             >
               <CachedImage source={NUQTA_COIN} style={{ width: 16, height: 16 }} />
               <Text style={styles.coinsBadgeText}>{userCoins.toLocaleString()}</Text>
@@ -172,7 +168,7 @@ function GamesPage() {
 
           {loading ? (
             <View style={styles.gamesGrid}>
-              {[1, 2, 3, 4, 5, 6].map(i => (
+              {[1, 2, 3, 4, 5, 6].map((i) => (
                 <View key={i} style={styles.skeletonCard}>
                   <SkeletonBox width={48} height={48} borderRadius={14} />
                   <SkeletonBox width="80%" height={16} borderRadius={4} />
@@ -193,7 +189,13 @@ function GamesPage() {
                   <Pressable
                     key={game.id}
                     onPress={() => router.push(game.path as any)}
-                   
+                    accessibilityRole="button"
+                    accessibilityLabel={
+                      isExhausted
+                        ? `${game.title} — no plays remaining, come back tomorrow`
+                        : `Play ${game.title} — ${game.playsRemaining} plays remaining, earn up to ${game.reward} coins`
+                    }
+                    accessibilityState={{ disabled: isExhausted }}
                     style={styles.gameCardOuter}
                   >
                     <View style={[styles.gameCard, isExhausted && { opacity: 0.5 }]}>
@@ -214,8 +216,12 @@ function GamesPage() {
                       </View>
 
                       {/* Title + Description */}
-                      <Text style={styles.gameTitle} numberOfLines={1}>{game.title}</Text>
-                      <Text style={styles.gameDescription} numberOfLines={1}>{game.description}</Text>
+                      <Text style={styles.gameTitle} numberOfLines={1}>
+                        {game.title}
+                      </Text>
+                      <Text style={styles.gameDescription} numberOfLines={1}>
+                        {game.description}
+                      </Text>
 
                       {/* Progress */}
                       <View style={styles.gameProgressSection}>

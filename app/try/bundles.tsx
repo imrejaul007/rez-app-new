@@ -63,14 +63,11 @@ export default function BundlesScreen() {
 
   const loadBundles = useCallback(async () => {
     try {
-      const [bundlesData, activeBundlesData] = await Promise.all([
-        tryApi.getBundles(),
-        tryApi.getMyBundles(),
-      ]);
+      const [bundlesData, activeBundlesData] = await Promise.all([tryApi.getBundles(), tryApi.getMyBundles()]);
       setBundles(bundlesData);
       setActiveBundles(activeBundlesData);
     } catch (err) {
-      console.error('Failed to load bundles:', err);
+      if (__DEV__) console.error('Failed to load bundles:', err);
     } finally {
       setLoading(false);
     }
@@ -89,7 +86,7 @@ export default function BundlesScreen() {
   const handleConfirmPurchase = async () => {
     if (!purchaseModal.bundle) return;
 
-    setPurchaseModal(prev => ({ ...prev, confirming: true }));
+    setPurchaseModal((prev) => ({ ...prev, confirming: true }));
 
     try {
       // Create Razorpay order
@@ -118,14 +115,15 @@ export default function BundlesScreen() {
         await loadBundles();
         setPurchaseModal({ isVisible: false, bundle: null, confirming: false });
       } catch (paymentErr: any) {
-        if (paymentErr.code !== 2) { // 2 = user cancelled
-          console.error('Payment error:', paymentErr);
+        if (paymentErr.code !== 2) {
+          // 2 = user cancelled
+          if (__DEV__) console.error('Payment error:', paymentErr);
         }
-        setPurchaseModal(prev => ({ ...prev, confirming: false }));
+        setPurchaseModal((prev) => ({ ...prev, confirming: false }));
       }
     } catch (err: any) {
-      console.error('Failed to purchase bundle:', err);
-      setPurchaseModal(prev => ({ ...prev, confirming: false }));
+      if (__DEV__) console.error('Failed to purchase bundle:', err);
+      setPurchaseModal((prev) => ({ ...prev, confirming: false }));
     }
   };
 
@@ -162,10 +160,7 @@ export default function BundlesScreen() {
         </View>
       </View>
 
-      <Pressable
-        style={styles.buyNowButton}
-        onPress={() => handlePurchase(bundle)}
-      >
+      <Pressable style={styles.buyNowButton} onPress={() => handlePurchase(bundle)}>
         <Text style={styles.buyNowButtonText}>Buy Now</Text>
       </Pressable>
     </LinearGradient>
@@ -176,7 +171,9 @@ export default function BundlesScreen() {
       <View style={styles.bundleHeader}>
         <View>
           <Text style={styles.bundleName}>{item.name}</Text>
-          <Text style={styles.bundleDesc} numberOfLines={1}>{item.description}</Text>
+          <Text style={styles.bundleDesc} numberOfLines={1}>
+            {item.description}
+          </Text>
         </View>
         {item.category && (
           <View style={styles.categoryBadge}>
@@ -209,10 +206,7 @@ export default function BundlesScreen() {
         </View>
       </View>
 
-      <Pressable
-        style={styles.bundleBuyButton}
-        onPress={() => handlePurchase(item)}
-      >
+      <Pressable style={styles.bundleBuyButton} onPress={() => handlePurchase(item)}>
         <Text style={styles.bundleBuyButtonText}>Buy Now</Text>
       </Pressable>
     </View>
@@ -227,21 +221,16 @@ export default function BundlesScreen() {
         <View style={styles.activeBundleHeader}>
           <View>
             <Text style={styles.activeBundleName}>{item.name}</Text>
-            <Text style={styles.slotsText}>{slotsRemaining}/{item.slotsTotal} slots left</Text>
+            <Text style={styles.slotsText}>
+              {slotsRemaining}/{item.slotsTotal} slots left
+            </Text>
           </View>
-          <Text style={styles.expiryDate}>
-            Expires {new Date(item.expiresAt).toLocaleDateString()}
-          </Text>
+          <Text style={styles.expiryDate}>Expires {new Date(item.expiresAt).toLocaleDateString()}</Text>
         </View>
 
         {/* Progress Bar */}
         <View style={styles.progressBar}>
-          <View
-            style={[
-              styles.progressFill,
-              { width: `${progress}%` },
-            ]}
-          />
+          <View style={[styles.progressFill, { width: `${progress}%` }]} />
         </View>
       </View>
     );
@@ -264,8 +253,8 @@ export default function BundlesScreen() {
     );
   }
 
-  const featuredBundle = bundles && Array.isArray(bundles) ? bundles.find(b => b.isFeatured) : undefined;
-  const regularBundles = bundles && Array.isArray(bundles) ? bundles.filter(b => !b.isFeatured) : [];
+  const featuredBundle = bundles && Array.isArray(bundles) ? bundles.find((b) => b.isFeatured) : undefined;
+  const regularBundles = bundles && Array.isArray(bundles) ? bundles.filter((b) => !b.isFeatured) : [];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -285,11 +274,9 @@ export default function BundlesScreen() {
       <FlatList
         data={regularBundles}
         renderItem={renderBundleCard}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
         scrollEnabled={true}
         ListHeaderComponent={
           <>
@@ -300,7 +287,7 @@ export default function BundlesScreen() {
                 <FlatList
                   data={activeBundles}
                   renderItem={renderActiveBundle}
-                  keyExtractor={item => item.id}
+                  keyExtractor={(item) => item.id}
                   scrollEnabled={false}
                   gap={spacing.md}
                 />
@@ -322,18 +309,12 @@ export default function BundlesScreen() {
       />
 
       {/* Purchase Modal */}
-      <Modal
-        visible={purchaseModal.isVisible}
-        transparent
-        animationType="fade"
-      >
+      <Modal visible={purchaseModal.isVisible} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Confirm Purchase</Text>
-              <Pressable
-                onPress={() => setPurchaseModal({ isVisible: false, bundle: null, confirming: false })}
-              >
+              <Pressable onPress={() => setPurchaseModal({ isVisible: false, bundle: null, confirming: false })}>
                 <Ionicons name="close" size={24} color={colors.text.primary} />
               </Pressable>
             </View>
@@ -358,18 +339,12 @@ export default function BundlesScreen() {
                 <View style={styles.modalSection}>
                   <Text style={styles.modalSectionTitle}>Includes</Text>
                   <View style={styles.modalIncluded}>
-                    <Text style={styles.modalIncludedItem}>
-                      ✓ {purchaseModal.bundle.trialCount} Trial Passes
-                    </Text>
+                    <Text style={styles.modalIncludedItem}>✓ {purchaseModal.bundle.trialCount} Trial Passes</Text>
                     <Text style={styles.modalIncludedItem}>
                       ✓ {purchaseModal.bundle.trialCoinsIncluded} Trial Coins
                     </Text>
-                    <Text style={styles.modalIncludedItem}>
-                      ✓ {purchaseModal.bundle.rezCoinsBonus} Bonus ReZ Coins
-                    </Text>
-                    <Text style={styles.modalIncludedItem}>
-                      ✓ Valid for {purchaseModal.bundle.validDays} days
-                    </Text>
+                    <Text style={styles.modalIncludedItem}>✓ {purchaseModal.bundle.rezCoinsBonus} Bonus ReZ Coins</Text>
+                    <Text style={styles.modalIncludedItem}>✓ Valid for {purchaseModal.bundle.validDays} days</Text>
                   </View>
                 </View>
               </ScrollView>

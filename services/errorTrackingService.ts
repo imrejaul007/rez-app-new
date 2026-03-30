@@ -175,7 +175,7 @@ class ErrorTrackingService {
    * Generate session ID
    */
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `session_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 
   /**
@@ -534,7 +534,7 @@ class ErrorTrackingService {
    * Generate error ID
    */
   private generateErrorId(): string {
-    return `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `error_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 
   /**

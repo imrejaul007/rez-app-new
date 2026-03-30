@@ -1,12 +1,11 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, RefreshControl, Platform } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAuth } from '@/contexts/AuthContext';
 import disputeApi, { Dispute } from '@/services/disputeApi';
-import CachedImage from '@/components/ui/CachedImage';
 import { colors, typography, spacing, borderRadius, shadows } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 

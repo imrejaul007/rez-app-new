@@ -6,15 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Platform,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Platform, RefreshControl } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -79,17 +71,39 @@ const FitnessPage: React.FC = () => {
       ]);
 
       // Extract data from responses
-      const gymsData = gymsRes.status === 'fulfilled' ? ((gymsRes.value.data as any)?.stores || []) : [];
-      const studiosData = studiosRes.status === 'fulfilled' ? ((studiosRes.value.data as any)?.stores || []) : [];
-      const trainersData = trainersRes.status === 'fulfilled' ? ((trainersRes.value.data as any)?.stores || []) : [];
-      const storesData = storesRes.status === 'fulfilled' ? ((storesRes.value.data as any)?.stores || []) : [];
+      const gymsData = gymsRes.status === 'fulfilled' ? (gymsRes.value.data as any)?.stores || [] : [];
+      const studiosData = studiosRes.status === 'fulfilled' ? (studiosRes.value.data as any)?.stores || [] : [];
+      const trainersData = trainersRes.status === 'fulfilled' ? (trainersRes.value.data as any)?.stores || [] : [];
+      const storesData = storesRes.status === 'fulfilled' ? (storesRes.value.data as any)?.stores || [] : [];
 
       // Build categories with real counts
       const builtCategories: Category[] = [
-        { _id: 'gyms', name: 'Gyms', slug: 'gyms', storeCount: gymsRes.status === 'fulfilled' ? ((gymsRes.value.data as any)?.total || gymsData.length) : 0 },
-        { _id: 'studios', name: 'Fitness Studios', slug: 'studios', storeCount: studiosRes.status === 'fulfilled' ? ((studiosRes.value.data as any)?.total || studiosData.length) : 0 },
-        { _id: 'trainers', name: 'Personal Trainers', slug: 'trainers', storeCount: trainersRes.status === 'fulfilled' ? ((trainersRes.value.data as any)?.total || trainersData.length) : 0 },
-        { _id: 'store', name: 'Sports Store', slug: 'store', storeCount: storesRes.status === 'fulfilled' ? ((storesRes.value.data as any)?.total || storesData.length) : 0 },
+        {
+          _id: 'gyms',
+          name: 'Gyms',
+          slug: 'gyms',
+          storeCount: gymsRes.status === 'fulfilled' ? (gymsRes.value.data as any)?.total || gymsData.length : 0,
+        },
+        {
+          _id: 'studios',
+          name: 'Fitness Studios',
+          slug: 'studios',
+          storeCount:
+            studiosRes.status === 'fulfilled' ? (studiosRes.value.data as any)?.total || studiosData.length : 0,
+        },
+        {
+          _id: 'trainers',
+          name: 'Personal Trainers',
+          slug: 'trainers',
+          storeCount:
+            trainersRes.status === 'fulfilled' ? (trainersRes.value.data as any)?.total || trainersData.length : 0,
+        },
+        {
+          _id: 'store',
+          name: 'Sports Store',
+          slug: 'store',
+          storeCount: storesRes.status === 'fulfilled' ? (storesRes.value.data as any)?.total || storesData.length : 0,
+        },
         { _id: 'challenges', name: 'Challenges', slug: 'challenges', storeCount: 50 },
         { _id: 'nutrition', name: 'Nutrition', slug: 'nutrition', storeCount: 100 },
       ];
@@ -109,7 +123,6 @@ const FitnessPage: React.FC = () => {
         maxCashback: maxCashback || 35,
         coinsMultiplier: '3X',
       });
-
     } catch (error) {
       // Set fallback data
       if (!isMounted()) return;
@@ -176,14 +189,19 @@ const FitnessPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
             <Text style={styles.headerTitle}>Fitness & Sports</Text>
             <Text style={styles.headerSubtitle}>Stay fit, earn rewards</Text>
           </View>
-          <Pressable style={styles.searchButton}>
+          <Pressable style={styles.searchButton} accessibilityRole="button" accessibilityLabel="Search fitness venues">
             <Ionicons name="search" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
@@ -210,11 +228,7 @@ const FitnessPage: React.FC = () => {
         contentContainerStyle={{ paddingBottom: 120 }}
         showsVerticalScrollIndicator={false}
         refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={colors.brand.orange}
-          />
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor={colors.brand.orange} />
         }
       >
         <View style={styles.section}>
@@ -225,13 +239,18 @@ const FitnessPage: React.FC = () => {
                 key={cat._id}
                 style={styles.categoryCard}
                 onPress={() => handleCategoryPress(cat.slug)}
-               
+                accessibilityRole="button"
+                accessibilityLabel={`${cat.name} fitness category`}
               >
                 <View style={[styles.categoryIcon, { backgroundColor: `${getCategoryColor(cat.slug)}20` }]}>
                   <Text style={styles.categoryEmoji}>{getCategoryIcon(cat.slug)}</Text>
                 </View>
-                <Text style={styles.categoryTitle} numberOfLines={2}>{cat.name}</Text>
-                <Text style={styles.categoryCount} numberOfLines={1}>{formatCount(cat.storeCount)}</Text>
+                <Text style={styles.categoryTitle} numberOfLines={2}>
+                  {cat.name}
+                </Text>
+                <Text style={styles.categoryCount} numberOfLines={1}>
+                  {formatCount(cat.storeCount)}
+                </Text>
               </Pressable>
             ))}
           </View>
@@ -240,7 +259,11 @@ const FitnessPage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Featured Gyms</Text>
-            <Pressable onPress={() => handleCategoryPress('gyms')}>
+            <Pressable
+              onPress={() => handleCategoryPress('gyms')}
+              accessibilityRole="button"
+              accessibilityLabel="View all gyms"
+            >
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -252,23 +275,25 @@ const FitnessPage: React.FC = () => {
                   key={gym._id}
                   style={styles.gymCard}
                   onPress={() => handleGymPress(gym)}
-                 
+                  accessibilityRole="button"
+                  accessibilityLabel={`${gym.name}, ${gym.location?.city || 'Bangalore'}, rating ${gym.ratings?.average?.toFixed(1) || '4.5'}`}
                 >
-                  <CachedImage
-                    source={gym.banner?.[0] || gym.logo || undefined}
-                    style={styles.gymImage}
-                  />
+                  <CachedImage source={gym.banner?.[0] || gym.logo || undefined} style={styles.gymImage} />
                   <View style={styles.cashbackBadge}>
                     <Text style={styles.cashbackText}>{gym.offers?.cashback || 15}%</Text>
                   </View>
                   <View style={styles.gymInfo}>
-                    <Text style={styles.gymName} numberOfLines={1}>{gym.name}</Text>
+                    <Text style={styles.gymName} numberOfLines={1}>
+                      {gym.name}
+                    </Text>
                     <View style={styles.gymMeta}>
                       <View style={styles.ratingContainer}>
                         <Ionicons name="star" size={14} color={Colors.warning} />
                         <Text style={styles.ratingText}>{gym.ratings?.average?.toFixed(1) || '4.5'}</Text>
                       </View>
-                      <Text style={styles.distanceText} numberOfLines={1}>{gym.location?.city || 'Bangalore'}</Text>
+                      <Text style={styles.distanceText} numberOfLines={1}>
+                        {gym.location?.city || 'Bangalore'}
+                      </Text>
                     </View>
                   </View>
                 </Pressable>
@@ -295,6 +320,8 @@ const FitnessPage: React.FC = () => {
             <Pressable
               style={styles.promoButton}
               onPress={() => router.push('/challenges' as any)}
+              accessibilityRole="button"
+              accessibilityLabel="Join the New Year Fitness Challenge and win up to 10,000 coins"
             >
               <Text style={styles.promoButtonText}>Join Challenge</Text>
             </Pressable>
@@ -309,10 +336,20 @@ const FitnessPage: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.primary },
-  loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background.primary },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+  },
   loadingText: { marginTop: Spacing.md, fontSize: Typography.body.fontSize, color: colors.text.tertiary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: Spacing.lg },
-  headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: Spacing.base },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    marginBottom: Spacing.base,
+  },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
   headerTitle: { fontSize: Typography.h3.fontSize, fontWeight: '700', color: colors.text.inverse },
@@ -324,18 +361,65 @@ const styles = StyleSheet.create({
   statLabel: { fontSize: Typography.caption.fontSize, color: 'rgba(255,255,255,0.8)' },
   statDivider: { width: 1, height: 30, backgroundColor: 'rgba(255,255,255,0.3)' },
   section: { padding: Spacing.base },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.md },
-  sectionTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.md },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: Spacing.md,
+  },
+  sectionTitle: {
+    fontSize: Typography.h4.fontSize,
+    fontWeight: '700',
+    color: colors.nileBlue,
+    marginBottom: Spacing.md,
+  },
   viewAllText: { fontSize: Typography.body.fontSize, fontWeight: '600', color: colors.brand.orange },
   categoriesGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
-  categoryCard: { flexBasis: '30%', flexGrow: 1, flexShrink: 1, alignItems: 'center', padding: Spacing.md, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.lg },
-  categoryIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.sm },
+  categoryCard: {
+    flexBasis: '30%',
+    flexGrow: 1,
+    flexShrink: 1,
+    alignItems: 'center',
+    padding: Spacing.md,
+    backgroundColor: colors.background.secondary,
+    borderRadius: BorderRadius.lg,
+  },
+  categoryIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius['2xl'],
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.sm,
+  },
   categoryEmoji: { fontSize: Typography.h2.fontSize },
-  categoryTitle: { fontSize: Typography.bodySmall.fontSize, fontWeight: '600', color: colors.nileBlue, marginBottom: 2, textAlign: 'center' },
+  categoryTitle: {
+    fontSize: Typography.bodySmall.fontSize,
+    fontWeight: '600',
+    color: colors.nileBlue,
+    marginBottom: 2,
+    textAlign: 'center',
+  },
   categoryCount: { fontSize: Typography.overline.fontSize, color: colors.text.tertiary },
-  gymCard: { width: 200, marginRight: Spacing.md, borderRadius: BorderRadius.lg, overflow: 'hidden', backgroundColor: colors.background.primary, borderWidth: 1, borderColor: colors.border.default },
+  gymCard: {
+    width: 200,
+    marginRight: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+    backgroundColor: colors.background.primary,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   gymImage: { width: '100%', height: 120 },
-  cashbackBadge: { position: 'absolute', top: 8, right: 8, backgroundColor: Colors.success, paddingHorizontal: Spacing.sm, paddingVertical: Spacing.xs, borderRadius: BorderRadius.sm },
+  cashbackBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: Colors.success,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
   cashbackText: { fontSize: Typography.caption.fontSize, fontWeight: '700', color: colors.text.inverse },
   gymInfo: { padding: Spacing.md },
   gymName: { fontSize: Typography.body.fontSize, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.xs },
@@ -348,9 +432,24 @@ const styles = StyleSheet.create({
   promoBanner: { marginHorizontal: Spacing.base },
   promoGradient: { padding: Spacing.xl, borderRadius: BorderRadius.lg, alignItems: 'center' },
   promoEmoji: { fontSize: 40, marginBottom: Spacing.md },
-  promoTitle: { fontSize: Typography.h4.fontSize, fontWeight: '700', color: colors.text.inverse, marginBottom: Spacing.xs },
-  promoSubtitle: { fontSize: Typography.bodySmall.fontSize, color: 'rgba(255,255,255,0.9)', textAlign: 'center', marginBottom: Spacing.base },
-  promoButton: { backgroundColor: colors.background.primary, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius['2xl'] },
+  promoTitle: {
+    fontSize: Typography.h4.fontSize,
+    fontWeight: '700',
+    color: colors.text.inverse,
+    marginBottom: Spacing.xs,
+  },
+  promoSubtitle: {
+    fontSize: Typography.bodySmall.fontSize,
+    color: 'rgba(255,255,255,0.9)',
+    textAlign: 'center',
+    marginBottom: Spacing.base,
+  },
+  promoButton: {
+    backgroundColor: colors.background.primary,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius['2xl'],
+  },
   promoButtonText: { fontSize: Typography.body.fontSize, fontWeight: '700', color: Colors.success },
 });
 

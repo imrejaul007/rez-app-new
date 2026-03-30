@@ -76,7 +76,7 @@ function UpgradeBanner({
         <View style={styles.contentContainer}>
           {/* Close Button */}
           {dismissible && (
-            <Pressable style={styles.closeButton} onPress={handleDismiss}>
+            <Pressable style={styles.closeButton} onPress={handleDismiss} accessibilityRole="button" accessibilityLabel="Dismiss upgrade banner">
               <Ionicons name="close" size={20} color={SUBSCRIPTION_COLORS.white} />
             </Pressable>
           )}
@@ -108,6 +108,8 @@ function UpgradeBanner({
               onUpgrade();
               handleDismiss();
             }}
+            accessibilityRole="button"
+            accessibilityLabel={currentTier === 'free' ? 'View subscription plans' : 'Upgrade subscription'}
           >
             <ThemedText style={styles.ctaText}>
               {currentTier === 'free' ? 'View Plans' : 'Upgrade'}

@@ -372,7 +372,14 @@ function TriviaPage() {
         </View>
       </View>
 
-      <Pressable style={styles.startButton} onPress={startGame} disabled={loading}>
+      <Pressable
+        style={styles.startButton}
+        onPress={startGame}
+        disabled={loading}
+        accessibilityRole="button"
+        accessibilityLabel="Start the trivia quiz"
+        accessibilityState={{ disabled: loading }}
+      >
         <LinearGradient colors={['#FF6B6B', colors.error]} style={styles.startButtonGradient}>
           {loading ? (
             <ActivityIndicator color={colors.text.inverse} />
@@ -517,13 +524,23 @@ function TriviaPage() {
         )}
 
         <View style={styles.actionButtons}>
-          <Pressable style={styles.playAgainButton} onPress={startGame}>
+          <Pressable
+            style={styles.playAgainButton}
+            onPress={startGame}
+            accessibilityRole="button"
+            accessibilityLabel="Play the trivia quiz again"
+          >
             <LinearGradient colors={['#FF6B6B', colors.error]} style={styles.startButtonGradient}>
               <Ionicons name="refresh" size={20} color={colors.text.inverse} />
               <ThemedText style={styles.startButtonText}>Play Again</ThemedText>
             </LinearGradient>
           </Pressable>
-          <Pressable style={styles.backToGamesBtn} onPress={() => router.push('/games' as any)}>
+          <Pressable
+            style={styles.backToGamesBtn}
+            onPress={() => router.push('/games' as any)}
+            accessibilityRole="button"
+            accessibilityLabel="Browse more games"
+          >
             <Ionicons name="game-controller" size={18} color={colors.text.primary} />
             <ThemedText style={styles.backToGamesText}>More Games</ThemedText>
           </Pressable>
@@ -541,7 +558,12 @@ function TriviaPage() {
           headerTintColor: colors.text.primary,
           headerTitleStyle: { fontWeight: 'bold' },
           headerLeft: () => (
-            <Pressable onPress={handleBackPress} style={styles.headerBackButton}>
+            <Pressable
+              onPress={handleBackPress}
+              style={styles.headerBackButton}
+              accessibilityRole="button"
+              accessibilityLabel="Go back to games"
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
           ),

@@ -4,16 +4,7 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity,
-  ActivityIndicator,
-  SafeAreaView,
-  RefreshControl,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { useRouter, useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -63,7 +54,7 @@ export default function StampCardScreen() {
         setStampCard(response.data.stampCard);
       }
     } catch (error) {
-      console.error('[Stamp Card] Error fetching data:', error);
+      if (__DEV__) console.error('[Stamp Card] Error fetching data:', error);
     } finally {
       if (!isMounted()) return;
       setLoading(false);

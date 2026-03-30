@@ -366,6 +366,9 @@ function PharmacyPage() {
         key={category.id}
         style={[styles.categoryChip, isSelected && { backgroundColor: category.color }]}
         onPress={() => setSelectedCategory(category.id)}
+        accessibilityRole="radio"
+        accessibilityLabel={`${category.name} category`}
+        accessibilityState={{ selected: isSelected }}
       >
         <Ionicons name={category.icon as any} size={16} color={isSelected ? colors.text.inverse : category.color} />
         <Text style={[styles.categoryChipText, isSelected && styles.categoryChipTextSelected]}>{category.name}</Text>
@@ -375,7 +378,12 @@ function PharmacyPage() {
 
   // Render pharmacy card
   const renderPharmacyCard = (pharmacy: PharmacyStore) => (
-    <Pressable key={pharmacy._id} style={styles.pharmacyCard}>
+    <Pressable
+      key={pharmacy._id}
+      style={styles.pharmacyCard}
+      accessibilityRole="button"
+      accessibilityLabel={`${pharmacy.name}, ${pharmacy.address.city}, rating ${pharmacy.ratings.average.toFixed(1)}`}
+    >
       <View style={styles.pharmacyLogo}>
         {pharmacy.logo ? (
           <CachedImage source={pharmacy.logo} style={styles.pharmacyLogoImg} />
@@ -416,7 +424,12 @@ function PharmacyPage() {
       medicine.price.discount || Math.round(((medicine.price.mrp - medicine.price.selling) / medicine.price.mrp) * 100);
 
     return (
-      <Pressable key={medicine._id} style={styles.medicineCard}>
+      <Pressable
+        key={medicine._id}
+        style={styles.medicineCard}
+        accessibilityRole="button"
+        accessibilityLabel={`${medicine.name}${medicine.metadata?.packSize ? `, ${medicine.metadata.packSize}` : ''}, ${currencySymbol}${medicine.price.selling}${discount > 0 ? `, ${discount}% off` : ''}${medicine.metadata?.requiresPrescription ? ', prescription required' : ''}`}
+      >
         <View style={styles.medicineImageContainer}>
           {medicine.images && medicine.images.length > 0 ? (
             <CachedImage source={medicine.images[0]} style={styles.medicineImage} />
@@ -461,7 +474,12 @@ function PharmacyPage() {
             )}
           </View>
 
-          <Pressable style={styles.addToCartButton} onPress={() => addToCart(medicine)}>
+          <Pressable
+            style={styles.addToCartButton}
+            onPress={() => addToCart(medicine)}
+            accessibilityRole="button"
+            accessibilityLabel={`Add ${medicine.name} to cart`}
+          >
             <Ionicons name="cart-outline" size={16} color={colors.background.primary} />
             <Text style={styles.addToCartText}>Add</Text>
           </Pressable>
@@ -478,6 +496,8 @@ function PharmacyPage() {
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
           >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
@@ -485,7 +505,12 @@ function PharmacyPage() {
             <Text style={styles.headerTitle}>Online Pharmacy</Text>
             <Text style={styles.headerSubtitle}>Medicines delivered to your door</Text>
           </View>
-          <Pressable style={styles.cartButton} onPress={() => setCartModalVisible(true)}>
+          <Pressable
+            style={styles.cartButton}
+            onPress={() => setCartModalVisible(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`View cart — ${cart.length} items`}
+          >
             <Ionicons name="cart" size={24} color={colors.background.primary} />
             {cart.length > 0 && (
               <View style={styles.cartBadge}>

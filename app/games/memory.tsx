@@ -74,7 +74,16 @@ const MemoryCardView = React.memo(
     }));
 
     return (
-      <Pressable style={styles.cardContainer} onPress={onPress} disabled={disabled}>
+      <Pressable
+        style={styles.cardContainer}
+        onPress={onPress}
+        disabled={disabled}
+        accessibilityRole="button"
+        accessibilityLabel={
+          card.isFlipped || card.isMatched ? `${card.emoji} card${card.isMatched ? ', matched' : ''}` : 'Hidden card'
+        }
+        accessibilityState={{ disabled }}
+      >
         <Animated.View style={[styles.card, styles.cardBack, card.isMatched && styles.cardMatched, frontStyle]}>
           {card.isMatched ? (
             <Ionicons name="checkmark-circle" size={28} color={Colors.success} />
@@ -295,7 +304,14 @@ function MemoryPage() {
         </View>
       </View>
 
-      <Pressable style={styles.startButton} onPress={startGame} disabled={loading}>
+      <Pressable
+        style={styles.startButton}
+        onPress={startGame}
+        disabled={loading}
+        accessibilityRole="button"
+        accessibilityLabel="Start the memory matching game"
+        accessibilityState={{ disabled: loading }}
+      >
         <LinearGradient colors={[colors.brand.indigo, '#4F46E5']} style={styles.startButtonGradient}>
           {loading ? (
             <ActivityIndicator color={colors.text.inverse} />
@@ -348,13 +364,23 @@ function MemoryPage() {
       )}
 
       <View style={styles.actionButtons}>
-        <Pressable style={styles.playAgainButton} onPress={startGame}>
+        <Pressable
+          style={styles.playAgainButton}
+          onPress={startGame}
+          accessibilityRole="button"
+          accessibilityLabel="Play the memory game again"
+        >
           <LinearGradient colors={[colors.brand.indigo, '#4F46E5']} style={styles.startButtonGradient}>
             <Ionicons name="refresh" size={20} color={colors.text.inverse} />
             <ThemedText style={styles.startButtonText}>Play Again</ThemedText>
           </LinearGradient>
         </Pressable>
-        <Pressable style={styles.backToGamesBtn} onPress={() => router.push('/games' as any)}>
+        <Pressable
+          style={styles.backToGamesBtn}
+          onPress={() => router.push('/games' as any)}
+          accessibilityRole="button"
+          accessibilityLabel="Browse more games"
+        >
           <Ionicons name="game-controller" size={18} color={colors.text.primary} />
           <ThemedText style={styles.backToGamesText}>More Games</ThemedText>
         </Pressable>
@@ -371,7 +397,12 @@ function MemoryPage() {
           headerTintColor: colors.text.primary,
           headerTitleStyle: { fontWeight: 'bold' },
           headerLeft: () => (
-            <Pressable onPress={handleBackPress} style={styles.headerBackButton}>
+            <Pressable
+              onPress={handleBackPress}
+              style={styles.headerBackButton}
+              accessibilityRole="button"
+              accessibilityLabel="Go back to games"
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
           ),

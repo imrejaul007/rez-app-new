@@ -511,6 +511,9 @@ const FitnessBookingPage: React.FC = () => {
             key={tab.id}
             style={[styles.tab, activeTab === tab.id && styles.tabActive]}
             onPress={() => setActiveTab(tab.id)}
+            accessibilityRole="tab"
+            accessibilityLabel={`${tab.label} booking tab`}
+            accessibilityState={{ selected: activeTab === tab.id }}
           >
             <Ionicons
               name={tab.icon as any}
@@ -540,6 +543,9 @@ const FitnessBookingPage: React.FC = () => {
             plan.popular && styles.planCardPopular,
           ]}
           onPress={() => setSelectedPlan(plan)}
+          accessibilityRole="radio"
+          accessibilityLabel={`${plan.name}, ${plan.duration}, ${currencySymbol}${plan.price.toLocaleString()}${plan.popular ? ', most popular' : ''}`}
+          accessibilityState={{ selected: selectedPlan?.id === plan.id }}
         >
           {plan.popular && (
             <View style={styles.popularBadge}>
@@ -590,6 +596,9 @@ const FitnessBookingPage: React.FC = () => {
             key={index}
             style={[styles.dateCard, isSelected && styles.dateCardSelected]}
             onPress={() => onSelect(date)}
+            accessibilityRole="radio"
+            accessibilityLabel={`${isToday ? 'Today, ' : ''}${date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}`}
+            accessibilityState={{ selected: isSelected }}
           >
             <Text style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
               {date.toLocaleDateString('en-US', { weekday: 'short' })}
@@ -617,6 +626,9 @@ const FitnessBookingPage: React.FC = () => {
             style={[styles.classCard, isSelected && styles.classCardSelected, isFull && styles.classCardFull]}
             onPress={() => !isFull && setSelectedClass(cls)}
             disabled={isFull}
+            accessibilityRole="radio"
+            accessibilityLabel={`${cls.name} at ${cls.time}, ${cls.duration}, instructor ${cls.instructor}, ${isFull ? 'class full' : `${cls.spots} spots left`}, ${currencySymbol}${cls.price}`}
+            accessibilityState={{ selected: isSelected, disabled: isFull }}
           >
             <View style={styles.classTime}>
               <Text style={styles.classTimeText}>{cls.time}</Text>
@@ -658,6 +670,9 @@ const FitnessBookingPage: React.FC = () => {
             key={option.id}
             style={[styles.sessionOption, sessionType === option.id && styles.sessionOptionSelected]}
             onPress={() => setSessionType(option.id)}
+            accessibilityRole="radio"
+            accessibilityLabel={`${option.label}, ${currencySymbol}${option.price.toLocaleString()}${option.save ? `, save ${option.save}` : ''}`}
+            accessibilityState={{ selected: sessionType === option.id }}
           >
             {option.save && (
               <View style={styles.saveBadge}>
@@ -693,6 +708,9 @@ const FitnessBookingPage: React.FC = () => {
             ]}
             onPress={() => slot.available && setSelectedTimeSlot(slot.id)}
             disabled={!slot.available}
+            accessibilityRole="radio"
+            accessibilityLabel={slot.available ? slot.time : `${slot.time}, unavailable`}
+            accessibilityState={{ selected: selectedTimeSlot === slot.id, disabled: !slot.available }}
           >
             <Text
               style={[
@@ -744,6 +762,9 @@ const FitnessBookingPage: React.FC = () => {
             <Pressable
               style={styles.quantityButton}
               onPress={() => dayPassCount > 1 && setDayPassCount(dayPassCount - 1)}
+              accessibilityRole="button"
+              accessibilityLabel="Remove one day pass"
+              accessibilityState={{ disabled: dayPassCount <= 1 }}
             >
               <Ionicons name="remove" size={20} color={colors.nileBlue} />
             </Pressable>
@@ -751,6 +772,9 @@ const FitnessBookingPage: React.FC = () => {
             <Pressable
               style={styles.quantityButton}
               onPress={() => dayPassCount < 5 && setDayPassCount(dayPassCount + 1)}
+              accessibilityRole="button"
+              accessibilityLabel="Add one more day pass"
+              accessibilityState={{ disabled: dayPassCount >= 5 }}
             >
               <Ionicons name="add" size={20} color={colors.nileBlue} />
             </Pressable>
@@ -825,6 +849,8 @@ const FitnessBookingPage: React.FC = () => {
               <Pressable
                 style={styles.backBtn}
                 onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+                accessibilityRole="button"
+                accessibilityLabel="Go back"
               >
                 <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
               </Pressable>
@@ -859,7 +885,11 @@ const FitnessBookingPage: React.FC = () => {
             <View style={styles.errorBanner}>
               <Ionicons name="alert-circle" size={18} color={Colors.error} />
               <Text style={styles.errorText}>{errorMessage}</Text>
-              <Pressable onPress={() => setErrorMessage('')}>
+              <Pressable
+                onPress={() => setErrorMessage('')}
+                accessibilityRole="button"
+                accessibilityLabel="Dismiss error"
+              >
                 <Ionicons name="close" size={18} color={Colors.error} />
               </Pressable>
             </View>
@@ -880,7 +910,14 @@ const FitnessBookingPage: React.FC = () => {
                 </Text>
               )}
             </View>
-            <Pressable style={styles.bookButton} onPress={handleBooking} disabled={submitting}>
+            <Pressable
+              style={styles.bookButton}
+              onPress={handleBooking}
+              disabled={submitting}
+              accessibilityRole="button"
+              accessibilityLabel="Continue to confirm your fitness booking"
+              accessibilityState={{ disabled: submitting }}
+            >
               <LinearGradient colors={[colors.brand.orange, colors.brand.orangeDark]} style={styles.bookButtonGradient}>
                 {submitting ? (
                   <ActivityIndicator size="small" color={colors.text.inverse} />
@@ -928,7 +965,12 @@ const FitnessBookingPage: React.FC = () => {
                   </Text>
                 </View>
               </View>
-              <Pressable style={styles.doneButton} onPress={handleSuccessClose}>
+              <Pressable
+                style={styles.doneButton}
+                onPress={handleSuccessClose}
+                accessibilityRole="button"
+                accessibilityLabel="Done — close booking confirmation"
+              >
                 <LinearGradient
                   colors={[colors.brand.orange, colors.brand.orangeDark]}
                   style={styles.doneButtonGradient}

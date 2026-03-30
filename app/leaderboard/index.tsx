@@ -2,7 +2,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Leaderboard Page
 // Display top users by coins with ranking and filters with real-time updates
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { View, StyleSheet, ScrollView, Pressable, StatusBar, ActivityIndicator, RefreshControl } from 'react-native';
 import Animated, {
   interpolate,
@@ -71,10 +71,10 @@ function LeaderboardPage() {
 
   useEffect(() => {
     fetchLeaderboard();
-  }, [selectedPeriod]);
+  }, [fetchLeaderboard]);
 
   // Fetch leaderboard data
-  const fetchLeaderboard = async () => {
+  const fetchLeaderboard = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await gamificationAPI.getLeaderboard(selectedPeriod, 50);
@@ -91,13 +91,13 @@ function LeaderboardPage() {
       if (!isMounted()) return;
       setIsRefreshing(false);
     }
-  };
+  }, [selectedPeriod, isMounted]);
 
   // Handle refresh
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     setIsRefreshing(true);
     fetchLeaderboard();
-  };
+  }, [fetchLeaderboard]);
 
   // Trigger celebration animation
   const triggerCelebration = (message: string) => {
@@ -141,7 +141,7 @@ function LeaderboardPage() {
   const displayUserRank = realtimeUserRank || leaderboardData?.userRank;
 
   // Render medal for top 3
-  const renderMedal = (rank: number) => {
+  const renderMedal = useCallback((rank: number) => {
     const medals = {
       1: { icon: 'medal', color: colors.brand.goldBright }, // Gold
       2: { icon: 'medal', color: '#C0C0C0' }, // Silver
@@ -156,84 +156,90 @@ function LeaderboardPage() {
         <Ionicons name={medal.icon as any} size={24} color={medal.color} />
       </View>
     );
-  };
+  }, []);
 
   // Render leaderboard entry
-  const renderLeaderboardEntry = (entry: LeaderboardEntry, index: number) => {
-    const isCurrentUser = entry.isCurrentUser;
-    const isTopThree = entry.rank <= 3;
-    const hasRankedUp = hasRecentRankUp(entry.userId, 10);
+  const renderLeaderboardEntry = useCallback(
+    (entry: LeaderboardEntry, index: number) => {
+      const isCurrentUser = entry.isCurrentUser;
+      const isTopThree = entry.rank <= 3;
+      const hasRankedUp = hasRecentRankUp(entry.userId, 10);
 
-    return (
-      <Animated.View
-        key={entry.userId}
-        style={[
-          styles.entryCard,
-          isCurrentUser && styles.currentUserCard,
-          isTopThree && styles.topThreeCard,
-          hasRankedUp && styles.rankedUpCard,
-          isCurrentUser && pulseStyle,
-        ]}
-        accessibilityLabel={`Rank ${entry.rank}. ${entry.fullName}${isCurrentUser ? ' - You' : ''}. ${entry.coins.toLocaleString()} coins. ${entry.achievements} achievements${isTopThree ? `. Top ${entry.rank} position` : ''}${hasRankedUp ? '. Ranked up recently' : ''}`}
-        accessibilityRole="text"
-      >
-        {/* Rank */}
-        <View style={styles.rankContainer}>
-          {isTopThree ? renderMedal(entry.rank) : <ThemedText style={styles.rankText}>#{entry.rank}</ThemedText>}
-        </View>
-
-        {/* Avatar */}
-        <View style={[styles.avatar, isTopThree && styles.topThreeAvatar]}>
-          <View style={styles.avatarPlaceholder}>
-            <ThemedText style={styles.avatarText}>{entry.fullName?.charAt(0)?.toUpperCase() || '?'}</ThemedText>
+      return (
+        <Animated.View
+          key={entry.userId}
+          style={[
+            styles.entryCard,
+            isCurrentUser && styles.currentUserCard,
+            isTopThree && styles.topThreeCard,
+            hasRankedUp && styles.rankedUpCard,
+            isCurrentUser && pulseStyle,
+          ]}
+          accessibilityLabel={`Rank ${entry.rank}. ${entry.fullName}${isCurrentUser ? ' - You' : ''}. ${entry.coins.toLocaleString()} coins. ${entry.achievements} achievements${isTopThree ? `. Top ${entry.rank} position` : ''}${hasRankedUp ? '. Ranked up recently' : ''}`}
+          accessibilityRole="text"
+        >
+          {/* Rank */}
+          <View style={styles.rankContainer}>
+            {isTopThree ? renderMedal(entry.rank) : <ThemedText style={styles.rankText}>#{entry.rank}</ThemedText>}
           </View>
-        </View>
 
-        {/* User Info */}
-        <View style={styles.userInfo}>
-          <ThemedText style={styles.userName}>
-            {entry.fullName} {isCurrentUser && '(You)'}
-          </ThemedText>
-          <View style={styles.userStats}>
-            <View style={styles.statItem}>
-              <ThemedText style={styles.rupeeSymbol}>{currencySymbol}</ThemedText>
-              <ThemedText style={styles.statText}>{entry.coins.toLocaleString()}</ThemedText>
-            </View>
-            <View style={styles.statItem}>
-              <Ionicons name="trophy" size={12} color={Colors.brand.purpleLight} />
-              <ThemedText style={styles.statText}>{entry.achievements}</ThemedText>
+          {/* Avatar */}
+          <View style={[styles.avatar, isTopThree && styles.topThreeAvatar]}>
+            <View style={styles.avatarPlaceholder}>
+              <ThemedText style={styles.avatarText}>{entry.fullName?.charAt(0)?.toUpperCase() || '?'}</ThemedText>
             </View>
           </View>
-        </View>
 
-        {/* Tier Badge */}
-        <TierBadge tier={entry.tier} size="small" showIcon={false} />
-
-        {/* Rank Up Indicator */}
-        {hasRankedUp && (
-          <View style={styles.rankUpBadge}>
-            <Ionicons name="trending-up" size={12} color="#4CD964" />
-            <ThemedText style={styles.rankUpText}>Ranked Up!</ThemedText>
+          {/* User Info */}
+          <View style={styles.userInfo}>
+            <ThemedText style={styles.userName}>
+              {entry.fullName} {isCurrentUser && '(You)'}
+            </ThemedText>
+            <View style={styles.userStats}>
+              <View style={styles.statItem}>
+                <ThemedText style={styles.rupeeSymbol}>{currencySymbol}</ThemedText>
+                <ThemedText style={styles.statText}>{entry.coins.toLocaleString()}</ThemedText>
+              </View>
+              <View style={styles.statItem}>
+                <Ionicons name="trophy" size={12} color={Colors.brand.purpleLight} />
+                <ThemedText style={styles.statText}>{entry.achievements}</ThemedText>
+              </View>
+            </View>
           </View>
-        )}
-      </Animated.View>
-    );
-  };
+
+          {/* Tier Badge */}
+          <TierBadge tier={entry.tier} size="small" showIcon={false} />
+
+          {/* Rank Up Indicator */}
+          {hasRankedUp && (
+            <View style={styles.rankUpBadge}>
+              <Ionicons name="trending-up" size={12} color="#4CD964" />
+              <ThemedText style={styles.rankUpText}>Ranked Up!</ThemedText>
+            </View>
+          )}
+        </Animated.View>
+      );
+    },
+    [renderMedal, hasRecentRankUp, pulseStyle, currencySymbol],
+  );
 
   // Render period filter
-  const renderPeriodButton = (period: Period, label: string) => (
-    <Pressable
-      style={[styles.periodButton, selectedPeriod === period && styles.periodButtonActive]}
-      onPress={() => setSelectedPeriod(period)}
-      accessibilityLabel={`${label} leaderboard`}
-      accessibilityRole="button"
-      accessibilityState={{ selected: selectedPeriod === period }}
-      accessibilityHint={`Double tap to view ${label.toLowerCase()} rankings`}
-    >
-      <ThemedText style={[styles.periodButtonText, selectedPeriod === period && styles.periodButtonTextActive]}>
-        {label}
-      </ThemedText>
-    </Pressable>
+  const renderPeriodButton = useCallback(
+    (period: Period, label: string) => (
+      <Pressable
+        style={[styles.periodButton, selectedPeriod === period && styles.periodButtonActive]}
+        onPress={() => setSelectedPeriod(period)}
+        accessibilityLabel={`${label} leaderboard`}
+        accessibilityRole="button"
+        accessibilityState={{ selected: selectedPeriod === period }}
+        accessibilityHint={`Double tap to view ${label.toLowerCase()} rankings`}
+      >
+        <ThemedText style={[styles.periodButtonText, selectedPeriod === period && styles.periodButtonTextActive]}>
+          {label}
+        </ThemedText>
+      </Pressable>
+    ),
+    [selectedPeriod],
   );
 
   return (

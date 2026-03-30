@@ -272,6 +272,11 @@ function SlotsPage() {
         style={[styles.spinButton, (spinning || balance < SPIN_COST) && styles.spinButtonDisabled]}
         onPress={handleSpin}
         disabled={spinning || balance < SPIN_COST}
+        accessibilityRole="button"
+        accessibilityLabel={
+          balance < SPIN_COST ? `Not enough coins to spin — need ${SPIN_COST} coins` : 'Spin the slot machine'
+        }
+        accessibilityState={{ disabled: spinning || balance < SPIN_COST }}
       >
         <LinearGradient
           colors={spinning ? [colors.neutral[400], colors.neutral[500]] : [colors.error, colors.error]}
@@ -332,7 +337,12 @@ function SlotsPage() {
       </View>
 
       {/* Back to Games */}
-      <Pressable style={styles.backToGamesBtn} onPress={() => router.push('/games' as any)}>
+      <Pressable
+        style={styles.backToGamesBtn}
+        onPress={() => router.push('/games' as any)}
+        accessibilityRole="button"
+        accessibilityLabel="More games"
+      >
         <Ionicons name="game-controller" size={18} color={colors.text.primary} />
         <ThemedText style={styles.backToGamesText}>More Games</ThemedText>
       </Pressable>
@@ -348,7 +358,12 @@ function SlotsPage() {
           headerTintColor: colors.neutral[900],
           headerTitleStyle: { fontWeight: 'bold' },
           headerLeft: () => (
-            <Pressable onPress={handleBackPress} style={styles.headerBackButton}>
+            <Pressable
+              onPress={handleBackPress}
+              style={styles.headerBackButton}
+              accessibilityRole="button"
+              accessibilityLabel="Go back to games"
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
             </Pressable>
           ),

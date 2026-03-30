@@ -13,6 +13,11 @@ import { useGetCurrencySymbol } from '@/stores/selectors';
 import apiClient from '@/services/apiClient';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import {
+  EMI_DEFAULT_INTEREST_RATE_PERCENT,
+  EMI_DEFAULT_TENURE_OPTIONS,
+  EMI_BANK_PROCESSING_FEES,
+} from '@/constants/appConstants';
 
 interface EMIOption {
   tenure: number;
@@ -30,13 +35,50 @@ interface Bank {
   processingFee: string;
 }
 
+// NOTE: These processing fees are display fallbacks only — real values come from /payments/emi-options API.
 const getDefaultBanks = (currencySymbol: string): Bank[] => [
-  { id: '1', name: 'HDFC Bank', logo: '🏦', noCostTenures: [3, 6], processingFee: `${currencySymbol}199` },
-  { id: '2', name: 'ICICI Bank', logo: '🏛️', noCostTenures: [3, 6, 9], processingFee: `${currencySymbol}299` },
-  { id: '3', name: 'SBI Card', logo: '🏦', noCostTenures: [3], processingFee: `${currencySymbol}199` },
-  { id: '4', name: 'Axis Bank', logo: '🏛️', noCostTenures: [3, 6, 12], processingFee: `${currencySymbol}249` },
-  { id: '5', name: 'Kotak Bank', logo: '🏦', noCostTenures: [3, 6], processingFee: `${currencySymbol}199` },
-  { id: '6', name: 'AMEX', logo: '💳', noCostTenures: [3], processingFee: `${currencySymbol}499` },
+  {
+    id: '1',
+    name: 'HDFC Bank',
+    logo: '🏦',
+    noCostTenures: [3, 6],
+    processingFee: `${currencySymbol}${EMI_BANK_PROCESSING_FEES.hdfc}`,
+  },
+  {
+    id: '2',
+    name: 'ICICI Bank',
+    logo: '🏛️',
+    noCostTenures: [3, 6, 9],
+    processingFee: `${currencySymbol}${EMI_BANK_PROCESSING_FEES.icici}`,
+  },
+  {
+    id: '3',
+    name: 'SBI Card',
+    logo: '🏦',
+    noCostTenures: [3],
+    processingFee: `${currencySymbol}${EMI_BANK_PROCESSING_FEES.sbi}`,
+  },
+  {
+    id: '4',
+    name: 'Axis Bank',
+    logo: '🏛️',
+    noCostTenures: [3, 6, 12],
+    processingFee: `${currencySymbol}${EMI_BANK_PROCESSING_FEES.axis}`,
+  },
+  {
+    id: '5',
+    name: 'Kotak Bank',
+    logo: '🏦',
+    noCostTenures: [3, 6],
+    processingFee: `${currencySymbol}${EMI_BANK_PROCESSING_FEES.kotak}`,
+  },
+  {
+    id: '6',
+    name: 'AMEX',
+    logo: '💳',
+    noCostTenures: [3],
+    processingFee: `${currencySymbol}${EMI_BANK_PROCESSING_FEES.amex}`,
+  },
 ];
 
 function EMISelectionPage() {
@@ -71,9 +113,9 @@ function EMISelectionPage() {
 
   const calculateEMI = (tenure: number, bank: Bank): EMIOption => {
     const isNoCost = bank.noCostTenures.includes(tenure);
-    // BUG-038: Hardcoded fallback interest rate — replace with bank-specific rate
-    // returned by the /payments/emi-options API once that endpoint is live.
-    const interestRate = isNoCost ? 0 : 14; // 14% p.a. is a fallback default
+    // BUG-038: Fallback interest rate — replace with bank-specific rate returned
+    // by the /payments/emi-options API once that endpoint is live.
+    const interestRate = isNoCost ? 0 : EMI_DEFAULT_INTEREST_RATE_PERCENT; // fallback default p.a.
     const monthlyRate = interestRate / 12 / 100;
 
     let emi: number;
@@ -99,9 +141,9 @@ function EMISelectionPage() {
     };
   };
 
-  // BUG-055: Hardcoded fallback tenure list — replace with tenures returned by the
+  // BUG-055: Fallback tenure list — replace with tenures returned by the
   // /payments/emi-options API for the selected bank once that endpoint is live.
-  const tenureOptions = [3, 6, 9, 12, 18, 24]; // fallback defaults in months
+  const tenureOptions = EMI_DEFAULT_TENURE_OPTIONS; // fallback defaults in months
 
   const handleContinue = () => {
     if (selectedBank && selectedTenure) {

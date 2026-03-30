@@ -27,7 +27,9 @@ const HomeTabBar: React.FC<HomeTabBarProps> = ({
         <Pressable
           style={styles.tabItem}
           onPress={() => onTabChange('nuqta')}
-         
+          accessibilityRole="tab"
+          accessibilityLabel="Nuqta tab"
+          accessibilityState={{ selected: activeTab === 'nuqta' }}
         >
           <View style={[
             styles.tab,
@@ -44,7 +46,9 @@ const HomeTabBar: React.FC<HomeTabBarProps> = ({
         <Pressable
           style={styles.tabItem}
           onPress={() => onTabChange('nuqta-mall')}
-         
+          accessibilityRole="tab"
+          accessibilityLabel="Nuqta Mall tab"
+          accessibilityState={{ selected: activeTab === 'nuqta-mall' }}
         >
           <View style={[
             styles.tab,
@@ -65,7 +69,9 @@ const HomeTabBar: React.FC<HomeTabBarProps> = ({
         <Pressable
           style={styles.tabItem}
           onPress={() => onTabChange('cash-store')}
-         
+          accessibilityRole="tab"
+          accessibilityLabel="Cash Store tab"
+          accessibilityState={{ selected: activeTab === 'cash-store' }}
         >
           <View style={[
             styles.tab,

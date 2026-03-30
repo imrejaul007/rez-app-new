@@ -209,8 +209,10 @@ function TableBookingPage() {
         <Pressable
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
         >
-          <ThemedText style={(styles as any).backButtonText}>Go Back</ThemedText>
+          <ThemedText style={styles.backButtonText}>Go Back</ThemedText>
         </Pressable>
       </ThemedView>
     );
@@ -307,6 +309,8 @@ function TableBookingPage() {
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
@@ -329,6 +333,8 @@ function TableBookingPage() {
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
@@ -339,6 +345,8 @@ function TableBookingPage() {
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.errorButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
           >
             <ThemedText style={styles.errorButtonText}>Go Back</ThemedText>
           </Pressable>
@@ -368,6 +376,8 @@ function TableBookingPage() {
               <Pressable
                 onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
                 style={styles.backButton}
+                accessibilityRole="button"
+                accessibilityLabel="Go back"
               >
                 <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
               </Pressable>
@@ -423,6 +433,9 @@ function TableBookingPage() {
                         setSelectedTime(null); // Reset time when date changes
                       }}
                       style={[styles.dateCard, isSelected && styles.dateCardSelected]}
+                      accessibilityRole="radio"
+                      accessibilityLabel={`${isToday ? 'Today, ' : ''}${dateItem.dayName} ${dateItem.dayNumber} ${dateItem.monthName}`}
+                      accessibilityState={{ selected: isSelected }}
                     >
                       {isToday && (
                         <View style={styles.todayBadge}>
@@ -471,6 +484,13 @@ function TableBookingPage() {
                           isSelected && styles.timeSlotSelected,
                           !slot.available && styles.timeSlotDisabled,
                         ]}
+                        accessibilityRole="radio"
+                        accessibilityLabel={
+                          slot.available
+                            ? `${slot.time}${slot.tablesLeft && slot.tablesLeft <= 3 ? `, ${slot.tablesLeft} tables left` : ''}`
+                            : `${slot.time}, fully booked`
+                        }
+                        accessibilityState={{ selected: isSelected, disabled: !slot.available }}
                       >
                         <ThemedText
                           style={[
@@ -509,6 +529,9 @@ function TableBookingPage() {
                   style={styles.partySizeButton}
                   onPress={() => handlePartySizeChange(false)}
                   disabled={partySize <= (store?.bookingConfig?.minPartySize || 1)}
+                  accessibilityRole="button"
+                  accessibilityLabel="Decrease party size"
+                  accessibilityState={{ disabled: partySize <= (store?.bookingConfig?.minPartySize || 1) }}
                 >
                   <Ionicons
                     name="remove-circle"
@@ -530,6 +553,9 @@ function TableBookingPage() {
                   style={styles.partySizeButton}
                   onPress={() => handlePartySizeChange(true)}
                   disabled={partySize >= maxPartySize}
+                  accessibilityRole="button"
+                  accessibilityLabel="Increase party size"
+                  accessibilityState={{ disabled: partySize >= maxPartySize }}
                 >
                   <Ionicons
                     name="add-circle"
@@ -546,6 +572,9 @@ function TableBookingPage() {
                       key={size}
                       onPress={() => setPartySize(size)}
                       style={[styles.quickSizeButton, partySize === size && styles.quickSizeButtonSelected]}
+                      accessibilityRole="radio"
+                      accessibilityLabel={`${size} guests`}
+                      accessibilityState={{ selected: partySize === size }}
                     >
                       <Ionicons
                         name="people"
@@ -577,6 +606,7 @@ function TableBookingPage() {
                     placeholderTextColor={colors.neutral[400]}
                     value={customerName}
                     onChangeText={setCustomerName}
+                    accessibilityLabel="Enter your full name"
                   />
                 </View>
 
@@ -595,6 +625,7 @@ function TableBookingPage() {
                     value={customerPhone}
                     onChangeText={setCustomerPhone}
                     keyboardType="phone-pad"
+                    accessibilityLabel="Enter your phone number"
                   />
                 </View>
 
@@ -608,6 +639,7 @@ function TableBookingPage() {
                     onChangeText={setCustomerEmail}
                     keyboardType="email-address"
                     autoCapitalize="none"
+                    accessibilityLabel="Enter your email address (optional)"
                   />
                 </View>
 
@@ -627,6 +659,7 @@ function TableBookingPage() {
                     multiline
                     numberOfLines={4}
                     textAlignVertical="top"
+                    accessibilityLabel="Enter any special requests such as dietary requirements or seating preferences (optional)"
                   />
                 </View>
               </View>
@@ -637,7 +670,14 @@ function TableBookingPage() {
 
           {/* Bottom Fixed Button */}
           <View style={[styles.bottomContainer, { backgroundColor }]}>
-            <Pressable onPress={handleBooking} style={styles.bookButton} disabled={submitting}>
+            <Pressable
+              onPress={handleBooking}
+              style={styles.bookButton}
+              disabled={submitting}
+              accessibilityRole="button"
+              accessibilityLabel={`Confirm table booking at ${store.name} for ${partySize} guests`}
+              accessibilityState={{ disabled: submitting }}
+            >
               <LinearGradient
                 colors={
                   submitting ? [colors.text.tertiary, colors.text.tertiary] : [Colors.brand.purple, Colors.brand.purple]
@@ -700,6 +740,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  // BUG-066 FIX: properly typed style, removed (styles as any) cast
+  backButtonText: {
+    ...Typography.body,
+    fontWeight: '600',
+    color: Colors.gold,
   },
   headerTitle: {
     ...Typography.h4,

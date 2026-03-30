@@ -628,7 +628,7 @@ class TelemetryService {
    * Generate batch ID
    */
   private generateBatchId(): string {
-    return `batch_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `batch_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
   }
 
   /**

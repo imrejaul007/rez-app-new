@@ -344,6 +344,9 @@ function DentalCarePage() {
         key={service.id}
         style={[styles.serviceCard, isSelected && styles.serviceCardSelected]}
         onPress={() => setSelectedService(isSelected ? null : service.id)}
+        accessibilityRole="radio"
+        accessibilityLabel={`${service.name}, ${service.priceRange}`}
+        accessibilityState={{ selected: isSelected }}
       >
         <View style={[styles.serviceIcon, isSelected && styles.serviceIconSelected]}>
           <Ionicons name={service.icon as any} size={24} color={isSelected ? colors.text.inverse : colors.brand.cyan} />
@@ -356,7 +359,13 @@ function DentalCarePage() {
 
   // Render dentist card
   const renderDentistCard = (dentist: DentistStore) => (
-    <Pressable key={dentist._id} style={styles.dentistCard} onPress={() => openBookingModal(dentist)}>
+    <Pressable
+      key={dentist._id}
+      style={styles.dentistCard}
+      onPress={() => openBookingModal(dentist)}
+      accessibilityRole="button"
+      accessibilityLabel={`Book appointment with ${dentist.name}, ${dentist.metadata?.qualification || 'BDS, MDS'}, ${dentist.address.city}, rating ${dentist.ratings.average.toFixed(1)}`}
+    >
       <View style={styles.dentistHeader}>
         <View style={styles.dentistImageContainer}>
           {dentist.logo ? (
@@ -420,11 +429,21 @@ function DentalCarePage() {
       )}
 
       <View style={styles.cardActions}>
-        <Pressable style={styles.callButton} onPress={() => callDentist(dentist.contact.phone)}>
+        <Pressable
+          style={styles.callButton}
+          onPress={() => callDentist(dentist.contact.phone)}
+          accessibilityRole="button"
+          accessibilityLabel={`Call ${dentist.name}`}
+        >
           <Ionicons name="call-outline" size={18} color={colors.brand.cyan} />
           <Text style={styles.callButtonText}>Call</Text>
         </Pressable>
-        <Pressable style={styles.bookButton} onPress={() => openBookingModal(dentist)}>
+        <Pressable
+          style={styles.bookButton}
+          onPress={() => openBookingModal(dentist)}
+          accessibilityRole="button"
+          accessibilityLabel={`Book appointment with ${dentist.name}`}
+        >
           <Ionicons name="calendar-outline" size={18} color={colors.text.inverse} />
           <Text style={styles.bookButtonText}>Book Appointment</Text>
         </Pressable>
@@ -440,6 +459,8 @@ function DentalCarePage() {
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
           >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
@@ -447,7 +468,7 @@ function DentalCarePage() {
             <Text style={styles.headerTitle}>Dental Care</Text>
             <Text style={styles.headerSubtitle}>Find dentists near you</Text>
           </View>
-          <Pressable style={styles.filterButton}>
+          <Pressable style={styles.filterButton} accessibilityRole="button" accessibilityLabel="Filter dentists">
             <Ionicons name="options-outline" size={24} color={colors.text.inverse} />
           </Pressable>
         </View>
@@ -461,9 +482,10 @@ function DentalCarePage() {
             placeholderTextColor={colors.text.tertiary}
             value={searchQuery}
             onChangeText={setSearchQuery}
+            accessibilityLabel="Search dentists and dental services"
           />
           {searchQuery.length > 0 && (
-            <Pressable onPress={() => setSearchQuery('')}>
+            <Pressable onPress={() => setSearchQuery('')} accessibilityRole="button" accessibilityLabel="Clear search">
               <Ionicons name="close-circle" size={20} color={colors.text.tertiary} />
             </Pressable>
           )}
@@ -566,7 +588,11 @@ function DentalCarePage() {
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Book Appointment</Text>
-              <Pressable onPress={() => setBookingModalVisible(false)}>
+              <Pressable
+                onPress={() => setBookingModalVisible(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Close booking modal"
+              >
                 <Ionicons name="close" size={24} color={colors.neutral[700]} />
               </Pressable>
             </View>
@@ -598,6 +624,9 @@ function DentalCarePage() {
                     key={service.id}
                     style={[styles.serviceChip, selectedServiceType === service.name && styles.serviceChipSelected]}
                     onPress={() => setSelectedServiceType(service.name)}
+                    accessibilityRole="radio"
+                    accessibilityLabel={`${service.name} dental service`}
+                    accessibilityState={{ selected: selectedServiceType === service.name }}
                   >
                     <Text
                       style={[
@@ -622,6 +651,9 @@ function DentalCarePage() {
                       key={index}
                       style={[styles.dateCard, isSelected && styles.dateCardSelected]}
                       onPress={() => setSelectedDate(date)}
+                      accessibilityRole="radio"
+                      accessibilityLabel={`${formatted.day} ${formatted.date} ${formatted.month}`}
+                      accessibilityState={{ selected: isSelected }}
                     >
                       <Text style={[styles.dateDay, isSelected && styles.dateTextSelected]}>{formatted.day}</Text>
                       <Text style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>{formatted.date}</Text>
@@ -644,6 +676,9 @@ function DentalCarePage() {
                     ]}
                     disabled={!slot.available}
                     onPress={() => setSelectedSlot(slot.time)}
+                    accessibilityRole="radio"
+                    accessibilityLabel={slot.available ? slot.time : `${slot.time}, unavailable`}
+                    accessibilityState={{ selected: selectedSlot === slot.time, disabled: !slot.available }}
                   >
                     <Text
                       style={[
@@ -668,6 +703,7 @@ function DentalCarePage() {
                 numberOfLines={3}
                 value={bookingNotes}
                 onChangeText={setBookingNotes}
+                accessibilityLabel="Describe your dental issue or concern (optional)"
               />
 
               {/* Consultation Fee */}
@@ -686,6 +722,11 @@ function DentalCarePage() {
                 style={[styles.confirmButton, isBooking && styles.confirmButtonDisabled]}
                 onPress={handleBookAppointment}
                 disabled={isBooking}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  selectedDentist ? `Confirm appointment with ${selectedDentist.name}` : 'Confirm appointment'
+                }
+                accessibilityState={{ disabled: isBooking }}
               >
                 {isBooking ? (
                   <ActivityIndicator color={colors.text.inverse} />

@@ -84,7 +84,8 @@ function PaymentMethodSelector({
     <Pressable
       style={styles.selectedPaymentButton}
       onPress={() => setShowModal(true)}
-     
+      accessibilityRole="button"
+      accessibilityLabel={selectedMethod ? `Selected payment method: ${getPaymentTypeLabel(selectedMethod.type)}, ${selectedMethod.displayName}. Tap to change` : 'Select a payment method'}
     >
       {selectedMethod ? (
         <>
@@ -130,7 +131,9 @@ function PaymentMethodSelector({
           onSelect(method.id);
           setShowModal(false);
         }}
-       
+        accessibilityRole="radio"
+        accessibilityLabel={`${getPaymentTypeLabel(method.type)}: ${method.displayName}${method.isDefault ? ', default' : ''}`}
+        accessibilityState={{ selected: isSelected }}
       >
         <View style={styles.methodContent}>
           <View style={[styles.methodIcon, isSelected && styles.methodIconSelected]}>
@@ -198,6 +201,8 @@ function PaymentMethodSelector({
               <Pressable
                 style={styles.closeButton}
                 onPress={() => setShowModal(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Close payment method selector"
               >
                 <Ionicons
                   name="close"
@@ -241,6 +246,8 @@ function PaymentMethodSelector({
                     setShowModal(false);
                     onAddNew?.();
                   }}
+                  accessibilityRole="button"
+                  accessibilityLabel="Add a new payment method"
                 >
                   <Ionicons
                     name="add-circle"

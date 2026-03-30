@@ -30,7 +30,7 @@ function RescheduleBookingScreen() {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background.secondary }]}>
         <View style={[styles.header, { backgroundColor: colors.background.primary }]}>
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back">
             <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
           </TouchableOpacity>
           <Text style={[styles.title, { color: colors.text.primary }]}>Reschedule Appointment</Text>
@@ -38,7 +38,12 @@ function RescheduleBookingScreen() {
         </View>
         <View style={(styles as any).errorContainer}>
           <Text style={(styles as any).errorText}>Booking not found</Text>
-          <TouchableOpacity onPress={() => router.back()} style={(styles as any).retryButton}>
+          <TouchableOpacity
+            onPress={() => router.back()}
+            style={(styles as any).retryButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back to previous screen"
+          >
             <Text style={(styles as any).retryButtonText}>Go Back</Text>
           </TouchableOpacity>
         </View>
@@ -122,7 +127,7 @@ function RescheduleBookingScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background.secondary }]}>
       <View style={[styles.header, { backgroundColor: colors.background.primary }]}>
-        <TouchableOpacity onPress={() => router.back()}>
+        <TouchableOpacity onPress={() => router.back()} accessibilityRole="button" accessibilityLabel="Go back">
           <Ionicons name="arrow-back" size={24} color={colors.text.primary} />
         </TouchableOpacity>
         <Text style={[styles.title, { color: colors.text.primary }]}>Reschedule Appointment</Text>
@@ -139,6 +144,9 @@ function RescheduleBookingScreen() {
                 key={date}
                 onPress={() => setSelectedDate(date)}
                 style={[styles.dateButton, selectedDate === date && styles.dateButtonSelected]}
+                accessibilityRole="radio"
+                accessibilityLabel={`Select date ${formatDate(date)}`}
+                accessibilityState={{ selected: selectedDate === date }}
               >
                 <Text style={[styles.dateButtonText, selectedDate === date && styles.dateButtonTextSelected]}>
                   {formatDate(date)}
@@ -158,6 +166,9 @@ function RescheduleBookingScreen() {
                   key={time}
                   onPress={() => setSelectedTime(time)}
                   style={[styles.timeButton, selectedTime === time && styles.timeButtonSelected]}
+                  accessibilityRole="radio"
+                  accessibilityLabel={`Select time ${formatTime(time)}`}
+                  accessibilityState={{ selected: selectedTime === time }}
                 >
                   <Text style={[styles.timeButtonText, selectedTime === time && styles.timeButtonTextSelected]}>
                     {formatTime(time)}
@@ -186,6 +197,9 @@ function RescheduleBookingScreen() {
             style={[styles.confirmBtn, { backgroundColor: colors.brand.purpleLight, opacity: loading ? 0.7 : 1 }]}
             onPress={handleReschedule}
             disabled={loading}
+            accessibilityRole="button"
+            accessibilityLabel={`Confirm reschedule to ${formatDate(selectedDate)} at ${formatTime(selectedTime)}`}
+            accessibilityState={{ disabled: loading }}
           >
             {loading ? (
               <ActivityIndicator size="small" color={colors.background.primary} />

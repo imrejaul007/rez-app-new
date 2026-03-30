@@ -89,6 +89,8 @@ function QuizPage() {
               <Pressable
                 onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
                 style={styles.backButton}
+                accessibilityRole="button"
+                accessibilityLabel="Go back to games"
               >
                 <Ionicons name="arrow-back" size={24} color="white" />
               </Pressable>
@@ -143,14 +145,24 @@ function QuizPage() {
             )}
 
             <View style={styles.actionsContainer}>
-              <Pressable style={styles.actionButton} onPress={handlePlayAgain}>
+              <Pressable
+                style={styles.actionButton}
+                onPress={handlePlayAgain}
+                accessibilityRole="button"
+                accessibilityLabel="Play quiz again"
+              >
                 <View style={styles.actionButtonInner}>
                   <Ionicons name="refresh" size={20} color={colors.brand.purpleLight} />
                   <ThemedText style={styles.actionButtonText}>Play Again</ThemedText>
                 </View>
               </Pressable>
 
-              <Pressable style={[styles.actionButton, styles.actionButtonSecondary]} onPress={handleViewChallenges}>
+              <Pressable
+                style={[styles.actionButton, styles.actionButtonSecondary]}
+                onPress={handleViewChallenges}
+                accessibilityRole="button"
+                accessibilityLabel="View challenges"
+              >
                 <View style={styles.actionButtonInner}>
                   <Ionicons name="trophy" size={20} color="white" />
                   <ThemedText style={styles.actionButtonTextSecondary}>View Challenges</ThemedText>
@@ -176,7 +188,12 @@ function QuizPage() {
             fontWeight: 'bold',
           },
           headerLeft: () => (
-            <Pressable onPress={handleBackPress} style={styles.backButton}>
+            <Pressable
+              onPress={handleBackPress}
+              style={styles.backButton}
+              accessibilityRole="button"
+              accessibilityLabel="Go back to games"
+            >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
           ),

@@ -12,14 +12,15 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius, typography } from '@/constants/theme';
 import { useUserIdentityStore } from '@/stores/userIdentityStore';
+import { STUDENT_EXTRA_COINS_PERCENT, STUDENT_VERIFIED_BADGE_TEXT } from '@/constants/appConstants';
 
 const STUDENT_CATEGORIES = [
-  { id: 'food', emoji: '🍕', label: 'Food & Drinks', sublabel: 'Meals under ₹149', color: '#FFF7ED' },
-  { id: 'cafe', emoji: '☕', label: 'Cafes', sublabel: 'Study spots & brews', color: '#FFFBEB' },
-  { id: 'stationery', emoji: '📓', label: 'Stationery', sublabel: 'Books & supplies', color: '#FEF3C7' },
-  { id: 'gym', emoji: '💪', label: 'Fitness', sublabel: 'Student memberships', color: '#FFF7ED' },
-  { id: 'salon', emoji: '✂️', label: 'Grooming', sublabel: 'Budget hair & skin', color: '#FFFBEB' },
-  { id: 'try', emoji: '🔍', label: 'Try Free', sublabel: 'Risk-free trials', color: '#FEF9C3' },
+  { id: 'food', emoji: '🍕', label: 'Food & Drinks', sublabel: 'Meals under ₹149', color: colors.tint.orange },
+  { id: 'cafe', emoji: '☕', label: 'Cafes', sublabel: 'Study spots & brews', color: colors.tint.amber },
+  { id: 'stationery', emoji: '📓', label: 'Stationery', sublabel: 'Books & supplies', color: colors.tint.amberLight },
+  { id: 'gym', emoji: '💪', label: 'Fitness', sublabel: 'Student memberships', color: colors.tint.orange },
+  { id: 'salon', emoji: '✂️', label: 'Grooming', sublabel: 'Budget hair & skin', color: colors.tint.amber },
+  { id: 'try', emoji: '🔍', label: 'Try Free', sublabel: 'Risk-free trials', color: colors.warningScale[50] },
 ];
 
 export default function StudentOffersScreen() {
@@ -41,7 +42,7 @@ export default function StudentOffersScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         {/* Hero banner */}
         <LinearGradient
-          colors={['#1a3a52', '#FFC857']}
+          colors={[colors.nileBlue, colors.brand.goldWarm]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.heroBanner}
@@ -60,8 +61,8 @@ export default function StudentOffersScreen() {
           </View>
           {isStudent && (
             <View style={styles.heroBadge}>
-              <Ionicons name="checkmark-circle" size={13} color="#fff" />
-              <Text style={styles.heroBadgeText}>Verified Student — 20% extra coins active</Text>
+              <Ionicons name="checkmark-circle" size={13} color={colors.text.inverse} />
+              <Text style={styles.heroBadgeText}>{STUDENT_VERIFIED_BADGE_TEXT(STUDENT_EXTRA_COINS_PERCENT)}</Text>
             </View>
           )}
           {!isStudent && (
@@ -98,12 +99,12 @@ export default function StudentOffersScreen() {
         {/* TRY nudge */}
         <Pressable style={styles.tryNudge} onPress={() => router.push('/try' as any)}>
           <LinearGradient
-            colors={['#1a3a52', '#2d5f87']}
+            colors={[colors.nileBlue, colors.brand.nileBlueLight]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
             style={styles.tryNudgeGradient}
           >
-            <Ionicons name="flask" size={20} color="#fff" />
+            <Ionicons name="flask" size={20} color={colors.text.inverse} />
             <View style={styles.tryNudgeText}>
               <Text style={styles.tryNudgeTitle}>Try Before You Buy</Text>
               <Text style={styles.tryNudgeSub}>Commit ₹1 • Experience it free • Get refund back</Text>
@@ -117,7 +118,7 @@ export default function StudentOffersScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background || '#fff' },
+  safe: { flex: 1, backgroundColor: colors.background.primary },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.1)',
   },
   heroContent: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  heroTitle: { fontSize: 18, fontWeight: '800', color: '#fff', marginBottom: 4 },
+  heroTitle: { fontSize: 18, fontWeight: '800', color: colors.text.inverse, marginBottom: 4 },
   heroSub: { fontSize: 12, color: 'rgba(255,255,255,0.85)', maxWidth: '80%', lineHeight: 18 },
   heroEmoji: { fontSize: 40, opacity: 0.9 },
   heroBadge: {
@@ -160,15 +161,15 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignSelf: 'flex-start',
   },
-  heroBadgeText: { fontSize: 11, color: '#fff', fontWeight: '600' },
+  heroBadgeText: { fontSize: 11, color: colors.text.inverse, fontWeight: '600' },
   verifyBtn: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.background.primary,
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 20,
     alignSelf: 'flex-start',
   },
-  verifyBtnText: { fontSize: 13, fontWeight: '700', color: '#1a3a52' },
+  verifyBtnText: { fontSize: 13, fontWeight: '700', color: colors.nileBlue },
 
   sectionTitle: {
     fontSize: 15,
@@ -192,7 +193,7 @@ const styles = StyleSheet.create({
   },
   catEmoji: { fontSize: 28, marginBottom: 6 },
   catLabel: { fontSize: 14, fontWeight: '700', color: '#111', marginBottom: 2 },
-  catSublabel: { fontSize: 11, color: '#6B7280' },
+  catSublabel: { fontSize: 11, color: colors.slateGray },
 
   tryNudge: { marginHorizontal: spacing.lg, marginTop: 20, borderRadius: borderRadius.xl, overflow: 'hidden' },
   tryNudgeGradient: {
@@ -203,6 +204,6 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   tryNudgeText: { flex: 1 },
-  tryNudgeTitle: { fontSize: 14, fontWeight: '700', color: '#fff', marginBottom: 2 },
+  tryNudgeTitle: { fontSize: 14, fontWeight: '700', color: colors.text.inverse, marginBottom: 2 },
   tryNudgeSub: { fontSize: 11, color: 'rgba(255,255,255,0.8)' },
 });

@@ -146,20 +146,20 @@ function MessagesIndexPage() {
     };
   }, [socket]);
 
-  const handleBackPress = () => {
+  const handleBackPress = useCallback(() => {
     router.canGoBack() ? router.back() : router.replace('/(tabs)');
-  };
+  }, [router]);
 
-  const handleRefresh = () => {
+  const handleRefresh = useCallback(() => {
     setRefreshing(true);
     loadConversations(1, false);
-  };
+  }, [loadConversations]);
 
-  const handleLoadMore = () => {
+  const handleLoadMore = useCallback(() => {
     if (!loading && hasMore) {
       loadConversations(currentPage + 1, true);
     }
-  };
+  }, [loading, hasMore, currentPage, loadConversations]);
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -171,7 +171,7 @@ function MessagesIndexPage() {
     loadConversations(1, false);
   };
 
-  const renderEmpty = () => {
+  const renderEmpty = useCallback(() => {
     if (loading) {
       return <ChatSkeleton />;
     }
@@ -198,7 +198,7 @@ function MessagesIndexPage() {
         </ThemedText>
       </View>
     );
-  };
+  }, [loading, error, searchQuery, loadConversations]);
 
   return (
     <SafeAreaView style={styles.container}>

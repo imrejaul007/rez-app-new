@@ -188,7 +188,12 @@ function SpinWheelPage() {
             fontWeight: 'bold',
           },
           headerLeft: () => (
-            <Pressable onPress={handleBackPress} style={styles.backButton}>
+            <Pressable
+              onPress={handleBackPress}
+              style={styles.backButton}
+              accessibilityRole="button"
+              accessibilityLabel="Go back to games"
+            >
               <Ionicons name="arrow-back" size={24} color="white" />
             </Pressable>
           ),
@@ -256,7 +261,12 @@ function SpinWheelPage() {
               <ThemedText style={styles.ctaText}>
                 Come back tomorrow for more spins or complete challenges to earn extra spins!
               </ThemedText>
-              <Pressable style={styles.ctaButton} onPress={() => router.push('/gamification' as any)}>
+              <Pressable
+                style={styles.ctaButton}
+                onPress={() => router.push('/gamification' as any)}
+                accessibilityRole="button"
+                accessibilityLabel="View challenges to earn more spins"
+              >
                 <View style={styles.ctaButtonInner}>
                   <ThemedText style={styles.ctaButtonText}>View Challenges</ThemedText>
                   <Ionicons name="arrow-forward" size={20} color={Colors.brand.purpleLight} />

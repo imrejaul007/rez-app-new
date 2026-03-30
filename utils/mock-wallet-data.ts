@@ -90,7 +90,7 @@ const createMockTransaction = (
   timestamp: new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000),
   status: 'completed',
   merchantName: type === 'spent' ? 'Reliance Trends' : undefined,
-  orderId: type === 'spent' ? `ORD${Math.random().toString(36).substr(2, 8)}` : undefined,
+  orderId: type === 'spent' ? `ORD${Math.random().toString(36).substring(2, 10)}` : undefined,
   balanceAfter: Math.random() * 2000 + 500, // Random balance after transaction
 });
 

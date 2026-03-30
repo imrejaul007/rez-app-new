@@ -220,8 +220,9 @@ const ExcitingDealsSection: React.FC = () => {
           <Text style={styles.errorText}>{error}</Text>
           <Pressable
             onPress={handleRetry}
-           
             style={styles.retryButton}
+            accessibilityRole="button"
+            accessibilityLabel="Retry loading deals"
           >
             <Ionicons name="refresh" size={16} color={colors.background.primary} />
             <Text style={styles.retryText}>Retry</Text>
@@ -249,7 +250,7 @@ const ExcitingDealsSection: React.FC = () => {
             <Text style={styles.headerSubtitle}>Limited time offers</Text>
           </View>
         </View>
-        <Pressable onPress={handleViewAll} style={styles.viewAllButton}>
+        <Pressable onPress={handleViewAll} style={styles.viewAllButton} accessibilityRole="button" accessibilityLabel="View all exciting deals">
           <Text style={styles.viewAllText}>View All</Text>
           <Ionicons name="chevron-forward" size={16} color={COLORS.nileBlue} />
         </Pressable>
@@ -262,7 +263,8 @@ const ExcitingDealsSection: React.FC = () => {
             {/* Category Header Card */}
             <Pressable
               onPress={() => handleCategoryPress(category.id)}
-             
+              accessibilityRole="button"
+              accessibilityLabel={`${category.title} — ${formatValue(category.subtitle)}`}
             >
               <LinearGradient
                 colors={category.gradientColors as [string, string, ...string[]]}
@@ -316,7 +318,8 @@ const ExcitingDealsSection: React.FC = () => {
                     <Pressable
                       style={styles.viewMoreCard}
                       onPress={() => handleCategoryPress(category.id)}
-                     
+                      accessibilityRole="button"
+                      accessibilityLabel={`View all ${category.title} deals`}
                     >
                       <View style={styles.viewMoreContent}>
                         <View style={styles.viewMoreIconCircle}>
@@ -342,7 +345,7 @@ const ExcitingDealsSection: React.FC = () => {
       </View>
 
       {/* Bottom CTA Banner */}
-      <Pressable style={styles.ctaBanner} onPress={handleViewAll}>
+      <Pressable style={styles.ctaBanner} onPress={handleViewAll} accessibilityRole="button" accessibilityLabel="Don't miss out — view all exciting deals">
         <LinearGradient
           colors={[COLORS.nileBlue, COLORS.nileBlueLight]}
           start={{ x: 0, y: 0 }}

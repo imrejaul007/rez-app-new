@@ -959,7 +959,7 @@ class MockOffersApi implements OffersApiEndpoints {
       await this.simulateDelay();
 
       // Generate redemption ID
-      const redemptionId = `redemption_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const redemptionId = `redemption_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 
       const response: ApiResponse<{ success: boolean; redemptionId: string }> = {
         success: true,

@@ -80,7 +80,7 @@ export default function CampaignsScreen() {
         const data = await tryApi.getCampaigns(cityName ?? city);
         setCampaigns(data);
       } catch (err) {
-        console.error('Failed to load campaigns:', err);
+        if (__DEV__) console.error('Failed to load campaigns:', err);
       } finally {
         setLoading(false);
       }
@@ -100,7 +100,7 @@ export default function CampaignsScreen() {
       // Reload campaigns to update joined status
       await loadCampaigns();
     } catch (err) {
-      console.error('Failed to join campaign:', err);
+      if (__DEV__) console.error('Failed to join campaign:', err);
     }
   };
 

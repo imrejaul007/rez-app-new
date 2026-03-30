@@ -30,6 +30,12 @@ import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert
 
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
+import {
+  SUBSCRIPTION_VIP_MONTHLY_FALLBACK,
+  SUBSCRIPTION_VIP_YEARLY_FALLBACK,
+  SUBSCRIPTION_PREMIUM_MONTHLY_FALLBACK,
+  SUBSCRIPTION_PREMIUM_YEARLY_FALLBACK,
+} from '@/constants/appConstants';
 import { useIsMounted } from '@/hooks/useIsMounted';
 const { width } = Dimensions.get('window');
 
@@ -50,8 +56,9 @@ function SubscriptionPlansPage() {
     if (config?.pricing) return { monthly: config.pricing.monthly, yearly: config.pricing.yearly };
     // TODO: Remove these hardcoded fallback prices once the subscription tiers API
     // reliably returns pricing for all environments (staging + production).
-    if (tier === 'vip') return { monthly: 299, yearly: 2850 }; // fallback default — VIP tier
-    if (tier === 'premium') return { monthly: 99, yearly: 950 }; // fallback default — Premium tier
+    if (tier === 'vip') return { monthly: SUBSCRIPTION_VIP_MONTHLY_FALLBACK, yearly: SUBSCRIPTION_VIP_YEARLY_FALLBACK }; // fallback default — VIP tier
+    if (tier === 'premium')
+      return { monthly: SUBSCRIPTION_PREMIUM_MONTHLY_FALLBACK, yearly: SUBSCRIPTION_PREMIUM_YEARLY_FALLBACK }; // fallback default — Premium tier
     return { monthly: 0, yearly: 0 };
   };
   const getTierFeatures = (tier: string, fallback: string[]): string[] => {
@@ -363,7 +370,13 @@ function SubscriptionPlansPage() {
                 <ThemedText style={styles.activeButtonText}>Active</ThemedText>
               </View>
             ) : (
-              <Pressable onPress={() => handleSubscribe(tier as 'premium' | 'vip')} disabled={isSubscribing}>
+              <Pressable
+                onPress={() => handleSubscribe(tier as 'premium' | 'vip')}
+                disabled={isSubscribing}
+                accessibilityRole="button"
+                accessibilityLabel={`${isUpgrade ? 'Upgrade' : 'Downgrade'} to ${name} plan`}
+                accessibilityState={{ disabled: isSubscribing }}
+              >
                 <LinearGradient
                   colors={isVIP ? [Colors.gold, Colors.goldDark] : [Colors.gold, colors.nileBlue]}
                   start={{ x: 0, y: 0 }}
@@ -414,7 +427,12 @@ function SubscriptionPlansPage() {
         style={styles.header}
       >
         <View style={styles.headerContainer}>
-          <Pressable onPress={handleGoBack} style={styles.backButton}>
+          <Pressable
+            onPress={handleGoBack}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
             <View style={styles.backButtonInner}>
               <Ionicons name="arrow-back" size={22} color={colors.background.primary} />
             </View>
@@ -438,6 +456,9 @@ function SubscriptionPlansPage() {
             <Pressable
               style={[styles.billingOption, selectedBilling === 'monthly' && styles.billingOptionActive]}
               onPress={() => setSelectedBilling('monthly')}
+              accessibilityRole="radio"
+              accessibilityLabel="Monthly billing"
+              accessibilityState={{ selected: selectedBilling === 'monthly' }}
             >
               {selectedBilling === 'monthly' && (
                 <LinearGradient
@@ -457,6 +478,9 @@ function SubscriptionPlansPage() {
             <Pressable
               style={[styles.billingOption, selectedBilling === 'yearly' && styles.billingOptionActive]}
               onPress={() => setSelectedBilling('yearly')}
+              accessibilityRole="radio"
+              accessibilityLabel="Yearly billing, save 20 percent"
+              accessibilityState={{ selected: selectedBilling === 'yearly' }}
             >
               {selectedBilling === 'yearly' && (
                 <LinearGradient
@@ -480,7 +504,13 @@ function SubscriptionPlansPage() {
 
         {/* Promo Code Section */}
         <View style={styles.promoSection}>
-          <Pressable style={styles.promoToggle} onPress={() => setShowPromoInput(!showPromoInput)}>
+          <Pressable
+            style={styles.promoToggle}
+            onPress={() => setShowPromoInput(!showPromoInput)}
+            accessibilityRole="button"
+            accessibilityLabel={showPromoInput ? 'Hide promo code input' : 'Enter a promo code'}
+            accessibilityState={{ expanded: showPromoInput }}
+          >
             <View style={styles.promoIconContainer}>
               <Ionicons name="pricetag" size={18} color={Colors.gold} />
             </View>
@@ -499,8 +529,15 @@ function SubscriptionPlansPage() {
                 placeholder="Enter promo code"
                 placeholderTextColor={colors.text.tertiary}
                 autoCapitalize="characters"
+                accessibilityLabel="Enter your promo code"
               />
-              <Pressable onPress={handleApplyPromo} disabled={validatingPromo}>
+              <Pressable
+                onPress={handleApplyPromo}
+                disabled={validatingPromo}
+                accessibilityRole="button"
+                accessibilityLabel="Apply promo code"
+                accessibilityState={{ disabled: validatingPromo }}
+              >
                 <LinearGradient colors={[Colors.gold, colors.nileBlue]} style={styles.promoApplyButton}>
                   {validatingPromo ? (
                     <ActivityIndicator color={colors.background.primary} size="small" />

@@ -4,7 +4,7 @@
  */
 
 import { useEffect, useRef, useCallback } from 'react';
-import { performanceMonitor, trackRender, trackInteraction } from '@/utils/performanceMonitor';
+import { performanceMonitor, trackInteraction } from '@/utils/performanceMonitor';
 
 // ============================================================================
 // Types

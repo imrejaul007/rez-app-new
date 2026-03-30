@@ -59,7 +59,7 @@ class OfflineQueueService {
     maxRetries: number = 3
   ): Promise<string> {
     const operation: QueuedOperation = {
-      id: `${type}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `${type}_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
       type,
       timestamp: new Date().toISOString(),
       data,

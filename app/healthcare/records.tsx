@@ -225,7 +225,7 @@ const HealthRecordsPage: React.FC = () => {
         } catch (error) {
           platformAlertSimple('Error', 'Failed to delete record');
         }
-      }
+      },
     );
   };
 
@@ -263,6 +263,9 @@ const HealthRecordsPage: React.FC = () => {
       <Pressable
         style={[styles.typeFilterChip, !selectedType && styles.typeFilterChipActive]}
         onPress={() => setSelectedType(null)}
+        accessibilityRole="radio"
+        accessibilityLabel="All health records"
+        accessibilityState={{ selected: !selectedType }}
       >
         <Text style={[styles.typeFilterText, !selectedType && styles.typeFilterTextActive]}>
           All ({Object.values(typeCounts).reduce((a, b) => a + b, 0)})
@@ -277,6 +280,9 @@ const HealthRecordsPage: React.FC = () => {
             { borderColor: config.color },
           ]}
           onPress={() => setSelectedType(selectedType === type ? null : type)}
+          accessibilityRole="radio"
+          accessibilityLabel={`${config.label} records, ${typeCounts[type] || 0} available`}
+          accessibilityState={{ selected: selectedType === type }}
         >
           <Text style={styles.typeFilterEmoji}>{config.icon}</Text>
           <Text style={[styles.typeFilterText, selectedType === type && styles.typeFilterTextActive]}>
@@ -298,21 +304,32 @@ const HealthRecordsPage: React.FC = () => {
           setSelectedRecord(record);
           setShowRecordModal(true);
         }}
+        accessibilityRole="button"
+        accessibilityLabel={`${record.title}, ${typeConfig.label}, ${formatDate(record.createdAt)}${record.issuedBy ? `, issued by ${record.issuedBy.name}` : ''}`}
       >
         <View style={[styles.recordIcon, { backgroundColor: `${typeConfig.color}20` }]}>
           <Text style={styles.recordEmoji}>{typeConfig.icon}</Text>
         </View>
         <View style={styles.recordInfo}>
-          <Text style={styles.recordTitle} numberOfLines={1}>{record.title}</Text>
+          <Text style={styles.recordTitle} numberOfLines={1}>
+            {record.title}
+          </Text>
           <Text style={styles.recordMeta}>
             {typeConfig.label} • {formatDate(record.createdAt)}
           </Text>
           {record.issuedBy && (
-            <Text style={styles.recordIssuer} numberOfLines={1}>By: {record.issuedBy.name}</Text>
+            <Text style={styles.recordIssuer} numberOfLines={1}>
+              By: {record.issuedBy.name}
+            </Text>
           )}
         </View>
         <View style={styles.recordActions}>
-          <View style={[styles.fileTypeBadge, { backgroundColor: record.documentType === 'pdf' ? Colors.error : Colors.info }]}>
+          <View
+            style={[
+              styles.fileTypeBadge,
+              { backgroundColor: record.documentType === 'pdf' ? Colors.error : Colors.info },
+            ]}
+          >
             <Text style={styles.fileTypeText}>{record.documentType.toUpperCase()}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
@@ -327,7 +344,11 @@ const HealthRecordsPage: React.FC = () => {
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Upload Health Record</Text>
-            <Pressable onPress={() => setShowUploadModal(false)}>
+            <Pressable
+              onPress={() => setShowUploadModal(false)}
+              accessibilityRole="button"
+              accessibilityLabel="Close upload modal"
+            >
               <Ionicons name="close" size={24} color={colors.text.tertiary} />
             </Pressable>
           </View>
@@ -336,11 +357,21 @@ const HealthRecordsPage: React.FC = () => {
             <View style={styles.uploadSection}>
               <Text style={styles.uploadLabel}>Select Document</Text>
               <View style={styles.uploadButtons}>
-                <Pressable style={styles.uploadButton} onPress={pickImage}>
+                <Pressable
+                  style={styles.uploadButton}
+                  onPress={pickImage}
+                  accessibilityRole="button"
+                  accessibilityLabel="Take photo of health record using camera"
+                >
                   <Ionicons name="camera" size={24} color={Colors.info} />
                   <Text style={styles.uploadButtonText}>Camera</Text>
                 </Pressable>
-                <Pressable style={styles.uploadButton} onPress={pickDocument}>
+                <Pressable
+                  style={styles.uploadButton}
+                  onPress={pickDocument}
+                  accessibilityRole="button"
+                  accessibilityLabel="Choose health record file from device"
+                >
                   <Ionicons name="document" size={24} color={Colors.brand.purple} />
                   <Text style={styles.uploadButtonText}>File</Text>
                 </Pressable>
@@ -348,8 +379,14 @@ const HealthRecordsPage: React.FC = () => {
               {selectedFile && (
                 <View style={styles.selectedFile}>
                   <Ionicons name="document-attach" size={20} color={Colors.success} />
-                  <Text style={styles.selectedFileName} numberOfLines={1}>{selectedFile.name}</Text>
-                  <Pressable onPress={() => setSelectedFile(null)}>
+                  <Text style={styles.selectedFileName} numberOfLines={1}>
+                    {selectedFile.name}
+                  </Text>
+                  <Pressable
+                    onPress={() => setSelectedFile(null)}
+                    accessibilityRole="button"
+                    accessibilityLabel="Remove selected file"
+                  >
                     <Ionicons name="close-circle" size={20} color={Colors.error} />
                   </Pressable>
                 </View>
@@ -375,9 +412,15 @@ const HealthRecordsPage: React.FC = () => {
                       key={type}
                       style={[
                         styles.recordTypeOption,
-                        uploadForm.recordType === type && { borderColor: config.color, backgroundColor: `${config.color}10` },
+                        uploadForm.recordType === type && {
+                          borderColor: config.color,
+                          backgroundColor: `${config.color}10`,
+                        },
                       ]}
                       onPress={() => setUploadForm({ ...uploadForm, recordType: type as HealthRecord['recordType'] })}
+                      accessibilityRole="radio"
+                      accessibilityLabel={`${config.label} record type`}
+                      accessibilityState={{ selected: uploadForm.recordType === type }}
                     >
                       <Text style={styles.recordTypeEmoji}>{config.icon}</Text>
                       <Text style={styles.recordTypeLabel}>{config.label}</Text>
@@ -425,6 +468,9 @@ const HealthRecordsPage: React.FC = () => {
               style={[styles.submitButton, (!selectedFile || !uploadForm.title) && styles.submitButtonDisabled]}
               onPress={handleUpload}
               disabled={uploadLoading || !selectedFile || !uploadForm.title}
+              accessibilityRole="button"
+              accessibilityLabel="Upload health record"
+              accessibilityState={{ disabled: uploadLoading || !selectedFile || !uploadForm.title }}
             >
               {uploadLoading ? (
                 <ActivityIndicator color={colors.text.inverse} />
@@ -446,7 +492,12 @@ const HealthRecordsPage: React.FC = () => {
     const typeConfig = recordTypes[selectedRecord.recordType] || recordTypes.other;
 
     return (
-      <Modal visible={showRecordModal} animationType="slide" transparent onRequestClose={() => setShowRecordModal(false)}>
+      <Modal
+        visible={showRecordModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setShowRecordModal(false)}
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
@@ -456,7 +507,11 @@ const HealthRecordsPage: React.FC = () => {
                 </View>
                 <Text style={styles.modalTitle}>{typeConfig.label}</Text>
               </View>
-              <Pressable onPress={() => setShowRecordModal(false)}>
+              <Pressable
+                onPress={() => setShowRecordModal(false)}
+                accessibilityRole="button"
+                accessibilityLabel="Close record details"
+              >
                 <Ionicons name="close" size={24} color={colors.text.tertiary} />
               </Pressable>
             </View>
@@ -537,24 +592,42 @@ const HealthRecordsPage: React.FC = () => {
 
             <View style={styles.modalFooter}>
               <View style={styles.actionButtons}>
-                <Pressable style={[styles.actionButton, { backgroundColor: Colors.info }]}>
+                <Pressable
+                  style={[styles.actionButton, { backgroundColor: Colors.info }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Share ${selectedRecord.title}`}
+                >
                   <Ionicons name="share-social" size={18} color={colors.text.inverse} />
                   <Text style={styles.actionButtonText}>Share</Text>
                 </Pressable>
-                <Pressable style={[styles.actionButton, { backgroundColor: Colors.success }]}>
+                <Pressable
+                  style={[styles.actionButton, { backgroundColor: Colors.success }]}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Download ${selectedRecord.title}`}
+                >
                   <Ionicons name="download" size={18} color={colors.text.inverse} />
                   <Text style={styles.actionButtonText}>Download</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.actionButton, { backgroundColor: Colors.warning }]}
                   onPress={() => handleArchiveRecord(selectedRecord._id, selectedRecord.isArchived)}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    selectedRecord.isArchived ? `Unarchive ${selectedRecord.title}` : `Archive ${selectedRecord.title}`
+                  }
                 >
-                  <Ionicons name={selectedRecord.isArchived ? 'archive' : 'archive-outline'} size={18} color={colors.text.inverse} />
+                  <Ionicons
+                    name={selectedRecord.isArchived ? 'archive' : 'archive-outline'}
+                    size={18}
+                    color={colors.text.inverse}
+                  />
                   <Text style={styles.actionButtonText}>{selectedRecord.isArchived ? 'Unarchive' : 'Archive'}</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.actionButton, { backgroundColor: Colors.error }]}
                   onPress={() => handleDeleteRecord(selectedRecord._id)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Delete ${selectedRecord.title}`}
                 >
                   <Ionicons name="trash" size={18} color={colors.text.inverse} />
                   <Text style={styles.actionButtonText}>Delete</Text>
@@ -577,21 +650,32 @@ const HealthRecordsPage: React.FC = () => {
           setSelectedRecord(item);
           setShowRecordModal(true);
         }}
+        accessibilityRole="button"
+        accessibilityLabel={`${item.title}, ${typeConfig.label}, ${formatDate(item.createdAt)}${item.issuedBy ? `, issued by ${item.issuedBy.name}` : ''}`}
       >
         <View style={[styles.recordIcon, { backgroundColor: `${typeConfig.color}20` }]}>
           <Text style={styles.recordEmoji}>{typeConfig.icon}</Text>
         </View>
         <View style={styles.recordInfo}>
-          <Text style={styles.recordTitle} numberOfLines={1}>{item.title}</Text>
+          <Text style={styles.recordTitle} numberOfLines={1}>
+            {item.title}
+          </Text>
           <Text style={styles.recordMeta}>
             {typeConfig.label} • {formatDate(item.createdAt)}
           </Text>
           {item.issuedBy && (
-            <Text style={styles.recordIssuer} numberOfLines={1}>By: {item.issuedBy.name}</Text>
+            <Text style={styles.recordIssuer} numberOfLines={1}>
+              By: {item.issuedBy.name}
+            </Text>
           )}
         </View>
         <View style={styles.recordActions}>
-          <View style={[styles.fileTypeBadge, { backgroundColor: item.documentType === 'pdf' ? Colors.error : Colors.info }]}>
+          <View
+            style={[
+              styles.fileTypeBadge,
+              { backgroundColor: item.documentType === 'pdf' ? Colors.error : Colors.info },
+            ]}
+          >
             <Text style={styles.fileTypeText}>{item.documentType.toUpperCase()}</Text>
           </View>
           <Ionicons name="chevron-forward" size={20} color={colors.text.tertiary} />
@@ -609,7 +693,12 @@ const HealthRecordsPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -619,6 +708,8 @@ const HealthRecordsPage: React.FC = () => {
           <Pressable
             style={styles.addButton}
             onPress={() => setShowUploadModal(true)}
+            accessibilityRole="button"
+            accessibilityLabel="Upload new health record"
           >
             <Ionicons name="add" size={24} color={colors.text.inverse} />
           </Pressable>
@@ -633,6 +724,8 @@ const HealthRecordsPage: React.FC = () => {
             value={searchQuery}
             onChangeText={setSearchQuery}
             onSubmitEditing={handleSearch}
+            accessibilityLabel="Search health records"
+            accessibilityRole="search"
           />
         </View>
       </LinearGradient>
@@ -642,6 +735,9 @@ const HealthRecordsPage: React.FC = () => {
         <Pressable
           style={[styles.archiveToggle, showArchived && styles.archiveToggleActive]}
           onPress={() => setShowArchived(!showArchived)}
+          accessibilityRole="button"
+          accessibilityLabel={showArchived ? 'Hide archived records' : 'Show archived records'}
+          accessibilityState={{ selected: showArchived }}
         >
           <Ionicons name="archive" size={16} color={showArchived ? colors.background.primary : colors.text.tertiary} />
         </Pressable>
@@ -657,7 +753,12 @@ const HealthRecordsPage: React.FC = () => {
             {showArchived ? 'No archived records' : 'Upload your first health record'}
           </Text>
           {!showArchived && (
-            <Pressable style={styles.uploadCTA} onPress={() => setShowUploadModal(true)}>
+            <Pressable
+              style={styles.uploadCTA}
+              onPress={() => setShowUploadModal(true)}
+              accessibilityRole="button"
+              accessibilityLabel="Upload your first health record"
+            >
               <Ionicons name="add-circle" size={20} color={colors.text.inverse} />
               <Text style={styles.uploadCTAText}>Upload Record</Text>
             </Pressable>
@@ -675,11 +776,13 @@ const HealthRecordsPage: React.FC = () => {
         />
       )}
 
-      <Pressable style={styles.fab} onPress={() => setShowUploadModal(true)}>
-        <LinearGradient
-          colors={[colors.brand.purpleLight, colors.brand.purple]}
-          style={styles.fabGradient}
-        >
+      <Pressable
+        style={styles.fab}
+        onPress={() => setShowUploadModal(true)}
+        accessibilityRole="button"
+        accessibilityLabel="Upload new health record"
+      >
+        <LinearGradient colors={[colors.brand.purpleLight, colors.brand.purple]} style={styles.fabGradient}>
           <Ionicons name="add" size={28} color={colors.text.inverse} />
         </LinearGradient>
       </Pressable>
@@ -693,23 +796,56 @@ const HealthRecordsPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background.primary },
   header: { paddingTop: Platform.OS === 'ios' ? 56 : 16, paddingBottom: Spacing.base },
-  headerTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, marginBottom: Spacing.base },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.base,
+    marginBottom: Spacing.base,
+  },
   backButton: { padding: Spacing.sm },
   headerTitleContainer: { flex: 1, marginLeft: Spacing.sm },
   headerTitle: { ...Typography.h3, fontWeight: '700', color: colors.text.inverse },
   headerSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
   addButton: { padding: Spacing.sm, backgroundColor: 'rgba(255,255,255,0.2)', borderRadius: BorderRadius.xl },
-  searchContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.primary, marginHorizontal: Spacing.base, borderRadius: BorderRadius.md, paddingHorizontal: Spacing.md },
-  searchInput: { flex: 1, paddingVertical: 10, paddingHorizontal: Spacing.sm, ...Typography.body, color: colors.nileBlue },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+    marginHorizontal: Spacing.base,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.md,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 10,
+    paddingHorizontal: Spacing.sm,
+    ...Typography.body,
+    color: colors.nileBlue,
+  },
 
   filterRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: Spacing.sm },
   typeFilters: { flex: 1, paddingHorizontal: Spacing.base },
-  typeFilterChip: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.md, paddingVertical: 6, marginRight: Spacing.sm, borderRadius: BorderRadius.lg, backgroundColor: colors.background.secondary, borderWidth: 1, borderColor: colors.border.default },
+  typeFilterChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
+    marginRight: Spacing.sm,
+    borderRadius: BorderRadius.lg,
+    backgroundColor: colors.background.secondary,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
   typeFilterChipActive: { backgroundColor: Colors.brand.purple, borderColor: Colors.brand.purple },
   typeFilterEmoji: { ...Typography.body, marginRight: Spacing.xs },
   typeFilterText: { ...Typography.bodySmall, color: colors.text.tertiary },
   typeFilterTextActive: { color: colors.text.inverse },
-  archiveToggle: { padding: Spacing.sm, marginRight: Spacing.base, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.xl },
+  archiveToggle: {
+    padding: Spacing.sm,
+    marginRight: Spacing.base,
+    backgroundColor: colors.background.secondary,
+    borderRadius: BorderRadius.xl,
+  },
   archiveToggleActive: { backgroundColor: Colors.warning },
 
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
@@ -718,12 +854,34 @@ const styles = StyleSheet.create({
   emptyIcon: { fontSize: 64, marginBottom: Spacing.base },
   emptyTitle: { ...Typography.h3, fontWeight: '700', color: colors.nileBlue, marginBottom: Spacing.sm },
   emptySubtitle: { ...Typography.body, color: colors.text.tertiary, textAlign: 'center', marginBottom: Spacing.xl },
-  uploadCTA: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.brand.purple, paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md, borderRadius: BorderRadius['2xl'] },
+  uploadCTA: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.brand.purple,
+    paddingHorizontal: Spacing.xl,
+    paddingVertical: Spacing.md,
+    borderRadius: BorderRadius['2xl'],
+  },
   uploadCTAText: { ...Typography.body, fontWeight: '600', color: colors.text.inverse, marginLeft: Spacing.sm },
 
   recordsList: { padding: Spacing.base },
-  recordCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.background.primary, padding: Spacing.md, borderRadius: BorderRadius.md, marginBottom: Spacing.md, borderWidth: 1, borderColor: colors.border.default },
-  recordIcon: { width: 48, height: 48, borderRadius: BorderRadius['2xl'], justifyContent: 'center', alignItems: 'center' },
+  recordCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.background.primary,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+  },
+  recordIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: BorderRadius['2xl'],
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   recordEmoji: { ...Typography.h2 },
   recordInfo: { flex: 1, marginLeft: Spacing.md },
   recordTitle: { ...Typography.body, fontWeight: '600', color: colors.nileBlue },
@@ -733,14 +891,44 @@ const styles = StyleSheet.create({
   fileTypeBadge: { paddingHorizontal: Spacing.sm, paddingVertical: 2, borderRadius: 4, marginBottom: Spacing.xs },
   fileTypeText: { ...Typography.caption, fontWeight: '700', color: colors.text.inverse },
 
-  fab: { position: 'absolute', bottom: 90, right: 20, borderRadius: 28, overflow: 'hidden', elevation: 8, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.3, shadowRadius: 8 },
+  fab: {
+    position: 'absolute',
+    bottom: 90,
+    right: 20,
+    borderRadius: 28,
+    overflow: 'hidden',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+  },
   fabGradient: { width: 56, height: 56, justifyContent: 'center', alignItems: 'center' },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: colors.background.primary, borderTopLeftRadius: 24, borderTopRightRadius: 24, maxHeight: '90%' },
-  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Spacing.base, borderBottomWidth: 1, borderBottomColor: colors.border.default },
+  modalContent: {
+    backgroundColor: colors.background.primary,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '90%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: Spacing.base,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+  },
   recordModalHeader: { flexDirection: 'row', alignItems: 'center' },
-  recordModalIcon: { width: 40, height: 40, borderRadius: BorderRadius.xl, justifyContent: 'center', alignItems: 'center', marginRight: Spacing.md },
+  recordModalIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.xl,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+  },
   recordModalEmoji: { ...Typography.h3 },
   modalTitle: { ...Typography.h4, fontWeight: '700', color: colors.nileBlue },
   modalBody: { padding: Spacing.base, maxHeight: 400 },
@@ -749,21 +937,58 @@ const styles = StyleSheet.create({
   uploadSection: { marginBottom: Spacing.lg },
   uploadLabel: { ...Typography.bodySmall, fontWeight: '600', color: colors.nileBlue, marginBottom: Spacing.md },
   uploadButtons: { flexDirection: 'row', gap: Spacing.md },
-  uploadButton: { flex: 1, alignItems: 'center', padding: Spacing.lg, backgroundColor: colors.background.secondary, borderRadius: BorderRadius.md, borderWidth: 1, borderColor: colors.border.default, borderStyle: 'dashed' },
+  uploadButton: {
+    flex: 1,
+    alignItems: 'center',
+    padding: Spacing.lg,
+    backgroundColor: colors.background.secondary,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    borderStyle: 'dashed',
+  },
   uploadButtonText: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.sm },
-  selectedFile: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.success + '10', padding: Spacing.md, borderRadius: BorderRadius.sm, marginTop: Spacing.md },
+  selectedFile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.success + '10',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    marginTop: Spacing.md,
+  },
   selectedFileName: { flex: 1, ...Typography.bodySmall, color: colors.nileBlue, marginLeft: Spacing.sm },
 
   formGroup: { marginBottom: Spacing.base },
   formLabel: { ...Typography.bodySmall, fontWeight: '600', color: colors.nileBlue, marginBottom: Spacing.sm },
-  formInput: { borderWidth: 1, borderColor: colors.border.default, borderRadius: BorderRadius.md, padding: Spacing.md, ...Typography.body, color: colors.nileBlue },
+  formInput: {
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    ...Typography.body,
+    color: colors.nileBlue,
+  },
   formTextArea: { height: 80, textAlignVertical: 'top' },
   recordTypeGrid: { flexDirection: 'row', gap: Spacing.sm },
-  recordTypeOption: { alignItems: 'center', padding: Spacing.md, borderRadius: BorderRadius.md, borderWidth: 1, borderColor: colors.border.default, minWidth: 80 },
+  recordTypeOption: {
+    alignItems: 'center',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: colors.border.default,
+    minWidth: 80,
+  },
   recordTypeEmoji: { ...Typography.h2, marginBottom: Spacing.xs },
   recordTypeLabel: { ...Typography.caption, color: colors.text.tertiary },
 
-  submitButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: Colors.brand.purple, padding: Spacing.base, borderRadius: BorderRadius.md },
+  submitButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Colors.brand.purple,
+    padding: Spacing.base,
+    borderRadius: BorderRadius.md,
+  },
   submitButtonDisabled: { backgroundColor: colors.text.tertiary },
   submitButtonText: { ...Typography.bodyLarge, fontWeight: '700', color: colors.text.inverse, marginLeft: Spacing.sm },
 
@@ -775,18 +1000,35 @@ const styles = StyleSheet.create({
   detailLabel: { ...Typography.bodySmall, fontWeight: '600', color: colors.text.tertiary, marginBottom: Spacing.xs },
   detailValue: { ...Typography.body, color: colors.nileBlue },
   tagsContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  tag: { backgroundColor: Colors.brand.purple + '20', paddingHorizontal: 10, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md },
+  tag: {
+    backgroundColor: Colors.brand.purple + '20',
+    paddingHorizontal: 10,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.md,
+  },
   tagText: { ...Typography.bodySmall, color: Colors.brand.purple },
   shareItem: { flexDirection: 'row', alignItems: 'center', marginTop: Spacing.xs },
   shareText: { ...Typography.bodySmall, color: colors.nileBlue, marginLeft: Spacing.sm },
-  documentPreview: { marginTop: Spacing.base, borderRadius: BorderRadius.md, overflow: 'hidden', backgroundColor: colors.background.secondary },
+  documentPreview: {
+    marginTop: Spacing.base,
+    borderRadius: BorderRadius.md,
+    overflow: 'hidden',
+    backgroundColor: colors.background.secondary,
+  },
   previewImage: { width: '100%', height: 200 },
   pdfPreview: { alignItems: 'center', padding: Spacing['2xl'] },
   pdfPreviewText: { ...Typography.body, fontWeight: '600', color: colors.nileBlue, marginTop: Spacing.sm },
   pdfPreviewName: { ...Typography.bodySmall, color: colors.text.tertiary, marginTop: Spacing.xs },
 
   actionButtons: { flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.sm },
-  actionButton: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: Spacing.md, borderRadius: BorderRadius.md },
+  actionButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
   actionButtonText: { ...Typography.caption, fontWeight: '600', color: colors.text.inverse, marginLeft: Spacing.xs },
 });
 

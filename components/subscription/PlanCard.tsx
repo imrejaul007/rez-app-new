@@ -94,6 +94,9 @@ function PlanCard({
         style={[styles.upgradeButton, { backgroundColor: tierColor }]}
         onPress={onSubscribe}
         disabled={isLoading || disabled}
+        accessibilityRole="button"
+        accessibilityLabel={`${tier === 'premium' || tier === 'vip' ? 'Upgrade' : 'Downgrade'} to ${name} plan at ${currencySymbol}${displayPrice} per month`}
+        accessibilityState={{ disabled: isLoading || disabled }}
       >
         {isLoading ? (
           <ActivityIndicator color={SUBSCRIPTION_COLORS.white} />

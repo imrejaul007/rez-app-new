@@ -778,9 +778,9 @@ function HomeScreen() {
       case 'prive':
         return [colors.neutral[800], colors.neutral[800], colors.neutral[900], colors.neutral[900]];
       case 'mall':
-        return ['#FFFBEB', '#FFF8E1', '#FFFBEB', colors.background.primary];
+        return [colors.tint.amber, colors.warningScale[50], colors.tint.amber, colors.background.primary];
       case 'cash':
-        return ['#FFFBEB', '#FFF8E1', '#FFFBEB', colors.background.primary];
+        return [colors.tint.amber, colors.warningScale[50], colors.tint.amber, colors.background.primary];
       default:
         return [colors.primary[300], colors.primary[200], colors.linen, colors.background.primary];
     }
@@ -790,19 +790,19 @@ function HomeScreen() {
   const tabStyles = useMemo(() => {
     const isPrive = activeTab === 'prive';
     return {
-      locationIconBg: isPrive ? { backgroundColor: '#FFC857' } : undefined,
+      locationIconBg: isPrive ? { backgroundColor: MUSTARD } : undefined,
       locationText: isPrive
         ? { color: colors.text.inverse, ...typography.body, fontWeight: '600' as const }
         : undefined,
-      chevronColor: isPrive ? '#FFC857' : colors.text.tertiary,
+      chevronColor: isPrive ? MUSTARD : colors.text.tertiary,
       coinContainerStyle: isPrive
         ? { backgroundColor: 'rgba(255, 200, 87, 0.2)', borderColor: 'rgba(255, 200, 87, 0.4)' }
         : undefined,
-      coinTextColor: isPrive ? { color: '#FFC857' } : undefined,
+      coinTextColor: isPrive ? { color: MUSTARD } : undefined,
       iconColor: isPrive ? colors.text.inverse : colors.text.primary,
       whatsNewVariant: (isPrive ? 'gold' : 'green') as 'blue' | 'gold' | 'green',
       savedPillBg: isPrive ? { backgroundColor: 'rgba(255, 200, 87, 0.25)' } : undefined,
-      savedTextColor: isPrive ? { color: '#FFC857' } : undefined,
+      savedTextColor: isPrive ? { color: MUSTARD } : undefined,
     };
   }, [activeTab]);
 
@@ -1277,22 +1277,22 @@ function HomeScreen() {
 const textStyles = StyleSheet.create({
   // Single line, truncated — Nile Blue text on cream header
   locationText: {
-    color: '#1a3a52',
+    color: colors.nileBlue,
     fontSize: 13,
     fontWeight: '600',
     numberOfLines: 1,
   } as any,
 });
 
-// ── CRED Light design tokens ───────────────────────────────────────────────
-const CREAM_BG = '#F5F5F0';
-const WHITE = '#FFFFFF';
-const NILE_BLUE = '#1a3a52';
-const MUSTARD = '#FFC857';
-const PRIMARY_TEXT = '#1a1a1a';
-const MUTED_TEXT = '#6B7280';
-const CARD_BORDER = 'rgba(0,0,0,0.06)';
-const DIVIDER = '#E8E8E8';
+// ── CRED Light design tokens (mapped to theme — do NOT add raw hex values here) ─
+const CREAM_BG = colors.tint.warmGray; // warm off-white page background
+const WHITE = colors.background.primary; // pure white cards / header
+const NILE_BLUE = colors.nileBlue; // brand primary dark
+const MUSTARD = colors.brand.goldWarm; // brand accent gold
+const PRIMARY_TEXT = colors.text.primary; // main text
+const MUTED_TEXT = colors.slateGray; // secondary/muted text
+const CARD_BORDER = 'rgba(0,0,0,0.06)'; // very subtle border (no token equivalent)
+const DIVIDER = colors.slateLight; // list dividers
 
 const viewStyles = StyleSheet.create({
   mainContainer: {
@@ -1384,7 +1384,7 @@ const viewStyles = StyleSheet.create({
   headerStreakPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFBEB',
+    backgroundColor: colors.tint.amber,
     borderRadius: 10,
     paddingVertical: 8,
     paddingHorizontal: 10,
@@ -1400,7 +1400,7 @@ const viewStyles = StyleSheet.create({
   headerStreakText: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#B8860B',
+    color: colors.brand.goldAccent,
   },
   // Coin pill — white card, Nile Blue number
   headerCoinContainer: {

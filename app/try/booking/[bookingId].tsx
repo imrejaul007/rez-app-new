@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  SafeAreaView,
-  Pressable,
-  Linking,
-  ActivityIndicator,
-  Modal,
-} from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Pressable, Linking, ActivityIndicator, Modal } from 'react-native';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
@@ -47,7 +38,7 @@ export default function QRDisplayScreen() {
         const details = await tryApi.getBookingDetails(bookingId);
         setBooking(details);
       } catch (err) {
-        console.error('Failed to load booking details:', err);
+        if (__DEV__) console.error('Failed to load booking details:', err);
         setBooking(null);
       } finally {
         setLoading(false);
@@ -96,10 +87,7 @@ export default function QRDisplayScreen() {
         <View style={styles.errorContainer}>
           <Ionicons name="alert-circle" size={48} color={colors.error} />
           <Text style={styles.errorTitle}>Booking Not Found</Text>
-          <Pressable
-            style={styles.button}
-            onPress={() => router.back()}
-          >
+          <Pressable style={styles.button} onPress={() => router.back()}>
             <Text style={styles.buttonText}>Go Back</Text>
           </Pressable>
         </View>
@@ -170,28 +158,17 @@ export default function QRDisplayScreen() {
               isExpired && styles.timerDisplayExpired,
             ]}
           >
-            <Text style={[styles.timerValue, isExpired && styles.timerValueExpired]}>
-              {timeRemaining}
-            </Text>
+            <Text style={[styles.timerValue, isExpired && styles.timerValueExpired]}>{timeRemaining}</Text>
           </View>
-          {isLowTime && !isExpired && (
-            <Text style={styles.timerWarningText}>⚡ Show QR code soon</Text>
-          )}
-          {isExpired && (
-            <Text style={styles.timerExpiredText}>⏰ This QR code has expired</Text>
-          )}
+          {isLowTime && !isExpired && <Text style={styles.timerWarningText}>⚡ Show QR code soon</Text>}
+          {isExpired && <Text style={styles.timerExpiredText}>⏰ This QR code has expired</Text>}
         </View>
 
         {/* QR Code Display */}
         {!isExpired ? (
           <View style={styles.qrContainer}>
             <View style={styles.qrBox}>
-              <QRCode
-                value={booking.qrToken}
-                size={qrSize}
-                color={colors.text.primary}
-                backgroundColor="#fff"
-              />
+              <QRCode value={booking.qrToken} size={qrSize} color={colors.text.primary} backgroundColor="#fff" />
             </View>
             <Text style={styles.qrHint}>Show this to the merchant to complete your trial</Text>
           </View>
@@ -289,10 +266,7 @@ export default function QRDisplayScreen() {
               <Ionicons name="chevron-forward" size={20} color={colors.text.secondary} />
             </Pressable>
 
-            <Pressable
-              style={styles.ctaCard}
-              onPress={() => router.push('/shop')}
-            >
+            <Pressable style={styles.ctaCard} onPress={() => router.push('/shop')}>
               <Ionicons name="bag" size={20} color={colors.brand.orange} />
               <View style={styles.ctaContent}>
                 <Text style={styles.ctaTitle}>Shop Products</Text>
@@ -316,10 +290,7 @@ export default function QRDisplayScreen() {
           </Pressable>
         )}
 
-        <Pressable
-          style={styles.allBookingsButton}
-          onPress={() => router.push('/try/history')}
-        >
+        <Pressable style={styles.allBookingsButton} onPress={() => router.push('/try/history')}>
           <Text style={styles.allBookingsButtonText}>View All Bookings</Text>
         </Pressable>
       </View>

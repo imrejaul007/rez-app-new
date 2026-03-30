@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useEffect, useState, useRef, useMemo } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   StyleSheet,
@@ -25,6 +25,7 @@ import analytics from '@/services/analytics/AnalyticsService';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { FREE_DELIVERY_THRESHOLD, DEFAULT_DELIVERY_FEE_PER_STORE } from '@/constants/appConstants';
 // CARLOS retention fix: show coins-earned popup immediately after purchase
 import { useRewardPopup } from '@/contexts/RewardPopupContext';
 
@@ -510,10 +511,9 @@ function PaymentSuccessPage() {
                   const subtotal = isMultiStoreOrder
                     ? orders.reduce((sum, o) => sum + (o.totals?.subtotal || 0), 0)
                     : order?.totals?.subtotal || 0;
-                  const FREE_DELIVERY_THRESHOLD = 500;
-                  // Calculate what delivery WOULD have been (₹50 per store)
+                  // Calculate what delivery WOULD have been (fallback: DEFAULT_DELIVERY_FEE_PER_STORE per store)
                   const storeCount = isMultiStoreOrder ? orders.length : 1;
-                  const wouldBeDeliveryFee = storeCount * 50;
+                  const wouldBeDeliveryFee = storeCount * DEFAULT_DELIVERY_FEE_PER_STORE;
 
                   return (
                     <View style={styles.detailRow}>

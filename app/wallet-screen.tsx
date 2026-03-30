@@ -57,6 +57,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Colors, Spacing, BorderRadius, Typography, Gradients } from '@/constants/DesignSystem';
 import walletApi from '@/services/walletApi';
 import { colors } from '@/constants/theme';
+import { WALLET_RECHARGE_CASHBACK_TEXT } from '@/constants/appConstants';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Phase 1.3: Simplified wallet view for new/casual users
 import SimplifiedWalletView from '@/components/wallet/SimplifiedWalletView';
@@ -781,7 +782,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
 
           {/* Recharge with Discount */}
           <RechargeWalletCard
-            cashbackText="Save upto 10% on wallet recharge"
+            cashbackText={WALLET_RECHARGE_CASHBACK_TEXT}
             amountOptions={[120, 500, 1000, 5000, 10000]}
             onAmountSelect={handleAmountSelect}
             onSubmit={handleTopupSubmit}
@@ -813,7 +814,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               }}
             >
               <LinearGradient
-                colors={['#1a3a52', '#FFC857']}
+                colors={[colors.nileBlue, colors.brand.goldWarm]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={{ padding: 18 }}
@@ -874,7 +875,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
                 <Pressable
                   onPress={() => router.push('/value-packs?persona=student' as any)}
                   style={{
-                    backgroundColor: '#fff',
+                    backgroundColor: colors.background.primary,
                     borderRadius: 12,
                     paddingVertical: 11,
                     flexDirection: 'row',
@@ -883,8 +884,8 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
                     gap: 6,
                   }}
                 >
-                  <Ionicons name="flash" size={15} color="#1a3a52" />
-                  <Text style={{ fontSize: 13, fontWeight: '700', color: '#1a3a52' }}>
+                  <Ionicons name="flash" size={15} color={colors.nileBlue} />
+                  <Text style={{ fontSize: 13, fontWeight: '700', color: colors.nileBlue }}>
                     Buy a Micro Pack — unlock more deals
                   </Text>
                 </Pressable>
@@ -903,7 +904,7 @@ const WalletScreen: React.FC<WalletScreenProps> = ({ onNavigateBack, onCoinPress
               }}
             >
               <LinearGradient
-                colors={['#1a3a52', '#2A5577']}
+                colors={[colors.nileBlue, colors.secondary[500]]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={{ padding: 18 }}

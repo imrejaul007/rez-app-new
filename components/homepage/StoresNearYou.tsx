@@ -101,7 +101,8 @@ const StoresNearYou: React.FC<StoresNearYouProps> = ({ onMapViewPress }) => {
           <Pressable
             style={styles.enableButton}
             onPress={requestLocationPermission}
-           
+            accessibilityRole="button"
+            accessibilityLabel="Enable location access to see nearby stores"
           >
             <Ionicons name="navigate" size={16} color={colors.background.primary} style={{ marginRight: 6 }} />
             <Text style={styles.enableButtonText}>Enable Location</Text>
@@ -133,7 +134,8 @@ const StoresNearYou: React.FC<StoresNearYouProps> = ({ onMapViewPress }) => {
           <Pressable
             style={styles.retryButton}
             onPress={refetch}
-           
+            accessibilityRole="button"
+            accessibilityLabel="Retry loading nearby stores"
           >
             <Ionicons name="refresh" size={16} color={colors.background.primary} style={{ marginRight: 6 }} />
             <Text style={styles.retryButtonText}>Retry</Text>
@@ -177,6 +179,8 @@ const StoresNearYou: React.FC<StoresNearYouProps> = ({ onMapViewPress }) => {
             <Pressable
               style={styles.emptyActionCard}
               onPress={() => router.push('/mall/offers' as any)}
+              accessibilityRole="button"
+              accessibilityLabel="Browse online deals in the mall"
             >
               <Ionicons name="globe-outline" size={20} color={colors.lightMustard} />
               <Text style={styles.emptyActionText}>Browse Online Deals</Text>
@@ -184,6 +188,8 @@ const StoresNearYou: React.FC<StoresNearYouProps> = ({ onMapViewPress }) => {
             <Pressable
               style={styles.emptyActionCard}
               onPress={handleInviteMerchant}
+              accessibilityRole="button"
+              accessibilityLabel="Invite a store to join REZ"
             >
               <Ionicons name="person-add-outline" size={20} color={colors.lightMustard} />
               <Text style={styles.emptyActionText}>Invite a Store</Text>
@@ -192,6 +198,8 @@ const StoresNearYou: React.FC<StoresNearYouProps> = ({ onMapViewPress }) => {
           <Pressable
             style={styles.refreshButton}
             onPress={refetch}
+            accessibilityRole="button"
+            accessibilityLabel="Refresh nearby stores list"
           >
             <Ionicons name="refresh" size={16} color={colors.lightMustard} style={{ marginRight: 6 }} />
             <Text style={styles.refreshButtonText}>Refresh</Text>
@@ -217,7 +225,8 @@ const StoresNearYou: React.FC<StoresNearYouProps> = ({ onMapViewPress }) => {
         </View>
         <Pressable
           onPress={handleMapView}
-         
+          accessibilityRole="button"
+          accessibilityLabel="View nearby stores on the map"
           style={styles.mapViewButton}
         >
           <Text style={styles.mapViewText}>Map View</Text>
@@ -231,7 +240,8 @@ const StoresNearYou: React.FC<StoresNearYouProps> = ({ onMapViewPress }) => {
           <Pressable
             key={store.id}
             onPress={() => handleStorePress(store.id)}
-           
+            accessibilityRole="button"
+            accessibilityLabel={`${store.name}, ${store.distance} away, ${store.cashback} cashback${store.closingSoon ? ', closing soon' : ''}`}
             style={styles.storeCard}
           >
             <LinearGradient

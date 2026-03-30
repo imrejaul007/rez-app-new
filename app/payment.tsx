@@ -185,7 +185,12 @@ function PaymentPage() {
     try {
       const response = await paymentService.getPaymentMethods(currency, fiatCurrency);
       if (response.success && response.data) {
-        setPaymentMethods(response.data);
+        // Filter out 'card' until the card payment flow is fully implemented.
+        // Cards require PCI-DSS compliant tokenisation (Razorpay Cards / Stripe
+        // Elements) which is not yet wired up on this screen.  Showing the
+        // option without a working flow would silently fail for users.
+        const availableMethods = response.data.filter((m) => m.type !== 'card');
+        setPaymentMethods(availableMethods);
       }
     } catch (error) {
       platformAlertSimple('Error', 'Failed to load payment methods. Please try again.');

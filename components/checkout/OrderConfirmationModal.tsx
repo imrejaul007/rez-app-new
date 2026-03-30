@@ -175,13 +175,16 @@ function OrderConfirmationModal({
 
           {/* Footer Buttons */}
           <View style={styles.confirmModalFooter}>
-            <Pressable style={styles.confirmCancelButton} onPress={onClose}>
+            <Pressable style={styles.confirmCancelButton} onPress={onClose} accessibilityRole="button" accessibilityLabel="Review your cart before confirming">
               <ThemedText style={styles.confirmCancelText}>Review Cart</ThemedText>
             </Pressable>
             <Pressable
               style={[styles.confirmPayButton, processingPayment && { opacity: 0.5 }]}
               onPress={onConfirm}
               disabled={processingPayment}
+              accessibilityRole="button"
+              accessibilityLabel={`Confirm and pay ${currencySymbol}${finalAmount}`}
+              accessibilityState={{ disabled: processingPayment }}
             >
               <LinearGradient
                 colors={[colors.lightMustard, colors.brand.goldRich]}

@@ -185,7 +185,7 @@ const CATEGORY_SECTIONS: CategorySection[] = Object.values(CATEGORY_CONFIGS).map
 
 // ─── Sized Suspense placeholder to prevent layout collapse ───────────────────
 const SuspensePlaceholder: React.FC<{ height: number }> = React.memo(({ height }) => (
-  <View style={{ height, backgroundColor: '#f5f5f5' }} />
+  <View style={{ height, backgroundColor: colors.tint.warmGray }} />
 ));
 
 // ─── Section group header ─────────────────────────────────────────────────────
@@ -202,7 +202,7 @@ const groupHeaderStyles = StyleSheet.create({
     paddingTop: Spacing.lg,
     paddingBottom: Spacing.sm,
     borderTopWidth: 4,
-    borderTopColor: colors.background.secondary || '#F3F4F6',
+    borderTopColor: colors.background.secondary,
     marginTop: Spacing.md,
   },
   title: {
@@ -213,7 +213,7 @@ const groupHeaderStyles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 12,
-    color: colors.text.tertiary || '#9CA3AF',
+    color: colors.text.tertiary,
     marginTop: 2,
   },
 });

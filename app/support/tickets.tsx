@@ -3,14 +3,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 // Lists all support tickets with filters, pagination, and status badges
 
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  StyleSheet,
-  Pressable,
-  StatusBar,
-  Platform,
-  RefreshControl,
-} from 'react-native';
+import { View, StyleSheet, Pressable, StatusBar, Platform, RefreshControl } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -41,47 +34,50 @@ function TicketsPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  const loadTickets = useCallback(async (reset = false) => {
-    const currentPage = reset ? 1 : page;
-    const filters: GetTicketsFilters = {
-      page: currentPage,
-      limit: 20,
-    };
-    if (activeFilter !== 'all') {
-      filters.status = activeFilter as GetTicketsFilters['status'];
-    }
-
-    try {
-      const response = await supportService.getMyTickets(filters);
-      if (response.success && response.data) {
-        if (reset || currentPage === 1) {
-          setTickets(response.data.tickets);
-        } else {
-          setTickets(prev => [...prev, ...response.data!.tickets]);
-        }
-        setTotalPages(response.data.pages);
+  const loadTickets = useCallback(
+    async (reset = false) => {
+      const currentPage = reset ? 1 : page;
+      const filters: GetTicketsFilters = {
+        page: currentPage,
+        limit: 20,
+      };
+      if (activeFilter !== 'all') {
+        filters.status = activeFilter as GetTicketsFilters['status'];
       }
-    } catch (error) {
-      // silently handle
-    }
-  }, [activeFilter, page]);
+
+      try {
+        const response = await supportService.getMyTickets(filters);
+        if (response.success && response.data) {
+          if (reset || currentPage === 1) {
+            setTickets(response.data.tickets);
+          } else {
+            setTickets((prev) => [...prev, ...response.data!.tickets]);
+          }
+          setTotalPages(response.data.pages);
+        }
+      } catch (error) {
+        // silently handle
+      }
+    },
+    [activeFilter, page],
+  );
   const isMounted = useIsMounted();
 
   useEffect(() => {
     setLoading(true);
     setPage(1);
     loadTickets(true).finally(() => setLoading(false));
-  }, [activeFilter]);
+  }, [activeFilter, loadTickets]);
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     setPage(1);
     await loadTickets(true);
     if (!isMounted()) return;
     setRefreshing(false);
-  };
+  }, [loadTickets, isMounted]);
 
-  const handleLoadMore = async () => {
+  const handleLoadMore = useCallback(async () => {
     if (loadingMore || page >= totalPages) return;
     setLoadingMore(true);
     const nextPage = page + 1;
@@ -98,7 +94,7 @@ function TicketsPage() {
     try {
       const response = await supportService.getMyTickets(filters);
       if (response.success && response.data) {
-        setTickets(prev => [...prev, ...response.data!.tickets]);
+        setTickets((prev) => [...prev, ...response.data!.tickets]);
         setTotalPages(response.data.pages);
       }
     } catch (error) {
@@ -107,31 +103,45 @@ function TicketsPage() {
       if (!isMounted()) return;
       setLoadingMore(false);
     }
-  };
+  }, [loadingMore, page, totalPages, activeFilter, isMounted]);
 
-  const handleFilterChange = (filter: string) => {
-    if (filter === activeFilter) return;
-    setActiveFilter(filter);
-  };
+  const handleFilterChange = useCallback(
+    (filter: string) => {
+      if (filter === activeFilter) return;
+      setActiveFilter(filter);
+    },
+    [activeFilter],
+  );
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'open': return Colors.primary[500];
-      case 'in_progress': return Colors.secondary[500];
-      case 'waiting_customer': return Colors.warning;
-      case 'resolved': return Colors.success;
-      case 'closed': return Colors.gray[400];
-      default: return Colors.gray[600];
+      case 'open':
+        return Colors.primary[500];
+      case 'in_progress':
+        return Colors.secondary[500];
+      case 'waiting_customer':
+        return Colors.warning;
+      case 'resolved':
+        return Colors.success;
+      case 'closed':
+        return Colors.gray[400];
+      default:
+        return Colors.gray[600];
     }
   };
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'urgent': return Colors.error;
-      case 'high': return '#E65100';
-      case 'medium': return Colors.warning;
-      case 'low': return Colors.success;
-      default: return Colors.gray[400];
+      case 'urgent':
+        return Colors.error;
+      case 'high':
+        return '#E65100';
+      case 'medium':
+        return Colors.warning;
+      case 'low':
+        return Colors.success;
+      default:
+        return Colors.gray[400];
     }
   };
 
@@ -147,7 +157,7 @@ function TicketsPage() {
     return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
   };
 
-  const renderFilterChip = (filter: typeof STATUS_FILTERS[number]) => {
+  const renderFilterChip = (filter: (typeof STATUS_FILTERS)[number]) => {
     const isActive = activeFilter === filter.key;
     return (
       <Pressable
@@ -155,97 +165,101 @@ function TicketsPage() {
         style={[styles.filterChip, isActive && styles.filterChipActive]}
         onPress={() => handleFilterChange(filter.key)}
       >
-        <ThemedText style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>
-          {filter.label}
-        </ThemedText>
+        <ThemedText style={[styles.filterChipText, isActive && styles.filterChipTextActive]}>{filter.label}</ThemedText>
       </Pressable>
     );
   };
-  const renderFilterChipItem = useCallback(({ item }: { item: typeof STATUS_FILTERS[number] }) => renderFilterChip(item), [activeFilter]);
-
-  const renderTicketCard = ({ item: ticket }: { item: SupportTicket }) => {
-    const statusColor = getStatusColor(ticket.status);
-    const priorityColor = getPriorityColor(ticket.priority);
-    const lastMessage = ticket.messages?.[ticket.messages.length - 1];
-
-    return (
-      <Pressable
-        style={styles.ticketCard}
-        onPress={() => router.push(`/support/ticket/${ticket._id}` as any)}
-      >
-        <View style={styles.ticketHeader}>
-          <View style={styles.ticketTitleRow}>
-            <ThemedText style={styles.ticketNumber}>{ticket.ticketNumber}</ThemedText>
-            <View style={styles.badgeRow}>
-              <View style={[styles.priorityDot, { backgroundColor: priorityColor }]} />
-              <View style={[styles.statusBadge, { backgroundColor: `${statusColor}20` }]}>
-                <ThemedText style={[styles.statusText, { color: statusColor }]}>
-                  {ticket.status.replace(/_/g, ' ')}
-                </ThemedText>
-              </View>
-            </View>
-          </View>
-          <ThemedText style={styles.ticketSubject} numberOfLines={1}>
-            {ticket.subject}
-          </ThemedText>
-        </View>
-
-        {lastMessage && (
-          <ThemedText style={styles.lastMessage} numberOfLines={2}>
-            {lastMessage.message}
-          </ThemedText>
-        )}
-
-        <View style={styles.ticketFooter}>
-          <View style={styles.ticketMeta}>
-            <Ionicons name="time-outline" size={14} color={Colors.gray[600]} />
-            <ThemedText style={styles.ticketDate}>{formatDate(ticket.updatedAt)}</ThemedText>
-          </View>
-          <View style={styles.categoryBadge}>
-            <ThemedText style={styles.categoryText}>{ticket.category}</ThemedText>
-          </View>
-        </View>
-      </Pressable>
-    );
-  };
-
-  const renderSkeleton = () => (
-    <View style={styles.skeletonContainer}>
-      {[1, 2, 3, 4].map(i => (
-        <View key={i} style={styles.ticketCard}>
-          <View style={styles.skeletonRow}>
-            <SkeletonLoader width={100} height={14} borderRadius={4} />
-            <SkeletonLoader width={70} height={22} borderRadius={12} />
-          </View>
-          <SkeletonLoader width="80%" height={18} borderRadius={4} style={{ marginTop: 8 }} />
-          <SkeletonLoader width="100%" height={14} borderRadius={4} style={{ marginTop: 12 }} />
-          <SkeletonLoader width="60%" height={14} borderRadius={4} style={{ marginTop: 4 }} />
-          <View style={[styles.skeletonRow, { marginTop: 12 }]}>
-            <SkeletonLoader width={80} height={14} borderRadius={4} />
-            <SkeletonLoader width={60} height={22} borderRadius={8} />
-          </View>
-        </View>
-      ))}
-    </View>
+  const renderFilterChipItem = useCallback(
+    ({ item }: { item: (typeof STATUS_FILTERS)[number] }) => renderFilterChip(item),
+    [activeFilter],
   );
 
-  const renderEmpty = () => (
-    <View style={styles.emptyContainer}>
-      <Ionicons name="ticket-outline" size={64} color={Colors.gray[300]} />
-      <ThemedText style={styles.emptyTitle}>No Tickets Found</ThemedText>
-      <ThemedText style={styles.emptyText}>
-        {activeFilter !== 'all'
-          ? `You don't have any ${activeFilter.replace(/_/g, ' ')} tickets.`
-          : "You haven't created any support tickets yet."}
-      </ThemedText>
-      <Pressable
-        style={styles.emptyButton}
-        onPress={() => router.push('/support/create-ticket' as any)}
-      >
-        <Ionicons name="add-circle-outline" size={20} color={colors.background.primary} />
-        <ThemedText style={styles.emptyButtonText}>Create Ticket</ThemedText>
-      </Pressable>
-    </View>
+  const renderTicketCard = useCallback(
+    ({ item: ticket }: { item: SupportTicket }) => {
+      const statusColor = getStatusColor(ticket.status);
+      const priorityColor = getPriorityColor(ticket.priority);
+      const lastMessage = ticket.messages?.[ticket.messages.length - 1];
+
+      return (
+        <Pressable style={styles.ticketCard} onPress={() => router.push(`/support/ticket/${ticket._id}` as any)}>
+          <View style={styles.ticketHeader}>
+            <View style={styles.ticketTitleRow}>
+              <ThemedText style={styles.ticketNumber}>{ticket.ticketNumber}</ThemedText>
+              <View style={styles.badgeRow}>
+                <View style={[styles.priorityDot, { backgroundColor: priorityColor }]} />
+                <View style={[styles.statusBadge, { backgroundColor: `${statusColor}20` }]}>
+                  <ThemedText style={[styles.statusText, { color: statusColor }]}>
+                    {ticket.status.replace(/_/g, ' ')}
+                  </ThemedText>
+                </View>
+              </View>
+            </View>
+            <ThemedText style={styles.ticketSubject} numberOfLines={1}>
+              {ticket.subject}
+            </ThemedText>
+          </View>
+
+          {lastMessage && (
+            <ThemedText style={styles.lastMessage} numberOfLines={2}>
+              {lastMessage.message}
+            </ThemedText>
+          )}
+
+          <View style={styles.ticketFooter}>
+            <View style={styles.ticketMeta}>
+              <Ionicons name="time-outline" size={14} color={Colors.gray[600]} />
+              <ThemedText style={styles.ticketDate}>{formatDate(ticket.updatedAt)}</ThemedText>
+            </View>
+            <View style={styles.categoryBadge}>
+              <ThemedText style={styles.categoryText}>{ticket.category}</ThemedText>
+            </View>
+          </View>
+        </Pressable>
+      );
+    },
+    [getStatusColor, getPriorityColor, formatDate, router],
+  );
+
+  const renderSkeleton = useCallback(
+    () => (
+      <View style={styles.skeletonContainer}>
+        {[1, 2, 3, 4].map((i) => (
+          <View key={i} style={styles.ticketCard}>
+            <View style={styles.skeletonRow}>
+              <SkeletonLoader width={100} height={14} borderRadius={4} />
+              <SkeletonLoader width={70} height={22} borderRadius={12} />
+            </View>
+            <SkeletonLoader width="80%" height={18} borderRadius={4} style={{ marginTop: 8 }} />
+            <SkeletonLoader width="100%" height={14} borderRadius={4} style={{ marginTop: 12 }} />
+            <SkeletonLoader width="60%" height={14} borderRadius={4} style={{ marginTop: 4 }} />
+            <View style={[styles.skeletonRow, { marginTop: 12 }]}>
+              <SkeletonLoader width={80} height={14} borderRadius={4} />
+              <SkeletonLoader width={60} height={22} borderRadius={8} />
+            </View>
+          </View>
+        ))}
+      </View>
+    ),
+    [],
+  );
+
+  const renderEmpty = useCallback(
+    () => (
+      <View style={styles.emptyContainer}>
+        <Ionicons name="ticket-outline" size={64} color={Colors.gray[300]} />
+        <ThemedText style={styles.emptyTitle}>No Tickets Found</ThemedText>
+        <ThemedText style={styles.emptyText}>
+          {activeFilter !== 'all'
+            ? `You don't have any ${activeFilter.replace(/_/g, ' ')} tickets.`
+            : "You haven't created any support tickets yet."}
+        </ThemedText>
+        <Pressable style={styles.emptyButton} onPress={() => router.push('/support/create-ticket' as any)}>
+          <Ionicons name="add-circle-outline" size={20} color={colors.background.primary} />
+          <ThemedText style={styles.emptyButtonText}>Create Ticket</ThemedText>
+        </Pressable>
+      </View>
+    ),
+    [activeFilter, router],
   );
 
   return (
@@ -257,14 +271,14 @@ function TicketsPage() {
         {/* Header */}
         <LinearGradient colors={Gradients.nileBlue} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <ThemedText style={styles.headerTitle}>My Tickets</ThemedText>
-            <Pressable
-              style={styles.addButton}
-              onPress={() => router.push('/support/create-ticket' as any)}
-            >
+            <Pressable style={styles.addButton} onPress={() => router.push('/support/create-ticket' as any)}>
               <Ionicons name="add" size={24} color={colors.background.primary} />
             </Pressable>
           </View>
@@ -273,9 +287,9 @@ function TicketsPage() {
         {/* Filter Chips */}
         <View style={styles.filtersContainer}>
           <FlashList
-            data={STATUS_FILTERS as unknown as typeof STATUS_FILTERS[number][]}
+            data={STATUS_FILTERS as unknown as (typeof STATUS_FILTERS)[number][]}
             renderItem={renderFilterChipItem}
-            keyExtractor={item => item.key}
+            keyExtractor={(item) => item.key}
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.filtersList}
@@ -290,11 +304,9 @@ function TicketsPage() {
           <FlashList
             data={tickets}
             renderItem={renderTicketCard}
-            keyExtractor={item => item._id}
+            keyExtractor={(item) => item._id}
             contentContainerStyle={styles.listContent}
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-            }
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />}
             onEndReached={handleLoadMore}
             onEndReachedThreshold={0.3}
             ListEmptyComponent={renderEmpty}

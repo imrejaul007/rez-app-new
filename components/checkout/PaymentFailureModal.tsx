@@ -84,7 +84,7 @@ const PaymentFailureModal: React.FC<PaymentFailureModalProps> = ({
           <View style={styles.dragIndicator} />
 
           {/* Close button */}
-          <Pressable style={styles.closeBtn} onPress={onClose}>
+          <Pressable style={styles.closeBtn} onPress={onClose} accessibilityRole="button" accessibilityLabel="Close payment failure dialog">
             <Ionicons name="close" size={22} color={colors.neutral[500]} />
           </Pressable>
 
@@ -109,6 +109,8 @@ const PaymentFailureModal: React.FC<PaymentFailureModalProps> = ({
                 key={m.key}
                 style={styles.methodRow}
                 onPress={() => onSwitchMethod(m.key)}
+                accessibilityRole="button"
+                accessibilityLabel={`Switch to ${m.label}: ${m.subtitle}`}
               >
                 <View style={[styles.methodIcon, { backgroundColor: m.iconBg }]}>
                   <Ionicons name={m.icon} size={20} color={m.iconColor} />
@@ -123,7 +125,7 @@ const PaymentFailureModal: React.FC<PaymentFailureModalProps> = ({
           </View>
 
           {/* Retry button */}
-          <Pressable style={styles.retryBtn} onPress={onRetry}>
+          <Pressable style={styles.retryBtn} onPress={onRetry} accessibilityRole="button" accessibilityLabel="Retry payment with the same method">
             <Ionicons name="refresh" size={18} color={colors.background.primary} />
             <ThemedText style={styles.retryText}>Try Again</ThemedText>
           </Pressable>

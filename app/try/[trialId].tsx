@@ -89,7 +89,7 @@ function TrialDetailScreen() {
         const coinsData = await tryApi.getCoins();
         setCoinBalance(coinsData.totalBalance);
       } catch (err) {
-        console.error('Failed to load trial details:', err);
+        if (__DEV__) console.error('Failed to load trial details:', err);
       } finally {
         setLoading(false);
       }
@@ -167,7 +167,7 @@ function TrialDetailScreen() {
       if (bookingResponse?.data?.bookingId) {
         router.push(`/try/booking/${bookingResponse.data.bookingId}`);
       } else {
-        console.error('No booking ID in response:', bookingResponse);
+        if (__DEV__) console.error('No booking ID in response:', bookingResponse);
         setBookingModal((prev) => ({
           ...prev,
           loading: false,

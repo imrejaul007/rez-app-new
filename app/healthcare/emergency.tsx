@@ -127,12 +127,18 @@ const EmergencyPage: React.FC = () => {
     Linking.canOpenURL(phoneNumber)
       .then((supported) => {
         if (supported) {
-          try { Linking.openURL(phoneNumber); } catch (_e) { /* silently handle */ }
+          try {
+            Linking.openURL(phoneNumber);
+          } catch (_e) {
+            /* silently handle */
+          }
         } else {
           platformAlertSimple('Error', 'Phone call is not supported on this device');
         }
       })
-      .catch(() => { /* silently handle */ });
+      .catch(() => {
+        /* silently handle */
+      });
   };
 
   const handleBookAmbulance = async () => {
@@ -161,7 +167,7 @@ const EmergencyPage: React.FC = () => {
         setShowBookingModal(false);
         platformAlertSimple(
           'Ambulance Booked!',
-          `Booking Number: ${response.data.bookingNumber}\n\nHelp is on the way. You will receive a call shortly.`
+          `Booking Number: ${response.data.bookingNumber}\n\nHelp is on the way. You will receive a call shortly.`,
         );
       }
     } catch (error: any) {
@@ -181,7 +187,8 @@ const EmergencyPage: React.FC = () => {
             key={item.number}
             style={[styles.quickCallCard, { borderColor: item.color }]}
             onPress={() => makePhoneCall(item.number)}
-           
+            accessibilityRole="button"
+            accessibilityLabel={`Call ${item.label}: ${item.number}`}
           >
             <Text style={styles.quickCallIcon}>{item.icon}</Text>
             <Text style={styles.quickCallNumber}>{item.number}</Text>
@@ -221,6 +228,8 @@ const EmergencyPage: React.FC = () => {
               <Pressable
                 style={styles.callDriverButton}
                 onPress={() => makePhoneCall(activeBooking.assignedUnit?.phone || '102')}
+                accessibilityRole="button"
+                accessibilityLabel={`Call ambulance driver: ${activeBooking.assignedUnit?.phone || '102'}`}
               >
                 <Ionicons name="call" size={16} color={COLORS.white} />
                 <Text style={styles.callDriverText}>Call Driver</Text>
@@ -241,17 +250,16 @@ const EmergencyPage: React.FC = () => {
         <Pressable
           style={styles.contactTypeHeader}
           onPress={() => setSelectedType(selectedType === type ? null : type)}
+          accessibilityRole="button"
+          accessibilityLabel={`${typeInfo.label} contacts, ${typeContacts.length} available`}
+          accessibilityState={{ expanded: selectedType === type }}
         >
           <View style={[styles.contactTypeIcon, { backgroundColor: `${typeInfo.color}20` }]}>
             <Text style={styles.contactTypeEmoji}>{typeInfo.icon}</Text>
           </View>
           <Text style={styles.contactTypeTitle}>{typeInfo.label}</Text>
           <Text style={styles.contactTypeCount}>{typeContacts.length}</Text>
-          <Ionicons
-            name={selectedType === type ? 'chevron-up' : 'chevron-down'}
-            size={20}
-            color={COLORS.gray600}
-          />
+          <Ionicons name={selectedType === type ? 'chevron-up' : 'chevron-down'} size={20} color={COLORS.gray600} />
         </Pressable>
 
         {selectedType === type && (
@@ -261,6 +269,8 @@ const EmergencyPage: React.FC = () => {
                 key={contact._id}
                 style={styles.contactCard}
                 onPress={() => makePhoneCall(contact.phoneNumbers[0])}
+                accessibilityRole="button"
+                accessibilityLabel={`Call ${contact.name}${contact.isNational ? ', national helpline' : ''}, ${contact.operatingHours}`}
               >
                 <View style={styles.contactInfo}>
                   <Text style={styles.contactName}>{contact.name}</Text>
@@ -285,6 +295,8 @@ const EmergencyPage: React.FC = () => {
                       key={index}
                       style={[styles.phoneButton, { backgroundColor: typeInfo.color }]}
                       onPress={() => makePhoneCall(phone)}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Call ${contact.name}: ${phone}`}
                     >
                       <Ionicons name="call" size={14} color={COLORS.white} />
                       <Text style={styles.phoneButtonText}>{phone}</Text>
@@ -300,20 +312,26 @@ const EmergencyPage: React.FC = () => {
   };
 
   const renderBookingModal = () => (
-    <Modal visible={showBookingModal} animationType="slide" transparent onRequestClose={() => setShowBookingModal(false)}>
+    <Modal
+      visible={showBookingModal}
+      animationType="slide"
+      transparent
+      onRequestClose={() => setShowBookingModal(false)}
+    >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Book Ambulance</Text>
-            <Pressable onPress={() => setShowBookingModal(false)}>
+            <Pressable
+              onPress={() => setShowBookingModal(false)}
+              accessibilityRole="button"
+              accessibilityLabel="Close ambulance booking modal"
+            >
               <Ionicons name="close" size={24} color={COLORS.gray600} />
             </Pressable>
           </View>
 
-          <ScrollView
-        style={styles.modalBody}
-        contentContainerStyle={{ paddingBottom: 120 }}
-      >
+          <ScrollView style={styles.modalBody} contentContainerStyle={{ paddingBottom: 120 }}>
             <View style={styles.formGroup}>
               <Text style={styles.formLabel}>Patient Name *</Text>
               <TextInput
@@ -321,6 +339,7 @@ const EmergencyPage: React.FC = () => {
                 placeholder="Enter patient name"
                 value={bookingForm.patientName}
                 onChangeText={(text) => setBookingForm({ ...bookingForm, patientName: text })}
+                accessibilityLabel="Patient name"
               />
             </View>
 
@@ -332,6 +351,7 @@ const EmergencyPage: React.FC = () => {
                 keyboardType="phone-pad"
                 value={bookingForm.patientPhone}
                 onChangeText={(text) => setBookingForm({ ...bookingForm, patientPhone: text })}
+                accessibilityLabel="Contact phone number for ambulance booking"
               />
             </View>
 
@@ -344,6 +364,7 @@ const EmergencyPage: React.FC = () => {
                 numberOfLines={3}
                 value={bookingForm.pickupAddress}
                 onChangeText={(text) => setBookingForm({ ...bookingForm, pickupAddress: text })}
+                accessibilityLabel="Pickup address for ambulance"
               />
             </View>
 
@@ -358,6 +379,9 @@ const EmergencyPage: React.FC = () => {
                       bookingForm.emergencyType === type && styles.emergencyTypeButtonActive,
                     ]}
                     onPress={() => setBookingForm({ ...bookingForm, emergencyType: type })}
+                    accessibilityRole="radio"
+                    accessibilityLabel={`${type.charAt(0).toUpperCase() + type.slice(1)} emergency type`}
+                    accessibilityState={{ selected: bookingForm.emergencyType === type }}
                   >
                     <Text
                       style={[
@@ -381,6 +405,7 @@ const EmergencyPage: React.FC = () => {
                 numberOfLines={2}
                 value={bookingForm.patientCondition}
                 onChangeText={(text) => setBookingForm({ ...bookingForm, patientCondition: text })}
+                accessibilityLabel="Patient condition description (optional)"
               />
             </View>
           </ScrollView>
@@ -390,6 +415,9 @@ const EmergencyPage: React.FC = () => {
               style={styles.bookButton}
               onPress={handleBookAmbulance}
               disabled={bookingLoading}
+              accessibilityRole="button"
+              accessibilityLabel="Book ambulance now"
+              accessibilityState={{ disabled: bookingLoading }}
             >
               {bookingLoading ? (
                 <ActivityIndicator color={COLORS.white} />
@@ -400,9 +428,7 @@ const EmergencyPage: React.FC = () => {
                 </>
               )}
             </Pressable>
-            <Text style={styles.emergencyNote}>
-              For immediate help, call 102 directly
-            </Text>
+            <Text style={styles.emergencyNote}>For immediate help, call 102 directly</Text>
           </View>
         </View>
       </View>
@@ -426,7 +452,12 @@ const EmergencyPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
+          >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -436,6 +467,8 @@ const EmergencyPage: React.FC = () => {
           <Pressable
             style={styles.sosButton}
             onPress={() => makePhoneCall('112')}
+            accessibilityRole="button"
+            accessibilityLabel="SOS — call emergency number 112"
           >
             <Text style={styles.sosText}>SOS</Text>
           </Pressable>
@@ -449,6 +482,8 @@ const EmergencyPage: React.FC = () => {
         <Pressable
           style={styles.bookAmbulanceButton}
           onPress={() => setShowBookingModal(true)}
+          accessibilityRole="button"
+          accessibilityLabel="Book ambulance — request emergency medical transport"
         >
           <LinearGradient
             colors={[colors.infoScale[400], colors.brand.blue]}
@@ -473,19 +508,19 @@ const EmergencyPage: React.FC = () => {
         <View style={styles.firstAidSection}>
           <Text style={styles.sectionTitle}>Quick First Aid Tips</Text>
           <View style={styles.tipsGrid}>
-            <Pressable style={styles.tipCard}>
+            <Pressable style={styles.tipCard} accessibilityRole="button" accessibilityLabel="CPR first aid tips">
               <Text style={styles.tipIcon}>💓</Text>
               <Text style={styles.tipTitle}>CPR</Text>
             </Pressable>
-            <Pressable style={styles.tipCard}>
+            <Pressable style={styles.tipCard} accessibilityRole="button" accessibilityLabel="Wounds first aid tips">
               <Text style={styles.tipIcon}>🩹</Text>
               <Text style={styles.tipTitle}>Wounds</Text>
             </Pressable>
-            <Pressable style={styles.tipCard}>
+            <Pressable style={styles.tipCard} accessibilityRole="button" accessibilityLabel="Burns first aid tips">
               <Text style={styles.tipIcon}>🔥</Text>
               <Text style={styles.tipTitle}>Burns</Text>
             </Pressable>
-            <Pressable style={styles.tipCard}>
+            <Pressable style={styles.tipCard} accessibilityRole="button" accessibilityLabel="Choking first aid tips">
               <Text style={styles.tipIcon}>😵</Text>
               <Text style={styles.tipTitle}>Choking</Text>
             </Pressable>
@@ -510,13 +545,25 @@ const styles = StyleSheet.create({
   headerTitleContainer: { flex: 1, marginLeft: 8 },
   headerTitle: { ...Typography.h3, fontWeight: '700', color: COLORS.white },
   headerSubtitle: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
-  sosButton: { backgroundColor: COLORS.white, paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.xl },
+  sosButton: {
+    backgroundColor: COLORS.white,
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.xl,
+  },
   sosText: { ...Typography.body, fontWeight: '800', color: COLORS.red500 },
 
   quickCallSection: { padding: Spacing.base },
   quickCallTitle: { ...Typography.bodyLarge, fontWeight: '700', color: COLORS.navy, marginBottom: Spacing.md },
   quickCallGrid: { flexDirection: 'row', justifyContent: 'space-between' },
-  quickCallCard: { width: (SCREEN_WIDTH - 48) / 4, alignItems: 'center', padding: Spacing.md, backgroundColor: COLORS.white, borderRadius: BorderRadius.md, borderWidth: 2 },
+  quickCallCard: {
+    width: (SCREEN_WIDTH - 48) / 4,
+    alignItems: 'center',
+    padding: Spacing.md,
+    backgroundColor: COLORS.white,
+    borderRadius: BorderRadius.md,
+    borderWidth: 2,
+  },
   quickCallIcon: { fontSize: 24, marginBottom: 4 },
   quickCallNumber: { ...Typography.bodyLarge, fontWeight: '800', color: COLORS.navy },
   quickCallLabel: { ...Typography.overline, color: COLORS.gray600, marginTop: 2 },
@@ -530,12 +577,32 @@ const styles = StyleSheet.create({
   activeBookingNumber: { ...Typography.bodySmall, color: 'rgba(255,255,255,0.8)' },
   statusBadge: { paddingHorizontal: Spacing.md, paddingVertical: Spacing.xs, borderRadius: BorderRadius.md },
   statusText: { ...Typography.overline, fontWeight: '700', color: COLORS.white },
-  assignedUnitInfo: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: Spacing.md, paddingTop: Spacing.md, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.2)' },
+  assignedUnitInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.2)',
+  },
   assignedUnitText: { ...Typography.bodySmall, color: COLORS.white },
-  callDriverButton: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: Spacing.md, paddingVertical: 6, borderRadius: BorderRadius.lg },
+  callDriverButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(255,255,255,0.2)',
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
+    borderRadius: BorderRadius.lg,
+  },
   callDriverText: { ...Typography.bodySmall, fontWeight: '600', color: COLORS.white, marginLeft: Spacing.xs },
 
-  bookAmbulanceButton: { marginHorizontal: Spacing.base, marginBottom: Spacing.base, borderRadius: BorderRadius.lg, overflow: 'hidden' },
+  bookAmbulanceButton: {
+    marginHorizontal: Spacing.base,
+    marginBottom: Spacing.base,
+    borderRadius: BorderRadius.lg,
+    overflow: 'hidden',
+  },
   bookAmbulanceGradient: { flexDirection: 'row', alignItems: 'center', padding: Spacing.base },
   bookAmbulanceIcon: { fontSize: 32 },
   bookAmbulanceText: { flex: 1, marginLeft: Spacing.md },
@@ -545,46 +612,116 @@ const styles = StyleSheet.create({
   contactsSection: { padding: Spacing.base },
   sectionTitle: { ...Typography.h4, fontWeight: '700', color: COLORS.navy, marginBottom: Spacing.md },
   contactTypeSection: { marginBottom: Spacing.sm },
-  contactTypeHeader: { flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.gray50, padding: Spacing.md, borderRadius: BorderRadius.md },
-  contactTypeIcon: { width: 40, height: 40, borderRadius: BorderRadius.xl, justifyContent: 'center', alignItems: 'center' },
+  contactTypeHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.gray50,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+  },
+  contactTypeIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: BorderRadius.xl,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   contactTypeEmoji: { fontSize: 20 },
   contactTypeTitle: { flex: 1, ...Typography.body, fontWeight: '600', color: COLORS.navy, marginLeft: Spacing.md },
   contactTypeCount: { ...Typography.bodySmall, color: COLORS.gray600, marginRight: Spacing.sm },
   contactsList: { marginTop: Spacing.sm },
-  contactCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: COLORS.white, padding: Spacing.md, borderRadius: BorderRadius.md, marginBottom: Spacing.sm, borderWidth: 1, borderColor: COLORS.gray200 },
+  contactCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.white,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    marginBottom: Spacing.sm,
+    borderWidth: 1,
+    borderColor: COLORS.gray200,
+  },
   contactInfo: { flex: 1 },
   contactName: { ...Typography.body, fontWeight: '600', color: COLORS.navy },
   contactDescription: { ...Typography.bodySmall, color: COLORS.gray600, marginTop: 2 },
   contactMeta: { flexDirection: 'row', alignItems: 'center', marginTop: 4 },
   contactHours: { ...Typography.caption, color: COLORS.gray600, marginLeft: Spacing.xs },
-  nationalBadge: { backgroundColor: COLORS.green500, paddingHorizontal: 6, paddingVertical: 2, borderRadius: BorderRadius.xs, marginLeft: Spacing.sm },
+  nationalBadge: {
+    backgroundColor: COLORS.green500,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.xs,
+    marginLeft: Spacing.sm,
+  },
   nationalText: { fontSize: 9, fontWeight: '600', color: COLORS.white },
   phoneButtons: { flexDirection: 'column', gap: Spacing.xs },
-  phoneButton: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 6, borderRadius: BorderRadius.lg },
+  phoneButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: BorderRadius.lg,
+  },
   phoneButtonText: { ...Typography.caption, fontWeight: '600', color: COLORS.white, marginLeft: Spacing.xs },
 
   firstAidSection: { padding: Spacing.base },
   tipsGrid: { flexDirection: 'row', justifyContent: 'space-between' },
-  tipCard: { width: (SCREEN_WIDTH - 48) / 4, alignItems: 'center', padding: Spacing.base, backgroundColor: COLORS.gray50, borderRadius: BorderRadius.md },
+  tipCard: {
+    width: (SCREEN_WIDTH - 48) / 4,
+    alignItems: 'center',
+    padding: Spacing.base,
+    backgroundColor: COLORS.gray50,
+    borderRadius: BorderRadius.md,
+  },
   tipIcon: { fontSize: 28, marginBottom: 8 },
   tipTitle: { ...Typography.bodySmall, fontWeight: '600', color: COLORS.navy },
 
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: COLORS.white, borderTopLeftRadius: BorderRadius['2xl'], borderTopRightRadius: BorderRadius['2xl'], maxHeight: '90%' },
-  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Spacing.base, borderBottomWidth: 1, borderBottomColor: COLORS.gray200 },
+  modalContent: {
+    backgroundColor: COLORS.white,
+    borderTopLeftRadius: BorderRadius['2xl'],
+    borderTopRightRadius: BorderRadius['2xl'],
+    maxHeight: '90%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: Spacing.base,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.gray200,
+  },
   modalTitle: { ...Typography.h4, fontWeight: '700', color: COLORS.navy },
   modalBody: { padding: Spacing.base },
   modalFooter: { padding: Spacing.base, borderTopWidth: 1, borderTopColor: COLORS.gray200 },
   formGroup: { marginBottom: Spacing.base },
   formLabel: { ...Typography.bodySmall, fontWeight: '600', color: COLORS.navy, marginBottom: Spacing.sm },
-  formInput: { borderWidth: 1, borderColor: COLORS.gray200, borderRadius: BorderRadius.md, padding: Spacing.md, ...Typography.body, color: COLORS.navy },
+  formInput: {
+    borderWidth: 1,
+    borderColor: COLORS.gray200,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    ...Typography.body,
+    color: COLORS.navy,
+  },
   formTextArea: { height: 80, textAlignVertical: 'top' },
   emergencyTypeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
-  emergencyTypeButton: { paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, borderRadius: BorderRadius.xl, backgroundColor: COLORS.gray100 },
+  emergencyTypeButton: {
+    paddingHorizontal: Spacing.base,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.xl,
+    backgroundColor: COLORS.gray100,
+  },
   emergencyTypeButtonActive: { backgroundColor: COLORS.red500 },
   emergencyTypeText: { ...Typography.bodySmall, fontWeight: '500', color: COLORS.gray600 },
   emergencyTypeTextActive: { color: COLORS.white },
-  bookButton: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', backgroundColor: COLORS.red500, padding: Spacing.base, borderRadius: BorderRadius.md },
+  bookButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: COLORS.red500,
+    padding: Spacing.base,
+    borderRadius: BorderRadius.md,
+  },
   bookButtonText: { ...Typography.bodyLarge, fontWeight: '700', color: COLORS.white, marginLeft: Spacing.sm },
   emergencyNote: { ...Typography.bodySmall, color: COLORS.gray600, textAlign: 'center', marginTop: Spacing.md },
 });

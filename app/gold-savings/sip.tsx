@@ -155,7 +155,7 @@ function GoldSavingsSipPage() {
       const amount = customAmount ? parseInt(customAmount) : selectedAmount;
 
       if (isNaN(amount) || amount <= 0) {
-        console.warn('[GoldSIP] Invalid amount:', amount);
+        if (__DEV__) console.warn('[GoldSIP] Invalid amount:', amount);
         return;
       }
 
@@ -170,7 +170,7 @@ function GoldSavingsSipPage() {
         setCustomAmount('');
       }
     } catch (error) {
-      console.error('[GoldSIP] Failed to start SIP:', error);
+      if (__DEV__) console.error('[GoldSIP] Failed to start SIP:', error);
     } finally {
       setSaving(false);
     }
@@ -182,7 +182,7 @@ function GoldSavingsSipPage() {
       await apiClient.delete('/wallet/gold-sip');
       await fetchGoldData();
     } catch (error) {
-      console.error('[GoldSIP] Failed to cancel SIP:', error);
+      if (__DEV__) console.error('[GoldSIP] Failed to cancel SIP:', error);
     } finally {
       setSaving(false);
     }

@@ -76,7 +76,7 @@ export default function TrialCoinsScreen() {
           setTransactions(coinsData.recentTransactions);
         }
       } catch (err) {
-        console.error('Failed to load coins data:', err);
+        if (__DEV__) console.error('Failed to load coins data:', err);
       } finally {
         setLoading(false);
       }
@@ -120,12 +120,12 @@ export default function TrialCoinsScreen() {
       } catch (paymentErr: any) {
         if (paymentErr.code !== 2) {
           // 2 = user cancelled
-          console.error('Payment error:', paymentErr);
+          if (__DEV__) console.error('Payment error:', paymentErr);
         }
         setPurchaseModal((prev) => ({ ...prev, loading: false }));
       }
     } catch (err: any) {
-      console.error('Failed to purchase coins:', err);
+      if (__DEV__) console.error('Failed to purchase coins:', err);
       setPurchaseModal((prev) => ({ ...prev, loading: false }));
     }
   };

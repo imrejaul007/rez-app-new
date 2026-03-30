@@ -15,13 +15,9 @@ import {
   Dimensions,
   ActivityIndicator,
   RefreshControl,
-  Platform
+  Platform,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -104,11 +100,16 @@ const tabs = [
 
 const getDifficultyStyle = (difficulty: string) => {
   switch (difficulty) {
-    case 'easy': return { bg: 'rgba(255, 205, 87, 0.15)', color: colors.primary[500], label: 'Easy' };
-    case 'medium': return { bg: 'rgba(59, 130, 246, 0.15)', color: colors.infoScale[500], label: 'Medium' };
-    case 'hard': return { bg: 'rgba(139, 92, 246, 0.15)', color: THEME.purple500, label: 'Hard' };
-    case 'legendary': return { bg: 'rgba(245, 158, 11, 0.15)', color: colors.warningScale[500], label: 'Legendary' };
-    default: return { bg: colors.neutral[200], color: colors.neutral[600], label: difficulty };
+    case 'easy':
+      return { bg: 'rgba(255, 205, 87, 0.15)', color: colors.primary[500], label: 'Easy' };
+    case 'medium':
+      return { bg: 'rgba(59, 130, 246, 0.15)', color: colors.infoScale[500], label: 'Medium' };
+    case 'hard':
+      return { bg: 'rgba(139, 92, 246, 0.15)', color: THEME.purple500, label: 'Hard' };
+    case 'legendary':
+      return { bg: 'rgba(245, 158, 11, 0.15)', color: colors.warningScale[500], label: 'Legendary' };
+    default:
+      return { bg: colors.neutral[200], color: colors.neutral[600], label: difficulty };
   }
 };
 
@@ -137,12 +138,7 @@ const MissionCard: React.FC<{
   };
 
   return (
-    <Pressable
-     
-      onPress={onPress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-    >
+    <Pressable onPress={onPress} onPressIn={handlePressIn} onPressOut={handlePressOut}>
       <Animated.View
         style={[
           styles.missionCard,
@@ -152,11 +148,13 @@ const MissionCard: React.FC<{
         ]}
       >
         <View style={styles.missionRow}>
-          <View style={[
-            styles.missionIconBox,
-            mission.completed && styles.missionIconBoxCompleted,
-            mission.userState === 'available' && styles.missionIconBoxAvailable
-          ]}>
+          <View
+            style={[
+              styles.missionIconBox,
+              mission.completed && styles.missionIconBoxCompleted,
+              mission.userState === 'available' && styles.missionIconBoxAvailable,
+            ]}
+          >
             {mission.claimed ? (
               <Ionicons name="checkmark-done" size={24} color={colors.background.primary} />
             ) : mission.completed ? (
@@ -172,15 +170,17 @@ const MissionCard: React.FC<{
 
           <View style={styles.missionContent}>
             <View style={styles.missionHeader}>
-              <Text style={styles.missionTitle} numberOfLines={2}>{mission.title}</Text>
+              <Text style={styles.missionTitle} numberOfLines={2}>
+                {mission.title}
+              </Text>
               <View style={[styles.difficultyBadge, { backgroundColor: diffStyle.bg }]}>
-                <Text style={[styles.difficultyText, { color: diffStyle.color }]}>
-                  {diffStyle.label}
-                </Text>
+                <Text style={[styles.difficultyText, { color: diffStyle.color }]}>{diffStyle.label}</Text>
               </View>
             </View>
 
-            <Text style={styles.missionDesc} numberOfLines={2}>{mission.description}</Text>
+            <Text style={styles.missionDesc} numberOfLines={2}>
+              {mission.description}
+            </Text>
 
             {/* Progress Bar */}
             {!mission.completed && (
@@ -213,30 +213,32 @@ const MissionCard: React.FC<{
                   <View style={[styles.rewardBadge, styles.cashbackBadge]}>
                     <Ionicons name="flash" size={12} color={colors.successScale[500]} />
                     <Text style={[styles.rewardText, { color: colors.successScale[600] }]}>
-                      {currencySymbol}{mission.reward.cashback}
+                      {currencySymbol}
+                      {mission.reward.cashback}
                     </Text>
                   </View>
                 )}
               </View>
               <View style={styles.timeContainer}>
                 {/* Urgency badge for challenges ending within 2 hours */}
-                {mission.endDate && (() => {
-                  const msLeft = new Date(mission.endDate).getTime() - (Date.now() - serverTimeOffsetRef.current);
-                  if (msLeft > 0 && msLeft < 2 * 60 * 60 * 1000) {
+                {mission.endDate &&
+                  (() => {
+                    const msLeft = new Date(mission.endDate).getTime() - (Date.now() - serverTimeOffsetRef.current);
+                    if (msLeft > 0 && msLeft < 2 * 60 * 60 * 1000) {
+                      return (
+                        <View style={styles.urgencyBadge}>
+                          <Ionicons name="flame" size={10} color={colors.error} />
+                          <Text style={styles.urgencyText}>Ending Soon!</Text>
+                        </View>
+                      );
+                    }
                     return (
-                      <View style={styles.urgencyBadge}>
-                        <Ionicons name="flame" size={10} color={colors.error} />
-                        <Text style={styles.urgencyText}>Ending Soon!</Text>
-                      </View>
+                      <>
+                        <Ionicons name="time-outline" size={12} color={colors.neutral[500]} />
+                        <Text style={styles.endsIn}>{mission.endsIn}</Text>
+                      </>
                     );
-                  }
-                  return (
-                    <>
-                      <Ionicons name="time-outline" size={12} color={colors.neutral[500]} />
-                      <Text style={styles.endsIn}>{mission.endsIn}</Text>
-                    </>
-                  );
-                })()}
+                  })()}
               </View>
             </View>
           </View>
@@ -250,7 +252,6 @@ const MissionCard: React.FC<{
         {/* Claim Button */}
         {isClaimable && (
           <Pressable
-           
             style={styles.claimButtonWrapper}
             onPress={(e) => {
               e.stopPropagation();
@@ -358,7 +359,7 @@ const MissionsScreen: React.FC = () => {
         setStats({
           completed: challengeStats.totalCompleted || 0,
           coinsEarned: challengeStats.totalCoinsEarned || 0,
-          active: challengeStats.activeChallenges || mapped.filter(m => !m.completed && !m.claimed).length,
+          active: challengeStats.activeChallenges || mapped.filter((m) => !m.completed && !m.claimed).length,
         });
       } else {
         if (!isMounted()) return;
@@ -393,7 +394,7 @@ const MissionsScreen: React.FC = () => {
         return;
       }
       fetchMissions(true);
-    }, [fetchMissions])
+    }, [fetchMissions]),
   );
 
   const handleRefresh = useCallback(() => {
@@ -401,73 +402,80 @@ const MissionsScreen: React.FC = () => {
     fetchMissions(true);
   }, [fetchMissions]);
 
-  const handleClaimReward = async (progressId: string) => {
-    setClaiming(progressId);
-    try {
-      const response = await challengesApi.claimReward(progressId);
-      if (!isMounted()) return;
-      if (response.success && response.data) {
+  const handleClaimReward = useCallback(
+    async (progressId: string) => {
+      setClaiming(progressId);
+      try {
+        const response = await challengesApi.claimReward(progressId);
         if (!isMounted()) return;
-        setAllMissions(prev =>
-          prev.map(m =>
-            m.progressId === progressId ? { ...m, claimed: true } : m
-          )
-        );
+        if (response.success && response.data) {
+          if (!isMounted()) return;
+          setAllMissions((prev) => prev.map((m) => (m.progressId === progressId ? { ...m, claimed: true } : m)));
+          if (!isMounted()) return;
+          setStats((prev) => ({
+            ...prev,
+            coinsEarned: prev.coinsEarned + (response.data?.coinsEarned || 0),
+          }));
+          platformAlert('Rewards Claimed!', `+${response.data.coinsEarned} coins added to your wallet!`, [
+            { text: 'Awesome!' },
+          ]);
+        } else {
+          platformAlertSimple('Error', response.error || 'Failed to claim rewards');
+        }
+      } catch (err: any) {
+        platformAlertSimple('Error', err.message || 'Failed to claim rewards');
+      } finally {
         if (!isMounted()) return;
-        setStats(prev => ({
-          ...prev,
-          coinsEarned: prev.coinsEarned + (response.data?.coinsEarned || 0),
-        }));
-        platformAlert(
-          'Rewards Claimed!',
-          `+${response.data.coinsEarned} coins added to your wallet!`,
-          [{ text: 'Awesome!' }]
-        );
-      } else {
-        platformAlertSimple('Error', response.error || 'Failed to claim rewards');
+        setClaiming(null);
       }
-    } catch (err: any) {
-      platformAlertSimple('Error', err.message || 'Failed to claim rewards');
-    } finally {
-      if (!isMounted()) return;
-      setClaiming(null);
-    }
-  };
+    },
+    [isMounted],
+  );
 
-  const handleMissionPress = (mission: Mission) => {
-    // Special handling for Daily Check-In mission
-    if (mission.title.toLowerCase().includes('daily check-in') ||
+  const handleMissionPress = useCallback(
+    (mission: Mission) => {
+      // Special handling for Daily Check-In mission
+      if (
+        mission.title.toLowerCase().includes('daily check-in') ||
         mission.title.toLowerCase().includes('check in') ||
-        mission.title.toLowerCase() === 'daily check-in') {
-      router.push('/explore/daily-checkin');
-      return;
-    }
+        mission.title.toLowerCase() === 'daily check-in'
+      ) {
+        router.push('/explore/daily-checkin');
+        return;
+      }
 
-    // Default: go to mission detail page
-    router.push({
-      pathname: '/mission-detail',
-      params: {
-        id: mission.id,
-        progressId: mission.progressId,
-      },
-    });
-  };
+      // Default: go to mission detail page
+      router.push({
+        pathname: '/mission-detail',
+        params: {
+          id: mission.id,
+          progressId: mission.progressId,
+        },
+      });
+    },
+    [router],
+  );
 
   // Filter missions by type
-  const dailyMissions = useMemo(() => allMissions.filter(m => m.type === 'daily'), [allMissions]);
-  const weeklyMissions = useMemo(() => allMissions.filter(m => m.type === 'weekly'), [allMissions]);
-  const specialMissions = useMemo(() => allMissions.filter(m => m.type === 'special' || m.type === 'monthly'), [allMissions]);
+  const dailyMissions = useMemo(() => allMissions.filter((m) => m.type === 'daily'), [allMissions]);
+  const weeklyMissions = useMemo(() => allMissions.filter((m) => m.type === 'weekly'), [allMissions]);
+  const specialMissions = useMemo(
+    () => allMissions.filter((m) => m.type === 'special' || m.type === 'monthly'),
+    [allMissions],
+  );
 
-  const getMissions = () => {
+  const missions = useMemo(() => {
     switch (activeTab) {
-      case 'daily': return dailyMissions;
-      case 'weekly': return weeklyMissions;
-      case 'special': return specialMissions;
-      default: return dailyMissions;
+      case 'daily':
+        return dailyMissions;
+      case 'weekly':
+        return weeklyMissions;
+      case 'special':
+        return specialMissions;
+      default:
+        return dailyMissions;
     }
-  };
-
-  const missions = getMissions();
+  }, [activeTab, dailyMissions, weeklyMissions, specialMissions]);
 
   const formatNumber = (num: number) => {
     if (num >= 1000) {
@@ -481,15 +489,11 @@ const MissionsScreen: React.FC = () => {
       <Stack.Screen options={{ headerShown: false }} />
       <SafeAreaView style={styles.container} edges={['top']}>
         {/* Header */}
-        <LinearGradient
-          colors={[THEME.purple600, THEME.indigo600]}
-          style={styles.header}
-        >
+        <LinearGradient colors={[THEME.purple600, THEME.indigo600]} style={styles.header}>
           <View style={styles.headerTop}>
             <Pressable
               style={styles.backButton}
-              onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-             
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             >
               <Ionicons name="arrow-back" size={20} color={colors.background.primary} />
             </Pressable>
@@ -503,14 +507,12 @@ const MissionsScreen: React.FC = () => {
             {streak > 0 ? (
               <View style={styles.streakBadge}>
                 <Ionicons name="flame" size={14} color={THEME.orange400} />
-                <Text style={styles.streakText}>{streak} day{streak > 1 ? 's' : ''}</Text>
+                <Text style={styles.streakText}>
+                  {streak} day{streak > 1 ? 's' : ''}
+                </Text>
               </View>
             ) : (
-              <Pressable
-                style={styles.streakBadge}
-                onPress={() => router.push('/explore/daily-checkin')}
-               
-              >
+              <Pressable style={styles.streakBadge} onPress={() => router.push('/explore/daily-checkin')}>
                 <Ionicons name="flame-outline" size={14} color={colors.background.primary} />
                 <Text style={styles.streakText}>Check in</Text>
               </Pressable>
@@ -519,32 +521,26 @@ const MissionsScreen: React.FC = () => {
 
           {/* Tabs */}
           <View style={styles.tabsRow}>
-            {tabs.map(tab => {
+            {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
-              const count = tab.id === 'daily' ? dailyMissions.length
-                          : tab.id === 'weekly' ? weeklyMissions.length
-                          : specialMissions.length;
+              const count =
+                tab.id === 'daily'
+                  ? dailyMissions.length
+                  : tab.id === 'weekly'
+                    ? weeklyMissions.length
+                    : specialMissions.length;
 
               return (
                 <Pressable
                   key={tab.id}
                   style={[styles.tab, isActive && styles.tabActive]}
                   onPress={() => setActiveTab(tab.id)}
-                 
                 >
-                  <Ionicons
-                    name={tab.icon}
-                    size={16}
-                    color={isActive ? THEME.purple600 : colors.background.primary}
-                  />
-                  <Text style={[styles.tabText, isActive && styles.tabTextActive]}>
-                    {tab.label}
-                  </Text>
+                  <Ionicons name={tab.icon} size={16} color={isActive ? THEME.purple600 : colors.background.primary} />
+                  <Text style={[styles.tabText, isActive && styles.tabTextActive]}>{tab.label}</Text>
                   {count > 0 && (
                     <View style={[styles.tabBadge, isActive && styles.tabBadgeActive]}>
-                      <Text style={[styles.tabBadgeText, isActive && styles.tabBadgeTextActive]}>
-                        {count}
-                      </Text>
+                      <Text style={[styles.tabBadgeText, isActive && styles.tabBadgeTextActive]}>{count}</Text>
                     </View>
                   )}
                 </Pressable>
@@ -571,7 +567,7 @@ const MissionsScreen: React.FC = () => {
             <View style={styles.loadingContainer}>
               {/* Stats skeleton */}
               <View style={styles.statsRow}>
-                {[1, 2, 3].map(i => (
+                {[1, 2, 3].map((i) => (
                   <View key={i} style={[styles.statCard, { alignItems: 'center', padding: spacing.md }]}>
                     <SkeletonBox width={36} height={36} borderRadius={18} />
                     <SkeletonBox width={30} height={20} borderRadius={4} style={{ marginTop: 8 }} />
@@ -582,7 +578,7 @@ const MissionsScreen: React.FC = () => {
               {/* Mission card skeletons */}
               <View style={{ paddingHorizontal: spacing.md }}>
                 <SkeletonBox width={140} height={16} borderRadius={4} style={{ marginBottom: spacing.sm }} />
-                {[1, 2, 3, 4].map(i => (
+                {[1, 2, 3, 4].map((i) => (
                   <View key={i} style={[styles.missionCard, { flexDirection: 'row', gap: spacing.sm }]}>
                     <SkeletonBox width={48} height={48} borderRadius={8} />
                     <View style={{ flex: 1 }}>
@@ -608,10 +604,7 @@ const MissionsScreen: React.FC = () => {
               </View>
               <Text style={styles.errorTitle}>Unable to load missions</Text>
               <Text style={styles.errorText}>{error}</Text>
-              <Pressable
-                onPress={() => fetchMissions()}
-                style={styles.retryButton}
-              >
+              <Pressable onPress={() => fetchMissions()} style={styles.retryButton}>
                 <Text style={styles.retryText}>Try Again</Text>
               </Pressable>
             </View>
@@ -624,9 +617,7 @@ const MissionsScreen: React.FC = () => {
                 <View style={styles.statIconContainer}>
                   <Ionicons name="trophy" size={20} color={colors.successScale[500]} />
                 </View>
-                <Text style={[styles.statValue, { color: colors.successScale[600] }]}>
-                  {stats.completed}
-                </Text>
+                <Text style={[styles.statValue, { color: colors.successScale[600] }]}>{stats.completed}</Text>
                 <Text style={styles.statLabel}>Completed</Text>
               </View>
               <View style={[styles.statCard, styles.statCardGold]}>
@@ -642,9 +633,7 @@ const MissionsScreen: React.FC = () => {
                 <View style={styles.statIconContainer}>
                   <Ionicons name="flash" size={20} color={colors.infoScale[500]} />
                 </View>
-                <Text style={[styles.statValue, { color: colors.infoScale[700] }]}>
-                  {stats.active}
-                </Text>
+                <Text style={[styles.statValue, { color: colors.infoScale[700] }]}>{stats.active}</Text>
                 <Text style={styles.statLabel}>Active</Text>
               </View>
             </View>
@@ -656,9 +645,11 @@ const MissionsScreen: React.FC = () => {
               {/* Section Header */}
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>
-                  {activeTab === 'daily' ? 'Daily Challenges'
-                   : activeTab === 'weekly' ? 'Weekly Challenges'
-                   : 'Special Challenges'}
+                  {activeTab === 'daily'
+                    ? 'Daily Challenges'
+                    : activeTab === 'weekly'
+                      ? 'Weekly Challenges'
+                      : 'Special Challenges'}
                 </Text>
                 <Text style={styles.sectionCount}>{missions.length} available</Text>
               </View>
@@ -673,11 +664,7 @@ const MissionsScreen: React.FC = () => {
                   <Text style={styles.emptyText}>
                     New missions appear regularly. Pull down to refresh or check other tabs!
                   </Text>
-                  <Pressable
-                    style={styles.emptyButton}
-                    onPress={handleRefresh}
-                   
-                  >
+                  <Pressable style={styles.emptyButton} onPress={handleRefresh}>
                     <Ionicons name="refresh" size={16} color={THEME.purple600} />
                     <Text style={styles.emptyButtonText}>Refresh</Text>
                   </Pressable>
@@ -685,7 +672,7 @@ const MissionsScreen: React.FC = () => {
               )}
 
               {/* Mission Cards */}
-              {missions.map(mission => (
+              {missions.map((mission) => (
                 <MissionCard
                   key={mission.id}
                   mission={mission}

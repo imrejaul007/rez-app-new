@@ -54,7 +54,7 @@ export default function TrialHistoryScreen() {
         const data = await tryApi.getHistory();
         setBookings(data);
       } catch (err) {
-        console.error('Failed to load history:', err);
+        if (__DEV__) console.error('Failed to load history:', err);
       } finally {
         setLoading(false);
       }

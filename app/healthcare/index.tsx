@@ -203,6 +203,8 @@ const HealthcarePage: React.FC = () => {
           <Pressable
             onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
             style={styles.backButton}
+            accessibilityRole="button"
+            accessibilityLabel="Go back"
           >
             <Ionicons name="arrow-back" size={24} color={COLORS.white} />
           </Pressable>
@@ -210,7 +212,12 @@ const HealthcarePage: React.FC = () => {
             <Text style={styles.headerTitle}>Healthcare</Text>
             <Text style={styles.headerSubtitle}>Your health, our priority</Text>
           </View>
-          <Pressable style={styles.searchButton} onPress={() => router.push('/healthcare/records' as any)}>
+          <Pressable
+            style={styles.searchButton}
+            onPress={() => router.push('/healthcare/records' as any)}
+            accessibilityRole="button"
+            accessibilityLabel="View health records"
+          >
             <Ionicons name="document-text" size={24} color={COLORS.white} />
           </Pressable>
         </View>
@@ -248,6 +255,9 @@ const HealthcarePage: React.FC = () => {
                 key={action.id}
                 style={[styles.quickActionButton, { backgroundColor: action.color }]}
                 onPress={() => handleQuickCall(action.phone)}
+                accessibilityRole="button"
+                accessibilityLabel={`Call ${action.title}: ${action.phone}`}
+                accessibilityHint={`Double tap to dial ${action.phone}`}
               >
                 <Ionicons name={action.icon as any} size={20} color={COLORS.white} />
                 <Text style={styles.quickActionText}>{action.title}</Text>
@@ -262,7 +272,13 @@ const HealthcarePage: React.FC = () => {
           <Text style={styles.sectionTitle}>Healthcare Services</Text>
           <View style={styles.categoriesGrid}>
             {categoryConfig.map((cat) => (
-              <Pressable key={cat.id} style={styles.categoryCard} onPress={() => navigateToCategory(cat.route)}>
+              <Pressable
+                key={cat.id}
+                style={styles.categoryCard}
+                onPress={() => navigateToCategory(cat.route)}
+                accessibilityRole="button"
+                accessibilityLabel={`${cat.title} healthcare services`}
+              >
                 <View style={[styles.categoryIcon, { backgroundColor: `${cat.color}20` }]}>
                   <Ionicons name={cat.icon as any} size={24} color={cat.color} />
                 </View>
@@ -277,7 +293,11 @@ const HealthcarePage: React.FC = () => {
         <View style={styles.section}>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Popular Services</Text>
-            <Pressable onPress={() => router.push('/healthcare/doctors' as any)}>
+            <Pressable
+              onPress={() => router.push('/healthcare/doctors' as any)}
+              accessibilityRole="button"
+              accessibilityLabel="View all healthcare services"
+            >
               <Text style={styles.viewAllText}>View All</Text>
             </Pressable>
           </View>
@@ -299,6 +319,8 @@ const HealthcarePage: React.FC = () => {
                   <Pressable
                     key={service._id}
                     style={styles.serviceCard}
+                    accessibilityRole="button"
+                    accessibilityLabel={`${service.name}, ${service.metadata?.serviceType || 'Lab Test'}, price ${service.price.selling}`}
                     onPress={() => {
                       // Route to the correct healthcare sub-screen based on serviceType metadata
                       const serviceType = service.metadata?.serviceType?.toLowerCase() || '';
@@ -317,7 +339,11 @@ const HealthcarePage: React.FC = () => {
                       router.push(route as any);
                     }}
                   >
-                    <CachedImage source={service.images?.[0] || undefined} style={styles.serviceImage} />
+                    <CachedImage
+                      source={service.images?.[0] || undefined}
+                      style={styles.serviceImage}
+                      accessible={false}
+                    />
                     {cashback > 0 && (
                       <View style={styles.cashbackBadge}>
                         <Text style={styles.cashbackText}>{cashback}% CB</Text>
@@ -358,7 +384,12 @@ const HealthcarePage: React.FC = () => {
         </View>
 
         {/* Health Records Banner */}
-        <Pressable style={styles.recordsBanner} onPress={() => router.push('/healthcare/records' as any)}>
+        <Pressable
+          style={styles.recordsBanner}
+          onPress={() => router.push('/healthcare/records' as any)}
+          accessibilityRole="button"
+          accessibilityLabel="Manage your health records — prescriptions, reports and medical documents"
+        >
           <LinearGradient
             colors={[colors.brand.cyan, colors.cyanDark]}
             start={{ x: 0, y: 0 }}
@@ -379,7 +410,12 @@ const HealthcarePage: React.FC = () => {
         </Pressable>
 
         {/* Emergency Services Banner */}
-        <Pressable style={styles.emergencyBanner} onPress={() => router.push('/healthcare/emergency' as any)}>
+        <Pressable
+          style={styles.emergencyBanner}
+          onPress={() => router.push('/healthcare/emergency' as any)}
+          accessibilityRole="button"
+          accessibilityLabel="Emergency services — ambulance, hospitals, 24x7 emergency contacts"
+        >
           <LinearGradient
             colors={[Colors.error, Colors.error]}
             start={{ x: 0, y: 0 }}
@@ -414,7 +450,11 @@ const HealthcarePage: React.FC = () => {
                 Get covered from {currencySymbol}500/month{'\n'}Family plans available
               </Text>
             </View>
-            <Pressable style={styles.promoButton}>
+            <Pressable
+              style={styles.promoButton}
+              accessibilityRole="button"
+              accessibilityLabel="Get a health insurance quote"
+            >
               <Text style={styles.promoButtonText}>Get Quote</Text>
             </Pressable>
           </LinearGradient>

@@ -863,7 +863,7 @@ function ProfilePage() {
               </Pressable>
             </View>
             {statsLoading ? (
-              <View style={{ height: 60, backgroundColor: '#E0E0E0', borderRadius: 8, marginVertical: 8 }} />
+              <View style={{ height: 60, backgroundColor: colors.gray[300], borderRadius: 8, marginVertical: 8 }} />
             ) : statistics ? (
               <View style={styles.statsGrid}>
                 <Pressable
@@ -922,7 +922,7 @@ function ProfilePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4F6F9',
+    backgroundColor: colors.tint.coolGray,
   },
 
   // ── Header ──────────────────────────────────────────────────────────────
@@ -1018,7 +1018,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   userCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background.primary,
     borderRadius: 20,
     padding: Spacing.md,
     flexDirection: 'row',
@@ -1110,7 +1110,7 @@ const styles = StyleSheet.create({
   verifiedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#E8F5E9',
+    backgroundColor: colors.greenMist,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 20,
@@ -1120,7 +1120,7 @@ const styles = StyleSheet.create({
   verifiedText: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#2E7D32',
+    color: colors.brand.greenDark,
   },
 
   // Primary CTA: Edit Profile
@@ -1177,7 +1177,7 @@ const styles = StyleSheet.create({
 
   // Profile Completion Card
   completionCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background.primary,
     borderRadius: 18,
     padding: Spacing.lg,
     marginTop: Spacing.md,
@@ -1226,7 +1226,7 @@ const styles = StyleSheet.create({
   },
   progressBarContainer: {
     height: 7,
-    backgroundColor: '#EEF0F3',
+    backgroundColor: colors.indigoMist,
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 12,
@@ -1291,7 +1291,7 @@ const styles = StyleSheet.create({
   // Loyalty Card
   loyaltyCard: {
     marginTop: Spacing.md,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background.primary,
     borderRadius: 18,
     padding: Spacing.md,
     shadowColor: PROFILE_COLORS.primaryDark,
@@ -1420,7 +1420,7 @@ const styles = StyleSheet.create({
 
   // ── Icon Grid ──────────────────────────────────────────────────────────────
   iconGrid: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background.primary,
     borderRadius: 20,
     paddingVertical: 20,
     paddingHorizontal: 12,
@@ -1460,7 +1460,7 @@ const styles = StyleSheet.create({
 
   // ── Menu List ──────────────────────────────────────────────────────────────
   menuList: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background.primary,
     borderRadius: 20,
     overflow: 'hidden',
     shadowColor: PROFILE_COLORS.primaryDark,
@@ -1476,7 +1476,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F2F5',
+    borderBottomColor: colors.slateLight,
     minHeight: 64,
   },
   menuItemLeft: {
@@ -1521,7 +1521,7 @@ const styles = StyleSheet.create({
     backgroundColor: PROFILE_COLORS.primaryDark,
   },
   newBadge: {
-    backgroundColor: '#2E7D32',
+    backgroundColor: colors.brand.greenDark,
   },
   menuBadgeText: {
     fontSize: 12, // min readable font size
@@ -1535,7 +1535,7 @@ const styles = StyleSheet.create({
 
   // ── Stats Section ──────────────────────────────────────────────────────────
   statsCard: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.background.primary,
     borderRadius: 20,
     padding: Spacing.xl,
     shadowColor: PROFILE_COLORS.primaryDark,
@@ -1578,7 +1578,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: Spacing.md,
     marginHorizontal: Spacing.xs,
-    backgroundColor: '#F8FAFC',
+    backgroundColor: colors.tint.coolGray,
     borderRadius: 14,
   },
   statNumber: {

@@ -11,21 +11,23 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { colors, spacing, borderRadius } from '@/constants/theme';
+import { BUDGET_PRICE_TIERS, BUDGET_DEALS_MAX_DISPLAY_PRICE } from '@/constants/appConstants';
 
-const BUDGET_FILTERS = [
-  { id: 'under49', label: 'Under ₹49', emoji: '🤑', maxPrice: 49 },
-  { id: 'under99', label: 'Under ₹99', emoji: '💰', maxPrice: 99 },
-  { id: 'under149', label: 'Under ₹149', emoji: '🏷️', maxPrice: 149 },
-  { id: 'under199', label: 'Under ₹199', emoji: '🛍️', maxPrice: 199 },
-];
+const BUDGET_FILTER_EMOJIS: Record<number, string> = { 49: '🤑', 99: '💰', 149: '🏷️', 199: '🛍️' };
+const BUDGET_FILTERS = BUDGET_PRICE_TIERS.map((price) => ({
+  id: `under${price}`,
+  label: `Under ₹${price}`,
+  emoji: BUDGET_FILTER_EMOJIS[price] ?? '🏷️',
+  maxPrice: price,
+}));
 
 const BUDGET_CATEGORIES = [
-  { id: 'street-food', emoji: '🌮', label: 'Street Food', color: '#FFF7ED' },
-  { id: 'cafe', emoji: '☕', label: 'Cafes', color: '#FFFBEB' },
-  { id: 'grocery', emoji: '🥬', label: 'Grocery', color: '#F0FDF4' },
-  { id: 'snacks', emoji: '🍟', label: 'Snacks', color: '#FEF9C3' },
-  { id: 'bakery', emoji: '🥐', label: 'Bakery', color: '#FFF1F2' },
-  { id: 'juice', emoji: '🥤', label: 'Juice Bar', color: '#F0FDF4' },
+  { id: 'street-food', emoji: '🌮', label: 'Street Food', color: colors.tint.orange },
+  { id: 'cafe', emoji: '☕', label: 'Cafes', color: colors.tint.amber },
+  { id: 'grocery', emoji: '🥬', label: 'Grocery', color: colors.tint.greenLight },
+  { id: 'snacks', emoji: '🍟', label: 'Snacks', color: colors.warningScale[50] },
+  { id: 'bakery', emoji: '🥐', label: 'Bakery', color: colors.pinkMist },
+  { id: 'juice', emoji: '🥤', label: 'Juice Bar', color: colors.tint.greenLight },
 ];
 
 export default function BudgetScreen() {
@@ -43,11 +45,18 @@ export default function BudgetScreen() {
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         {/* Hero */}
-        <LinearGradient colors={['#F59E0B', '#FDE68A']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.hero}>
+        <LinearGradient
+          colors={[colors.warningScale[400], colors.warningScale[200]]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.hero}
+        >
           <View style={styles.heroInner}>
             <View>
               <Text style={styles.heroTitle}>🏷️ Great deals await</Text>
-              <Text style={styles.heroSub}>Discover amazing offers under ₹199 near you</Text>
+              <Text style={styles.heroSub}>
+                Discover amazing offers under ₹{BUDGET_DEALS_MAX_DISPLAY_PRICE} near you
+              </Text>
             </View>
             <Text style={styles.heroEmoji}>💸</Text>
           </View>
@@ -99,12 +108,12 @@ export default function BudgetScreen() {
           onPress={() =>
             router.push({
               pathname: '/StoreListPage',
-              params: { maxPrice: 199, sort: 'price_low' },
+              params: { maxPrice: BUDGET_DEALS_MAX_DISPLAY_PRICE, sort: 'price_low' },
             } as any)
           }
         >
-          <Text style={styles.allDealsBtnText}>See all deals under ₹199</Text>
-          <Ionicons name="arrow-forward" size={16} color="#F59E0B" />
+          <Text style={styles.allDealsBtnText}>See all deals under ₹{BUDGET_DEALS_MAX_DISPLAY_PRICE}</Text>
+          <Ionicons name="arrow-forward" size={16} color={colors.warningScale[400]} />
         </Pressable>
       </ScrollView>
     </SafeAreaView>
@@ -112,7 +121,7 @@ export default function BudgetScreen() {
 }
 
 const styles = StyleSheet.create({
-  safe: { flex: 1, backgroundColor: colors.background || '#fff' },
+  safe: { flex: 1, backgroundColor: colors.background.primary },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -128,8 +137,8 @@ const styles = StyleSheet.create({
 
   hero: { margin: spacing.lg, borderRadius: borderRadius.xl, padding: 20, overflow: 'hidden' },
   heroInner: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  heroTitle: { fontSize: 18, fontWeight: '800', color: '#78350F', marginBottom: 4 },
-  heroSub: { fontSize: 12, color: '#92400E', maxWidth: '80%', lineHeight: 18 },
+  heroTitle: { fontSize: 18, fontWeight: '800', color: colors.brand.amberDark, marginBottom: 4 },
+  heroSub: { fontSize: 12, color: colors.brand.amberDeep, maxWidth: '80%', lineHeight: 18 },
   heroEmoji: { fontSize: 44, opacity: 0.85 },
 
   sectionTitle: {
@@ -145,15 +154,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: '#FFFBEB',
+    backgroundColor: colors.tint.amber,
     paddingVertical: 8,
     paddingHorizontal: 14,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#FDE68A',
+    borderColor: colors.warningScale[200],
   },
   pillEmoji: { fontSize: 14 },
-  pillLabel: { fontSize: 13, fontWeight: '600', color: '#78350F' },
+  pillLabel: { fontSize: 13, fontWeight: '600', color: colors.brand.amberDark },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: spacing.lg, gap: 10 },
   categoryCard: {
@@ -165,7 +174,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(0,0,0,0.06)',
   },
   catEmoji: { fontSize: 28, marginBottom: 6 },
-  catLabel: { fontSize: 12, fontWeight: '700', color: '#111', textAlign: 'center' },
+  catLabel: { fontSize: 12, fontWeight: '700', color: colors.text.primary, textAlign: 'center' },
 
   allDealsBtn: {
     marginHorizontal: spacing.lg,
@@ -177,7 +186,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     borderRadius: borderRadius.xl,
     borderWidth: 2,
-    borderColor: '#F59E0B',
+    borderColor: colors.warningScale[400],
   },
-  allDealsBtnText: { fontSize: 15, fontWeight: '700', color: '#F59E0B' },
+  allDealsBtnText: { fontSize: 15, fontWeight: '700', color: colors.warningScale[400] },
 });

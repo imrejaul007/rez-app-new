@@ -46,7 +46,7 @@ export default function LeaderboardScreen() {
       const data = await tryApi.getLeaderboard(city, period);
       setLeaderboard(data);
     } catch (err) {
-      console.error('Failed to load leaderboard:', err);
+      if (__DEV__) console.error('Failed to load leaderboard:', err);
     } finally {
       setLoading(false);
     }

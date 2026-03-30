@@ -19,10 +19,12 @@ import { ThemedText } from '@/components/ThemedText';
 import { ACCOUNT_COLORS } from '@/types/account.types';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
+import paymentService from '@/services/paymentService';
 import walletApi from '@/services/walletApi';
 import analytics from '@/services/analytics/AnalyticsService';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useRouter } from 'expo-router';
 
 interface TopupModalProps {
   visible: boolean;
@@ -41,6 +43,7 @@ function TopupModal({
 }: TopupModalProps) {
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
+  const router = useRouter();
   const [customAmount, setCustomAmount] = useState('');
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -93,41 +96,54 @@ function TopupModal({
   const processTopup = async (amount: number) => {
     setLoading(true);
     try {
-      // Uses the direct topup endpoint (POST /wallet/topup)
-      const res = await walletApi.topup({
-        amount,
-        paymentMethod: 'wallet_topup',
-        paymentId: `TOPUP_${Date.now()}`,
-      });
-
-      if (!res.data) {
-        throw new Error(res.error || 'Topup failed');
-      }
-
-      const newBalance = res.data.wallet?.balance?.total;
+      // Step 1: Fetch available payment methods so the user can choose on the
+      // payment screen.  Close this modal first, then navigate to /payment with
+      // the wallet_topup intent.  The payment screen owns the Razorpay order
+      // creation → checkout → verify/confirm flow end-to-end.
+      //
+      // POST /wallet/initiate-payment  →  Razorpay order created by backend
+      // User completes Razorpay checkout
+      // POST /wallet/confirm-payment   →  backend verifies signature, credits wallet
+      //
+      // We do NOT call POST /wallet/topup here — that endpoint is admin-only.
 
       if (!isMounted()) return;
       setLoading(false);
       setSelectedAmount(null);
       setCustomAmount('');
-      onSuccess(amount);
+
+      // Track that the user started a topup flow
+      try {
+        analytics.trackEvent(ANALYTICS_EVENTS.WALLET_TOPPED_UP, {
+          amount,
+          currency: currencySymbol,
+          payment_method: 'gateway',
+          stage: 'initiated',
+        });
+      } catch {}
+
+      // Close the modal before navigating so the sheet doesn't stack under
+      // the payment page sheet.
       onClose();
 
-      // Track wallet_topup event
-      try { analytics.trackEvent(ANALYTICS_EVENTS.WALLET_TOPPED_UP, { amount, currency: currencySymbol, payment_method: 'wallet_topup' }); } catch {}
-
-      platformAlertSimple(
-        'Topup Successful!',
-        newBalance != null
-          ? `${currencySymbol}${amount.toLocaleString()} has been added. New balance: ${currencySymbol}${newBalance.toLocaleString()}`
-          : `${currencySymbol}${amount.toLocaleString()} has been added to your wallet`
+      // Navigate to the payment screen with wallet_topup context.
+      // The payment screen will call paymentService.processPayment() which
+      // hits POST /wallet/initiate-payment, opens Razorpay checkout, and on
+      // success calls POST /wallet/confirm-payment to credit the wallet.
+      router.push(
+        `/payment?type=wallet_topup&amount=${amount}&currency=NC` as any
       );
+
+      // onSuccess will be called by the payment screen on confirmed completion.
+      // We optimistically signal the parent so it can refresh the balance once
+      // the user returns from the payment screen.
+      onSuccess(amount);
     } catch (error: any) {
       if (!isMounted()) return;
       setLoading(false);
       platformAlertSimple(
         'Topup Failed',
-        error?.message || 'Unable to process payment. Please try again.'
+        error?.message || 'Unable to initiate payment. Please try again.'
       );
     }
   };

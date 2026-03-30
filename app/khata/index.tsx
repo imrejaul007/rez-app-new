@@ -35,7 +35,7 @@ function ConsumerKhataScreen() {
       const resp = await apiClient.get('/consumer/khata');
       setCredits(resp.data?.data || resp.data?.credits || []);
     } catch (e) {
-      console.error('Khata load error', e);
+      if (__DEV__) console.error('Khata load error', e);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -58,16 +58,18 @@ function ConsumerKhataScreen() {
           <Ionicons name="storefront-outline" size={20} color={colors.brand.purpleLight} />
         </View>
         <View style={{ flex: 1, marginLeft: Spacing.md }}>
-          <Text style={[styles.merchantName, { color: colors.text.primary }]}>
-            {item.merchantId.businessName}
-          </Text>
+          <Text style={[styles.merchantName, { color: colors.text.primary }]}>{item.merchantId.businessName}</Text>
           <Text style={[styles.lastTx, { color: colors.text.tertiary }]}>
             Last updated {new Date(item.updatedAt).toLocaleDateString('en-IN')}
           </Text>
         </View>
         <View style={{ alignItems: 'flex-end' }}>
           <Text style={[styles.balance, { color: item.balance > 0 ? Colors.error : colors.successScale[500] }]}>
-            {item.balance > 0 ? `₹${item.balance} owed` : item.balance < 0 ? `₹${Math.abs(item.balance)} credit` : '₹0 settled'}
+            {item.balance > 0
+              ? `₹${item.balance} owed`
+              : item.balance < 0
+                ? `₹${Math.abs(item.balance)} credit`
+                : '₹0 settled'}
           </Text>
           <Ionicons name="chevron-forward" size={16} color={colors.text.tertiary} />
         </View>
@@ -96,25 +98,39 @@ function ConsumerKhataScreen() {
       </View>
 
       {totalOwed > 0 && (
-        <View style={[styles.summaryBanner, { backgroundColor: colors.tint.pink, borderColor: colors.brand.purpleLight }]}>
+        <View
+          style={[styles.summaryBanner, { backgroundColor: colors.tint.pink, borderColor: colors.brand.purpleLight }]}
+        >
           <Text style={[styles.summaryText, { color: colors.brand.purple }]}>
-            Total outstanding: <Text style={{ fontWeight: '700' }}>₹{totalOwed}</Text> across {credits.filter(c => c.balance > 0).length} store{credits.filter(c => c.balance > 0).length !== 1 ? 's' : ''}
+            Total outstanding: <Text style={{ fontWeight: '700' }}>₹{totalOwed}</Text> across{' '}
+            {credits.filter((c) => c.balance > 0).length} store
+            {credits.filter((c) => c.balance > 0).length !== 1 ? 's' : ''}
           </Text>
         </View>
       )}
 
       <FlatList
         data={credits}
-        keyExtractor={item => item._id}
+        keyExtractor={(item) => item._id}
         renderItem={renderItem}
         contentContainerStyle={{ padding: Spacing.lg, gap: Spacing.md }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => { setRefreshing(true); loadCredits(); }} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              setRefreshing(true);
+              loadCredits();
+            }}
+          />
+        }
         ListEmptyComponent={
           !loading ? (
             <View style={styles.empty}>
               <Ionicons name="receipt-outline" size={48} color={colors.text.tertiary} />
               <Text style={[styles.emptyText, { color: colors.text.secondary }]}>No credit records yet</Text>
-              <Text style={[styles.emptySub, { color: colors.text.tertiary }]}>Your outstanding balances at stores will appear here</Text>
+              <Text style={[styles.emptySub, { color: colors.text.tertiary }]}>
+                Your outstanding balances at stores will appear here
+              </Text>
             </View>
           ) : null
         }
@@ -128,9 +144,21 @@ export default withErrorBoundary(ConsumerKhataScreen, 'KhataIndex');
 const styles = StyleSheet.create({
   container: { flex: 1 },
   loadingContainer: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: Spacing.lg, paddingTop: Spacing.md },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: Spacing.lg,
+    paddingTop: Spacing.md,
+  },
   headerTitle: { ...Typography.h4, fontWeight: '700' },
-  summaryBanner: { margin: Spacing.lg, marginBottom: 0, padding: Spacing.md, borderRadius: BorderRadius.lg, borderWidth: 1 },
+  summaryBanner: {
+    margin: Spacing.lg,
+    marginBottom: 0,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.lg,
+    borderWidth: 1,
+  },
   summaryText: { ...Typography.body, fontWeight: '500' },
   card: { borderRadius: BorderRadius.lg, padding: Spacing.lg, borderWidth: 1 },
   cardRow: { flexDirection: 'row', alignItems: 'center' },

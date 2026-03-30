@@ -9,10 +9,67 @@ import { errorReporter } from '@/utils/errorReporter';
 import { useSocket } from '@/contexts/SocketContext';
 
 // ---------------------------------------------------------------------------
+// Typed shapes for raw backend wallet data
+// ---------------------------------------------------------------------------
+/** A single coin entry as returned by the backend /wallet/balance endpoint */
+export interface BackendCoinEntry {
+  type: string;
+  amount: number;
+  isActive?: boolean;
+  earnedDate?: string;
+  lastUsed?: string;
+  expiryDate?: string;
+  promoDetails?: unknown;
+}
+
+/** A single branded-coin (store/partner coin) entry from the backend */
+export interface BrandedCoinEntry {
+  id?: string;
+  brandId?: string;
+  brandName?: string;
+  amount: number;
+  currency?: string;
+  expiryDate?: string;
+  isActive?: boolean;
+}
+
+/** Raw backend wallet response shape (lenient — extra fields are allowed) */
+export interface RawWalletBackendData {
+  coins?: BackendCoinEntry[];
+  promoCoins?: BackendCoinEntry & { promoDetails?: unknown };
+  brandedCoins?: BrandedCoinEntry[];
+  brandedCoinsTotal?: number;
+  totalValue?: number;
+  balance?: {
+    available?: number;
+    cashback?: number;
+    pending?: number;
+  };
+  breakdown?: {
+    rezCoins?: { amount: number };
+    cashback?: number;
+    cashbackBalance?: number;
+    pending?: number;
+    pendingRewards?: number;
+  };
+  savingsInsights?: {
+    totalSaved: number;
+    thisMonth: number;
+    avgPerVisit: number;
+  };
+  lastUpdated?: string;
+  status?: {
+    isActive?: boolean;
+    isFrozen?: boolean;
+    frozenReason?: string;
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Transform backend wallet response into frontend WalletData
 // (Same logic as hooks/useWallet.ts — kept in sync)
 // ---------------------------------------------------------------------------
-function transformWalletResponse(backendData: any, userId: string): WalletData {
+function transformWalletResponse(backendData: RawWalletBackendData, userId: string): WalletData {
   if (!backendData || typeof backendData !== 'object') {
     throw new Error('Invalid wallet data received');
   }
@@ -21,7 +78,7 @@ function transformWalletResponse(backendData: any, userId: string): WalletData {
   const safeDate = backendData.lastUpdated ? new Date(backendData.lastUpdated) : new Date();
 
   const backendCoins = Array.isArray(backendData.coins) ? backendData.coins : [];
-  const rezCoin = backendCoins.find((c: any) => c.type === 'rez');
+  const rezCoin = backendCoins.find((c) => c.type === 'rez');
   const promoData = backendData.promoCoins;
 
   // Resolve rez coin amount: prefer coin object, fall back to breakdown.rezCoins.amount
@@ -66,9 +123,9 @@ function transformWalletResponse(backendData: any, userId: string): WalletData {
 
   // Prefer the API's canonical totalValue (already includes all coin types).
   // Fall back to local sum only if totalValue is missing (older API versions).
-  const brandedCoinsData = Array.isArray(backendData.brandedCoins) ? backendData.brandedCoins : [];
+  const brandedCoinsData: BrandedCoinEntry[] = Array.isArray(backendData.brandedCoins) ? backendData.brandedCoins : [];
   const brandedCoinsTotal = backendData.brandedCoinsTotal
-    ?? brandedCoinsData.reduce((sum: number, bc: any) => sum + (bc.amount || 0), 0);
+    ?? brandedCoinsData.reduce((sum, bc) => sum + (bc.amount || 0), 0);
 
   // cashbackBalance: API returns it under balance.cashback OR breakdown.cashback
   const cashbackBalance =
@@ -119,10 +176,10 @@ interface WalletDataContextType {
   rezBalance: number;
   totalBalance: number;
   availableBalance: number;
-  brandedCoins: any[];
+  brandedCoins: BrandedCoinEntry[];
   savingsInsights: { totalSaved: number; thisMonth: number; avgPerVisit: number };
   refreshWallet: () => Promise<void>;
-  rawBackendData: any | null;
+  rawBackendData: RawWalletBackendData | null;
 }
 
 // Loading context — changes on loading transitions only
@@ -139,7 +196,7 @@ const WALLET_DATA_DEFAULTS: WalletDataContextType = {
   rezBalance: 0,
   totalBalance: 0,
   availableBalance: 0,
-  brandedCoins: [],
+  brandedCoins: [] as BrandedCoinEntry[],
   savingsInsights: { totalSaved: 0, thisMonth: 0, avgPerVisit: 0 },
   refreshWallet: async () => {},
   rawBackendData: null,
@@ -170,7 +227,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
   const isAuthenticated = useIsAuthenticated();
 
   const [walletData, setWalletData] = useState<WalletData | null>(null);
-  const [rawBackendData, setRawBackendData] = useState<any | null>(null);
+  const [rawBackendData, setRawBackendData] = useState<RawWalletBackendData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -206,9 +263,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
         if (response.success && response.data) {
           const userId = authUser?._id || authUser?.id || 'unknown';
-          const transformed = transformWalletResponse(response.data, userId);
+          const rawData = response.data as RawWalletBackendData;
+          const transformed = transformWalletResponse(rawData, userId);
           setWalletData(transformed);
-          setRawBackendData(response.data);
+          setRawBackendData(rawData);
           _walletLastFetch = Date.now();
         }
       } catch (error) {

@@ -137,6 +137,8 @@ function TrialBanner({
           style={styles.closeButton}
           onPress={onDismissWithStorage}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          accessibilityRole="button"
+          accessibilityLabel="Dismiss trial banner"
         >
           <Ionicons
             name="close-circle"
@@ -196,7 +198,8 @@ function TrialBanner({
               onUpgrade();
               onDismissWithStorage();
             }}
-           
+            accessibilityRole="button"
+            accessibilityLabel={`Upgrade now — ${daysRemaining} day${daysRemaining !== 1 ? 's' : ''} left in trial`}
           >
             <ThemedText style={styles.upgradeButtonText}>Upgrade Now</ThemedText>
             <Ionicons

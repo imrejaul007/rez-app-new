@@ -59,13 +59,46 @@ import {
   MIN_QUANTITY,
 } from '@/utils/cartValidation';
 
+// Typed variant shape for cart items
+export interface CartItemVariant {
+  id?: string;
+  name?: string;
+  sku?: string;
+  price?: number;
+  attributes?: Record<string, string>;
+}
+
+// Typed metadata for event/slot bookings carried in cart items
+export interface CartItemMetadata {
+  eventId?: string;
+  slotId?: string;
+  slotTime?: string;
+  eventType?: string;
+  location?: string;
+  date?: string;
+  time?: string;
+  [key: string]: string | number | boolean | undefined;
+}
+
+// Typed card/bank offer applied to the cart
+export interface CartCardOffer {
+  id?: string;
+  bankName?: string;
+  cardType?: string;
+  discountType?: 'flat' | 'percent';
+  discountValue?: number;
+  maxDiscount?: number;
+  minOrderValue?: number;
+  [key: string]: string | number | boolean | undefined;
+}
+
 // Extended cart item with quantity and selected state
 interface CartItemWithQuantity extends CartItemType {
   quantity: number;
   selected: boolean;
   addedAt: string;
   productId?: string;
-  variant?: any;
+  variant?: CartItemVariant | string;
   itemType?: 'product' | 'service' | 'event';
   serviceBookingDetails?: {
     bookingDate: Date | string | null;
@@ -77,7 +110,7 @@ interface CartItemWithQuantity extends CartItemType {
     customerPhone?: string;
     customerEmail?: string;
   } | null;
-  metadata?: any;
+  metadata?: CartItemMetadata | null;
 }
 
 interface DineInContext {
@@ -95,7 +128,7 @@ interface CartState {
   lastUpdated: string | null;
   isOnline: boolean;
   pendingSync: boolean;
-  appliedCardOffer?: any;
+  appliedCardOffer?: CartCardOffer;
   dineInContext?: DineInContext;
 }
 
@@ -112,7 +145,7 @@ type CartAction =
   | { type: 'CLEAR_ERROR' }
   | { type: 'SET_ONLINE_STATUS'; payload: boolean }
   | { type: 'SET_PENDING_SYNC'; payload: boolean }
-  | { type: 'SET_CARD_OFFER'; payload: any }
+  | { type: 'SET_CARD_OFFER'; payload: CartCardOffer }
   | { type: 'REMOVE_CARD_OFFER' }
   | { type: 'SET_DINE_IN_CONTEXT'; payload: DineInContext | undefined };
 
@@ -190,8 +223,10 @@ function cartReducer(state: CartState, action: CartAction): CartState {
       const existingItem = state.items.find(item => item.id === action.payload.id);
       let newItems: CartItemWithQuantity[];
 
-      // Preserve metadata from payload
-      const payloadMetadata = (action.payload as any).metadata;
+      // Preserve metadata from payload — CartItemType is the base type; metadata lives
+      // on CartItemWithQuantity which extends it, so we read via a typed intersection.
+      const payloadWithMeta = action.payload as CartItemType & { metadata?: CartItemMetadata };
+      const payloadMetadata = payloadWithMeta.metadata;
 
       if (existingItem) {
         // Validate quantity increase
@@ -389,7 +424,7 @@ interface CartContextType {
     getItemQuantity: (itemId: string) => number;
     applyCoupon: (couponCode: string) => Promise<void>;
     removeCoupon: () => Promise<void>;
-    setCardOffer: (offer: any) => Promise<void>;
+    setCardOffer: (offer: CartCardOffer) => Promise<void>;
     removeCardOffer: () => void;
     setDineInContext: (ctx: DineInContext | undefined) => void;
     syncWithServer: () => Promise<void>;
@@ -438,7 +473,28 @@ export function CartProvider({ children }: CartProviderProps) {
           const mappedCart = mapBackendCartToFrontend(response.data);
 
           // Convert to CartItemWithQuantity format
-          const cartItems: CartItemWithQuantity[] = mappedCart.items.map((item: any) => {
+          // mapBackendCartToFrontend returns `any`; apply a typed shape here so the map
+          // callback is fully typed without touching the shared mapper function.
+          interface MappedCartItemShape {
+            id: string;
+            productId?: string;
+            name: string;
+            image?: string | { uri?: string };
+            price?: number;
+            originalPrice?: number;
+            discount?: number;
+            lockedQuantity?: number;
+            quantity: number;
+            addedAt?: string;
+            store?: unknown;
+            variant?: CartItemVariant | string;
+            subtotal?: number;
+            savings?: number;
+            itemType?: 'product' | 'service' | 'event';
+            serviceBookingDetails?: CartItemWithQuantity['serviceBookingDetails'];
+            metadata?: CartItemMetadata | null;
+          }
+          const cartItems: CartItemWithQuantity[] = (mappedCart.items as MappedCartItemShape[]).map((item) => {
 
             return {
               id: item.id,
@@ -512,7 +568,7 @@ export function CartProvider({ children }: CartProviderProps) {
       productId: item.productId,
       name: item.name,
       // Store only essential image data (URL only, no full image objects)
-      image: typeof item.image === 'string' ? item.image : (item.image as any)?.uri || '',
+      image: typeof item.image === 'string' ? item.image : (item.image as { uri?: string } | null | undefined)?.uri ?? '',
       price: item.price || item.discountedPrice, // Current price
       originalPrice: item.originalPrice,
       discountedPrice: item.discountedPrice,
@@ -610,8 +666,8 @@ export function CartProvider({ children }: CartProviderProps) {
 
   const addItem = async (item: CartItemType) => {
     try {
-      // Extract metadata for event handling
-      const itemMetadata = (item as any).metadata;
+      // Extract metadata for event handling — CartItemWithQuantity extends CartItemType with metadata
+      const itemMetadata = (item as CartItemType & { metadata?: CartItemMetadata }).metadata;
 
       // Invalidate cache on cart add
       await (await getCacheService()).invalidateByEvent({ type: 'cart:add' });
@@ -722,7 +778,7 @@ export function CartProvider({ children }: CartProviderProps) {
         try {
           // For events, extract the actual eventId from metadata
           // The item.id might be "eventId_slotId" format, but backend needs just eventId
-          const itemMetadata = (item as any).metadata;
+          const itemMetadata = (item as CartItemType & { metadata?: CartItemMetadata }).metadata;
           let productIdForBackend = item.id;
           
           // ALWAYS extract from composite ID if it contains underscore
@@ -1002,7 +1058,7 @@ export function CartProvider({ children }: CartProviderProps) {
     }
   };
 
-  const setCardOffer = useCallback(async (offer: any) => {
+  const setCardOffer = useCallback(async (offer: CartCardOffer) => {
     try {
       dispatch({ type: 'SET_CARD_OFFER', payload: offer });
       

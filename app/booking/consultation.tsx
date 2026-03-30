@@ -60,6 +60,8 @@ function ConsultationBookingScreen() {
         <Pressable
           onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
           style={styles.backButton}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
         >
           <ThemedText style={(styles as any).backButtonText}>Go Back</ThemedText>
         </Pressable>
@@ -290,6 +292,8 @@ function ConsultationBookingScreen() {
             <Pressable
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               style={styles.backButton}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
@@ -312,6 +316,8 @@ function ConsultationBookingScreen() {
             <Pressable
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               style={styles.backButton}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
@@ -323,6 +329,8 @@ function ConsultationBookingScreen() {
             <Pressable
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               style={styles.errorButton}
+              accessibilityRole="button"
+              accessibilityLabel="Go back to previous screen"
             >
               <Text style={styles.errorButtonText}>Go Back</Text>
             </Pressable>
@@ -344,6 +352,8 @@ function ConsultationBookingScreen() {
             <Pressable
               onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               style={styles.backButton}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
             >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
@@ -375,6 +385,9 @@ function ConsultationBookingScreen() {
                       selectedConsultation === type.id && styles.consultationCardSelected,
                     ]}
                     onPress={() => setSelectedConsultation(type.id)}
+                    accessibilityRole="radio"
+                    accessibilityLabel={`${type.name} consultation type`}
+                    accessibilityState={{ selected: selectedConsultation === type.id }}
                   >
                     <View style={[styles.consultationIcon, { backgroundColor: type.color + '20' }]}>
                       <Ionicons name={type.icon} size={24} color={type.color} />
@@ -416,6 +429,9 @@ function ConsultationBookingScreen() {
                       setSelectedDate(date);
                       setSelectedTime(null); // Reset time when date changes
                     }}
+                    accessibilityRole="radio"
+                    accessibilityLabel={`Select date ${formatDate(date)}`}
+                    accessibilityState={{ selected: selectedDate?.toDateString() === date.toDateString() }}
                   >
                     <Text
                       style={[
@@ -465,6 +481,9 @@ function ConsultationBookingScreen() {
                         ]}
                         onPress={() => slot.available && setSelectedTime(slot.time)}
                         disabled={!slot.available}
+                        accessibilityRole="radio"
+                        accessibilityLabel={slot.available ? `${slot.time} available` : `${slot.time} unavailable`}
+                        accessibilityState={{ selected: selectedTime === slot.time, disabled: !slot.available }}
                       >
                         <Text
                           style={[
@@ -502,6 +521,7 @@ function ConsultationBookingScreen() {
                   placeholderTextColor={colors.text.tertiary}
                   value={patientName}
                   onChangeText={setPatientName}
+                  accessibilityLabel="Patient full name"
                 />
               </View>
 
@@ -515,6 +535,7 @@ function ConsultationBookingScreen() {
                     value={age}
                     onChangeText={setAge}
                     keyboardType="numeric"
+                    accessibilityLabel="Patient age"
                   />
                 </View>
 
@@ -527,6 +548,7 @@ function ConsultationBookingScreen() {
                     value={phoneNumber}
                     onChangeText={setPhoneNumber}
                     keyboardType="phone-pad"
+                    accessibilityLabel="Patient phone number"
                   />
                 </View>
               </View>
@@ -541,6 +563,7 @@ function ConsultationBookingScreen() {
                   onChangeText={setEmail}
                   keyboardType="email-address"
                   autoCapitalize="none"
+                  accessibilityLabel="Patient email address (optional)"
                 />
               </View>
 
@@ -554,6 +577,7 @@ function ConsultationBookingScreen() {
                   onChangeText={setReason}
                   multiline
                   numberOfLines={4}
+                  accessibilityLabel="Reason for consultation"
                 />
               </View>
 
@@ -567,6 +591,7 @@ function ConsultationBookingScreen() {
                   onChangeText={setMedicalHistory}
                   multiline
                   numberOfLines={4}
+                  accessibilityLabel="Medical history, allergies, or current medications (optional)"
                 />
               </View>
             </View>
@@ -617,6 +642,13 @@ function ConsultationBookingScreen() {
             <Pressable
               onPress={handleConfirmBooking}
               disabled={isSubmitting || !selectedConsultation || !selectedDate || !selectedTime}
+              accessibilityRole="button"
+              accessibilityLabel={
+                selectedConsultationType && selectedDate && selectedTime
+                  ? `Confirm ${selectedConsultationType.name} consultation on ${formatDate(selectedDate)} at ${selectedTime}`
+                  : 'Confirm consultation — select type, date and time first'
+              }
+              accessibilityState={{ disabled: isSubmitting || !selectedConsultation || !selectedDate || !selectedTime }}
             >
               <LinearGradient
                 colors={
