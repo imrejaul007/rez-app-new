@@ -19,8 +19,6 @@ import { ThemedText } from '@/components/ThemedText';
 import { ACCOUNT_COLORS } from '@/types/account.types';
 import { useGetCurrencySymbol } from '@/stores/selectors';
 import { platformAlertSimple, platformAlertConfirm } from '@/utils/platformAlert';
-import paymentService from '@/services/paymentService';
-import walletApi from '@/services/walletApi';
 import analytics from '@/services/analytics/AnalyticsService';
 import { ANALYTICS_EVENTS } from '@/services/analytics/events';
 import { useIsMounted } from '@/hooks/useIsMounted';
