@@ -359,14 +359,14 @@ function RechargePage() {
             <Text style={styles.countryCode}>{selectedOperator?.countryCode || regionPhonePrefix}</Text>
             <TextInput
               style={styles.input}
-              placeholder="Enter 10-digit mobile number"
+              placeholder="Enter mobile number"
               placeholderTextColor={COLORS.textSecondary}
               keyboardType="phone-pad"
-              maxLength={10}
+              maxLength={15}
               value={mobileNumber}
               onChangeText={setMobileNumber}
             />
-            {mobileNumber.length === 10 && <Ionicons name="checkmark-circle" size={24} color={COLORS.primaryGreen} />}
+            {mobileNumber.length >= 7 && <Ionicons name="checkmark-circle" size={24} color={COLORS.primaryGreen} />}
           </View>
         </View>
 
