@@ -1,3 +1,5 @@
+// TODO Phase 7: import { OrderStatus, normalizeOrderStatus } from '@rez/shared';
+// Replace string-literal status comparisons (e.g. status === 'confirmed') with the shared OrderStatus type.
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Linking } from 'react-native';

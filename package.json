@@ -29,6 +29,7 @@
     "format": "prettier --write 'app/**/*.ts' 'app/**/*.tsx'"
   },
   "dependencies": {
+    "@rez/shared": "../../packages/rez-shared",
     "@expo-google-fonts/inter": "^0.4.2",
     "@expo-google-fonts/poppins": "^0.4.1",
     "@expo/vector-icons": "^14.1.0",
