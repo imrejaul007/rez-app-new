@@ -11,6 +11,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // OG-D005/OG-D006 FIX: Register every fetch's AbortController so the
 // app-level background listener can cancel in-flight requests on OS kill.
 import { requestRegistry } from '@/utils/requestRegistry';
+import { useSubscriptionStore } from '@/stores/subscriptionStore';
+import { usePriveStore } from '@/stores/priveStore';
 
 // Cached device fingerprint (loaded once, reused for all requests)
 let _cachedDeviceFingerprint: string | null = null;
@@ -421,8 +423,6 @@ class ApiClient {
 
       // Report API errors to Sentry with tier tags for filtering
       try {
-        const { useSubscriptionStore } = require('@/stores/subscriptionStore');
-        const { usePriveStore } = require('@/stores/priveStore');
         const subComputed = useSubscriptionStore.getState().computed;
         const priveEligibility = usePriveStore.getState().eligibility;
 

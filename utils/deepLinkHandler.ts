@@ -9,6 +9,22 @@ interface DeepLinkData {
   data: any;
 }
 
+// Allowlist validators — prevent path traversal and injection via crafted deep links
+const MONGO_ID_RE = /^[a-f0-9]{24}$/i;
+const REFERRAL_CODE_RE = /^[A-Z0-9]{4,20}$/;
+
+function sanitizeMongoId(value: string | undefined): string | null {
+  if (!value) return null;
+  const clean = value.split('?')[0].split('#')[0].trim();
+  return MONGO_ID_RE.test(clean) ? clean : null;
+}
+
+function sanitizeReferralCode(value: string | undefined): string | null {
+  if (!value) return null;
+  const clean = value.split('?')[0].split('#')[0].trim().toUpperCase();
+  return REFERRAL_CODE_RE.test(clean) ? clean : null;
+}
+
 export class DeepLinkHandler {
   /**
    * Parse deep link URL
@@ -22,41 +38,37 @@ export class DeepLinkHandler {
       // Handle referral links: /invite/ABC123 or /ref/ABC123
       if (hostname === 'invite' || hostname === 'ref' ||
           path?.includes('/invite/') || path?.includes('/ref/')) {
-        const code = path?.split(/\/(?:invite|ref)\//)[1] || hostname;
+        const raw = path?.split(/\/(?:invite|ref)\//)[1] || hostname;
+        const code = sanitizeReferralCode(raw);
+        if (!code) return { type: 'unknown', data: { url } };
         return {
           type: 'referral',
-          data: {
-            code: code?.toUpperCase(),
-            source: queryParams?.source || 'direct'
-          }
+          data: { code, source: queryParams?.source || 'direct' }
         };
       }
 
-      // Handle product links: rez://product/123
+      // Handle product links: rezapp://product/123
       if (hostname === 'product' || path?.includes('/product/')) {
-        const productId = path?.split('/product/')[1] || hostname;
-        return {
-          type: 'product',
-          data: { productId }
-        };
+        const raw = path?.split('/product/')[1] || hostname;
+        const productId = sanitizeMongoId(raw);
+        if (!productId) return { type: 'unknown', data: { url } };
+        return { type: 'product', data: { productId } };
       }
 
-      // Handle store links: rez://store/456
+      // Handle store links: rezapp://store/456
       if (hostname === 'store' || path?.includes('/store/')) {
-        const storeId = path?.split('/store/')[1] || hostname;
-        return {
-          type: 'store',
-          data: { storeId }
-        };
+        const raw = path?.split('/store/')[1] || hostname;
+        const storeId = sanitizeMongoId(raw);
+        if (!storeId) return { type: 'unknown', data: { url } };
+        return { type: 'store', data: { storeId } };
       }
 
-      // Handle offer links: rez://offer/789
+      // Handle offer links: rezapp://offer/789
       if (hostname === 'offer' || path?.includes('/offer/')) {
-        const offerId = path?.split('/offer/')[1] || hostname;
-        return {
-          type: 'offer',
-          data: { offerId }
-        };
+        const raw = path?.split('/offer/')[1] || hostname;
+        const offerId = sanitizeMongoId(raw);
+        if (!offerId) return { type: 'unknown', data: { url } };
+        return { type: 'offer', data: { offerId } };
       }
 
       return {

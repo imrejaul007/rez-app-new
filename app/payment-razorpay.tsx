@@ -188,7 +188,9 @@ function PaymentPage() {
 
   const handleMethodSelect = (method: PaymentMethod) => {
     setSelectedMethod(method);
-    handleRazorpayPayment();
+    // Pass method directly — setSelectedMethod is async; reading selectedMethod
+    // state inside handleRazorpayPayment immediately after would be stale.
+    handleRazorpayPayment(method);
   };
 
   // ==================== RAZORPAY FLOW ====================
@@ -275,7 +277,7 @@ function PaymentPage() {
     }
   };
 
-  const handleRazorpayPayment = async () => {
+  const handleRazorpayPayment = async (_method?: PaymentMethod) => {
     setCurrentStep('processing');
     setIsProcessing(true);
 

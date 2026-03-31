@@ -98,7 +98,13 @@ function RootLayout() {
       const apiUrl = process.env.EXPO_PUBLIC_API_BASE_URL || 'https://api.rezapp.com';
       const resp = await fetch(`${apiUrl}/config/app-status`, { signal: controller.signal });
       clearTimeout(timeoutId);
-      const json = await resp.json();
+      let json: any;
+      try {
+        json = await resp.json();
+      } catch {
+        logger.debug('[AppStatus] Response was not valid JSON', undefined, 'AppStatus');
+        return;
+      }
       const data = json?.data;
 
       if (data?.maintenanceMode) {
