@@ -4,6 +4,7 @@
  */
 
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import { Platform } from 'react-native';
 import { ENV } from './env';
 import { getAuthToken, clearAuthData } from '../utils/authStorage';
 
@@ -15,16 +16,21 @@ export const apiClient: AxiosInstance = axios.create({
     'Content-Type': 'application/json',
     'Accept': 'application/json',
   },
+  // Phase 6: send httpOnly cookies on web for cookie-based auth
+  withCredentials: Platform.OS === 'web',
 });
 
 // Request interceptor to add authentication token
 apiClient.interceptors.request.use(
   async (config: AxiosRequestConfig) => {
     try {
-      // Add auth token if available
-      const token = await getAuthToken();
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
+      // Phase 6: on web, auth is via httpOnly cookies (withCredentials:true above).
+      // Bearer injection from localStorage is native-only to avoid dual-auth paths.
+      if (Platform.OS !== 'web') {
+        const token = await getAuthToken();
+        if (token && config.headers) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
       }
 
       // Add debug logging in development

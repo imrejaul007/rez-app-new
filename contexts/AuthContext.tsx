@@ -628,6 +628,25 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         authStorage.getUser(),
       ]);
 
+      // Phase 6 web path: on web, access token is in an httpOnly cookie (not readable
+      // from JS). storedToken is null, but a valid server session may still exist.
+      // Validate via getProfile() which sends the cookie automatically (withCredentials).
+      if (!storedToken && typeof window !== 'undefined') {
+        const profileResp = await authService.getProfile().catch(() => null);
+        if (profileResp?.success && profileResp.data) {
+          clearTimeout(authTimeout);
+          // Do NOT call apiClient.setAuthToken — cookie handles auth on web.
+          // Setting a sentinel would inject a fake Bearer header and break requests.
+          dispatch({ type: 'AUTH_SUCCESS', payload: { user: profileResp.data, token: 'cookie-session' } });
+          setHasExplicitlyLoggedOut(false);
+          return;
+        }
+        // No valid cookie session — fall through to AUTH_LOGOUT below.
+        clearTimeout(authTimeout);
+        dispatch({ type: 'AUTH_LOGOUT' });
+        return;
+      }
+
       // Only show loading spinner if there's nothing in storage to restore from.
       // When stored credentials exist, we can restore synchronously without a flash.
       if (!storedToken || !storedUser) {

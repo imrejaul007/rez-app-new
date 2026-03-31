@@ -134,30 +134,28 @@ async function nativeDelete(key: string): Promise<void> {
 
 /**
  * Save auth token
- * On web: localStorage only
+ * Phase 6: On web, httpOnly cookies manage auth — skip localStorage write.
+ *           getAuthToken() still reads localStorage for backward compat (old sessions continue until re-login).
  * On native: SecureStore only
  */
 export async function saveAuthToken(token: string): Promise<void> {
   if (isWeb) {
-    if (hasLocalStorage) {
-      window.localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, token);
-    }
-  } else {
-    await nativeSet(STORAGE_KEYS.ACCESS_TOKEN, token);
+    // Phase 6: cookies handle auth on web — do not write to localStorage
+    return;
   }
+  await nativeSet(STORAGE_KEYS.ACCESS_TOKEN, token);
 }
 
 /**
  * Save refresh token
+ * Phase 6: On web, httpOnly cookies manage refresh — skip localStorage write.
  */
 export async function saveRefreshToken(token: string): Promise<void> {
   if (isWeb) {
-    if (hasLocalStorage) {
-      window.localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, token);
-    }
-  } else {
-    await nativeSet(STORAGE_KEYS.REFRESH_TOKEN, token);
+    // Phase 6: cookies handle refresh on web — do not write to localStorage
+    return;
   }
+  await nativeSet(STORAGE_KEYS.REFRESH_TOKEN, token);
 }
 
 /**
@@ -181,13 +179,11 @@ export async function saveUser(user: any): Promise<void> {
  */
 export async function getAuthToken(): Promise<string | null> {
   try {
-    if (isWeb) {
-      if (hasLocalStorage) {
-        const localStorageToken = window.localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
-        if (localStorageToken) return localStorageToken;
-      }
-      return null;
-    }
+    // Phase 6: web auth is fully cookie-based — do not read from localStorage.
+    // New sessions never write tokens here (saveAuthToken is a no-op on web),
+    // so any localStorage token is from a pre-migration session. Returning null
+    // forces re-login which issues a proper httpOnly cookie.
+    if (isWeb) return null;
     return await nativeGet(STORAGE_KEYS.ACCESS_TOKEN);
   } catch (_error) {
     return null;
@@ -199,13 +195,8 @@ export async function getAuthToken(): Promise<string | null> {
  */
 export async function getRefreshToken(): Promise<string | null> {
   try {
-    if (isWeb) {
-      if (hasLocalStorage) {
-        const localStorageToken = window.localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN);
-        if (localStorageToken) return localStorageToken;
-      }
-      return null;
-    }
+    // Phase 6: web refresh is cookie-based — skip localStorage read.
+    if (isWeb) return null;
     return await nativeGet(STORAGE_KEYS.REFRESH_TOKEN);
   } catch (_error) {
     return null;
@@ -263,18 +254,20 @@ export async function clearAuthData(): Promise<void> {
 
 /**
  * Save all auth data at once
- * On web: localStorage only
+ * Phase 6: On web, httpOnly cookies manage tokens — only user data is persisted (non-sensitive).
+ *           Token writes are skipped; getAuthToken() reads are kept for backward compat.
  * On native: SecureStore only
  */
 export async function saveAuthData(accessToken: string, refreshToken: string, user: any): Promise<void> {
   const userString = JSON.stringify(user);
 
   if (isWeb) {
+    // Phase 6: skip token writes on web — cookies handle auth
+    // Only persist user data so UI can show name/avatar without re-fetching
     if (hasLocalStorage) {
-      window.localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, accessToken);
-      window.localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, refreshToken);
       window.localStorage.setItem(STORAGE_KEYS.USER, userString);
     }
+    return;
   } else {
     // Write all three keys. If any write fails, clean up all keys so we never
     // leave partial auth state (e.g. token saved but user data missing).
