@@ -12,7 +12,7 @@ import {
   spacing as Spacing,
   borderRadius as BorderRadius,
   shadows as Shadows,
-  typography as Typography,
+  typography as baseTypography,
   timing as Timing,
   iconSize as IconSize,
   opacity as Opacity,
@@ -40,6 +40,26 @@ export const Colors = {
   warning: '#FF9F1C',
   info: '#1a3a52',
   gold: '#ffcd57',
+  // Flat string aliases for commonly used nested color values
+  text: '#1a3a52',
+  textSecondary: '#2A5577',
+  white: '#FFFFFF',
+  primary: '#ffcd57',
+  primaryDark: '#E6B84E',
+  surfaceLight: '#faf1e0',
+} as const;
+
+// Typography with legacy naming aliases used in campaign and game screens.
+// theme.ts uses h1/h2/h3/bodyLarge/body/bodySmall; older code uses heading2/heading3/body1/body2.
+export const Typography = {
+  ...baseTypography,
+  // Legacy aliases
+  heading1: baseTypography.h1,
+  heading2: baseTypography.h2,
+  heading3: baseTypography.h3,
+  heading4: baseTypography.h4,
+  body1: baseTypography.bodyLarge,
+  body2: baseTypography.body,
 } as const;
 
 export {
@@ -47,7 +67,6 @@ export {
   Spacing,
   BorderRadius,
   Shadows,
-  Typography,
   Timing,
   IconSize,
   Opacity,

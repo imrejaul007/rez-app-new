@@ -1,4 +1,4 @@
-import { normalizeOrderStatus } from '../../utils/statusCompat';
+import { normalizeOrderStatus } from '@imrejaul007/rez-shared';
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, ActivityIndicator, Linking } from 'react-native';

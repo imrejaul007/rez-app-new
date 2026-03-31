@@ -99,7 +99,7 @@ function CampaignSubmitScreen() {
   const isValid = selectedPlatform && postUrl.startsWith('https://');
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
       <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
 
       {/* Header */}

@@ -43,8 +43,8 @@ function CampaignStatusScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={Colors.text} />
@@ -61,8 +61,8 @@ function CampaignStatusScreen() {
 
   if (error || !status) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={Colors.text} />
@@ -70,11 +70,7 @@ function CampaignStatusScreen() {
           <Text style={styles.headerTitle}>Submission Status</Text>
           <View style={{ width: 24 }} />
         </View>
-        <ErrorState
-          title="Failed to load status"
-          message="Please try again"
-          onRetry={refetch}
-        />
+        <ErrorState title="Failed to load status" message="Please try again" onRetry={refetch} />
       </SafeAreaView>
     );
   }
@@ -115,8 +111,8 @@ function CampaignStatusScreen() {
   ];
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -142,25 +138,13 @@ function CampaignStatusScreen() {
             {timelineSteps.map((step, idx) => (
               <React.Fragment key={idx}>
                 <View style={styles.timelineItem}>
-                  <View
-                    style={[
-                      styles.timelineItemDot,
-                      step.completed && styles.timelineItemDotCompleted,
-                    ]}
-                  >
-                    {step.completed && (
-                      <Ionicons name="checkmark" size={12} color={Colors.white} />
-                    )}
+                  <View style={[styles.timelineItemDot, step.completed && styles.timelineItemDotCompleted]}>
+                    {step.completed && <Ionicons name="checkmark" size={12} color={Colors.white} />}
                   </View>
                   <Text style={styles.timelineItemLabel}>{step.label}</Text>
                 </View>
                 {idx < timelineSteps.length - 1 && (
-                  <View
-                    style={[
-                      styles.timelineConnector,
-                      step.completed && styles.timelineConnectorCompleted,
-                    ]}
-                  />
+                  <View style={[styles.timelineConnector, step.completed && styles.timelineConnectorCompleted]} />
                 )}
               </React.Fragment>
             ))}
@@ -194,9 +178,7 @@ function CampaignStatusScreen() {
                   </View>
                   <View style={styles.coinsInfo}>
                     <Text style={styles.coinsLabel}>Coins Earned</Text>
-                    <Text style={styles.coinsAmount}>
-                      +{status.coinsEarned} coins
-                    </Text>
+                    <Text style={styles.coinsAmount}>+{status.coinsEarned} coins</Text>
                   </View>
                 </View>
                 <Text style={styles.coinsExpiry}>Valid for {status.expiryDays} days</Text>
@@ -212,44 +194,31 @@ function CampaignStatusScreen() {
             <View style={styles.nextStepsBox}>
               <View style={styles.nextStepItem}>
                 <Ionicons name="timer" size={20} color={Colors.primary} />
-                <Text style={styles.nextStepText}>
-                  Usually reviewed within 48 hours
-                </Text>
+                <Text style={styles.nextStepText}>Usually reviewed within 48 hours</Text>
               </View>
               <View style={styles.nextStepItem}>
                 <Ionicons name="notifications" size={20} color={Colors.primary} />
-                <Text style={styles.nextStepText}>
-                  We'll notify you when a decision is made
-                </Text>
+                <Text style={styles.nextStepText}>We'll notify you when a decision is made</Text>
               </View>
             </View>
           ) : status.status === 'approved' ? (
             <View style={styles.nextStepsBox}>
               <View style={styles.nextStepItem}>
                 <Ionicons name="checkmark" size={20} color={Colors.success} />
-                <Text style={styles.nextStepText}>
-                  Coins have been added to your Privé wallet
-                </Text>
+                <Text style={styles.nextStepText}>Coins have been added to your Privé wallet</Text>
               </View>
               <View style={styles.nextStepItem}>
                 <Ionicons name="share-social" size={20} color={Colors.primary} />
-                <Text style={styles.nextStepText}>
-                  Share your achievement on other campaigns
-                </Text>
+                <Text style={styles.nextStepText}>Share your achievement on other campaigns</Text>
               </View>
             </View>
           ) : (
             <View style={styles.nextStepsBox}>
               <View style={styles.nextStepItem}>
                 <Ionicons name="arrow-forward" size={20} color={Colors.primary} />
-                <Text style={styles.nextStepText}>
-                  You can try submitting to other campaigns
-                </Text>
+                <Text style={styles.nextStepText}>You can try submitting to other campaigns</Text>
               </View>
-              <Pressable
-                onPress={() => router.back()}
-                style={styles.tryAgainButton}
-              >
+              <Pressable onPress={() => router.back()} style={styles.tryAgainButton}>
                 <Text style={styles.tryAgainButtonText}>Browse More Campaigns</Text>
               </Pressable>
             </View>
@@ -261,10 +230,7 @@ function CampaignStatusScreen() {
       <View style={styles.footer}>
         <Pressable
           onPress={() => router.push('/prive')}
-          style={({ pressed }) => [
-            styles.ctaButton,
-            pressed && { opacity: 0.8 },
-          ]}
+          style={({ pressed }) => [styles.ctaButton, pressed && { opacity: 0.8 }]}
         >
           <LinearGradient
             colors={[Colors.primary, Colors.primaryDark]}
@@ -286,7 +252,7 @@ export default withErrorBoundary(CampaignStatusScreen, 'PriveCampaignsStatus');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -295,7 +261,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.border.default,
   },
   headerTitle: {
     ...Typography.heading3,
@@ -349,7 +315,7 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: colors.border,
+    backgroundColor: colors.border.default,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -363,7 +329,7 @@ const styles = StyleSheet.create({
   timelineConnector: {
     height: 20,
     width: 2,
-    backgroundColor: colors.border,
+    backgroundColor: colors.border.default,
     marginLeft: 9,
     marginVertical: 0,
   },
@@ -455,8 +421,8 @@ const styles = StyleSheet.create({
   footer: {
     padding: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
-    backgroundColor: colors.background,
+    borderTopColor: colors.border.default,
+    backgroundColor: colors.background.primary,
   },
   ctaButton: {
     borderRadius: BorderRadius.md,
