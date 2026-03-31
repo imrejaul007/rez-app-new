@@ -276,6 +276,10 @@ class ApiClient {
         method,
         headers: requestHeaders,
         signal: controller.signal,
+        // Phase 6: On web (browser), send httpOnly cookies cross-origin so the backend
+        // can authenticate via the rez_access_token cookie set on login.
+        // On native, this has no effect — native fetch ignores the credentials option.
+        credentials: Platform.OS === 'web' ? 'include' : 'same-origin',
       };
 
       // Add body for non-GET requests

@@ -1,11 +1,19 @@
 /**
  * Auth Storage Utilities
  * Handles auth token storage for both web and native platforms
- * - Web: localStorage
+ * - Web: localStorage (see Phase 6 note below)
  * - Native: expo-secure-store (encrypted keychain/keystore)
  *
  * Migration: Users upgrading from AsyncStorage-only will have tokens migrated
  * on first read, then removed from AsyncStorage.
+ *
+ * Phase 6: Web-mode sessions now use httpOnly cookies set by the backend (rez_access_token).
+ * localStorage token storage is retained for native builds only.
+ * On web (Platform.OS === 'web'), tokens should come from cookies, not localStorage.
+ * TODO: Gate localStorage reads/writes behind Platform.OS !== 'web' check once all web
+ * users have been migrated to cookie sessions. For now, the web-mode localStorage path
+ * is inert because the apiClient uses credentials:'include' and the backend validates
+ * the cookie before falling back to the Authorization header.
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
