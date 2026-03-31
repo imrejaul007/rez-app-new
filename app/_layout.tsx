@@ -85,7 +85,9 @@ function RootLayout() {
   }, []);
 
   useEffect(() => {
-    installProductionConsoleGuard();
+    // LOW-9: installProductionConsoleGuard() is now called at module load time
+    // in utils/logger.ts so it runs before any module-level logs. The call here
+    // is removed to avoid double-installation.
     checkAppStatus();
   }, []);
 

@@ -4,6 +4,7 @@
 import { Platform } from 'react-native';
 import { parseConnectionError, formatConnectionError, isConnectionError } from '@/utils/connectionUtils';
 import { Sentry } from '@/config/sentry';
+import { API_CONFIG as ENV_API_CONFIG } from '@/config/env';
 import { globalDeduplicator, createRequestKey } from '@/utils/requestDeduplicator';
 import { globalConcurrencyLimiter } from '@/utils/concurrencyLimiter';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -230,7 +231,7 @@ class ApiClient {
       method = 'GET',
       headers = {},
       body,
-      timeout = 8000
+      timeout = ENV_API_CONFIG.timeout
     } = options;
 
     const url = `${this.baseURL}${endpoint}`;
@@ -361,10 +362,13 @@ class ApiClient {
             if (this.refreshTokenCallback && !this.isLoggingOut) {
               const refreshSuccess = await this.handleTokenRefresh();
               if (refreshSuccess) {
-                // A 401 means auth middleware rejected the request BEFORE the handler ran —
-                // the server never processed the original action. It is therefore safe to
-                // retry ALL methods (including POST/PUT/PATCH/DELETE) with the new token.
-                return this.makeRequest<T>(endpoint, options);
+                // Only retry idempotent methods (GET, HEAD) after a token refresh.
+                // For mutating methods (POST, PUT, PATCH, DELETE), the server may have
+                // partially processed the request before the 401 was returned, so
+                // retrying blindly risks duplicate mutations or inconsistent state.
+                if (method === 'GET' || method === 'HEAD') {
+                  return this.makeRequest<T>(endpoint, options);
+                }
               }
             }
 

@@ -155,11 +155,13 @@ class PushNotificationService {
   /**
    * Register push token with backend
    */
-  private async registerTokenWithBackend(token: string, userId: string): Promise<void> {
+  private async registerTokenWithBackend(token: string, _userId: string): Promise<void> {
     try {
+      // MED-6: userId is NOT sent in the request body — the backend derives user
+      // identity from the JWT in the Authorization header. Sending userId from the
+      // client allows spoofing (a user could register another user's token).
       const response = await apiClient.post('/notifications/register-token', {
         token,
-        userId,
         platform: Platform.OS,
         deviceInfo: {
           brand: Device.brand,

@@ -1183,9 +1183,13 @@ class MockOffersApi implements OffersApiEndpoints {
 // Import real API
 import realOffersApi from './realOffersApi';
 
-// Export the API instance - Switch between mock and real
-const USE_REAL_API = process.env.EXPO_PUBLIC_MOCK_API !== 'true';
-export const offersApi = USE_REAL_API ? realOffersApi : new MockOffersApi();
+// MED-4: Only instantiate MockOffersApi when EXPO_PUBLIC_MOCK_API is explicitly 'true'.
+// In all other environments the real API is used and the mock class is never instantiated.
+// Note: bundlers (Metro, Webpack) cannot statically tree-shake the class definition above
+// because it is referenced by name here. To fully exclude it from production bundles,
+// move MockOffersApi to a separate file and import it conditionally in a future refactor.
+const USE_MOCK_API = process.env.EXPO_PUBLIC_MOCK_API === 'true';
+export const offersApi = USE_MOCK_API ? new MockOffersApi() : realOffersApi;
 
 // Export utilities
 export { API_CONFIG, offersCache, categoriesCache, userCache };

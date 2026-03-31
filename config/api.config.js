@@ -1,3 +1,4 @@
+// NOTE: This file is not used by the active API client (services/apiClient.ts). Do not edit expecting runtime effects.
 // API Configuration for REZ App
 // This file centralizes all API configuration
 

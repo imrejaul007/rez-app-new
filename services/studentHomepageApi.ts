@@ -150,64 +150,51 @@ const PLACEHOLDER_MICRO_PACKS: StudentMicroPack[] = [
 
 /**
  * Fetch trending merchants near campus, sorted by student_booking_count.
- *
- * TODO: Replace placeholder with real API call:
- *   GET /api/homepage/campus-trending?campusId={campusId}
+ * Calls GET /api/homepage/campus-trending?campusId={campusId}
+ * Falls back to placeholder data if the backend endpoint is not yet live.
  */
 export async function getCampusTrending(campusId: string): Promise<CampusTrendingItem[]> {
-  try {
-    const response = await apiClient.get<{ items: CampusTrendingItem[] }>(
-      `/homepage/campus-trending?campusId=${campusId}`
-    );
-    if (response.success && response.data?.items) {
-      return response.data.items;
-    }
-  } catch {
-    // Fall through to placeholder
+  const response = await apiClient.get<{ items: CampusTrendingItem[] }>(
+    `/homepage/campus-trending`,
+    { campusId }
+  );
+  if (response.success && response.data?.items) {
+    return response.data.items;
   }
-  // TODO: Remove placeholder once backend is live
+  // MED-5: Temporary fallback until backend endpoint is live. Remove once /homepage/campus-trending is deployed.
   return PLACEHOLDER_CAMPUS_TRENDING;
 }
 
 /**
  * Fetch student utility deals near given location.
- *
- * TODO: Replace placeholder with real API call:
- *   GET /api/homepage/student-utility?lat={lat}&lng={lng}
+ * Calls GET /api/homepage/student-utility?lat={lat}&lng={lng}
+ * Falls back to placeholder data if the backend endpoint is not yet live.
  */
 export async function getStudentUtilityDeals(lat: number, lng: number): Promise<StudentUtilityDeal[]> {
-  try {
-    const response = await apiClient.get<{ items: StudentUtilityDeal[] }>(
-      `/homepage/student-utility?lat=${lat}&lng=${lng}`
-    );
-    if (response.success && response.data?.items) {
-      return response.data.items;
-    }
-  } catch {
-    // Fall through to placeholder
+  const response = await apiClient.get<{ items: StudentUtilityDeal[] }>(
+    `/homepage/student-utility`,
+    { lat, lng }
+  );
+  if (response.success && response.data?.items) {
+    return response.data.items;
   }
-  // TODO: Remove placeholder once backend is live
+  // MED-5: Temporary fallback until backend endpoint is live. Remove once /homepage/student-utility is deployed.
   return PLACEHOLDER_UTILITY_DEALS;
 }
 
 /**
  * Fetch micro prepaid pack configurations.
- *
- * TODO: Replace placeholder with real API call:
- *   GET /api/homepage/student-packs
+ * Calls GET /api/homepage/student-packs
+ * Falls back to placeholder data if the backend endpoint is not yet live.
  */
 export async function getStudentMicroPacks(): Promise<StudentMicroPack[]> {
-  try {
-    const response = await apiClient.get<{ packs: StudentMicroPack[] }>(
-      '/homepage/student-packs'
-    );
-    if (response.success && response.data?.packs) {
-      return response.data.packs;
-    }
-  } catch {
-    // Fall through to placeholder
+  const response = await apiClient.get<{ packs: StudentMicroPack[] }>(
+    '/homepage/student-packs'
+  );
+  if (response.success && response.data?.packs) {
+    return response.data.packs;
   }
-  // TODO: Remove placeholder once backend is live
+  // MED-5: Temporary fallback until backend endpoint is live. Remove once /homepage/student-packs is deployed.
   return PLACEHOLDER_MICRO_PACKS;
 }
 

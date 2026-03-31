@@ -239,7 +239,7 @@ class AuthService {
 
       const response = await withRetry(
         () => apiClient.post<{ message: string; expiresIn: number }>('/user/auth/send-otp', data, { timeout: API_TIMEOUTS.AUTH }),
-        { maxRetries: 2 }
+        { maxRetries: 0 } // HIGH-5: Do NOT retry OTP send — retrying triggers duplicate SMS charges
       );
 
       logApiResponse('POST', '/user/auth/send-otp', { success: response.success }, Date.now() - startTime);
@@ -299,7 +299,7 @@ class AuthService {
 
       const response = await withRetry(
         () => apiClient.post<AuthResponse>('/user/auth/verify-otp', data, { timeout: API_TIMEOUTS.AUTH }),
-        { maxRetries: 1 } // Don't retry OTP verification
+        { maxRetries: 0 } // HIGH-4: Do NOT retry OTP verification — a wrong OTP should fail immediately without consuming extra attempts
       );
 
       logApiResponse('POST', '/user/auth/verify-otp', { success: response.success }, Date.now() - startTime);
@@ -391,7 +391,7 @@ class AuthService {
 
       const response = await withRetry(
         () => apiClient.post<{ message: string }>('/user/auth/logout'),
-        { maxRetries: 1 }
+        { maxRetries: 0 } // MED-9: Do NOT retry logout — retrying a logout after a network error may succeed and double-invalidate, or worse confuse state
       );
 
       logApiResponse('POST', '/user/auth/logout', response, Date.now() - startTime);
@@ -677,43 +677,28 @@ class AuthService {
    */
   isAuthenticated(): boolean {
     const token = this.getAuthToken();
-    return token !== null && token.length > 0;
+    // LOW-10: Exclude the 'cookie-session' sentinel — it is not a real Bearer token
+    // and must not be treated as proof of authentication.
+    return token !== null && token.length > 0 && token !== 'cookie-session';
   }
 
   /**
    * Validate and refresh token if needed
    * Call this before making authenticated requests
+   *
+   * TODO (MED-3): This method is NOT implemented. It always returns false.
+   * Token refresh is handled automatically by AuthContext.tryRefreshToken()
+   * via the apiClient 401 interceptor. Do NOT call this method expecting it
+   * to actually validate or refresh the token — it will silently lie to callers.
+   *
+   * @deprecated Use AuthContext.tryRefreshToken() (via apiClient 401 callback) instead.
    */
   async ensureValidToken(): Promise<boolean> {
-    try {
-      const token = this.getAuthToken();
-
-      if (!token) {
-        devLog.warn('[AUTH API] No token available');
-        return false;
-      }
-
-      // Try to get profile to validate token
-      const profileResponse = await this.getProfile();
-
-      if (profileResponse.success) {
-        return true;
-      }
-
-      // If 401, try to refresh token
-      if (profileResponse.error?.includes('401') || profileResponse.error?.includes('expired')) {
-        devLog.log('[AUTH API] Token expired, attempting refresh...');
-
-        // Note: refreshToken needs to be stored separately
-        // This is a simplified implementation
-        return false;
-      }
-
-      return false;
-    } catch (error) {
-      devLog.error('[AUTH API] Error validating token:', error);
-      return false;
-    }
+    // NOT IMPLEMENTED — see TODO above.
+    // The refresh flow is owned by AuthContext; this stub exists for
+    // backwards compatibility only.
+    devLog.warn('[AUTH API] ensureValidToken() is not implemented and always returns false. Use AuthContext token refresh instead.');
+    return false;
   }
 }
 

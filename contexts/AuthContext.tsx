@@ -421,6 +421,13 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
         realTimeService?.disconnect?.();
       } catch {}
 
+      // LOW-3: Unregister FCM/push token from backend so the user stops
+      // receiving notifications after logout.
+      try {
+        const { default: pushNotificationService } = await import('@/services/pushNotificationService');
+        await pushNotificationService.unregisterToken();
+      } catch {}
+
       // Call backend logout (invalidate token) - but don't fail if it errors
       try {
 
@@ -456,8 +463,8 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
       // Clear from AsyncStorage and localStorage (web)
       await authStorage.clearAuthData();
 
-      // Clear onboarding flag so new/different users go through onboarding.
-      await AsyncStorage.removeItem('onboarding_completed');
+      // NOTE: onboarding_completed is intentionally NOT cleared on logout.
+      // Returning users should not be forced through onboarding again.
 
       // Clear auth token from API client
       authService.setAuthToken(null);
@@ -616,9 +623,9 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
     // minutes), give up after 12 s and show the sign-in screen so the user is
     // never permanently locked out.
     const authTimeout = setTimeout(() => {
-      logger.warn('[AUTH] checkAuthStatus timed out after 8s');
+      logger.warn('[AUTH] checkAuthStatus timed out after 30s');
       dispatch({ type: 'AUTH_LOGOUT' });
-    }, 8_000);
+    }, 30_000);
 
     try {
       // Read stored auth FIRST, then only show loading if nothing is cached.
@@ -637,7 +644,7 @@ const [shouldRedirectToSignIn, setShouldRedirectToSignIn] = React.useState(false
           clearTimeout(authTimeout);
           // Do NOT call apiClient.setAuthToken — cookie handles auth on web.
           // Setting a sentinel would inject a fake Bearer header and break requests.
-          dispatch({ type: 'AUTH_SUCCESS', payload: { user: profileResp.data, token: 'cookie-session' } });
+          dispatch({ type: 'AUTH_SUCCESS', payload: { user: profileResp.data, token: null } });
           setHasExplicitlyLoggedOut(false);
           return;
         }

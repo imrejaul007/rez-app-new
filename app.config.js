@@ -38,7 +38,7 @@ module.exports = {
     version: process.env.APP_VERSION || '1.0.0',
     orientation: 'portrait',
     icon: './assets/images/icon.png',
-    scheme: 'rez', // Deep link scheme
+    scheme: 'rezapp', // Deep link scheme — must match EXPO_PUBLIC_DEEP_LINK_SCHEME=rezapp
     userInterfaceStyle: 'light',
     newArchEnabled: true,
     notification: {

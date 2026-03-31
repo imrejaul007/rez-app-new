@@ -305,3 +305,8 @@ export const installProductionConsoleGuard = (): void => {
     originalError(...args.map((arg) => redact(arg)));
   };
 };
+
+// LOW-9: Install the production console guard at module load time so it is active
+// before any module-level console.log calls in other files execute. This replaces
+// the useEffect-based call in app/_layout.tsx (which fires after the first render).
+installProductionConsoleGuard();

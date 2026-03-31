@@ -20,6 +20,7 @@ import { platformAlertSimple, platformAlertConfirm, platformAlertDestructive } f
 import { Colors, Spacing, BorderRadius, Shadows, Typography } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
+import { useAuth } from '@/contexts/AuthContext';
 
 // Import Razorpay for native support
 let RazorpayCheckout: any = null;
@@ -35,11 +36,24 @@ const RAZORPAY_KEY_ID = process.env.EXPO_PUBLIC_RAZORPAY_KEY_ID || '';
 function PaymentPage() {
   const isMounted = useIsMounted();
   const router = useRouter();
+  const { state: authState } = useAuth();
+  const authUser = authState.user;
   const params = useLocalSearchParams();
   const getCurrencySymbol = useGetCurrencySymbol();
   const currencySymbol = getCurrencySymbol();
   const amount = Number(params.amount) || 5000;
   const currency = ((params.currency as string) || 'INR').toUpperCase();
+
+  // HIGH-10: Validate amount before rendering payment UI
+  useEffect(() => {
+    if (amount <= 0 || amount > 1000000) {
+      platformAlertSimple('Invalid Amount', 'The payment amount is invalid. Please go back and try again.');
+      const t = setTimeout(() => {
+        router.canGoBack() ? router.back() : router.replace('/(tabs)');
+      }, 300);
+      return () => clearTimeout(t);
+    }
+  }, []);
   const orderId = params.orderId as string; // For travel/event: order ID; for deals/flash-sales: pre-created Razorpay order ID
   const bookingId = params.bookingId as string;
   const bookingType = params.bookingType as string;
@@ -304,16 +318,18 @@ function PaymentPage() {
               : isTravelPayment
                 ? 'REZ - Travel Booking'
                 : 'REZ App Payment',
-      image: 'https://your-logo-url.com/logo.png',
+      image: process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME
+        ? `https://res.cloudinary.com/${process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload/logo.png`
+        : undefined,
       currency: orderData.currency,
       key: orderData.razorpayKeyId,
       amount: orderData.amount,
       order_id: orderData.razorpayOrderId,
       name: 'REZ App',
       prefill: {
-        email: 'user@example.com',
-        contact: '9876543210',
-        name: 'User Name',
+        email: authUser?.email || '',
+        contact: authUser?.phoneNumber || '',
+        name: authUser?.profile ? `${authUser.profile.firstName || ''} ${authUser.profile.lastName || ''}`.trim() : '',
       },
       theme: { color: colors.brand.purpleLight },
       modal: {

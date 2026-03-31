@@ -275,14 +275,7 @@ class RazorpayService {
             {
               text: 'Simulate Payment (Test)',
               onPress: () => {
-                // Simulate successful payment for testing
-                const mockData: RazorpayPaymentData = {
-                  razorpay_order_id: order.id,
-                  razorpay_payment_id: 'pay_mock_' + Date.now(),
-                  razorpay_signature: 'mock_signature_' + Date.now(),
-                };
-
-                resolve(mockData);
+                reject(new Error('Razorpay SDK is not available in this environment. Real device required for payments.'));
               },
             },
           ],

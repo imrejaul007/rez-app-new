@@ -18,8 +18,9 @@ export const CLOUDINARY_CONFIG = {
   // Cloud name from Cloudinary dashboard
   cloudName: process.env.EXPO_PUBLIC_CLOUDINARY_CLOUD_NAME || 'your-cloud-name',
 
-  // API Key (optional for unsigned uploads)
-  apiKey: process.env.EXPO_PUBLIC_CLOUDINARY_API_KEY || '',
+  // HIGH-8: API key is NOT included here. Unsigned uploads do not require an API key
+  // on the client side, and exposing it in the app bundle is a security risk.
+  // Signed operations must go through the backend.
 
   // Upload Presets
   uploadPresets: {
