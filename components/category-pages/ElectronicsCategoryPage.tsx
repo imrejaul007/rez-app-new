@@ -77,8 +77,8 @@ const TRENDING_GADGETS = [
 
 // Helper: check if a store matches a given filter
 function storeMatchesFilter(store: any, filterId: string): boolean {
-  const tags = (store.tags || []).map((t: string) => t.toLowerCase());
-  const serviceTypes = (store.serviceTypes || []).map((t: string) => t.toLowerCase());
+  const tags = ((store.tags || []) as string[]).map((t: string) => t.toLowerCase());
+  const serviceTypes = ((store.serviceTypes || []) as string[]).map((t: string) => t.toLowerCase());
   const allTags = [...tags, ...serviceTypes];
 
   switch (filterId) {

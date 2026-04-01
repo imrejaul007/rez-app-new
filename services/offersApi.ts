@@ -493,7 +493,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       // Apply filters
       if (params.filters) {
-        const { minCashBack, priceRange, cashBackMin } = params.filters;
+        const { minCashBack, priceRange, cashBackMin } = params.filters as any;
 
         if (minCashBack !== undefined) {
           allOffers = allOffers.filter(offer =>
@@ -521,7 +521,7 @@ class MockOffersApi implements OffersApiEndpoints {
 
       // Apply sorting
       if (params.sortBy) {
-        switch (params.sortBy) {
+        switch (params.sortBy as string) {
           case 'cashback':
             allOffers.sort((a, b) => b.cashBackPercentage - a.cashBackPercentage);
             break;

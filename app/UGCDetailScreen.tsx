@@ -165,15 +165,16 @@ function UGCDetailScreen() {
   // Get the store ID to use for follow - prioritize store over creator
   const getFollowableStoreId = useCallback(() => {
     if (!video) return null;
-    // Priority: video.store > video.storeId > creator.storeId > creator.store > creator.id
+    const videoAny = video as any;
+    // Priority: video.stores > video.storesId > creator.storesId > creator.stores > creator.id
     return (
-      video.store?.id ||
-      video.store?._id ||
-      (video as any).storeId ||
-      video.creator?.storeId ||
-      (video.creator as any)?.store?.id ||
-      (video.creator as any)?.store?._id ||
-      video.creator?.id ||
+      videoAny.stores?.id ||
+      videoAny.stores?._id ||
+      videoAny.storesId ||
+      videoAny.creator?.storesId ||
+      videoAny.creator?.stores?.id ||
+      videoAny.creator?.stores?._id ||
+      videoAny.creator?.id ||
       video.creator?._id
     );
   }, [video]);
@@ -182,11 +183,12 @@ function UGCDetailScreen() {
   useEffect(() => {
     let cancelled = false;
     if (video) {
-      const likes = video.metrics?.likes || video.engagement?.likes;
+      const videoAny = video as any;
+      const likes = videoAny.metrics?.likes || video.engagement?.likes;
       setLikesCount(Array.isArray(likes) ? likes.length : Number(likes) || 0);
-      setViewsCount(video.metrics?.views || video.engagement?.views || 0);
-      setIsLiked(video.engagement?.liked || false);
-      setIsBookmarked(video.engagement?.bookmarked || false);
+      setViewsCount(videoAny.metrics?.views || video.engagement?.views || 0);
+      setIsLiked(videoAny.engagement?.liked || false);
+      setIsBookmarked(videoAny.engagement?.bookmarked || false);
 
       // Check follow status for the store (using wishlistApi)
       const storeIdToCheck = getFollowableStoreId();
@@ -619,8 +621,8 @@ function UGCDetailScreen() {
     if (video?.creator?.profile) {
       return `${video.creator.profile.firstName || ''} ${video.creator.profile.lastName || ''}`.trim() || 'User';
     }
-    return video?.creator?.name || video?.creator?.username || video?.store?.name || 'User';
-  }, [video?.creator, video?.store?.name]);
+    return video?.creator?.name || video?.creator?.username || video?.stores?.name || 'User';
+  }, [video?.creator, video?.stores?.name]);
 
   const creatorAvatar = useMemo(() => {
     const defaultAvatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(creatorName)}&background=8B5CF6&color=fff&size=100`;
@@ -661,7 +663,7 @@ function UGCDetailScreen() {
         <>
           <Video
             key="bg-video-horizontal"
-            source={videoError ? FALLBACK_VIDEO_URL : video.videoUrl}
+            source={{ uri: videoError ? FALLBACK_VIDEO_URL : video.videoUrl }}
             style={[
               StyleSheet.absoluteFill,
               styles.backgroundVideo,
@@ -691,7 +693,7 @@ function UGCDetailScreen() {
         <Video
           key={`video-${videoAspectRatio}`}
           ref={videoRef}
-          source={videoError ? FALLBACK_VIDEO_URL : video.videoUrl}
+          source={{ uri: videoError ? FALLBACK_VIDEO_URL : video.videoUrl }}
           style={StyleSheet.absoluteFill}
           resizeMode={videoAspectRatio === 'horizontal' ? ResizeMode.CONTAIN : ResizeMode.COVER}
           isLooping={true}

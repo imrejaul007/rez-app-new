@@ -151,64 +151,8 @@ import {
 // TYPE COLLECTIONS (for convenience)
 // ============================================================================
 
-export const ProductTypes = {
-  Product,
-  ProductPrice,
-  ProductRating,
-  ProductInventory,
-  ProductImage,
-  ProductAvailabilityStatus,
-  ProductCategory,
-  ProductStoreInfo,
-  ProductCashback,
-  ProductVariant,
-};
-
-export const StoreTypes = {
-  Store,
-  StoreLocation,
-  StoreContact,
-  StoreBusinessHours,
-  StoreStatus,
-  StoreRating,
-  StoreCategory,
-  StoreService,
-  StoreFeature,
-};
-
-export const CartTypes = {
-  CartItem,
-  LockedProduct,
-  CartState,
-  CartSummary,
-  CartValidation,
-};
-
-export const UserTypes = {
-  User,
-  UserProfile,
-  UserPreferences,
-  UserAddress,
-  UserPaymentMethod,
-};
-
-export const OrderTypes = {
-  Order,
-  OrderItem,
-  OrderPricing,
-  OrderStatus,
-  PaymentStatus,
-  DeliveryStatus,
-};
-
-export const ReviewTypes = {
-  Review,
-  ReviewUser,
-  ReviewImage,
-  ReviewStats,
-  RatingDistribution,
-  ReviewFilters,
-};
+// Note: TypeScript interfaces/types cannot be used as runtime values.
+// Import individual types directly: import { Product, Store, ... } from '@/types/unified'
 
 // ============================================================================
 // UTILITY COLLECTIONS

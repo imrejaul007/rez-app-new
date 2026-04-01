@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-  Share,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions, ActivityIndicator, Share } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
@@ -24,20 +16,20 @@ import FeatureErrorBoundary from '@/components/common/FeatureErrorBoundary';
 const { width } = Dimensions.get('window');
 
 const storeEmojis: Record<string, string> = {
-  'food': '🍛',
-  'restaurant': '🍽️',
-  'cafe': '☕',
-  'coffee': '☕',
-  'fashion': '👗',
-  'clothing': '👕',
-  'shoes': '👟',
-  'electronics': '📱',
-  'grocery': '🛒',
-  'beauty': '💄',
-  'spa': '💆',
-  'fitness': '💪',
-  'gym': '🏋️',
-  'default': '🏪',
+  food: '🍛',
+  restaurant: '🍽️',
+  cafe: '☕',
+  coffee: '☕',
+  fashion: '👗',
+  clothing: '👕',
+  shoes: '👟',
+  electronics: '📱',
+  grocery: '🛒',
+  beauty: '💄',
+  spa: '💆',
+  fitness: '💪',
+  gym: '🏋️',
+  default: '🏪',
 };
 
 const getStoreEmoji = (category?: string, storeName?: string): string => {
@@ -89,10 +81,15 @@ const UGCPostsFeed = () => {
           // Use real storeId from backend
           storeId: video.storeId || video.store?.id || video.store?._id || null,
           user: {
-            name: video.creator?.name || video.creator?.username ||
-                  (video.creator?.profile ? `${video.creator.profile.firstName || ''} ${video.creator.profile.lastName || ''}`.trim() : null) ||
-                  `User ${index + 1}`,
-            avatar: video.creator?.avatar || video.creator?.profile?.avatar || `https://i.pravatar.cc/100?img=${10 + index}`,
+            name:
+              video.creator?.name ||
+              video.creator?.username ||
+              (video.creator?.profile
+                ? `${video.creator.profile.firstName || ''} ${video.creator.profile.lastName || ''}`.trim()
+                : null) ||
+              `User ${index + 1}`,
+            avatar:
+              video.creator?.avatar || video.creator?.profile?.avatar || `https://i.pravatar.cc/100?img=${10 + index}`,
             // Use real distance from store/location data, or show area name
             distance: video.store?.distance
               ? `${video.store.distance.toFixed(1)} km away`
@@ -111,7 +108,7 @@ const UGCPostsFeed = () => {
           comments: video.commentsCount || video.comments?.length || 0,
           time: formatTimeAgo(video.createdAt),
           // Use real isLiked status from backend
-          isLiked: video.isLiked || false,
+          isLiked: video.liked || false,
         }));
         if (!isMounted()) return;
         setUgcPosts(transformed);
@@ -136,22 +133,24 @@ const UGCPostsFeed = () => {
   // Handle like/helpful button
   const handleLike = async (postId: string) => {
     // Find the current post
-    const currentPost = ugcPosts.find(p => p.id === postId);
+    const currentPost = ugcPosts.find((p) => p.id === postId);
     if (!currentPost) return;
 
-    const wasLiked = currentPost.isLiked;
+    const wasLiked = currentPost.liked;
 
     // Optimistic update - immediately update UI
-    setUgcPosts(prev => prev.map(post => {
-      if (post.id === postId) {
-        return {
-          ...post,
-          isLiked: !wasLiked,
-          helpful: wasLiked ? Math.max(0, post.helpful - 1) : post.helpful + 1,
-        };
-      }
-      return post;
-    }));
+    setUgcPosts((prev) =>
+      prev.map((post) => {
+        if (post.id === postId) {
+          return {
+            ...post,
+            isLiked: !wasLiked,
+            helpful: wasLiked ? Math.max(0, post.helpful - 1) : post.helpful + 1,
+          };
+        }
+        return post;
+      }),
+    );
 
     // Call API to persist like
     try {
@@ -160,30 +159,34 @@ const UGCPostsFeed = () => {
       // Update with actual server response if available
       if (response.success && response.data) {
         if (!isMounted()) return;
-        setUgcPosts(prev => prev.map(post => {
-          if (post.id === postId) {
-            return {
-              ...post,
-              isLiked: response.data.liked ?? response.data.isLiked ?? !wasLiked,
-              helpful: response.data.likesCount ?? response.data.totalLikes ?? post.helpful,
-            };
-          }
-          return post;
-        }));
+        setUgcPosts((prev) =>
+          prev.map((post) => {
+            if (post.id === postId) {
+              return {
+                ...post,
+                isLiked: response.data.liked ?? response.data.liked ?? !wasLiked,
+                helpful: response.data.likesCount ?? response.data.totalLikes ?? post.helpful,
+              };
+            }
+            return post;
+          }),
+        );
       }
     } catch (error) {
       // Revert on error
       if (!isMounted()) return;
-      setUgcPosts(prev => prev.map(post => {
-        if (post.id === postId) {
-          return {
-            ...post,
-            isLiked: wasLiked,
-            helpful: wasLiked ? post.helpful + 1 : Math.max(0, post.helpful - 1),
-          };
-        }
-        return post;
-      }));
+      setUgcPosts((prev) =>
+        prev.map((post) => {
+          if (post.id === postId) {
+            return {
+              ...post,
+              isLiked: wasLiked,
+              helpful: wasLiked ? post.helpful + 1 : Math.max(0, post.helpful - 1),
+            };
+          }
+          return post;
+        }),
+      );
     }
   };
 
@@ -256,117 +259,92 @@ const UGCPostsFeed = () => {
 
   return (
     <FeatureErrorBoundary featureName="UGC Posts" compact={true}>
-    <View style={styles.container}>
-      {/* Section Header */}
-      <View style={styles.sectionHeader}>
-        <View>
-          <Text style={styles.sectionTitle}>People Are Saving Here</Text>
-          <Text style={styles.sectionSubtitle}>Real experiences from your neighborhood</Text>
-        </View>
-        <Pressable onPress={() => navigateTo('/explore/reels')}>
-          <Text style={styles.seeAllText}>See All</Text>
-        </Pressable>
-      </View>
-
-      {/* Posts List */}
-      <View style={styles.postsList}>
-        {ugcPosts.map((post) => (
-          <View key={post.id} style={styles.postCard}>
-            {/* User Header */}
-            <View style={styles.postHeader}>
-              <CachedImage source={post.user.avatar} style={styles.userAvatar} />
-              <View style={styles.userInfo}>
-                <Text style={styles.userName}>{post.user.name}</Text>
-                <View style={styles.userMeta}>
-                  <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />
-                  <Text style={styles.userMetaText}>{post.user.distance}</Text>
-                  <Text style={styles.metaDot}>•</Text>
-                  <Text style={styles.userMetaText}>{post.time}</Text>
-                </View>
-              </View>
-              <Pressable
-                style={styles.viewStoreButton}
-                onPress={() => handleViewStore(post.storeId, post.store)}
-              >
-                <Text style={styles.viewStoreText}>View Store</Text>
-              </Pressable>
-            </View>
-
-            {/* Post Image */}
-            <Pressable
-              style={styles.imageContainer}
-              onPress={() => navigateTo(`/explore/reel/${post.id}`)}
-            >
-              <CachedImage source={post.image} style={styles.postImage} />
-
-              {/* Savings Badge */}
-              <View style={styles.savingsBadge}>
-                <View style={styles.savingsIcon}>
-                  <Ionicons name="wallet-outline" size={14} color={colors.text.inverse} />
-                </View>
-                <Text style={styles.savingsText}>{currencySymbol}{post.saved}</Text>
-              </View>
-            </Pressable>
-
-            {/* Store Name - Tappable */}
-            <Pressable
-              style={styles.storeRow}
-              onPress={() => handleViewStore(post.storeId, post.store)}
-            >
-              <Text style={styles.storeEmoji}>{post.storeEmoji}</Text>
-              <Text style={styles.storeName}>{post.store}</Text>
-              <Ionicons name="chevron-forward" size={16} color={Colors.gold} />
-            </Pressable>
-
-            {/* Caption */}
-            <Text style={styles.caption}>{post.caption}</Text>
-
-            {/* Actions Row */}
-            <View style={styles.actionsRow}>
-              <Pressable
-                style={styles.actionButton}
-                onPress={() => handleLike(post.id)}
-              >
-                <Ionicons
-                  name={post.isLiked ? "thumbs-up" : "thumbs-up-outline"}
-                  size={18}
-                  color={post.isLiked ? colors.lightMustard : colors.neutral[500]}
-                />
-                <Text style={[
-                  styles.actionText,
-                  post.isLiked && styles.actionTextActive
-                ]}>
-                  {post.helpful}
-                </Text>
-                <Text style={[
-                  styles.actionLabel,
-                  post.isLiked && styles.actionLabelActive
-                ]}>
-                  Helpful
-                </Text>
-              </Pressable>
-
-              <Pressable
-                style={styles.actionButton}
-                onPress={() => handleComment(post.id)}
-              >
-                <Ionicons name="chatbubble-outline" size={18} color={colors.text.tertiary} />
-                <Text style={styles.actionText}>{post.comments}</Text>
-                <Text style={styles.actionLabel}>Comment</Text>
-              </Pressable>
-
-              <Pressable
-                style={styles.actionButton}
-                onPress={() => handleShare(post)}
-              >
-                <Ionicons name="share-outline" size={18} color={colors.text.tertiary} />
-                <Text style={styles.actionLabel}>Share</Text>
-              </Pressable>
-            </View>
+      <View style={styles.container}>
+        {/* Section Header */}
+        <View style={styles.sectionHeader}>
+          <View>
+            <Text style={styles.sectionTitle}>People Are Saving Here</Text>
+            <Text style={styles.sectionSubtitle}>Real experiences from your neighborhood</Text>
           </View>
-        ))}
+          <Pressable onPress={() => navigateTo('/explore/reels')}>
+            <Text style={styles.seeAllText}>See All</Text>
+          </Pressable>
+        </View>
+
+        {/* Posts List */}
+        <View style={styles.postsList}>
+          {ugcPosts.map((post) => (
+            <View key={post.id} style={styles.postCard}>
+              {/* User Header */}
+              <View style={styles.postHeader}>
+                <CachedImage source={post.user.avatar} style={styles.userAvatar} />
+                <View style={styles.userInfo}>
+                  <Text style={styles.userName}>{post.user.name}</Text>
+                  <View style={styles.userMeta}>
+                    <Ionicons name="location-outline" size={12} color={colors.text.tertiary} />
+                    <Text style={styles.userMetaText}>{post.user.distance}</Text>
+                    <Text style={styles.metaDot}>•</Text>
+                    <Text style={styles.userMetaText}>{post.time}</Text>
+                  </View>
+                </View>
+                <Pressable style={styles.viewStoreButton} onPress={() => handleViewStore(post.storeId, post.store)}>
+                  <Text style={styles.viewStoreText}>View Store</Text>
+                </Pressable>
+              </View>
+
+              {/* Post Image */}
+              <Pressable style={styles.imageContainer} onPress={() => navigateTo(`/explore/reel/${post.id}`)}>
+                <CachedImage source={post.image} style={styles.postImage} />
+
+                {/* Savings Badge */}
+                <View style={styles.savingsBadge}>
+                  <View style={styles.savingsIcon}>
+                    <Ionicons name="wallet-outline" size={14} color={colors.text.inverse} />
+                  </View>
+                  <Text style={styles.savingsText}>
+                    {currencySymbol}
+                    {post.saved}
+                  </Text>
+                </View>
+              </Pressable>
+
+              {/* Store Name - Tappable */}
+              <Pressable style={styles.storeRow} onPress={() => handleViewStore(post.storeId, post.store)}>
+                <Text style={styles.storeEmoji}>{post.storeEmoji}</Text>
+                <Text style={styles.storeName}>{post.store}</Text>
+                <Ionicons name="chevron-forward" size={16} color={Colors.gold} />
+              </Pressable>
+
+              {/* Caption */}
+              <Text style={styles.caption}>{post.caption}</Text>
+
+              {/* Actions Row */}
+              <View style={styles.actionsRow}>
+                <Pressable style={styles.actionButton} onPress={() => handleLike(post.id)}>
+                  <Ionicons
+                    name={post.liked ? 'thumbs-up' : 'thumbs-up-outline'}
+                    size={18}
+                    color={post.liked ? colors.lightMustard : colors.neutral[500]}
+                  />
+                  <Text style={[styles.actionText, post.liked && styles.actionTextActive]}>{post.helpful}</Text>
+                  <Text style={[styles.actionLabel, post.liked && styles.actionLabelActive]}>Helpful</Text>
+                </Pressable>
+
+                <Pressable style={styles.actionButton} onPress={() => handleComment(post.id)}>
+                  <Ionicons name="chatbubble-outline" size={18} color={colors.text.tertiary} />
+                  <Text style={styles.actionText}>{post.comments}</Text>
+                  <Text style={styles.actionLabel}>Comment</Text>
+                </Pressable>
+
+                <Pressable style={styles.actionButton} onPress={() => handleShare(post)}>
+                  <Ionicons name="share-outline" size={18} color={colors.text.tertiary} />
+                  <Text style={styles.actionLabel}>Share</Text>
+                </Pressable>
+              </View>
+            </View>
+          ))}
+        </View>
       </View>
-    </View>
     </FeatureErrorBoundary>
   );
 };

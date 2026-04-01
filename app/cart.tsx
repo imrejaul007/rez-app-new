@@ -78,6 +78,12 @@ interface ExtendedCartItem extends CartItemType {
   } | null;
 }
 
+// Extended cart item with formatted display fields for service bookings
+interface DisplayServiceItem extends ExtendedCartItem {
+  bookingDateFormatted?: string;
+  bookingTimeFormatted?: string;
+}
+
 /** Type guard: narrows a CartItemType to ExtendedCartItem */
 function asExtendedCartItem(item: CartItemType): ExtendedCartItem {
   return item as ExtendedCartItem;
@@ -518,7 +524,7 @@ function CartPage() {
       // Render service item with booking details
       if (activeTab === 'service') {
         // Use the typed helper rather than casting to any
-        const serviceItem = asExtendedCartItem(item);
+        const serviceItem = asExtendedCartItem(item) as DisplayServiceItem;
         return (
           <View style={styles.cardWrapper}>
             <CartItem
@@ -647,10 +653,7 @@ function CartPage() {
             ListFooterComponent={
               overallItemCount > 0 && overallTotal > 0 && activeTab === 'products' ? (
                 <CardOffersSection
-                  storeId={
-                    asExtendedCartItem(productItems[0] as CartItemType)?.store?.id ||
-                    asExtendedCartItem(productItems[0] as CartItemType)?.productId
-                  }
+                  storeId={productItems[0]?.store?.id || productItems[0]?.productId}
                   orderValue={overallTotal}
                   onOfferApplied={handleCardOfferApplied}
                 />

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet , Animated} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useCountdown, getUrgencyColor, getUrgencyBadge } from '@/hooks/useCountdown';
 import { colors } from '@/constants/theme';

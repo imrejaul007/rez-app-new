@@ -272,7 +272,7 @@ function LockConfirmPage() {
             {/* Expiry info (deposit only) */}
             {!isBalancePayment && expiresAt && (
               <View style={styles.infoRow}>
-                <Ionicons name="calendar-outline" size={16} color={colors.text?.tertiary || '#888'} />
+                <Ionicons name="calendar-outline" size={16} color={colors.text.tertiary} />
                 <ThemedText style={styles.infoText}>Pick up by {formatDate(expiresAt)}</ThemedText>
               </View>
             )}
@@ -324,9 +324,9 @@ const styles = StyleSheet.create({
   },
   retryText: {
     textAlign: 'center',
-    color: colors.text?.secondary || '#aaa',
+    color: colors.text.secondary,
     marginTop: Spacing.md,
-    fontSize: Typography.body.small,
+    fontSize: Typography.bodySmall.fontSize,
   },
   errorContainer: {
     flex: 1,
@@ -336,19 +336,19 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   errorTitle: {
-    fontSize: Typography.heading.h3,
+    fontSize: Typography.h3.fontSize,
     fontWeight: '700',
     color: '#fff',
     textAlign: 'center',
   },
   errorMessage: {
-    fontSize: Typography.body.medium,
+    fontSize: Typography.body.fontSize,
     color: '#ff8888',
     textAlign: 'center',
   },
   errorNote: {
-    fontSize: Typography.body.small,
-    color: colors.text?.secondary || '#aaa',
+    fontSize: Typography.bodySmall.fontSize,
+    color: colors.text.secondary,
     textAlign: 'center',
     lineHeight: 20,
   },
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
   supportButtonText: {
     color: '#fff',
     fontWeight: '600',
-    fontSize: Typography.body.medium,
+    fontSize: Typography.body.fontSize,
   },
   myLocksButton: {
     paddingVertical: Spacing.sm,
@@ -371,7 +371,7 @@ const styles = StyleSheet.create({
   myLocksButtonText: {
     color: '#2a5a7c',
     fontWeight: '500',
-    fontSize: Typography.body.medium,
+    fontSize: Typography.body.fontSize,
   },
 
   // Success
@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
     borderRadius: 48,
     alignItems: 'center',
     justifyContent: 'center',
-    ...Shadows.large,
+    ...Shadows.strong,
   },
   content: {
     width: '100%',
@@ -393,13 +393,13 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   title: {
-    fontSize: Typography.heading.h2,
+    fontSize: Typography.h2.fontSize,
     fontWeight: '800',
     color: '#fff',
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: Typography.body.medium,
+    fontSize: Typography.body.fontSize,
     color: 'rgba(255,255,255,0.8)',
     textAlign: 'center',
   },
@@ -417,7 +417,7 @@ const styles = StyleSheet.create({
   rewardText: {
     color: '#FFD700',
     fontWeight: '600',
-    fontSize: Typography.body.small,
+    fontSize: Typography.bodySmall.fontSize,
   },
   codeCard: {
     width: '100%',
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.sm,
   },
   codeLabel: {
-    fontSize: Typography.body.small,
+    fontSize: Typography.bodySmall.fontSize,
     color: 'rgba(255,255,255,0.6)',
     marginBottom: Spacing.sm,
     textTransform: 'uppercase',
@@ -453,7 +453,7 @@ const styles = StyleSheet.create({
   },
   copiedText: {
     color: Colors.success,
-    fontSize: Typography.body.small,
+    fontSize: Typography.bodySmall.fontSize,
     marginTop: Spacing.xs,
   },
   infoRow: {
@@ -463,7 +463,7 @@ const styles = StyleSheet.create({
   },
   infoText: {
     color: 'rgba(255,255,255,0.6)',
-    fontSize: Typography.body.small,
+    fontSize: Typography.bodySmall.fontSize,
   },
   instructionsCard: {
     width: '100%',
@@ -475,12 +475,12 @@ const styles = StyleSheet.create({
   instructionsTitle: {
     color: 'rgba(255,255,255,0.9)',
     fontWeight: '600',
-    fontSize: Typography.body.medium,
+    fontSize: Typography.body.fontSize,
     marginBottom: Spacing.xs,
   },
   instructionsText: {
     color: 'rgba(255,255,255,0.6)',
-    fontSize: Typography.body.small,
+    fontSize: Typography.bodySmall.fontSize,
     lineHeight: 20,
   },
   primaryButton: {
@@ -495,7 +495,7 @@ const styles = StyleSheet.create({
   primaryButtonText: {
     color: '#fff',
     fontWeight: '700',
-    fontSize: Typography.body.large,
+    fontSize: Typography.bodyLarge.fontSize,
   },
   secondaryButton: {
     width: '100%',
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
   secondaryButtonText: {
     color: 'rgba(255,255,255,0.6)',
     fontWeight: '500',
-    fontSize: Typography.body.medium,
+    fontSize: Typography.body.fontSize,
   },
 });
 

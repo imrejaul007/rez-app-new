@@ -81,7 +81,11 @@ function GiftCardsPage() {
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const mountedRef = useRef(true);
-  useEffect(() => { return () => { mountedRef.current = false; }; }, []);
+  useEffect(() => {
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
 
   // Debounce search query
   useEffect(() => {
@@ -149,7 +153,7 @@ function GiftCardsPage() {
 
     const confirmed = await platformAlertConfirm(
       'Confirm Purchase',
-      `Buy ${selectedCard.name} gift card for ${currencySymbol}${numAmount} ${BRAND.CURRENCY_CODE}?`
+      `Buy ${selectedCard.name} gift card for ${currencySymbol}${numAmount} ${BRAND.CURRENCY_CODE}?`,
     );
     if (!confirmed) return;
 
@@ -160,7 +164,7 @@ function GiftCardsPage() {
         giftCardId: selectedCard._id,
         amount: numAmount,
         idempotencyKey,
-      });
+      } as any);
       if (mountedRef.current) {
         setIdempotencyKey(generateIdempotencyKey('gift-card'));
         platformAlert('Success', 'Gift card purchased successfully!');
@@ -176,103 +180,122 @@ function GiftCardsPage() {
     }
   };
 
-  const renderGiftCard = useCallback(({ item }: { item: GiftCard }) => {
-    const denoms = item.denominations || [];
-    const minD = denoms.length > 0 ? Math.min(...denoms) : 0;
-    const maxD = denoms.length > 0 ? Math.max(...denoms) : 0;
-    return (
-      <Pressable
-        style={styles.giftCard}
-        onPress={() => setSelectedCard(item)}
-      >
-        <View style={[styles.giftCardLogo, item.color ? { backgroundColor: item.color + '15' } : undefined]}>
-          <ThemedText style={styles.giftCardEmoji}>{item.logo || '🎁'}</ThemedText>
-        </View>
-        <View style={styles.giftCardInfo}>
-          <ThemedText style={styles.giftCardBrand}>{item.name}</ThemedText>
-          {item.cashbackPercentage > 0 && (
-            <ThemedText style={styles.giftCardCashback}>
-              Get {item.cashbackPercentage}% cashback
+  const renderGiftCard = useCallback(
+    ({ item }: { item: GiftCard }) => {
+      const denoms = item.denominations || [];
+      const minD = denoms.length > 0 ? Math.min(...denoms) : 0;
+      const maxD = denoms.length > 0 ? Math.max(...denoms) : 0;
+      return (
+        <Pressable style={styles.giftCard} onPress={() => setSelectedCard(item)}>
+          <View style={[styles.giftCardLogo, item.color ? { backgroundColor: item.color + '15' } : undefined]}>
+            <ThemedText style={styles.giftCardEmoji}>{item.logo || '🎁'}</ThemedText>
+          </View>
+          <View style={styles.giftCardInfo}>
+            <ThemedText style={styles.giftCardBrand}>{item.name}</ThemedText>
+            {item.cashbackPercentage > 0 && (
+              <ThemedText style={styles.giftCardCashback}>Get {item.cashbackPercentage}% cashback</ThemedText>
+            )}
+            <ThemedText style={styles.giftCardRange}>
+              {minD === maxD ? `${currencySymbol}${minD}` : `${currencySymbol}${minD} - ${currencySymbol}${maxD}`}
             </ThemedText>
-          )}
-          <ThemedText style={styles.giftCardRange}>
-            {minD === maxD ? `${currencySymbol}${minD}` : `${currencySymbol}${minD} - ${currencySymbol}${maxD}`}
+          </View>
+          <View style={styles.buyButton}>
+            <ThemedText style={styles.buyButtonText}>Buy</ThemedText>
+          </View>
+        </Pressable>
+      );
+    },
+    [currencySymbol],
+  );
+
+  const renderMyGiftCard = useCallback(
+    ({ item }: { item: MyGiftCard }) => {
+      const isUsed = item.status === 'fully_used' || item.status === 'expired';
+      const brandName = item.giftCard?.name || 'Gift Card';
+      const statusLabel =
+        item.status === 'partially_used'
+          ? 'Partial'
+          : item.status === 'fully_used'
+            ? 'Used'
+            : item.status === 'expired'
+              ? 'Expired'
+              : '';
+      return (
+        <View style={[styles.myGiftCard, isUsed && styles.myGiftCardUsed]}>
+          <View style={styles.myGiftCardHeader}>
+            <ThemedText style={styles.myGiftCardBrand}>{brandName}</ThemedText>
+            {statusLabel ? (
+              <View style={styles.usedBadge}>
+                <ThemedText style={styles.usedBadgeText}>{statusLabel}</ThemedText>
+              </View>
+            ) : null}
+          </View>
+          <ThemedText style={styles.myGiftCardAmount}>
+            {currencySymbol}
+            {item.balance ?? item.amount}
+            {item.balance < item.amount && (
+              <ThemedText style={styles.myGiftCardOriginal}>
+                {' '}
+                / {currencySymbol}
+                {item.amount}
+              </ThemedText>
+            )}
+          </ThemedText>
+          <View style={styles.myGiftCardCode}>
+            <ThemedText style={styles.codeText}>{item.code}</ThemedText>
+            {!isUsed && (
+              <Pressable
+                style={styles.copyButton}
+                onPress={async () => {
+                  try {
+                    const response = await walletApi.revealGiftCardCode(item._id);
+                    if ((response as any)?.requiresReAuth) {
+                      platformAlertSimple(
+                        'Verification Required',
+                        'Please verify your identity via OTP to reveal the gift card code.',
+                      );
+                      return;
+                    }
+                    const fullCode = response?.data?.code || item.code;
+                    await Clipboard.setStringAsync(fullCode);
+                    platformAlertSimple('Copied', 'Gift card code copied to clipboard');
+                  } catch (err: any) {
+                    if (err?.requiresReAuth || err?.response?.data?.requiresReAuth) {
+                      platformAlertSimple(
+                        'Verification Required',
+                        'Please verify your identity via OTP to reveal the gift card code.',
+                      );
+                      return;
+                    }
+                    await Clipboard.setStringAsync(item.code);
+                    platformAlertSimple('Copied', 'Masked code copied');
+                  }
+                }}
+              >
+                <Ionicons name="copy-outline" size={16} color={Colors.primary[600]} />
+              </Pressable>
+            )}
+          </View>
+          <ThemedText style={styles.myGiftCardExpiry}>
+            Expires: {item.expiresAt ? new Date(item.expiresAt).toLocaleDateString() : 'N/A'}
           </ThemedText>
         </View>
-        <View style={styles.buyButton}>
-          <ThemedText style={styles.buyButtonText}>Buy</ThemedText>
-        </View>
-      </Pressable>
-    );
-  }, [currencySymbol]);
-
-  const renderMyGiftCard = useCallback(({ item }: { item: MyGiftCard }) => {
-    const isUsed = item.status === 'fully_used' || item.status === 'expired';
-    const brandName = item.giftCard?.name || 'Gift Card';
-    const statusLabel = item.status === 'partially_used' ? 'Partial' : item.status === 'fully_used' ? 'Used' : item.status === 'expired' ? 'Expired' : '';
-    return (
-      <View style={[styles.myGiftCard, isUsed && styles.myGiftCardUsed]}>
-        <View style={styles.myGiftCardHeader}>
-          <ThemedText style={styles.myGiftCardBrand}>{brandName}</ThemedText>
-          {statusLabel ? (
-            <View style={styles.usedBadge}>
-              <ThemedText style={styles.usedBadgeText}>{statusLabel}</ThemedText>
-            </View>
-          ) : null}
-        </View>
-        <ThemedText style={styles.myGiftCardAmount}>
-          {currencySymbol}{item.balance ?? item.amount}
-          {item.balance < item.amount && (
-            <ThemedText style={styles.myGiftCardOriginal}> / {currencySymbol}{item.amount}</ThemedText>
-          )}
-        </ThemedText>
-        <View style={styles.myGiftCardCode}>
-          <ThemedText style={styles.codeText}>{item.code}</ThemedText>
-          {!isUsed && (
-            <Pressable
-              style={styles.copyButton}
-              onPress={async () => {
-                try {
-                  const response = await walletApi.revealGiftCardCode(item._id);
-                  if ((response as any)?.requiresReAuth) {
-                    platformAlertSimple('Verification Required', 'Please verify your identity via OTP to reveal the gift card code.');
-                    return;
-                  }
-                  const fullCode = response?.data?.code || item.code;
-                  await Clipboard.setStringAsync(fullCode);
-                  platformAlertSimple('Copied', 'Gift card code copied to clipboard');
-                } catch (err: any) {
-                  if (err?.requiresReAuth || err?.response?.data?.requiresReAuth) {
-                    platformAlertSimple('Verification Required', 'Please verify your identity via OTP to reveal the gift card code.');
-                    return;
-                  }
-                  await Clipboard.setStringAsync(item.code);
-                  platformAlertSimple('Copied', 'Masked code copied');
-                }
-              }}
-            >
-              <Ionicons name="copy-outline" size={16} color={Colors.primary[600]} />
-            </Pressable>
-          )}
-        </View>
-        <ThemedText style={styles.myGiftCardExpiry}>
-          Expires: {item.expiresAt ? new Date(item.expiresAt).toLocaleDateString() : 'N/A'}
-        </ThemedText>
-      </View>
-    );
-  }, [currencySymbol]);
+      );
+    },
+    [currencySymbol],
+  );
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.primary[600]} />
 
       {/* Header */}
-      <LinearGradient
-        colors={[Colors.primary[600], Colors.secondary[700]]}
-        style={styles.header}
-      >
+      <LinearGradient colors={[Colors.primary[600], Colors.secondary[700]]} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <ThemedText style={styles.headerTitle}>Gift Cards</ThemedText>
@@ -281,21 +304,13 @@ function GiftCardsPage() {
 
         {/* Tabs */}
         <View style={styles.tabs}>
-          <Pressable
-            style={[styles.tab, activeTab === 'buy' && styles.tabActive]}
-            onPress={() => setActiveTab('buy')}
-          >
+          <Pressable style={[styles.tab, activeTab === 'buy' && styles.tabActive]} onPress={() => setActiveTab('buy')}>
             <ThemedText style={[styles.tabText, activeTab === 'buy' && styles.tabTextActive]}>
               Buy Gift Cards
             </ThemedText>
           </Pressable>
-          <Pressable
-            style={[styles.tab, activeTab === 'my' && styles.tabActive]}
-            onPress={() => setActiveTab('my')}
-          >
-            <ThemedText style={[styles.tabText, activeTab === 'my' && styles.tabTextActive]}>
-              My Gift Cards
-            </ThemedText>
+          <Pressable style={[styles.tab, activeTab === 'my' && styles.tabActive]} onPress={() => setActiveTab('my')}>
+            <ThemedText style={[styles.tabText, activeTab === 'my' && styles.tabTextActive]}>My Gift Cards</ThemedText>
           </Pressable>
         </View>
       </LinearGradient>
@@ -321,19 +336,13 @@ function GiftCardsPage() {
             style={styles.categoriesScroll}
             contentContainerStyle={styles.categoriesContent}
           >
-            {categories.map(category => (
+            {categories.map((category) => (
               <Pressable
                 key={category}
-                style={[
-                  styles.categoryChip,
-                  selectedCategory === category && styles.categoryChipActive,
-                ]}
+                style={[styles.categoryChip, selectedCategory === category && styles.categoryChipActive]}
                 onPress={() => setSelectedCategory(category)}
               >
-                <ThemedText style={[
-                  styles.categoryText,
-                  selectedCategory === category && styles.categoryTextActive,
-                ]}>
+                <ThemedText style={[styles.categoryText, selectedCategory === category && styles.categoryTextActive]}>
                   {category}
                 </ThemedText>
               </Pressable>
@@ -356,7 +365,7 @@ function GiftCardsPage() {
             <FlashList
               data={filteredCards}
               renderItem={renderGiftCard}
-              keyExtractor={item => item._id}
+              keyExtractor={(item) => item._id}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContent}
               ListEmptyComponent={
@@ -376,7 +385,7 @@ function GiftCardsPage() {
             <FlashList
               data={myGiftCards}
               renderItem={renderMyGiftCard}
-              keyExtractor={item => item._id}
+              keyExtractor={(item) => item._id}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.listContent}
               estimatedItemSize={120}
@@ -385,13 +394,8 @@ function GiftCardsPage() {
             <View style={styles.emptyState}>
               <Ionicons name="gift-outline" size={64} color={Colors.gray[300]} />
               <ThemedText style={styles.emptyTitle}>No Gift Cards Yet</ThemedText>
-              <ThemedText style={styles.emptyText}>
-                Buy gift cards to see them here
-              </ThemedText>
-              <Pressable
-                style={styles.emptyButton}
-                onPress={() => setActiveTab('buy')}
-              >
+              <ThemedText style={styles.emptyText}>Buy gift cards to see them here</ThemedText>
+              <Pressable style={styles.emptyButton} onPress={() => setActiveTab('buy')}>
                 <ThemedText style={styles.emptyButtonText}>Browse Gift Cards</ThemedText>
               </Pressable>
             </View>
@@ -403,10 +407,7 @@ function GiftCardsPage() {
       {selectedCard && (
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
-            <Pressable
-              style={styles.modalClose}
-              onPress={() => setSelectedCard(null)}
-            >
+            <Pressable style={styles.modalClose} onPress={() => setSelectedCard(null)}>
               <Ionicons name="close" size={24} color={colors.text.primary} />
             </Pressable>
 
@@ -415,9 +416,7 @@ function GiftCardsPage() {
               <ThemedText style={styles.modalBrand}>{selectedCard.name}</ThemedText>
               {selectedCard.cashbackPercentage > 0 && (
                 <View style={styles.cashbackBadge}>
-                  <ThemedText style={styles.cashbackText}>
-                    {selectedCard.cashbackPercentage}% Cashback
-                  </ThemedText>
+                  <ThemedText style={styles.cashbackText}>{selectedCard.cashbackPercentage}% Cashback</ThemedText>
                 </View>
               )}
             </View>
@@ -428,17 +427,14 @@ function GiftCardsPage() {
                 {selectedCard.denominations.map((denom) => (
                   <Pressable
                     key={denom}
-                    style={[
-                      styles.denominationChip,
-                      Number(amount) === denom && styles.denominationChipActive,
-                    ]}
+                    style={[styles.denominationChip, Number(amount) === denom && styles.denominationChipActive]}
                     onPress={() => setAmount(String(denom))}
                   >
-                    <ThemedText style={[
-                      styles.denominationText,
-                      Number(amount) === denom && styles.denominationTextActive,
-                    ]}>
-                      {currencySymbol}{denom}
+                    <ThemedText
+                      style={[styles.denominationText, Number(amount) === denom && styles.denominationTextActive]}
+                    >
+                      {currencySymbol}
+                      {denom}
                     </ThemedText>
                   </Pressable>
                 ))}
@@ -447,7 +443,8 @@ function GiftCardsPage() {
               {amount && selectedCard.cashbackPercentage > 0 && selectedCard.denominations.includes(Number(amount)) && (
                 <View style={styles.cashbackPreview}>
                   <ThemedText style={styles.cashbackPreviewText}>
-                    You'll earn {Math.floor(Number(amount) * selectedCard.cashbackPercentage / 100)} {BRAND.CURRENCY_CODE} cashback
+                    You'll earn {Math.floor((Number(amount) * selectedCard.cashbackPercentage) / 100)}{' '}
+                    {BRAND.CURRENCY_CODE} cashback
                   </ThemedText>
                 </View>
               )}

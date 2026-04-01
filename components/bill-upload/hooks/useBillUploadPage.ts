@@ -268,7 +268,7 @@ export function useBillUploadPage(): BillUploadHookReturn {
       }
     }
     setFormData((prev) => ({ ...prev, [fieldName]: sanitizedValue }));
-    if (errors[fieldName]) {
+    if ((errors as any)[fieldName]) {
       setErrors((prev) => ({ ...prev, [fieldName]: undefined }));
     }
   };

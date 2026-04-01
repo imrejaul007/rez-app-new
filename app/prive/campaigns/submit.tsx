@@ -100,7 +100,7 @@ function CampaignSubmitScreen() {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -264,7 +264,7 @@ function ProgressStep({ number, label, active }: ProgressStepProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -273,7 +273,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.border.default,
   },
   headerTitle: {
     ...Typography.heading3,
@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   },
   progressLine: {
     height: 2,
-    backgroundColor: colors.border,
+    backgroundColor: colors.border.default,
     flex: 0.3,
   },
   section: {
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.lg,
     borderRadius: BorderRadius.md,
     borderWidth: 2,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     alignItems: 'center',
     gap: Spacing.sm,
     backgroundColor: Colors.white,
@@ -369,7 +369,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     borderRadius: BorderRadius.md,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     backgroundColor: Colors.white,
     gap: Spacing.sm,
   },
@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     borderWidth: 2,
     borderStyle: 'dashed',
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
@@ -437,8 +437,8 @@ const styles = StyleSheet.create({
   footer: {
     padding: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
-    backgroundColor: colors.background,
+    borderTopColor: colors.border.default,
+    backgroundColor: colors.background.primary,
   },
   submitButton: {
     borderRadius: BorderRadius.md,

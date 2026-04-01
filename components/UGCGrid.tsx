@@ -55,7 +55,7 @@ function UGCItemCard({ item, onContentPress, onLikeContent, onBookmarkContent }:
   const handleLikePress = () => {
     likeScaleAnim.value = withSequence(
       withTiming(0.8, { duration: 100 }),
-      withSpring(1, { friction: 3, tension: 100 }),
+      withSpring(1, { friction: 3, tension: 100 } as any),
     );
     onLikeContent?.(item.id);
   };
@@ -63,7 +63,7 @@ function UGCItemCard({ item, onContentPress, onLikeContent, onBookmarkContent }:
   const handleBookmarkPress = () => {
     bookmarkScaleAnim.value = withSequence(
       withTiming(0.8, { duration: 100 }),
-      withSpring(1, { friction: 3, tension: 100 }),
+      withSpring(1, { friction: 3, tension: 100 } as any),
     );
     onBookmarkContent?.(item.id);
   };

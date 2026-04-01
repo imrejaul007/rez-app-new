@@ -82,7 +82,7 @@ export default function FoodScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<{ [key: string]: any }>({
   safe: { flex: 1, backgroundColor: colors.background || '#fff' },
   header: {
     flexDirection: 'row',

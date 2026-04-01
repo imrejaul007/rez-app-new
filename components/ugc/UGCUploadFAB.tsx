@@ -40,7 +40,7 @@ function UGCUploadFAB({
   // Fade in animation on mount
   useEffect(() => {
     if (visible) {
-      scaleAnim.value = withSpring(1, { tension: 50, friction: 5 });
+      scaleAnim.value = withSpring(1, { tension: 50, friction: 5 } as any);
       rotateAnim.value = withTiming(1, { duration: 300 });
     } else {
       scaleAnim.value = withTiming(0, { duration: 200 });
@@ -57,7 +57,7 @@ function UGCUploadFAB({
     // Scale animation on press
     scaleAnim.value = withSequence(
       withTiming(0.9, { duration: 100 }),
-      withSpring(1, { tension: 100, friction: 5 }),
+      withSpring(1, { tension: 100, friction: 5 } as any),
     );
 
     onPress();

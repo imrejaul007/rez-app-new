@@ -1,4 +1,4 @@
-import apiClient, { ApiResponse } from './apiClient';
+import apiClient from './apiClient';
 
 // ============================================================================
 // INSTANT REWARD API SERVICE
@@ -51,11 +51,11 @@ export async function onCheckin(storeId: string, location?: { latitude: number; 
     storeId,
     ...(location ?? {}),
   };
-  const response = await apiClient.post<ApiResponse<InstantRewardResult>>(
+  const response = await apiClient.post<InstantRewardResult>(
     '/api/rewards/instant/checkin',
-    payload,
+    payload as unknown as Record<string, unknown>,
   );
-  return response.data.data;
+  return response.data as InstantRewardResult;
 }
 
 /**
@@ -64,9 +64,9 @@ export async function onCheckin(storeId: string, location?: { latitude: number; 
  */
 export async function onQRScan(storeId: string, qrData?: string): Promise<InstantRewardResult> {
   const payload: QRScanPayload = { storeId, qrData };
-  const response = await apiClient.post<ApiResponse<InstantRewardResult>>(
+  const response = await apiClient.post<InstantRewardResult>(
     '/api/rewards/instant/scan',
-    payload,
+    payload as unknown as Record<string, unknown>,
   );
-  return response.data.data;
+  return response.data as InstantRewardResult;
 }

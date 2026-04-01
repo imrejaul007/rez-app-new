@@ -1,4 +1,4 @@
-import apiClient, { ApiResponse } from './apiClient';
+import apiClient from './apiClient';
 
 // ============================================================================
 // REZ SCORE API SERVICE
@@ -63,8 +63,8 @@ export interface ScoreHistoryEntry {
  * GET /api/score
  */
 export async function getScore(): Promise<RezScore> {
-  const response = await apiClient.get<ApiResponse<RezScore>>('/api/score');
-  return response.data.data;
+  const response = await apiClient.get<RezScore>('/api/score');
+  return response.data as RezScore;
 }
 
 /**
@@ -72,10 +72,10 @@ export async function getScore(): Promise<RezScore> {
  * GET /api/score/boosters
  */
 export async function getScoreBoosters(): Promise<ScoreBooster[]> {
-  const response = await apiClient.get<ApiResponse<ScoreBooster[]>>(
+  const response = await apiClient.get<ScoreBooster[]>(
     '/api/score/boosters',
   );
-  return response.data.data;
+  return (response.data as ScoreBooster[]) ?? [];
 }
 
 /**
@@ -83,8 +83,8 @@ export async function getScoreBoosters(): Promise<ScoreBooster[]> {
  * GET /api/score/history
  */
 export async function getScoreHistory(): Promise<ScoreHistoryEntry[]> {
-  const response = await apiClient.get<ApiResponse<ScoreHistoryEntry[]>>(
+  const response = await apiClient.get<ScoreHistoryEntry[]>(
     '/api/score/history',
   );
-  return response.data.data;
+  return (response.data as ScoreHistoryEntry[]) ?? [];
 }

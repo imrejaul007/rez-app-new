@@ -60,10 +60,14 @@ const PickCard = React.memo(({ pick, onPress }: { pick: CreatorPick; onPress: ()
       )}
     </View>
     <View style={styles.pickInfo}>
-      <Text style={styles.pickTitle} numberOfLines={2}>{pick.title}</Text>
+      <Text style={styles.pickTitle} numberOfLines={2}>
+        {pick.title}
+      </Text>
       <Text style={styles.pickBrand}>{pick.productBrand}</Text>
       <View style={styles.pickFooter}>
-        <Text style={styles.pickPrice}>{BRAND.CURRENCY_CODE} {pick.productPrice?.toLocaleString()}</Text>
+        <Text style={styles.pickPrice}>
+          {BRAND.CURRENCY_CODE} {pick.productPrice?.toLocaleString()}
+        </Text>
         <View style={styles.pickStats}>
           <Ionicons name="eye-outline" size={12} color={colors.text.tertiary} />
           <Text style={styles.pickStatText}>{formatCount(pick.views)}</Text>
@@ -96,11 +100,7 @@ function CreatorProfilePage() {
   const [followLoading, setFollowLoading] = useState(false);
 
   // Check if this is the logged-in user's own profile
-  const isOwnProfile = !!(
-    user?.id &&
-    id &&
-    (user.id === id || user.id === creator?.profileId)
-  );
+  const isOwnProfile = !!(user?.id && id && (user.id === id || user.id === creator?.profileId));
 
   const fetchCreatorData = useCallback(async () => {
     if (!id) {
@@ -128,7 +128,7 @@ function CreatorProfilePage() {
         if (!isOwnId) {
           const followResponse = await checkFollowStatus(id);
           if (followResponse.success && followResponse.data) {
-            setIsFollowing(followResponse.data.isFollowing);
+            setIsFollowing(followResponse.data.following);
           }
         }
       } else {
@@ -163,7 +163,7 @@ function CreatorProfilePage() {
     try {
       const response = await toggleFollow(id);
       if (response.success && response.data) {
-        setIsFollowing(response.data.isFollowing);
+        setIsFollowing(response.data.following);
       } else {
         if (!isMounted()) return;
         setIsFollowing(wasFollowing); // revert
@@ -177,12 +177,12 @@ function CreatorProfilePage() {
     }
   }, [id, isFollowing, followLoading]);
 
-  const renderPickCard = useCallback(({ item }: { item: CreatorPick }) => (
-    <PickCard
-      pick={item}
-      onPress={() => router.push({ pathname: '/picks/[id]', params: { id: item.id } })}
-    />
-  ), [router]);
+  const renderPickCard = useCallback(
+    ({ item }: { item: CreatorPick }) => (
+      <PickCard pick={item} onPress={() => router.push({ pathname: '/picks/[id]', params: { id: item.id } })} />
+    ),
+    [router],
+  );
 
   const keyExtractor = useCallback((item: CreatorPick) => item.id, []);
 
@@ -196,7 +196,10 @@ function CreatorProfilePage() {
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
         <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Creator Profile</Text>
@@ -218,7 +221,10 @@ function CreatorProfilePage() {
         <StatusBar barStyle="light-content" backgroundColor={colors.nileBlue} />
         <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
           <View style={styles.headerContent}>
-            <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+            <Pressable
+              style={styles.backButton}
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
             <Text style={styles.headerTitle}>Creator Profile</Text>
@@ -232,7 +238,10 @@ function CreatorProfilePage() {
           <Pressable style={styles.retryButton} onPress={fetchCreatorData}>
             <Text style={styles.retryButtonText}>Try Again</Text>
           </Pressable>
-          <Pressable style={styles.goBackButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.goBackButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Text style={styles.goBackButtonText}>Go Back</Text>
           </Pressable>
         </View>
@@ -251,16 +260,21 @@ function CreatorProfilePage() {
       {/* Header */}
       <LinearGradient colors={[colors.nileBlue, '#2d5a7b']} style={styles.header}>
         <View style={styles.headerContent}>
-          <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+          <Pressable
+            style={styles.backButton}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
           </Pressable>
           <Text style={styles.headerTitle}>{creator.name}</Text>
           <Pressable
             style={styles.shareButton}
-            onPress={() => { Share.share({
-              message: `Check out ${creator.name} on ${BRAND.APP_NAME}!`,
-              title: creator.name,
-            }).catch(() => {}); }}
+            onPress={() => {
+              Share.share({
+                message: `Check out ${creator.name} on ${BRAND.APP_NAME}!`,
+                title: creator.name,
+              }).catch(() => {});
+            }}
           >
             <Ionicons name="share-social-outline" size={22} color={colors.text.inverse} />
           </Pressable>
@@ -272,20 +286,13 @@ function CreatorProfilePage() {
         <View style={styles.profileSection}>
           {/* Cover Image */}
           {creator.coverImage && (
-            <CachedImage
-              source={creator.coverImage}
-              style={styles.coverImage}
-              contentFit="cover"
-            />
+            <CachedImage source={creator.coverImage} style={styles.coverImage} contentFit="cover" />
           )}
 
           {/* Avatar & Info */}
           <View style={styles.profileInfo}>
             <View style={styles.avatarSection}>
-              <LinearGradient
-                colors={['#9333EA', colors.brand.pink]}
-                style={styles.avatarGradient}
-              >
+              <LinearGradient colors={['#9333EA', colors.brand.pink]} style={styles.avatarGradient}>
                 {creator.avatar ? (
                   <CachedImage source={creator.avatar} style={styles.avatarImage} />
                 ) : (
@@ -297,9 +304,7 @@ function CreatorProfilePage() {
             <View style={styles.nameSection}>
               <View style={styles.nameRow}>
                 <Text style={styles.creatorName}>{creator.name}</Text>
-                {creator.verified && (
-                  <Ionicons name="checkmark-circle" size={20} color={Colors.info} />
-                )}
+                {creator.verified && <Ionicons name="checkmark-circle" size={20} color={Colors.info} />}
               </View>
               {creator.tier && (
                 <View style={styles.tierBadge}>
@@ -309,17 +314,12 @@ function CreatorProfilePage() {
                   </Text>
                 </View>
               )}
-              {creator.bio && (
-                <Text style={styles.bioText}>{creator.bio}</Text>
-              )}
+              {creator.bio && <Text style={styles.bioText}>{creator.bio}</Text>}
             </View>
 
             {/* Action Button: Edit Profile (own) or Follow (others) */}
             {isOwnProfile ? (
-              <Pressable
-                style={styles.editProfileButton}
-                onPress={() => router.push('/creator/edit')}
-              >
+              <Pressable style={styles.editProfileButton} onPress={() => router.push('/creator/edit')}>
                 <Ionicons name="create-outline" size={16} color={colors.nileBlue} />
                 <Text style={styles.editProfileButtonText}>Edit</Text>
               </Pressable>
@@ -378,11 +378,7 @@ function CreatorProfilePage() {
         {/* Own Profile Actions */}
         {isOwnProfile && (
           <View style={styles.ownProfileActions}>
-            <Pressable
-              style={styles.dashboardButton}
-              onPress={() => router.push('/creator-dashboard')}
-             
-            >
+            <Pressable style={styles.dashboardButton} onPress={() => router.push('/creator-dashboard')}>
               <Ionicons name="analytics-outline" size={18} color={colors.text.inverse} />
               <Text style={styles.dashboardButtonText}>Go to Dashboard</Text>
             </Pressable>
@@ -412,16 +408,27 @@ function CreatorProfilePage() {
                 <Pressable
                   key={index}
                   style={styles.socialLink}
-                  onPress={() => { if (link.url) { try { Linking.openURL(link.url); } catch (e) { catchAndWarn(e, 'CreatorProfile/openURL'); } } }}
-                 
+                  onPress={() => {
+                    if (link.url) {
+                      try {
+                        Linking.openURL(link.url);
+                      } catch (e) {
+                        catchAndWarn(e, 'CreatorProfile/openURL');
+                      }
+                    }
+                  }}
                 >
                   <Ionicons
                     name={
-                      link.platform === 'instagram' ? 'logo-instagram' :
-                      link.platform === 'youtube' ? 'logo-youtube' :
-                      link.platform === 'twitter' ? 'logo-twitter' :
-                      link.platform === 'tiktok' ? 'musical-notes' :
-                      'link' as any
+                      link.platform === 'instagram'
+                        ? 'logo-instagram'
+                        : link.platform === 'youtube'
+                          ? 'logo-youtube'
+                          : link.platform === 'twitter'
+                            ? 'logo-twitter'
+                            : link.platform === 'tiktok'
+                              ? 'musical-notes'
+                              : ('link' as any)
                     }
                     size={18}
                     color={colors.text.tertiary}
@@ -435,9 +442,7 @@ function CreatorProfilePage() {
 
         {/* Picks Section */}
         <View style={styles.picksSection}>
-          <Text style={styles.sectionTitle}>
-            Product Picks ({picks.length})
-          </Text>
+          <Text style={styles.sectionTitle}>Product Picks ({picks.length})</Text>
 
           {picks.length > 0 ? (
             <View style={styles.picksGrid}>
@@ -462,7 +467,8 @@ function CreatorProfilePage() {
           <View style={styles.joinedSection}>
             <Ionicons name="calendar-outline" size={14} color={colors.text.tertiary} />
             <Text style={styles.joinedText}>
-              Joined {new Date(creator.joinedAt).toLocaleDateString('en-US', {
+              Joined{' '}
+              {new Date(creator.joinedAt).toLocaleDateString('en-US', {
                 month: 'long',
                 year: 'numeric',
               })}

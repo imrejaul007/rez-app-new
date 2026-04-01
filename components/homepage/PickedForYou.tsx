@@ -215,7 +215,7 @@ const PickedForYou: React.FC<PickedForYouProps> = ({
           const originalPrice = getOriginalPrice(product.price);
           const savingsPercent = getSavings(product.price);
           const productName = product.name || product.title || 'Product';
-          const productImage = product.image || product.images?.[0];
+          const productImage = product.image || product.image?.[0];
 
           return (
             <Pressable

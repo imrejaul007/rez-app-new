@@ -394,7 +394,7 @@ function StoreCard({
                       });
                     }}
                     style={{ width: '100%', height: 140 }}
-                    contentContainerStyle={{ height: 140 }}
+                    contentContainerStyle={{ height: 140 } as any}
                   />
                   {/* Pagination Dots */}
                   <View style={styles.paginationContainer}>

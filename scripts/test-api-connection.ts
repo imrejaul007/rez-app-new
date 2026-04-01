@@ -25,7 +25,7 @@ async function testConnection() {
     if (offersResponse.success && offersResponse.data.length > 0) {
       console.log('✅ Offers API Working!');
       console.log(`   Found ${offersResponse.data.length} offers`);
-      console.log(`   First offer: ${offersResponse.data[0].title}`);
+      console.log(`   First offer: ${(offersResponse.data as any)[0]?.title}`);
     } else {
       console.log('❌ Offers API returned empty data');
     }

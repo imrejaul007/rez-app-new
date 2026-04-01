@@ -76,9 +76,18 @@ type StatusFilter = 'all' | 'upcoming' | 'pending' | 'confirmed' | 'completed' |
 // BUG-042 FIX: Type the `raw` field instead of `any` to prevent unsafe property access.
 // `raw` preserves the original API object for cancel/navigation/display operations that
 // need type-specific fields not in the normalized shape (storeId, bookingNumber, etc.).
+interface RawBookingStoreObject {
+  _id?: string;
+  name?: string;
+  logo?: string;
+  location?: unknown;
+  contact?: unknown;
+  [key: string]: unknown;
+}
+
 interface RawBookingData {
   _id: string;
-  storeId?: { _id?: string; name?: string; location?: unknown; contact?: unknown } | string;
+  storeId?: RawBookingStoreObject | string;
   bookingNumber?: string;
   specialRequests?: string;
   cancellationReason?: string;
@@ -575,8 +584,10 @@ function BookingsPage() {
 
       // Build expanded details from raw data
       const raw = booking.raw;
-      const storeLocation = raw?.storeId?.location;
-      const storeContact = raw?.storeId?.contact;
+      const rawStoreObj =
+        raw?.storeId && typeof raw.storeId === 'object' ? (raw.storeId as RawBookingStoreObject) : null;
+      const storeLocation = rawStoreObj?.location;
+      const storeContact = rawStoreObj?.contact;
 
       const handleExpand = () => setExpandedBookingId(isExpanded ? null : booking.id);
       const handleMenuPress = () => {

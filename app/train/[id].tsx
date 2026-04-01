@@ -167,10 +167,11 @@ function TrainDetailsPage() {
       const productData = response.data;
 
       // Check if this is a train service
-      const isTrain = productData.serviceCategory?.slug === 'trains' || 
-                       productData.category?.slug === 'trains' ||
-                       productData.name?.toLowerCase().includes('train') ||
-                       productData.name?.toLowerCase().includes('express');
+      const isTrain =
+        productData.serviceCategory?.slug === 'trains' ||
+        productData.category?.slug === 'trains' ||
+        productData.name?.toLowerCase().includes('train') ||
+        productData.name?.toLowerCase().includes('express');
 
       if (!isTrain) {
         // Redirect to regular product page
@@ -203,8 +204,13 @@ function TrainDetailsPage() {
           }
         }
         if (!from) {
-          if (productData.name.toLowerCase().includes('rajdhani')) { from = from || 'Delhi'; to = to || 'Mumbai'; }
-          else if (productData.name.toLowerCase().includes('shatabdi')) { from = from || 'Delhi'; to = to || 'Chandigarh'; }
+          if (productData.name.toLowerCase().includes('rajdhani')) {
+            from = from || 'Delhi';
+            to = to || 'Mumbai';
+          } else if (productData.name.toLowerCase().includes('shatabdi')) {
+            from = from || 'Delhi';
+            to = to || 'Chandigarh';
+          }
         }
         if (!from) from = 'Origin';
         if (!to) to = 'Destination';
@@ -217,12 +223,14 @@ function TrainDetailsPage() {
       let departureTime = specDepTime;
       let arrivalTime = specArrTime;
       if (!departureTime || !arrivalTime) {
-        const baseDepartureHour = 8, baseDepartureMin = 0;
+        const baseDepartureHour = 8,
+          baseDepartureMin = 0;
         const durationHours = Math.floor(dur / 60);
         const durationMins = dur % 60;
         const arrH = (baseDepartureHour + durationHours + Math.floor((baseDepartureMin + durationMins) / 60)) % 24;
         const arrM = (baseDepartureMin + durationMins) % 60;
-        const formatTime = (h: number, m: number) => `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+        const formatTime = (h: number, m: number) =>
+          `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
         if (!departureTime) departureTime = formatTime(baseDepartureHour, baseDepartureMin);
         if (!arrivalTime) arrivalTime = formatTime(arrH, arrM);
       }
@@ -232,13 +240,15 @@ function TrainDetailsPage() {
 
       // Train type: prefer specs, fallback to name parsing
       const specTrainType = getSpec('trainType');
-      const trainType = specTrainType || (() => {
-        if (productData.name.toLowerCase().includes('rajdhani')) return 'Rajdhani Express';
-        if (productData.name.toLowerCase().includes('shatabdi')) return 'Shatabdi Express';
-        if (productData.name.toLowerCase().includes('duronto')) return 'Duronto Express';
-        if (productData.name.toLowerCase().includes('garib')) return 'Garib Rath';
-        return 'Express';
-      })();
+      const trainType =
+        specTrainType ||
+        (() => {
+          if (productData.name.toLowerCase().includes('rajdhani')) return 'Rajdhani Express';
+          if (productData.name.toLowerCase().includes('shatabdi')) return 'Shatabdi Express';
+          if (productData.name.toLowerCase().includes('duronto')) return 'Duronto Express';
+          if (productData.name.toLowerCase().includes('garib')) return 'Garib Rath';
+          return 'Express';
+        })();
 
       // Get cashback from multiple sources
       const cashbackPercentage = (() => {
@@ -250,14 +260,20 @@ function TrainDetailsPage() {
       })();
 
       // Calculate price properly
-      const basePrice = productData.pricing?.selling || productData.pricing?.basePrice || productData.price?.current || 0;
-      const originalPrice = productData.pricing?.original || productData.pricing?.basePrice || productData.price?.original;
-      const calculatedDiscount = originalPrice && basePrice && originalPrice > basePrice
-        ? Math.round(((originalPrice - basePrice) / originalPrice) * 100)
-        : productData.pricing?.discount || 0;
+      const basePrice =
+        productData.pricing?.selling || productData.pricing?.basePrice || productData.price?.current || 0;
+      const originalPrice =
+        productData.pricing?.original || productData.pricing?.basePrice || productData.price?.original;
+      const calculatedDiscount =
+        originalPrice && basePrice && originalPrice > basePrice
+          ? Math.round(((originalPrice - basePrice) / originalPrice) * 100)
+          : productData.pricing?.discount || 0;
 
       // Train number: prefer specs, fallback to SKU
-      const trainNumber = getSpec('trainNumber') || productData.sku || productData.barcode ||
+      const trainNumber =
+        getSpec('trainNumber') ||
+        productData.sku ||
+        productData.barcode ||
         `${productData.name.substring(0, 3).toUpperCase()}${(productData.id || productData._id || '').toString().slice(-4)}`;
 
       // Class options: prefer specs, fallback to price multipliers
@@ -305,7 +321,7 @@ function TrainDetailsPage() {
               return null;
             })
             .filter((url: string | null): url is string => Boolean(url && typeof url === 'string' && url.length > 0));
-          const validatedImages = processedImages.filter(url => {
+          const validatedImages = processedImages.filter((url) => {
             // Remove mismatched bus images from train listings
             if (url.toLowerCase().includes('bus') && !url.toLowerCase().includes('train')) {
               return false;
@@ -314,14 +330,15 @@ function TrainDetailsPage() {
           });
           return validatedImages;
         })(),
-        description: productData.description || productData.shortDescription || 'Comfortable train journey with excellent service.',
+        description:
+          productData.description || productData.description || 'Comfortable train journey with excellent service.',
         duration: dur,
         departureTime,
         arrivalTime,
         availableDates: generateAvailableDates(),
         cashback: {
           percentage: cashbackPercentage,
-          amount: Math.round(basePrice * cashbackPercentage / 100),
+          amount: Math.round((basePrice * cashbackPercentage) / 100),
         },
         rating: reviewSummary?.averageRating || productData.ratings?.average || 0,
         reviewCount: reviewSummary?.totalReviews || productData.ratings?.count || 0,
@@ -332,23 +349,27 @@ function TrainDetailsPage() {
         },
         amenities: (() => {
           const tagAmenities: Record<string, string[]> = {
-            'premium': ['AC Coach', 'Meals', 'Bedding', 'Reading Light', 'Charging Point', 'Wi-Fi'],
-            'express': ['AC Coach', 'Meals', 'Reading Light', 'Charging Point'],
-            'sleeper': ['Fans', 'Reading Light', 'Charging Point'],
+            premium: ['AC Coach', 'Meals', 'Bedding', 'Reading Light', 'Charging Point', 'Wi-Fi'],
+            express: ['AC Coach', 'Meals', 'Reading Light', 'Charging Point'],
+            sleeper: ['Fans', 'Reading Light', 'Charging Point'],
           };
           const tags = productData.tags || [];
           for (const [key, amenities] of Object.entries(tagAmenities)) {
             if (tags.some((tag: string) => tag.toLowerCase().includes(key))) return amenities;
           }
-          if (productData.name.toLowerCase().includes('rajdhani') || productData.name.toLowerCase().includes('shatabdi')) {
+          if (
+            productData.name.toLowerCase().includes('rajdhani') ||
+            productData.name.toLowerCase().includes('shatabdi')
+          ) {
             return ['AC Coach', 'Meals', 'Bedding', 'Reading Light', 'Charging Point'];
           }
           return ['AC Coach', 'Meals', 'Reading Light', 'Charging Point'];
         })(),
         cancellationPolicy: {
-          freeCancellation: productData.specifications?.some((s: any) =>
-            s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free')
-          ) || true,
+          freeCancellation:
+            productData.specifications?.some(
+              (s: any) => s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free'),
+            ) || true,
           cancellationDeadline: '24',
           refundPercentage: 80,
         },
@@ -391,7 +412,7 @@ function TrainDetailsPage() {
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
-        }
+        },
       } as any);
     } else {
       setBookingData(data);
@@ -406,7 +427,7 @@ function TrainDetailsPage() {
 
   const handleFavorite = async () => {
     if (!train) return;
-    
+
     try {
       if (isInWishlist(train.id)) {
         await removeFromWishlist(train.id);
@@ -442,8 +463,8 @@ function TrainDetailsPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView} 
+      <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -452,7 +473,7 @@ function TrainDetailsPage() {
           {(() => {
             const imageUrl = train.images?.[selectedImageIndex] || train.images?.[0];
             const hasValidImage = imageUrl && typeof imageUrl === 'string' && imageUrl.length > 0;
-            
+
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
@@ -465,40 +486,31 @@ function TrainDetailsPage() {
                   onLoadStart={() => {
                     setImageError(false);
                   }}
-                  onLoad={() => {
-                  }}
+                  onLoad={() => {}}
                 />
               );
             }
-            
+
             return (
               <View style={[styles.headerImage, styles.placeholderImage]}>
                 <Ionicons name="train" size={64} color={colors.text.tertiary} />
                 <Text style={styles.placeholderText}>Train Image</Text>
                 {imageUrl && (
-                  <Text style={styles.placeholderSubtext}>
-                    {imageError ? 'Failed to load image' : 'Loading...'}
-                  </Text>
+                  <Text style={styles.placeholderSubtext}>{imageError ? 'Failed to load image' : 'Loading...'}</Text>
                 )}
               </View>
             );
           })()}
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.7)']}
-            style={styles.headerGradient}
-          />
-          
+          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.headerGradient} />
+
           {/* Back and Action Buttons */}
           <View style={styles.headerActions}>
             <Pressable style={styles.backButton} onPress={handleBack}>
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
-            
+
             <View style={styles.headerRightActions}>
-              <Pressable
-                style={styles.actionButton}
-                onPress={handleFavorite}
-              >
+              <Pressable style={styles.actionButton} onPress={handleFavorite}>
                 <Ionicons
                   name={isInWishlist(train.id) ? 'heart' : 'heart-outline'}
                   size={24}
@@ -524,10 +536,7 @@ function TrainDetailsPage() {
               {train.images.map((_, index) => (
                 <Pressable
                   key={index}
-                  style={[
-                    styles.indicator,
-                    selectedImageIndex === index && styles.indicatorActive,
-                  ]}
+                  style={[styles.indicator, selectedImageIndex === index && styles.indicatorActive]}
                   onPress={() => setSelectedImageIndex(index)}
                 />
               ))}
@@ -593,9 +602,15 @@ function TrainDetailsPage() {
               <Text style={styles.priceLabel}>Starting from</Text>
               <View style={styles.priceContainer}>
                 {train.originalPrice && train.originalPrice > train.price && (
-                  <Text style={styles.originalPrice}>{currencySymbol}{train.originalPrice.toLocaleString(locale)}</Text>
+                  <Text style={styles.originalPrice}>
+                    {currencySymbol}
+                    {train.originalPrice.toLocaleString(locale)}
+                  </Text>
                 )}
-                <Text style={styles.price}>{currencySymbol}{train.price.toLocaleString(locale)}</Text>
+                <Text style={styles.price}>
+                  {currencySymbol}
+                  {train.price.toLocaleString(locale)}
+                </Text>
               </View>
               {train.discount && train.discount > 0 && (
                 <View style={styles.discountTag}>
@@ -608,11 +623,10 @@ function TrainDetailsPage() {
                 <Ionicons name="gift" size={20} color={Colors.gold} />
               </View>
               <View style={styles.cashbackContent}>
-                <Text style={styles.cashbackText}>
-                  {train.cashback.percentage}% Cashback
-                </Text>
+                <Text style={styles.cashbackText}>{train.cashback.percentage}% Cashback</Text>
                 <Text style={styles.cashbackAmount}>
-                  Earn {currencySymbol}{train.cashback.amount.toLocaleString(locale)}
+                  Earn {currencySymbol}
+                  {train.cashback.amount.toLocaleString(locale)}
                 </Text>
               </View>
             </View>
@@ -640,17 +654,21 @@ function TrainDetailsPage() {
                 <Ionicons name="train" size={24} color={Colors.gold} />
               </View>
               <Text style={styles.detailLabel}>Train Type</Text>
-              <Text style={styles.detailValue} numberOfLines={2}>{train.trainType}</Text>
+              <Text style={styles.detailValue} numberOfLines={2}>
+                {train.trainType}
+              </Text>
             </View>
             <View style={styles.detailItem}>
               <View style={styles.detailIconContainer}>
                 <Ionicons name="ticket" size={24} color={Colors.gold} />
               </View>
               <Text style={styles.detailLabel}>Train Number</Text>
-              <Text style={styles.detailValue} numberOfLines={2}>{train.trainNumber}</Text>
+              <Text style={styles.detailValue} numberOfLines={2}>
+                {train.trainNumber}
+              </Text>
             </View>
           </View>
-          
+
           {/* Additional Info */}
           <View style={styles.additionalInfo}>
             <View style={styles.infoRow}>
@@ -659,7 +677,9 @@ function TrainDetailsPage() {
             </View>
             <View style={styles.infoRow}>
               <Ionicons name="location-outline" size={18} color={colors.text.tertiary} />
-              <Text style={styles.infoText}>{train.route.fromStation} → {train.route.toStation}</Text>
+              <Text style={styles.infoText}>
+                {train.route.fromStation} → {train.route.toStation}
+              </Text>
             </View>
           </View>
         </View>
@@ -674,7 +694,7 @@ function TrainDetailsPage() {
             <Text style={styles.sectionTitle}>About This Train</Text>
           </View>
           <Text style={styles.description}>{train.description}</Text>
-          
+
           {/* Key Highlights */}
           <View style={styles.highlightsContainer}>
             <View style={styles.highlightItem}>
@@ -716,10 +736,7 @@ function TrainDetailsPage() {
         </View>
 
         {/* Related Trains */}
-        <RelatedTrainsSection
-          currentTrainId={train.id}
-          route={train.route}
-        />
+        <RelatedTrainsSection currentTrainId={train.id} route={train.route} />
 
         {/* Bottom Spacing */}
         <View style={{ height: 160 }} />
@@ -727,11 +744,7 @@ function TrainDetailsPage() {
 
       {/* Book Now Button */}
       <View style={styles.bookButtonContainer}>
-        <Pressable
-          style={styles.bookButton}
-          onPress={handleBookNow}
-         
-        >
+        <Pressable style={styles.bookButton} onPress={handleBookNow}>
           <LinearGradient
             colors={[colors.lightMustard, '#e6b84d']}
             style={styles.bookButtonGradient}
@@ -751,11 +764,7 @@ function TrainDetailsPage() {
         presentationStyle="pageSheet"
         onRequestClose={() => setShowBookingFlow(false)}
       >
-        <TrainBookingFlow
-          train={train}
-          onComplete={handleBookingComplete}
-          onClose={() => setShowBookingFlow(false)}
-        />
+        <TrainBookingFlow train={train} onComplete={handleBookingComplete} onClose={() => setShowBookingFlow(false)} />
       </Modal>
 
       {/* Booking Confirmation Modal */}
@@ -763,7 +772,10 @@ function TrainDetailsPage() {
         visible={showConfirmation}
         animationType="slide"
         presentationStyle="pageSheet"
-        onRequestClose={() => { setShowConfirmation(false); router.canGoBack() ? router.back() : router.replace('/(tabs)'); }}
+        onRequestClose={() => {
+          setShowConfirmation(false);
+          router.canGoBack() ? router.back() : router.replace('/(tabs)');
+        }}
       >
         {bookingData && (
           <TrainBookingConfirmation

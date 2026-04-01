@@ -4,7 +4,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  * Production-ready with complete booking flow
  */
 
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -15,13 +15,9 @@ import {
   ActivityIndicator,
   SafeAreaView,
   Dimensions,
-  Modal
+  Modal,
 } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withSequence,
-  withTiming } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -131,7 +127,7 @@ function PackageDetailsPage() {
   const [bookingData, setBookingData] = useState<BookingData | null>(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [imageError, setImageError] = useState(false);
-  
+
   // Animation for button
   const buttonScale = useSharedValue(1);
 
@@ -140,9 +136,11 @@ function PackageDetailsPage() {
     reviews,
     summary: reviewSummary,
     isLoading: reviewsLoading,
-    refreshReviews } = useProductReviews({
+    refreshReviews,
+  } = useProductReviews({
     productId: id as string,
-    autoLoad: true });
+    autoLoad: true,
+  });
 
   useEffect(() => {
     if (id) {
@@ -166,10 +164,11 @@ function PackageDetailsPage() {
       const productData = response.data;
 
       // Check if this is a package service
-      const isPackage = productData.serviceCategory?.slug === 'packages' || 
-                       productData.category?.slug === 'packages' ||
-                       productData.name?.toLowerCase().includes('package') ||
-                       productData.name?.toLowerCase().includes('tour');
+      const isPackage =
+        productData.serviceCategory?.slug === 'packages' ||
+        productData.category?.slug === 'packages' ||
+        productData.name?.toLowerCase().includes('package') ||
+        productData.name?.toLowerCase().includes('tour');
 
       if (!isPackage) {
         router.replace(`/product-page?cardId=${id}&cardType=product`);
@@ -193,11 +192,7 @@ function PackageDetailsPage() {
       if (specDays) days = parseInt(specDays) || nights + 1;
 
       if (!destination) {
-        const namePatterns = [
-          /(.+?)\s+(\d+)N\/(\d+)D/i,
-          /(.+?)\s+(\d+)\s+nights/i,
-          /(.+?)\s+package/i,
-        ];
+        const namePatterns = [/(.+?)\s+(\d+)N\/(\d+)D/i, /(.+?)\s+(\d+)\s+nights/i, /(.+?)\s+package/i];
         for (const pattern of namePatterns) {
           const match = productData.name.match(pattern);
           if (match) {
@@ -241,11 +236,14 @@ function PackageDetailsPage() {
       })();
 
       // Calculate price
-      const basePrice = productData.pricing?.selling || productData.pricing?.basePrice || productData.price?.current || 0;
-      const originalPrice = productData.pricing?.original || productData.pricing?.basePrice || productData.price?.original;
-      const calculatedDiscount = originalPrice && basePrice && originalPrice > basePrice
-        ? Math.round(((originalPrice - basePrice) / originalPrice) * 100)
-        : productData.pricing?.discount || 0;
+      const basePrice =
+        productData.pricing?.selling || productData.pricing?.basePrice || productData.price?.current || 0;
+      const originalPrice =
+        productData.pricing?.original || productData.pricing?.basePrice || productData.price?.original;
+      const calculatedDiscount =
+        originalPrice && basePrice && originalPrice > basePrice
+          ? Math.round(((originalPrice - basePrice) / originalPrice) * 100)
+          : productData.pricing?.discount || 0;
 
       // Accommodation options: prefer specs
       const specAccommodation = getSpec('accommodationTypes') || getSpec('roomTypes');
@@ -253,13 +251,19 @@ function PackageDetailsPage() {
         const defaults = {
           standard: { price: basePrice, available: true, description: 'Comfortable standard accommodation' },
           deluxe: { price: Math.round(basePrice * 1.3), available: true, description: 'Premium deluxe accommodation' },
-          luxury: { price: Math.round(basePrice * 1.6), available: true, description: 'Luxury accommodation with premium amenities' } };
+          luxury: {
+            price: Math.round(basePrice * 1.6),
+            available: true,
+            description: 'Luxury accommodation with premium amenities',
+          },
+        };
         if (!specAccommodation) return defaults;
         const types = specAccommodation.split(',').map((t: string) => t.trim().toLowerCase());
         return {
           standard: { ...defaults.standard, available: types.includes('standard') || types.length === 0 },
           deluxe: { ...defaults.deluxe, available: types.includes('deluxe') },
-          luxury: { ...defaults.luxury, available: types.includes('luxury') } };
+          luxury: { ...defaults.luxury, available: types.includes('luxury') },
+        };
       };
 
       // Transform to PackageDetails
@@ -284,21 +288,27 @@ function PackageDetailsPage() {
             .filter((url: string | null): url is string => Boolean(url && typeof url === 'string' && url.length > 0));
           return processedImages;
         })(),
-        description: productData.description || productData.shortDescription || 'Complete travel package with hotel, meals, and sightseeing.',
+        description:
+          productData.description ||
+          productData.description ||
+          'Complete travel package with hotel, meals, and sightseeing.',
         cashback: {
           percentage: cashbackPercentage,
-          amount: Math.round(basePrice * cashbackPercentage / 100) },
+          amount: Math.round((basePrice * cashbackPercentage) / 100),
+        },
         rating: reviewSummary?.averageRating || productData.ratings?.average || 0,
         reviewCount: reviewSummary?.totalReviews || productData.ratings?.count || 0,
         store: {
           id: productData.store?.id || productData.store?._id,
           name: providerName || productData.store?.name || 'Wanderlust Tours',
-          logo: productData.store?.logo },
+          logo: productData.store?.logo,
+        },
         amenities: (() => {
           const tagAmenities: Record<string, string[]> = {
-            'luxury': ['Hotel', 'Meals', 'Transport', 'Sightseeing', 'Guide', 'Wi-Fi', 'AC'],
-            'premium': ['Hotel', 'Meals', 'Transport', 'Sightseeing', 'Wi-Fi'],
-            'budget': ['Hotel', 'Breakfast', 'Transport', 'Sightseeing'] };
+            luxury: ['Hotel', 'Meals', 'Transport', 'Sightseeing', 'Guide', 'Wi-Fi', 'AC'],
+            premium: ['Hotel', 'Meals', 'Transport', 'Sightseeing', 'Wi-Fi'],
+            budget: ['Hotel', 'Breakfast', 'Transport', 'Sightseeing'],
+          };
           const tags = productData.tags || [];
           for (const [key, amenities] of Object.entries(tagAmenities)) {
             if (tags.some((tag: string) => tag.toLowerCase().includes(key))) return amenities;
@@ -307,12 +317,15 @@ function PackageDetailsPage() {
         })(),
         inclusions,
         cancellationPolicy: {
-          freeCancellation: productData.specifications?.some((s: any) =>
-            s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free')
-          ) || true,
+          freeCancellation:
+            productData.specifications?.some(
+              (s: any) => s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free'),
+            ) || true,
           cancellationDeadline: '7',
-          refundPercentage: 80 },
-        accommodationOptions: buildAccommodationOptions() };
+          refundPercentage: 80,
+        },
+        accommodationOptions: buildAccommodationOptions(),
+      };
 
       if (!isMounted()) return;
       setPackageData(packageDetails);
@@ -330,11 +343,8 @@ function PackageDetailsPage() {
   }));
 
   const handleBookNow = () => {
-    buttonScale.value = withSequence(
-      withTiming(0.95, { duration: 100 }),
-      withTiming(1, { duration: 100 })
-    );
-    
+    buttonScale.value = withSequence(withTiming(0.95, { duration: 100 }), withTiming(1, { duration: 100 }));
+
     setShowBookingFlow(true);
   };
 
@@ -347,7 +357,8 @@ function PackageDetailsPage() {
           amount: (data as any).totalAmount,
           bookingId: data.bookingId,
           bookingType: 'travel',
-          currency: currency || 'INR' }
+          currency: currency || 'INR',
+        },
       } as any);
     } else {
       setBookingData(data);
@@ -362,7 +373,7 @@ function PackageDetailsPage() {
 
   const handleFavorite = async () => {
     if (!packageData) return;
-    
+
     try {
       if (isInWishlist(packageData.id)) {
         await removeFromWishlist(packageData.id);
@@ -398,8 +409,8 @@ function PackageDetailsPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView} 
+      <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -408,7 +419,7 @@ function PackageDetailsPage() {
           {(() => {
             const imageUrl = packageData.images?.[selectedImageIndex] || packageData.images?.[0];
             const hasValidImage = imageUrl && typeof imageUrl === 'string' && imageUrl.length > 0;
-            
+
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
@@ -420,7 +431,7 @@ function PackageDetailsPage() {
                 />
               );
             }
-            
+
             return (
               <View style={[styles.headerImage, styles.placeholderImage]}>
                 <Ionicons name="bag" size={64} color={colors.text.tertiary} />
@@ -428,16 +439,13 @@ function PackageDetailsPage() {
               </View>
             );
           })()}
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.7)']}
-            style={styles.headerGradient}
-          />
-          
+          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.headerGradient} />
+
           <View style={styles.headerActions}>
             <Pressable style={styles.backButton} onPress={handleBack}>
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
-            
+
             <View style={styles.headerRightActions}>
               <Pressable style={styles.actionButton} onPress={handleFavorite}>
                 <Ionicons
@@ -455,13 +463,7 @@ function PackageDetailsPage() {
           {packageData.images.length > 1 && (
             <View style={styles.imageIndicators}>
               {packageData.images.map((_, index) => (
-                <View
-                  key={index}
-                  style={[
-                    styles.indicator,
-                    selectedImageIndex === index && styles.indicatorActive,
-                  ]}
-                />
+                <View key={index} style={[styles.indicator, selectedImageIndex === index && styles.indicatorActive]} />
               ))}
             </View>
           )}
@@ -479,9 +481,7 @@ function PackageDetailsPage() {
             <Text style={styles.sectionTitle}>Tour Operator</Text>
           </View>
           <View style={styles.storeCard}>
-            {packageData.store.logo && (
-              <CachedImage source={packageData.store.logo} style={styles.storeLogo} />
-            )}
+            {packageData.store.logo && <CachedImage source={packageData.store.logo} style={styles.storeLogo} />}
             <View style={styles.storeInfo}>
               <Text style={styles.storeName}>{packageData.store.name}</Text>
               <View style={styles.storeBadge}>
@@ -502,18 +502,25 @@ function PackageDetailsPage() {
               <View>
                 <Text style={styles.priceLabel}>Price</Text>
                 <View style={styles.priceValueContainer}>
-                  <Text style={styles.priceValue}>{currencySymbol}{packageData.price.toLocaleString(locale)}</Text>
+                  <Text style={styles.priceValue}>
+                    {currencySymbol}
+                    {packageData.price.toLocaleString(locale)}
+                  </Text>
                   {packageData.originalPrice && packageData.originalPrice > packageData.price && (
-                    <Text style={styles.originalPrice}>{currencySymbol}{packageData.originalPrice.toLocaleString(locale)}</Text>
+                    <Text style={styles.originalPrice}>
+                      {currencySymbol}
+                      {packageData.originalPrice.toLocaleString(locale)}
+                    </Text>
                   )}
                 </View>
               </View>
               <View style={styles.cashbackBadge}>
                 <Ionicons name="cash" size={20} color={colors.text.inverse} />
-                <Text style={styles.cashbackText}>
-                  {packageData.cashback.percentage}% Cashback
+                <Text style={styles.cashbackText}>{packageData.cashback.percentage}% Cashback</Text>
+                <Text style={styles.cashbackAmount}>
+                  {currencySymbol}
+                  {packageData.cashback.amount}
                 </Text>
-                <Text style={styles.cashbackAmount}>{currencySymbol}{packageData.cashback.amount}</Text>
               </View>
             </View>
             {packageData.discount && packageData.discount > 0 && (
@@ -613,10 +620,14 @@ function PackageDetailsPage() {
               <Text style={styles.priceInfoLabel}>Total Price</Text>
               <View style={styles.priceInfoValueContainer}>
                 <Text style={styles.priceInfoValue}>
-                  {currencySymbol}{packageData.price.toLocaleString(locale)}
+                  {currencySymbol}
+                  {packageData.price.toLocaleString(locale)}
                 </Text>
                 {packageData.originalPrice && packageData.originalPrice > packageData.price && (
-                  <Text style={styles.priceInfoOriginal}>{currencySymbol}{packageData.originalPrice.toLocaleString(locale)}</Text>
+                  <Text style={styles.priceInfoOriginal}>
+                    {currencySymbol}
+                    {packageData.originalPrice.toLocaleString(locale)}
+                  </Text>
                 )}
               </View>
             </View>
@@ -626,13 +637,9 @@ function PackageDetailsPage() {
             </View>
           </View>
         </View>
-        
+
         <Animated.View style={buttonScaleStyle}>
-          <Pressable 
-            style={styles.bookButton} 
-            onPress={handleBookNow}
-           
-          >
+          <Pressable style={styles.bookButton} onPress={handleBookNow}>
             <LinearGradient
               colors={[colors.brand.purpleLight, colors.brand.purple, colors.brand.purpleDeep]}
               style={styles.bookButtonGradient}
@@ -697,68 +704,84 @@ function PackageDetailsPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary },
+    backgroundColor: colors.background.primary,
+  },
   scrollView: {
-    flex: 1 },
+    flex: 1,
+  },
   scrollContent: {
-    paddingBottom: 200 },
+    paddingBottom: 200,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   loadingContent: {
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   loadingText: {
     ...Typography.h4,
     fontWeight: '600',
     color: colors.text.primary,
-    marginTop: Spacing.base },
+    marginTop: Spacing.base,
+  },
   loadingSubtext: {
     ...Typography.body,
     color: colors.text.tertiary,
-    marginTop: Spacing.sm },
+    marginTop: Spacing.sm,
+  },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: Spacing['2xl'] },
+    padding: Spacing['2xl'],
+  },
   errorText: {
     ...Typography.h4,
     fontWeight: '600',
     color: Colors.error,
     marginTop: Spacing.base,
-    textAlign: 'center' },
+    textAlign: 'center',
+  },
   retryButton: {
     marginTop: Spacing.xl,
     paddingHorizontal: Spacing.xl,
     paddingVertical: Spacing.md,
     backgroundColor: Colors.brand.purpleLight,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   retryButtonText: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   headerContainer: {
     width: screenWidth,
     height: 300,
-    position: 'relative' },
+    position: 'relative',
+  },
   headerImage: {
     width: '100%',
-    height: '100%' },
+    height: '100%',
+  },
   placeholderImage: {
     backgroundColor: colors.background.secondary,
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   placeholderText: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
-    marginTop: Spacing.md },
+    marginTop: Spacing.md,
+  },
   headerGradient: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    height: 150 },
+    height: 150,
+  },
   headerActions: {
     position: 'absolute',
     top: Platform.OS === 'ios' ? 50 : 20,
@@ -766,24 +789,28 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 16 },
+    paddingHorizontal: 16,
+  },
   backButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: 'rgba(0,0,0,0.3)',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   headerRightActions: {
     flexDirection: 'row',
-    gap: 12 },
+    gap: 12,
+  },
   actionButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
     backgroundColor: 'rgba(0,0,0,0.3)',
     justifyContent: 'center',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   imageIndicators: {
     position: 'absolute',
     bottom: 16,
@@ -791,127 +818,155 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 8 },
+    gap: 8,
+  },
   indicator: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: 'rgba(255,255,255,0.5)' },
+    backgroundColor: 'rgba(255,255,255,0.5)',
+  },
   indicatorActive: {
     backgroundColor: colors.background.primary,
-    width: 24 },
+    width: 24,
+  },
   infoCardWrapper: {
     marginTop: -20,
     marginHorizontal: 16,
-    marginBottom: 24 },
+    marginBottom: 24,
+  },
   section: {
     paddingHorizontal: 16,
-    marginBottom: 24 },
+    marginBottom: 24,
+  },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    marginBottom: 16 },
+    marginBottom: 16,
+  },
   sectionTitle: {
     ...Typography.h3,
     fontWeight: '700',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   storeCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.lg,
-    gap: Spacing.md },
+    gap: Spacing.md,
+  },
   storeLogo: {
     width: 48,
     height: 48,
-    borderRadius: BorderRadius.md },
+    borderRadius: BorderRadius.md,
+  },
   storeInfo: {
-    flex: 1 },
+    flex: 1,
+  },
   storeName: {
     ...Typography.bodyLarge,
     fontWeight: '600',
     color: colors.text.primary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   storeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.xs },
+    gap: Spacing.xs,
+  },
   storeBadgeText: {
     ...Typography.bodySmall,
     color: Colors.success,
-    fontWeight: '500' },
+    fontWeight: '500',
+  },
   viewStoreButton: {
     paddingHorizontal: Spacing.base,
     paddingVertical: Spacing.sm,
     backgroundColor: Colors.brand.purpleLight,
-    borderRadius: BorderRadius.sm },
+    borderRadius: BorderRadius.sm,
+  },
   viewStoreButtonText: {
     color: colors.text.inverse,
     ...Typography.body,
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   priceContainer: {
     backgroundColor: colors.background.secondary,
     padding: Spacing.lg,
-    borderRadius: BorderRadius.lg },
+    borderRadius: BorderRadius.lg,
+  },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   priceLabel: {
     ...Typography.body,
     color: colors.text.tertiary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   priceValueContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12 },
+    gap: 12,
+  },
   priceValue: {
     ...Typography.h1,
     fontWeight: '800',
-    color: Colors.brand.purpleLight },
+    color: Colors.brand.purpleLight,
+  },
   originalPrice: {
     ...Typography.h4,
     color: colors.text.tertiary,
-    textDecorationLine: 'line-through' },
+    textDecorationLine: 'line-through',
+  },
   cashbackBadge: {
     backgroundColor: Colors.brand.purpleLight,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 12,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   cashbackText: {
     color: colors.text.inverse,
     ...Typography.bodySmall,
     fontWeight: '600',
-    marginTop: Spacing.xs },
+    marginTop: Spacing.xs,
+  },
   cashbackAmount: {
     color: colors.text.inverse,
     ...Typography.bodyLarge,
     fontWeight: '800',
-    marginTop: 2 },
+    marginTop: 2,
+  },
   discountBadge: {
     alignSelf: 'flex-start',
     backgroundColor: Colors.success,
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
-    marginTop: 12 },
+    marginTop: 12,
+  },
   discountText: {
     color: colors.text.inverse,
     ...Typography.bodySmall,
-    fontWeight: '700' },
+    fontWeight: '700',
+  },
   detailsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16 },
+    gap: 16,
+  },
   detailItem: {
     width: (screenWidth - 48) / 2,
     backgroundColor: colors.background.secondary,
     padding: Spacing.base,
     borderRadius: BorderRadius.md,
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   detailIconContainer: {
     width: 40,
     height: 40,
@@ -919,25 +974,30 @@ const styles = StyleSheet.create({
     backgroundColor: colors.tint.pink,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8 },
+    marginBottom: 8,
+  },
   detailLabel: {
     ...Typography.bodySmall,
     color: colors.text.tertiary,
-    marginBottom: Spacing.xs },
+    marginBottom: Spacing.xs,
+  },
   detailValue: {
     ...Typography.bodyLarge,
     fontWeight: '700',
-    color: colors.text.primary },
+    color: colors.text.primary,
+  },
   descriptionTitle: {
     ...Typography.h4,
     fontWeight: '700',
     color: colors.text.primary,
-    marginBottom: Spacing.md },
+    marginBottom: Spacing.md,
+  },
   description: {
     ...Typography.body,
     fontSize: 15,
     lineHeight: 24,
-    color: colors.text.secondary },
+    color: colors.text.secondary,
+  },
   bookButtonContainer: {
     position: 'absolute',
     bottom: 30,
@@ -954,41 +1014,49 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 16,
-    zIndex: 1001 },
+    zIndex: 1001,
+  },
   priceInfoCard: {
     backgroundColor: colors.background.secondary,
     borderRadius: BorderRadius.lg,
     padding: Spacing.base,
     marginBottom: Spacing.md,
     borderWidth: 1,
-    borderColor: colors.border.default },
+    borderColor: colors.border.default,
+  },
   priceInfoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center' },
+    alignItems: 'center',
+  },
   priceInfoLeft: {
-    flex: 1 },
+    flex: 1,
+  },
   priceInfoLabel: {
     ...Typography.bodySmall,
     fontWeight: '600',
     color: colors.text.tertiary,
     marginBottom: Spacing.xs,
     textTransform: 'uppercase',
-    letterSpacing: 0.5 },
+    letterSpacing: 0.5,
+  },
   priceInfoValueContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12 },
+    gap: 12,
+  },
   priceInfoValue: {
     ...Typography.h2,
     fontWeight: '800',
     color: colors.text.primary,
-    letterSpacing: -0.5 },
+    letterSpacing: -0.5,
+  },
   priceInfoOriginal: {
     ...Typography.bodyLarge,
     color: colors.text.tertiary,
     textDecorationLine: 'line-through',
-    fontWeight: '600' },
+    fontWeight: '600',
+  },
   cashbackInfo: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -998,11 +1066,13 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E9D5FF' },
+    borderColor: '#E9D5FF',
+  },
   cashbackInfoText: {
     fontSize: 13,
     fontWeight: '700',
-    color: '#6B21A8' },
+    color: '#6B21A8',
+  },
   bookButton: {
     borderRadius: 20,
     overflow: 'hidden',
@@ -1010,29 +1080,36 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
-    elevation: 8 },
+    elevation: 8,
+  },
   bookButtonGradient: {
     paddingVertical: 20,
-    paddingHorizontal: 24 },
+    paddingHorizontal: 24,
+  },
   bookButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between' },
+    justifyContent: 'space-between',
+  },
   bookButtonLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12 },
+    gap: 12,
+  },
   bookButtonText: {
     color: colors.text.inverse,
     ...Typography.h3,
     fontWeight: '800',
-    letterSpacing: 0.5 },
+    letterSpacing: 0.5,
+  },
   bookButtonRight: {
     width: 36,
     height: 36,
     borderRadius: 18,
     backgroundColor: 'rgba(255, 255, 255, 0.25)',
     justifyContent: 'center',
-    alignItems: 'center' } });
+    alignItems: 'center',
+  },
+});
 
 export default withErrorBoundary(PackageDetailsPage, 'PackageId');

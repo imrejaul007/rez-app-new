@@ -60,7 +60,7 @@ async function runCashbackTests() {
 
   try {
     // Initialize API client
-    apiClient.setBaseUrl(TEST_CONFIG.baseUrl);
+    apiClient.setBaseURL(TEST_CONFIG.baseUrl);
 
     // Note: In real scenario, you would authenticate first
     // For now, we'll attempt without auth to show what happens

@@ -6,16 +6,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
 
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  RefreshControl,
-  Platform,
-  TextInput,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, RefreshControl, Platform, TextInput } from 'react-native';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
@@ -35,9 +26,11 @@ interface Store {
   logo?: string;
   banner?: string;
   rating?: { average?: number; count?: number };
+  ratings?: { average?: number; count?: number };
   maxCashback?: number;
+  offers?: { cashback?: number; [key: string]: any };
   operationalInfo?: {
-    deliveryTime?: { min?: number; max?: number };
+    deliveryTime?: string | { min?: number; max?: number };
     minimumOrder?: number;
     freeDeliveryAbove?: number;
   };
@@ -134,48 +127,40 @@ const GroceryStoresPage: React.FC = () => {
   }, [fetchStores]);
 
   // Filter stores by search
-  const filteredStores = stores.filter(store =>
-    store.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredStores = stores.filter((store) => store.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   // Render featured store card
   const renderFeaturedStore = (store: Store) => {
     const storeId = store.id || store._id || '';
-    const deliveryTime = store.operationalInfo?.deliveryTime
-      ? store.operationalInfo?.deliveryTime || "15-30 min"
-      : '30-45 min';
+    const rawDeliveryTime = store.operationalInfo?.deliveryTime;
+    const deliveryTime = typeof rawDeliveryTime === 'string' ? rawDeliveryTime : '30-45 min';
 
     return (
       <Pressable
         key={storeId}
         style={styles.featuredCard}
         onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as any)}
-       
       >
-        <CachedImage
-          source={store.banner || store.logo || undefined}
-          style={styles.featuredImage}
-        />
-        <LinearGradient
-          colors={['transparent', 'rgba(0,0,0,0.7)']}
-          style={styles.featuredOverlay}
-        >
+        <CachedImage source={store.banner || store.logo || undefined} style={styles.featuredImage} />
+        <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.featuredOverlay}>
           {(store.offers?.cashback || store.maxCashback) && (store.offers?.cashback || store.maxCashback) > 0 && (
             <View style={styles.cashbackBadge}>
               <Text style={styles.cashbackText}>{store.offers?.cashback || store.maxCashback}% Cashback</Text>
             </View>
           )}
           <View style={styles.featuredContent}>
-            {store.logo && (
-              <CachedImage source={store.logo} style={styles.storeLogo} />
-            )}
+            {store.logo && <CachedImage source={store.logo} style={styles.storeLogo} />}
             <View style={styles.featuredInfo}>
-              <Text style={styles.featuredName} numberOfLines={1}>{store.name}</Text>
+              <Text style={styles.featuredName} numberOfLines={1}>
+                {store.name}
+              </Text>
               <View style={styles.featuredMeta}>
                 {store.rating?.average && (
                   <View style={styles.ratingBadge}>
                     <Ionicons name="star" size={12} color={Colors.warning} />
-                    <Text style={styles.ratingText}>{(store.ratings?.average || store.rating?.average || 4.5).toFixed(1)}</Text>
+                    <Text style={styles.ratingText}>
+                      {(store.ratings?.average || store.rating?.average || 4.5).toFixed(1)}
+                    </Text>
                   </View>
                 )}
                 <View style={styles.deliveryBadge}>
@@ -193,9 +178,8 @@ const GroceryStoresPage: React.FC = () => {
   // Render store list item
   const renderStoreItem = (store: Store) => {
     const storeId = store.id || store._id || '';
-    const deliveryTime = store.operationalInfo?.deliveryTime
-      ? store.operationalInfo?.deliveryTime || "15-30 min"
-      : '30-45 min';
+    const rawDeliveryTimeItem = store.operationalInfo?.deliveryTime;
+    const deliveryTime = typeof rawDeliveryTimeItem === 'string' ? rawDeliveryTimeItem : '30-45 min';
 
     // Build tags
     const tags: string[] = [];
@@ -208,24 +192,24 @@ const GroceryStoresPage: React.FC = () => {
         key={storeId}
         style={styles.storeCard}
         onPress={() => router.push(`/MainStorePage?storeId=${storeId}` as any)}
-       
       >
-        <CachedImage
-          source={store.logo || store.banner || undefined}
-          style={styles.storeImage}
-        />
+        <CachedImage source={store.logo || store.banner || undefined} style={styles.storeImage} />
         {(store.offers?.cashback || store.maxCashback) && (store.offers?.cashback || store.maxCashback) > 0 && (
           <View style={styles.storeCashbackBadge}>
             <Text style={styles.storeCashbackText}>{store.offers?.cashback || store.maxCashback}%</Text>
           </View>
         )}
         <View style={styles.storeInfo}>
-          <Text style={styles.storeName} numberOfLines={1}>{store.name}</Text>
+          <Text style={styles.storeName} numberOfLines={1}>
+            {store.name}
+          </Text>
           <View style={styles.storeMeta}>
             {store.rating?.average && (
               <>
                 <Ionicons name="star" size={12} color={Colors.warning} />
-                <Text style={styles.storeRating}>{(store.ratings?.average || store.rating?.average || 4.5).toFixed(1)}</Text>
+                <Text style={styles.storeRating}>
+                  {(store.ratings?.average || store.rating?.average || 4.5).toFixed(1)}
+                </Text>
               </>
             )}
             <View style={styles.dot} />
@@ -249,12 +233,12 @@ const GroceryStoresPage: React.FC = () => {
   if (loading) {
     return (
       <View style={styles.container}>
-        <LinearGradient
-          colors={[colors.brand.orange, colors.brand.orangeDark]}
-          style={styles.header}
-        >
+        <LinearGradient colors={[colors.brand.orange, colors.brand.orangeDark]} style={styles.header}>
           <View style={styles.headerTop}>
-            <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+            <Pressable
+              onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+              style={styles.backButton}
+            >
               <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
             </Pressable>
             <View style={styles.headerTitleContainer}>
@@ -278,7 +262,10 @@ const GroceryStoresPage: React.FC = () => {
         style={styles.header}
       >
         <View style={styles.headerTop}>
-          <Pressable onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')} style={styles.backButton}>
+          <Pressable
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+            style={styles.backButton}
+          >
             <Ionicons name="arrow-back" size={24} color={colors.background.primary} />
           </Pressable>
           <View style={styles.headerTitleContainer}>
@@ -306,10 +293,7 @@ const GroceryStoresPage: React.FC = () => {
           {filterOptions.map((filter) => (
             <Pressable
               key={filter.key}
-              style={[
-                styles.filterChip,
-                selectedFilter === filter.key && styles.filterChipActive,
-              ]}
+              style={[styles.filterChip, selectedFilter === filter.key && styles.filterChipActive]}
               onPress={() => setSelectedFilter(filter.key)}
             >
               <Ionicons
@@ -317,12 +301,7 @@ const GroceryStoresPage: React.FC = () => {
                 size={16}
                 color={selectedFilter === filter.key ? colors.background.primary : colors.neutral[500]}
               />
-              <Text
-                style={[
-                  styles.filterChipText,
-                  selectedFilter === filter.key && styles.filterChipTextActive,
-                ]}
-              >
+              <Text style={[styles.filterChipText, selectedFilter === filter.key && styles.filterChipTextActive]}>
                 {filter.label}
               </Text>
             </Pressable>
@@ -347,11 +326,7 @@ const GroceryStoresPage: React.FC = () => {
         {featuredStores.length > 0 && !searchQuery && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Featured Stores</Text>
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.featuredScroll}
-            >
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.featuredScroll}>
               {featuredStores.map(renderFeaturedStore)}
             </ScrollView>
           </View>
@@ -359,18 +334,14 @@ const GroceryStoresPage: React.FC = () => {
 
         {/* All Stores */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            {searchQuery ? `Results for "${searchQuery}"` : 'All Stores'}
-          </Text>
+          <Text style={styles.sectionTitle}>{searchQuery ? `Results for "${searchQuery}"` : 'All Stores'}</Text>
           {filteredStores.length === 0 ? (
             <View style={styles.emptyState}>
               <Ionicons name="storefront-outline" size={48} color={colors.neutral[400]} />
               <Text style={styles.emptyText}>No stores found</Text>
             </View>
           ) : (
-            <View style={styles.storesList}>
-              {filteredStores.map(renderStoreItem)}
-            </View>
+            <View style={styles.storesList}>{filteredStores.map(renderStoreItem)}</View>
           )}
         </View>
 

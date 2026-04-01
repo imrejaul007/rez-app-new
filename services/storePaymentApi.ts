@@ -252,7 +252,7 @@ const storePaymentApi = {
   }> {
     const url = `${STORE_PAYMENT_BASE}/details/${encodeURIComponent(paymentId)}`;
 
-    const response = await apiClient.get(url);
+    const response = await apiClient.get<any>(url);
 
     if (!response.success || !response.data) {
       throw new Error(response.error || response.message || 'Payment not found');
@@ -352,7 +352,7 @@ const storePaymentApi = {
    */
   async getCoinsForStore(storeId: string): Promise<AppliedCoins> {
     try {
-      const response = await apiClient.get(`${STORE_PAYMENT_BASE}/coins/${storeId}`);
+      const response = await apiClient.get<any>(`${STORE_PAYMENT_BASE}/coins/${storeId}`);
 
       if (!response.success || !response.data) {
         return mapRezToNuqtaCoins(null);
@@ -370,7 +370,7 @@ const storePaymentApi = {
    */
   async getEnhancedPaymentMethods(storeId: string, amount?: number): Promise<EnhancedPaymentMethod[]> {
     try {
-      const response = await apiClient.get(
+      const response = await apiClient.get<any>(
         `${STORE_PAYMENT_BASE}/payment-methods/${storeId}`,
         { params: amount ? { amount } : undefined }
       );
@@ -401,7 +401,7 @@ const storePaymentApi = {
     };
 
     try {
-      const response = await apiClient.post(`${STORE_PAYMENT_BASE}/auto-optimize`, {
+      const response = await apiClient.post<any>(`${STORE_PAYMENT_BASE}/auto-optimize`, {
         storeId,
         billAmount,
       });
@@ -428,7 +428,7 @@ const storePaymentApi = {
    */
   async getStoreMembership(storeId: string): Promise<StoreMembership | null> {
     try {
-      const response = await apiClient.get(`${STORE_PAYMENT_BASE}/membership/${storeId}`);
+      const response = await apiClient.get<any>(`${STORE_PAYMENT_BASE}/membership/${storeId}`);
 
       if (!response.success || !response.data) {
         return null;

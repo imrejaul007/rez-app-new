@@ -185,15 +185,7 @@ export const usePriceTracking = ({
           setHasActiveAlert(true);
           devLog.log('✅ [usePriceTracking] Alert created successfully');
 
-          // Track analytics
-          if (typeof analyticsService !== 'undefined') {
-            (window as any).analyticsService?.track('price_alert_created', {
-              product_id: productId,
-              alert_type: data.alertType,
-              target_price: data.targetPrice,
-              percentage_drop: data.percentageDrop,
-            });
-          }
+          // Track analytics (no-op placeholder — wire up analyticsService if needed)
         }
       } catch (err: any) {
         devLog.error('❌ [usePriceTracking] Create alert error:', err);

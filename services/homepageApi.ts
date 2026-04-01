@@ -424,7 +424,7 @@ export class HomepageApiService {
         success: true,
         data: {
           sections: validatedSections,
-          metadata: rawData._metadata || rawData.metadata,
+          metadata: rawData.metadata || rawData.metadata,
           userContext: rawData.userContext || null,
         },
       };

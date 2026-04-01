@@ -336,7 +336,7 @@ function FoodDiningCategoryPage() {
       if (storesArr.length > 0) {
         const formatted = storesArr.map((store: any) => ({
           id: store._id || store.id, _id: store._id || store.id, name: store.name, slug: store.slug,
-          logo: store.logo, banner: store.banner, rating: store.ratings?.average || 0, ratings: store.ratings,
+          logo: store.logo, banner: store.banner, rating: store.rating?.average || 0, ratings: store.rating,
           cashback: store.offers?.cashback, distance: store.distance, tags: store.tags || [],
           rewardRules: store.rewardRules, priceForTwo: store.priceForTwo, offers: store.offers,
           operationalInfo: store.operationalInfo, deliveryCategories: store.deliveryCategories, location: store.location,
@@ -391,7 +391,7 @@ function FoodDiningCategoryPage() {
 
     // Rating filter
     if (activeFilters.minRating) {
-      result = result.filter(s => (s.ratings?.average || s.rating || 0) >= activeFilters.minRating!);
+      result = result.filter(s => (s.rating?.average || s.rating || 0) >= activeFilters.minRating!);
     }
 
     // Price filter
@@ -407,14 +407,14 @@ function FoodDiningCategoryPage() {
     // Sort
     result.sort((a, b) => {
       switch (sortOption) {
-        case 'rating': return (b.ratings?.average || b.rating || 0) - (a.ratings?.average || a.rating || 0);
+        case 'rating': return (b.rating?.average || b.rating || 0) - (a.rating?.average || a.rating || 0);
         case 'delivery_time': {
           const aTime = parseInt(a.operationalInfo?.deliveryTime) || 60;
           const bTime = parseInt(b.operationalInfo?.deliveryTime) || 60;
           return aTime - bTime;
         }
         case 'newest': return 0;
-        default: return (b.ratings?.count || 0) - (a.ratings?.count || 0);
+        default: return (b.rating?.count || 0) - (a.rating?.count || 0);
       }
     });
 

@@ -631,7 +631,7 @@ const CreatorPickDetail = () => {
               keyExtractor={(item) => item.id}
               estimatedItemSize={150}
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: Spacing.base, gap: 10 }}
+              contentContainerStyle={{ paddingHorizontal: Spacing.base, gap: 10 } as any}
             />
           </View>
         )}

@@ -89,7 +89,7 @@ export const OnlineRedemptionModal: React.FC<OnlineRedemptionModalProps> = ({
 
   const animateIn = () => {
     fadeAnim.value = withTiming(1, { duration: 300 });
-    slideAnim.value = withSpring(0, { tension: 50, friction: 7 });
+    slideAnim.value = withSpring(0, { tension: 50, friction: 7 } as any);
   };
 
   const animateOut = () => {

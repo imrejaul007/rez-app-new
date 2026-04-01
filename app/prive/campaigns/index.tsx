@@ -53,10 +53,7 @@ function PriveCampaignsScreen() {
         limit: 20,
       }),
     enabled: priveCampaignsEnabled,
-    select: (res) =>
-      res.success && res.data
-        ? res.data.campaigns
-        : [],
+    select: (res) => (res.success && res.data ? res.data.campaigns : []),
   });
 
   const campaigns: PriveCampaign[] = campaignsData ?? [];
@@ -71,8 +68,8 @@ function PriveCampaignsScreen() {
 
   if (!priveCampaignsEnabled) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={Colors.text} />
@@ -83,9 +80,7 @@ function PriveCampaignsScreen() {
         <View style={styles.comingSoonContainer}>
           <Ionicons name="sparkles" size={64} color={Colors.primary} />
           <Text style={styles.comingSoonTitle}>Coming Soon</Text>
-          <Text style={styles.comingSoonSubtitle}>
-            Exciting campaigns are on the way. Stay tuned!
-          </Text>
+          <Text style={styles.comingSoonSubtitle}>Exciting campaigns are on the way. Stay tuned!</Text>
         </View>
       </SafeAreaView>
     );
@@ -93,8 +88,8 @@ function PriveCampaignsScreen() {
 
   if (error) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={Colors.text} />
@@ -102,18 +97,14 @@ function PriveCampaignsScreen() {
           <Text style={styles.headerTitle}>Campaigns</Text>
           <View style={{ width: 24 }} />
         </View>
-        <ErrorState
-          title="Failed to load campaigns"
-          message="Please try again"
-          onRetry={refetch}
-        />
+        <ErrorState title="Failed to load campaigns" message="Please try again" onRetry={refetch} />
       </SafeAreaView>
     );
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -135,17 +126,9 @@ function PriveCampaignsScreen() {
           <Pressable
             key={chip.id}
             onPress={() => handleFilterChange(chip.id)}
-            style={[
-              styles.filterChip,
-              selectedFilter === chip.id && styles.filterChipActive,
-            ]}
+            style={[styles.filterChip, selectedFilter === chip.id && styles.filterChipActive]}
           >
-            <Text
-              style={[
-                styles.filterChipText,
-                selectedFilter === chip.id && styles.filterChipTextActive,
-              ]}
-            >
+            <Text style={[styles.filterChipText, selectedFilter === chip.id && styles.filterChipTextActive]}>
               {chip.label}
             </Text>
           </Pressable>
@@ -167,11 +150,7 @@ function PriveCampaignsScreen() {
       ) : (
         <ScrollView style={styles.listContainer} showsVerticalScrollIndicator={false}>
           {campaigns.map((campaign) => (
-            <CampaignCard
-              key={campaign.id}
-              campaign={campaign}
-              onJoin={() => handleJoinCampaign(campaign.id)}
-            />
+            <CampaignCard key={campaign.id} campaign={campaign} onJoin={() => handleJoinCampaign(campaign.id)} />
           ))}
           <View style={{ height: Spacing.lg }} />
         </ScrollView>
@@ -247,7 +226,7 @@ export default withErrorBoundary(PriveCampaignsScreen, 'PriveCampaignsIndex');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -256,7 +235,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.border.default,
   },
   headerTitle: {
     ...Typography.heading3,
@@ -279,7 +258,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.border.default,
     backgroundColor: Colors.white,
   },
   filterChipActive: {

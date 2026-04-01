@@ -44,6 +44,7 @@ export interface UseStreaksGamificationResult {
   loading: boolean;
   error: string | null;
   coinBalance: number;
+  campusRank: number | null;
   actions: StreaksGamificationActions;
 }
 

@@ -94,7 +94,7 @@ function ProductCard({ recommendation, onPress }: ProductCardProps) {
   const currencySymbol = getCurrencySymbol();
 
   // Handle both nested (recommendation.product) and flat (recommendation) structures
-  const product = recommendation.product || recommendation;
+  const product = (recommendation.product || recommendation) as any;
   const { reasons, similarity } = recommendation;
 
   // Flexible price extraction

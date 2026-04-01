@@ -68,6 +68,7 @@ export const colors = {
     200: '#FECACA',
     400: '#F87171',
     500: '#EF4444',
+    600: '#DC2626',
     700: '#B91C1C',
   },
   warningScale: {
@@ -76,6 +77,7 @@ export const colors = {
     200: '#FDE68A',
     400: '#FBBF24',
     500: '#FF9F1C',
+    600: '#F59E0B',
     700: '#E6B84E',
   },
   successScale: {
@@ -84,6 +86,7 @@ export const colors = {
     200: '#BBF7D0',
     400: '#34D399',
     500: '#2ECC71',
+    600: '#16A34A',
     700: '#15803D',
   },
   infoScale: {
@@ -92,6 +95,7 @@ export const colors = {
     200: '#BFDBFE',
     400: '#60A5FA',
     500: '#1a3a52',
+    600: '#0F2D45',
     700: '#0E1F33',
   },
 
@@ -778,6 +782,7 @@ export const darkColors = {
     200: '#5C2020',
     400: '#F87171',
     500: '#EF4444',
+    600: '#DC2626',
     700: '#FCA5A5',
   },
   warningScale: {
@@ -786,6 +791,7 @@ export const darkColors = {
     200: '#5C4A20',
     400: '#FBBF24',
     500: '#FF9F1C',
+    600: '#F59E0B',
     700: '#FDE68A',
   },
   successScale: {
@@ -794,6 +800,7 @@ export const darkColors = {
     200: '#205C35',
     400: '#34D399',
     500: '#2ECC71',
+    600: '#22C55E',
     700: '#BBF7D0',
   },
   infoScale: {
@@ -802,6 +809,7 @@ export const darkColors = {
     200: '#1a3a52',
     400: '#60A5FA',
     500: '#7599B7',
+    600: '#5B8BAA',
     700: '#D1DDE7',
   },
 

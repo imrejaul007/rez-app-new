@@ -510,7 +510,7 @@ class PaymentVerificationService {
         devLog.warn('⚠️ [VERIFICATION] Biometric authentication failed');
         return {
           success: false,
-          error: result.error || 'Biometric authentication failed',
+          error: String(result.error) || 'Biometric authentication failed',
         };
       }
     } catch (error: any) {

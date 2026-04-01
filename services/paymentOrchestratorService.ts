@@ -232,7 +232,7 @@ class PaymentOrchestratorService {
   ): Promise<PaymentResponse> {
 
     try {
-      const response = await apiClient.post('/payment/internal/process', paymentRequest);
+      const response = await apiClient.post<any>('/payment/internal/process', paymentRequest);
 
       if (response.success && response.data) {
         return response.data;
@@ -252,7 +252,7 @@ class PaymentOrchestratorService {
   ): Promise<PaymentResponse> {
 
     try {
-      const response = await apiClient.post('/payment/cod/create', paymentRequest);
+      const response = await apiClient.post<any>('/payment/cod/create', paymentRequest);
 
       if (response.success && response.data) {
         return response.data;
@@ -269,7 +269,7 @@ class PaymentOrchestratorService {
    */
   async getCODConfiguration(): Promise<CODConfig> {
     try {
-      const response = await apiClient.get('/payment/cod/config');
+      const response = await apiClient.get<any>('/payment/cod/config');
 
       if (response.success && response.data) {
         return response.data;
@@ -296,7 +296,7 @@ class PaymentOrchestratorService {
   }> {
 
     try {
-      const response = await apiClient.get('/payment/saved-methods');
+      const response = await apiClient.get<any>('/payment/saved-methods');
 
       if (response.success && response.data) {
         return response.data;
@@ -326,7 +326,7 @@ class PaymentOrchestratorService {
   ): Promise<{ success: boolean; id?: string }> {
 
     try {
-      const response = await apiClient.post('/payment/save-method', {
+      const response = await apiClient.post<any>('/payment/save-method', {
         type,
         details,
       });
@@ -347,7 +347,7 @@ class PaymentOrchestratorService {
   async deleteSavedPaymentMethod(methodId: string): Promise<boolean> {
 
     try {
-      const response = await apiClient.delete(`/payment/saved-methods/${methodId}`);
+      const response = await apiClient.delete<any>(`/payment/saved-methods/${methodId}`);
       return response.success;
     } catch (error) {
       return false;
@@ -360,7 +360,7 @@ class PaymentOrchestratorService {
   async getPaymentPreferences(): Promise<PaymentMethodPreference | null> {
 
     try {
-      const response = await apiClient.get('/payment/preferences');
+      const response = await apiClient.get<any>('/payment/preferences');
 
       if (response.success && response.data) {
         return response.data;
@@ -380,7 +380,7 @@ class PaymentOrchestratorService {
   ): Promise<boolean> {
 
     try {
-      const response = await apiClient.put('/payment/preferences', preferences);
+      const response = await apiClient.put<any>('/payment/preferences', preferences);
       return response.success;
     } catch (error) {
       return false;
@@ -399,7 +399,7 @@ class PaymentOrchestratorService {
 
         case 'internal':
         case 'none':
-          const response = await apiClient.get(`/payment/status/${paymentId}`);
+          const response = await apiClient.get<any>(`/payment/status/${paymentId}`);
           if (response.success && response.data) {
             return response.data;
           }

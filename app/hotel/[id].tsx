@@ -167,9 +167,10 @@ function HotelDetailsPage() {
       const productData = response.data;
 
       // Check if this is a hotel service
-      const isHotel = productData.serviceCategory?.slug === 'hotels' || 
-                       productData.category?.slug === 'hotels' ||
-                       productData.name?.toLowerCase().includes('hotel');
+      const isHotel =
+        productData.serviceCategory?.slug === 'hotels' ||
+        productData.category?.slug === 'hotels' ||
+        productData.name?.toLowerCase().includes('hotel');
 
       if (!isHotel) {
         // Redirect to regular product page
@@ -183,10 +184,12 @@ function HotelDetailsPage() {
 
       // Location: prefer specs, fallback to name parsing
       const specCity = getSpec('location') || getSpec('city');
-      const city = specCity || (() => {
-        const locationMatch = productData.name.match(/(.+?)\s+(hotel|resort|inn|lodge)/i);
-        return locationMatch ? locationMatch[1].trim() : 'City Center';
-      })();
+      const city =
+        specCity ||
+        (() => {
+          const locationMatch = productData.name.match(/(.+?)\s+(hotel|resort|inn|lodge)/i);
+          return locationMatch ? locationMatch[1].trim() : 'City Center';
+        })();
 
       // Check-in/Check-out times: prefer specs
       const checkInTime = getSpec('checkInTime') || '14:00';
@@ -202,22 +205,27 @@ function HotelDetailsPage() {
       })();
 
       // Calculate price properly
-      const basePrice = productData.pricing?.selling || productData.pricing?.basePrice || productData.price?.current || 0;
-      const originalPrice = productData.pricing?.original || productData.pricing?.basePrice || productData.price?.original;
-      const calculatedDiscount = originalPrice && basePrice && originalPrice > basePrice
-        ? Math.round(((originalPrice - basePrice) / originalPrice) * 100)
-        : productData.pricing?.discount || 0;
+      const basePrice =
+        productData.pricing?.selling || productData.pricing?.basePrice || productData.price?.current || 0;
+      const originalPrice =
+        productData.pricing?.original || productData.pricing?.basePrice || productData.price?.original;
+      const calculatedDiscount =
+        originalPrice && basePrice && originalPrice > basePrice
+          ? Math.round(((originalPrice - basePrice) / originalPrice) * 100)
+          : productData.pricing?.discount || 0;
 
       // Star rating: prefer specs, fallback to name/price
       const specStarRating = getSpec('starRating');
-      const starRating = specStarRating ? parseInt(specStarRating) : (() => {
-        const starMatch = productData.name.match(/(\d+)\s*star/i);
-        if (starMatch) return parseInt(starMatch[1]);
-        if (basePrice >= 10000) return 5;
-        if (basePrice >= 5000) return 4;
-        if (basePrice >= 2000) return 3;
-        return 2;
-      })();
+      const starRating = specStarRating
+        ? parseInt(specStarRating)
+        : (() => {
+            const starMatch = productData.name.match(/(\d+)\s*star/i);
+            if (starMatch) return parseInt(starMatch[1]);
+            if (basePrice >= 10000) return 5;
+            if (basePrice >= 5000) return 4;
+            if (basePrice >= 2000) return 3;
+            return 2;
+          })();
 
       // Provider name: prefer specs
       const providerName = getSpec('providerName');
@@ -232,8 +240,16 @@ function HotelDetailsPage() {
       const buildRoomTypes = () => {
         const defaults = {
           standard: { price: basePrice, available: true, description: 'Comfortable room with essential amenities' },
-          deluxe: { price: Math.round(basePrice * 1.5), available: true, description: 'Spacious room with premium amenities' },
-          suite: { price: Math.round(basePrice * 2.5), available: true, description: 'Luxury suite with premium features' },
+          deluxe: {
+            price: Math.round(basePrice * 1.5),
+            available: true,
+            description: 'Spacious room with premium amenities',
+          },
+          suite: {
+            price: Math.round(basePrice * 2.5),
+            available: true,
+            description: 'Luxury suite with premium features',
+          },
         };
         if (!specRoomTypes) return defaults;
         const types = specRoomTypes.split(',').map((t: string) => t.trim().toLowerCase());
@@ -271,12 +287,13 @@ function HotelDetailsPage() {
             .filter((url: string | null): url is string => Boolean(url && typeof url === 'string' && url.length > 0));
           return processedImages;
         })(),
-        description: productData.description || productData.shortDescription || 'Comfortable accommodation with excellent service.',
+        description:
+          productData.description || productData.description || 'Comfortable accommodation with excellent service.',
         checkInTime,
         checkOutTime,
         cashback: {
           percentage: cashbackPercentage,
-          amount: Math.round(basePrice * cashbackPercentage / 100),
+          amount: Math.round((basePrice * cashbackPercentage) / 100),
         },
         rating: reviewSummary?.averageRating || productData.ratings?.average || 0,
         reviewCount: reviewSummary?.totalReviews || productData.ratings?.count || 0,
@@ -287,9 +304,9 @@ function HotelDetailsPage() {
         },
         amenities: (() => {
           const tagAmenities: Record<string, string[]> = {
-            'luxury': ['Wi-Fi', 'Pool', 'Gym', 'Spa', 'Restaurant', 'Room Service', 'Concierge', 'Parking'],
-            'budget': ['Wi-Fi', 'Parking', '24/7 Reception'],
-            'business': ['Wi-Fi', 'Business Center', 'Meeting Rooms', 'Gym', 'Restaurant'],
+            luxury: ['Wi-Fi', 'Pool', 'Gym', 'Spa', 'Restaurant', 'Room Service', 'Concierge', 'Parking'],
+            budget: ['Wi-Fi', 'Parking', '24/7 Reception'],
+            business: ['Wi-Fi', 'Business Center', 'Meeting Rooms', 'Gym', 'Restaurant'],
           };
           const tags = productData.tags || [];
           for (const [key, amenities] of Object.entries(tagAmenities)) {
@@ -300,9 +317,10 @@ function HotelDetailsPage() {
           return ['Wi-Fi', 'Parking', '24/7 Reception'];
         })(),
         cancellationPolicy: {
-          freeCancellation: productData.specifications?.some((s: any) =>
-            s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free')
-          ) || true,
+          freeCancellation:
+            productData.specifications?.some(
+              (s: any) => s.key?.toLowerCase().includes('cancellation') && s.value?.toLowerCase().includes('free'),
+            ) || true,
           cancellationDeadline: '24',
           refundPercentage: 80,
         },
@@ -335,7 +353,7 @@ function HotelDetailsPage() {
           bookingId: data.bookingId,
           bookingType: 'travel',
           currency: currency || 'INR',
-        }
+        },
       } as any);
     } else {
       setBookingData(data);
@@ -350,7 +368,7 @@ function HotelDetailsPage() {
 
   const handleFavorite = async () => {
     if (!hotel) return;
-    
+
     try {
       if (isInWishlist(hotel.id)) {
         await removeFromWishlist(hotel.id);
@@ -386,8 +404,8 @@ function HotelDetailsPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView 
-        style={styles.scrollView} 
+      <ScrollView
+        style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -396,7 +414,7 @@ function HotelDetailsPage() {
           {(() => {
             const imageUrl = hotel.images?.[selectedImageIndex] || hotel.images?.[0];
             const hasValidImage = imageUrl && typeof imageUrl === 'string' && imageUrl.length > 0;
-            
+
             if (hasValidImage && !imageError) {
               return (
                 <CachedImage
@@ -409,40 +427,31 @@ function HotelDetailsPage() {
                   onLoadStart={() => {
                     setImageError(false);
                   }}
-                  onLoad={() => {
-                  }}
+                  onLoad={() => {}}
                 />
               );
             }
-            
+
             return (
               <View style={[styles.headerImage, styles.placeholderImage]}>
                 <Ionicons name="bed" size={64} color={colors.text.tertiary} />
                 <Text style={styles.placeholderText}>Hotel Image</Text>
                 {imageUrl && (
-                  <Text style={styles.placeholderSubtext}>
-                    {imageError ? 'Failed to load image' : 'Loading...'}
-                  </Text>
+                  <Text style={styles.placeholderSubtext}>{imageError ? 'Failed to load image' : 'Loading...'}</Text>
                 )}
               </View>
             );
           })()}
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.7)']}
-            style={styles.headerGradient}
-          />
-          
+          <LinearGradient colors={['transparent', 'rgba(0,0,0,0.7)']} style={styles.headerGradient} />
+
           {/* Back and Action Buttons */}
           <View style={styles.headerActions}>
             <Pressable style={styles.backButton} onPress={handleBack}>
               <Ionicons name="arrow-back" size={24} color={colors.text.inverse} />
             </Pressable>
-            
+
             <View style={styles.headerRightActions}>
-              <Pressable
-                style={styles.actionButton}
-                onPress={handleFavorite}
-              >
+              <Pressable style={styles.actionButton} onPress={handleFavorite}>
                 <Ionicons
                   name={isInWishlist(hotel.id) ? 'heart' : 'heart-outline'}
                   size={24}
@@ -468,10 +477,7 @@ function HotelDetailsPage() {
               {hotel.images.map((_, index) => (
                 <Pressable
                   key={index}
-                  style={[
-                    styles.indicator,
-                    selectedImageIndex === index && styles.indicatorActive,
-                  ]}
+                  style={[styles.indicator, selectedImageIndex === index && styles.indicatorActive]}
                   onPress={() => setSelectedImageIndex(index)}
                 />
               ))}
@@ -537,9 +543,15 @@ function HotelDetailsPage() {
               <Text style={styles.priceLabel}>Starting from</Text>
               <View style={styles.priceContainer}>
                 {hotel.originalPrice && hotel.originalPrice > hotel.price && (
-                  <Text style={styles.originalPrice}>{currencySymbol}{hotel.originalPrice.toLocaleString(locale)}</Text>
+                  <Text style={styles.originalPrice}>
+                    {currencySymbol}
+                    {hotel.originalPrice.toLocaleString(locale)}
+                  </Text>
                 )}
-                <Text style={styles.price}>{currencySymbol}{hotel.price.toLocaleString(locale)}</Text>
+                <Text style={styles.price}>
+                  {currencySymbol}
+                  {hotel.price.toLocaleString(locale)}
+                </Text>
               </View>
               <Text style={styles.pricePerNight}>per night</Text>
               {hotel.discount && hotel.discount > 0 && (
@@ -553,11 +565,10 @@ function HotelDetailsPage() {
                 <Ionicons name="gift" size={20} color={Colors.gold} />
               </View>
               <View style={styles.cashbackContent}>
-                <Text style={styles.cashbackText}>
-                  {hotel.cashback.percentage}% Cashback
-                </Text>
+                <Text style={styles.cashbackText}>{hotel.cashback.percentage}% Cashback</Text>
                 <Text style={styles.cashbackAmount}>
-                  Earn {currencySymbol}{hotel.cashback.amount.toLocaleString(locale)}
+                  Earn {currencySymbol}
+                  {hotel.cashback.amount.toLocaleString(locale)}
                 </Text>
               </View>
             </View>
@@ -590,12 +601,10 @@ function HotelDetailsPage() {
                 <Ionicons name="star" size={24} color={colors.brand.pink} />
               </View>
               <Text style={styles.detailLabel}>Rating</Text>
-              <Text style={styles.detailValue}>
-                {hotel.starRating ? `${hotel.starRating} Star` : 'N/A'}
-              </Text>
+              <Text style={styles.detailValue}>{hotel.starRating ? `${hotel.starRating} Star` : 'N/A'}</Text>
             </View>
           </View>
-          
+
           {/* Additional Info */}
           <View style={styles.additionalInfo}>
             <View style={styles.infoRow}>
@@ -604,7 +613,9 @@ function HotelDetailsPage() {
             </View>
             <View style={styles.infoRow}>
               <Ionicons name="bed-outline" size={18} color={colors.text.tertiary} />
-              <Text style={styles.infoText}>{hotel.roomFeatures.beds} • {hotel.roomFeatures.size}</Text>
+              <Text style={styles.infoText}>
+                {hotel.roomFeatures.beds} • {hotel.roomFeatures.size}
+              </Text>
             </View>
           </View>
         </View>
@@ -619,7 +630,7 @@ function HotelDetailsPage() {
             <Text style={styles.sectionTitle}>About This Hotel</Text>
           </View>
           <Text style={styles.description}>{hotel.description}</Text>
-          
+
           {/* Key Highlights */}
           <View style={styles.highlightsContainer}>
             <View style={styles.highlightItem}>
@@ -661,10 +672,7 @@ function HotelDetailsPage() {
         </View>
 
         {/* Related Hotels */}
-        <RelatedHotelsSection
-          currentHotelId={hotel.id}
-          location={hotel.location}
-        />
+        <RelatedHotelsSection currentHotelId={hotel.id} location={hotel.location} />
 
         {/* Bottom Spacing */}
         <View style={{ height: 100 }} />
@@ -672,11 +680,7 @@ function HotelDetailsPage() {
 
       {/* Book Now Button */}
       <View style={styles.bookButtonContainer}>
-        <Pressable
-          style={styles.bookButton}
-          onPress={handleBookNow}
-         
-        >
+        <Pressable style={styles.bookButton} onPress={handleBookNow}>
           <LinearGradient
             colors={[colors.brand.pink, colors.deepPink]}
             style={styles.bookButtonGradient}
@@ -696,11 +700,7 @@ function HotelDetailsPage() {
         presentationStyle="pageSheet"
         onRequestClose={() => setShowBookingFlow(false)}
       >
-        <HotelBookingFlow
-          hotel={hotel}
-          onComplete={handleBookingComplete}
-          onClose={() => setShowBookingFlow(false)}
-        />
+        <HotelBookingFlow hotel={hotel} onComplete={handleBookingComplete} onClose={() => setShowBookingFlow(false)} />
       </Modal>
 
       {/* Booking Confirmation Modal */}
@@ -708,7 +708,10 @@ function HotelDetailsPage() {
         visible={showConfirmation}
         animationType="slide"
         presentationStyle="pageSheet"
-        onRequestClose={() => { setShowConfirmation(false); router.canGoBack() ? router.back() : router.replace('/(tabs)'); }}
+        onRequestClose={() => {
+          setShowConfirmation(false);
+          router.canGoBack() ? router.back() : router.replace('/(tabs)');
+        }}
       >
         {bookingData && (
           <HotelBookingConfirmation

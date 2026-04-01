@@ -56,7 +56,7 @@ export const useProductAvailability = ({
         // If we have variant locally, use it for quick check
         if (selectedVariant) {
           const status = getStockStatus(selectedVariant);
-          const available = selectedVariant.inventory.isAvailable &&
+          const available = selectedVariant.inventory.available &&
                            selectedVariant.inventory.quantity >= quantity;
 
           const availabilityStatus: IAvailabilityStatus = {
@@ -89,17 +89,17 @@ export const useProductAvailability = ({
 
         // Transform backend response to availability status
         const availabilityStatus: IAvailabilityStatus = {
-          status: data.isAvailable
+          status: data.available
             ? data.quantity > 5
               ? 'in_stock'
               : 'low_stock'
             : 'out_of_stock',
           quantity: data.quantity || 0,
           message: data.message || getStockMessage(
-            data.isAvailable ? 'in_stock' : 'out_of_stock',
+            data.available ? 'in_stock' : 'out_of_stock',
             data.quantity || 0
           ),
-          canPurchase: data.canPurchase !== undefined ? data.canPurchase : data.isAvailable,
+          canPurchase: data.canPurchase !== undefined ? data.canPurchase : data.available,
           maxQuantity: data.maxQuantity || Math.min(data.quantity || 0, 10),
           estimatedRestock: data.estimatedRestock
             ? new Date(data.estimatedRestock)

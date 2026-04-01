@@ -98,7 +98,7 @@ export function deepMigrateIds<T>(obj: T): T {
 
   const migrated: any = {};
 
-  for (const [key, value] of Object.entries(obj)) {
+  for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
     if (key === '_id' && !('id' in (obj as any))) {
       migrated.id = value;
     } else {

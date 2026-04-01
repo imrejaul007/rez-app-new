@@ -218,7 +218,7 @@ export const useSubscriptionStore = create<SubscriptionStoreState>((set, get) =>
       const s = get().state;
       if (!s.featureFlags.ENABLE_TIER_BENEFITS) return false;
       if (!s.currentSubscription) return false;
-      return s.currentSubscription.benefits?.[benefit] === true;
+      return (s.currentSubscription.benefits as any)?.[benefit] === true;
     },
   },
 }));

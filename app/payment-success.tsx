@@ -1,5 +1,5 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import {
   View,
   StyleSheet,
@@ -149,7 +149,7 @@ function PaymentSuccessPage() {
                 ? orderData.store._id || orderData.store.id
                 : null) ||
               (typeof orderData.store === 'string' ? orderData.store : null) ||
-              orderData.storeId ||
+              orderData.store ||
               orderData.items?.[0]?.store?.id ||
               '';
 
@@ -736,12 +736,12 @@ function PaymentSuccessPage() {
             </Pressable>
 
             {/* Rate Your Experience - shown for single-store orders with a known store */}
-            {!isMultiStoreOrder && order?.storeId ? (
+            {!isMultiStoreOrder && order?.store ? (
               <Pressable
                 style={styles.reviewButton}
                 onPress={() =>
                   router.push(
-                    `/ReviewPage?storeId=${order.storeId}&storeName=${encodeURIComponent(order.storeName || '')}` as any,
+                    `/ReviewPage?storeId=${order.store}&storeName=${encodeURIComponent(order.storeName || '')}` as any,
                   )
                 }
                 accessibilityLabel="Rate your experience"

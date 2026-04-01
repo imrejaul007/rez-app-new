@@ -66,8 +66,8 @@ function CampaignDetailScreen() {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={Colors.text} />
@@ -84,8 +84,8 @@ function CampaignDetailScreen() {
 
   if (error || !campaign) {
     return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-        <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
+        <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
         <View style={styles.header}>
           <Pressable onPress={() => router.back()} style={styles.backButton}>
             <Ionicons name="chevron-back" size={24} color={Colors.text} />
@@ -93,11 +93,7 @@ function CampaignDetailScreen() {
           <Text style={styles.headerTitle}>Campaign</Text>
           <View style={{ width: 24 }} />
         </View>
-        <ErrorState
-          title="Failed to load campaign"
-          message="Please try again"
-          onRetry={refetch}
-        />
+        <ErrorState title="Failed to load campaign" message="Please try again" onRetry={refetch} />
       </SafeAreaView>
     );
   }
@@ -107,8 +103,8 @@ function CampaignDetailScreen() {
   const daysLeft = Math.ceil((deadlineDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background.primary }]}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.background.primary} />
 
       {/* Header */}
       <View style={styles.header}>
@@ -133,21 +129,9 @@ function CampaignDetailScreen() {
 
         {/* Campaign Info Cards */}
         <View style={styles.infoCards}>
-          <InfoCard
-            icon="gift"
-            label="Reward"
-            value={`${campaign.rewardCoins} coins`}
-          />
-          <InfoCard
-            icon="calendar"
-            label="Deadline"
-            value={`${daysLeft} days left`}
-          />
-          <InfoCard
-            icon="chatbubbles"
-            label="Submissions"
-            value={`${campaign.submissionCount}`}
-          />
+          <InfoCard icon="gift" label="Reward" value={`${campaign.rewardCoins} coins`} />
+          <InfoCard icon="calendar" label="Deadline" value={`${daysLeft} days left`} />
+          <InfoCard icon="chatbubbles" label="Submissions" value={`${campaign.submissionCount}`} />
         </View>
 
         {/* Rules Section */}
@@ -179,9 +163,7 @@ function CampaignDetailScreen() {
           <Text style={styles.sectionTitle}>Guidelines</Text>
           <View style={styles.guideline}>
             <Ionicons name="checkmark-circle" size={20} color={Colors.primary} />
-            <Text style={styles.guidelineText}>
-              Minimum caption length: {campaign.minCaptionLength} characters
-            </Text>
+            <Text style={styles.guidelineText}>Minimum caption length: {campaign.minCaptionLength} characters</Text>
           </View>
         </View>
 
@@ -190,9 +172,7 @@ function CampaignDetailScreen() {
           <View
             style={[
               styles.eligibilityBox,
-              campaign.isEligible
-                ? styles.eligibilityEligible
-                : styles.eligibilityIneligible,
+              campaign.isEligible ? styles.eligibilityEligible : styles.eligibilityIneligible,
             ]}
           >
             <Ionicons
@@ -203,9 +183,7 @@ function CampaignDetailScreen() {
             <Text
               style={[
                 styles.eligibilityText,
-                campaign.isEligible
-                  ? { color: Colors.success }
-                  : { color: Colors.error },
+                campaign.isEligible ? { color: Colors.success } : { color: Colors.error },
               ]}
             >
               {campaign.isEligible ? 'You are eligible' : 'You are not eligible for this campaign'}
@@ -227,9 +205,7 @@ function CampaignDetailScreen() {
         >
           <LinearGradient
             colors={
-              campaign.isEligible
-                ? [Colors.primary, Colors.primaryDark]
-                : [Colors.textSecondary, Colors.textSecondary]
+              campaign.isEligible ? [Colors.primary, Colors.primaryDark] : [Colors.textSecondary, Colors.textSecondary]
             }
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
@@ -276,7 +252,7 @@ function InfoCard({ icon, label, value }: InfoCardProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -285,7 +261,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     paddingVertical: Spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: colors.border,
+    borderBottomColor: colors.border.default,
   },
   headerTitle: {
     ...Typography.heading3,
@@ -426,8 +402,8 @@ const styles = StyleSheet.create({
   footer: {
     padding: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: colors.border,
-    backgroundColor: colors.background,
+    borderTopColor: colors.border.default,
+    backgroundColor: colors.background.primary,
   },
   ctaButton: {
     borderRadius: BorderRadius.md,

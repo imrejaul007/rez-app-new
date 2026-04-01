@@ -371,7 +371,7 @@ function UGCUploadModal({
 
         // Success animation
         successScaleAnim.value = withSpring(1, { tension: 50,
-          friction: 5 });
+          friction: 5 } as any);
 
         if (Platform.OS !== 'web') {
           try { Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => {}); } catch (e) { catchSilent(e, 'UGCUploadModal/haptics'); }

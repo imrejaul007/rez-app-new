@@ -334,7 +334,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     if (!state.currentSubscription) return false;
 
     const benefits = state.currentSubscription.benefits;
-    return benefits?.[benefit] === true;
+    return (benefits as any)?.[benefit] === true;
   }, [state.featureFlags.ENABLE_TIER_BENEFITS, state.currentSubscription]);
 
   const contextValue: SubscriptionContextType = useMemo(() => ({

@@ -173,7 +173,7 @@ class FlashSaleApiService {
    */
   async trackClick(id: string): Promise<void> {
     try {
-      await apiClient.post(`/flash-sales/${id}/track-click`);
+      await apiClient.post<any>(`/flash-sales/${id}/track-click`);
     } catch (error) {
       // Silently fail - analytics shouldn't break the app
     }

@@ -60,6 +60,7 @@ interface UserVoucher {
   code: string;
   brandName: string;
   brandLogo?: string;
+  brandWebsiteUrl?: string;
   value: number;
   description: string;
   expiryDate: string;

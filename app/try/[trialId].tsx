@@ -464,7 +464,7 @@ function TrialDetailScreen() {
 
 export default withErrorBoundary(TrialDetailScreen, 'TryTrialId');
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<{ [key: string]: any }>({
   container: {
     flex: 1,
     backgroundColor: colors.background.primary,

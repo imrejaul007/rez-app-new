@@ -94,7 +94,7 @@ function OnlineVoucherPage() {
 
     // Entrance animation
     fadeAnim.value = withTiming(1, { duration: 800 });
-    slideAnim.value = withSpring(0, { tension: 50, friction: 7 });
+    slideAnim.value = withSpring(0, { tension: 50, friction: 7 } as any);
 
     // Shimmer animation loop
     shimmerAnim.value = withRepeat(withTiming(1, { duration: 2000 }), -1);

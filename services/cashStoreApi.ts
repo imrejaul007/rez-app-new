@@ -108,8 +108,8 @@ class CashStoreApiService {
    */
   async getCategories(): Promise<any[]> {
     try {
-      const response = await apiClient.get(CASH_STORE_ENDPOINTS.CATEGORIES);
-      return response.data || [];
+      const response = await apiClient.get<any>(CASH_STORE_ENDPOINTS.CATEGORIES);
+      return (response.data as any[]) || [];
     } catch (error) {
       return [];
     }
@@ -133,7 +133,7 @@ class CashStoreApiService {
       if (params.limit) query.set('limit', String(params.limit));
       if (params.page) query.set('page', String(params.page));
 
-      const response = await apiClient.get(
+      const response = await apiClient.get<any>(
         `${CASH_STORE_ENDPOINTS.BRANDS}?${query.toString()}`
       );
       return {
@@ -156,8 +156,8 @@ class CashStoreApiService {
     highCashbackBrands: any[];
   } | null> {
     try {
-      const response = await apiClient.get(CASH_STORE_ENDPOINTS.HOMEPAGE);
-      return response.data || null;
+      const response = await apiClient.get<any>(CASH_STORE_ENDPOINTS.HOMEPAGE);
+      return (response.data as any) ?? null;
     } catch (error) {
       return null;
     }
@@ -170,7 +170,7 @@ class CashStoreApiService {
     try {
       if (!query || query.length < 2) return { brands: [], total: 0 };
 
-      const response = await apiClient.get(
+      const response = await apiClient.get<any>(
         `${CASH_STORE_ENDPOINTS.BRANDS_SEARCH}?q=${encodeURIComponent(query)}&limit=${limit}`
       );
       return {
@@ -196,7 +196,7 @@ class CashStoreApiService {
         return null;
       }
 
-      const response = await apiClient.post(
+      const response = await apiClient.post<any>(
         CASH_STORE_ENDPOINTS.AFFILIATE_CLICK,
         { brandId }
       );
@@ -229,7 +229,7 @@ class CashStoreApiService {
     pages: number;
   }> {
     try {
-      const response = await apiClient.get(
+      const response = await apiClient.get<any>(
         `${CASH_STORE_ENDPOINTS.AFFILIATE_CLICKS}?page=${page}&limit=${limit}`
       );
       return {
@@ -252,7 +252,7 @@ class CashStoreApiService {
     pages: number;
   }> {
     try {
-      const response = await apiClient.get(
+      const response = await apiClient.get<any>(
         `${CASH_STORE_ENDPOINTS.AFFILIATE_PURCHASES}?page=${page}&limit=${limit}`
       );
       return {
@@ -279,7 +279,7 @@ class CashStoreApiService {
       if (params.page) query.set('page', String(params.page));
       if (params.limit) query.set('limit', String(params.limit));
 
-      const response = await apiClient.get(
+      const response = await apiClient.get<any>(
         `${CASH_STORE_ENDPOINTS.GIFT_CARDS}?${query.toString()}`
       );
       return {
@@ -300,7 +300,7 @@ class CashStoreApiService {
     highCashbackBrands: any[];
   }> {
     try {
-      const response = await apiClient.get(CASH_STORE_ENDPOINTS.TRENDING);
+      const response = await apiClient.get<any>(CASH_STORE_ENDPOINTS.TRENDING);
       return {
         popularBrands: response.data?.popularBrands || [],
         activeOffers: response.data?.activeOffers || [],
@@ -316,8 +316,8 @@ class CashStoreApiService {
    */
   async getDoubleCampaigns(): Promise<any[]> {
     try {
-      const response = await apiClient.get(CASH_STORE_ENDPOINTS.DOUBLE_CAMPAIGNS);
-      return response.data || [];
+      const response = await apiClient.get<any>(CASH_STORE_ENDPOINTS.DOUBLE_CAMPAIGNS);
+      return (response.data as any[]) || [];
     } catch (error) {
       return [];
     }
@@ -328,8 +328,8 @@ class CashStoreApiService {
    */
   async getCoinDrops(): Promise<any[]> {
     try {
-      const response = await apiClient.get(CASH_STORE_ENDPOINTS.COIN_DROPS);
-      return response.data || [];
+      const response = await apiClient.get<any>(CASH_STORE_ENDPOINTS.COIN_DROPS);
+      return (response.data as any[]) || [];
     } catch (error) {
       return [];
     }
@@ -341,10 +341,10 @@ class CashStoreApiService {
    */
   async getCashbackSummary(): Promise<AffiliateCashbackSummary | null> {
     try {
-      const response = await apiClient.get(
+      const response = await apiClient.get<any>(
         CASH_STORE_ENDPOINTS.AFFILIATE_SUMMARY
       );
-      return response.data || null;
+      return (response.data as any) ?? null;
     } catch (error) {
       return null;
     }

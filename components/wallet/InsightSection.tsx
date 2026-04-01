@@ -9,6 +9,7 @@ import { InsightTile } from './InsightTile';
 import { WalletData } from '@/types/wallet';
 import { Spacing } from '@/constants/DesignSystem';
 import { colors } from '@/constants/theme';
+import { Colors } from '@/constants/theme';
 
 const SEGMENT_THIRD_TILE: Record<string, { label: string; icon: string; iconColor: string }> = {
   verified_student:    { label: 'Campus Rank',    icon: 'trophy-outline',       iconColor: '#F59E0B' },

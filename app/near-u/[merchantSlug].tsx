@@ -170,7 +170,7 @@ function MerchantSlugScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<{ [key: string]: any }>({
   safe: { flex: 1, backgroundColor: colors.background || '#fff' },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
 

@@ -7,15 +7,7 @@ import { withErrorBoundary } from '@/utils/withErrorBoundary';
  */
 
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import {
-  View,
-  StyleSheet,
-  RefreshControl,
-  ActivityIndicator,
-  Text,
-  Pressable,
-  Platform,
-} from 'react-native';
+import { View, StyleSheet, RefreshControl, ActivityIndicator, Text, Pressable, Platform } from 'react-native';
 import { FlashList } from '@shopify/flash-list';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -35,57 +27,60 @@ import { colors } from '@/constants/theme';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
 // Filter config for header styling
-const FILTER_CONFIG: Record<FilterType, {
-  title: string;
-  icon: string;
-  colors: [string, string];
-  description: string;
-  isLuxury?: boolean;
-  accentColor?: string;
-}> = {
-  'all': {
+const FILTER_CONFIG: Record<
+  FilterType,
+  {
+    title: string;
+    icon: string;
+    colors: [string, string];
+    description: string;
+    isLuxury?: boolean;
+    accentColor?: string;
+  }
+> = {
+  all: {
     title: 'All Stores',
     icon: 'storefront',
     colors: [Colors.warning, colors.nileBlue],
-    description: `Browse all ${BRAND.APP_NAME} Mall stores`
+    description: `Browse all ${BRAND.APP_NAME} Mall stores`,
   },
-  'featured': {
+  featured: {
     title: 'Featured Stores',
     icon: 'star',
     colors: [Colors.warning, colors.warningScale[700]],
-    description: 'Hand-picked stores with best deals'
+    description: 'Hand-picked stores with best deals',
   },
-  'new': {
+  new: {
     title: 'New Stores',
     icon: 'sparkles',
     colors: [colors.brand.pink, colors.deepPink],
-    description: `Recently added to ${BRAND.APP_NAME} Mall`
+    description: `Recently added to ${BRAND.APP_NAME} Mall`,
   },
   'top-rated': {
     title: 'Top Rated',
     icon: 'trophy',
     colors: [Colors.info, colors.brand.blue],
-    description: 'Highest rated by our users'
+    description: 'Highest rated by our users',
   },
-  'luxury': {
+  luxury: {
     title: 'Luxury Zone',
     icon: 'diamond',
     colors: ['#0F172A', '#1E293B'],
     description: 'Exclusive access to world-class luxury brands',
     isLuxury: true,
-    accentColor: colors.brand.goldBright
+    accentColor: colors.brand.goldBright,
   },
-  'trending': {
+  trending: {
     title: 'Trending Stores',
     icon: 'flame',
     colors: [Colors.error, colors.error],
-    description: 'Most popular stores right now'
+    description: 'Most popular stores right now',
   },
   'reward-boosters': {
     title: 'Reward Boosters',
     icon: 'gift',
     colors: [Colors.brand.purpleLight, Colors.brand.purple],
-    description: 'Stores with the best coin rewards'
+    description: 'Stores with the best coin rewards',
   },
 };
 
@@ -96,7 +91,12 @@ function transformStoreToMallBrand(store: any): MallBrand {
   let mallCategory = null;
   if (store.category) {
     if (typeof store.category === 'string') {
-      mallCategory = { _id: store.category, id: store.category, name: store.category, slug: store.category.toLowerCase() };
+      mallCategory = {
+        _id: store.category,
+        id: store.category,
+        name: store.category,
+        slug: store.category.toLowerCase(),
+      };
     } else if (store.category.name) {
       mallCategory = store.category;
     }
@@ -119,10 +119,7 @@ function transformStoreToMallBrand(store: any): MallBrand {
     isInAppStore: true,
     mallCategory,
     tier: store.deliveryCategories?.premium ? 'premium' : 'standard',
-    badges: [
-      ...(store.isFeatured ? ['exclusive' as const] : []),
-      ...(store.isVerified ? ['verified' as const] : []),
-    ],
+    badges: [...(store.isFeatured ? ['exclusive' as const] : []), ...(store.isVerified ? ['verified' as const] : [])],
     cashback: {
       percentage: store.rewardRules?.baseCashbackPercent || store.offers?.cashback || 0,
       maxAmount: store.rewardRules?.maxCashback || store.offers?.maxCashback,
@@ -131,8 +128,8 @@ function transformStoreToMallBrand(store: any): MallBrand {
     ratings: {
       average: store.ratings?.average || 0,
       count: store.ratings?.count || 0,
-      successRate: store.ratings?.successRate || Math.min(Math.round((store.ratings?.average || 0) / 5 * 100), 100),
-      distribution: store.ratings?.distribution || { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 },
+      successRate: store.ratings?.successRate || Math.min(Math.round(((store.ratings?.average || 0) / 5) * 100), 100),
+      distribution: store.ratings?.distribution || ({ 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } as any),
     },
     isFeatured: store.isFeatured || false,
     isActive: store.isActive !== false,
@@ -156,79 +153,77 @@ function BrandsListingPage() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeFilter, setActiveFilter] = useState<FilterType>(
-    (initialFilter as FilterType) || 'all'
-  );
+  const [activeFilter, setActiveFilter] = useState<FilterType>((initialFilter as FilterType) || 'all');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState<string | null>(null);
 
   const filterConfig = FILTER_CONFIG[activeFilter] || FILTER_CONFIG.all;
 
-  const fetchBrands = useCallback(async (
-    pageNum: number = 1,
-    append: boolean = false
-  ) => {
-    try {
-      setError(null);
-      let data: MallBrand[] = [];
-      let total = 0;
+  const fetchBrands = useCallback(
+    async (pageNum: number = 1, append: boolean = false) => {
+      try {
+        setError(null);
+        let data: MallBrand[] = [];
+        let total = 0;
 
-      if (searchQuery.length >= 2) {
-        const stores = await mallApi.searchMallStores(searchQuery, 50);
-        data = stores.map(transformStoreToMallBrand);
-        total = data.length;
-      } else if (activeFilter === 'featured') {
-        const stores = await mallApi.getFeaturedMallStores(50);
-        data = stores.map(transformStoreToMallBrand);
-        total = data.length;
-      } else if (activeFilter === 'new') {
-        const stores = await mallApi.getNewMallStores(50);
-        data = stores.map(transformStoreToMallBrand);
-        total = data.length;
-      } else if (activeFilter === 'top-rated') {
-        const stores = await mallApi.getTopRatedMallStores(50);
-        data = stores.map(transformStoreToMallBrand);
-        total = data.length;
-      } else if (activeFilter === 'luxury') {
-        const stores = await mallApi.getPremiumMallStores(50);
-        data = stores.map(transformStoreToMallBrand);
-        total = data.length;
-      } else if (activeFilter === 'trending') {
-        const stores = await mallApi.getTrendingStores(50);
-        data = stores.map(transformStoreToMallBrand);
-        total = data.length;
-      } else if (activeFilter === 'reward-boosters') {
-        const stores = await mallApi.getRewardBoosterStores(50);
-        data = stores.map(transformStoreToMallBrand);
-        total = data.length;
-      } else {
-        const result = await mallApi.getMallStores({ page: pageNum, limit: 20 });
-        data = result.stores.map(transformStoreToMallBrand);
-        total = result.total;
-        if (!isMounted()) return;
-        setTotalPages(result.pages);
-      }
+        if (searchQuery.length >= 2) {
+          const stores = await mallApi.searchMallStores(searchQuery, 50);
+          data = stores.map(transformStoreToMallBrand);
+          total = data.length;
+        } else if (activeFilter === 'featured') {
+          const stores = await mallApi.getFeaturedMallStores(50);
+          data = stores.map(transformStoreToMallBrand);
+          total = data.length;
+        } else if (activeFilter === 'new') {
+          const stores = await mallApi.getNewMallStores(50);
+          data = stores.map(transformStoreToMallBrand);
+          total = data.length;
+        } else if (activeFilter === 'top-rated') {
+          const stores = await mallApi.getTopRatedMallStores(50);
+          data = stores.map(transformStoreToMallBrand);
+          total = data.length;
+        } else if (activeFilter === 'luxury') {
+          const stores = await mallApi.getPremiumMallStores(50);
+          data = stores.map(transformStoreToMallBrand);
+          total = data.length;
+        } else if (activeFilter === 'trending') {
+          const stores = await mallApi.getTrendingStores(50);
+          data = stores.map(transformStoreToMallBrand);
+          total = data.length;
+        } else if (activeFilter === 'reward-boosters') {
+          const stores = await mallApi.getRewardBoosterStores(50);
+          data = stores.map(transformStoreToMallBrand);
+          total = data.length;
+        } else {
+          const result = await mallApi.getMallStores({ page: pageNum, limit: 20 });
+          data = result.stores.map(transformStoreToMallBrand);
+          total = result.total;
+          if (!isMounted()) return;
+          setTotalPages(result.pages);
+        }
 
-      if (append) {
+        if (append) {
+          if (!isMounted()) return;
+          setBrands((prev) => [...prev, ...data]);
+        } else {
+          if (!isMounted()) return;
+          setBrands(data);
+        }
+      } catch (err: any) {
         if (!isMounted()) return;
-        setBrands(prev => [...prev, ...data]);
-      } else {
+        setError(err.message || 'Failed to load stores');
+      } finally {
         if (!isMounted()) return;
-        setBrands(data);
+        setIsLoading(false);
+        if (!isMounted()) return;
+        setIsRefreshing(false);
+        if (!isMounted()) return;
+        setIsLoadingMore(false);
       }
-    } catch (err: any) {
-      if (!isMounted()) return;
-      setError(err.message || 'Failed to load stores');
-    } finally {
-      if (!isMounted()) return;
-      setIsLoading(false);
-      if (!isMounted()) return;
-      setIsRefreshing(false);
-      if (!isMounted()) return;
-      setIsLoadingMore(false);
-    }
-  }, [searchQuery, activeFilter]);
+    },
+    [searchQuery, activeFilter],
+  );
 
   useEffect(() => {
     setIsLoading(true);
@@ -252,9 +247,12 @@ function BrandsListingPage() {
     fetchBrands(nextPage, true);
   }, [page, totalPages, isLoadingMore, activeFilter, searchQuery, fetchBrands]);
 
-  const handleBrandPress = useCallback((brand: MallBrand) => {
-    router.push(`/MainStorePage?storeId=${brand.id || brand._id}` as any);
-  }, [router]);
+  const handleBrandPress = useCallback(
+    (brand: MallBrand) => {
+      router.push(`/MainStorePage?storeId=${brand.id || brand._id}` as any);
+    },
+    [router],
+  );
 
   const handleSearch = useCallback((query: string) => {
     setSearchQuery(query);
@@ -269,134 +267,134 @@ function BrandsListingPage() {
     setActiveFilter('all');
   }, []);
 
-  const renderItem = useCallback(({ item }: { item: MallBrand }) => (
-    <BrandFullWidthCard brand={item} onPress={handleBrandPress} />
-  ), [handleBrandPress]);
+  const renderItem = useCallback(
+    ({ item }: { item: MallBrand }) => <BrandFullWidthCard brand={item} onPress={handleBrandPress} />,
+    [handleBrandPress],
+  );
 
-  const keyExtractor = useCallback((item: MallBrand) =>
-    item.id || item._id, []);
+  const keyExtractor = useCallback((item: MallBrand) => item.id || item._id, []);
 
   const isLuxuryTheme = filterConfig.isLuxury;
   const accentColor = filterConfig.accentColor || colors.background.primary;
 
-  const ListHeader = useMemo(() => (
-    <View style={styles.listHeaderContainer}>
-      {/* Premium Header */}
-      <LinearGradient
-        colors={filterConfig.colors}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={[styles.headerGradient, { paddingTop: insets.top + 10 }]}
-      >
-        {/* Decorative Elements */}
-        <View style={styles.headerDecor}>
-          {isLuxuryTheme ? (
-            <>
-              <LinearGradient
-                colors={['rgba(255, 215, 0, 0.15)', 'rgba(255, 215, 0, 0)']}
-                style={[styles.decorCircle, styles.decorCircle1, { backgroundColor: 'transparent' }]}
-              />
-              <LinearGradient
-                colors={['rgba(255, 215, 0, 0.1)', 'rgba(255, 215, 0, 0)']}
-                style={[styles.decorCircle, styles.decorCircle2, { backgroundColor: 'transparent' }]}
-              />
-              <View style={styles.luxuryDecorLine1} />
-              <View style={styles.luxuryDecorLine2} />
-            </>
-          ) : (
-            <>
-              <View style={[styles.decorCircle, styles.decorCircle1]} />
-              <View style={[styles.decorCircle, styles.decorCircle2]} />
-            </>
-          )}
-        </View>
-
-        {/* Back Button */}
-        <Pressable
-          style={[styles.backButton, isLuxuryTheme && styles.luxuryBackButton]}
-          onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-         
+  const ListHeader = useMemo(
+    () => (
+      <View style={styles.listHeaderContainer}>
+        {/* Premium Header */}
+        <LinearGradient
+          colors={filterConfig.colors}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+          style={[styles.headerGradient, { paddingTop: insets.top + 10 }]}
         >
-          <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
-        </Pressable>
-
-        {/* Header Content */}
-        <View style={styles.headerContent}>
-          {isLuxuryTheme ? (
-            <LinearGradient
-              colors={[colors.brand.goldBright, Colors.warning]}
-              style={styles.luxuryIconWrapper}
-            >
-              <Ionicons name={filterConfig.icon as any} size={28} color="#0F172A" />
-            </LinearGradient>
-          ) : (
-            <View style={styles.headerIconWrapper}>
-              <Ionicons name={filterConfig.icon as any} size={28} color={colors.text.inverse} />
-            </View>
-          )}
-          <Text style={styles.headerTitle}>{filterConfig.title}</Text>
-          {isLuxuryTheme && (
-            <View style={styles.luxuryPremiumBadge}>
-              <Ionicons name="star" size={10} color={colors.brand.goldBright} />
-              <Text style={styles.luxuryPremiumText}>PREMIUM</Text>
-            </View>
-          )}
-          <Text style={[styles.headerDescription, isLuxuryTheme && styles.luxuryDescription]}>
-            {filterConfig.description}
-          </Text>
-        </View>
-
-        {/* Stats Row */}
-        <View style={[styles.statsRow, isLuxuryTheme && styles.luxuryStatsRow]}>
-          <View style={styles.statItem}>
-            <Text style={[styles.statValue, isLuxuryTheme && styles.luxuryStatValue]}>
-              {brands.length}
-            </Text>
-            <Text style={styles.statLabel}>Stores</Text>
+          {/* Decorative Elements */}
+          <View style={styles.headerDecor}>
+            {isLuxuryTheme ? (
+              <>
+                <LinearGradient
+                  colors={['rgba(255, 215, 0, 0.15)', 'rgba(255, 215, 0, 0)']}
+                  style={[styles.decorCircle, styles.decorCircle1, { backgroundColor: 'transparent' }]}
+                />
+                <LinearGradient
+                  colors={['rgba(255, 215, 0, 0.1)', 'rgba(255, 215, 0, 0)']}
+                  style={[styles.decorCircle, styles.decorCircle2, { backgroundColor: 'transparent' }]}
+                />
+                <View style={styles.luxuryDecorLine1} />
+                <View style={styles.luxuryDecorLine2} />
+              </>
+            ) : (
+              <>
+                <View style={[styles.decorCircle, styles.decorCircle1]} />
+                <View style={[styles.decorCircle, styles.decorCircle2]} />
+              </>
+            )}
           </View>
-          <View style={[styles.statDivider, isLuxuryTheme && styles.luxuryStatDivider]} />
-          <View style={styles.statItem}>
-            <Ionicons name="gift" size={18} color={colors.brand.goldBright} />
-            <Text style={styles.statLabel}>{isLuxuryTheme ? 'Premium Rewards' : 'Earn Coins'}</Text>
-          </View>
-          {isLuxuryTheme && (
-            <>
-              <View style={[styles.statDivider, styles.luxuryStatDivider]} />
-              <View style={styles.statItem}>
-                <Ionicons name="shield-checkmark" size={18} color={colors.brand.goldBright} />
-                <Text style={styles.statLabel}>Verified</Text>
+
+          {/* Back Button */}
+          <Pressable
+            style={[styles.backButton, isLuxuryTheme && styles.luxuryBackButton]}
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+          >
+            <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
+          </Pressable>
+
+          {/* Header Content */}
+          <View style={styles.headerContent}>
+            {isLuxuryTheme ? (
+              <LinearGradient colors={[colors.brand.goldBright, Colors.warning]} style={styles.luxuryIconWrapper}>
+                <Ionicons name={filterConfig.icon as any} size={28} color="#0F172A" />
+              </LinearGradient>
+            ) : (
+              <View style={styles.headerIconWrapper}>
+                <Ionicons name={filterConfig.icon as any} size={28} color={colors.text.inverse} />
               </View>
-            </>
-          )}
+            )}
+            <Text style={styles.headerTitle}>{filterConfig.title}</Text>
+            {isLuxuryTheme && (
+              <View style={styles.luxuryPremiumBadge}>
+                <Ionicons name="star" size={10} color={colors.brand.goldBright} />
+                <Text style={styles.luxuryPremiumText}>PREMIUM</Text>
+              </View>
+            )}
+            <Text style={[styles.headerDescription, isLuxuryTheme && styles.luxuryDescription]}>
+              {filterConfig.description}
+            </Text>
+          </View>
+
+          {/* Stats Row */}
+          <View style={[styles.statsRow, isLuxuryTheme && styles.luxuryStatsRow]}>
+            <View style={styles.statItem}>
+              <Text style={[styles.statValue, isLuxuryTheme && styles.luxuryStatValue]}>{brands.length}</Text>
+              <Text style={styles.statLabel}>Stores</Text>
+            </View>
+            <View style={[styles.statDivider, isLuxuryTheme && styles.luxuryStatDivider]} />
+            <View style={styles.statItem}>
+              <Ionicons name="gift" size={18} color={colors.brand.goldBright} />
+              <Text style={styles.statLabel}>{isLuxuryTheme ? 'Premium Rewards' : 'Earn Coins'}</Text>
+            </View>
+            {isLuxuryTheme && (
+              <>
+                <View style={[styles.statDivider, styles.luxuryStatDivider]} />
+                <View style={styles.statItem}>
+                  <Ionicons name="shield-checkmark" size={18} color={colors.brand.goldBright} />
+                  <Text style={styles.statLabel}>Verified</Text>
+                </View>
+              </>
+            )}
+          </View>
+        </LinearGradient>
+
+        {/* Search Bar */}
+        <View style={styles.searchSection}>
+          <SearchBar placeholder="Search stores..." value={searchQuery} onSearch={handleSearch} />
         </View>
-      </LinearGradient>
 
-      {/* Search Bar */}
-      <View style={styles.searchSection}>
-        <SearchBar
-          placeholder="Search stores..."
-          value={searchQuery}
-          onSearch={handleSearch}
-        />
-      </View>
+        {/* Filter Chips */}
+        <FilterChips activeFilter={activeFilter} onFilterChange={handleFilterChange} />
 
-      {/* Filter Chips */}
-      <FilterChips
-        activeFilter={activeFilter}
-        onFilterChange={handleFilterChange}
-      />
-
-      {/* Results Count */}
-      <View style={styles.resultsHeader}>
-        <Text style={styles.resultsTitle}>Results</Text>
-        <View style={[styles.resultsCountBadge, isLuxuryTheme && styles.luxuryResultsBadge]}>
-          <Text style={[styles.resultsCount, isLuxuryTheme && styles.luxuryResultsCount]}>
-            {brands.length} stores
-          </Text>
+        {/* Results Count */}
+        <View style={styles.resultsHeader}>
+          <Text style={styles.resultsTitle}>Results</Text>
+          <View style={[styles.resultsCountBadge, isLuxuryTheme && styles.luxuryResultsBadge]}>
+            <Text style={[styles.resultsCount, isLuxuryTheme && styles.luxuryResultsCount]}>
+              {brands.length} stores
+            </Text>
+          </View>
         </View>
       </View>
-    </View>
-  ), [brands.length, filterConfig, searchQuery, activeFilter, insets.top, router, handleSearch, handleFilterChange, isLuxuryTheme]);
+    ),
+    [
+      brands.length,
+      filterConfig,
+      searchQuery,
+      activeFilter,
+      insets.top,
+      router,
+      handleSearch,
+      handleFilterChange,
+      isLuxuryTheme,
+    ],
+  );
 
   const ListFooter = useMemo(() => {
     if (isLoadingMore) {
@@ -417,11 +415,7 @@ function BrandsListingPage() {
     return (
       <MallEmptyState
         title={searchQuery ? 'No stores found' : 'No stores available'}
-        message={
-          searchQuery
-            ? `No stores match "${searchQuery}"`
-            : 'Try adjusting your filters'
-        }
+        message={searchQuery ? `No stores match "${searchQuery}"` : 'Try adjusting your filters'}
         icon={searchQuery ? 'search-outline' : 'storefront-outline'}
         actionLabel="Clear Filters"
         onAction={handleClearFilters}
@@ -451,8 +445,7 @@ function BrandsListingPage() {
             >
               <Pressable
                 style={styles.backButton}
-                onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-               
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               >
                 <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
               </Pressable>
@@ -475,8 +468,7 @@ function BrandsListingPage() {
             >
               <Pressable
                 style={styles.backButton}
-                onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}
-               
+                onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
               >
                 <Ionicons name="arrow-back" size={22} color={colors.text.inverse} />
               </Pressable>

@@ -1,14 +1,6 @@
 import { colors } from '@/constants/theme';
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Dimensions,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions, ActivityIndicator } from 'react-native';
 import { CardGridSkeleton } from '@/components/skeletons';
 import CachedImage from '@/components/ui/CachedImage';
 import { Ionicons } from '@expo/vector-icons';
@@ -137,122 +129,117 @@ const FriendsCommunity = () => {
 
   return (
     <FeatureErrorBoundary featureName="Friends & Community" compact={true}>
-    <View style={styles.container}>
-      {/* People Shopping Nearby */}
-      <View style={styles.friendsSection}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>People Shopping Nearby</Text>
-          <Pressable onPress={() => navigateTo('/explore/friends')}>
-            <Text style={styles.viewAllText}>See all</Text>
-          </Pressable>
-        </View>
-
-        {friendsShopping.length > 0 ? (
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.friendsContainer}
-          >
-            {friendsShopping.map((friend) => (
-              <Pressable
-                key={friend.id}
-                style={styles.friendBubble}
-                onPress={() => navigateTo(`/explore/search?q=${encodeURIComponent(friend.store)}`)}
-              >
-                <View style={styles.avatarContainer}>
-                  <CachedImage source={friend.avatar} style={styles.friendAvatar} />
-                  {friend.isLive && <View style={styles.liveDot} />}
-                </View>
-                <Text style={styles.friendName}>{friend.name}</Text>
-                <Text style={styles.friendStore}>{friend.store}</Text>
-              </Pressable>
-            ))}
-            <Pressable style={styles.inviteBubble} onPress={() => navigateTo('/referral')}>
-              <View style={styles.inviteIcon}>
-                <Ionicons name="person-add" size={20} color={Colors.gold} />
-              </View>
-              <Text style={styles.inviteText}>Invite</Text>
+      <View style={styles.container}>
+        {/* People Shopping Nearby */}
+        <View style={styles.friendsSection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>People Shopping Nearby</Text>
+            <Pressable onPress={() => navigateTo('/explore/friends')}>
+              <Text style={styles.viewAllText}>See all</Text>
             </Pressable>
-          </ScrollView>
-        ) : (
-          <View style={styles.emptyFriendsContainer}>
-            <Text style={styles.emptyFriendsText}>Invite friends to see their activity</Text>
-            <Pressable
-              style={styles.inviteButtonSmall}
-              onPress={() => navigateTo('/referral')}
+          </View>
+
+          {friendsShopping.length > 0 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.friendsContainer}
             >
-              <Ionicons name="person-add" size={16} color={Colors.gold} />
-              <Text style={styles.inviteButtonText}>Invite Friends</Text>
-            </Pressable>
-          </View>
-        )}
-      </View>
-
-      {/* Community Activity */}
-      <View style={styles.activitySection}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Community Activity</Text>
-          <View style={styles.liveBadge}>
-            <View style={styles.liveIndicator} />
-            <Text style={styles.liveText}>Live</Text>
-          </View>
+              {friendsShopping.map((friend) => (
+                <Pressable
+                  key={friend.id}
+                  style={styles.friendBubble}
+                  onPress={() => navigateTo(`/explore/search?q=${encodeURIComponent(friend.store)}`)}
+                >
+                  <View style={styles.avatarContainer}>
+                    <CachedImage source={friend.avatar} style={styles.friendAvatar} />
+                    {friend.isLive && <View style={styles.liveDot} />}
+                  </View>
+                  <Text style={styles.friendName}>{friend.name}</Text>
+                  <Text style={styles.friendStore}>{friend.store}</Text>
+                </Pressable>
+              ))}
+              <Pressable style={styles.inviteBubble} onPress={() => navigateTo('/referral')}>
+                <View style={styles.inviteIcon}>
+                  <Ionicons name="person-add" size={20} color={Colors.gold} />
+                </View>
+                <Text style={styles.inviteText}>Invite</Text>
+              </Pressable>
+            </ScrollView>
+          ) : (
+            <View style={styles.emptyFriendsContainer}>
+              <Text style={styles.emptyFriendsText}>Invite friends to see their activity</Text>
+              <Pressable style={styles.inviteButtonSmall} onPress={() => navigateTo('/referral')}>
+                <Ionicons name="person-add" size={16} color={Colors.gold} />
+                <Text style={styles.inviteButtonText}>Invite Friends</Text>
+              </Pressable>
+            </View>
+          )}
         </View>
 
-        {activities.length > 0 ? (
-          <View style={styles.activityList}>
-            {activities.slice(0, 4).map((activity) => (
-              <Pressable
-                key={activity.id}
-                style={styles.activityItem}
-                onPress={() => {
-                  // Navigate based on activity type
-                  if (activity.storeId) {
-                    navigateTo(`/MainStorePage?storeId=${activity.storeId}`);
-                  } else if (activity.store) {
-                    navigateTo(`/explore/search?q=${encodeURIComponent(activity.store)}`);
-                  }
-                }}
-              >
-                <View style={styles.activityIconContainer}>
-                  {activity.user && activity.user.avatar ? (
-                    <CachedImage source={activity.user.avatar} style={styles.activityAvatar} />
-                  ) : (
-                    <View style={styles.activityIconBadge}>
-                      {renderActivityIcon(activity.type)}
-                    </View>
-                  )}
-                </View>
-
-                <View style={styles.activityContent}>
-                  <Text style={styles.activityText}>
-                    {activity.user && (
-                      <Text style={styles.activityUserName}>{activity.user.name} </Text>
-                    )}
-                    {activity.message}
-                    {activity.store && (
-                      <Text style={styles.activityStore}> {activity.store}</Text>
-                    )}
-                    {activity.amount && activity.amount > 0 && (
-                      <Text style={styles.activityAmount}> - {currencySymbol}{activity.amount}</Text>
-                    )}
-                  </Text>
-                  <Text style={styles.activityTime}>{activity.time}</Text>
-                </View>
-
-                <View style={styles.activityAction}>
-                  <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
-                </View>
-              </Pressable>
-            ))}
+        {/* Community Activity */}
+        <View style={styles.activitySection}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Community Activity</Text>
+            <View style={styles.liveBadge}>
+              <View style={styles.liveIndicator} />
+              <Text style={styles.liveText}>Live</Text>
+            </View>
           </View>
-        ) : (
-          <View style={styles.emptyActivityContainer}>
-            <Ionicons name="people-outline" size={32} color={colors.text.tertiary} />
-            <Text style={styles.emptyText}>No recent activity</Text>
-          </View>
-        )}
+
+          {activities.length > 0 ? (
+            <View style={styles.activityList}>
+              {activities.slice(0, 4).map((activity) => (
+                <Pressable
+                  key={activity.id}
+                  style={styles.activityItem}
+                  onPress={() => {
+                    // Navigate based on activity type
+                    if (activity.store) {
+                      navigateTo(`/MainStorePage?storeId=${activity.store}`);
+                    } else if (activity.store) {
+                      navigateTo(`/explore/search?q=${encodeURIComponent(activity.store)}`);
+                    }
+                  }}
+                >
+                  <View style={styles.activityIconContainer}>
+                    {activity.user && activity.user.avatar ? (
+                      <CachedImage source={activity.user.avatar} style={styles.activityAvatar} />
+                    ) : (
+                      <View style={styles.activityIconBadge}>{renderActivityIcon(activity.type)}</View>
+                    )}
+                  </View>
+
+                  <View style={styles.activityContent}>
+                    <Text style={styles.activityText}>
+                      {activity.user && <Text style={styles.activityUserName}>{activity.user.name} </Text>}
+                      {activity.message}
+                      {activity.store && <Text style={styles.activityStore}> {activity.store}</Text>}
+                      {activity.amount && activity.amount > 0 && (
+                        <Text style={styles.activityAmount}>
+                          {' '}
+                          - {currencySymbol}
+                          {activity.amount}
+                        </Text>
+                      )}
+                    </Text>
+                    <Text style={styles.activityTime}>{activity.time}</Text>
+                  </View>
+
+                  <View style={styles.activityAction}>
+                    <Ionicons name="chevron-forward" size={18} color={colors.text.tertiary} />
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+          ) : (
+            <View style={styles.emptyActivityContainer}>
+              <Ionicons name="people-outline" size={32} color={colors.text.tertiary} />
+              <Text style={styles.emptyText}>No recent activity</Text>
+            </View>
+          )}
+        </View>
       </View>
-    </View>
     </FeatureErrorBoundary>
   );
 };

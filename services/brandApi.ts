@@ -97,7 +97,7 @@ class BrandApiService {
    */
   async trackBrandClick(brandId: string): Promise<void> {
     try {
-      await apiClient.post(`${this.BASE_PATH}/${brandId}/click`);
+      await apiClient.post<any>(`${this.BASE_PATH}/${brandId}/click`);
     } catch (error) {
       // Silently fail analytics tracking
     }
@@ -109,7 +109,7 @@ class BrandApiService {
    */
   async trackBrandView(brandId: string): Promise<void> {
     try {
-      await apiClient.post(`${this.BASE_PATH}/${brandId}/view`);
+      await apiClient.post<any>(`${this.BASE_PATH}/${brandId}/view`);
     } catch (error) {
       // Silently fail analytics tracking
     }

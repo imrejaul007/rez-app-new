@@ -296,7 +296,7 @@ function CheckoutPage() {
           {state.fulfillment.selectedType === 'delivery' && (
             <DeliverySlotPicker
               selectedSlot={state.fulfillment.deliverySlot}
-              onSelectSlot={(slot: string) => actions.setFulfillmentDetails({ deliverySlot: slot })}
+              onSelectSlot={(slot: string) => actions.setFulfillmentDetails({ deliverySlot: slot } as any)}
             />
           )}
 

@@ -50,7 +50,7 @@ function StoreProductCard({
   const isMounted = useIsMounted();
 
   // Get main image or fallback
-  const mainImage = product.images?.[0]?.url || product.image || 'https://via.placeholder.com/300';
+  const mainImage = product.image?.[0]?.url || product.image || 'https://via.placeholder.com/300';
 
   // Normalize price and rating using utility functions
   const normalizedPrice = normalizeProductPrice(product);

@@ -1,12 +1,6 @@
 import { withErrorBoundary } from '@/utils/withErrorBoundary';
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Pressable,
-  Dimensions} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Dimensions } from 'react-native';
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -16,7 +10,8 @@ import Animated, {
   withRepeat,
   interpolate,
   cancelAnimation,
-  Easing} from 'react-native-reanimated';
+  Easing,
+} from 'react-native-reanimated';
 import CachedImage from '@/components/ui/CachedImage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -62,7 +57,8 @@ const COLORS = {
   error: Colors.error,
 
   shadow: 'rgba(26, 58, 82, 0.08)',
-  shadowGreen: 'rgba(255, 205, 87, 0.2)'};
+  shadowGreen: 'rgba(255, 205, 87, 0.2)',
+};
 
 interface Card {
   id: number;
@@ -81,7 +77,13 @@ interface AnimatedCardProps {
 
 // Animated Card Component
 const AnimatedCard: React.FC<AnimatedCardProps> = ({
-  card, index, isFlipped, isMatched, onPress, cardSize, disabled
+  card,
+  index,
+  isFlipped,
+  isMatched,
+  onPress,
+  cardSize,
+  disabled,
 }) => {
   const flipAnim = useSharedValue(0);
   const scaleAnim = useSharedValue(1);
@@ -91,17 +93,11 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
     flipAnim.value = withSpring(isFlipped || isMatched ? 1 : 0, { damping: 8, stiffness: 10 });
 
     if (isMatched) {
-      scaleAnim.value = withSequence(
-        withTiming(1.08, { duration: 150 }),
-        withTiming(1, { duration: 150 }),
-      );
+      scaleAnim.value = withSequence(withTiming(1.08, { duration: 150 }), withTiming(1, { duration: 150 }));
 
       glowAnim.value = withRepeat(
-        withSequence(
-          withTiming(1, { duration: 1000 }),
-          withTiming(0.5, { duration: 1000 }),
-        ),
-        -1
+        withSequence(withTiming(1, { duration: 1000 }), withTiming(0.5, { duration: 1000 })),
+        -1,
       );
 
       return () => cancelAnimation(glowAnim);
@@ -117,27 +113,30 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
     <Pressable
       onPress={onPress}
       disabled={disabled || isFlipped || isMatched}
-     
       style={[styles.cardWrapper, { width: cardSize, height: cardSize }]}
     >
       {/* Card Back (Question mark) */}
-      <Animated.View style={[
-        styles.cardFace,
-        styles.cardBack,
-        { width: cardSize - 4, height: cardSize - 4, opacity: backOpacity, transform: [{ scale: scaleAnim }] }
-      ]}>
+      <Animated.View
+        style={[
+          styles.cardFace,
+          styles.cardBack,
+          { width: cardSize - 4, height: cardSize - 4, opacity: backOpacity, transform: [{ scale: scaleAnim }] },
+        ]}
+      >
         <View style={styles.cardBackInner}>
           <Text style={styles.cardQuestion}>?</Text>
         </View>
       </Animated.View>
 
       {/* Card Front (Emoji) */}
-      <Animated.View style={[
-        styles.cardFace,
-        styles.cardFront,
-        isMatched && styles.cardMatched,
-        { width: cardSize - 4, height: cardSize - 4, opacity: frontOpacity, transform: [{ scale: scaleAnim }] }
-      ]}>
+      <Animated.View
+        style={[
+          styles.cardFace,
+          styles.cardFront,
+          isMatched && styles.cardMatched,
+          { width: cardSize - 4, height: cardSize - 4, opacity: frontOpacity, transform: [{ scale: scaleAnim }] },
+        ]}
+      >
         <View style={[styles.cardFrontInner, isMatched && styles.cardFrontMatched]}>
           <Text style={styles.cardEmoji}>{card.emoji}</Text>
         </View>
@@ -159,10 +158,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
       opacity.value = 1;
 
       translateY.value = withTiming(300, { duration: 2500, easing: Easing.out(Easing.quad) });
-      opacity.value = withSequence(
-        withTiming(1, { duration: 100 }),
-        withTiming(0, { duration: 2400 })
-      );
+      opacity.value = withSequence(withTiming(1, { duration: 100 }), withTiming(0, { duration: 2400 }));
       rotate.value = withTiming(1, { duration: 2500 });
     }, delay);
 
@@ -183,15 +179,7 @@ const ConfettiParticle: React.FC<{ delay: number; color: string }> = ({ delay, c
     opacity: opacity.value,
   }));
 
-  return (
-    <Animated.View
-      style={[
-        styles.confetti,
-        { backgroundColor: color },
-        animStyle,
-      ]}
-    />
-  );
+  return <Animated.View style={[styles.confetti, { backgroundColor: color }, animStyle]} />;
 };
 
 const MemoryMatch = () => {
@@ -222,10 +210,7 @@ const MemoryMatch = () => {
     setLoading(true);
     setError(null);
     try {
-      const [limitsResponse] = await Promise.all([
-        gameApi.getDailyLimits(),
-        refreshWallet(),
-      ]);
+      const [limitsResponse] = await Promise.all([gameApi.getDailyLimits(), refreshWallet()]);
 
       if (limitsResponse.data) {
         const memoryLimits = limitsResponse.data.memory_match;
@@ -354,15 +339,20 @@ const MemoryMatch = () => {
   };
 
   const getPerformanceRating = () => {
-    if (matched.length === cardEmojis.length && timeLeft > 40 && moves <= 12) return { text: 'Perfect!', icon: 'star' as const, color: COLORS.gold };
-    if (matched.length === cardEmojis.length && timeLeft > 30) return { text: 'Excellent!', icon: 'trophy' as const, color: COLORS.primary };
-    if (matched.length === cardEmojis.length) return { text: 'Good Job!', icon: 'thumbs-up' as const, color: COLORS.primary };
+    if (matched.length === cardEmojis.length && timeLeft > 40 && moves <= 12)
+      return { text: 'Perfect!', icon: 'star' as const, color: COLORS.gold };
+    if (matched.length === cardEmojis.length && timeLeft > 30)
+      return { text: 'Excellent!', icon: 'trophy' as const, color: COLORS.primary };
+    if (matched.length === cardEmojis.length)
+      return { text: 'Good Job!', icon: 'thumbs-up' as const, color: COLORS.primary };
     if (matched.length >= 5) return { text: 'Nice Try!', icon: 'happy' as const, color: COLORS.gold };
     return { text: 'Try Again!', icon: 'refresh' as const, color: COLORS.textMuted };
   };
 
   const cardSize = (width - 56) / 4;
-  const progressWidth = interpolate(progressAnim.value, [0, 1], ['0%', '100%']);
+  const progressAnimatedStyle = useAnimatedStyle(() => ({
+    width: `${interpolate(progressAnim.value, [0, 1], [0, 100])}%` as `${number}%`,
+  }));
 
   return (
     <View style={styles.container}>
@@ -370,7 +360,10 @@ const MemoryMatch = () => {
 
       {/* Header */}
       <View style={styles.header}>
-        <Pressable style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/(tabs)')}>
+        <Pressable
+          style={styles.backButton}
+          onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)'))}
+        >
           <Ionicons name="chevron-back" size={24} color={COLORS.navy} />
         </Pressable>
 
@@ -389,11 +382,7 @@ const MemoryMatch = () => {
           </View>
         ) : (
           <Pressable style={styles.coinsBadge} onPress={() => router.push('/wallet' as any)}>
-            <CachedImage
-              source={BRAND.COIN_IMAGE}
-              style={styles.coinIcon}
-              contentFit="contain"
-            />
+            <CachedImage source={BRAND.COIN_IMAGE} style={styles.coinIcon} contentFit="contain" />
             <Text style={styles.coinsText}>{walletBalance.toLocaleString()}</Text>
           </Pressable>
         )}
@@ -409,12 +398,38 @@ const MemoryMatch = () => {
           <View style={styles.content}>
             {/* Error State */}
             {error && (
-              <View style={{ padding: Spacing.base, backgroundColor: Colors.errorScale[100], borderRadius: BorderRadius.md, marginBottom: Spacing.base, alignItems: 'center' }}>
+              <View
+                style={{
+                  padding: Spacing.base,
+                  backgroundColor: Colors.errorScale[100],
+                  borderRadius: BorderRadius.md,
+                  marginBottom: Spacing.base,
+                  alignItems: 'center',
+                }}
+              >
                 <Ionicons name="alert-circle-outline" size={32} color={Colors.error} />
-                <Text style={{ color: Colors.errorScale[700], ...Typography.body, marginTop: Spacing.sm, textAlign: 'center' }}>{error}</Text>
+                <Text
+                  style={{
+                    color: Colors.errorScale[700],
+                    ...Typography.body,
+                    marginTop: Spacing.sm,
+                    textAlign: 'center',
+                  }}
+                >
+                  {error}
+                </Text>
                 <Pressable
-                  onPress={() => { setError(null); fetchData(); }}
-                  style={{ marginTop: Spacing.md, paddingHorizontal: Spacing.lg, paddingVertical: Spacing.sm, backgroundColor: Colors.error, borderRadius: BorderRadius.sm }}
+                  onPress={() => {
+                    setError(null);
+                    fetchData();
+                  }}
+                  style={{
+                    marginTop: Spacing.md,
+                    paddingHorizontal: Spacing.lg,
+                    paddingVertical: Spacing.sm,
+                    backgroundColor: Colors.error,
+                    borderRadius: BorderRadius.sm,
+                  }}
                 >
                   <Text style={{ color: colors.text.inverse, fontWeight: '600' }}>Retry</Text>
                 </Pressable>
@@ -439,11 +454,7 @@ const MemoryMatch = () => {
 
               <View style={styles.heroStatsRow}>
                 <View style={styles.heroStatBox}>
-                  <CachedImage
-                    source={BRAND.COIN_IMAGE}
-                    style={styles.heroStatIcon}
-                    contentFit="contain"
-                  />
+                  <CachedImage source={BRAND.COIN_IMAGE} style={styles.heroStatIcon} contentFit="contain" />
                   <Text style={styles.heroStatValue}>150</Text>
                   <Text style={styles.heroStatLabel}>Max Coins</Text>
                 </View>
@@ -452,7 +463,9 @@ const MemoryMatch = () => {
 
                 <View style={styles.heroStatBox}>
                   <Ionicons name="game-controller" size={24} color={colors.text.inverse} />
-                  <Text style={styles.heroStatValue}>{maxPlays - todayPlays}/{maxPlays}</Text>
+                  <Text style={styles.heroStatValue}>
+                    {maxPlays - todayPlays}/{maxPlays}
+                  </Text>
                   <Text style={styles.heroStatLabel}>Plays Left</Text>
                 </View>
               </View>
@@ -471,9 +484,27 @@ const MemoryMatch = () => {
 
               <View style={styles.stepsContainer}>
                 {[
-                  { num: '1', color: COLORS.primary, title: 'Tap cards to flip them', desc: 'Find matching pairs', icon: 'hand-left' },
-                  { num: '2', color: COLORS.gold, title: 'Match all 8 pairs', desc: '25 coins per match', icon: 'grid' },
-                  { num: '3', color: Colors.brand.purple, title: 'Earn bonus coins', desc: 'Speed +25 • Efficiency +25 • Complete +50', icon: 'trophy' },
+                  {
+                    num: '1',
+                    color: COLORS.primary,
+                    title: 'Tap cards to flip them',
+                    desc: 'Find matching pairs',
+                    icon: 'hand-left',
+                  },
+                  {
+                    num: '2',
+                    color: COLORS.gold,
+                    title: 'Match all 8 pairs',
+                    desc: '25 coins per match',
+                    icon: 'grid',
+                  },
+                  {
+                    num: '3',
+                    color: Colors.brand.purple,
+                    title: 'Earn bonus coins',
+                    desc: 'Speed +25 • Efficiency +25 • Complete +50',
+                    icon: 'trophy',
+                  },
                 ].map((step, idx) => (
                   <View key={idx} style={styles.stepRow}>
                     <View style={[styles.stepBadge, { backgroundColor: `${step.color}15` }]}>
@@ -492,20 +523,19 @@ const MemoryMatch = () => {
             </View>
 
             {/* Start Button */}
-            <Pressable
-              onPress={initializeGame}
-              disabled={todayPlays >= maxPlays}
-             
-              style={styles.startButtonWrapper}
-            >
+            <Pressable onPress={initializeGame} disabled={todayPlays >= maxPlays} style={styles.startButtonWrapper}>
               <LinearGradient
-                colors={todayPlays >= maxPlays ? [colors.text.tertiary, Colors.gray[600]] : [COLORS.primary, COLORS.primaryDark]}
+                colors={
+                  todayPlays >= maxPlays
+                    ? [colors.text.tertiary, Colors.gray[600]]
+                    : [COLORS.primary, COLORS.primaryDark]
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.startButton}
               >
                 <Ionicons
-                  name={todayPlays >= maxPlays ? "time-outline" : "play"}
+                  name={todayPlays >= maxPlays ? 'time-outline' : 'play'}
                   size={22}
                   color={colors.text.inverse}
                 />
@@ -531,7 +561,10 @@ const MemoryMatch = () => {
 
               <View style={styles.gameStatItem}>
                 <Text style={styles.gameStatLabel}>MATCHED</Text>
-                <Text style={styles.gameStatValue}>{matched.length}<Text style={styles.gameStatTotal}>/8</Text></Text>
+                <Text style={styles.gameStatValue}>
+                  {matched.length}
+                  <Text style={styles.gameStatTotal}>/8</Text>
+                </Text>
               </View>
 
               <View style={styles.gameStatDivider} />
@@ -564,9 +597,11 @@ const MemoryMatch = () => {
             {/* Progress Bar */}
             <View style={styles.progressWrapper}>
               <View style={styles.progressBg}>
-                <Animated.View style={[styles.progressFill, { width: progressWidth }]}>
+                <Animated.View style={[styles.progressFill, progressAnimatedStyle]}>
                   <LinearGradient
-                    colors={timeLeft <= 10 ? [Colors.error, Colors.errorScale[700]] : [COLORS.primary, COLORS.primaryLight]}
+                    colors={
+                      timeLeft <= 10 ? [Colors.error, Colors.errorScale[700]] : [COLORS.primary, COLORS.primaryLight]
+                    }
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.progressGradient}
@@ -575,7 +610,9 @@ const MemoryMatch = () => {
               </View>
               <View style={styles.progressLabels}>
                 <Text style={styles.progressLabel}>0s</Text>
-                <Text style={[styles.progressLabel, styles.progressLabelCenter, timeLeft <= 10 && { color: COLORS.error }]}>
+                <Text
+                  style={[styles.progressLabel, styles.progressLabelCenter, timeLeft <= 10 && { color: COLORS.error }]}
+                >
                   {timeLeft}s remaining
                 </Text>
                 <Text style={styles.progressLabel}>60s</Text>
@@ -603,32 +640,75 @@ const MemoryMatch = () => {
             {/* Result Card */}
             <View style={styles.resultCard}>
               <LinearGradient
-                colors={matched.length === cardEmojis.length ? [COLORS.primary, COLORS.primaryDark] : [COLORS.surfaceSecondary, COLORS.surface]}
+                colors={
+                  matched.length === cardEmojis.length
+                    ? [COLORS.primary, COLORS.primaryDark]
+                    : [COLORS.surfaceSecondary, COLORS.surface]
+                }
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.resultGradient}
               >
-                <View style={[styles.resultIconWrapper, { backgroundColor: matched.length === cardEmojis.length ? 'rgba(255,255,255,0.2)' : COLORS.primaryBg }]}>
+                <View
+                  style={[
+                    styles.resultIconWrapper,
+                    {
+                      backgroundColor:
+                        matched.length === cardEmojis.length ? 'rgba(255,255,255,0.2)' : COLORS.primaryBg,
+                    },
+                  ]}
+                >
                   <Ionicons
                     name={getPerformanceRating().icon}
                     size={48}
-                    color={matched.length === cardEmojis.length ? colors.background.primary : getPerformanceRating().color}
+                    color={
+                      matched.length === cardEmojis.length ? colors.background.primary : getPerformanceRating().color
+                    }
                   />
                 </View>
 
-                <Text style={[styles.resultTitle, { color: matched.length === cardEmojis.length ? colors.background.primary : COLORS.navy }]}>
+                <Text
+                  style={[
+                    styles.resultTitle,
+                    { color: matched.length === cardEmojis.length ? colors.background.primary : COLORS.navy },
+                  ]}
+                >
                   {getPerformanceRating().text}
                 </Text>
-                <Text style={[styles.resultSubtitle, { color: matched.length === cardEmojis.length ? 'rgba(255,255,255,0.9)' : COLORS.textMuted }]}>
+                <Text
+                  style={[
+                    styles.resultSubtitle,
+                    { color: matched.length === cardEmojis.length ? 'rgba(255,255,255,0.9)' : COLORS.textMuted },
+                  ]}
+                >
                   You matched {matched.length} of {cardEmojis.length} pairs
                 </Text>
 
-                <View style={[styles.earnedBox, { backgroundColor: matched.length === cardEmojis.length ? 'rgba(255,255,255,0.15)' : COLORS.goldBg }]}>
+                <View
+                  style={[
+                    styles.earnedBox,
+                    {
+                      backgroundColor: matched.length === cardEmojis.length ? 'rgba(255,255,255,0.15)' : COLORS.goldBg,
+                    },
+                  ]}
+                >
                   <View style={styles.earnedRow}>
                     <CachedImage source={BRAND.COIN_IMAGE} style={styles.earnedCoin} contentFit="contain" />
-                    <Text style={[styles.earnedValue, { color: matched.length === cardEmojis.length ? colors.background.primary : COLORS.gold }]}>+{score}</Text>
+                    <Text
+                      style={[
+                        styles.earnedValue,
+                        { color: matched.length === cardEmojis.length ? colors.background.primary : COLORS.gold },
+                      ]}
+                    >
+                      +{score}
+                    </Text>
                   </View>
-                  <Text style={[styles.earnedLabel, { color: matched.length === cardEmojis.length ? 'rgba(255,255,255,0.8)' : COLORS.textMuted }]}>
+                  <Text
+                    style={[
+                      styles.earnedLabel,
+                      { color: matched.length === cardEmojis.length ? 'rgba(255,255,255,0.8)' : COLORS.textMuted },
+                    ]}
+                  >
                     Coins Earned
                   </Text>
                 </View>
@@ -657,26 +737,28 @@ const MemoryMatch = () => {
                 <View style={[styles.statIconBg, { backgroundColor: COLORS.primaryBg }]}>
                   <Ionicons name="checkmark-done" size={22} color={COLORS.primary} />
                 </View>
-                <Text style={styles.statValue}>{matched.length}/{cardEmojis.length}</Text>
+                <Text style={styles.statValue}>
+                  {matched.length}/{cardEmojis.length}
+                </Text>
                 <Text style={styles.statLabel}>Matched</Text>
               </View>
             </View>
 
             {/* Action Buttons */}
             <View style={styles.actionsContainer}>
-              <Pressable
-                onPress={initializeGame}
-                disabled={todayPlays >= maxPlays}
-               
-              >
+              <Pressable onPress={initializeGame} disabled={todayPlays >= maxPlays}>
                 <LinearGradient
-                  colors={todayPlays >= maxPlays ? [colors.text.tertiary, Colors.gray[600]] : [COLORS.primary, COLORS.primaryDark]}
+                  colors={
+                    todayPlays >= maxPlays
+                      ? [colors.text.tertiary, Colors.gray[600]]
+                      : [COLORS.primary, COLORS.primaryDark]
+                  }
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.primaryAction}
                 >
                   <Ionicons
-                    name={todayPlays >= maxPlays ? "time-outline" : "refresh"}
+                    name={todayPlays >= maxPlays ? 'time-outline' : 'refresh'}
                     size={20}
                     color={colors.text.inverse}
                   />
@@ -688,10 +770,7 @@ const MemoryMatch = () => {
                 </LinearGradient>
               </Pressable>
 
-              <Pressable
-                onPress={() => router.push('/playandearn' as any)}
-                style={styles.secondaryAction}
-              >
+              <Pressable onPress={() => router.push('/playandearn' as any)} style={styles.secondaryAction}>
                 <Ionicons name="arrow-back" size={18} color={COLORS.textMuted} />
                 <Text style={styles.secondaryActionText}>Back to Games</Text>
               </Pressable>
@@ -705,10 +784,11 @@ const MemoryMatch = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create<{ [key: string]: any }>({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background},
+    backgroundColor: COLORS.background,
+  },
 
   // Header
   header: {
@@ -720,30 +800,37 @@ const styles = StyleSheet.create({
     gap: 12,
     backgroundColor: COLORS.surface,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border},
+    borderBottomColor: COLORS.border,
+  },
   backButton: {
     width: 44,
     height: 44,
     borderRadius: 12,
     backgroundColor: COLORS.surfaceSecondary,
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   headerCenter: {
-    flex: 1},
+    flex: 1,
+  },
   headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8},
+    gap: 8,
+  },
   headerIcon: {
-    fontSize: 24},
+    fontSize: 24,
+  },
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.navy},
+    color: COLORS.navy,
+  },
   headerSubtitle: {
     fontSize: 13,
     color: COLORS.textMuted,
-    marginTop: 2},
+    marginTop: 2,
+  },
   timerBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -751,15 +838,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: COLORS.primaryBg},
+    backgroundColor: COLORS.primaryBg,
+  },
   timerBadgeWarning: {
-    backgroundColor: Colors.errorScale[100]},
+    backgroundColor: Colors.errorScale[100],
+  },
   timerText: {
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.primary},
+    color: COLORS.primary,
+  },
   timerTextWarning: {
-    color: Colors.error},
+    color: Colors.error,
+  },
   coinsBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -767,19 +858,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: COLORS.goldBg},
+    backgroundColor: COLORS.goldBg,
+  },
   coinIcon: {
     width: 20,
-    height: 20},
+    height: 20,
+  },
   coinsText: {
     fontSize: 15,
     fontWeight: '700',
-    color: COLORS.goldDark},
+    color: COLORS.goldDark,
+  },
 
   scrollView: {
-    flex: 1},
+    flex: 1,
+  },
   content: {
-    padding: 16},
+    padding: 16,
+  },
 
   // Hero Card
   heroCard: {
@@ -788,64 +884,79 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 20,
     overflow: 'hidden',
-    position: 'relative'},
+    position: 'relative',
+  },
   heroIconWrapper: {
-    marginBottom: 16},
+    marginBottom: 16,
+  },
   heroIconBg: {
     width: 80,
     height: 80,
     borderRadius: 40,
     backgroundColor: 'rgba(255,255,255,0.2)',
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   heroIconText: {
-    fontSize: 40},
+    fontSize: 40,
+  },
   heroTitle: {
     fontSize: 28,
     fontWeight: '800',
     color: colors.text.inverse,
-    marginBottom: 8},
+    marginBottom: 8,
+  },
   heroSubtitle: {
     fontSize: 15,
     color: 'rgba(255,255,255,0.9)',
     textAlign: 'center',
-    marginBottom: 24},
+    marginBottom: 24,
+  },
   heroStatsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 32},
+    gap: 32,
+  },
   heroStatBox: {
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   heroStatIcon: {
     width: 28,
     height: 28,
-    marginBottom: 8},
+    marginBottom: 8,
+  },
   heroStatValue: {
     fontSize: 24,
     fontWeight: '800',
-    color: colors.text.inverse},
+    color: colors.text.inverse,
+  },
   heroStatLabel: {
     fontSize: 12,
     color: 'rgba(255,255,255,0.8)',
-    marginTop: 4},
+    marginTop: 4,
+  },
   heroStatDivider: {
     width: 1,
     height: 50,
-    backgroundColor: 'rgba(255,255,255,0.3)'},
+    backgroundColor: 'rgba(255,255,255,0.3)',
+  },
   decorCircle: {
     position: 'absolute',
     borderRadius: 100,
-    backgroundColor: 'rgba(255,255,255,0.1)'},
+    backgroundColor: 'rgba(255,255,255,0.1)',
+  },
   decorCircle1: {
     width: 120,
     height: 120,
     top: -40,
-    right: -40},
+    right: -40,
+  },
   decorCircle2: {
     width: 100,
     height: 100,
     bottom: -30,
-    left: -30},
+    left: -30,
+  },
 
   // How to Play
   howToPlayCard: {
@@ -857,63 +968,77 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 12,
-    elevation: 4},
+    elevation: 4,
+  },
   howToPlayHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 16},
+    marginBottom: 16,
+  },
   howToPlayTitle: {
     fontSize: 17,
     fontWeight: '700',
-    color: COLORS.navy},
+    color: COLORS.navy,
+  },
   stepsContainer: {
-    gap: 14},
+    gap: 14,
+  },
   stepRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12},
+    gap: 12,
+  },
   stepBadge: {
     width: 32,
     height: 32,
     borderRadius: 16,
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   stepBadgeText: {
     fontSize: 14,
-    fontWeight: '700'},
+    fontWeight: '700',
+  },
   stepTextContainer: {
-    flex: 1},
+    flex: 1,
+  },
   stepTitle: {
     fontSize: 14,
     fontWeight: '600',
     color: COLORS.navy,
-    marginBottom: 2},
+    marginBottom: 2,
+  },
   stepDesc: {
     fontSize: 12,
-    color: COLORS.textMuted},
+    color: COLORS.textMuted,
+  },
   stepIconBg: {
     width: 36,
     height: 36,
     borderRadius: 18,
     justifyContent: 'center',
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
 
   // Start Button
   startButtonWrapper: {
     borderRadius: 16,
-    overflow: 'hidden'},
+    overflow: 'hidden',
+  },
   startButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
     paddingVertical: 18,
-    borderRadius: 16},
+    borderRadius: 16,
+  },
   startButtonText: {
     fontSize: 17,
     fontWeight: '700',
-    color: colors.text.inverse},
+    color: colors.text.inverse,
+  },
 
   // Game Stats Bar
   gameStatsBar: {
@@ -927,35 +1052,43 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
-    elevation: 2},
+    elevation: 2,
+  },
   gameStatItem: {
     flex: 1,
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   gameStatLabel: {
     fontSize: 10,
     fontWeight: '600',
     color: COLORS.textLight,
     marginBottom: 4,
-    letterSpacing: 0.5},
+    letterSpacing: 0.5,
+  },
   gameStatValue: {
     fontSize: 20,
     fontWeight: '700',
-    color: COLORS.navy},
+    color: COLORS.navy,
+  },
   gameStatTotal: {
     fontSize: 14,
     fontWeight: '500',
-    color: COLORS.textMuted},
+    color: COLORS.textMuted,
+  },
   gameStatDivider: {
     width: 1,
     height: 32,
-    backgroundColor: COLORS.border},
+    backgroundColor: COLORS.border,
+  },
   scoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4},
+    gap: 4,
+  },
   miniCoin: {
     width: 18,
-    height: 18},
+    height: 18,
+  },
 
   // Game Board
   gameBoard: {
@@ -963,17 +1096,22 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: 8,
     marginBottom: 20,
-    justifyContent: 'center'},
+    justifyContent: 'center',
+  },
   cardWrapper: {
-    perspective: 1000},
+    perspective: 1000,
+  },
   cardFace: {
     position: 'absolute',
     borderRadius: 14,
-    overflow: 'hidden'},
+    overflow: 'hidden',
+  },
   cardBack: {
-    zIndex: 2},
+    zIndex: 2,
+  },
   cardFront: {
-    zIndex: 1},
+    zIndex: 1,
+  },
   cardMatched: {
     // Matched state handled by inner styles
   },
@@ -984,7 +1122,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: COLORS.border},
+    borderColor: COLORS.border,
+  },
   cardFrontInner: {
     flex: 1,
     backgroundColor: COLORS.surface,
@@ -992,41 +1131,52 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: COLORS.border},
+    borderColor: COLORS.border,
+  },
   cardFrontMatched: {
     backgroundColor: COLORS.primaryBg,
-    borderColor: COLORS.primary},
+    borderColor: COLORS.primary,
+  },
   cardQuestion: {
     fontSize: 28,
     fontWeight: '700',
-    color: COLORS.textLight},
+    color: COLORS.textLight,
+  },
   cardEmoji: {
-    fontSize: 32},
+    fontSize: 32,
+  },
 
   // Progress Bar
   progressWrapper: {
-    marginBottom: 8},
+    marginBottom: 8,
+  },
   progressBg: {
     height: 10,
     backgroundColor: COLORS.surfaceSecondary,
     borderRadius: 5,
-    overflow: 'hidden'},
+    overflow: 'hidden',
+  },
   progressFill: {
     height: '100%',
     borderRadius: 5,
-    overflow: 'hidden'},
+    overflow: 'hidden',
+  },
   progressGradient: {
-    flex: 1},
+    flex: 1,
+  },
   progressLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8},
+    marginTop: 8,
+  },
   progressLabel: {
     fontSize: 11,
-    color: COLORS.textLight},
+    color: COLORS.textLight,
+  },
   progressLabelCenter: {
     fontWeight: '600',
-    color: COLORS.textMuted},
+    color: COLORS.textMuted,
+  },
 
   // Confetti
   confettiContainer: {
@@ -1036,14 +1186,16 @@ const styles = StyleSheet.create({
     right: 0,
     height: 200,
     pointerEvents: 'none',
-    overflow: 'hidden'},
+    overflow: 'hidden',
+  },
   confetti: {
     position: 'absolute',
     width: 10,
     height: 10,
     borderRadius: 2,
     left: '50%',
-    top: -10},
+    top: -10,
+  },
 
   // Result Card
   resultCard: {
@@ -1054,48 +1206,59 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 1,
     shadowRadius: 20,
-    elevation: 8},
+    elevation: 8,
+  },
   resultGradient: {
     padding: 32,
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   resultIconWrapper: {
     width: 96,
     height: 96,
     borderRadius: 48,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20},
+    marginBottom: 20,
+  },
   resultTitle: {
     fontSize: 32,
     fontWeight: '800',
-    marginBottom: 8},
+    marginBottom: 8,
+  },
   resultSubtitle: {
     fontSize: 15,
-    marginBottom: 24},
+    marginBottom: 24,
+  },
   earnedBox: {
     paddingHorizontal: 32,
     paddingVertical: 20,
     borderRadius: 16,
-    alignItems: 'center'},
+    alignItems: 'center',
+  },
   earnedRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: 6},
+    marginBottom: 6,
+  },
   earnedCoin: {
     width: 36,
-    height: 36},
+    height: 36,
+  },
   earnedValue: {
     fontSize: 44,
-    fontWeight: '800'},
+    fontWeight: '800',
+  },
   earnedLabel: {
-    fontSize: 13},
+    fontSize: 13,
+  },
 
   // Stats Grid
   statsGrid: {
     flexDirection: 'row',
     gap: 12,
-    marginBottom: 20},
+    marginBottom: 20,
+  },
   statCard: {
     flex: 1,
     backgroundColor: COLORS.surface,
@@ -1106,40 +1269,47 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 8,
-    elevation: 2},
+    elevation: 2,
+  },
   statIconBg: {
     width: 44,
     height: 44,
     borderRadius: 22,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10},
+    marginBottom: 10,
+  },
   statValue: {
     fontSize: 20,
     fontWeight: '700',
     color: COLORS.navy,
-    marginBottom: 4},
+    marginBottom: 4,
+  },
   statLabel: {
     fontSize: 11,
     fontWeight: '600',
     color: COLORS.textMuted,
     textTransform: 'uppercase',
-    letterSpacing: 0.5},
+    letterSpacing: 0.5,
+  },
 
   // Actions
   actionsContainer: {
-    gap: 12},
+    gap: 12,
+  },
   primaryAction: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
     paddingVertical: 18,
-    borderRadius: 16},
+    borderRadius: 16,
+  },
   primaryActionText: {
     fontSize: 16,
     fontWeight: '700',
-    color: colors.text.inverse},
+    color: colors.text.inverse,
+  },
   secondaryAction: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1149,10 +1319,13 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     backgroundColor: COLORS.surface,
     borderWidth: 1,
-    borderColor: COLORS.border},
+    borderColor: COLORS.border,
+  },
   secondaryActionText: {
     fontSize: 15,
     fontWeight: '600',
-    color: COLORS.textMuted}});
+    color: COLORS.textMuted,
+  },
+});
 
 export default withErrorBoundary(MemoryMatch, 'PlayandearnMemorymatch');
