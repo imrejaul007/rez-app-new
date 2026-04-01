@@ -31,6 +31,7 @@ interface PushNotifications {
   paymentUpdates: boolean;
   securityAlerts: boolean;
   chatMessages: boolean;
+  whatsappMarketing: boolean;
 }
 
 function PushNotificationsScreen() {
@@ -77,6 +78,7 @@ function PushNotificationsScreen() {
     paymentUpdates: true,
     securityAlerts: true,
     chatMessages: true,
+    whatsappMarketing: false,
   });
 
   const updateSettings = async (updates: Partial<PushNotifications>) => {
@@ -251,6 +253,19 @@ function PushNotificationsScreen() {
             settings.chatMessages,
             (value) => updateSettings({ chatMessages: value }),
             !settings.enabled,
+          )}
+        </View>
+
+        <View style={[styles.section, { marginTop: 16 }]}>
+          <View style={styles.sectionHeader}>
+            <Ionicons name="logo-whatsapp" size={24} color="#25D366" />
+            <Text style={styles.sectionTitle}>Marketing Preferences</Text>
+          </View>
+          <Text style={{ color: colors.text.tertiary, fontSize: 13, marginBottom: 12, lineHeight: 18 }}>
+            Allow nearby merchants to send you personalised offers and deals via WhatsApp.
+          </Text>
+          {renderSettingItem('WhatsApp Marketing Messages', settings.whatsappMarketing, (value) =>
+            updateSettings({ whatsappMarketing: value }),
           )}
         </View>
       </ScrollView>
