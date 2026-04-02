@@ -60,28 +60,26 @@ export const SafeBackButton: React.FC<SafeBackButtonProps> = ({
     await performNavigation();
   }, [onPress, showConfirmation, confirmationMessage, canGoBack, fallbackRoute]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const performNavigation: () => Promise<void> = useCallback(async () => {
+  const performNavigation = useCallback(async (): Promise<void> => {
     try {
       if (canGoBack) {
         // @ts-ignore — complex union type
         await goBack(fallbackRoute);
       } else if (fallbackRoute) {
         // @ts-ignore — complex union type
-        await navigate(fallbackRoute);
+        await navigate(fallbackRoute as any);
       } else {
-        // Use default fallback
         await goBack();
       }
-    } catch (error: any) {
-      // Final fallback - go to home
+    } catch {
       try {
-        await navigate('/(tabs)' as Href);
-      } catch (finalError) {
+        await navigate('/(tabs)' as any);
+      } catch {
         // silently handle
       }
     }
-  }, [canGoBack, goBack, navigate, fallbackRoute]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [canGoBack, (goBack as any), (navigate as any), fallbackRoute]);
 
   return (
     // @ts-ignore - complex union type from Href<string> intersection
