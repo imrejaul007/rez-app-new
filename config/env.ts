@@ -31,7 +31,7 @@ export const API_CONFIG = {
 
 // API Endpoints
 export const ENDPOINTS = {
-  auth: process.env.EXPO_PUBLIC_AUTH_ENDPOINT || '/auth',
+  auth: process.env.EXPO_PUBLIC_AUTH_ENDPOINT || '/user/auth',
   products: process.env.EXPO_PUBLIC_PRODUCTS_ENDPOINT || '/products',
   cart: process.env.EXPO_PUBLIC_CART_ENDPOINT || '/cart',
   categories: process.env.EXPO_PUBLIC_CATEGORIES_ENDPOINT || '/categories',

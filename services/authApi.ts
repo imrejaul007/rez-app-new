@@ -694,11 +694,13 @@ class AuthService {
    * @deprecated Use AuthContext.tryRefreshToken() (via apiClient 401 callback) instead.
    */
   async ensureValidToken(): Promise<boolean> {
-    // NOT IMPLEMENTED — see TODO above.
-    // The refresh flow is owned by AuthContext; this stub exists for
-    // backwards compatibility only.
-    devLog.warn('[AUTH API] ensureValidToken() is not implemented and always returns false. Use AuthContext token refresh instead.');
-    return false;
+    // Removed: this method was a no-op stub that always returned false,
+    // silently breaking any caller that depended on it. Token refresh is
+    // handled automatically by the apiClient 401 interceptor via AuthContext.
+    // Call sites should be updated to remove this call entirely.
+    throw new Error(
+      '[AuthService] ensureValidToken() is removed. Token refresh is automatic via apiClient. Remove this call.',
+    );
   }
 }
 

@@ -154,7 +154,7 @@ export const API_ENDPOINTS = {
     VERIFY_OTP: `${ENV.ENDPOINTS.auth}/verify-otp`,
     RESEND_OTP: `${ENV.ENDPOINTS.auth}/resend-otp`,
     LOGOUT: `${ENV.ENDPOINTS.auth}/logout`,
-    REFRESH_TOKEN: '/user/auth/refresh-token',
+    REFRESH_TOKEN: `${ENV.ENDPOINTS.auth}/refresh-token`,
     FORGOT_PASSWORD: `${ENV.ENDPOINTS.auth}/forgot-password`,
     RESET_PASSWORD: `${ENV.ENDPOINTS.auth}/reset-password`,
   },
