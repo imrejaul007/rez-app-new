@@ -932,19 +932,15 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    width: 90,
-    height: 90,
-    borderRadius: 45,
-    backgroundColor: 'rgba(255, 200, 87, 0.12)',
     shadowColor: '#FFC857',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
     elevation: 8,
   },
   logoImage: {
-    width: 70,
-    height: 70,
+    width: 200,
+    height: 107,
   },
 
   // Shield Icon (OTP step)

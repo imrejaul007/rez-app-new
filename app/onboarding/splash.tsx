@@ -122,7 +122,7 @@ function SplashScreen() {
           <Animated.View style={[styles.coinGlow, pulseStyle]} />
 
           {/* Main Logo */}
-          <Animated.View style={[styles.coinOuter, coinSpinStyle]}>
+          <Animated.View style={styles.coinOuter}>
             <CachedImage source={BRAND.LOGO_IMAGE} style={styles.coinImage} contentFit="contain" transition={200} />
           </Animated.View>
         </Animated.View>
@@ -218,26 +218,24 @@ const styles = StyleSheet.create({
   },
   coinGlow: {
     position: 'absolute',
-    width: 160,
-    height: 160,
-    borderRadius: 80,
-    backgroundColor: 'rgba(255, 200, 87, 0.25)',
+    width: 300,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: 'rgba(255, 200, 87, 0.18)',
   },
   coinOuter: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 260,
+    height: 140,
     overflow: 'hidden',
     shadowColor: COLORS.gold,
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.5,
-    shadowRadius: 24,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.4,
+    shadowRadius: 20,
     elevation: 15,
   },
   coinImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 260,
+    height: 140,
   },
 
   // Brand
