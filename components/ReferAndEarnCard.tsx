@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet, Pressable, Dimensions, ActivityIndicator, Linking } from "react-native";
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { colors } from '@/constants/theme';
+import referralService from '@/services/referralApi';
 
 const { width } = Dimensions.get("window");
 
@@ -27,23 +28,41 @@ const ReferAndEarnCard: React.FC<ReferAndEarnCardProps> = ({
   const [data, setData] = useState<ReferData | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Use dummy data as fallback
-  const dummyData: ReferData = {
-    title: "Refer and Earn",
-    subtitle: "Invite your friends and get free jewellery",
-    inviteButtonText: "Invite",
-    inviteLink: "https://example.com/invite",
-  };
-
   useEffect(() => {
     if (propData) {
       setData(propData);
       setLoading(propLoading);
-    } else {
-      // Use dummy data if no props provided
-      setData(dummyData);
-      setLoading(false);
+      return;
     }
+
+    let cancelled = false;
+    const fetchReferralData = async () => {
+      setLoading(true);
+      try {
+        const response = await referralService.getReferralData();
+        if (!cancelled && response.success && response.data) {
+          setData({
+            title: response.data.title || 'Refer and Earn',
+            subtitle: response.data.subtitle || 'Invite your friends and earn rewards',
+            inviteButtonText: response.data.inviteButtonText || 'Invite',
+            inviteLink: response.data.inviteLink || '',
+          });
+        } else if (!cancelled) {
+          // API returned no data — hide the card by leaving data as null
+          setData(null);
+        }
+      } catch {
+        if (!cancelled) {
+          // On error, hide the card gracefully
+          setData(null);
+        }
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    fetchReferralData();
+    return () => { cancelled = true; };
   }, [propData, propLoading]);
 
   const handleInvite = async () => {

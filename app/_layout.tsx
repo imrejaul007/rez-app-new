@@ -36,6 +36,7 @@ import * as Constants from 'expo-constants';
 import * as Updates from 'expo-updates';
 import React, { useEffect, useRef, useState } from 'react';
 import { AppState, AppStateStatus, Platform, StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { platformAlertConfirm } from '@/utils/platformAlert';
 import NetInfo from '@react-native-community/netinfo';
 import { useRouter } from 'expo-router';
@@ -196,18 +197,20 @@ function RootLayout() {
   }
 
   return (
-    <View style={styles.rootContainer}>
-      {isConnected === false && (
-        <View style={styles.offlineBanner}>
-          <Text style={styles.offlineBannerText}>You&apos;re offline. Some features may be unavailable.</Text>
-        </View>
-      )}
-      <AppProviders
-        onErrorBoundaryError={handleErrorBoundaryError}
-        onQueueSyncComplete={handleQueueSyncComplete}
-        onQueueSyncError={handleQueueSyncError}
-      />
-    </View>
+    <ErrorBoundary>
+      <View style={styles.rootContainer}>
+        {isConnected === false && (
+          <View style={styles.offlineBanner}>
+            <Text style={styles.offlineBannerText}>You&apos;re offline. Some features may be unavailable.</Text>
+          </View>
+        )}
+        <AppProviders
+          onErrorBoundaryError={handleErrorBoundaryError}
+          onQueueSyncComplete={handleQueueSyncComplete}
+          onQueueSyncError={handleQueueSyncError}
+        />
+      </View>
+    </ErrorBoundary>
   );
 }
 
