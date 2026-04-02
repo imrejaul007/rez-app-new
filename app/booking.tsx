@@ -33,6 +33,7 @@ import { colors } from '@/constants/theme';
 import BookingRewardBanner from '@/components/booking/BookingRewardBanner';
 import serviceBookingService from '@/services/serviceBookingApi';
 import tableBookingApi from '@/services/tableBookingApi';
+import apiClient from '@/services/apiClient';
 import { platformAlertSimple } from '@/utils/platformAlert';
 import { useIsMounted } from '@/hooks/useIsMounted';
 
@@ -142,6 +143,14 @@ function BookingPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [dealValidationError, setDealValidationError] = useState<string | null>(null);
   const [validatedDeal, setValidatedDeal] = useState<ActiveDeal | null>(activeDeal);
+  // Staff picker state
+  const [availableStaff, setAvailableStaff] = useState<Array<{ _id: string; name: string; speciality?: string }>>([]);
+  const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
+  const [selectedStaffName, setSelectedStaffName] = useState<string | null>(null);
+  const [showStaffPicker, setShowStaffPicker] = useState(false);
+  // Real slot availability
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [realSlots, setRealSlots] = useState<TimeSlot[] | null>(null);
 
   // Close modals on back press instead of leaving the page
   const handleBackPress = useCallback(() => {
@@ -167,6 +176,58 @@ function BookingPage() {
   useEffect(() => {
     loadDetails();
   }, [storeId, productId]);
+
+  // Load staff list for service bookings
+  useEffect(() => {
+    if (!isServiceBooking || !storeId) return;
+    (async () => {
+      try {
+        const res = await apiClient.get(`/public/stores/${storeId}/staff`);
+        if (res.success && Array.isArray(res.data)) {
+          setAvailableStaff(res.data);
+        }
+      } catch {
+        // Non-fatal — staff picker just won't show
+      }
+    })();
+  }, [isServiceBooking, storeId]);
+
+  // Load real slot availability when date changes (service bookings only)
+  useEffect(() => {
+    if (!isServiceBooking || !storeId) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoadingSlots(true);
+        setRealSlots(null);
+        const dateStr = (() => {
+          const d = selectedDate;
+          return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        })();
+        const res = await apiClient.get(`/service-appointments/slots/${storeId}?date=${dateStr}`);
+        if (cancelled) return;
+        const raw: Array<{ time: string; available: boolean }> = Array.isArray(res.data)
+          ? res.data
+          : res.data?.slots || [];
+        if (raw.length > 0) {
+          const mapped: TimeSlot[] = raw.map((s) => {
+            const [h, m] = s.time.split(':').map(Number);
+            const p = h >= 12 ? 'PM' : 'AM';
+            const h12 = h > 12 ? h - 12 : h === 0 ? 12 : h;
+            return { id: s.time, time: `${h12}:${String(m).padStart(2, '0')} ${p}`, available: s.available };
+          });
+          setRealSlots(mapped);
+        }
+      } catch {
+        // Fallback to generated slots — handled below
+      } finally {
+        if (!cancelled) setLoadingSlots(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isServiceBooking, storeId, selectedDate]);
 
   // Deep-link parameter validation guard
   if (!storeId || typeof storeId !== 'string') {
@@ -239,13 +300,13 @@ function BookingPage() {
             if (!isMounted()) return;
             setValidatedDeal(null);
           }
-        } catch (err) {
+        } catch (err: any) {
           // Don't block booking if validation fails, but warn user
           if (!isMounted()) return;
           setDealValidationError('Could not verify deal status');
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setErrorMessage('Failed to load details. Please try again.');
     } finally {
@@ -254,31 +315,24 @@ function BookingPage() {
     }
   };
 
-  // Generate time slots (9 AM to 9 PM in 30-minute intervals)
+  // Generate fallback time slots (9 AM to 9 PM in 30-minute intervals)
   const generateTimeSlots = (): TimeSlot[] => {
     const slots: TimeSlot[] = [];
-    const startHour = 9;
-    const endHour = 21;
-
-    for (let hour = startHour; hour < endHour; hour++) {
-      for (let minute of [0, 30]) {
+    const now = new Date();
+    const isToday = selectedDate.toDateString() === now.toDateString();
+    for (let hour = 9; hour < 21; hour++) {
+      for (const minute of [0, 30]) {
         const timeString = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
         const displayTime = `${hour > 12 ? hour - 12 : hour}:${minute.toString().padStart(2, '0')} ${hour >= 12 ? 'PM' : 'AM'}`;
-
-        // Simple availability logic
-        const isPast = selectedDate.toDateString() === new Date().toDateString() && hour < new Date().getHours();
-
-        slots.push({
-          id: timeString,
-          time: displayTime,
-          available: !isPast,
-        });
+        const isPast = isToday && (hour < now.getHours() || (hour === now.getHours() && minute <= now.getMinutes()));
+        slots.push({ id: timeString, time: displayTime, available: !isPast });
       }
     }
     return slots;
   };
 
-  const timeSlots = generateTimeSlots();
+  // Use real slots from API when available, fall back to generated
+  const timeSlots: TimeSlot[] = realSlots && realSlots.length > 0 ? realSlots : generateTimeSlots();
 
   // Generate next 14 days for date selection
   const getNextDays = (count: number) => {
@@ -350,6 +404,7 @@ function BookingPage() {
             }),
           }),
           paymentMethod: 'cash',
+          ...(selectedStaffId && { assignedStaff: selectedStaffName || selectedStaffId }),
         });
 
         if (!response.success) {
@@ -385,7 +440,7 @@ function BookingPage() {
       if (validatedDeal) {
         try {
           await campaignsApi.useRedemption(validatedDeal.redemptionCode);
-        } catch (err) {
+        } catch (err: any) {
           // silently handle — booking already succeeded
         }
       }
@@ -484,7 +539,7 @@ function BookingPage() {
         if (!isMounted()) return;
         setErrorMessage(response.message || 'Failed to add service to cart');
       }
-    } catch (error) {
+    } catch (error: any) {
       if (!isMounted()) return;
       setErrorMessage('Failed to add service to cart. Please try again.');
     } finally {
@@ -670,23 +725,37 @@ function BookingPage() {
                       setSelectedTime(null);
                       setSelectedTime24h(null);
                     }}
-                    style={[styles.dateCard, isSelected && styles.dateCardSelected]}
+                    style={[styles.dateCard, isSelected ? styles.dateCardSelected : null]}
                   >
-                    <ThemedText style={[styles.dateDay, isSelected && styles.dateTextSelected]}>
+                    <ThemedText style={[styles.dateDay, isSelected ? styles.dateTextSelected : null]}>
                       {date.toLocaleDateString('en-US', { weekday: 'short' })}
                     </ThemedText>
-                    <ThemedText style={[styles.dateNumber, isSelected && styles.dateTextSelected]}>
+                    <ThemedText style={[styles.dateNumber, isSelected ? styles.dateTextSelected : null]}>
                       {date.getDate()}
                     </ThemedText>
-                    <ThemedText style={[styles.dateMonth, isSelected && styles.dateTextSelected]}>
+                    <ThemedText style={[styles.dateMonth, isSelected ? styles.dateTextSelected : null]}>
                       {date.toLocaleDateString('en-US', { month: 'short' })}
                     </ThemedText>
-                    {isToday && <View style={[styles.todayDot, isSelected && styles.todayDotSelected]} />}
+                    {isToday && <View style={[styles.todayDot, isSelected ? styles.todayDotSelected : null]} />}
                   </Pressable>
                 );
               })}
             </ScrollView>
           </View>
+
+          {/* Staff Picker — service bookings only, when staff are available */}
+          {isServiceBooking && availableStaff.length > 0 && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <Ionicons name="person-circle-outline" size={20} color={Colors.gold} />
+                <ThemedText style={styles.sectionTitle}>Select Staff</ThemedText>
+              </View>
+              <Pressable style={[styles.staffPickerBtn]} onPress={() => setShowStaffPicker(true)}>
+                <ThemedText style={styles.staffPickerText}>{selectedStaffName || 'Any available staff'}</ThemedText>
+                <Ionicons name="chevron-down" size={16} color="#9ca3af" />
+              </Pressable>
+            </View>
+          )}
 
           {/* Time Slots */}
           <View style={styles.section}>
@@ -694,38 +763,42 @@ function BookingPage() {
               <Ionicons name="time-outline" size={20} color={Colors.gold} />
               <ThemedText style={styles.sectionTitle}>Select Time</ThemedText>
             </View>
-            <View style={styles.timeGrid}>
-              {timeSlots.map((slot) => {
-                const isSelected = selectedTime === slot.id;
-                return (
-                  <Pressable
-                    key={slot.id}
-                    onPress={() => {
-                      if (slot.available) {
-                        setSelectedTime(slot.time); // Display format
-                        setSelectedTime24h(slot.id); // 24-hour format for calculation
-                      }
-                    }}
-                    disabled={!slot.available}
-                    style={[
-                      styles.timeSlot,
-                      isSelected && styles.timeSlotSelected,
-                      !slot.available && styles.timeSlotDisabled,
-                    ]}
-                  >
-                    <ThemedText
+            {loadingSlots ? (
+              <ActivityIndicator color={Colors.gold} style={{ marginVertical: 12 }} />
+            ) : (
+              <View style={styles.timeGrid}>
+                {timeSlots.map((slot) => {
+                  const isSelected = selectedTime === slot.id;
+                  return (
+                    <Pressable
+                      key={slot.id}
+                      onPress={() => {
+                        if (slot.available) {
+                          setSelectedTime(slot.time); // Display format
+                          setSelectedTime24h(slot.id); // 24-hour format for calculation
+                        }
+                      }}
+                      disabled={!slot.available}
                       style={[
-                        styles.timeText,
-                        isSelected && styles.timeTextSelected,
-                        !slot.available && styles.timeTextDisabled,
+                        styles.timeSlot,
+                        isSelected && styles.timeSlotSelected,
+                        !slot.available && styles.timeSlotDisabled,
                       ]}
                     >
-                      {slot.time}
-                    </ThemedText>
-                  </Pressable>
-                );
-              })}
-            </View>
+                      <ThemedText
+                        style={[
+                          styles.timeText,
+                          isSelected && styles.timeTextSelected,
+                          !slot.available && styles.timeTextDisabled,
+                        ]}
+                      >
+                        {slot.time}
+                      </ThemedText>
+                    </Pressable>
+                  );
+                })}
+              </View>
+            )}
           </View>
 
           {/* Number of People - Only for Table Booking */}
@@ -983,6 +1056,52 @@ function BookingPage() {
                 </LinearGradient>
               </Pressable>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Staff Picker Modal */}
+      <Modal
+        visible={showStaffPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowStaffPicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { paddingBottom: 32 }]}>
+            <ThemedText style={styles.modalTitle}>Choose Staff</ThemedText>
+            <Pressable
+              style={styles.staffOption}
+              onPress={() => {
+                setSelectedStaffId(null);
+                setSelectedStaffName(null);
+                setShowStaffPicker(false);
+              }}
+            >
+              <Ionicons name="people-outline" size={18} color="#9ca3af" />
+              <ThemedText style={styles.staffOptionText}>Any available staff</ThemedText>
+              {!selectedStaffId && <Ionicons name="checkmark" size={16} color={Colors.gold} />}
+            </Pressable>
+            {availableStaff.map((s) => (
+              <Pressable
+                key={s._id}
+                style={styles.staffOption}
+                onPress={() => {
+                  setSelectedStaffId(s._id);
+                  setSelectedStaffName(s.name);
+                  setShowStaffPicker(false);
+                }}
+              >
+                <Ionicons name="person-outline" size={18} color="#374151" />
+                <View style={{ flex: 1 }}>
+                  <ThemedText style={styles.staffOptionText}>{s.name}</ThemedText>
+                  {s.speciality ? (
+                    <ThemedText style={{ fontSize: 12, color: '#9ca3af' }}>{s.speciality}</ThemedText>
+                  ) : null}
+                </View>
+                {selectedStaffId === s._id && <Ionicons name="checkmark" size={16} color={Colors.gold} />}
+              </Pressable>
+            ))}
           </View>
         </View>
       </Modal>
@@ -1280,6 +1399,34 @@ const styles = StyleSheet.create({
   },
   todayDotSelected: {
     backgroundColor: colors.background.primary,
+  },
+  staffPickerBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: colors.background.primary,
+    borderWidth: 1.5,
+    borderColor: colors.border.default,
+    borderRadius: BorderRadius.md,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+  },
+  staffPickerText: {
+    fontSize: 14,
+    color: colors.text.secondary,
+  },
+  staffOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingVertical: 13,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.border.default,
+  },
+  staffOptionText: {
+    flex: 1,
+    fontSize: 15,
+    fontWeight: '600',
   },
   timeGrid: {
     flexDirection: 'row',
