@@ -1,6 +1,10 @@
 /**
- * Calculate estimated savings amount from offer/deal data.
- * Used across OfferTile, search results, and deal sections.
+ * DEPRECATED: cashback calculation must happen server-side. This returns 0 until removed.
+ *
+ * Previously calculated an estimated savings amount from offer/deal data on the frontend.
+ * All financial calculations (cashback amounts, discount values) must now be computed
+ * by the backend and returned via API. Callers should use the value from the API response
+ * (e.g. offer.saveAmount, offer.discountedPrice) directly instead of calling this function.
  */
 export function calculateSaveAmount(opts: {
   cashbackPercent?: number;
@@ -9,14 +13,5 @@ export function calculateSaveAmount(opts: {
   discountedPrice?: number;
   fixedDiscount?: number;
 }): number {
-  const { cashbackPercent, averageBill = 500, originalPrice, discountedPrice, fixedDiscount } = opts;
-
-  if (fixedDiscount && fixedDiscount > 0) return Math.round(fixedDiscount);
-  if (originalPrice && discountedPrice && originalPrice > discountedPrice) {
-    return Math.round(originalPrice - discountedPrice);
-  }
-  if (cashbackPercent && cashbackPercent > 0) {
-    return Math.round((cashbackPercent / 100) * averageBill);
-  }
   return 0;
 }

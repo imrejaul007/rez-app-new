@@ -400,9 +400,12 @@ export function formatDateTime(date: string | Date): string {
 }
 
 /**
- * Calculate savings percentage
+ * DEPRECATED: cashback calculation must happen server-side. This returns 0 until removed.
+ *
+ * Previously computed a savings percentage on the frontend from original and current prices.
+ * Savings percentages must now come from the backend API response rather than being
+ * computed client-side.
  */
 export function calculateSavingsPercentage(original: number, current: number): number {
-  if (original <= current) return 0;
-  return Math.round(((original - current) / original) * 100);
+  return 0;
 }

@@ -113,14 +113,10 @@ function OffersScreen() {
     }
   };
 
+  // DEPRECATED: cashback calculation must happen server-side. This returns 0 until removed.
+  // The backend should return the calculated discount for each offer and for the selected offer set.
   const calculateTotalDiscount = (): number => {
-    return selectedOffers.reduce((total, offer) => {
-      if (offer.valueType === 'PERCENTAGE') {
-        const discount = (numericAmount * offer.value) / 100;
-        return total + (offer.maxDiscount ? Math.min(discount, offer.maxDiscount) : discount);
-      }
-      return total + offer.value;
-    }, 0);
+    return 0;
   };
 
   const handleContinue = () => {

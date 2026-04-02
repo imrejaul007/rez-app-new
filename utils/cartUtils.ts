@@ -9,9 +9,15 @@
 
 import { CartItem, LockedProduct, LOCK_CONFIG, getLockStatus } from '@/types/cart';
 
-/** Calculate the total price of cart items. */
+/**
+ * DEPRECATED: cashback calculation must happen server-side. This returns 0 until removed.
+ *
+ * Previously summed cart item prices on the frontend. Cart totals (subtotal, tax, discount,
+ * cashback, total) must come from the backend cart API response (cart.totals.*).
+ * Use the totals already returned by the API instead of calling this function.
+ */
 export const calculateTotal = (items: CartItem[]): number => {
-  return items.reduce((total, item) => total + item.price, 0);
+  return 0;
 };
 
 /** Return the count of cart items. */
@@ -19,13 +25,14 @@ export const getItemCount = (items: CartItem[]): number => {
   return items.length;
 };
 
-/** Calculate the total value of items with pending locks. */
+/**
+ * DEPRECATED: cashback calculation must happen server-side. This returns 0 until removed.
+ *
+ * Previously summed locked product prices on the frontend. Locked item totals must come
+ * from the backend API response rather than being computed client-side.
+ */
 export const calculateLockedTotal = (items: LockedProduct[]): number => {
-  return items.reduce((total, item) => {
-    // For paid locks, subtract the lock fee since it's already paid
-    const lockFee = (item as any).isPaidLock && (item as any).lockFee ? (item as any).lockFee : 0;
-    return total + (item.price - lockFee);
-  }, 0);
+  return 0;
 };
 
 /** Return the count of currently locked items. */

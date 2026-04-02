@@ -78,122 +78,44 @@ export const validateDeal = (
 };
 
 /**
- * Calculates the discount amount for a given deal
+ * DEPRECATED: cashback calculation must happen server-side. This returns 0 until removed.
+ *
+ * Previously calculated the discount amount for a given deal on the frontend.
+ * All financial calculations must now be computed by the backend and returned via the API.
+ * Callers should use the discountAmount/finalAmount already present in the API response
+ * rather than computing them client-side.
  */
 export const calculateDealDiscount = (
   deal: Deal,
   billAmount: number,
   appliedDeals: AppliedDeal[] = []
 ): DealCalculationResult => {
-  const validationErrors = validateDeal(deal, billAmount, appliedDeals);
-  
-  if (validationErrors.length > 0) {
-    return {
-      isValid: false,
-      discountAmount: 0,
-      finalAmount: billAmount,
-      errors: validationErrors,
-      warnings: []
-    };
-  }
-
-  let discountAmount = 0;
-  const warnings: string[] = [];
-
-  switch (deal.discountType) {
-    case 'percentage':
-      discountAmount = (billAmount * deal.discountValue) / 100;
-      
-      // Apply max discount cap if specified
-      if (deal.maxDiscount && discountAmount > deal.maxDiscount) {
-        discountAmount = deal.maxDiscount;
-        warnings.push(`Discount capped at ₹${deal.maxDiscount.toLocaleString()}`);
-      }
-      break;
-
-    case 'fixed':
-      if (deal.category === 'buy-one-get-one') {
-        // Special BOGO logic - assume 33% discount on average
-        discountAmount = (billAmount * 33) / 100;
-        warnings.push('BOGO discount calculated as average savings');
-      } else {
-        discountAmount = deal.discountValue;
-      }
-      break;
-  }
-
-  // Ensure discount doesn't exceed bill amount
-  if (discountAmount > billAmount) {
-    discountAmount = billAmount;
-    warnings.push('Discount adjusted to not exceed bill amount');
-  }
-
-  const finalAmount = Math.max(0, billAmount - discountAmount);
-
   return {
-    isValid: true,
-    discountAmount: Math.round(discountAmount),
-    finalAmount: Math.round(finalAmount),
+    isValid: false,
+    discountAmount: 0,
+    finalAmount: billAmount,
     errors: [],
-    warnings
+    warnings: ['Discount calculation must be performed server-side.'],
   };
 };
 
 /**
- * Calculates total discount when multiple deals are applied
+ * DEPRECATED: cashback calculation must happen server-side. This returns 0 until removed.
+ *
+ * Previously calculated the total discount when multiple deals were applied on the frontend.
+ * All financial calculations must now be computed by the backend and returned via the API.
  */
 export const calculateTotalDiscount = (
   deals: Deal[],
   billAmount: number,
   allowStacking: boolean = false
 ): DealCalculationResult => {
-  if (deals.length === 0) {
-    return {
-      isValid: true,
-      discountAmount: 0,
-      finalAmount: billAmount,
-      errors: [],
-      warnings: []
-    };
-  }
-
-  if (!allowStacking && deals.length > 1) {
-    return {
-      isValid: false,
-      discountAmount: 0,
-      finalAmount: billAmount,
-      errors: [{
-        dealId: 'multiple',
-        errorType: 'STORE_RESTRICTION',
-        message: 'Only one deal can be applied at a time'
-      }],
-      warnings: []
-    };
-  }
-
-  let totalDiscount = 0;
-  let currentBillAmount = billAmount;
-  const allErrors: DealValidationError[] = [];
-  const allWarnings: string[] = [];
-
-  for (const deal of deals) {
-    const result = calculateDealDiscount(deal, currentBillAmount);
-    
-    if (result.isValid) {
-      totalDiscount += result.discountAmount;
-      currentBillAmount = result.finalAmount;
-      allWarnings.push(...result.warnings);
-    } else {
-      allErrors.push(...result.errors);
-    }
-  }
-
   return {
-    isValid: allErrors.length === 0,
-    discountAmount: Math.round(totalDiscount),
-    finalAmount: Math.round(Math.max(0, billAmount - totalDiscount)),
-    errors: allErrors,
-    warnings: allWarnings
+    isValid: false,
+    discountAmount: 0,
+    finalAmount: billAmount,
+    errors: [],
+    warnings: ['Discount calculation must be performed server-side.'],
   };
 };
 
@@ -224,29 +146,15 @@ export const isDealEligible = (
 };
 
 /**
- * Gets the best deal from available deals for a given bill amount
+ * DEPRECATED: cashback calculation must happen server-side. This returns null until removed.
+ *
+ * Previously selected the best deal by computing discount amounts on the frontend.
+ * Best-deal logic must now be resolved by the backend and returned via the API.
  */
 export const getBestDeal = (
   deals: Deal[],
   billAmount: number,
   userType?: 'first-time' | 'loyalty' | 'regular'
 ): Deal | null => {
-  const eligibleDeals = deals.filter(deal => 
-    isDealEligible(deal, billAmount, userType)
-  );
-  if (eligibleDeals.length === 0) return null;
-
-  // Find deal with maximum discount amount
-  let bestDeal = eligibleDeals[0];
-  let maxDiscount = calculateDealDiscount(bestDeal, billAmount).discountAmount;
-
-  for (const deal of eligibleDeals.slice(1)) {
-    const discount = calculateDealDiscount(deal, billAmount).discountAmount;
-    if (discount > maxDiscount) {
-      maxDiscount = discount;
-      bestDeal = deal;
-    }
-  }
-
-  return bestDeal;
+  return null;
 };
