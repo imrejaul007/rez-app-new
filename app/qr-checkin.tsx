@@ -31,7 +31,7 @@ export default function QRCheckinScreen() {
       setLoadingStore(true);
       apiClient
         .get(`/qr-checkin/store/${storeId}`)
-        .then((r) => setStoreName(r.data?.data?.name || ''))
+        .then((r) => setStoreName((r as any).data?.data?.name || ''))
         .catch(() => {})
         .finally(() => setLoadingStore(false));
     }
@@ -46,7 +46,7 @@ export default function QRCheckinScreen() {
     setLoading(true);
     try {
       const res = await apiClient.post('/qr-checkin', { storeId, amount: amt, paymentMethod: 'cash' });
-      setResult(res.data?.data);
+      setResult((res as any).data?.data);
     } catch (err: any) {
       const msg = err?.response?.data?.message || 'Check-in failed. Try again.';
       Alert.alert('Error', msg);

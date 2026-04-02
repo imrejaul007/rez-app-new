@@ -67,6 +67,7 @@ import { getScore } from '@/services/rezScoreApi';
 
 // NOTE: PersonaDetectionOnboarding, MicroMomentDecisionCard, StreakToDealConnector,
 // CoinExpiryUrgencyBanner are rendered inside NearUTabContent — not here.
+import RebookingNudgeCard from '@/components/home/RebookingNudgeCard';
 
 function lazyWithRetry<T extends React.ComponentType<any>>(
   factory: () => Promise<{ default: T }>,
@@ -1109,6 +1110,13 @@ function HomeScreen() {
             </View>
             <Ionicons name="chevron-forward" size={16} color="#8B5CF6" />
           </Pressable>
+        )}
+
+        {/* Rebooking Nudge — shown on Near-U tab for stores not visited in >10 days */}
+        {activeTab === 'near-u' && (
+          <FeatureErrorBoundary featureName="Rebooking Nudge" compact={true}>
+            <RebookingNudgeCard />
+          </FeatureErrorBoundary>
         )}
 
         {/* Try Before You Buy Banner */}

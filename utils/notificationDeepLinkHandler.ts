@@ -8,6 +8,7 @@ import { colors } from '@/constants/theme';
 
 export interface NotificationData {
   type?: string;
+  screen?: string;
   deepLink?: string;
   orderId?: string;
   storeId?: string;
@@ -30,6 +31,13 @@ export function handleNotificationDeepLink(data: NotificationData): void {
     // Direct deep link takes precedence
     if (data.deepLink) {
       router.push(data.deepLink as any);
+      return;
+    }
+
+    // Handle rebooking / revisit push notifications: { screen: 'store', storeId: '...' }
+    // Sent by backend when it's time for a consumer to revisit a store.
+    if (data.screen === 'store' && data.storeId) {
+      router.push(`/MainStorePage?storeId=${data.storeId}` as any);
       return;
     }
 
