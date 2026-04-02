@@ -451,7 +451,7 @@ function OnlineVoucherPage() {
             decelerationRate="fast"
             bounces={false}
             contentContainerStyle={styles.heroCarouselContent}
-            onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
+            onScroll={(Animated as any).event([{ nativeEvent: { contentOffset: { x: scrollX } } }], {
               useNativeDriver: true,
               listener: (event: any) => {
                 const index = Math.round(event.nativeEvent.contentOffset.x / SNAP_INTERVAL);

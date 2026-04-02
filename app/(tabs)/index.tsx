@@ -1067,6 +1067,50 @@ function HomeScreen() {
           </View>
         )}
 
+        {/* REZ Network Banner */}
+        {activeTab === 'near-u' && (
+          <Pressable
+            style={{
+              backgroundColor: '#F5F3FF',
+              borderRadius: 14,
+              padding: 14,
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 10,
+              marginHorizontal: 16,
+              marginBottom: 12,
+              borderWidth: 1,
+              borderColor: '#DDD6FE',
+            }}
+            onPress={() => router.push('/explore' as any)}
+            accessibilityRole="button"
+            accessibilityLabel="Explore REZ network stores"
+            accessibilityHint="Tap to discover stores where your REZ coins work"
+          >
+            <View
+              style={{
+                width: 36,
+                height: 36,
+                borderRadius: 10,
+                backgroundColor: '#EDE9FE',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name="sparkles" size={18} color="#7C3AED" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontSize: 13, fontWeight: '700', color: '#4C1D95' }}>
+                Your REZ coins have value everywhere
+              </Text>
+              <Text style={{ fontSize: 12, color: '#8B5CF6', marginTop: 1 }}>
+                Earn & spend across restaurants, salons, shops and more
+              </Text>
+            </View>
+            <Ionicons name="chevron-forward" size={16} color="#8B5CF6" />
+          </Pressable>
+        )}
+
         {/* Try Before You Buy Banner */}
         {activeTab !== 'prive' && activeTab !== 'mall' && (
           <Pressable

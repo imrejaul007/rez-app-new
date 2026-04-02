@@ -5,7 +5,8 @@
  * and bill upload functionality.
  */
 
-import { ReactTestInstance } from 'react-test-renderer';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ReactTestInstance = any;
 import { act } from '@testing-library/react-native';
 
 // =============================================================================

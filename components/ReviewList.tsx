@@ -72,7 +72,7 @@ const ReviewList: React.FC<ReviewListProps> = ({
   return (
     <FlashList
       data={reviews}
-      renderItem={renderReviewItem}
+      renderItem={renderReviewItem as any}
       keyExtractor={keyExtractor}
       contentContainerStyle={[
         styles.contentContainer,

@@ -161,7 +161,7 @@ interface AnimatedCheckmarkProps {
   path: string;
   stroke: string;
   strokeWidth: number;
-  progress: Animated.Shared<number>;
+  progress: any;
 }
 
 const AnimatedCheckmark = React.memo(
