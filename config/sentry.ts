@@ -7,7 +7,7 @@
  * Requires EXPO_PUBLIC_SENTRY_DSN in .env to activate.
  */
 import * as Sentry from '@sentry/react-native';
-import { EXTERNAL_SERVICES, APP_CONFIG } from './env';
+import { EXTERNAL_SERVICES, APP_CONFIG, isProduction } from './env';
 
 const PLACEHOLDER_DSNS = ['your-sentry-dsn', 'YOUR_SENTRY_DSN', 'YOUR_SENTRY_DSN_HERE', ''];
 
@@ -18,6 +18,9 @@ export function initSentry() {
 
   const dsn = EXTERNAL_SERVICES.analytics.sentry;
   if (!dsn || PLACEHOLDER_DSNS.includes(dsn)) {
+    if (isProduction()) {
+      console.error('[Sentry] WARNING: EXPO_PUBLIC_SENTRY_DSN is not set. Crash reporting is disabled in production.');
+    }
     return;
   }
 

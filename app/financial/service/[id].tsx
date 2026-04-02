@@ -29,6 +29,7 @@ import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import * as Clipboard from 'expo-clipboard';
 import financialServicesApi, { FinancialService } from '@/services/financialServicesApi';
+import { fetchBill as apiFetchBill, FetchedBillInfo } from '@/services/billPaymentApi';
 import cartApi from '@/services/cartApi';
 import { useRefreshCart, useGetCurrencySymbol } from '@/stores/selectors';
 import { useComprehensiveAnalytics } from '@/hooks/useComprehensiveAnalytics';
@@ -81,7 +82,8 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
   // Form states - Bills
   const [consumerNumber, setConsumerNumber] = useState('');
   const [billAmount, setBillAmount] = useState('');
-  const [fetchedBill, setFetchedBill] = useState<{ amount: number; dueDate: string } | null>(null);
+  const [fetchedBill, setFetchedBill] = useState<FetchedBillInfo | null>(null);
+  const [isFetchingBill, setIsFetchingBill] = useState(false);
 
   // Form states - Recharge
   const [mobileNumber, setMobileNumber] = useState('');
@@ -197,11 +199,16 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
   };
 
   // Handle bill fetch
-  const handleFetchBill = () => {
+  const handleFetchBill = async () => {
     const sanitizedNumber = sanitizeNumericInput(consumerNumber);
 
     if (!sanitizedNumber || sanitizedNumber.length < 8) {
       platformAlertSimple('Invalid Input', 'Please enter a valid consumer/account number');
+      return;
+    }
+
+    if (!service?._id) {
+      platformAlertSimple('Error', 'Service information is not available. Please try again.');
       return;
     }
 
@@ -211,14 +218,49 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
       service_type: serviceType,
     });
 
-    // TODO: Replace with real bill-fetch API call (e.g. POST /financial/bills/fetch)
-    // that returns { amount, dueDate } for the given consumerNumber and service.
-    // Bill fetching from operator APIs is not yet connected — notify the user.
-    platformAlertSimple(
-      'Coming Soon',
-      'Automatic bill fetching is not yet available. Please enter your bill amount manually.',
-    );
-    setBillAmount('');
+    try {
+      setIsFetchingBill(true);
+      setFetchedBill(null);
+
+      const response = await apiFetchBill(service._id, sanitizedNumber);
+
+      if (!isMounted()) return;
+
+      if (response.success && response.data) {
+        setFetchedBill(response.data);
+        if (response.data.amount) {
+          setBillAmount(response.data.amount.toString());
+        }
+        trackEvent('financial_service_bill_fetch_success', {
+          service_id: id,
+          service_type: serviceType,
+          amount: response.data.amount,
+        });
+      } else {
+        platformAlertSimple(
+          'Bill Not Found',
+          response.error || 'Could not fetch bill details. Please enter the amount manually.',
+        );
+        trackEvent('financial_service_bill_fetch_error', {
+          service_id: id,
+          service_type: serviceType,
+          error: response.error || 'Unknown error',
+        });
+      }
+    } catch (err: any) {
+      if (!isMounted()) return;
+      platformAlertSimple(
+        'Fetch Failed',
+        'Unable to retrieve bill details. Please check your consumer number and try again, or enter the amount manually.',
+      );
+      trackEvent('financial_service_bill_fetch_error', {
+        service_id: id,
+        service_type: serviceType,
+        error: err.message || 'Unknown error',
+      });
+    } finally {
+      if (isMounted()) setIsFetchingBill(false);
+    }
   };
 
   // Handle proceed to payment
@@ -373,30 +415,19 @@ const FinancialServiceDetailPage: React.FC<FinancialServiceDetailPageProps> = ()
                 accessibilityLabel="Consumer account number input"
                 accessibilityHint="Enter your consumer or account number"
               />
-              {/* BUG-077: Show "Coming Soon" badge on the button upfront so users know
-                  the feature is not yet available before tapping. */}
-              <View style={{ position: 'relative' }}>
-                <Pressable
-                  style={[styles.fetchButton, !consumerNumber ? styles.fetchButtonDisabled : null]}
-                  onPress={handleFetchBill}
-                  disabled={!consumerNumber}
-                >
+              <Pressable
+                style={[styles.fetchButton, !consumerNumber || isFetchingBill ? styles.fetchButtonDisabled : null]}
+                onPress={handleFetchBill}
+                disabled={!consumerNumber || isFetchingBill}
+                accessibilityLabel="Fetch bill details"
+                accessibilityHint="Retrieves your outstanding bill amount from the service provider"
+              >
+                {isFetchingBill ? (
+                  <ActivityIndicator size="small" color={COLORS.white} />
+                ) : (
                   <Text style={styles.fetchButtonText}>Fetch Bill</Text>
-                </Pressable>
-                <View
-                  style={{
-                    position: 'absolute',
-                    top: -8,
-                    right: -8,
-                    backgroundColor: COLORS.amber500,
-                    borderRadius: 8,
-                    paddingHorizontal: 6,
-                    paddingVertical: 2,
-                  }}
-                >
-                  <Text style={{ fontSize: 9, fontWeight: '700', color: COLORS.white }}>SOON</Text>
-                </View>
-              </View>
+                )}
+              </Pressable>
             </View>
 
             {fetchedBill ? (
